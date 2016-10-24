@@ -1,96 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57387 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030465AbcJQVfC (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:37655 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934105AbcJXIWr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 17:35:02 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1F68F207B9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 23:34:10 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: renesas: r8a7796-salvator-x: Enable DU
-Date: Tue, 18 Oct 2016 00:34:51 +0300
-Message-Id: <1476740091-7011-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 24 Oct 2016 04:22:47 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
+Date: Mon, 24 Oct 2016 10:22:41 +0200
+Message-Id: <1477297361-28197-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Only the VGA output is supported for now.
+Fix off-by-one (row and/or register) errors in links to Peripheral
+Function Select Register bitfields from GPIO/Peripheral Function Select
+Register 4 macros for SDHI2 and SDHI3 pins.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Based on rev. 0.52E of the R-Car Gen3 User's Manual.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Untested. Thanks for testing!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 90e9a76c8b30..5bb25f2e3c51 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -29,6 +29,38 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
-+
-+	vga-encoder {
-+		compatible = "adi,adv7123";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	vga {
-+		compatible = "vga-connector";
-+
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
-+		};
-+	};
- };
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index dd23198492b547e3..57ddd394f8c5e7b8 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -122,22 +122,22 @@
+ #define GPSR3_0		F_(SD0_CLK,		IP7_19_16)
  
- &pfc {
-@@ -45,6 +77,22 @@
- 	};
- };
+ /* GPSR4 */
+-#define GPSR4_17	F_(SD3_DS,		IP11_11_8)
+-#define GPSR4_16	F_(SD3_DAT7,		IP10_7_4)
+-#define GPSR4_15	F_(SD3_DAT6,		IP10_3_0)
+-#define GPSR4_14	F_(SD3_DAT5,		IP9_31_28)
+-#define GPSR4_13	F_(SD3_DAT4,		IP9_27_24)
++#define GPSR4_17	F_(SD3_DS,		IP11_7_4)
++#define GPSR4_16	F_(SD3_DAT7,		IP11_3_0)
++#define GPSR4_15	F_(SD3_DAT6,		IP10_31_28)
++#define GPSR4_14	F_(SD3_DAT5,		IP10_27_24)
++#define GPSR4_13	F_(SD3_DAT4,		IP10_23_20)
+ #define GPSR4_12	F_(SD3_DAT3,		IP10_19_16)
+ #define GPSR4_11	F_(SD3_DAT2,		IP10_15_12)
+ #define GPSR4_10	F_(SD3_DAT1,		IP10_11_8)
+ #define GPSR4_9		F_(SD3_DAT0,		IP10_7_4)
+ #define GPSR4_8		F_(SD3_CMD,		IP10_3_0)
+ #define GPSR4_7		F_(SD3_CLK,		IP9_31_28)
+-#define GPSR4_6		F_(SD2_DS,		IP9_23_20)
+-#define GPSR4_5		F_(SD2_DAT3,		IP9_19_16)
+-#define GPSR4_4		F_(SD2_DAT2,		IP9_15_12)
+-#define GPSR4_3		F_(SD2_DAT1,		IP9_11_8)
+-#define GPSR4_2		F_(SD2_DAT0,		IP9_7_4)
++#define GPSR4_6		F_(SD2_DS,		IP9_27_24)
++#define GPSR4_5		F_(SD2_DAT3,		IP9_23_20)
++#define GPSR4_4		F_(SD2_DAT2,		IP9_19_16)
++#define GPSR4_3		F_(SD2_DAT1,		IP9_15_12)
++#define GPSR4_2		F_(SD2_DAT0,		IP9_11_8)
+ #define GPSR4_1		F_(SD2_CMD,		IP9_7_4)
+ #define GPSR4_0		F_(SD2_CLK,		IP9_3_0)
  
-+&du {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7123_in>;
-+			};
-+		};
-+		port@2 {
-+			lvds_connector: endpoint {
-+			};
-+		};
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
