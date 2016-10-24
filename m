@@ -1,35 +1,35 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pu1apc01on0134.outbound.protection.outlook.com ([104.47.126.134]:55535
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751021AbcJCHz5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Oct 2016 03:55:57 -0400
-From: Jithin T Raj <jithin.t@tataelxsi.co.in>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Kernal version Issue
-Date: Mon, 3 Oct 2016 07:55:53 +0000
-Message-ID: <SG2PR0401MB1296E3088D1BF1BCDBB0E3C7D8C20@SG2PR0401MB1296.apcprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1477299818-31935-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1477299818-31935-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Oct 2016 13:03:29 +0200
+Message-ID: <CAMuHMdUohporR7__mnX7b3XvmSjhYsOpp8UrERJbK00Zg5aqAg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] arm64: dts: renesas: r8a7796: Add FDP1 instance
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Kieran Bingham <kieran@ksquared.org.uk>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Mon, Oct 24, 2016 at 11:03 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The r8a7796 has a single FDP1 instance.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-=20
-hi team,
-=A0=A0=A0 I have downloaded Source tree version 4.7.5 from kernel.org..I ha=
-ve build image for RCAR E2=A0 by using that..but the board is not accepting=
- the kernel..i want to know "Is there any special release of kernel for Ren=
-esas only? if yes can you please provide me some links or kernel from www.k=
-ernel.org are suitable for all Renesas Board? Hopping your reply=20
+Gr{oetje,eeting}s,
 
-Best Regards
-Jithin T Raj
-=20
-=20
-=A0=A0 =
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
