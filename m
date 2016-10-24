@@ -1,72 +1,94 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36486 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932589AbcJYMtB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Oct 2016 08:49:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <1472637741-14624-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1472637741-14624-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Oct 2016 14:48:59 +0200
-Message-ID: <CAMuHMdWsxu0bBTFHZYh6+eowXkx=G-Uo06g7TOLE7Ek7vaHHYA@mail.gmail.com>
-Subject: Re: [PATCH v3 01/12] dt: arm: shmobile: add H3ULCB board DT bindings
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran@bingham.xyz>
+Subject: [PATCH v4 1/4] v4l: ctrls: Add deinterlacing mode control
+Date: Mon, 24 Oct 2016 12:03:35 +0300
+Message-Id: <1477299818-31935-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Vladimir,
+The menu control selects the operation mode of a video deinterlacer. The
+menu entries are driver specific.
 
-On Wed, Aug 31, 2016 at 12:02 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> Add H3ULCB Device tree bindings Documentation, listing it as a supported
-> board.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Changes in version 2:
-> - none
-> Changes in version 3:
-> - none
->
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-> index 5484c31d..2f0b716 100644
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -49,6 +49,8 @@ Boards:
->      compatible = "renesas,genmai", "renesas,r7s72100"
->    - Gose
->      compatible = "renesas,gose", "renesas,r8a7793"
-> +  - H3ULCB (RTP0RC7795SKB00010S)
-> +    compatible = "renesas,h3ulcb", "renesas,r8a7795";
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran@bingham.xyz>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+Changes since v3:
 
-Should this have been
+- Link the deinterlacing mode control to driver-specific documentation
+---
+ Documentation/media/uapi/v4l/extended-controls.rst | 4 ++++
+ Documentation/media/v4l-drivers/index.rst          | 2 ++
+ drivers/media/v4l2-core/v4l2-ctrls.c               | 2 ++
+ include/uapi/linux/v4l2-controls.h                 | 1 +
+ 4 files changed, 9 insertions(+)
 
-        H3SK (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
-        compatible = "renesas,h3sk", "renesas,r8a7795";
+diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+index 7725c33d8b69..40071ea5d90e 100644
+--- a/Documentation/media/uapi/v4l/extended-controls.rst
++++ b/Documentation/media/uapi/v4l/extended-controls.rst
+@@ -3017,6 +3017,10 @@ Image Process Control IDs
+     test pattern images. These hardware specific test patterns can be
+     used to test if a device is working properly.
+ 
++``V4L2_CID_DEINTERLACING_MODE (menu)``
++    The video deinterlacing mode (such as Bob, Weave, ...). The menu items are
++    driver specific and are documented in :ref:`v4l-drivers`.
++
+ 
+ .. _dv-controls:
+ 
+diff --git a/Documentation/media/v4l-drivers/index.rst b/Documentation/media/v4l-drivers/index.rst
+index aac566f88833..acde3ed7860f 100644
+--- a/Documentation/media/v4l-drivers/index.rst
++++ b/Documentation/media/v4l-drivers/index.rst
+@@ -2,6 +2,8 @@
+ 
+ .. include:: <isonum.txt>
+ 
++.. _v4l-drivers:
++
+ ################################################
+ Video4Linux (V4L)  driver-specific documentation
+ ################################################
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index adc2147fcff7..47001e25fd9e 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -885,6 +885,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_LINK_FREQ:		return "Link Frequency";
+ 	case V4L2_CID_PIXEL_RATE:		return "Pixel Rate";
+ 	case V4L2_CID_TEST_PATTERN:		return "Test Pattern";
++	case V4L2_CID_DEINTERLACING_MODE:	return "Deinterlacing Mode";
+ 
+ 	/* DV controls */
+ 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+@@ -1058,6 +1059,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+ 	case V4L2_CID_DV_RX_RGB_RANGE:
+ 	case V4L2_CID_DV_RX_IT_CONTENT_TYPE:
+ 	case V4L2_CID_TEST_PATTERN:
++	case V4L2_CID_DEINTERLACING_MODE:
+ 	case V4L2_CID_TUNE_DEEMPHASIS:
+ 	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+ 	case V4L2_CID_DETECT_MD_MODE:
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index b6a357a5f053..0d2e1e01fbd5 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -892,6 +892,7 @@ enum v4l2_jpeg_chroma_subsampling {
+ #define V4L2_CID_LINK_FREQ			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 1)
+ #define V4L2_CID_PIXEL_RATE			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 2)
+ #define V4L2_CID_TEST_PATTERN			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 3)
++#define V4L2_CID_DEINTERLACING_MODE		(V4L2_CID_IMAGE_PROC_CLASS_BASE + 4)
+ 
+ 
+ /*  DV-class control IDs defined by V4L2 */
+-- 
+Regards,
 
-instead?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
