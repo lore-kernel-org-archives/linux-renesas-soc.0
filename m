@@ -1,81 +1,81 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:49531 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933736AbcJUNRl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 09:17:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 18/23] ARM: shmobile: r8a7778: Stop passing mode pins state to clock driver
-Date: Fri, 21 Oct 2016 15:17:32 +0200
-Message-Id: <1477055857-17936-19-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v4.1 2/4] dt-bindings: Add Renesas R-Car FDP1 bindings
+Date: Mon, 24 Oct 2016 14:47:21 +0300
+Message-Id: <1477309641-14369-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1477299818-31935-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1477299818-31935-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now the R-Car M1A CPG clock driver obtains the state of the mode pins
-from the R-Car RST driver, there's no longer a need to pass this state
-explicitly. Hence we can just remove the .init_time() callback, the
-generic ARM code will take care of calling of_clk_init().
+From: Kieran Bingham <kieran+renesas@bingham.xyz>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+The FDP1 is a de-interlacing module which converts interlaced video to
+progressive video. It is also capable of performing pixel format conversion
+between YCbCr/YUV formats and RGB formats.
+
+Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v4:
-  - Add Acked-by,
+Changes since v4:
 
-v3:
-  - New.
+- Rewrote the power-domains property documentation
+- Added a reference to the clocks and power domains providers
+- Made the renesas,fcp property optional on Gen2
 ---
- arch/arm/mach-shmobile/setup-r8a7778.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+ .../devicetree/bindings/media/renesas,fdp1.txt     | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,fdp1.txt
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7778.c b/arch/arm/mach-shmobile/setup-r8a7778.c
-index cf236db686a9dd47..7fa4a0b5f6549287 100644
---- a/arch/arm/mach-shmobile/setup-r8a7778.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7778.c
-@@ -15,7 +15,6 @@
-  * GNU General Public License for more details.
-  */
- 
--#include <linux/clk/renesas.h>
- #include <linux/io.h>
- #include <linux/irqchip.h>
- 
-@@ -23,19 +22,6 @@
- 
- #include "common.h"
- 
--#define MODEMR 0xffcc0020
--
--static void __init r8a7778_timer_init(void)
--{
--	u32 mode;
--	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--
--	BUG_ON(!modemr);
--	mode = ioread32(modemr);
--	iounmap(modemr);
--	r8a7778_clocks_init(mode);
--}
--
- #define INT2SMSKCR0	0x82288 /* 0xfe782288 */
- #define INT2SMSKCR1	0x8228c /* 0xfe78228c */
- 
-@@ -70,6 +56,5 @@ static void __init r8a7778_init_irq_dt(void)
- 	.init_early	= shmobile_init_delay,
- 	.init_irq	= r8a7778_init_irq_dt,
- 	.init_late	= shmobile_init_late,
--	.init_time	= r8a7778_timer_init,
- 	.dt_compat	= r8a7778_compat_dt,
- MACHINE_END
+diff --git a/Documentation/devicetree/bindings/media/renesas,fdp1.txt b/Documentation/devicetree/bindings/media/renesas,fdp1.txt
+new file mode 100644
+index 000000000000..8dd1007bb573
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,fdp1.txt
+@@ -0,0 +1,37 @@
++Renesas R-Car Fine Display Processor (FDP1)
++-------------------------------------------
++
++The FDP1 is a de-interlacing module which converts interlaced video to
++progressive video. It is capable of performing pixel format conversion between
++YCbCr/YUV formats and RGB formats. Only YCbCr/YUV formats are supported as
++an input to the module.
++
++Required properties:
++
++ - compatible: must be "renesas,fdp1"
++ - reg: the register base and size for the device registers
++ - interrupts : interrupt specifier for the FDP1 instance
++ - clocks: reference to the functional clock
++
++Optional properties:
++
++ - power-domains: reference to the power domain that the FDP1 belongs to, if
++                  any.
++ - renesas,fcp: a phandle referencing the FCP that handles memory accesses
++                for the FDP1. Not needed on Gen2, mandatory on Gen3.
++
++Please refer to the binding documentation for the clock and/or power domain
++providers for more details.
++
++
++Device node example
++-------------------
++
++	fdp1@fe940000 {
++		compatible = "renesas,fdp1";
++		reg = <0 0xfe940000 0 0x2400>;
++		interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 119>;
++		power-domains = <&sysc R8A7795_PD_A3VP>;
++		renesas,fcp = <&fcpf0>;
++	};
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
+
