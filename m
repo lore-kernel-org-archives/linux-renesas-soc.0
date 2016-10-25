@@ -1,65 +1,41 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Thu, 20 Oct 2016 08:35:33 +0900
-Message-Id: <20161019233533.10506.16810.sendpatchset@little-apple>
-Subject: [PATCH v6 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V6
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33104 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755604AbcJYKtn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 25 Oct 2016 06:49:43 -0400
+MIME-Version: 1.0
+In-Reply-To: <1473764228-24768-12-git-send-email-horms+renesas@verge.net.au>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au> <1473764228-24768-12-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Oct 2016 12:49:42 +0200
+Message-ID: <CAMuHMdVLAK0TKLoB07_U1XNW9kCOyen80gPrkaXOLqAq0=BA+Q@mail.gmail.com>
+Subject: Re: [PATCH v7 11/11] arm64: dts: r8a7796: salvator-x: Enable UHS-I SDR-104
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: IPMMU multi-arch update V6
+On Tue, Sep 13, 2016 at 12:57 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Add the sd-uhs-sdr104 property to SDHI0 and SDHI1.
 
-[PATCH v6 01/07] iommu/ipmmu-vmsa: Remove platform data handling
-[PATCH v6 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-[PATCH v6 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
-[PATCH v6 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
-[PATCH v6 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-[PATCH v6 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-[PATCH v6 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+SDHI0 and SDHI3.
 
-These patches update the IPMMU driver with a couple of changes
-to support build on multiple architectures. In the process of
-doing so the interrupt code gets reworked and the foundation
-for supporting multiple contexts are added.
+Gr{oetje,eeting}s,
 
-Changes since V5:
- - Rebased series on top of next-20161019
- - Updated patch 5/7 to simplify domain allocation/free code - thanks Joerg!
- - Added reviewed-by tag from Joerg for patch 1-4 and 6-7.
- 
-Changes since V4:
- - Updated patch 3/7 to work on top on the following commit in next-20160920:
-   b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
- - Add Kconfig hunk to patch 5/7 to avoid undeclared ipmmu_ops if COMPILE_TEST
- - Rebased patch 7/7 to fit on top of new Kconfig bits in 5/7
+                        Geert
 
-Changes since V3:
- - Updated patch 3/7 to fix hang-on-boot issue on 32-bit ARM - thanks Geert!
- - Reworked group parameter handling in patch 3/7 and 5/7.
- - Added patch 6/7 to fix build of the driver on s390/tile/um architectures
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Changes since V2:
- - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
- - V3 patch 3, 4 and 5 come from
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Patch 5 has been reworked to include patch 3 of the V1 of this series 
-
-Changes since V1:
- - Got rid of patch 2 and 3 from initial series
- - Updated bitmap code locking and also used lighter bitop functions
- - Updated the Kconfig bits to apply on top of ARCH_RENESAS
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Built on top next-20161019:
-
- drivers/iommu/Kconfig      |    2 
- drivers/iommu/ipmmu-vmsa.c |  311 +++++++++++++++++++++++++++++++++++---------
- 2 files changed, 254 insertions(+), 59 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
