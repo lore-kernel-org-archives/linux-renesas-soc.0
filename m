@@ -1,41 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35527 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936138AbcJ0OpI (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39629 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753957AbcJZJN0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 10:45:08 -0400
-Received: by mail-pf0-f196.google.com with SMTP id s8so2846063pfj.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 07:45:08 -0700 (PDT)
+        Wed, 26 Oct 2016 05:13:26 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVfpXHiOw5odMWGX=xKAzEhnEAHGPiGHF19iPF-kMVy4A@mail.gmail.com>
+References: <20161026033143.6617.5834.sendpatchset@little-apple> <CAMuHMdVfpXHiOw5odMWGX=xKAzEhnEAHGPiGHF19iPF-kMVy4A@mail.gmail.com>
 From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Thu, 27 Oct 2016 19:29:34 +0900
-Message-Id: <20161027102934.26426.94225.sendpatchset@little-apple>
-In-Reply-To: <20161027102856.26426.48132.sendpatchset@little-apple>
-References: <20161027102856.26426.48132.sendpatchset@little-apple>
-Subject: [PATCH 04/04] arm64: dts: r8a7795: Connect Ethernet AVB to IPMMU
+Date: Wed, 26 Oct 2016 18:13:23 +0900
+Message-ID: <CANqRtoTbjD7aqceT1JaOr3S+g7S68aUu5nWAOrLHU_--NHgcLQ@mail.gmail.com>
+Subject: Re: [PATCH] drm: rcar-du: Fix R-Car Gen3 crash when VSP is disabled
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Geert,
 
-Add IPMMU-DS0 to the Ethernet-AVB device node.
+On Wed, Oct 26, 2016 at 4:31 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Oct 26, 2016 at 5:31 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> For the DU to operate on R-Car Gen3 hardware a combination of DU
+>> and VSP devices are required. Since the DU driver also supports
+>> earlier generations hardware the VSP portion is enabled via Kconfig.
+>>
+>> The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
+>> as a module, however this is not enough to support R-Car Gen3. In
+>> the current case of CONFIG_DRM_RCAR_VSP=n then the kernel crashes
+>> when loading the module. This patch is fixing that particular case.
+>>
+>> In more detail, the crash triggers in drm_atomic_get_plane_state()
+>> when __drm_atomic_helper_set_config() passes NULL as crtc->primary.
+>>
+>> This patch corrects this issue by failing to load the DU driver on
+>> R-Car Gen3 when VSP is not available.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> ---
+>>
+>>  drivers/gpu/drm/rcar-du/rcar_du_vsp.h |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> --- 0001/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
+>> +++ work/drivers/gpu/drm/rcar-du/rcar_du_vsp.h  2016-10-26 00:01:12.920607110 +0900
+>> @@ -70,7 +70,7 @@ void rcar_du_vsp_disable(struct rcar_du_
+>>  void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc);
+>>  void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc);
+>>  #else
+>> -static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return 0; };
+>> +static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return -ENXIO; };
+>
+> -ENODEV sounds more appropriate
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Ok, however -ENXIO is the same error code as the DU driver currently
+returns when dealing with the VSP and not finding DT nodes.
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+To avoid dealing with this again I would prefer skipping per-driver
+Kconfig options entirely, for instance something like this:
 
---- 0006/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-10-27 18:08:09.590607110 +0900
-@@ -706,6 +706,7 @@
- 			phy-mode = "rgmii-id";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			iommus = <&ipmmu_ds0 16>;
- 		};
- 
- 		can0: can@e6c30000 {
+[PATCH/RFC] Simplify Gen3 DU and VSP Kconfig bits
+https://www.spinics.net/lists/linux-sh/msg45978.html
+
+>>  static inline void rcar_du_vsp_enable(struct rcar_du_crtc *crtc) { };
+>>  static inline void rcar_du_vsp_disable(struct rcar_du_crtc *crtc) { };
+>>  static inline void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc) { };
+>
+> Alternatively,  DRM_RCAR_DU can force DRM_RCAR_VSP to y if ARCH_R8A7795
+> or ARCH_R8A7796 is enabled.
+
+The DU driver has symbol dependencies on VSP and FCP driver code
+(V4L2), so we need to take the state of driver support for those
+modules into consideration as well instead of only depending on
+SoC-specific Kconfig symbols.
+
+On Wed, Oct 26, 2016 at 4:31 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>On Wed, Oct 26, 2016 at 5:31 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
+>> as a module, however this is not enough to support R-Car Gen3. In
+>
+> Nope, arm64 defconfig on v4.9-rc1:
+> # CONFIG_DRM_RCAR_DU is not set
+
+Right, you are correct. Sorry for the noise. It seems that I was using
+renesas-drivers-2016-10-18-v4.9-rc1 - not mainline v4.9-rc1.
+
+Without this fix the driver still crashes, but not due to defconfig in v4.9-rc1.
+
+Thanks,
+
+/ magnus
