@@ -1,20 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36587 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754299AbcJZMA0 (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37881 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751175AbcJZL4a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Oct 2016 08:00:26 -0400
+        Wed, 26 Oct 2016 07:56:30 -0400
 MIME-Version: 1.0
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477064730.2508.24.camel@pengutronix.de>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be> <1477064730.2508.24.camel@pengutronix.de>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Oct 2016 14:00:24 +0200
-Message-ID: <CAMuHMdVbpuv94x-ocTSDoEj+SbnESDbkuMXsXExQvoyZepp+Zg@mail.gmail.com>
+Date: Wed, 26 Oct 2016 13:56:29 +0200
+Message-ID: <CAMuHMdUsuoLni1FUwCPXM2WrGpwKVR4UA85zujpbcwmdPMXpdg@mail.gmail.com>
 Subject: Re: [PATCH v4 00/23] soc: renesas: Add R-Car RST driver for obtaining
  mode pin state
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
@@ -26,71 +27,32 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mike, Stephen,
+Hi Philip,
 
-On Fri, Oct 21, 2016 at 3:17 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Currently the R-Car Clock Pulse Generator (CPG) drivers obtains the
-> state of the mode pins either by a call from the platform code, or
-> directly by using a hardcoded register access. This is a bit messy, and
-> creates a dependency between driver and platform code.
->
-> This patch series converts the various Renesas R-Car clock drivers
-> and support code from reading the mode pin states using a hardcoded
-> register access to using a new minimalistic R-Car RST driver.
->
-> All R-Car clock drivers will rely on the presence in DT of a device node
-> for the RST module.  Backwards compatibility with old DTBs is retained
-> only for R-Car Gen2, which has fallback code using its own private copy
-> of rcar_gen2_read_mode_pins().
->
-> After this, there is still one remaining user of
-> rcar_gen2_read_mode_pins() left in platform code. A patch series to
-> remove that user has already been posted, though ("[PATCH/RFT 0/4] ARM:
-> shmobile: R-Car Gen2: Allow booting secondary CPU cores in debug mode").
-> Since v3, the other user has been removed in commit 9f5ce39ddb8f68b3
-> ("ARM: shmobile: rcar-gen2: Obtain extal frequency from DT").
->
-> This series consists of 5 parts:
->   A. Patches 1 and 2 add DT bindings and driver code for the R-Car RST
->      driver,
->   B. Patches 3-11 add device nodes for the RST modules to the R-Car DTS
->      files,
->   C. Patches 12-17 convert the clock drivers to call into the new R-Car
->      RST driver,
->   D. Patches 18-20 remove passing mode pin state to the clock drivers
->      from the platform code,
->   E. Patches 21-23 remove dead code from the clock drivers.
->
-> As is usually the case with moving functionality from platform code to
-> DT, there are lots of hard dependencies:
->   - The DT updates in Part B can be merged as soon as the DT bindings in
->     Part A have been approved,
->   - The clock driver updates in Part C depend functionally on the driver
->     code in Part A, and on the DT updates in Part B,
->   - The board code cleanups in Part D depend on the clock driver updates
->     in Part C,
->   - The block driver cleanups in part E depend on the board code
->     cleanups in part D.
->
-> Hence to maintain the required lockstep between SoC driver, clock
-> drivers, shmobile platform code, and shmobile DT, I propose to queue up
-> all patches in a single branch against v4.9-rc1, and send pull requests
-> to both Mike/Stephen (clock) and Simon (rest).
->
-> ***
+On Fri, Oct 21, 2016 at 5:45 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> Am Freitag, den 21.10.2016, 15:17 +0200 schrieb Geert Uytterhoeven:
+>>         Hi Philipp, Mike, Stephen, Simon, Magnus,
+>>       (see questions *** below!)
+>>
+>> Currently the R-Car Clock Pulse Generator (CPG) drivers obtains the
+>> state of the mode pins either by a call from the platform code, or
+>> directly by using a hardcoded register access. This is a bit messy, and
+>> creates a dependency between driver and platform code.
+>>
+>> This patch series converts the various Renesas R-Car clock drivers
+>> and support code from reading the mode pin states using a hardcoded
+>> register access to using a new minimalistic R-Car RST driver.
 
->   - Mike/Stephen/Simon/Magnus: Are you OK with the suggested merge
->     approach above?
+[...]
 
-Is this OK for you?
+>>   - Philip: While this is a driver for a reset-controller, currently it
+>>     doesn't provide any reset-controller functionality. Hence I added it
+>>     to drivers/soc/renesas/. Is that OK for you?
+>
+> Absolutely, as long as the driver isn't even a reset controller
+> provider, this is the right place.
 
-I'd like to move forward with this, as this is a prerequisite for adding
-support for new SoCs (RZ/G) without adding more copies of
-rcar_gen2_read_mode_pins(), and removing that function from platform code
-for good.
-
-Thanks!
+Thank you!
 
 Gr{oetje,eeting}s,
 
