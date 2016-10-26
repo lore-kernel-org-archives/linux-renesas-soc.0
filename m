@@ -1,74 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53527 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935327AbcJ0HAZ (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36290 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932115AbcJZOOW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 03:00:25 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: shmobile: select errata 798181 for SoCs with CA15 cores
-Date: Thu, 27 Oct 2016 09:00:06 +0200
-Message-Id: <1477551606-6903-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 26 Oct 2016 10:14:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id c17so1055436wmc.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Oct 2016 07:14:21 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, wsa@the-dreams.de,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 1/5] clk: renesas: r8a7796: Add I2C clocks
+Date: Wed, 26 Oct 2016 16:14:05 +0200
+Message-Id: <1477491249-2976-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Select ARM errata 798181 on SoCs cores affected CA15 cores.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/Kconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index c48be1d332ed..6fbd9b7d2d67 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -60,6 +60,7 @@ config ARCH_R7S72100
- config ARCH_R8A73A4
- 	bool "R-Mobile APE6 (R8A73A40)"
- 	select ARCH_RMOBILE
-+	select ARM_ERRATA_798181 if SMP
- 	select RENESAS_IRQC
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index c02fe34..d851c42 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -133,6 +133,13 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("gpio2",		 910,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio1",		 911,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio0",		 912,	R8A7796_CLK_S3D4),
++	DEF_MOD("i2c6",			 918,	R8A7796_CLK_S0D6),
++	DEF_MOD("i2c5",			 919,	R8A7796_CLK_S0D6),
++	DEF_MOD("i2c4",			 927,	R8A7796_CLK_S0D6),
++	DEF_MOD("i2c3",			 928,	R8A7796_CLK_S0D6),
++	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
++	DEF_MOD("i2c1",			 930,	R8A7796_CLK_S3D2),
++	DEF_MOD("i2c0",			 931,	R8A7796_CLK_S3D2),
+ };
  
- config ARCH_R8A7740
-@@ -70,6 +71,7 @@ config ARCH_R8A7740
- config ARCH_R8A7743
- 	bool "RZ/G1M (R8A77430)"
- 	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
- 
- config ARCH_R8A7778
- 	bool "R-Car M1A (R8A77781)"
-@@ -82,20 +84,24 @@ config ARCH_R8A7779
- config ARCH_R8A7790
- 	bool "R-Car H2 (R8A77900)"
- 	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
- 	select I2C
- 
- config ARCH_R8A7791
- 	bool "R-Car M2-W (R8A77910)"
- 	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
- 	select I2C
- 
- config ARCH_R8A7792
- 	bool "R-Car V2H (R8A77920)"
- 	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
- 
- config ARCH_R8A7793
- 	bool "R-Car M2-N (R8A7793)"
- 	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
- 	select I2C
- 
- config ARCH_R8A7794
+ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
