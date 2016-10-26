@@ -1,64 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:36881 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751441AbcJTEUl (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40845 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750938AbcJZMO0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Oct 2016 00:20:41 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: renesas_usbhs: add wait after initialization for R-Car Gen3
-Date: Thu, 20 Oct 2016 13:19:19 +0900
-Message-ID: <1476937159-5079-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 26 Oct 2016 08:14:26 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <5038285.9DcXKlHSpF@wasted.cogentembedded.com>
+References: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com> <5038285.9DcXKlHSpF@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Oct 2016 14:14:25 +0200
+Message-ID: <CAMuHMdV9O97qWskZ=EWz-kSy_rV_U5rfrsRDWRHUB2WiFXAq7w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: renesas: cpg-mssr: add R8A7743 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the controller on R-Car Gen3 doesn't have any status registers
-to detect initialization (LPSTS.SUSPM = 1) and the initialization needs
-up to 45 usec, this patch adds wait after the initialization. Otherwise,
-writing other registers (e.g. INTENB0) will fail.
+On Fri, Oct 21, 2016 at 10:17 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> --- /dev/null
+> +++ linux/drivers/clk/renesas/r8a7743-cpg-mssr.c
+> @@ -0,0 +1,264 @@
 
-Fixes: de18757e272d ("usb: renesas_usbhs: add R-Car Gen3 power control")
-Cc: <stable@vger.kernel.org> # v4.6+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- This patch is based on the latest Felipe's usb.git / testing/fixes branch
- (commit id = a1aa8cf6471b17c0fa7132ea5eeef0ae07ca07cd).
+> +static int __init r8a7743_cpg_mssr_init(struct device *dev)
+> +{
+> +       const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
+> +       u32 cpg_mode = rcar_gen2_read_modemr();
 
- drivers/usb/renesas_usbhs/rcar3.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+It would be good if we could appply "[PATCH v4 00/23] soc: renesas: Add R-Car
+RST driver for obtaining mode pin state" first, and change this driveer to
+use rcar_rst_read_mode_pins() instead.
 
-diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
-index 1d70add..d544b33 100644
---- a/drivers/usb/renesas_usbhs/rcar3.c
-+++ b/drivers/usb/renesas_usbhs/rcar3.c
-@@ -9,6 +9,7 @@
-  *
-  */
- 
-+#include <linux/delay.h>
- #include <linux/io.h>
- #include "common.h"
- #include "rcar3.h"
-@@ -35,10 +36,13 @@ static int usbhs_rcar3_power_ctrl(struct platform_device *pdev,
- 
- 	usbhs_write32(priv, UGCTRL2, UGCTRL2_RESERVED_3 | UGCTRL2_USB0SEL_OTG);
- 
--	if (enable)
-+	if (enable) {
- 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
--	else
-+		/* The controller on R-Car Gen3 needs to wait up to 45 usec */
-+		udelay(45);
-+	} else {
- 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, 0);
-+	}
- 
- 	return 0;
- }
--- 
-1.9.1
+> +       cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+> +
+> +       return rcar_gen2_cpg_init(cpg_pll_config);
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
