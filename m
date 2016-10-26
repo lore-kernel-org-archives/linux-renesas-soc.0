@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39629 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753957AbcJZJN0 (ORCPT
+Received: from mail-it0-f48.google.com ([209.85.214.48]:38043 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751118AbcJZHdP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Oct 2016 05:13:26 -0400
+        Wed, 26 Oct 2016 03:33:15 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVfpXHiOw5odMWGX=xKAzEhnEAHGPiGHF19iPF-kMVy4A@mail.gmail.com>
-References: <20161026033143.6617.5834.sendpatchset@little-apple> <CAMuHMdVfpXHiOw5odMWGX=xKAzEhnEAHGPiGHF19iPF-kMVy4A@mail.gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 26 Oct 2016 18:13:23 +0900
-Message-ID: <CANqRtoTbjD7aqceT1JaOr3S+g7S68aUu5nWAOrLHU_--NHgcLQ@mail.gmail.com>
+In-Reply-To: <20161026033143.6617.5834.sendpatchset@little-apple>
+References: <20161026033143.6617.5834.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Oct 2016 09:33:13 +0200
+Message-ID: <CAMuHMdU3YRR+axpM4Xv-Tg_QkmfFuF55BuDeWN7pHMcBHqmDLQ@mail.gmail.com>
 Subject: Re: [PATCH] drm: rcar-du: Fix R-Car Gen3 crash when VSP is disabled
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
 Cc: DRI Development <dri-devel@lists.freedesktop.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         David Airlie <airlied@linux.ie>,
@@ -21,80 +21,20 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Wed, Oct 26, 2016 at 5:31 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
+> as a module, however this is not enough to support R-Car Gen3. In
 
-On Wed, Oct 26, 2016 at 4:31 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Oct 26, 2016 at 5:31 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
->> From: Magnus Damm <damm+renesas@opensource.se>
->>
->> For the DU to operate on R-Car Gen3 hardware a combination of DU
->> and VSP devices are required. Since the DU driver also supports
->> earlier generations hardware the VSP portion is enabled via Kconfig.
->>
->> The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
->> as a module, however this is not enough to support R-Car Gen3. In
->> the current case of CONFIG_DRM_RCAR_VSP=n then the kernel crashes
->> when loading the module. This patch is fixing that particular case.
->>
->> In more detail, the crash triggers in drm_atomic_get_plane_state()
->> when __drm_atomic_helper_set_config() passes NULL as crtc->primary.
->>
->> This patch corrects this issue by failing to load the DU driver on
->> R-Car Gen3 when VSP is not available.
->>
->> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
->> ---
->>
->>  drivers/gpu/drm/rcar-du/rcar_du_vsp.h |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> --- 0001/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
->> +++ work/drivers/gpu/drm/rcar-du/rcar_du_vsp.h  2016-10-26 00:01:12.920607110 +0900
->> @@ -70,7 +70,7 @@ void rcar_du_vsp_disable(struct rcar_du_
->>  void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc);
->>  void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc);
->>  #else
->> -static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return 0; };
->> +static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return -ENXIO; };
->
-> -ENODEV sounds more appropriate
+Nope, arm64 defconfig on v4.9-rc1:
+# CONFIG_DRM_RCAR_DU is not set
 
-Ok, however -ENXIO is the same error code as the DU driver currently
-returns when dealing with the VSP and not finding DT nodes.
+Gr{oetje,eeting}s,
 
-To avoid dealing with this again I would prefer skipping per-driver
-Kconfig options entirely, for instance something like this:
+                        Geert
 
-[PATCH/RFC] Simplify Gen3 DU and VSP Kconfig bits
-https://www.spinics.net/lists/linux-sh/msg45978.html
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->>  static inline void rcar_du_vsp_enable(struct rcar_du_crtc *crtc) { };
->>  static inline void rcar_du_vsp_disable(struct rcar_du_crtc *crtc) { };
->>  static inline void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc) { };
->
-> Alternatively,  DRM_RCAR_DU can force DRM_RCAR_VSP to y if ARCH_R8A7795
-> or ARCH_R8A7796 is enabled.
-
-The DU driver has symbol dependencies on VSP and FCP driver code
-(V4L2), so we need to take the state of driver support for those
-modules into consideration as well instead of only depending on
-SoC-specific Kconfig symbols.
-
-On Wed, Oct 26, 2016 at 4:31 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->On Wed, Oct 26, 2016 at 5:31 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
->> The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
->> as a module, however this is not enough to support R-Car Gen3. In
->
-> Nope, arm64 defconfig on v4.9-rc1:
-> # CONFIG_DRM_RCAR_DU is not set
-
-Right, you are correct. Sorry for the noise. It seems that I was using
-renesas-drivers-2016-10-18-v4.9-rc1 - not mainline v4.9-rc1.
-
-Without this fix the driver still crashes, but not due to defconfig in v4.9-rc1.
-
-Thanks,
-
-/ magnus
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
