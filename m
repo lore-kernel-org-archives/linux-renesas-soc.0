@@ -1,93 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:39093 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751494AbcJPI2Z (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40549 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932115AbcJZOOY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Oct 2016 04:28:25 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 1/2] arm64: dts: r8a7795: salvator: enable on-board eMMC
-Date: Sun, 16 Oct 2016 10:27:47 +0200
-Message-Id: <20161016082748.2850-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161016082748.2850-1-wsa+renesas@sang-engineering.com>
-References: <20161016082748.2850-1-wsa+renesas@sang-engineering.com>
+        Wed, 26 Oct 2016 10:14:24 -0400
+Received: by mail-wm0-f68.google.com with SMTP id b80so3675732wme.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Oct 2016 07:14:23 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, wsa@the-dreams.de,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 2/5] pinctrl: sh-pfc: r8a7796: add I2C pin support
+Date: Wed, 26 Oct 2016 16:14:06 +0200
+Message-Id: <1477491249-2976-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 77 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 8964b1ea3cea69..8e98aeae54c066 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -62,6 +62,24 @@
- 		clock-frequency = <24576000>;
- 	};
- 
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -246,6 +264,18 @@
- 		power-source = <1800>;
- 	};
- 
-+	sdhi2_pins: sd2 {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <1800>;
-+	};
-+
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-@@ -398,6 +428,19 @@
- 	status = "okay";
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index dc9b671..42db745 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -1490,6 +1490,57 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
  };
  
-+&sdhi2 {
-+	/* used for on-board 8bit eMMC */
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
++/* - I2C -------------------------------------------------------------------- */
++static const unsigned int i2c1_a_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
++};
++static const unsigned int i2c1_a_mux[] = {
++	SDA1_A_MARK, SCL1_A_MARK,
++};
++static const unsigned int i2c1_b_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 23),
++};
++static const unsigned int i2c1_b_mux[] = {
++	SDA1_B_MARK, SCL1_B_MARK,
++};
++static const unsigned int i2c2_a_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
++};
++static const unsigned int i2c2_a_mux[] = {
++	SDA2_A_MARK, SCL2_A_MARK,
++};
++static const unsigned int i2c2_b_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 12),
++};
++static const unsigned int i2c2_b_mux[] = {
++	SDA2_B_MARK, SCL2_B_MARK,
++};
++static const unsigned int i2c6_a_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
++};
++static const unsigned int i2c6_a_mux[] = {
++	SDA6_A_MARK, SCL6_A_MARK,
++};
++static const unsigned int i2c6_b_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
++};
++static const unsigned int i2c6_b_mux[] = {
++	SDA6_B_MARK, SCL6_B_MARK,
++};
++static const unsigned int i2c6_c_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14),
++};
++static const unsigned int i2c6_c_mux[] = {
++	SDA6_C_MARK, SCL6_C_MARK,
 +};
 +
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
- 	pinctrl-1 = <&sdhi3_pins_uhs>;
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -1912,6 +1963,13 @@ static const unsigned int sdhi3_ds_mux[] = {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(i2c1_a),
++	SH_PFC_PIN_GROUP(i2c1_b),
++	SH_PFC_PIN_GROUP(i2c2_a),
++	SH_PFC_PIN_GROUP(i2c2_b),
++	SH_PFC_PIN_GROUP(i2c6_a),
++	SH_PFC_PIN_GROUP(i2c6_b),
++	SH_PFC_PIN_GROUP(i2c6_c),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -1969,6 +2027,22 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(sdhi3_ds),
+ };
+ 
++static const char * const i2c1_groups[] = {
++	"i2c1_a",
++	"i2c1_b",
++};
++
++static const char * const i2c2_groups[] = {
++	"i2c2_a",
++	"i2c2_b",
++};
++
++static const char * const i2c6_groups[] = {
++	"i2c6_a",
++	"i2c6_b",
++	"i2c6_c",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -2058,6 +2132,9 @@ static const char * const sdhi3_groups[] = {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(i2c1),
++	SH_PFC_FUNCTION(i2c2),
++	SH_PFC_FUNCTION(i2c6),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif2),
 -- 
-2.9.3
+2.7.4
