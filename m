@@ -1,75 +1,66 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <936e63bd-4f01-891f-24da-4c34caf94bcf@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1472637741-14624-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdWsxu0bBTFHZYh6+eowXkx=G-Uo06g7TOLE7Ek7vaHHYA@mail.gmail.com>
+ <83a48012-888e-3f86-c9a0-8cddb05ee2fe@cogentembedded.com> <936e63bd-4f01-891f-24da-4c34caf94bcf@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Oct 2016 13:33:54 +0200
+Message-ID: <CAMuHMdVxfCMK53SLch=kvhRS0hTvpd0kGS=p4T=kU+XX=1GjVA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/12] dt: arm: shmobile: add H3ULCB board DT bindings
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/7] base: soc: Check for NULL SoC device attributes
-Date: Mon, 31 Oct 2016 12:30:51 +0100
-Message-Id: <1477913455-5314-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yusuke Goda <yusuke.goda.sx@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If soc_device_match() is used to check the value of a specific
-attribute that is not present for the current SoC, the kernel crashes
-with a NULL pointer dereference.
+Hi Vladimir,
 
-Fix this by explicitly checking for the absence of a needed property,
-and considering this a non-match.
+On Wed, Oct 26, 2016 at 12:27 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> I've got this message from Renesas:
+> "
+>
+> Please use H3ULCB/M3ULCB in upstream.
+> # I got an agreement among parties.
+>
+> Board name in community: ULCB (= development code name)
+> Official name (product/brand name): Starter Kit Pro/Premier
+> "
+>
+> Renaming  H3ULCB -> H3SK is not desired for Renesas.
+>
+> What do you think to append the product/brand name only? :
+>
+> -        H3ULCB (RTP0RC7795SKB00010S)
+> +       H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
+>          compatible = "renesas,h3ulcb", "renesas,r8a7795";
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-v2:
-  - Add Acked-by.
----
- drivers/base/soc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Looks good to me.
 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 04ee597fc3a3fda0..dc26e5949a320223 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -176,19 +176,23 @@ static int soc_device_match_one(struct device *dev, void *arg)
- 	const struct soc_device_attribute *match = arg;
- 
- 	if (match->machine &&
--	    !glob_match(match->machine, soc_dev->attr->machine))
-+	    (!soc_dev->attr->machine ||
-+	     !glob_match(match->machine, soc_dev->attr->machine)))
- 		return 0;
- 
- 	if (match->family &&
--	    !glob_match(match->family, soc_dev->attr->family))
-+	    (!soc_dev->attr->family ||
-+	     !glob_match(match->family, soc_dev->attr->family)))
- 		return 0;
- 
- 	if (match->revision &&
--	    !glob_match(match->revision, soc_dev->attr->revision))
-+	    (!soc_dev->attr->revision ||
-+	     !glob_match(match->revision, soc_dev->attr->revision)))
- 		return 0;
- 
- 	if (match->soc_id &&
--	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
-+	    (!soc_dev->attr->soc_id ||
-+	     !glob_match(match->soc_id, soc_dev->attr->soc_id)))
- 		return 0;
- 
- 	return 1;
--- 
-1.9.1
+And then we can add
+
+        M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
+        compatible = "renesas,m3ulcb", "renesas,r8a7796";
+
+later.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
