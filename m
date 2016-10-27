@@ -1,66 +1,179 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36154 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754887AbcJ1Kvg (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:35796 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030484AbcJ0Vg3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Oct 2016 06:51:36 -0400
+        Thu, 27 Oct 2016 17:36:29 -0400
+Received: by mail-lf0-f41.google.com with SMTP id f134so37687977lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 14:36:28 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 1/7] ARM: dts: r8a7743: initial SoC device tree
+Date: Fri, 28 Oct 2016 00:36:25 +0300
+Message-ID: <13559419.B3v0G6vn24@wasted.cogentembedded.com>
+In-Reply-To: <1580369.yToZzJza1l@wasted.cogentembedded.com>
+References: <1580369.yToZzJza1l@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <13559419.B3v0G6vn24@wasted.cogentembedded.com>
-References: <1580369.yToZzJza1l@wasted.cogentembedded.com> <13559419.B3v0G6vn24@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 28 Oct 2016 12:51:34 +0200
-Message-ID: <CAMuHMdXt0yoHsk_BLpn+e8eqC+sz_VNV1xeOPPM4on=8i_Gb-Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] ARM: dts: r8a7743: initial SoC device tree
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+The  initial R8A7743 SoC device tree including CPU0, GIC, timer, SYSC, RST,
+CPG, and the required clock descriptions.
 
-On Thu, Oct 27, 2016 at 11:36 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The  initial R8A7743 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-> CPG, and the required clock descriptions.
->
-> Based on the original (and large) patch by Dmitry Shifrin
-> <dmitry.shifrin@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> ---
-> Changes in version 5:
-> - added the RST device node, updated the patch description accordingly.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-Thanks for the update!
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-> @@ -0,0 +1,120 @@
+---
+Changes in version 5:
+- added the RST device node, updated the patch description accordingly.
 
-> +               rst: reset-controller@e6160000 {
-> +                       compatible = "renesas,r8a7743-rst";
-> +                       reg = <0 0xe6160000 0 0x0200>;
+Changes in version 4:
+- removed the CPU1 node, updated the patch description accordingly;
+- reformatted the "interrupts" props of the GIC/timer device nodes;
+- added Geert's tag.
 
-I'd use "reg = <0 0xe6160000 0 0x0100>".
-Only R-Car Gen3 has registers above offset 0x100.
+Changes in version 3:
+- changed  the R8A7743 clock header #include;
+- replaced the multiple clock nodes with the single CPG node, updated the
+  "clocks" property in the CPU0 node, updated the patch description.
 
-Gr{oetje,eeting}s,
+Changes in version 2:
+- added the IRQC and Ether clocks.
 
-                        Geert
+ arch/arm/boot/dts/r8a7743.dtsi |  120 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 120 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -0,0 +1,120 @@
++/*
++ * Device Tree Source for the r8a7743 SoC
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2. This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r8a7743-cpg-mssr.h>
++#include <dt-bindings/power/r8a7743-sysc.h>
++
++/ {
++	compatible = "renesas,r8a7743";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <0>;
++			clock-frequency = <1500000000>;
++			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
++			power-domains = <&sysc R8A7743_PD_CA15_CPU0>;
++			next-level-cache = <&L2_CA15>;
++		};
++
++		L2_CA15: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			cache-unified;
++			cache-level = <2>;
++			power-domains = <&sysc R8A7743_PD_CA15_SCU>;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller@f1001000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0xf1001000 0 0x1000>,
++			      <0 0xf1002000 0 0x1000>,
++			      <0 0xf1004000 0 0x2000>,
++			      <0 0xf1006000 0 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
++						 IRQ_TYPE_LEVEL_HIGH)>;
++		};
++
++		timer {
++			compatible = "arm,armv7-timer";
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a7743-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&usb_extal_clk>;
++			clock-names = "extal", "usb_extal";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a7743-sysc";
++			reg = <0 0xe6180000 0 0x0200>;
++			#power-domain-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a7743-rst";
++			reg = <0 0xe6160000 0 0x0200>;
++		};
++	};
++
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overriden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++};
