@@ -1,67 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38726 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbcJGEl4 (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:35487 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935747AbcJ0Vin (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 00:41:56 -0400
-Date: Fri, 7 Oct 2016 13:41:51 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] ARM: dts: r7s72100: add sdhi DT
-Message-ID: <20161007044147.GA5855@verge.net.au>
-References: <20160926204032.12260-1-chris.brandt@renesas.com>
+        Thu, 27 Oct 2016 17:38:43 -0400
+Received: by mail-lf0-f52.google.com with SMTP id f134so37722189lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 14:38:43 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 4/7] ARM: dts: r8a7743: add Ether support
+Date: Fri, 28 Oct 2016 00:38:40 +0300
+Message-ID: <2378987.c5J5iVeYae@wasted.cogentembedded.com>
+In-Reply-To: <1580369.yToZzJza1l@wasted.cogentembedded.com>
+References: <1580369.yToZzJza1l@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160926204032.12260-1-chris.brandt@renesas.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 26, 2016 at 04:40:30PM -0400, Chris Brandt wrote:
-> SUMMARY:
-> This series adds sdhi to the r7s72100 (RZ/A1) Device Tree.
-> 
-> DEPENDECIES:
-> This series is dependent on the tmio/sh_sdhi patches being
-> applied to add r7s72100 support.
->   mmc: sh_mobile_sdhi: add ocr_mask option
->   mmc: tmio-mmc: add support for 32bit data port
->   mmc: sh_mobile_sdhi: Add r7s72100 support
-> 
-> MERGE CONFLICTS:
-> There are also patches being reviewed for adding mmc so depending on how
-> they get applied, there might be a line conflict.
-> To resolve the merge conflict, simply put the MMC nodes before
-> the SDHI nodes (just because that seems to be the order in other
-> Renesas SoCs DTs)
+Define the generic R8A7743 part of the Ether device node.
 
-Thanks for the notes above.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-I have decided to queue this up (for v4.10). Please let me know
-if that was not desired. Or if subsequently it becomes undesirable
-(i.e. if I should drop these patches).
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> CHANGES:
-> V1->V2
-> * Removed patch "[PATCH 1/3] ARM: dts: r7s72100: add sdhi clock to device tree"
->   because it has already been queued up
-> * moved bus-with property from dtsi to dts
-> 
-> 
-> Chris Brandt (2):
->   ARM: dts: r7s72100: add sdhi to device tree
->   ARM: dts: rskrza1: add sdhi1 DT support
-> 
->  arch/arm/boot/dts/r7s72100-rskrza1.dts |  5 +++++
->  arch/arm/boot/dts/r7s72100.dtsi        | 26 ++++++++++++++++++++++++++
->  2 files changed, 31 insertions(+)
-> 
-> -- 
-> 2.9.2
-> 
-> 
+---
+Changes in version 5:
+- refreshed the patch.
+
+Changes in version 4:
+- refreshed the patch;
+- added Geert's tag.
+
+Changes in version 3:
+- resolved a reject;
+- updated the "clocks" property for the CPG/MSSR driver.
+
+Changes in version 2:
+- new patch.
+
+ arch/arm/boot/dts/r8a7743.dtsi |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -418,6 +418,18 @@
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		ether: ethernet@ee700000 {
++			compatible = "renesas,ether-r8a7743";
++			reg = <0 0xee700000 0 0x400>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 813>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			phy-mode = "rmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	/* External root clock */
