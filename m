@@ -1,59 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48765 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752220AbcJDMbs (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:34750 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935063AbcJ0VAx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Oct 2016 08:31:48 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCH 2/6] drm: rcar-du: Constify node argument to rcar_du_lvds_connector_init()
-Date: Tue,  4 Oct 2016 15:31:35 +0300
-Message-Id: <1475584299-21236-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 27 Oct 2016 17:00:53 -0400
+Received: by mail-lf0-f41.google.com with SMTP id b81so41962352lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 14:00:53 -0700 (PDT)
+Subject: Re: [PATCH v4 0/2] Renesas R8A7743 CPG/MSSR clock support
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+References: <1590929.i2qFnIhqnT@wasted.cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ec1c0f63-203d-44c4-1a81-ed5e8fb0907b@cogentembedded.com>
+Date: Fri, 28 Oct 2016 00:00:49 +0300
+MIME-Version: 1.0
+In-Reply-To: <1590929.i2qFnIhqnT@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The node passed as a pointer to the rcar_du_lvds_connector_init()
-function is never modified, make it const.
+On 10/27/2016 11:20 PM, Sergei Shtylyov wrote:
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+>    Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+> 'linux.git' repo. I've splitted them from the R-Car gen2 common support patch.
+> As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
+> patch #1 of this series, it might make sense to merge this patch to the
+> 'renesas.git' repo as well...
+>
+> [1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+> [2/2] clk: renesas: cpg-mssr: add R8A7743 support
 
-Cc: David Airlie <airlied@linux.ie>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+    Forgot to mention that the patch #2 depends on Geert's RST driver in order 
+to build.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-index 6afd0af312ba..64e9f0b86e58 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-@@ -79,7 +79,7 @@ static const struct drm_connector_funcs connector_funcs = {
- 
- int rcar_du_lvds_connector_init(struct rcar_du_device *rcdu,
- 				struct rcar_du_encoder *renc,
--				/* TODO const */ struct device_node *np)
-+				const struct device_node *np)
- {
- 	struct drm_encoder *encoder = rcar_encoder_to_drm_encoder(renc);
- 	struct rcar_du_lvds_connector *lvdscon;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
-index d4881ee0be7e..639071dd235c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
-@@ -19,6 +19,6 @@ struct rcar_du_encoder;
- 
- int rcar_du_lvds_connector_init(struct rcar_du_device *rcdu,
- 				struct rcar_du_encoder *renc,
--				struct device_node *np);
-+				const struct device_node *np);
- 
- #endif /* __RCAR_DU_LVDSCON_H__ */
--- 
-Regards,
-
-Laurent Pinchart
+MBR, Sergei
