@@ -1,48 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:57207 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S944931AbcJaRIY (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34682 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935161AbcJ0Pkh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Oct 2016 13:08:24 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 5/5] dmaengine: rcar-dmac: Widen DMA mask to 40 bits
-Date: Mon, 31 Oct 2016 18:08:22 +0100
-Message-Id: <1477933702-13423-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
-References: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
+        Thu, 27 Oct 2016 11:40:37 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 3/4] arm64: dts: renesas: r8a7796: Add DU device to DT
+Date: Thu, 27 Oct 2016 18:40:31 +0300
+Message-ID: <1850959.FHUakZUkzN@avalon>
+In-Reply-To: <CANqRtoRdvxgXvbLUGtUGZmeochHc2f7-MDT0Ft_X26jkSDM1Fw@mail.gmail.com>
+References: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161027071348.GC7706@verge.net.au> <CANqRtoRdvxgXvbLUGtUGZmeochHc2f7-MDT0Ft_X26jkSDM1Fw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-By default, the DMA mask covers only the low 32-bit address space, which
-causes SWIOTLB on arm64 to fall back to a bounce buffer for DMA
-transfers involving memory outside the 32-bit address space.
+Hi Magnus,
 
-The R-Car DMA controller hardware supports a 40-bit address space, hence
-widen the DMA mask to 40 bits to actually make use of this feature.
+On Thursday 27 Oct 2016 16:25:35 Magnus Damm wrote:
+> On Thu, Oct 27, 2016 at 4:13 PM, Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Oct 27, 2016 at 03:52:44PM +0900, Magnus Damm wrote:
+> >> On Thu, Oct 20, 2016 at 5:56 PM, Simon Horman <horms@verge.net.au> wrote:
+> >>> On Tue, Oct 18, 2016 at 12:19:26PM +0300, Laurent Pinchart wrote:
+> >>>> On Tuesday 18 Oct 2016 11:05:32 Geert Uytterhoeven wrote:
+> >>>>> On Mon, Oct 17, 2016 at 11:34 PM, Laurent Pinchart wrote:
+> >>>>>> Add the DU device to r8a7796.dtsi in a disabled state.
+> >>>>>> 
+> >>>>>> Signed-off-by: Laurent Pinchart
+> >>>>>> <laurent.pinchart+renesas@ideasonboard.com>
+> >>>>> 
+> >>>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>>> 
+> >>>> Could you please pick patches 1/4 to 3/4 from this series and apply
+> >>>> them to your tree ? For convenience I've pushed them to
+> >>>> 
+> >>>>       git://linuxtv.org/pinchartl/media.git drm/r8a7796/dt
+> >>>> 
+> >>>> along with patch "arm64: dts: renesas: r8a7795: Remove FCP
+> >>>> SoC-specific compatible strings" that has been acked too. If you pull
+> >>>> from that branch please make sure you skip the top-most patch "arm64:
+> >>>> dts: renesas: r8a7796-salvator-x: Enable DU" for now.
+> >>> 
+> >>> Sure, done.
+> >> 
+> >> I think we should hold off with the upstreaming of the DU and VSP
+> >> integration code for now. Sorry for noticing this late, but I thought
+> >> we had already discussed the integration order and that merge of
+> >> non-64-bit capable devices need to be put on hold.
+> >> 
+> >> In particular, not so much the DU device (this patch) but more the VSP
+> >> instances. The reason for that is that VSP devices can only perform
+> >> 32-bit bus mastering without IOMMU. I believe next step for all this
+> >> would be to enable all on-board memory on r8a7796 Salvator-x, but I
+> >> think Geert is working on that.
+> > 
+> > So you would like to see the following patches dropped?
+> > 
+> > ee73acb13978 arm64: dts: renesas: r8a7796: Add VSP instances
+> > 0a6519d782fd arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
+> 
+> Yes, that would be great. Sorry for not noticing earlier.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/dma/sh/rcar-dmac.c | 1 +
- 1 file changed, 1 insertion(+)
+I'm sorry, but I don't agree with that. First of all the FCP has no issue with 
+>4GB memory as it doesn't perform DMA itself. Then, while the IPMMU is 
+required to operate the VSP with >4GB memory, enabling the VSP instances won't 
+break anything as unlike the DU the VSPs won't be used by standard kernel or 
+userspace components.
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 2e441d0ccd79a37a..93a69b992a51a7aa 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1716,6 +1716,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 
- 	dmac->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, dmac);
-+	dma_set_mask_and_coherent(dmac->dev, DMA_BIT_MASK(40));
- 
- 	ret = rcar_dmac_parse_of(&pdev->dev, dmac);
- 	if (ret < 0)
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
