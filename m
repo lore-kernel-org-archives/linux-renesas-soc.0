@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34939 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34539 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S942339AbcJ0OQx (ORCPT
+        with ESMTP id S965022AbcJ0OBx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 10:16:53 -0400
-Date: Thu, 27 Oct 2016 15:00:16 +0200
+        Thu, 27 Oct 2016 10:01:53 -0400
+Date: Thu, 27 Oct 2016 12:18:40 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH 3/4] arm64: dts: renesas: r8a7796: Add DU device to DT
-Message-ID: <20161027130012.GA1107@verge.net.au>
+Message-ID: <20161027101837.GA26581@verge.net.au>
 References: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
  <1476740091-7011-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
  <CAMuHMdUUeVRwM06+VA8QsqkaT5D4t4xiJML3mgQN9-CPcf4mzQ@mail.gmail.com>
@@ -77,7 +77,4 @@ On Thu, Oct 27, 2016 at 04:25:35PM +0900, Magnus Damm wrote:
 > 
 > Yes, that would be great. Sorry for not noticing earlier.
 
-I have also dropped the following patch as the vsp nodes it uses
-no longer exist.
-
-1a349bbbbb1c arm64: dts: renesas: r8a7796: Add DU device to DT
+No problem, I will make it so.
