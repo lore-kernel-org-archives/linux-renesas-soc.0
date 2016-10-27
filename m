@@ -1,149 +1,125 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Thu, 20 Oct 2016 08:36:03 +0900
-Message-Id: <20161019233603.10506.93030.sendpatchset@little-apple>
-In-Reply-To: <20161019233533.10506.16810.sendpatchset@little-apple>
-References: <20161019233533.10506.16810.sendpatchset@little-apple>
-Subject: [PATCH v6 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:36437 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935747AbcJ0VhN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 27 Oct 2016 17:37:13 -0400
+Received: by mail-lf0-f46.google.com with SMTP id b75so42534789lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 14:37:12 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 2/7] ARM: dts: r8a7743: add SYS-DMAC support
+Date: Fri, 28 Oct 2016 00:37:09 +0300
+Message-ID: <1760379.IT8zEqZLyA@wasted.cogentembedded.com>
+In-Reply-To: <1580369.yToZzJza1l@wasted.cogentembedded.com>
+References: <1580369.yToZzJza1l@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Describe SYS-DMAC0/1 in the R8A7743 device tree.
 
-Break out the utlb parsing code and dev_data allocation into a
-separate function. This is preparation for future code sharing.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
+Changes in version 5:
+- refreshed the patch.
 
- Changes since V5:
- - None
+Changes in version 4:
+- refreshed the patch.
 
- Changes since V4:
- - Dropped hunk with fix to apply on top of:
-   b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
- 
- Changes since V3:
- - Initialize "mmu" to NULL, check before accessing
- - Removed group parameter from ipmmu_init_platform_device()
+Changes in version 3:
+- resolved a reject;
+- updated the "clocks" properties for the CPG/MSSR driver.
 
- Changes since V2:
- - Included this new patch from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Reworked code to fit on top on previous two patches in current series.
+Changes in version 2:
+- added Geert's tag.
 
- drivers/iommu/ipmmu-vmsa.c |   58 ++++++++++++++++++++++++++++----------------
- 1 file changed, 37 insertions(+), 21 deletions(-)
+ arch/arm/boot/dts/r8a7743.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
---- 0006/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:49:34.580607110 +0900
-@@ -647,22 +647,15 @@ static int ipmmu_find_utlbs(struct ipmmu
- 	return 0;
- }
- 
--static int ipmmu_add_device(struct device *dev)
-+static int ipmmu_init_platform_device(struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata;
- 	struct ipmmu_vmsa_device *mmu;
--	struct iommu_group *group = NULL;
- 	unsigned int *utlbs;
- 	unsigned int i;
- 	int num_utlbs;
- 	int ret = -ENODEV;
- 
--	if (dev->archdata.iommu) {
--		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
--			 dev_name(dev));
--		return -EINVAL;
--	}
--
- 	/* Find the master corresponding to the device. */
- 
- 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
-@@ -699,6 +692,36 @@ static int ipmmu_add_device(struct devic
- 		}
- 	}
- 
-+	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
-+	if (!archdata) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -93,6 +93,70 @@
+ 			compatible = "renesas,r8a7743-rst";
+ 			reg = <0 0xe6160000 0 0x0200>;
+ 		};
 +
-+	archdata->mmu = mmu;
-+	archdata->utlbs = utlbs;
-+	archdata->num_utlbs = num_utlbs;
-+	dev->archdata.iommu = archdata;
-+	return 0;
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x20000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 219>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
 +
-+error:
-+	kfree(utlbs);
-+	return ret;
-+}
-+
-+static int ipmmu_add_device(struct device *dev)
-+{
-+	struct ipmmu_vmsa_archdata *archdata;
-+	struct ipmmu_vmsa_device *mmu = NULL;
-+	struct iommu_group *group;
-+	int ret;
-+
-+	if (dev->archdata.iommu) {
-+		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
-+			 dev_name(dev));
-+		return -EINVAL;
-+	}
-+
- 	/* Create a device group and add the device to it. */
- 	group = iommu_group_alloc();
- 	if (IS_ERR(group)) {
-@@ -716,16 +739,9 @@ static int ipmmu_add_device(struct devic
- 		goto error;
- 	}
++		dmac1: dma-controller@e6720000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6720000 0 0x20000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
+ 	};
  
--	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
--	if (!archdata) {
--		ret = -ENOMEM;
-+	ret = ipmmu_init_platform_device(dev);
-+	if (ret < 0)
- 		goto error;
--	}
--
--	archdata->mmu = mmu;
--	archdata->utlbs = utlbs;
--	archdata->num_utlbs = num_utlbs;
--	dev->archdata.iommu = archdata;
- 
- 	/*
- 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
-@@ -736,6 +752,8 @@ static int ipmmu_add_device(struct devic
- 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
- 	 *   at a 1GB offset to ensure that NULL VAs will fault.
- 	 */
-+	archdata = dev->archdata.iommu;
-+	mmu = archdata->mmu;
- 	if (!mmu->mapping) {
- 		struct dma_iommu_mapping *mapping;
- 
-@@ -760,10 +778,8 @@ static int ipmmu_add_device(struct devic
- 	return 0;
- 
- error:
--	arm_iommu_release_mapping(mmu->mapping);
--
--	kfree(dev->archdata.iommu);
--	kfree(utlbs);
-+	if (mmu)
-+		arm_iommu_release_mapping(mmu->mapping);
- 
- 	dev->archdata.iommu = NULL;
- 
+ 	/* External root clock */
