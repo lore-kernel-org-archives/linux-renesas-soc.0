@@ -1,107 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:34457 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966105AbcJ0Om2 (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34950 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936636AbcJ0UXj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 10:42:28 -0400
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, mchehab@osg.samsung.com
-Date: Thu, 27 Oct 2016 20:28:36 +0900
-Message-Id: <20161027112836.11613.13334.sendpatchset@little-apple>
-Subject: [PATCH/RFC] v4l: vsp1: Use FCP device for DisplayList and VB2 queue
+        Thu, 27 Oct 2016 16:23:39 -0400
+Received: by mail-lf0-f49.google.com with SMTP id f134so36465230lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 13:23:39 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v4 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+Date: Thu, 27 Oct 2016 23:23:35 +0300
+Message-ID: <3099806.ZmRHFh5yFn@wasted.cogentembedded.com>
+In-Reply-To: <1590929.i2qFnIhqnT@wasted.cogentembedded.com>
+References: <1590929.i2qFnIhqnT@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Add macros usable by  the device tree sources to reference the R8A7743 CPG
+clocks  by index. The data comes from the  table 7.2b in the revision 0.50
+of the RZ/G Series User's Manual.
 
-Incrementally fix up parts of the code not yet covered by the
-IOMMU patches by Laurent:
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[PATCH 0/6] R-Car DU: Fix IOMMU operation when connected to VSP
-
-This patch simply uses the recently introduced function
-rcar_fcp_get_device() on the VSP device to retrieve the
-FCP device that needs to be used with the DMA MAP API
-when IOMMU is enabled.
-
-Without this patch the DU/VSP/FCP devices on R-Car Gen3 will
-generate traps during boot when IOMMU is enabled.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
+Changes in version 4:
+- added Geert's tag.
 
- drivers/media/platform/vsp1/vsp1_dl.c    |   13 +++++++++----
- drivers/media/platform/vsp1/vsp1_video.c |    6 +++++-
- 2 files changed, 14 insertions(+), 5 deletions(-)
+Changes in version 3:
+- renumbered the #define's in order to match the R8A7791 CPG clocks;
+- added the reference to the manual in the patch description.
 
---- 0001/drivers/media/platform/vsp1/vsp1_dl.c
-+++ work/drivers/media/platform/vsp1/vsp1_dl.c	2016-09-01 06:18:17.140607110 +0900
-@@ -17,6 +17,8 @@
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- 
-+#include <media/rcar-fcp.h>
+Changes in version 2:
+- reduced the macro value indentation.
+
+ include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+Index: linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
 +
- #include "vsp1.h"
- #include "vsp1_dl.h"
- 
-@@ -130,12 +132,12 @@ static int vsp1_dl_body_init(struct vsp1
- 			     size_t extra_size)
- {
- 	size_t size = num_entries * sizeof(*dlb->entries) + extra_size;
-+	struct device *fcp = rcar_fcp_get_device(vsp1->fcp);
- 
- 	dlb->vsp1 = vsp1;
- 	dlb->size = size;
--
--	dlb->entries = dma_alloc_wc(vsp1->dev, dlb->size, &dlb->dma,
--				    GFP_KERNEL);
-+	dlb->entries = dma_alloc_wc(fcp ? fcp : vsp1->dev,
-+				    dlb->size, &dlb->dma, GFP_KERNEL);
- 	if (!dlb->entries)
- 		return -ENOMEM;
- 
-@@ -147,7 +149,10 @@ static int vsp1_dl_body_init(struct vsp1
-  */
- static void vsp1_dl_body_cleanup(struct vsp1_dl_body *dlb)
- {
--	dma_free_wc(dlb->vsp1->dev, dlb->size, dlb->entries, dlb->dma);
-+	struct device *fcp = rcar_fcp_get_device(dlb->vsp1->fcp);
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
-+	dma_free_wc(fcp ? fcp : dlb->vsp1->dev,
-+		    dlb->size, dlb->entries, dlb->dma);
- }
- 
- /**
---- 0001/drivers/media/platform/vsp1/vsp1_video.c
-+++ work/drivers/media/platform/vsp1/vsp1_video.c	2016-09-01 06:20:02.940607110 +0900
-@@ -27,6 +27,8 @@
- #include <media/videobuf2-v4l2.h>
- #include <media/videobuf2-dma-contig.h>
- 
-+#include <media/rcar-fcp.h>
++/* r8a7743 CPG Core Clocks */
++#define R8A7743_CLK_Z		0
++#define R8A7743_CLK_ZG		1
++#define R8A7743_CLK_ZTR		2
++#define R8A7743_CLK_ZTRD2	3
++#define R8A7743_CLK_ZT		4
++#define R8A7743_CLK_ZX		5
++#define R8A7743_CLK_ZS		6
++#define R8A7743_CLK_HP		7
++#define R8A7743_CLK_B		9
++#define R8A7743_CLK_LB		10
++#define R8A7743_CLK_P		11
++#define R8A7743_CLK_CL		12
++#define R8A7743_CLK_M2		13
++#define R8A7743_CLK_ZB3		15
++#define R8A7743_CLK_ZB3D2	16
++#define R8A7743_CLK_DDR		17
++#define R8A7743_CLK_SDH		18
++#define R8A7743_CLK_SD0		19
++#define R8A7743_CLK_SD2		20
++#define R8A7743_CLK_SD3		21
++#define R8A7743_CLK_MMC0	22
++#define R8A7743_CLK_MP		23
++#define R8A7743_CLK_QSPI	26
++#define R8A7743_CLK_CP		27
++#define R8A7743_CLK_RCAN	28
++#define R8A7743_CLK_R		29
++#define R8A7743_CLK_OSC		30
 +
- #include "vsp1.h"
- #include "vsp1_bru.h"
- #include "vsp1_dl.h"
-@@ -939,6 +941,7 @@ struct vsp1_video *vsp1_video_create(str
- {
- 	struct vsp1_video *video;
- 	const char *direction;
-+	struct device *fcp;
- 	int ret;
- 
- 	video = devm_kzalloc(vsp1->dev, sizeof(*video), GFP_KERNEL);
-@@ -996,7 +999,8 @@ struct vsp1_video *vsp1_video_create(str
- 	video->queue.ops = &vsp1_video_queue_qops;
- 	video->queue.mem_ops = &vb2_dma_contig_memops;
- 	video->queue.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
--	video->queue.dev = video->vsp1->dev;
-+	fcp = rcar_fcp_get_device(vsp1->fcp);
-+	video->queue.dev = fcp ? fcp : video->vsp1->dev;
- 	ret = vb2_queue_init(&video->queue);
- 	if (ret < 0) {
- 		dev_err(video->vsp1->dev, "failed to initialize vb2 queue\n");
++#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
