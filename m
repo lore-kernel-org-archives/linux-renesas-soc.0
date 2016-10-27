@@ -1,47 +1,46 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] swiotlb: Rate-limit printing and 64-bit memory debugging
-Date: Mon, 31 Oct 2016 16:45:02 +0100
-Message-Id: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mattw@codeaurora.org, mitchelh@codeaurora.org, broonie@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, chris.paterson2@renesas.com,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH 2/2] regmap: Avoid namespace collision within macro
+Date: Thu, 27 Oct 2016 10:33:19 +0100
+Message-Id: <1477560799-58896-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1477560799-58896-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1477560799-58896-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Konrad, Jon,
+Renamed variable "timeout" to "__timeout" to avoid namespace collision.
 
-This patch series contains two improvements for the SWIOTLB subsystem.
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ include/linux/regmap.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The first patch adds rate-limiting to an error message, to avoid
-flooding the kernel log.
-The second patch adds a kernel command line option to aid debugging when
-developing support for DMA to memory outside the 32-bit address space.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  swiotlb: Rate-limit printing when running out of SW-IOMMU space
-  swiotlb: Add swiotlb=nobounce debug option
-
- Documentation/kernel-parameters.txt |  3 ++-
- lib/swiotlb.c                       | 23 +++++++++++++++++++----
- 2 files changed, 21 insertions(+), 5 deletions(-)
-
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 9adc7b2..32f339a 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -115,7 +115,7 @@ struct reg_sequence {
+  */
+ #define regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
+ ({ \
+-	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
++	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
+ 	int ret; \
+ 	might_sleep_if(sleep_us); \
+ 	for (;;) { \
+@@ -124,7 +124,7 @@ struct reg_sequence {
+ 			break; \
+ 		if (cond) \
+ 			break; \
+-		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
++		if (timeout_us && ktime_compare(ktime_get(), __timeout) > 0) { \
+ 			ret = regmap_read((map), (addr), &(val)); \
+ 			break; \
+ 		} \
 -- 
 1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
