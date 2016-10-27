@@ -1,51 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S940970AbcJGQZl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 12:25:41 -0400
-Subject: [PATCH 07/10] PCI: rcar: Remove DRV_NAME macro
-To: Simon Horman <horms@verge.net.au>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Fri, 07 Oct 2016 11:25:36 -0500
-Message-ID: <20161007162536.23279.7727.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran.bingham+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kbingham@kernel.org>
+Cc: linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC 0/3] vsp1 writeback prototype
+Date: Thu, 27 Oct 2016 15:01:22 +0100
+Message-Id: <1477576885-21978-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DRV_NAME macro is only used once, so there's no real advantage to
-having the macro at all.  Remove it and use the "rcar-pcie" name directly
-in the struct platform_driver.  No functional change intended.
+This series presents an initial version of a write back video node for the VSP
+DRM pipeline, utilising the existing vsp1_video base where possible.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pcie-rcar.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+The current version limits the output of the video node to match the frames
+presented by updates from the CRTC atomic flush events. Matching the output rate
+against the vsync/display rate has proven more difficult and I wanted to get
+this out for review early.
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 02a90f4..17a2595 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -31,8 +31,6 @@
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
- 
--#define DRV_NAME "rcar-pcie"
--
- #define PCIECAR			0x000010
- #define PCIECCTLR		0x000018
- #define  CONFIG_SEND_ENABLE	(1 << 31)
-@@ -1189,7 +1187,7 @@ err_pm_disable:
- 
- static struct platform_driver rcar_pcie_driver = {
- 	.driver = {
--		.name = DRV_NAME,
-+		.name = "rcar-pcie",
- 		.of_match_table = rcar_pcie_of_match,
- 		.suppress_bind_attrs = true,
- 	},
+This series is based on renesas-drivers-2016-10-25-v4.9-rc2, and has been
+tested on a Salvator-H3. An updated/recent firmware is essential on this target
+otherwise WPF underruns will occur.
+
+This output can be tested with kmstest to generate frames and yavta to capture:
+
+Terminal 1:
+ # kmstest --flip --sync
+
+Terminal 2:
+ # yavta -c60 -n8 -f RGB24 -s1024x768 \
+	--file=frame-rgb24-1024x768-#.bin /dev/$VIDEO
+
+$VIDEO must be determined for your platform and represents the WPF Video node
+from the VSP-D. On Salvator-H3, on renesas-drivers-2016-10-25-v4.9-rc2 this is
+active at /dev/video28
+
+Kieran Bingham (3):
+  Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
+  v4l: vsp1: allow entities to have multiple source pads
+  v4l: vsp1: Provide a writeback video device
+
+ drivers/media/platform/vsp1/vsp1.h        |   1 +
+ drivers/media/platform/vsp1/vsp1_bru.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_clu.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_drm.c    |  20 ++++
+ drivers/media/platform/vsp1/vsp1_drv.c    |   5 +-
+ drivers/media/platform/vsp1/vsp1_entity.c |  15 +--
+ drivers/media/platform/vsp1/vsp1_entity.h |   3 +-
+ drivers/media/platform/vsp1/vsp1_histo.c  |   2 +-
+ drivers/media/platform/vsp1/vsp1_hsit.c   |   2 +-
+ drivers/media/platform/vsp1/vsp1_lif.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_lut.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_rwpf.c   |  15 ++-
+ drivers/media/platform/vsp1/vsp1_rwpf.h   |   2 +
+ drivers/media/platform/vsp1/vsp1_sru.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_uds.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_video.c  | 172 +++++++++++++++++++++++++++---
+ drivers/media/platform/vsp1/vsp1_video.h  |   5 +
+ drivers/media/platform/vsp1/vsp1_wpf.c    |  23 +++-
+ 19 files changed, 238 insertions(+), 41 deletions(-)
+
+-- 
+2.7.4
