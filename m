@@ -1,57 +1,35 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:54239 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935004AbcJ0OR2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 10:17:28 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: r8a7795: salvator-x: add bias setting for usb1_pins
-Date: Thu, 27 Oct 2016 19:29:27 +0900
-Message-Id: <1477564167-22422-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mattw@codeaurora.org, mitchelh@codeaurora.org, broonie@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, chris.paterson2@renesas.com,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH 0/2] Avoid namespace collision within macros
+Date: Thu, 27 Oct 2016 10:33:17 +0100
+Message-Id: <1477560799-58896-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since this board doesn't mount pull-up/down registers for
-USB1_{OVC,PWEN} pins, we should enable bias setting to pull these
-pins up/down.
+Hi All,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+   The readx_poll_timeout & similar macros defines "ktime timeout" local
+   variable. Fixed this potential namespace collision issue.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index da3e996b..bcaf400 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -309,8 +309,20 @@
- 	};
- 
- 	usb1_pins: usb1 {
--		groups = "usb1";
--		function = "usb1";
-+		mux {
-+			groups = "usb1";
-+			function = "usb1";
-+		};
-+
-+		ovc {
-+			pins = "GP_6_27";
-+			bias-pull-up;
-+		};
-+
-+		pwen {
-+			pins = "GP_6_26";
-+			bias-pull-down;
-+		};
- 	};
- 
- 	usb2_pins: usb2 {
+   This patchset is based on top of latest linux repo
+
+   commit 9fe68cad6e74967b88d0c6aeca7d9cd6b6e91942
+
+Thanks,
+Ramesh
+
+Ramesh Shanmugasundaram (2):
+  iopoll: Avoid namespace collision within macros
+  regmap: Avoid namespace collision within macro
+
+ include/linux/iopoll.h | 8 ++++----
+ include/linux/regmap.h | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
 -- 
 1.9.1
