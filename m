@@ -5,11 +5,11 @@ To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 7/7] ARM: dts: sk-rzg1m: add Ether support
-Date: Fri, 21 Oct 2016 23:48:58 +0300
-Message-ID: <1646335.vYatMAFDPt@wasted.cogentembedded.com>
-In-Reply-To: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
-References: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
+Subject: [PATCH v5 7/7] ARM: dts: sk-rzg1m: add Ether support
+Date: Fri, 28 Oct 2016 00:41:04 +0300
+Message-ID: <1827621.8E41kAJ5kh@wasted.cogentembedded.com>
+In-Reply-To: <1580369.yToZzJza1l@wasted.cogentembedded.com>
+References: <1580369.yToZzJza1l@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
