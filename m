@@ -1,42 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60826 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936313AbcJRWXM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53594 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933024AbcJ0HGV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 18:23:12 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 5453520010
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Oct 2016 00:22:20 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: dts: r8a7779: Fix DU reg property
-Date: Wed, 19 Oct 2016 01:23:02 +0300
-Message-Id: <1476829382-14785-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 27 Oct 2016 03:06:21 -0400
+Date: Thu, 27 Oct 2016 09:06:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 0/7] Add R8A7743/SK-RZG1M board support
+Message-ID: <20161027070615.GA7706@verge.net.au>
+References: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
+ <CAMuHMdUNgnYc1O7DATNH1r9SQ72eqtxwFvqcen08Tq+Er3LuvQ@mail.gmail.com>
+ <1a85f851-29ec-1c14-8905-8b0645f5bb1c@cogentembedded.com>
+ <CAMuHMdWQegsEf_C=UGXpQiEAX0YQqy335teuvCZxBY6C=7QozA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWQegsEf_C=UGXpQiEAX0YQqy335teuvCZxBY6C=7QozA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The system uses one address cell and one size cell, not two. Fix the DU
-DT node.
+On Wed, Oct 26, 2016 at 03:27:14PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Oct 26, 2016 at 3:23 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > On 10/26/2016 03:08 PM, Geert Uytterhoeven wrote:
+> >>>    Here's the set of 8 patches against Simon Horman's 'renesas.git'
+> >>> repo's
+> >>> 'renesas-devel-20161021-v4.9-rc1' tag. I'm adding the device tree support
+> >>> for
+> >>> the R8A7743-based SK-RZG1M board. The SoC is close to R8A7791 and the
+> >>> board
+> >>> seems identical to the R8A7791/Porter board. The device tree patches
+> >>> depend on
+> >>> the R8A7743 CPG/MSSR driver series just posted in order to compile and
+> >>> work.
+> >>
+> >>
+> >> They depend only on "[PATCH v3 1/2] ARM: shmobile: r8a7743: add CPG clock
+> >> index macros" of that series, right?
+> >>
+> >> "[PATCH v3 2/2] clk: renesas: cpg-mssr: add R8A7743 support" is not
+> >> needed,
+> >
+> >    How would "clocks" props _work_ without this patch?
+> 
+> Sorry, I was focusing too much on "compile"...
+> 
+> Got my coke, switching brain to overdrive mode...
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index b9bbcce69dfb..9d5b8fa3da8b 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -420,7 +420,7 @@
- 
- 	du: display@fff80000 {
- 		compatible = "renesas,du-r8a7779";
--		reg = <0 0xfff80000 0 0x40000>;
-+		reg = <0xfff80000 0x40000>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
- 		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
--- 
-Regards,
-
-Laurent Pinchart
+As we are talking about adding support for a new SoC I would be happy
+to queue up code in my tree that compiles under the assumption that
+in v4.10 the bits to make it run will appear in other branches.
