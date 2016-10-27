@@ -1,73 +1,132 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 20/23] ARM: shmobile: rcar-gen2: Stop passing mode pins state to clock driver
-Date: Fri, 21 Oct 2016 15:17:34 +0200
-Message-Id: <1477055857-17936-21-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:35911 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S942624AbcJ0Ohm (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 27 Oct 2016 10:37:42 -0400
+Received: by mail-pf0-f171.google.com with SMTP id e6so18850655pfk.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 07:37:28 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
+        geert+renesas@glider.be
+Date: Thu, 27 Oct 2016 20:18:22 +0900
+Message-Id: <20161027111822.11574.3221.sendpatchset@little-apple>
+Subject: [PATCH/RFC] arm64: dts: r8a7796: Add IPMMU device nodes
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now the R-Car Gen2 CPG clock driver obtains the state of the mode pins
-from the R-Car RST driver, there's no longer a need to pass this state
-explicitly. Hence we can just call of_clk_init() instead.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+Add r8a7796 IPMMU nodes and keep all disabled by default.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-v4:
-  - Add Acked-by,
-  - Rebase on top of "ARM: shmobile: rcar-gen2: Obtain extal frequency
-    from DT",
-  - Remove the call to rcar_gen2_read_mode_pins(),
 
-v3:
-  - Drop "select MFD_SYSCON", as the clock driver no longer uses syscon,
+ Depends on the following DT binding that has been acked by Laurent
+ but is not yet upstream or queued up in -next:
+ 
+ [PATCH v2] iommu/ipmmu-vmsa: Add r8a7796 DT binding
 
-v2:
-  - Kill compiler warning if CONFIG_ARM_ARCH_TIMER is not enabled.
----
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi |   89 ++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index afb9fdcd3d9084e2..b527258e0a62e806 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -15,7 +15,7 @@
-  * GNU General Public License for more details.
-  */
+--- 0001/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7796.dtsi	2016-10-27 20:12:24.830607110 +0900
+@@ -224,6 +224,95 @@
+ 			reg = <0 0xe6060000 0 0x50c>;
+ 		};
  
--#include <linux/clk/renesas.h>
-+#include <linux/clk-provider.h>
- #include <linux/clocksource.h>
- #include <linux/device.h>
- #include <linux/dma-contiguous.h>
-@@ -71,7 +71,6 @@ static unsigned int __init get_extal_freq(void)
- 
- void __init rcar_gen2_timer_init(void)
- {
--	u32 mode = rcar_gen2_read_mode_pins();
- #ifdef CONFIG_ARM_ARCH_TIMER
- 	void __iomem *base;
- 	u32 freq;
-@@ -130,7 +129,7 @@ void __init rcar_gen2_timer_init(void)
- 	iounmap(base);
- #endif /* CONFIG_ARM_ARCH_TIMER */
- 
--	rcar_gen2_clocks_init(mode);
-+	of_clk_init(NULL);
- 	clocksource_probe();
- }
- 
--- 
-1.9.1
-
++		ipmmu_vi: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfebd0000 0 0x1000>; /* IPMMU-VI */
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_vc0: mmu@fe6b0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfe6b0000 0 0x1000>; /* IPMMU-VC0 */
++			renesas,ipmmu-main = <&ipmmu_mm 8>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_pv0: mmu@fd800000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfd800000 0 0x1000>; /* IPMMU-PV0 */
++			renesas,ipmmu-main = <&ipmmu_mm 5>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_pv1: mmu@fd950000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfd950000 0 0x1000>; /* IPMMU-PV1 */
++			renesas,ipmmu-main = <&ipmmu_mm 6>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xff8b0000 0 0x1000>; /* IPMMU-IR */
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_hc: mmu@e6570000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe6570000 0 0x1000>; /* IPMMU-HC */
++			renesas,ipmmu-main = <&ipmmu_mm 2>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xffc80000 0 0x1000>; /* IPMMU-RT */
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mp0: mmu@ec670000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xec670000 0 0x1000>; /* IPMMU-MP0 */
++			renesas,ipmmu-main = <&ipmmu_mm 4>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds0: mmu@e6740000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
++			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe67b0000 0 0x1000>; /* IPMMU-MM */
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7796-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
