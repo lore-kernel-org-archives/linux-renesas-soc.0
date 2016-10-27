@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53121 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34461 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750807AbcJ1Foh (ORCPT
+        with ESMTP id S941588AbcJ0N4y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Oct 2016 01:44:37 -0400
-Date: Fri, 28 Oct 2016 07:44:30 +0200
+        Thu, 27 Oct 2016 09:56:54 -0400
+Date: Thu, 27 Oct 2016 12:19:53 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: "linux-arm-kernel@lists.infradead.org"
@@ -18,7 +18,7 @@ Cc: "linux-arm-kernel@lists.infradead.org"
         khilman@baylibre.com
 Subject: Re: [PATCH] arm64: defconfig: Enable DRM DU and V4L2 FCP + VSP
  modules
-Message-ID: <20161028054430.GA1106@verge.net.au>
+Message-ID: <20161027101953.GB26581@verge.net.au>
 References: <20161026052422.17283.57864.sendpatchset@little-apple>
  <20161027070801.GB7706@verge.net.au>
  <20161027071523.GD7706@verge.net.au>
@@ -55,4 +55,4 @@ On Thu, Oct 27, 2016 at 04:37:53PM +0900, Magnus Damm wrote:
 > has thanks to DU, FCP and VSP a working VGA port. So enabling those
 > devices in the defconfig from now on makes sense to me.
 
-Understood, I have queued this up.
+Understood, I will queue up this patch.
