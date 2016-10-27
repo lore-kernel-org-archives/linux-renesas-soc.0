@@ -1,137 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52660 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751702AbcJEKcu (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33032 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935270AbcJ0OqB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 06:32:50 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, magnus.damm@gmail.com,
-        linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v2 4/12] ARM: shmobile: r8a7743: basic SoC support
-Date: Wed, 05 Oct 2016 13:32:46 +0300
-Message-ID: <3685233.dpr7L9QmAC@avalon>
-In-Reply-To: <3178356.WuR0emdY7D@wasted.cogentembedded.com>
-References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com> <3178356.WuR0emdY7D@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 27 Oct 2016 10:46:01 -0400
+Received: by mail-pf0-f193.google.com with SMTP id i85so2857524pfa.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 07:45:48 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
+        geert+renesas@glider.be
+Date: Thu, 27 Oct 2016 19:28:56 +0900
+Message-Id: <20161027102856.26426.48132.sendpatchset@little-apple>
+Subject: [PATCH 00/04] arm64: dts: r8a7795: Initial IPMMU upstream integration
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+arm64: dts: r8a7795: Initial IPMMU upstream integration
 
-Thank you for the patch.
+[PATCH 01/04] arm64: dts: r8a7795: Add IPMMU device nodes
+[PATCH 02/04] arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
+[PATCH 03/04] arm64: dts: r8a7795: Point FCP devices to IPMMU
+[PATCH 04/04] arm64: dts: r8a7795: Connect Ethernet AVB to IPMMU
 
-On Friday 30 Sep 2016 01:23:52 Sergei Shtylyov wrote:
-> Add minimal support for the RZ/G1M (R8A7743) SoC.
-> 
-> Based on the original (and large) patch by Dmitry Shifrin
-> <dmitry.shifrin@cogentembedded.com>.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> ---
-> Changes in version 2:
-> - removed "select I2C" from the R8A7743 Kconfig entry;
-> - documented the R8A7743 device tree binding;
-> - added Geert's tag.
-> 
->  Documentation/devicetree/bindings/arm/shmobile.txt |    2 +
->  arch/arm/mach-shmobile/Kconfig                     |    4 ++
->  arch/arm/mach-shmobile/Makefile                    |    1
->  arch/arm/mach-shmobile/setup-r8a7743.c             |   34 +++++++++++++++++
+This series adds DT nodes for IPMMU devices on r8a7795 together
+with connections to various other on-chip devices. Currently
+all the IPMMU devices remain disabled, but once next hardware
+iteration of r8a7795 becomes available (with errata fixes) and
+various driver-level changes end up in mainline can start
+enabling the IPMMU devices.
 
-We should work towards removing files from arch/arm/mach-shmobile/, not adding 
-new ones :-) I've just sent a patch to do so ("[PATCH] ARM: shmobile: 
-Consolidate R8A779[234] machine definitions'") and CC'ed you.
+The DT binding for r8a7795 has since long been included in mainline
+and this series implements support following such format:
 
->  4 files changed, 41 insertions(+)
-> 
-> Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-> ===================================================================
-> --- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -13,6 +13,8 @@ SoCs:
->      compatible = "renesas,r8a73a4"
->    - R-Mobile A1 (R8A77400)
->      compatible = "renesas,r8a7740"
-> +  - RZ/G1M (R8A77430)
-> +    compatible = "renesas,r8a7743"
->    - R-Car M1A (R8A77781)
->      compatible = "renesas,r8a7778"
->    - R-Car H1 (R8A77790)
-> Index: renesas/arch/arm/mach-shmobile/Kconfig
-> ===================================================================
-> --- renesas.orig/arch/arm/mach-shmobile/Kconfig
-> +++ renesas/arch/arm/mach-shmobile/Kconfig
-> @@ -68,6 +68,10 @@ config ARCH_R8A7740
->  	select ARCH_RMOBILE
->  	select RENESAS_INTC_IRQPIN
-> 
-> +config ARCH_R8A7743
-> +	bool "RZ/G1M (R8A77430)"
-> +	select ARCH_RCAR_GEN2
-> +
->  config ARCH_R8A7778
->  	bool "R-Car M1A (R8A77781)"
->  	select ARCH_RCAR_GEN1
-> Index: renesas/arch/arm/mach-shmobile/Makefile
-> ===================================================================
-> --- renesas.orig/arch/arm/mach-shmobile/Makefile
-> +++ renesas/arch/arm/mach-shmobile/Makefile
-> @@ -9,6 +9,7 @@ obj-y				:= timer.o
->  obj-$(CONFIG_ARCH_SH73A0)	+= setup-sh73a0.o
->  obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
->  obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
-> +obj-$(CONFIG_ARCH_R8A7743)	+= setup-r8a7743.o
->  obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
->  obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
->  obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
-> Index: renesas/arch/arm/mach-shmobile/setup-r8a7743.c
-> ===================================================================
-> --- /dev/null
-> +++ renesas/arch/arm/mach-shmobile/setup-r8a7743.c
-> @@ -0,0 +1,34 @@
-> +/*
-> + * r8a7743 processor support
-> + *
-> + * Copyright (C) 2016 Cogent Embedded, Inc.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + *  published by the Free Software Foundation; of the License.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/init.h>
-> +
-> +#include <asm/mach/arch.h>
-> +
-> +#include "common.h"
-> +#include "rcar-gen2.h"
-> +
-> +static const char * const r8a7743_boards_compat_dt[] __initconst = {
-> +	"renesas,r8a7743",
-> +	NULL,
-> +};
-> +
-> +DT_MACHINE_START(R8A7743_DT, "Generic R8A7743 (Flattened Device Tree)")
-> +	.init_early	= shmobile_init_delay,
-> +	.init_time	= rcar_gen2_timer_init,
-> +	.init_late	= shmobile_init_late,
-> +	.reserve	= rcar_gen2_reserve,
-> +	.dt_compat	= r8a7743_boards_compat_dt,
-> +MACHINE_END
+d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
 
--- 
-Regards,
+I hope these patches now can be queued up for upstream merge,
+ideally aiming at v4.10-rc.
 
-Laurent Pinchart
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Developed on top of renesas-devel-20161024-v4.9-rc2
+
+ No special run time or compile time dependencies.
+
+ The first two patches earlier posted as
+ [PATCH/RFC 00/05] arm64: dts: r8a7795: salvator-x: IPMMU test code V2
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |  158 ++++++++++++++++++++++++++++++
+ 1 file changed, 158 insertions(+)
