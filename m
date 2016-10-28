@@ -1,59 +1,59 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:34394 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756635AbcJ1WVP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 28 Oct 2016 18:21:15 -0400
+Received: by mail-lf0-f46.google.com with SMTP id b81so66552522lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Oct 2016 15:21:14 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: r8a7794: remove Z clock
-Date: Sun, 30 Oct 2016 00:31:27 +0300
-Message-ID: <2289596.xFBEUD1OgK@wasted.cogentembedded.com>
-In-Reply-To: <1529351.Fac5N2tKoF@wasted.cogentembedded.com>
-References: <1529351.Fac5N2tKoF@wasted.cogentembedded.com>
+Subject: [PATCH 07/11] ARM: dts: r8a7745: add Ether support
+Date: Sat, 29 Oct 2016 01:21:11 +0300
+Message-ID: <2084001.a6ZvYb0cOj@wasted.cogentembedded.com>
+In-Reply-To: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
+References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R8A7794 doesn't have Cortex-A15 CPUs, thus there's no Z clock...
+Define the generic R8A7745 part of the Ether device node.
 
-Fixes: 0dce5454d5c2 ("ARM: shmobile: Initial r8a7794 SoC device tree")
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
-The patch is against the 'master' branch of Simon Horman's 'renesas.git' repo.
+ arch/arm/boot/dts/r8a7745.dtsi |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
- arch/arm/boot/dts/r8a7794.dtsi            |    3 +--
- include/dt-bindings/clock/r8a7794-clock.h |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+Index: renesas/arch/arm/boot/dts/r8a7745.dtsi
 ===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1025,8 +1025,7 @@
- 			clocks = <&extal_clk &usb_extal_clk>;
- 			#clock-cells = <1>;
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
--					     "lb", "qspi", "sdh", "sd0", "z",
--					     "rcan";
-+					     "lb", "qspi", "sdh", "sd0", "rcan";
- 			#power-domain-cells = <0>;
+--- renesas.orig/arch/arm/boot/dts/r8a7745.dtsi
++++ renesas/arch/arm/boot/dts/r8a7745.dtsi
+@@ -418,6 +418,18 @@
+ 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
+ 			status = "disabled";
  		};
- 		/* Variable factor clocks */
-Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
-===================================================================
---- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
-+++ renesas/include/dt-bindings/clock/r8a7794-clock.h
-@@ -20,8 +20,7 @@
- #define R8A7794_CLK_QSPI		5
- #define R8A7794_CLK_SDH			6
- #define R8A7794_CLK_SD0			7
--#define R8A7794_CLK_Z			8
--#define R8A7794_CLK_RCAN		9
-+#define R8A7794_CLK_RCAN		8
++
++		ether: ethernet@ee700000 {
++			compatible = "renesas,ether-r8a7745";
++			reg = <0 0xee700000 0 0x400>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 813>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			phy-mode = "rmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
+ 	};
  
- /* MSTP0 */
- #define R8A7794_CLK_MSIOF0		0
-
+ 	/* External root clock */
