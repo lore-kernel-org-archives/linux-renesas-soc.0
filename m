@@ -1,114 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52091 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbcJEJzM (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34096 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S942601AbcJ1WHt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 05:55:12 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.cz>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
-Date: Wed, 05 Oct 2016 12:55:07 +0300
-Message-ID: <2254757.qf3e5qBuAz@avalon>
-In-Reply-To: <CAMuHMdWEg8V81w=MT4akCaV=VUGopyWLJtSQC+KeWSpTR5dR_w@mail.gmail.com>
-References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com> <CAMuHMdWEg8V81w=MT4akCaV=VUGopyWLJtSQC+KeWSpTR5dR_w@mail.gmail.com>
+        Fri, 28 Oct 2016 18:07:49 -0400
+Received: by mail-lf0-f53.google.com with SMTP id b81so66392194lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Oct 2016 15:07:48 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 01/11] ARM: shmobile: r8a7745: add power domain index macros
+Date: Sat, 29 Oct 2016 01:07:45 +0300
+Message-ID: <1645729.DjklObBkNM@wasted.cogentembedded.com>
+In-Reply-To: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
+References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Friday 30 Sep 2016 10:38:48 Geert Uytterhoeven wrote:
-> On Thu, Sep 29, 2016 at 11:37 PM, Sergei Shtylyov wrote:
-> > Renesas  RZ/G SoC also have the SCIF, SCIFA, SCIFB, and HSCIF ports.
-> > Document RZ/G1[ME] (also known as R8A774[35]) SoC bindings along with
-> > the RZ/G family bindings.  The driver itself also needs to recognize
-> > the latter binding for the SCIF ports, so teach it...
-> > 
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
-> > ---
-> > This patch is against the 'tty-next' branch of GregKH's 'tty.git' repo.
-> > 
-> >  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt |   12
-> >  ++++++++++
-> >  drivers/tty/serial/sh-sci.c                                     |    3 ++
-> >  2 files changed, 15 insertions(+)
-> > 
-> > Index: tty/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-> > ===================================================================
-> > ---
-> > tty.orig/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-> > +++ tty/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt> 
-> > @@ -9,6 +9,14 @@ Required properties:
-> >      - "renesas,scifb-r8a73a4" for R8A73A4 (R-Mobile APE6) SCIFB
-> >      compatible UART. - "renesas,scifa-r8a7740" for R8A7740 (R-Mobile A1)
-> >      SCIFA compatible UART. - "renesas,scifb-r8a7740" for R8A7740
-> >      (R-Mobile A1) SCIFB compatible UART.> 
-> > +    - "renesas,scif-r8a7743" for R8A7743 (RZ/G1M) SCIF compatible UART.
-> > +    - "renesas,scifa-r8a7743" for R8A7743 (RZ/G1M) SCIFA compatible UART.
-> > +    - "renesas,scifb-r8a7743" for R8A7743 (RZ/G1M) SCIFB compatible UART.
-> > +    - "renesas,hscif-r8a7743" for R8A7743 (RZ/G1M) HSCIF compatible UART.
-> > +    - "renesas,scif-r8a7745" for R8A7745 (RZ/G1E) SCIF compatible UART.
-> > +    - "renesas,scifa-r8a7745" for R8A7745 (RZ/G1E) SCIFA compatible UART.
-> > +    - "renesas,scifb-r8a7745" for R8A7745 (RZ/G1E) SCIFB compatible UART.
-> > +    - "renesas,hscif-r8a7745" for R8A7745 (RZ/G1E) HSCIF compatible UART.
+Add macros usable by the device tree sources to reference R8A7745 SYSC power
+domains by index.
 
-Are we *really* going to add four compat string for each RZ/G* SoC ? We're 
-reaching the limit of sanity...
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-> >      - "renesas,scif-r8a7778" for R8A7778 (R-Car M1) SCIF compatible UART.
-> >      - "renesas,scif-r8a7779" for R8A7779 (R-Car H1) SCIF compatible UART.
-> >      - "renesas,scif-r8a7790" for R8A7790 (R-Car H2) SCIF compatible UART.
-> 
-> For the part above:
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> > @@ -38,11 +46,15 @@ Required properties:
-> >      - "renesas,rcar-gen1-scif" for R-Car Gen1 SCIF compatible UART,
-> >      - "renesas,rcar-gen2-scif" for R-Car Gen2 SCIF compatible UART,
-> >      - "renesas,rcar-gen3-scif" for R-Car Gen3 SCIF compatible UART,
-> > +    - "renesas,rzg-scif" for RZ/G SCIF compatible UART.
-> >      - "renesas,rcar-gen2-scifa" for R-Car Gen2 SCIFA compatible UART,
-> > +    - "renesas,rzg-scifa" for RZ/G SCIFA compatible UART.
-> >      - "renesas,rcar-gen2-scifb" for R-Car Gen2 SCIFB compatible UART,
-> > +    - "renesas,rzg-scifb" for RZ/G SCIFB compatible UART.
-> >      - "renesas,rcar-gen1-hscif" for R-Car Gen1 HSCIF compatible UART,
-> >      - "renesas,rcar-gen2-hscif" for R-Car Gen2 HSCIF compatible UART,
-> >      - "renesas,rcar-gen3-hscif" for R-Car Gen3 HSCIF compatible UART,
-> > +    - "renesas,rzg-hscif" for RZ/G HSCIF compatible UART.
-> >      - "renesas,scif" for generic SCIF compatible UART.
-> >      - "renesas,scifa" for generic SCIFA compatible UART.
-> >      - "renesas,scifb" for generic SCIFB compatible UART.
-> > 
-> > Index: tty/drivers/tty/serial/sh-sci.c
-> > ===================================================================
-> > --- tty.orig/drivers/tty/serial/sh-sci.c
-> > +++ tty/drivers/tty/serial/sh-sci.c
-> > @@ -2950,6 +2950,9 @@ static const struct of_device_id of_sci_
-> >         }, {
-> >                 .compatible = "renesas,rcar-gen3-scif",
-> >                 .data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
-> > 
-> > +       }, {
-> > +               .compatible = "renesas,rzg-scif",
-> > +               .data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
-> >         },
-> >         /* Generic types */
-> >         {
-> 
-> However, I wouldn't bother adding RZ/G family-specific DT bindings, as
-> RZ/G is a derivative of R-Car Gen2.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-I agree, we need to stop the compat string proliferation madness.
+---
+ include/dt-bindings/power/r8a7745-sysc.h |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
--- 
-Regards,
-
-Laurent Pinchart
+Index: renesas/include/dt-bindings/power/r8a7745-sysc.h
+===================================================================
+--- /dev/null
++++ renesas/include/dt-bindings/power/r8a7745-sysc.h
+@@ -0,0 +1,25 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7745_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7745_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A7745_PD_CA7_CPU0		 5
++#define R8A7745_PD_CA7_CPU1		 6
++#define R8A7745_PD_SGX			20
++#define R8A7745_PD_CA7_SCU		21
++
++/* Always-on power area */
++#define R8A7745_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A7745_SYSC_H__ */
