@@ -1,37 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34267 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759994AbcJaGWW (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34816 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756638AbcJ1WQ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Oct 2016 02:22:22 -0400
-Date: Mon, 31 Oct 2016 01:22:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        Fri, 28 Oct 2016 18:16:58 -0400
+Received: by mail-lf0-f52.google.com with SMTP id f134so61656531lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Oct 2016 15:16:57 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 03/11] ARM: shmobile: r8a7745: basic SoC support
-Message-ID: <20161031062219.m5lmkwvs2yejie6r@rob-hp-laptop>
+Subject: [PATCH 03/11] ARM: shmobile: r8a7745: basic SoC support
+Date: Sat, 29 Oct 2016 01:16:54 +0300
+Message-ID: <1638480.5pJxF7pUnz@wasted.cogentembedded.com>
+In-Reply-To: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
 References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
- <1638480.5pJxF7pUnz@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1638480.5pJxF7pUnz@wasted.cogentembedded.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Oct 29, 2016 at 01:16:54AM +0300, Sergei Shtylyov wrote:
-> Add minimal support for the RZ/G1E (R8A7745) SoC.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+Add minimal support for the RZ/G1E (R8A7745) SoC.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
->  arch/arm/mach-shmobile/Kconfig                     |    4 ++++
->  arch/arm/mach-shmobile/setup-rcar-gen2.c           |    1 +
->  3 files changed, 7 insertions(+)
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+ arch/arm/mach-shmobile/Kconfig                     |    4 ++++
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |    1 +
+ 3 files changed, 7 insertions(+)
+
+Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+===================================================================
+--- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
++++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -15,6 +15,8 @@ SoCs:
+     compatible = "renesas,r8a7740"
+   - RZ/G1M (R8A77430)
+     compatible = "renesas,r8a7743"
++  - RZ/G1E (R8A77450)
++    compatible = "renesas,r8a7745"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
+Index: renesas/arch/arm/mach-shmobile/Kconfig
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Kconfig
++++ renesas/arch/arm/mach-shmobile/Kconfig
+@@ -73,6 +73,10 @@ config ARCH_R8A7743
+ 	select ARCH_RCAR_GEN2
+ 	select ARM_ERRATA_798181 if SMP
+ 
++config ARCH_R8A7745
++	bool "RZ/G1E (R8A77450)"
++	select ARCH_RCAR_GEN2
++
+ config ARCH_R8A7778
+ 	bool "R-Car M1A (R8A77781)"
+ 	select ARCH_RCAR_GEN1
+Index: renesas/arch/arm/mach-shmobile/setup-rcar-gen2.c
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ renesas/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -225,6 +225,7 @@ MACHINE_END
+ 
+ static const char * const rz_g1_boards_compat_dt[] __initconst = {
+ 	"renesas,r8a7743",
++	"renesas,r8a7745",
+ 	NULL,
+ };
+ 
