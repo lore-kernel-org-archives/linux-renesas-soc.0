@@ -1,53 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:58360 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751971AbcJMJkJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Oct 2016 05:40:09 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: geert+renesas@glider.be, mturquette@baylibre.com,
-        sboyd@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        chris.paterson2@renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] clk: renesas: r8a7796: Add DRIF clock
-Date: Thu, 13 Oct 2016 10:31:48 +0100
-Message-Id: <1476351108-54370-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: r8a7794: remove Z clock
+Date: Sun, 30 Oct 2016 00:31:27 +0300
+Message-ID: <2289596.xFBEUD1OgK@wasted.cogentembedded.com>
+In-Reply-To: <1529351.Fac5N2tKoF@wasted.cogentembedded.com>
+References: <1529351.Fac5N2tKoF@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds DRIF module clocks for r8a7796 SoC.
+R8A7794 doesn't have Cortex-A15 CPUs, thus there's no Z clock...
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Fixes: 0dce5454d5c2 ("ARM: shmobile: Initial r8a7794 SoC device tree")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
-Hi Geert, All,
+The patch is against the 'master' branch of Simon Horman's 'renesas.git' repo.
 
-   This patch is based on renesas-drivers repo (tag:renesas-drivers-2016-10-04-v4.8)
+ arch/arm/boot/dts/r8a7794.dtsi            |    3 +--
+ include/dt-bindings/clock/r8a7794-clock.h |    3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-Thanks,
-Ramesh.
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1025,8 +1025,7 @@
+ 			clocks = <&extal_clk &usb_extal_clk>;
+ 			#clock-cells = <1>;
+ 			clock-output-names = "main", "pll0", "pll1", "pll3",
+-					     "lb", "qspi", "sdh", "sd0", "z",
+-					     "rcan";
++					     "lb", "qspi", "sdh", "sd0", "rcan";
+ 			#power-domain-cells = <0>;
+ 		};
+ 		/* Variable factor clocks */
+Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+===================================================================
+--- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
++++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+@@ -20,8 +20,7 @@
+ #define R8A7794_CLK_QSPI		5
+ #define R8A7794_CLK_SDH			6
+ #define R8A7794_CLK_SD0			7
+-#define R8A7794_CLK_Z			8
+-#define R8A7794_CLK_RCAN		9
++#define R8A7794_CLK_RCAN		8
+ 
+ /* MSTP0 */
+ #define R8A7794_CLK_MSIOF0		0
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index f0302fb..f2f56e1 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -128,6 +128,14 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
-+	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif6",		 509,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif5",		 510,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif4",		 511,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif3",		 512,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif2",		 513,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif1",		 514,	R8A7796_CLK_S3D2),
-+	DEF_MOD("drif0",		 515,	R8A7796_CLK_S3D2),
- 	DEF_MOD("hscif4",		 516,	R8A7796_CLK_S3D1),
- 	DEF_MOD("hscif3",		 517,	R8A7796_CLK_S3D1),
- 	DEF_MOD("hscif2",		 518,	R8A7796_CLK_S3D1),
--- 
-1.9.1
