@@ -1,68 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 5/7] ARM: dts: r8a7743: add IRQC support
-Date: Fri, 28 Oct 2016 00:39:25 +0300
-Message-ID: <1932405.6Lc0BeJuRW@wasted.cogentembedded.com>
-In-Reply-To: <1580369.yToZzJza1l@wasted.cogentembedded.com>
-References: <1580369.yToZzJza1l@wasted.cogentembedded.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:33493 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753937AbcJ3NB0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 30 Oct 2016 09:01:26 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1477829325-4495-1-git-send-email-geert@linux-m68k.org>
+References: <1477829325-4495-1-git-send-email-geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 30 Oct 2016 14:01:24 +0100
+Message-ID: <CAMuHMdUU0h1w5p_p54G8gZa7vmJU5cSWGg8MP0HBADBf6FSFiQ@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.9-rc3
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IRQC interrupt controller in the R8A7743 device tree.
+On Sun, Oct 30, 2016 at 1:08 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Below is the list of build error/warning regressions/improvements in
+> v4.9-rc3[1] compared to v4.8[2].
+>
+> Summarized:
+>   - build errors: +176/-3
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+  + /home/kisskb/slave/src/arch/arc/include/asm/atomic.h: Error: bad
+instruction `llock r2,[r0]':  => 184, 185
+  + /home/kisskb/slave/src/arch/arc/include/asm/atomic.h: Error: bad
+instruction `scond r2,[r0]':  => 186, 187
+    [...]
+  + /home/kisskb/slave/src/include/uapi/linux/swab.h: Error: bad
+instruction `swape r3,r3':  => 58
+  + /home/kisskb/slave/src/include/uapi/linux/swab.h: Error: bad
+instruction `swape r4,r4':  => 58
 
----
-Changes in version 4:
-- refreshed the patch;
-- added Geert's tag.
+arcompact/axs101_defconfig
 
-Changes in version 3:
-- updated the "clocks" property for the CPG/MSSR driver.
+  + /home/kisskb/slave/src/drivers/pci/host/pci-rcar-gen2.c: error:
+implicit declaration of function 'of_n_addr_cells'
+[-Werror=implicit-function-declaration]:  => 303:2
 
-Changes in version 2:
-- new patch.
+arm-randconfig
 
- arch/arm/boot/dts/r8a7743.dtsi |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+See https://patchwork.kernel.org/patch/4289161/ and
+https://patchwork.kernel.org/patch/8209431/
 
-Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-@@ -62,6 +62,25 @@
- 						 IRQ_TYPE_LEVEL_HIGH)>;
- 		};
- 
-+		irqc: interrupt-controller@e61c0000 {
-+			compatible = "renesas,irqc-r8a7743", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+		};
-+
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+> [1] http://kisskb.ellerman.id.au/kisskb/head/11140/ (all 262 configs)
+> [3] http://kisskb.ellerman.id.au/kisskb/head/11104/ (all 262 configs)
 
+Gr{oetje,eeting}s,
+
+                         Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
