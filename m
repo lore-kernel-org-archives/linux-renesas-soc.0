@@ -1,51 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:34850 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbcJZDja (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:57207 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S944931AbcJaRIY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Oct 2016 23:39:30 -0400
-From: Magnus Damm <magnus.damm@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, airlied@linux.ie,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com
-Date: Wed, 26 Oct 2016 12:31:43 +0900
-Message-Id: <20161026033143.6617.5834.sendpatchset@little-apple>
-Subject: [PATCH] drm: rcar-du: Fix R-Car Gen3 crash when VSP is disabled
+        Mon, 31 Oct 2016 13:08:24 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 5/5] dmaengine: rcar-dmac: Widen DMA mask to 40 bits
+Date: Mon, 31 Oct 2016 18:08:22 +0100
+Message-Id: <1477933702-13423-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
+References: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+By default, the DMA mask covers only the low 32-bit address space, which
+causes SWIOTLB on arm64 to fall back to a bounce buffer for DMA
+transfers involving memory outside the 32-bit address space.
 
-For the DU to operate on R-Car Gen3 hardware a combination of DU
-and VSP devices are required. Since the DU driver also supports
-earlier generations hardware the VSP portion is enabled via Kconfig.
+The R-Car DMA controller hardware supports a 40-bit address space, hence
+widen the DMA mask to 40 bits to actually make use of this feature.
 
-The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
-as a module, however this is not enough to support R-Car Gen3. In
-the current case of CONFIG_DRM_RCAR_VSP=n then the kernel crashes
-when loading the module. This patch is fixing that particular case.
-
-In more detail, the crash triggers in drm_atomic_get_plane_state()
-when __drm_atomic_helper_set_config() passes NULL as crtc->primary.
-
-This patch corrects this issue by failing to load the DU driver on
-R-Car Gen3 when VSP is not available.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ drivers/dma/sh/rcar-dmac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/gpu/drm/rcar-du/rcar_du_vsp.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 0001/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-+++ work/drivers/gpu/drm/rcar-du/rcar_du_vsp.h	2016-10-26 00:01:12.920607110 +0900
-@@ -70,7 +70,7 @@ void rcar_du_vsp_disable(struct rcar_du_
- void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc);
- void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc);
- #else
--static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return 0; };
-+static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return -ENXIO; };
- static inline void rcar_du_vsp_enable(struct rcar_du_crtc *crtc) { };
- static inline void rcar_du_vsp_disable(struct rcar_du_crtc *crtc) { };
- static inline void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc) { };
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 2e441d0ccd79a37a..93a69b992a51a7aa 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1716,6 +1716,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 
+ 	dmac->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, dmac);
++	dma_set_mask_and_coherent(dmac->dev, DMA_BIT_MASK(40));
+ 
+ 	ret = rcar_dmac_parse_of(&pdev->dev, dmac);
+ 	if (ret < 0)
+-- 
+1.9.1
