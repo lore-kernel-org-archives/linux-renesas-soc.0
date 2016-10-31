@@ -1,41 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:47009 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754454AbcJRNXt (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:35674 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754721AbcJaQCn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 09:23:49 -0400
-Subject: Re: The failure summary report of GEN2 for linux stable v4.8
-To: Xuan Truong Nguyen <nx-truong@jinso.co.jp>,
-        duclm <lm-duc@jinso.co.jp>, ryusuke.sakato.bx@renesas.com,
-        kuninori.morimoto.gx@renesas.com, magnus.damm@gmail.com,
-        geert+renesas@glider.be, h-inayoshi@jinso.co.jp,
-        yoshihiro.shimoda.uh@renesas.com, nv-dung@jinso.co.jp,
-        cm-hiep@jinso.co.jp, laurent.pinchart+renesas@ideasonboard.com,
-        horms+renesas@verge.net.au, linux-renesas-soc@vger.kernel.org
-References: <57A46D20.7040106@jinso.co.jp> <57C9764F.2070802@jinso.co.jp>
- <f2bb791e-8973-10a9-a2ac-1a944b38d4ad@jinso.co.jp>
- <9d9a647b-d75f-e89a-2d4d-55e409ccabae@jinso.co.jp>
-From: Wolfram Sang <wsa@sang-engineering.com>
-Message-ID: <580620CD.50703@sang-engineering.com>
-Date: Tue, 18 Oct 2016 15:17:01 +0200
+        Mon, 31 Oct 2016 12:02:43 -0400
+Received: by mail-lf0-f50.google.com with SMTP id f134so101882640lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Oct 2016 09:02:42 -0700 (PDT)
+Subject: Re: [PATCH 1/2] swiotlb: Rate-limit printing when running out of
+ SW-IOMMU space
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
+ <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <6651130c-9c13-5ba5-879a-1a8189472b7c@cogentembedded.com>
+Date: Mon, 31 Oct 2016 19:02:38 +0300
 MIME-Version: 1.0
-In-Reply-To: <9d9a647b-d75f-e89a-2d4d-55e409ccabae@jinso.co.jp>
+In-Reply-To: <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
+On 10/31/2016 06:45 PM, Geert Uytterhoeven wrote:
 
- > We have tested the linux stable v4.8 for Gen2 Koelsch and Lager
+> If the system runs out of SW-IOMMU space, changes are high successive
+
+    s/changes/chances/?
+
+> requests will fail, too, flooding the kernel log.  This is true
+> especially for streaming DMA, which is typically used repeatedly outside
+> the driver's initialization routine.  Add rate-limiting to fix this.
 >
-> So we would like to report the summary of the failure.
+> While at it, get rid of the open-coded dev_name() handling by using the
+> appropriate dev_err_*() variant.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[...]
 
-Thank you!
-
-Is it possible to get access to the full logfiles? I am especially 
-interested in the backtraces after the Kernel oops or warning.
-
-Kind regards,
-
-    Wolfram
+MBR, Sergei
