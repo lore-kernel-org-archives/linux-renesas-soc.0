@@ -1,49 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35333 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932115AbcJZOOR (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:52124 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S943204AbcJaNq0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Oct 2016 10:14:17 -0400
-Received: by mail-wm0-f68.google.com with SMTP id o81so3705980wma.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Oct 2016 07:14:16 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au
-Cc: geert@linux-m68k.org, magnus.damm@gmail.com, wsa@the-dreams.de,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 0/5] r8a7796 I2C integration
-Date: Wed, 26 Oct 2016 16:14:04 +0200
-Message-Id: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 31 Oct 2016 09:46:26 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add EtherAVB pins, groups and functions
+Date: Mon, 31 Oct 2016 14:46:28 +0100
+Message-Id: <1477921588-2326-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This revision is based on renesas-devel-20161024-v4.9-rc2.  It adds the
-Reviewed-bys and the entries for SYS-DMAC2 in the applicable I2C nodes.  I
-have also made sure it works with 64-bit memory enabled.
+This patch adds AVB_LINK, AVB_MAGIC, AVB_PHY_INT, AVB_MDC, AVB_AVTP_PPS,
+AVB_AVTP_MATCH, AVB_AVTP_CAPTURE pins, groups and functions to R8A7796
+SoC.
 
-CU
-Uli
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 87 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-
-Changes since v1:
-- added sys-dmac2 entries to i2c0-2
-- added Reviewed-bys
-- dropped "i2c: rcar: add support for r8a7796 (R-Car M3-W)" (picked up)
-
-
-Ulrich Hecht (5):
-  clk: renesas: r8a7796: Add I2C clocks
-  pinctrl: sh-pfc: r8a7796: add I2C pin support
-  arm64: renesas: r8a7796: add I2C support
-  arm64: renesas: r8a7796: Enable I2C DMA
-  arm64: renesas: r8a7796: salvator-x: enable I2C
-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  12 +++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 111 +++++++++++++++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |   7 ++
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  77 ++++++++++++++
- 4 files changed, 207 insertions(+)
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index c7b8811fbab554bb..16773e580a902edc 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -1490,6 +1490,71 @@ enum {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
+ 
++/* - EtherAVB --------------------------------------------------------------- */
++static const unsigned int avb_link_pins[] = {
++	/* AVB_LINK */
++	RCAR_GP_PIN(2, 12),
++};
++static const unsigned int avb_link_mux[] = {
++	AVB_LINK_MARK,
++};
++static const unsigned int avb_magic_pins[] = {
++	/* AVB_MAGIC_ */
++	RCAR_GP_PIN(2, 10),
++};
++static const unsigned int avb_magic_mux[] = {
++	AVB_MAGIC_MARK,
++};
++static const unsigned int avb_phy_int_pins[] = {
++	/* AVB_PHY_INT */
++	RCAR_GP_PIN(2, 11),
++};
++static const unsigned int avb_phy_int_mux[] = {
++	AVB_PHY_INT_MARK,
++};
++static const unsigned int avb_mdc_pins[] = {
++	/* AVB_MDC */
++	RCAR_GP_PIN(2, 9),
++};
++static const unsigned int avb_mdc_mux[] = {
++	AVB_MDC_MARK,
++};
++static const unsigned int avb_avtp_pps_pins[] = {
++	/* AVB_AVTP_PPS */
++	RCAR_GP_PIN(2, 6),
++};
++static const unsigned int avb_avtp_pps_mux[] = {
++	AVB_AVTP_PPS_MARK,
++};
++static const unsigned int avb_avtp_match_a_pins[] = {
++	/* AVB_AVTP_MATCH_A */
++	RCAR_GP_PIN(2, 13),
++};
++static const unsigned int avb_avtp_match_a_mux[] = {
++	AVB_AVTP_MATCH_A_MARK,
++};
++static const unsigned int avb_avtp_capture_a_pins[] = {
++	/* AVB_AVTP_CAPTURE_A */
++	RCAR_GP_PIN(2, 14),
++};
++static const unsigned int avb_avtp_capture_a_mux[] = {
++	AVB_AVTP_CAPTURE_A_MARK,
++};
++static const unsigned int avb_avtp_match_b_pins[] = {
++	/*  AVB_AVTP_MATCH_B */
++	RCAR_GP_PIN(1, 8),
++};
++static const unsigned int avb_avtp_match_b_mux[] = {
++	AVB_AVTP_MATCH_B_MARK,
++};
++static const unsigned int avb_avtp_capture_b_pins[] = {
++	/* AVB_AVTP_CAPTURE_B */
++	RCAR_GP_PIN(1, 11),
++};
++static const unsigned int avb_avtp_capture_b_mux[] = {
++	AVB_AVTP_CAPTURE_B_MARK,
++};
++
+ /* - DRIF0 --------------------------------------------------------------- */
+ static const unsigned int drif0_ctrl_a_pins[] = {
+ 	/* CLK, SYNC */
+@@ -2363,6 +2428,15 @@ enum {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(avb_link),
++	SH_PFC_PIN_GROUP(avb_magic),
++	SH_PFC_PIN_GROUP(avb_phy_int),
++	SH_PFC_PIN_GROUP(avb_mdc),
++	SH_PFC_PIN_GROUP(avb_avtp_pps),
++	SH_PFC_PIN_GROUP(avb_avtp_match_a),
++	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
++	SH_PFC_PIN_GROUP(avb_avtp_match_b),
++	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
+ 	SH_PFC_PIN_GROUP(drif0_ctrl_a),
+ 	SH_PFC_PIN_GROUP(drif0_data0_a),
+ 	SH_PFC_PIN_GROUP(drif0_data1_a),
+@@ -2564,6 +2638,18 @@ enum {
+ 	"hscif4_data_b",
+ };
+ 
++static const char * const avb_groups[] = {
++	"avb_link",
++	"avb_magic",
++	"avb_phy_int",
++	"avb_mdc",
++	"avb_avtp_pps",
++	"avb_avtp_match_a",
++	"avb_avtp_capture_a",
++	"avb_avtp_match_b",
++	"avb_avtp_capture_b",
++};
++
+ static const char * const i2c1_groups[] = {
+ 	"i2c1_a",
+ 	"i2c1_b",
+@@ -2669,6 +2755,7 @@ enum {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(drif0),
+ 	SH_PFC_FUNCTION(drif1),
+ 	SH_PFC_FUNCTION(drif2),
 -- 
-2.7.4
+1.9.1
