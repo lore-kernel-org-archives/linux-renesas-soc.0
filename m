@@ -1,45 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:53527 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S944836AbcJaRIX (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:53296 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941085AbcJaLbE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Oct 2016 13:08:23 -0400
+        Mon, 31 Oct 2016 07:31:04 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>,
+To: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yangbo Lu <yangbo.lu@nxp.com>,
         Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 3/5] arm64: dts: r8a7796: Connect Ethernet AVB to IPMMU
-Date: Mon, 31 Oct 2016 18:08:20 +0100
-Message-Id: <1477933702-13423-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
-References: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 5/7] ARM: shmobile: Document DT bindings for CCCR and PRR
+Date: Mon, 31 Oct 2016 12:30:53 +0100
+Message-Id: <1477913455-5314-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
+References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IPMMU-DS0 to the Ethernet-AVB device node.
-
-Based on a patch from Magnus Damm for r8a7795.
+Add device tree binding documentation for the Common Chip Code Register
+and Product Register, which provide SoC product and revision
+information.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+v2:
+  - New.
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 824d2c7831621386..f6d15805b75031bb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -483,6 +483,7 @@
- 			phy-mode = "rgmii-id";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			iommus = <&ipmmu_ds0 16>;
- 		};
- 
- 		i2c0: i2c@e6500000 {
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 15669642b5324412..bff1b596b235c535 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -79,3 +79,29 @@ Boards:
+     compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
+   - Wheat
+     compatible = "renesas,wheat", "renesas,r8a7792"
++
++
++Most Renesas ARM SoCs have one or two registers (Common Chip Code
++Register and/or Product Register) that allow to retrieve SoC product and
++revision information.  If present, device nodes for these devices should
++be added.
++
++Required properties:
++  - compatible: Must be one of:
++      - "renesas,cccr" for the Common Chip Code Register,
++      - "renesas,prr" for the Product Register.
++  - reg: Base address and length of the register block.
++
++
++Examples
++--------
++
++	cccr: chipid@e600101c {
++		compatible = "renesas,cccr";
++		reg = <0xe600101c 4>;
++	};
++
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
 -- 
 1.9.1
