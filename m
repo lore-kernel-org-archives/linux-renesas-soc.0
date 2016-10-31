@@ -1,45 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:35674 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754721AbcJaQCn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Oct 2016 12:02:43 -0400
-Received: by mail-lf0-f50.google.com with SMTP id f134so101882640lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Oct 2016 09:02:42 -0700 (PDT)
-Subject: Re: [PATCH 1/2] swiotlb: Rate-limit printing when running out of
- SW-IOMMU space
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Jonathan Corbet <corbet@lwn.net>
-References: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
- <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <6651130c-9c13-5ba5-879a-1a8189472b7c@cogentembedded.com>
-Date: Mon, 31 Oct 2016 19:02:38 +0300
-MIME-Version: 1.0
-In-Reply-To: <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] swiotlb: Rate-limit printing when running out of SW-IOMMU space
+Date: Mon, 31 Oct 2016 16:45:03 +0100
+Message-Id: <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
+References: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10/31/2016 06:45 PM, Geert Uytterhoeven wrote:
+If the system runs out of SW-IOMMU space, changes are high successive
+requests will fail, too, flooding the kernel log.  This is true
+especially for streaming DMA, which is typically used repeatedly outside
+the driver's initialization routine.  Add rate-limiting to fix this.
 
-> If the system runs out of SW-IOMMU space, changes are high successive
+While at it, get rid of the open-coded dev_name() handling by using the
+appropriate dev_err_*() variant.
 
-    s/changes/chances/?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ lib/swiotlb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> requests will fail, too, flooding the kernel log.  This is true
-> especially for streaming DMA, which is typically used repeatedly outside
-> the driver's initialization routine.  Add rate-limiting to fix this.
->
-> While at it, get rid of the open-coded dev_name() handling by using the
-> appropriate dev_err_*() variant.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[...]
-
-MBR, Sergei
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index 22e13a0e19d76a2b..6ce764410ae475cc 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -714,8 +714,8 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
+ 	 * When the mapping is small enough return a static buffer to limit
+ 	 * the damage, or panic when the transfer is too big.
+ 	 */
+-	printk(KERN_ERR "DMA: Out of SW-IOMMU space for %zu bytes at "
+-	       "device %s\n", size, dev ? dev_name(dev) : "?");
++	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
++			    size);
+ 
+ 	if (size <= io_tlb_overflow || !do_panic)
+ 		return;
+-- 
+1.9.1
