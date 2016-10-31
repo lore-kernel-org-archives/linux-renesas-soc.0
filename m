@@ -1,53 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:53432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932928AbcJLM7E (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Oct 2016 08:59:04 -0400
-Subject: [PATCH v2 3/5] PCI: rcar: Remove unused rcar_pcie_get_resources()
- platform_device arg
-To: Simon Horman <horms@verge.net.au>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Wed, 12 Oct 2016 07:58:59 -0500
-Message-ID: <20161012125859.24785.41542.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yangbo Lu <yangbo.lu@nxp.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/7] base: soc: Check for NULL SoC device attributes
+Date: Mon, 31 Oct 2016 12:30:51 +0100
+Message-Id: <1477913455-5314-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
+References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-rcar_pcie_get_resources() doesn't use the platform_device pointer passed to
-it, so remove it.  No functional change intended.
+If soc_device_match() is used to check the value of a specific
+attribute that is not present for the current SoC, the kernel crashes
+with a NULL pointer dereference.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Fix this by explicitly checking for the absence of a needed property,
+and considering this a non-match.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/host/pcie-rcar.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+v2:
+  - Add Acked-by.
+---
+ drivers/base/soc.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 4f352e8..800a86d 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -903,8 +903,7 @@ err:
- 	return err;
- }
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index 04ee597fc3a3fda0..dc26e5949a320223 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -176,19 +176,23 @@ static int soc_device_match_one(struct device *dev, void *arg)
+ 	const struct soc_device_attribute *match = arg;
  
--static int rcar_pcie_get_resources(struct platform_device *pdev,
--				   struct rcar_pcie *pcie)
-+static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct resource res;
-@@ -1141,7 +1140,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	if (match->machine &&
+-	    !glob_match(match->machine, soc_dev->attr->machine))
++	    (!soc_dev->attr->machine ||
++	     !glob_match(match->machine, soc_dev->attr->machine)))
+ 		return 0;
  
- 	rcar_pcie_parse_request_of_pci_ranges(pcie);
+ 	if (match->family &&
+-	    !glob_match(match->family, soc_dev->attr->family))
++	    (!soc_dev->attr->family ||
++	     !glob_match(match->family, soc_dev->attr->family)))
+ 		return 0;
  
--	err = rcar_pcie_get_resources(pdev, pcie);
-+	err = rcar_pcie_get_resources(pcie);
- 	if (err < 0) {
- 		dev_err(dev, "failed to request resources: %d\n", err);
- 		return err;
+ 	if (match->revision &&
+-	    !glob_match(match->revision, soc_dev->attr->revision))
++	    (!soc_dev->attr->revision ||
++	     !glob_match(match->revision, soc_dev->attr->revision)))
+ 		return 0;
+ 
+ 	if (match->soc_id &&
+-	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
++	    (!soc_dev->attr->soc_id ||
++	     !glob_match(match->soc_id, soc_dev->attr->soc_id)))
+ 		return 0;
+ 
+ 	return 1;
+-- 
+1.9.1
