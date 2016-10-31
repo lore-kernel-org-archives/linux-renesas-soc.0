@@ -1,54 +1,185 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: fix link error for rcar-gen2
-Date: Fri, 21 Oct 2016 17:47:06 +0200
-Message-Id: <20161021154737.3803065-1-arnd@arndb.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yangbo Lu <yangbo.lu@nxp.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/7] base: soc: Introduce soc_device_match() interface
+Date: Mon, 31 Oct 2016 12:30:50 +0100
+Message-Id: <1477913455-5314-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
+References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The addition of one more rcar-gen2 based SoC caused a build error (again)
-in my randconfig builds:
+From: Arnd Bergmann <arnd@arndb.de>
 
-arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
-setup-rcar-gen2.c:(.init.text+0x200): undefined reference to `rcar_gen2_clocks_init'
+We keep running into cases where device drivers want to know the exact
+version of the a SoC they are currently running on. In the past, this has
+usually been done through a vendor specific API that can be called by a
+driver, or by directly accessing some kind of version register that is
+not part of the device itself but that belongs to a global register area
+of the chip.
 
-I think this has happened twice in the past. Instead of adding each SoC
-one at a time, this changes the existing list to always build the
-rcar-gen2 related clk files whenever the generic symbol is selected.
+Common reasons for doing this include:
 
-Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
+- A machine is not using devicetree or similar for passing data about
+  on-chip devices, but just announces their presence using boot-time
+  platform devices, and the machine code itself does not care about the
+  revision.
+
+- There is existing firmware or boot loaders with existing DT binaries
+  with generic compatible strings that do not identify the particular
+  revision of each device, but the driver knows which SoC revisions
+  include which part.
+
+- A prerelease version of a chip has some quirks and we are using the same
+  version of the bootloader and the DT blob on both the prerelease and the
+  final version. An update of the DT binding seems inappropriate because
+  that would involve maintaining multiple copies of the dts and/or
+  bootloader.
+
+This patch introduces the soc_device_match() interface that is meant to
+work like of_match_node() but instead of identifying the version of a
+device, it identifies the SoC itself using a vendor-agnostic interface.
+
+Unlike of_match_node(), we do not do an exact string compare but instead
+use glob_match() to allow wildcards in strings.
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/renesas/Makefile | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+v2:
+  - Add Acked-by.
+---
+ drivers/base/Kconfig    |  1 +
+ drivers/base/soc.c      | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sys_soc.h |  3 +++
+ 3 files changed, 70 insertions(+)
 
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 90dd0db7d9c6..762d122eddec 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -4,11 +4,7 @@ obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_RCAR_GEN2)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
- obj-$(CONFIG_ARCH_R8A7796)		+= r8a7796-cpg-mssr.o rcar-gen3-cpg.o
- obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index d02e7c0f5bfdff1c..2abea876c0a0c2c2 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -237,6 +237,7 @@ config GENERIC_CPU_AUTOPROBE
+ 
+ config SOC_BUS
+ 	bool
++	select GLOB
+ 
+ source "drivers/base/regmap/Kconfig"
+ 
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index 028cef377fd49959..04ee597fc3a3fda0 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -13,6 +13,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+ #include <linux/err.h>
++#include <linux/glob.h>
+ 
+ static DEFINE_IDA(soc_ida);
+ 
+@@ -168,3 +169,68 @@ static int __init soc_bus_register(void)
+ 	return bus_register(&soc_bus_type);
+ }
+ core_initcall(soc_bus_register);
++
++static int soc_device_match_one(struct device *dev, void *arg)
++{
++	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
++	const struct soc_device_attribute *match = arg;
++
++	if (match->machine &&
++	    !glob_match(match->machine, soc_dev->attr->machine))
++		return 0;
++
++	if (match->family &&
++	    !glob_match(match->family, soc_dev->attr->family))
++		return 0;
++
++	if (match->revision &&
++	    !glob_match(match->revision, soc_dev->attr->revision))
++		return 0;
++
++	if (match->soc_id &&
++	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
++		return 0;
++
++	return 1;
++}
++
++/*
++ * soc_device_match - identify the SoC in the machine
++ * @matches: zero-terminated array of possible matches
++ *
++ * returns the first matching entry of the argument array, or NULL
++ * if none of them match.
++ *
++ * This function is meant as a helper in place of of_match_node()
++ * in cases where either no device tree is available or the information
++ * in a device node is insufficient to identify a particular variant
++ * by its compatible strings or other properties. For new devices,
++ * the DT binding should always provide unique compatible strings
++ * that allow the use of of_match_node() instead.
++ *
++ * The calling function can use the .data entry of the
++ * soc_device_attribute to pass a structure or function pointer for
++ * each entry.
++ */
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches)
++{
++	int ret = 0;
++
++	if (!matches)
++		return NULL;
++
++	while (!ret) {
++		if (!(matches->machine || matches->family ||
++		      matches->revision || matches->soc_id))
++			break;
++		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
++				       soc_device_match_one);
++		if (!ret)
++			matches++;
++		else
++			return matches;
++	}
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(soc_device_match);
+diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
+index 2739ccb69571e444..9f5eb06f9fd87565 100644
+--- a/include/linux/sys_soc.h
++++ b/include/linux/sys_soc.h
+@@ -13,6 +13,7 @@ struct soc_device_attribute {
+ 	const char *family;
+ 	const char *revision;
+ 	const char *soc_id;
++	const void *data;
+ };
+ 
+ /**
+@@ -34,4 +35,6 @@ struct soc_device *soc_device_register(
+  */
+ struct device *soc_device_to_device(struct soc_device *soc);
+ 
++const struct soc_device_attribute *soc_device_match(
++	const struct soc_device_attribute *matches);
+ #endif /* __SOC_BUS_H */
 -- 
-2.9.0
+1.9.1
