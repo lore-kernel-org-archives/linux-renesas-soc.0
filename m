@@ -1,151 +1,324 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:52124 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S943204AbcJaNq0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Oct 2016 09:46:26 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add EtherAVB pins, groups and functions
-Date: Mon, 31 Oct 2016 14:46:28 +0100
-Message-Id: <1477921588-2326-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 3/7] ARM: dts: r8a7743: add [H]SCIF{A|B} support
+Date: Mon, 31 Oct 2016 22:55:39 +0300
+Message-ID: <29562553.JmvzVUkhx3@wasted.cogentembedded.com>
+In-Reply-To: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
+References: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Describe [H]SCIF{|A|B} ports in the R8A7743 device tree.
 
-This patch adds AVB_LINK, AVB_MAGIC, AVB_PHY_INT, AVB_MDC, AVB_AVTP_PPS,
-AVB_AVTP_MATCH, AVB_AVTP_CAPTURE pins, groups and functions to R8A7796
-SoC.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 87 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+Changes in version 5:
+- refreshed the patch.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index c7b8811fbab554bb..16773e580a902edc 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1490,6 +1490,71 @@ enum {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	/* AVB_LINK */
-+	RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	/* AVB_MAGIC_ */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	/* AVB_PHY_INT */
-+	RCAR_GP_PIN(2, 11),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdc_pins[] = {
-+	/* AVB_MDC */
-+	RCAR_GP_PIN(2, 9),
-+};
-+static const unsigned int avb_mdc_mux[] = {
-+	AVB_MDC_MARK,
-+};
-+static const unsigned int avb_avtp_pps_pins[] = {
-+	/* AVB_AVTP_PPS */
-+	RCAR_GP_PIN(2, 6),
-+};
-+static const unsigned int avb_avtp_pps_mux[] = {
-+	AVB_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb_avtp_match_a_pins[] = {
-+	/* AVB_AVTP_MATCH_A */
-+	RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int avb_avtp_match_a_mux[] = {
-+	AVB_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int avb_avtp_capture_a_pins[] = {
-+	/* AVB_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(2, 14),
-+};
-+static const unsigned int avb_avtp_capture_a_mux[] = {
-+	AVB_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int avb_avtp_match_b_pins[] = {
-+	/*  AVB_AVTP_MATCH_B */
-+	RCAR_GP_PIN(1, 8),
-+};
-+static const unsigned int avb_avtp_match_b_mux[] = {
-+	AVB_AVTP_MATCH_B_MARK,
-+};
-+static const unsigned int avb_avtp_capture_b_pins[] = {
-+	/* AVB_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int avb_avtp_capture_b_mux[] = {
-+	AVB_AVTP_CAPTURE_B_MARK,
-+};
+Changes in version 4:
+- corrected RBNF in the patch description/subject;
+- used the R-Car gen2 bindings instead of the RZ/G family ones;
+- refreshed the patch;
+- added Geert's tag.
+
+Changes in version 3:
+- resolved  a reject;
+- updated the "clocks" properties for the CPG/MSSR driver;
+- renamed the patch.
+
+Changes in version 2:
+- used  the new RZ/G family "compatible" prop values, reformatting where needed;
+- fixed the size cells of the SCIFB device nodes' "reg" properties;
+- changed the size cells of the "reg" properties to hexadecimal;
+- indented the SCIFA1 device node's closing brace correctly
+- adjusted the patch description, renamed the patch.
+
+ arch/arm/boot/dts/r8a7743.dtsi |  261 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 261 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -157,6 +157,267 @@
+ 			#dma-cells = <1>;
+ 			dma-channels = <15>;
+ 		};
 +
- /* - DRIF0 --------------------------------------------------------------- */
- static const unsigned int drif0_ctrl_a_pins[] = {
- 	/* CLK, SYNC */
-@@ -2363,6 +2428,15 @@ enum {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdc),
-+	SH_PFC_PIN_GROUP(avb_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_b),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
- 	SH_PFC_PIN_GROUP(drif0_ctrl_a),
- 	SH_PFC_PIN_GROUP(drif0_data0_a),
- 	SH_PFC_PIN_GROUP(drif0_data1_a),
-@@ -2564,6 +2638,18 @@ enum {
- 	"hscif4_data_b",
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdc",
-+	"avb_avtp_pps",
-+	"avb_avtp_match_a",
-+	"avb_avtp_capture_a",
-+	"avb_avtp_match_b",
-+	"avb_avtp_capture_b",
-+};
++		scifa0: serial@e6c40000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++			reg = <0 0xe6c40000 0 0x40>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 204>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x21>, <&dmac0 0x22>,
++			       <&dmac1 0x21>, <&dmac1 0x22>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
- static const char * const i2c1_groups[] = {
- 	"i2c1_a",
- 	"i2c1_b",
-@@ -2669,6 +2755,7 @@ enum {
- };
++		scifa1: serial@e6c50000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++			reg = <0 0xe6c50000 0 0x40>;
++			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 203>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x25>, <&dmac0 0x26>,
++			       <&dmac1 0x25>, <&dmac1 0x26>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa2: serial@e6c60000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++			reg = <0 0xe6c60000 0 0x40>;
++			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 202>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x27>, <&dmac0 0x28>,
++			       <&dmac1 0x27>, <&dmac1 0x28>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa3: serial@e6c70000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++			reg = <0 0xe6c70000 0 0x40>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 1106>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
++			       <&dmac1 0x1b>, <&dmac1 0x1c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa4: serial@e6c78000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++			reg = <0 0xe6c78000 0 0x40>;
++			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 1107>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
++			       <&dmac1 0x1f>, <&dmac1 0x20>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa5: serial@e6c80000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++			reg = <0 0xe6c80000 0 0x40>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 1108>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x23>, <&dmac0 0x24>,
++			       <&dmac1 0x23>, <&dmac1 0x24>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifb0: serial@e6c20000 {
++			compatible = "renesas,scifb-r8a7743",
++				     "renesas,rcar-gen2-scifb", "renesas,scifb";
++			reg = <0 0xe6c20000 0 0x100>;
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 206>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
++		       <&dmac1 0x3d>, <&dmac1 0x3e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifb1: serial@e6c30000 {
++			compatible = "renesas,scifb-r8a7743",
++				     "renesas,rcar-gen2-scifb", "renesas,scifb";
++			reg = <0 0xe6c30000 0 0x100>;
++			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 207>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
++			       <&dmac1 0x19>, <&dmac1 0x1a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifb2: serial@e6ce0000 {
++			compatible = "renesas,scifb-r8a7743",
++				     "renesas,rcar-gen2-scifb", "renesas,scifb";
++			reg = <0 0xe6ce0000 0 0x100>;
++			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 216>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
++			       <&dmac1 0x1d>, <&dmac1 0x1e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a7743",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 721>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
++			       <&dmac1 0x29>, <&dmac1 0x2a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a7743",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 0x40>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 720>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
++			       <&dmac1 0x2d>, <&dmac1 0x2e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif2: serial@e6e58000 {
++			compatible = "renesas,scif-r8a7743",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e58000 0 0x40>;
++			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 719>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
++			       <&dmac1 0x2b>, <&dmac1 0x2c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6ea8000 {
++			compatible = "renesas,scif-r8a7743",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ea8000 0 0x40>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 718>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
++			       <&dmac1 0x2f>, <&dmac1 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6ee0000 {
++			compatible = "renesas,scif-r8a7743",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ee0000 0 0x40>;
++			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 715>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
++			       <&dmac1 0xfb>, <&dmac1 0xfc>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif5: serial@e6ee8000 {
++			compatible = "renesas,scif-r8a7743",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ee8000 0 0x40>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 714>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
++			       <&dmac1 0xfd>, <&dmac1 0xfe>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif0: serial@e62c0000 {
++			compatible = "renesas,hscif-r8a7743",
++				     "renesas,rcar-gen2-hscif", "renesas,hscif";
++			reg = <0 0xe62c0000 0 0x60>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 717>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++			       <&dmac1 0x39>, <&dmac1 0x3a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e62c8000 {
++			compatible = "renesas,hscif-r8a7743",
++				     "renesas,rcar-gen2-hscif", "renesas,hscif";
++			reg = <0 0xe62c8000 0 0x60>;
++			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 716>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++			       <&dmac1 0x4d>, <&dmac1 0x4e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif2: serial@e62d0000 {
++			compatible = "renesas,hscif-r8a7743",
++				     "renesas,rcar-gen2-hscif", "renesas,hscif";
++			reg = <0 0xe62d0000 0 0x60>;
++			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 713>,
++			         <&cpg CPG_CORE R8A7743_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
++			       <&dmac1 0x3b>, <&dmac1 0x3c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
+ 	};
  
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(drif0),
- 	SH_PFC_FUNCTION(drif1),
- 	SH_PFC_FUNCTION(drif2),
--- 
-1.9.1
+ 	/* External root clock */
+
