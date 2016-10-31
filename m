@@ -1,107 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] swiotlb: Add swiotlb=nobounce debug option
-Date: Mon, 31 Oct 2016 16:45:04 +0100
-Message-Id: <1477928704-10611-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
-References: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34103 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S946159AbcJaT6Q (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 31 Oct 2016 15:58:16 -0400
+Received: by mail-lf0-f49.google.com with SMTP id b81so111602120lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 31 Oct 2016 12:58:15 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 5/7] ARM: dts: r8a7743: add IRQC support
+Date: Mon, 31 Oct 2016 22:58:12 +0300
+Message-ID: <13318488.bgd30fnLeg@wasted.cogentembedded.com>
+In-Reply-To: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
+References: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On architectures like arm64, swiotlb is tied intimately to the core
-architecture DMA support. In addition, ZONE_DMA cannot be disabled.
+Describe the IRQC interrupt controller in the R8A7743 device tree.
 
-To aid debugging and catch devices not supporting DMA to memory outside
-the 32-bit address space, add a kernel command line option
-"swiotlb=nobounce", which disables the use of bounce buffers.
-If specified, trying to map memory that cannot be used with DMA will
-fail, and a warning will be printed (rate-limited).
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Note that io_tlb_nslabs is set to 1, which is the minimal supported
-value.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/kernel-parameters.txt |  3 ++-
- lib/swiotlb.c                       | 19 +++++++++++++++++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
+Changes in version 4:
+- refreshed the patch;
+- added Geert's tag.
 
-diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
-index 37babf91f2cb6de2..38556cdceabaf087 100644
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -3998,10 +3998,11 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
- 			it if 0 is given (See Documentation/cgroup-v1/memory.txt)
+Changes in version 3:
+- updated the "clocks" property for the CPG/MSSR driver.
+
+Changes in version 2:
+- new patch.
+
+ arch/arm/boot/dts/r8a7743.dtsi |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -62,6 +62,25 @@
+ 						 IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
  
- 	swiotlb=	[ARM,IA-64,PPC,MIPS,X86]
--			Format: { <int> | force }
-+			Format: { <int> | force | nobounce }
- 			<int> -- Number of I/O TLB slabs
- 			force -- force using of bounce buffers even if they
- 			         wouldn't be automatically used by the kernel
-+			nobounce -- Never use bounce buffers (for debugging)
- 
- 	switches=	[HW,M68k]
- 
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index 6ce764410ae475cc..4550e6b516c2a4c0 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -54,6 +54,7 @@
- #define IO_TLB_MIN_SLABS ((1<<20) >> IO_TLB_SHIFT)
- 
- int swiotlb_force;
-+static int swiotlb_nobounce;
- 
- /*
-  * Used to do a quick range check in swiotlb_tbl_unmap_single and
-@@ -106,8 +107,12 @@
- 	}
- 	if (*str == ',')
- 		++str;
--	if (!strcmp(str, "force"))
-+	if (!strcmp(str, "force")) {
- 		swiotlb_force = 1;
-+	} else if (!strcmp(str, "nobounce")) {
-+		swiotlb_nobounce = 1;
-+		io_tlb_nslabs = 1;
-+	}
- 
- 	return 0;
- }
-@@ -541,8 +546,15 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
- map_single(struct device *hwdev, phys_addr_t phys, size_t size,
- 	   enum dma_data_direction dir)
- {
--	dma_addr_t start_dma_addr = phys_to_dma(hwdev, io_tlb_start);
-+	dma_addr_t start_dma_addr;
++		irqc: interrupt-controller@e61c0000 {
++			compatible = "renesas,irqc-r8a7743", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++		};
 +
-+	if (swiotlb_nobounce) {
-+		dev_warn_ratelimited(hwdev, "Cannot do DMA to address %pa\n",
-+				     &phys);
-+		return SWIOTLB_MAP_ERROR;
-+	}
- 
-+	start_dma_addr = phys_to_dma(hwdev, io_tlb_start);
- 	return swiotlb_tbl_map_single(hwdev, start_dma_addr, phys, size, dir);
- }
- 
-@@ -707,6 +719,9 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
- swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
- 	     int do_panic)
- {
-+	if (swiotlb_nobounce)
-+		return;
-+
- 	/*
- 	 * Ran out of IOMMU space for this operation. This is very bad.
- 	 * Unfortunately the drivers cannot handle this operation properly.
--- 
-1.9.1
+ 		timer {
+ 			compatible = "arm,armv7-timer";
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
