@@ -1,83 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57386 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933997AbcJQVe6 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:42882 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S944933AbcJaRIZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 17:34:58 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 4871F2038D
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 23:34:09 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/4] arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
-Date: Tue, 18 Oct 2016 00:34:48 +0300
-Message-Id: <1476740091-7011-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 31 Oct 2016 13:08:25 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 4/5] arm64: dts: r8a7796: Enable ipmmu_ds0 and ipmmu_mm
+Date: Mon, 31 Oct 2016 18:08:21 +0100
+Message-Id: <1477933702-13423-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
+References: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCPs handle the interface between various IP cores and memory. Add
-the instances related to the FDPs and VSP2s.
+Enable the IPMMU for Ethernet AVB.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 9217da983525..39b6ec7a2068 100644
+index f6d15805b75031bb..dc416c300968b0e2 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -251,5 +251,47 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
+@@ -303,7 +303,7 @@
+ 			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
+ 			renesas,ipmmu-main = <&ipmmu_mm 0>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
++			status = "okay";
  		};
-+
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc R8A7796_PD_A3VC>;
-+		};
-+
-+		fcpvb0: fcp@fe96f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe96f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 607>;
-+			power-domains = <&sysc R8A7796_PD_A3VC>;
-+		};
-+
-+		fcpvi0: fcp@fe9af000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe9af000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 611>;
-+			power-domains = <&sysc R8A7796_PD_A3VC>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		};
-+
-+		fcpvd2: fcp@fea37000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea37000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 601>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		};
- 	};
- };
+ 
+ 		ipmmu_ds1: mmu@e7740000 {
+@@ -320,7 +320,7 @@
+ 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
++			status = "okay";
+ 		};
+ 
+ 		cpg: clock-controller@e6150000 {
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
