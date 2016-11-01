@@ -1,55 +1,39 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran.bingham+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCHv2 0/2] vsp1 writeback prototype
-Date: Fri,  4 Nov 2016 17:53:50 +0000
-Message-Id: <1478282032-17571-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:33570 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757936AbcKAPSi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 1 Nov 2016 11:18:38 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
+Date: Tue, 1 Nov 2016 15:13:32 +0000
+Message-ID: <SG2PR06MB116573EF21F52BC479F0C7C08AA10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
+ <20160912141507.6837-3-chris.brandt@renesas.com>
+ <20161101084938.GA1576@katana>
+ <SG2PR06MB11652157C1DA12165852747C8AA10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20161101150759.GA1436@katana>
+In-Reply-To: <20161101150759.GA1436@katana>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Resending this patch series to bring in dri-devel, and interested parties.
-Apologies for the resend to linux-media and linux-renesas-soc.
-
-This short series extends the VSP1 on the RCar platforms to allow creating a
-V4L2 video node on display pipelines where the hardware allows writing to
-memory simultaneously.
-
-In this instance, the hardware restricts the output to match the display size
-(no rescaling) but does allow pixel format conversion.
-
-A current limitation (that the DRI devs might have ideas about) is that the vb2
-buffers are swapped on the atomic_flush() calls rather than on vsync events.
-
-Ideally swapping buffers would occur on every vsync such that the output rate
-of the video node would match the display rate, however the timing here proves
-more difficult to synchronise the updates from a vysnc and flush without adding
-latency to the flush.
-
-Is there anything I can do to synchronise the v4l2 buffers with the DRM/KMS
-interfaces currently? Or does anyone have any suggestions for extending as
-such?
-
-And of course ideas on anything that could be done generically to support other
-targets as well would be worth considering - though currently this
-implementation is very RCar/VSP1 specific.
+> > I don't understand "TMIO_MMC_BIG_DATA_PORT" (How do you know 32-bit??
+> How do you know 64-bit??)
+>=20
+> I think 16 << host->bus_shift should work; need to verify this, though.
 
 
-Kieran Bingham (2):
-  Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
-  v4l: vsp1: Provide a writeback video device
-
- drivers/media/platform/vsp1/vsp1.h       |   1 +
- drivers/media/platform/vsp1/vsp1_drm.c   |  19 ++++
- drivers/media/platform/vsp1/vsp1_drv.c   |   5 +-
- drivers/media/platform/vsp1/vsp1_rwpf.h  |   1 +
- drivers/media/platform/vsp1/vsp1_video.c | 161 ++++++++++++++++++++++++++++---
- drivers/media/platform/vsp1/vsp1_video.h |   5 +
- drivers/media/platform/vsp1/vsp1_wpf.c   |  19 +++-
- 7 files changed, 193 insertions(+), 18 deletions(-)
-
--- 
-2.7.4
+Good idea.
