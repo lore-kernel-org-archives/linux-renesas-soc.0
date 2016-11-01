@@ -1,50 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36521 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751095AbcKITDC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56233 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1422780AbcKAJcX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 14:03:02 -0500
-Received: by mail-lf0-f48.google.com with SMTP id t196so172323566lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Nov 2016 11:03:01 -0800 (PST)
-Subject: Re: [PATCH/RFC] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S. Miller" <davem@davemloft.net>
-References: <1477934018-13968-1-git-send-email-geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
+        Tue, 1 Nov 2016 05:32:23 -0400
+Date: Tue, 1 Nov 2016 10:32:17 +0100
+From: Simon Horman <horms@verge.net.au>
+To: David Miller <davem@davemloft.net>
+Cc: geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
+        arnd@arndb.de, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <6c28b185-2283-fbbe-7850-4bc66c8581b0@cogentembedded.com>
-Date: Wed, 9 Nov 2016 22:02:58 +0300
+Subject: Re: [PATCH/RFC] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
+Message-ID: <20161101093216.GE28143@verge.net.au>
+References: <1477934018-13968-1-git-send-email-geert+renesas@glider.be>
+ <20161031.132431.648834397805808388.davem@davemloft.net>
 MIME-Version: 1.0
-In-Reply-To: <1477934018-13968-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161031.132431.648834397805808388.davem@davemloft.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Mon, Oct 31, 2016 at 01:24:31PM -0400, David Miller wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> Date: Mon, 31 Oct 2016 18:13:38 +0100
+> 
+> > The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
+> > ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
+> > revisions of R-Car H3, and on R-Car M3-W.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Tested on:
+> >   - r8a7795/salvator-x with R-Car H3 ES1.0 (limited to 100Mbps),
+> >   - r8a7795/salvator-x with R-Car H3 ES1.1 (1Gbps),
+> >   - r8a7796/salvator-x with R-Car M3-W ES1.0 (1Gbps).
+> > 
+> > This is marked as an RFC because it depends on:
+> >   A) the soc_device_match() infrastructure,
+> >   B) Renesas SoC core ESx.y handling.
+> > Hence I think the best merge strategy is to let this patch go in through
+> > Simon's Renesas tree.
+> > 
+> > David: If you agree, can you please provide your ack? Thanks!
+> 
+> Sure, no problem:
+> 
+> Acked-by: David S. Miller <davem@davemloft.net>
 
-On 10/31/2016 08:13 PM, Geert Uytterhoeven wrote:
+Thanks Dave.
 
-> The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
-> ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
-> revisions of R-Car H3, and on R-Car M3-W.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Tested on:
->   - r8a7795/salvator-x with R-Car H3 ES1.0 (limited to 100Mbps),
->   - r8a7795/salvator-x with R-Car H3 ES1.1 (1Gbps),
->   - r8a7796/salvator-x with R-Car M3-W ES1.0 (1Gbps).
->
-> This is marked as an RFC because it depends on:
->   A) the soc_device_match() infrastructure,
->   B) Renesas SoC core ESx.y handling.
-> Hence I think the best merge strategy is to let this patch go in through
-> Simon's Renesas tree.
-
-    I'm not seeing soc_device_match() and friends even in renesas.git repo...
-What else do I need to review this patch?
-
-MBR, Sergei
+Geert, please repost or otherwise ping me once the dependencies are in
+place and I should queue this up.
