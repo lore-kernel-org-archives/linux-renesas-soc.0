@@ -1,55 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:49910 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754997AbcKNShN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 13:37:13 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 07/11] ARM: dts: r8a7792: Add device node for PRR
-Date: Mon, 14 Nov 2016 19:37:13 +0100
-Message-Id: <1479148637-5399-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 1 Nov 2016 09:38:18 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][resend] drm: bridge: add DesignWare HDMI I2S audio
+ support
+Message-ID: <20161101093818.GQ1041@n2100.armlinux.org.uk>
+References: <87lgx9wa2d.wl%kuninori.morimoto.gx@renesas.com>
+ <20161031160621.GE1041@n2100.armlinux.org.uk>
+ <87y414dpue.wl%kuninori.morimoto.gx@renesas.com>
+ <87wpgodozh.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wpgodozh.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+On Tue, Nov 01, 2016 at 12:36:29AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Russell again
+> 
+> > > > +static struct platform_driver snd_dw_hdmi_driver = {
+> > > > +	.probe	= snd_dw_hdmi_probe,
+> > > 
+> > > The driver must have a .remove function, because the platform device it
+> > > is binding against can appear and disappear.
+> > 
+> > Thank you for your feedback
+> > OK, I will add it
+> 
+> This driver uses platform_device_register_full() and calls hdmi-codec
+> driver. This driver itself doesn't register sound card, like dw-hdmi-ahb-audio.c
+> Then, what does .remove should do in this case ?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Add to posted series,
+Remove the platform device that was created by
+platform_device_register_full().
 
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7792.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index a75e0cd312c5ecdf..69789020cf39e95f 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -120,6 +120,11 @@
- 				      IRQ_TYPE_LEVEL_LOW)>;
- 		};
- 
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7792-sysc";
- 			reg = <0 0xe6180000 0 0x0200>;
 -- 
-1.9.1
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
