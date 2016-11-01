@@ -1,52 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53445 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752312AbcKGPdw (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:37745 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754324AbcKAUPO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 10:33:52 -0500
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC] arm64: dts: r8a7796-salvator-x: Disable sdr104 of SDHI
-Date: Mon,  7 Nov 2016 16:33:34 +0100
-Message-Id: <1478532814-8652-1-git-send-email-horms@verge.net.au>
+        Tue, 1 Nov 2016 16:15:14 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/2] Add r8a7796 clocks to capture video
+Date: Tue,  1 Nov 2016 21:12:23 +0100
+Message-Id: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Hi Geert and everyone else,
 
-The problem which the card inserted in the slot of SDHI{0,3} does not
-recognize in the combination of some boards and UHS-I sdcard occurred.
+Add the clocks for VIN and CSI2 which are needed to be able to capture 
+video on r8a7796. Tested by capturing video using the VIN and CSI2 IP 
+cores on M3-W.
 
-Therefore, this patch repealed SDR104 of SDHI0 and SDHI3.
+Niklas Söderlund (2):
+  clk: renesas: r8a7796: Add CSI2 clocks
+  clk: renesas: r8a7796: Add VIN clocks
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 03334e943efa..c3061a6df410 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -567,7 +567,6 @@
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
--	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
-@@ -597,7 +596,6 @@
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
--	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
