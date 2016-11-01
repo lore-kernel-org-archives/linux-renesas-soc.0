@@ -1,43 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34101 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbcKBJZe (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:37755 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754367AbcKAUPO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:25:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <20161101201225.14810-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se> <20161101201225.14810-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 10:25:33 +0100
-Message-ID: <CAMuHMdWYicCK3mZ8_-SPCF7ieZZyY6BpNOriPpHO+ugAosHACg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: r8a7796: Add VIN clocks
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Tue, 1 Nov 2016 16:15:14 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] clk: renesas: r8a7796: Add VIN clocks
+Date: Tue,  1 Nov 2016 21:12:25 +0100
+Message-Id: <20161101201225.14810-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 1, 2016 at 9:12 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index ade75e7..bfef976 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -125,6 +125,14 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("thermal",		 522,	R8A7796_CLK_CP),
+ 	DEF_MOD("csi20",		 714,	R8A7796_CLK_CSI0),
+ 	DEF_MOD("csi40",		 716,	R8A7796_CLK_CSI0),
++	DEF_MOD("vin7",			 804,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin6",			 805,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin5",			 806,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin4",			 807,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin3",			 808,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin2",			 809,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin1",			 810,	R8A7796_CLK_S0D2),
++	DEF_MOD("vin0",			 811,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
+-- 
+2.10.2
