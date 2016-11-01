@@ -1,19 +1,8 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36673 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750919AbcKBIOE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 04:14:04 -0400
-MIME-Version: 1.0
-In-Reply-To: <20161031095214.GA2335@verge.net.au>
-References: <20161021154737.3803065-1-arnd@arndb.de> <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
- <3808786.t4RxxDciQu@wuerfel> <CAMuHMdWq9_xHZgMtho87yRnR+RBVA22Ss+8dPRb4OQ+Vrni69A@mail.gmail.com>
- <CAMuHMdXRjgETtjBHHu2mHt9iEfe_rL5fpD-pgPH9MWniOFubQQ@mail.gmail.com> <20161031095214.GA2335@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 09:14:02 +0100
-Message-ID: <CAMuHMdVHmRcN0Tc1mWpeU5CCzqZY+naj-eU6hfiTe=tRD9XjNg@mail.gmail.com>
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-To: Simon Horman <horms@verge.net.au>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 1 Nov 2016 10:28:16 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -24,66 +13,42 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH] clk: fix link error for rcar-gen2
+Message-ID: <20161101092814.GD28143@verge.net.au>
+References: <20161021154737.3803065-1-arnd@arndb.de>
+ <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
+ <3808786.t4RxxDciQu@wuerfel>
+ <CAMuHMdWq9_xHZgMtho87yRnR+RBVA22Ss+8dPRb4OQ+Vrni69A@mail.gmail.com>
+ <CAMuHMdXRjgETtjBHHu2mHt9iEfe_rL5fpD-pgPH9MWniOFubQQ@mail.gmail.com>
+ <20161031095214.GA2335@verge.net.au>
+ <CAMuHMdV6==enPXf_A=SO-PdSihKZdaRUvZA6ZM5+Dy6KJxhrJw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV6==enPXf_A=SO-PdSihKZdaRUvZA6ZM5+Dy6KJxhrJw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Mon, Oct 31, 2016 at 11:02:36AM +0100, Geert Uytterhoeven wrote:
+> On Mon, Oct 31, 2016 at 10:52 AM, Simon Horman <horms@verge.net.au> wrote:
+> > From: Simon Horman <horms+renesas@verge.net.au>
+> > Subject: [PATCH] ARM: shmobile: only call rcar_gen2_clocks_init() if present
+> >
+> > The RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the R-Car Gen2 clock
+> > driver. This is a harbinger of a transition for R-Car Gen2 SoCs. As the
+> > process to get all the required pieces in place is somewhat complex it
+> > seems useful to try to disentangle dependencies where possible.
+> >
+> > The approach here is to temporarily disable calling rcar_gen2_clocks_init()
+> > if no R-Car Gen2 SoC are configured and thus the symbol will not be
+> 
+> SoCs
+> 
+> > present.
+> >
+> > Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Mon, Oct 31, 2016 at 10:52 AM, Simon Horman <horms@verge.net.au> wrote:
-> From: Simon Horman <horms+renesas@verge.net.au>
-> Subject: [PATCH] ARM: shmobile: only call rcar_gen2_clocks_init() if present
->
-> The RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the R-Car Gen2 clock
-> driver. This is a harbinger of a transition for R-Car Gen2 SoCs. As the
-> process to get all the required pieces in place is somewhat complex it
-> seems useful to try to disentangle dependencies where possible.
->
-> The approach here is to temporarily disable calling rcar_gen2_clocks_init()
-> if no R-Car Gen2 SoC are configured and thus the symbol will not be
-> present.
->
-> Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->
-> The current likely path to removing need for this is for
-> "[PATCH v4 00/23] soc: renesas: Add R-Car RST driver for obtaining mode
-> pin state" to be accepted. In particular patch 20 removes the call to
-> rcar_gen2_clocks_init() in rcar_gen2_timer_init().
-> ---
->  arch/arm/mach-shmobile/setup-rcar-gen2.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> index 875bcb8c1026..657262556dc4 100644
-> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> @@ -131,7 +131,13 @@ void __init rcar_gen2_timer_init(void)
->         iounmap(base);
->  #endif /* CONFIG_ARM_ARCH_TIMER */
->
-> -       rcar_gen2_clocks_init(mode);
-> +       if (IS_ENABLED(CONFIG_ARCH_R8A7790) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7791) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7792) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7793) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7794))
-> +               rcar_gen2_clocks_init(mode);
-
-Upon second thought (triggered bySergei conflict notification), this needs
-an else clause:
-
-        else
-                of_clk_init(NULL);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, I will queue this up.
