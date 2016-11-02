@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49467 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49502 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753924AbcKBN3h (ORCPT
+        with ESMTP id S1753565AbcKBN3p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:37 -0400
+        Wed, 2 Nov 2016 09:29:45 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -13,9 +13,9 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 05/32] media: rcar-vin: fix how pads are handled for v4l2 subdeivce operations
-Date: Wed,  2 Nov 2016 14:23:02 +0100
-Message-Id: <20161102132329.436-6-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 22/32] media: rcar-vin: add chsel information to rvin_info
+Date: Wed,  2 Nov 2016 14:23:19 +0100
+Message-Id: <20161102132329.436-23-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -24,104 +24,55 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar-vin driver only uses one pad, pad number 0.
-
- All v4l2 operations which did not check that the requested operation
- was for pad 0 have been updated with a check to enforce this.
-
- All v4l2 operations that stored (and later restore) the requested pad
- before substituting it for the subdeivce pad number have been update
- not store the incoming pad and simply restore it to 0 after the
- subdevice operation is complete.
+Each Gen3 SoC have a limited set of predefined routing possibilities for
+which CSI2 device and virtual channel can be routed to which VIN
+instance.  Prepare to store this information in the struct rvin_info.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-vin.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 7ca2759..610f59e 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -550,14 +550,16 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--	int pad, ret;
-+	int ret;
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 90c28a7..cd7d959 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -35,6 +35,9 @@
+ /* Max number on VIN instances that can be in a system */
+ #define RCAR_VIN_NUM 8
+ 
++/* Max number of CHSEL values for any Gen3 SoC */
++#define RCAR_CHSEL_MAX 6
 +
-+	if (timings->pad)
-+		return -EINVAL;
+ enum chip_id {
+ 	RCAR_H1,
+ 	RCAR_M1,
+@@ -111,6 +114,16 @@ struct rvin_graph_entity {
  
--	pad = timings->pad;
- 	timings->pad = vin->sink_pad_idx;
+ struct rvin_group;
  
- 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
- 
--	timings->pad = pad;
-+	timings->pad = 0;
- 
- 	return ret;
- }
-@@ -600,14 +602,16 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--	int pad, ret;
-+	int ret;
 +
-+	if (cap->pad)
-+		return -EINVAL;
++/** struct rvin_group_chsel - Map a CSI2 device and channel for a CHSEL value
++ * @csi:		VIN internal number for CSI2 device
++ * @chan:		CSI2 VC number on remote
++ */
++struct rvin_group_chsel {
++	enum rvin_csi_id csi;
++	int chan;
++};
++
+ /**
+  * struct rvin_info- Information about the particular VIN implementation
+  * @chip:		type of VIN chip
+@@ -123,6 +136,9 @@ struct rvin_info {
  
--	pad = cap->pad;
- 	cap->pad = vin->sink_pad_idx;
+ 	unsigned int max_width;
+ 	unsigned int max_height;
++
++	unsigned int num_chsels;
++	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
+ };
  
- 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
- 
--	cap->pad = pad;
-+	cap->pad = 0;
- 
- 	return ret;
- }
-@@ -616,17 +620,16 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--	int input, ret;
-+	int ret;
- 
- 	if (edid->pad)
- 		return -EINVAL;
- 
--	input = edid->pad;
- 	edid->pad = vin->sink_pad_idx;
- 
- 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
- 
--	edid->pad = input;
-+	edid->pad = 0;
- 
- 	return ret;
- }
-@@ -635,17 +638,16 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--	int input, ret;
-+	int ret;
- 
- 	if (edid->pad)
- 		return -EINVAL;
- 
--	input = edid->pad;
- 	edid->pad = vin->sink_pad_idx;
- 
- 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
- 
--	edid->pad = input;
-+	edid->pad = 0;
- 
- 	return ret;
- }
+ /**
 -- 
 2.10.2
