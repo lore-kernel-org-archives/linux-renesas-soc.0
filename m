@@ -1,37 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50328 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:48922 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750998AbcKGMcp (ORCPT
+        with ESMTP id S1751076AbcKBJYB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 07:32:45 -0500
-Date: Mon, 7 Nov 2016 13:32:38 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wed, 2 Nov 2016 05:24:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v7 03/11] arm64: dts: r8a7795: salvator-x: Enable UHS-I
- SDR-104
-Message-ID: <20161107123237.GC12319@verge.net.au>
-References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
- <1473764228-24768-4-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdW8WMFMWzjr+KnrifbOgvJV3dZWxC3zVYMfSvd=L6KAsw@mail.gmail.com>
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: shmobile: defconfig: Enable CONFIG_CGROUPS
+Date: Wed,  2 Nov 2016 10:23:54 +0100
+Message-Id: <a604a37d46b80899d5a09d937fdd670e93af690d.1478078446.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478078446.git.horms+renesas@verge.net.au>
+References: <cover.1478078446.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW8WMFMWzjr+KnrifbOgvJV3dZWxC3zVYMfSvd=L6KAsw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 25, 2016 at 12:48:40PM +0200, Geert Uytterhoeven wrote:
-> On Tue, Sep 13, 2016 at 12:57 PM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > Add the sd-uhs-sdr104 property to SDHI0 and SDHI1.
-> 
-> SDHI0 and SDHI3?
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Thanks, I will fix that.
+Enable support for CONFIG_CGROUPS in shmobile_defconfig.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index baa07a46a88b..1b0f8ae36fb3 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -2,6 +2,7 @@ CONFIG_SYSVIPC=y
+ CONFIG_NO_HZ=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
++CONFIG_CGROUPS=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_SYSCTL_SYSCALL=y
+-- 
+2.7.0.rc3.207.g0ac5344
