@@ -1,61 +1,107 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 14/14] i2c: mux: demux-pinctrl: make drivers with no pinctrl work again
-Date: Sun,  6 Nov 2016 21:20:32 +0100
-Message-Id: <20161106202032.5227-15-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49495 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752586AbcKBN3m (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 2 Nov 2016 09:29:42 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 15/32] media: rcar-vin: move max width and height information to chip information
+Date: Wed,  2 Nov 2016 14:23:12 +0100
+Message-Id: <20161102132329.436-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some drivers like i2c-gpio do not have dedicated pinctrl states. They
-broke when error checking for pinctrl was added. Detect them now, and in
-their case, simply skip over pinctrl configuration.
+On Gen3 the max supported width and height will be different from Gen2.
+Move the limits to the struct chip_info to prepare for Gen3 support.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/i2c/muxes/i2c-demux-pinctrl.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 6 ++++++
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-index b3893f6282ba5b..3e6fe1760d82fc 100644
---- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-+++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-@@ -69,10 +69,28 @@ static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 ne
- 		goto err_with_revert;
- 	}
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 372443e..e3dea60 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -255,14 +255,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
  
--	p = devm_pinctrl_get_select(adap->dev.parent, priv->bus_name);
-+	/*
-+	 * Check if there are pinctrl states at all. Note: we cant' use
-+	 * devm_pinctrl_get_select() because we need to distinguish between
-+	 * the -ENODEV from devm_pinctrl_get() and pinctrl_lookup_state().
-+	 */
-+	p = devm_pinctrl_get(adap->dev.parent);
- 	if (IS_ERR(p)) {
- 		ret = PTR_ERR(p);
--		goto err_with_put;
-+		/* continue if just no pinctrl states (e.g. i2c-gpio), otherwise exit */
-+		if (ret != -ENODEV)
-+			goto err_with_put;
-+	} else {
-+		/* there are states. check and use them */
-+		struct pinctrl_state *s = pinctrl_lookup_state(p, priv->bus_name);
+ static const struct rvin_info rcar_info_h1 = {
+ 	.chip = RCAR_H1,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_m1 = {
+ 	.chip = RCAR_M1,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.chip = RCAR_GEN2,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct of_device_id rvin_of_id_table[] = {
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 05b0181..f5fbe9f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -23,8 +23,6 @@
+ #include "rcar-vin.h"
+ 
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+-#define RVIN_MAX_WIDTH		2048
+-#define RVIN_MAX_HEIGHT		2048
+ 
+ /* -----------------------------------------------------------------------------
+  * Format Conversions
+@@ -271,8 +269,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+ 
+ 	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
+-			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
+ 
+ 	pix->bytesperline = max_t(u32, pix->bytesperline,
+ 				  rvin_format_bytesperline(pix));
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 17a5fce..ddeca9f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -91,9 +91,15 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info- Information about the particular VIN implementation
+  * @chip:		type of VIN chip
++ *
++ * max_width:		max input with the VIN supports
++ * max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
 +
-+		if (IS_ERR(s)) {
-+			ret = PTR_ERR(s);
-+			goto err_with_put;
-+		}
-+		ret = pinctrl_select_state(p, s);
-+		if (ret < 0)
-+			goto err_with_put;
- 	}
++	unsigned int max_width;
++	unsigned int max_height;
+ };
  
- 	priv->chan[new_chan].parent_adap = adap;
+ /**
 -- 
-2.9.3
-
+2.10.2
