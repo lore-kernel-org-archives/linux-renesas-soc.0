@@ -1,56 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49455 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753543AbcKBN3g (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:34763 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757493AbcKBVx5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:36 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 04/32] media: rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
-Date: Wed,  2 Nov 2016 14:23:01 +0100
-Message-Id: <20161102132329.436-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 2 Nov 2016 17:53:57 -0400
+Received: by mail-lf0-f51.google.com with SMTP id b81so23813991lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Nov 2016 14:53:56 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v5 0/2] Renesas R8A7743 CPG/MSSR clock support
+Date: Thu, 03 Nov 2016 00:53:53 +0300
+Message-ID: <1737840.BeMyoUTlpl@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use rvin_reset_format() in rvin_s_dv_timings() instead if just resetting
-a few fields. This fixes an issue where the field format was not
-properly set after S_DV_TIMINGS.
+Hello.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+'linux.git' repo. I've split them from the R-Car gen2 common support patch.
+As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
+patch #1 of this series, it might make sense to merge this patch to the
+'renesas.git' repo as well...
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 69bc4cf..7ca2759 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, void *priv_fh,
- 	if (ret)
- 		return ret;
- 
--	vin->source.width = timings->bt.width;
--	vin->source.height = timings->bt.height;
--	vin->format.width = timings->bt.width;
--	vin->format.height = timings->bt.height;
--
--	return 0;
-+	/* Changing the timings will change the width/height */
-+	return rvin_reset_format(vin);
- }
- 
- static int rvin_g_dv_timings(struct file *file, void *priv_fh,
--- 
-2.10.2
+[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+[2/2] clk: renesas: cpg-mssr: add R8A7743 support
+
+MBR, Sergei
