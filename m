@@ -1,80 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932196AbcKDJpK (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36559 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750762AbcKBJtK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:45:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Wed, 2 Nov 2016 05:49:10 -0400
+MIME-Version: 1.0
+In-Reply-To: <1638480.5pJxF7pUnz@wasted.cogentembedded.com>
+References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <1638480.5pJxF7pUnz@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 10:49:08 +0100
+Message-ID: <CAMuHMdUGHET+b7eoyTeGo8vebxNvFWJsre-cLnk_i4BvgwjK_Q@mail.gmail.com>
+Subject: Re: [PATCH 03/11] ARM: shmobile: r8a7745: basic SoC support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.10
-Date: Fri,  4 Nov 2016 10:44:42 +0100
-Message-Id: <cover.1478251657.git.horms+renesas@verge.net.au>
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Sat, Oct 29, 2016 at 12:16 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add minimal support for the RZ/G1E (R8A7745) SoC.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Please consider these Renesas ARM based SoC updates for v4.10.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+                        Geert
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.10
-
-for you to fetch changes up to 9652623f8f019edc93a7a934a10b7d0b90421d5a:
-
-  ARM: shmobile: r8a7779/marzen: Add board part number to DT bindings (2016-11-04 10:25:45 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Updates for v4.10
-
-Enhancements:
-* Basic support for r8a7743 SoC; only SoC code so far
-* Select errata 798181 for SoCs with CA15 cores
-
-Clean-up:
-* Consolidate R8A7743 and R8A779[234] machine definitions
-
-Documentation:
-* Add Marzen, Gose and Alt board part numbers to DT bindings
-* Document SK-RZG1M board
-
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      ARM: shmobile: Sort Kconfig selections
-      ARM: shmobile: r8a7794/alt: Add board part number to DT bindings
-      ARM: shmobile: r8a7793/gose: Add board part number to DT bindings
-      ARM: shmobile: r8a7779/marzen: Add board part number to DT bindings
-
-Laurent Pinchart (1):
-      ARM: shmobile: Consolidate R8A7743 and R8A779[234] machine definitions
-
-Sergei Shtylyov (2):
-      ARM: shmobile: r8a7743: basic SoC support
-      ARM: shmobile: document SK-RZG1M board
-
-Simon Horman (2):
-      ARM: shmobile: only call rcar_gen2_clocks_init() if present
-      ARM: shmobile: select errata 798181 for SoCs with CA15 cores
-
- Documentation/devicetree/bindings/arm/shmobile.txt | 10 +++--
- arch/arm/mach-shmobile/Kconfig                     | 16 ++++++--
- arch/arm/mach-shmobile/Makefile                    |  3 --
- arch/arm/mach-shmobile/setup-r8a7792.c             | 35 -----------------
- arch/arm/mach-shmobile/setup-r8a7793.c             | 33 ----------------
- arch/arm/mach-shmobile/setup-r8a7794.c             | 33 ----------------
- arch/arm/mach-shmobile/setup-rcar-gen2.c           | 44 +++++++++++++++++++++-
- 7 files changed, 63 insertions(+), 111 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7792.c
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7793.c
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7794.c
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
