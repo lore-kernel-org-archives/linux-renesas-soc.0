@@ -1,244 +1,68 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        robin.murphy@arm.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH v6 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-Date: Fri, 11 Nov 2016 02:46:14 +0200
-Message-ID: <2771674.NN4Eo9tErC@avalon>
-In-Reply-To: <20161019233553.10506.72700.sendpatchset@little-apple>
-References: <20161019233533.10506.16810.sendpatchset@little-apple> <20161019233553.10506.72700.sendpatchset@little-apple>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49472 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754269AbcKBN3k (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 2 Nov 2016 09:29:40 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 12/32] media: rcar-vin: split rvin_s_fmt_vid_cap()
+Date: Wed,  2 Nov 2016 14:23:09 +0100
+Message-Id: <20161102132329.436-13-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+The functionality provided by rvin_s_fmt_vid_cap() will be needed in
+other places to add Gen3 support. Split it up in a function which do the
+work and one which interface with the v4l2 API.
 
-Thank you for the patch.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-On Thursday 20 Oct 2016 08:35:53 Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Introduce a bitmap for context handing and convert the
-> interrupt routine to handle all registered contexts.
-> 
-> At this point the number of contexts are still limited.
-> 
-> Also remove the use of the ARM specific mapping variable
-> from ipmmu_irq() to allow compile on ARM64.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Reviewed-by: Joerg Roedel <jroedel@suse.de>
-> ---
-> 
->  Changes since V5:
->  - None
-> 
->  Changes since V4:
->  - None
-> 
->  Changes since V3:
->  - None
-> 
->  Changes since V2: (Thanks again to Laurent!)
->  - Introduce a spinlock together with the bitmap and domain array.
->  - Break out code into separate functions for alloc and free.
->  - Perform free after (instead of before) configuring hardware registers.
->  - Use the spinlock to protect the domain array in the interrupt handler.
-> 
->  Changes since V1: (Thanks to Laurent for feedback!)
->  - Use simple find_first_zero()/set_bit()/clear_bit() for context
-> management. - For allocation rely on spinlock held when calling
-> ipmmu_domain_init_context() - For test/free use atomic bitops
->  - Return IRQ_HANDLED if any of the contexts generated interrupts
-> 
->  drivers/iommu/ipmmu-vmsa.c |   76 +++++++++++++++++++++++++++++++++++------
->  1 file changed, 66 insertions(+), 10 deletions(-)
-> 
-> --- 0004/drivers/iommu/ipmmu-vmsa.c
-> +++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:48:23.770607110 +0900
-> @@ -8,6 +8,7 @@
->   * the Free Software Foundation; version 2 of the License.
->   */
-> 
-> +#include <linux/bitmap.h>
->  #include <linux/delay.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/err.h>
-> @@ -26,12 +27,17 @@
-> 
->  #include "io-pgtable.h"
-> 
-> +#define IPMMU_CTX_MAX 1
-> +
->  struct ipmmu_vmsa_device {
->  	struct device *dev;
->  	void __iomem *base;
->  	struct list_head list;
-> 
->  	unsigned int num_utlbs;
-> +	spinlock_t lock;			/* Protects ctx and domains[] 
-*/
-> +	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-> +	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
-> 
->  	struct dma_iommu_mapping *mapping;
->  };
-> @@ -293,9 +299,29 @@ static struct iommu_gather_ops ipmmu_gat
->   * Domain/Context Management
->   */
-> 
-> +static int ipmmu_domain_allocate_context(struct ipmmu_vmsa_device *mmu,
-> +					 struct ipmmu_vmsa_domain *domain)
-
-Nitpicking, I'd name this ipmmu_domain_alloc_context() as the driver uses the 
-alloc abbreviation already.
-
-> +{
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	spin_lock_irqsave(&mmu->lock, flags);
-> +
-> +	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
-> +	if (ret != IPMMU_CTX_MAX) {
-> +		mmu->domains[ret] = domain;
-> +		set_bit(ret, mmu->ctx);
-> +	}
-
-How about returning a negative error code on error instead of IPMMU_CTX_MAX ? 
-I think it would make the API clearer, avoiding the need to think about 
-special error handling for this function.
-
-Having said that, I find that the init/alloc and destroy/free function names 
-don't carry a very clear semantic. Given the size of the alloc and free 
-functions, how about inlining them in their single caller ?
-
-> +
-> +	spin_unlock_irqrestore(&mmu->lock, flags);
-> +
-> +	return ret;
-> +}
-> +
->  static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
->  {
->  	u64 ttbr;
-> +	int ret;
-> 
->  	/*
->  	 * Allocate the page table operations.
-> @@ -325,10 +351,15 @@ static int ipmmu_domain_init_context(str
->  		return -EINVAL;
-> 
->  	/*
-> -	 * TODO: When adding support for multiple contexts, find an unused
-> -	 * context.
-> +	 * Find an unused context.
->  	 */
-
-The comment now holds on one line.
-
-> -	domain->context_id = 0;
-> +	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
-> +	if (ret == IPMMU_CTX_MAX) {
-> +		free_io_pgtable_ops(domain->iop);
-> +		return -EBUSY;
-> +	}
-> +
-> +	domain->context_id = ret;
-> 
->  	/* TTBR0 */
->  	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
-> @@ -370,6 +401,19 @@ static int ipmmu_domain_init_context(str
->  	return 0;
->  }
-> 
-> +static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
-> +				      unsigned int context_id)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&mmu->lock, flags);
-> +
-> +	clear_bit(context_id, mmu->ctx);
-> +	mmu->domains[context_id] = NULL;
-> +
-> +	spin_unlock_irqrestore(&mmu->lock, flags);
-> +}
-> +
->  static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
->  {
->  	/*
-> @@ -380,6 +424,7 @@ static void ipmmu_domain_destroy_context
->  	 */
->  	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
->  	ipmmu_tlb_sync(domain);
-> +	ipmmu_domain_free_context(domain->mmu, domain->context_id);
->  }
-> 
->  /*
-> ---------------------------------------------------------------------------
-> -- @@ -437,16 +482,25 @@ static irqreturn_t ipmmu_domain_irq(stru
->  static irqreturn_t ipmmu_irq(int irq, void *dev)
->  {
->  	struct ipmmu_vmsa_device *mmu = dev;
-> -	struct iommu_domain *io_domain;
-> -	struct ipmmu_vmsa_domain *domain;
-> +	irqreturn_t status = IRQ_NONE;
-> +	unsigned int i;
-> +	unsigned long flags;
-
-Nitpicking again I like to arrange variable declarations by decreasing line 
-length when there's no reason not to :-)
-
-> -	if (!mmu->mapping)
-> -		return IRQ_NONE;
-> +	spin_lock_irqsave(&mmu->lock, flags);
-> +
-> +	/*
-> +	 * Check interrupts for all active contexts.
-> +	 */
-
-This comment holds on a single line too.
-
-With all these small comments addressed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +	for (i = 0; i < IPMMU_CTX_MAX; i++) {
-> +		if (!mmu->domains[i])
-> +			continue;
-> +		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
-> +			status = IRQ_HANDLED;
-> +	}
-> 
-> -	io_domain = mmu->mapping->domain;
-> -	domain = to_vmsa_domain(io_domain);
-> +	spin_unlock_irqrestore(&mmu->lock, flags);
-> 
-> -	return ipmmu_domain_irq(domain);
-> +	return status;
->  }
-> 
->  /*
-> ---------------------------------------------------------------------------
-> -- @@ -774,6 +828,8 @@ static int ipmmu_probe(struct platform_d
-> 
->  	mmu->dev = &pdev->dev;
->  	mmu->num_utlbs = 32;
-> +	spin_lock_init(&mmu->lock);
-> +	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
-> 
->  	/* Map I/O memory and request IRQ. */
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 51324c6..929f58b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -313,10 +313,8 @@ static int rvin_try_fmt_vid_cap(struct file *file, void *priv,
+ 				 &source);
+ }
+ 
+-static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
+-			      struct v4l2_format *f)
++static int __rvin_s_fmt_vid_cap(struct rvin_dev *vin, struct v4l2_format *f)
+ {
+-	struct rvin_dev *vin = video_drvdata(file);
+ 	struct rvin_source_fmt source;
+ 	int ret;
+ 
+@@ -338,6 +336,14 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
+ 	return 0;
+ }
+ 
++static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
++			      struct v4l2_format *f)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++
++	return __rvin_s_fmt_vid_cap(vin, f);
++}
++
+ static int rvin_g_fmt_vid_cap(struct file *file, void *priv,
+ 			      struct v4l2_format *f)
+ {
 -- 
-Regards,
-
-Laurent Pinchart
+2.10.2
