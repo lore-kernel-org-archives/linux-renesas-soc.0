@@ -1,49 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:48890 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935046AbcKWUP6 (ORCPT
+        with ESMTP id S1751064AbcKBJXy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:58 -0500
+        Wed, 2 Nov 2016 05:23:54 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/31] ARM: dts: r8a7790: Add device node for PRR
-Date: Wed, 23 Nov 2016 21:14:34 +0100
-Message-Id: <328f39b84d4312f3bbc390524f6c6e8be5852500.1479931687.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+Subject: [PATCH] arm64: defconfig: Enable DRM DU and V4L2 FCP + VSP modules
+Date: Wed,  2 Nov 2016 10:23:45 +0100
+Message-Id: <833c97254724a620d1d9fb9a580681fb52536fbf.1478078567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478078567.git.horms+renesas@verge.net.au>
+References: <cover.1478078567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+Extend the ARM64 defconfig to enable the DU DRM device as module
+together with required dependencies of V4L2 FCP and VSP modules.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This enables VGA output on the r8a7795 Salvator-X board.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/configs/defconfig | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index a946474be9cf..f554ef3c8096 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1471,6 +1471,11 @@
- 		};
- 	};
- 
-+	prr: chipid@ff000044 {
-+		compatible = "renesas,prr";
-+		reg = <0 0xff000044 0 4>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,r8a7790-sysc";
- 		reg = <0 0xe6180000 0 0x0200>;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index dab2cb0c1f1c..6eaf937ef5a4 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -292,8 +292,22 @@ CONFIG_REGULATOR_PWM=y
+ CONFIG_REGULATOR_QCOM_SMD_RPM=y
+ CONFIG_REGULATOR_QCOM_SPMI=y
+ CONFIG_REGULATOR_S2MPS11=y
++CONFIG_MEDIA_SUPPORT=m
++CONFIG_MEDIA_CAMERA_SUPPORT=y
++CONFIG_MEDIA_ANALOG_TV_SUPPORT=y
++CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y
++CONFIG_MEDIA_CONTROLLER=y
++CONFIG_VIDEO_V4L2_SUBDEV_API=y
++# CONFIG_DVB_NET is not set
++CONFIG_V4L_MEM2MEM_DRIVERS=y
++CONFIG_VIDEO_RENESAS_FCP=m
++CONFIG_VIDEO_RENESAS_VSP1=m
+ CONFIG_DRM=m
+ CONFIG_DRM_NOUVEAU=m
++CONFIG_DRM_RCAR_DU=m
++CONFIG_DRM_RCAR_HDMI=y
++CONFIG_DRM_RCAR_LVDS=y
++CONFIG_DRM_RCAR_VSP=y
+ CONFIG_DRM_TEGRA=m
+ CONFIG_DRM_PANEL_SIMPLE=m
+ CONFIG_DRM_I2C_ADV7511=m
 -- 
 2.7.0.rc3.207.g0ac5344
