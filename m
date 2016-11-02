@@ -1,43 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:34923 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753068AbcKBQnb (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49446 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752978AbcKBN3g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 12:43:31 -0400
-Received: by mail-lf0-f41.google.com with SMTP id b14so17852840lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Nov 2016 09:43:30 -0700 (PDT)
-Subject: Re: [PATCH 03/32] media: rcar-vin: reset bytesperline and sizeimage
- when resetting format
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wed, 2 Nov 2016 09:29:36 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Hans Verkuil <hverkuil@xs4all.nl>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
- <20161102132329.436-4-niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <2f6c92a8-6d07-d355-41c9-ce7bc73093da@cogentembedded.com>
-Date: Wed, 2 Nov 2016 19:43:27 +0300
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 03/32] media: rcar-vin: reset bytesperline and sizeimage when resetting format
+Date: Wed,  2 Nov 2016 14:23:00 +0100
+Message-Id: <20161102132329.436-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20161102132329.436-4-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+These two fields where forgotten when refactoring the format reset code
+path. If they are not also reset at the same time as width and hight the
+format read using G_FMT will not match realty.
 
-On 11/02/2016 04:23 PM, Niklas Söderlund wrote:
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> These two fields where forgotten when refactoring the format reset code
-> path. If they are not also reset at the same time as width and hight the
-> format read using G_FMT will not match realty.
-
-    Reality?
-
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 2bbe6d4..69bc4cf 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -151,6 +151,9 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 
+ 	rvin_reset_crop_compose(vin);
+ 
++	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
++	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
++
+ 	return 0;
+ }
+ 
+-- 
+2.10.2
