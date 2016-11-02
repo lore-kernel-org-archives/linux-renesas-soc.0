@@ -1,84 +1,135 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49495 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754501AbcKBN3r (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 2 Nov 2016 09:29:47 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 25/32] media: rcar-vin: enable CSI2 group subdevices in lookup helpers
+Date: Wed,  2 Nov 2016 14:23:22 +0100
+Message-Id: <20161102132329.436-26-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <4144867.5S9itKOJEU@wasted.cogentembedded.com>
-References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <4144867.5S9itKOJEU@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 11:03:07 +0100
-Message-ID: <CAMuHMdVcHVZmZ_b4UXgG9-3kbAOydocS2mvLLFB1FAhSMQwbow@mail.gmail.com>
-Subject: Re: [PATCH 04/11] ARM: dts: r8a7745: initial SoC device tree
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Oct 29, 2016 at 12:17 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The  initial R8A7745 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-> CPG, and the required clock descriptions.
->
-> Based on the original (and large) patch by Dmitry Shifrin
-> <dmitry.shifrin@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Make the subdevice helpers look not only at the local digital subdevice
+but also for the CSI2 group subdevices which can be present on Gen3.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Which CSI2 group subdevices are found depends on the CSI2 subgroup
+routing which is stored in the CHSEL register of the subgroup master
+(VIN0 for VIN0-3 and VIN4 for VIN4-7). The lookup functions look at this
+value and returns the correct information or NULL if there is no
+attached subdevices for the current routing for this device.
 
-> ---
->  arch/arm/boot/dts/r8a7745.dtsi |  120 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 120 insertions(+)
->
-> Index: renesas/arch/arm/boot/dts/r8a7745.dtsi
-> ===================================================================
-> --- /dev/null
-> +++ renesas/arch/arm/boot/dts/r8a7745.dtsi
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 66 ++++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  2 +-
+ 2 files changed, 66 insertions(+), 2 deletions(-)
 
-> +               gic: interrupt-controller@f1001000 {
-> +                       compatible = "arm,gic-400";
-> +                       #interrupt-cells = <3>;
-> +                       #address-cells = <0>;
-> +                       interrupt-controller;
-> +                       reg = <0 0xf1001000 0 0x1000>,
-> +                             <0 0xf1002000 0 0x1000>,
-> +                             <0 0xf1004000 0 0x2000>,
-> +                             <0 0xf1006000 0 0x2000>;
-> +                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
-> +                                     IRQ_TYPE_LEVEL_HIGH)>;
-
-You may want to align IRQ_TYPE_LEVEL_HIGH with GIC_CPU_MASK_SIMPLE.
-
-> +               };
-> +
-> +               timer {
-> +                       compatible = "arm,armv7-timer";
-> +                       interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-> +                                     IRQ_TYPE_LEVEL_LOW)>,
-> +                                    <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-> +                                     IRQ_TYPE_LEVEL_LOW)>,
-> +                                    <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
-> +                                     IRQ_TYPE_LEVEL_LOW)>,
-> +                                    <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
-> +                                     IRQ_TYPE_LEVEL_LOW)>;
-
-Likewise.
-
-> +               };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 06876a8..f382f91 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -330,9 +330,73 @@ static void rvin_group_delete(struct rvin_dev *vin)
+  * Subdevice helpers
+  */
+ 
++static int rvin_group_vin_to_csi(struct rvin_dev *vin)
++{
++	int i, vin_num, vin_master, chsel, csi;
++
++	/*
++	 * Only try to translate to a CSI2 number if there is a enabled
++	 * link from the VIN sink pad. However if there are no links at
++	 * all we are at probe time so ignore the need for enabled links
++	 * to be able to make a better guess of initial format
++	 */
++	if (vin->pads[RVIN_SINK].entity->num_links &&
++	    !media_entity_remote_pad(&vin->pads[RVIN_SINK]))
++		return -1;
++
++	/* Find which VIN we are */
++	vin_num = -1;
++	for (i = 0; i < RCAR_VIN_NUM; i++)
++		if (vin == vin->group->vin[i])
++			vin_num = i;
++
++	if (vin_num == -1)
++		return -1;
++
++	vin_master = vin_num < 4 ? 0 : 4;
++	if (!vin->group->vin[vin_master])
++		return -1;
++
++	chsel = rvin_get_chsel(vin->group->vin[vin_master]);
++
++	csi = vin->info->chsels[vin_num][chsel].csi;
++	if (csi >= RVIN_CSI_MAX)
++		return -1;
++
++	if (!vin->group->source[csi].subdev || !vin->group->bridge[csi].subdev)
++		return -1;
++
++	return csi;
++}
++
+ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
+ {
+-	return &vin->digital;
++	int csi;
++
++	/* If there is a digital subdev use it */
++	if (vin->digital.subdev)
++		return &vin->digital;
++
++	csi = rvin_group_vin_to_csi(vin);
++	if (csi < 0)
++		return NULL;
++
++	return &vin->group->source[csi];
++}
++
++struct v4l2_subdev *vin_to_source(struct rvin_dev *vin)
++{
++	int csi;
++
++	/* If there is a digital subdev use it */
++	if (vin->digital.subdev)
++		return vin->digital.subdev;
++
++	csi = rvin_group_vin_to_csi(vin);
++	if (csi < 0)
++		return NULL;
++
++	return vin->group->source[csi].subdev;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index cd7d959..2f1e087 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -207,7 +207,7 @@ struct rvin_dev {
+ };
+ 
+ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
+-#define vin_to_source(vin)		vin->digital.subdev
++struct v4l2_subdev *vin_to_source(struct rvin_dev *vin);
+ 
+ /* Debug */
+ #define vin_dbg(d, fmt, arg...)		dev_dbg(d->dev, fmt, ##arg)
+-- 
+2.10.2
