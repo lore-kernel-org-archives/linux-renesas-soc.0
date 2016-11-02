@@ -1,135 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48964 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751993AbcKBJYR (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49467 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753924AbcKBN3h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:24:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] soc: renesas: rcar-sysc: add R8A7743 support
-Date: Wed,  2 Nov 2016 10:24:10 +0100
-Message-Id: <603311ba979fa5bbbf6a8961e5f7a27deafce1b4.1478077617.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478077617.git.horms+renesas@verge.net.au>
-References: <cover.1478077617.git.horms+renesas@verge.net.au>
+        Wed, 2 Nov 2016 09:29:37 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 05/32] media: rcar-vin: fix how pads are handled for v4l2 subdeivce operations
+Date: Wed,  2 Nov 2016 14:23:02 +0100
+Message-Id: <20161102132329.436-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The rcar-vin driver only uses one pad, pad number 0.
 
-Add support for RZ/G1M (R8A7743) SoC power areas to the R-Car SYSC driver.
+ All v4l2 operations which did not check that the requested operation
+ was for pad 0 have been updated with a check to enforce this.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+ All v4l2 operations that stored (and later restore) the requested pad
+ before substituting it for the subdeivce pad number have been update
+ not store the incoming pad and simply restore it to 0 after the
+ subdevice operation is complete.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- .../bindings/power/renesas,rcar-sysc.txt           |  7 +++--
- drivers/soc/renesas/Makefile                       |  1 +
- drivers/soc/renesas/r8a7743-sysc.c                 | 32 ++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c                    |  3 ++
- drivers/soc/renesas/rcar-sysc.h                    |  1 +
- 5 files changed, 41 insertions(+), 3 deletions(-)
- create mode 100644 drivers/soc/renesas/r8a7743-sysc.c
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-index 0725fb37a973..c16ec1866ac4 100644
---- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -1,12 +1,13 @@
--DT bindings for the Renesas R-Car System Controller
-+DT bindings for the Renesas R-Car (RZ/G) System Controller
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 7ca2759..610f59e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -550,14 +550,16 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad, ret;
++	int ret;
++
++	if (timings->pad)
++		return -EINVAL;
  
- == System Controller Node ==
+-	pad = timings->pad;
+ 	timings->pad = vin->sink_pad_idx;
  
--The R-Car System Controller provides power management for the CPU cores and
--various coprocessors.
-+The R-Car (RZ/G) System Controller provides power management for the CPU cores
-+and various coprocessors.
+ 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
  
- Required properties:
-   - compatible: Must contain exactly one of the following:
-+      - "renesas,r8a7743-sysc" (RZ/G1M)
-       - "renesas,r8a7779-sysc" (R-Car H1)
-       - "renesas,r8a7790-sysc" (R-Car H2)
-       - "renesas,r8a7791-sysc" (R-Car M2-W)
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 623039c3514c..9e0bb329594c 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -1,3 +1,4 @@
-+obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-diff --git a/drivers/soc/renesas/r8a7743-sysc.c b/drivers/soc/renesas/r8a7743-sysc.c
-new file mode 100644
-index 000000000000..9583a327d90c
---- /dev/null
-+++ b/drivers/soc/renesas/r8a7743-sysc.c
-@@ -0,0 +1,32 @@
-+/*
-+ * Renesas RZ/G1M System Controller
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation; of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7743-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7743_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7743_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca15-scu",	0x180, 0, R8A7743_PD_CA15_SCU,	R8A7743_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca15-cpu0",	 0x40, 0, R8A7743_PD_CA15_CPU0,	R8A7743_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu1",	 0x40, 1, R8A7743_PD_CA15_CPU1,	R8A7743_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sgx",	 0xc0, 0, R8A7743_PD_SGX,	R8A7743_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7743_sysc_info __initconst = {
-+	.areas = r8a7743_areas,
-+	.num_areas = ARRAY_SIZE(r8a7743_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 65c8e1eb90c0..71acd45b13f0 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -275,6 +275,9 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+-	timings->pad = pad;
++	timings->pad = 0;
+ 
+ 	return ret;
  }
+@@ -600,14 +602,16 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad, ret;
++	int ret;
++
++	if (cap->pad)
++		return -EINVAL;
  
- static const struct of_device_id rcar_sysc_matches[] = {
-+#ifdef CONFIG_ARCH_R8A7743
-+	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
-+#endif
- #ifdef CONFIG_ARCH_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 77dbe861473f..8ab9ca8a825a 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -50,6 +50,7 @@ struct rcar_sysc_info {
- 	unsigned int num_areas;
- };
+-	pad = cap->pad;
+ 	cap->pad = vin->sink_pad_idx;
  
-+extern const struct rcar_sysc_info r8a7743_sysc_info;
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
+ 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+ 
+-	cap->pad = pad;
++	cap->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -616,17 +620,16 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int input, ret;
++	int ret;
+ 
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	input = edid->pad;
+ 	edid->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
+ 
+-	edid->pad = input;
++	edid->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -635,17 +638,16 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int input, ret;
++	int ret;
+ 
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	input = edid->pad;
+ 	edid->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
+ 
+-	edid->pad = input;
++	edid->pad = 0;
+ 
+ 	return ret;
+ }
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
