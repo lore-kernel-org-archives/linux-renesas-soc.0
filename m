@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:36352 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758992AbcKCUsw (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:35663 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933216AbcKBVvi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 16:48:52 -0400
-Received: by mail-lf0-f53.google.com with SMTP id t196so49377808lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 13:48:51 -0700 (PDT)
+        Wed, 2 Nov 2016 17:51:38 -0400
+Received: by mail-lf0-f50.google.com with SMTP id b14so23789180lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Nov 2016 14:51:37 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
         sboyd@codeaurora.org
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 RESEND] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-Date: Thu, 03 Nov 2016 23:48:47 +0300
-Message-ID: <2777851.5TLojugvYX@wasted.cogentembedded.com>
+Subject: [PATCH v3] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+Date: Thu, 03 Nov 2016 00:51:33 +0300
+Message-ID: <2853606.sYpNoOurq6@wasted.cogentembedded.com>
 In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
 References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
 MIME-Version: 1.0
@@ -31,8 +31,6 @@ Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 ---
-This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
-
 Changes in version 3:
 - remove the divisor logic from the PLL0  related code;
 - also mention R-Car V2H as not having the PLL0CR register.
@@ -49,10 +47,10 @@ Changes in version 2:
  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
  2 files changed, 408 insertions(+)
 
-Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
+Index: renesas/drivers/clk/renesas/rcar-gen2-cpg.c
 ===================================================================
 --- /dev/null
-+++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
++++ renesas/drivers/clk/renesas/rcar-gen2-cpg.c
 @@ -0,0 +1,366 @@
 +/*
 + * R-Car Gen2 Clock Pulse Generator
@@ -420,10 +418,10 @@ Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
 +
 +	return 0;
 +}
-Index: linux/drivers/clk/renesas/rcar-gen2-cpg.h
+Index: renesas/drivers/clk/renesas/rcar-gen2-cpg.h
 ===================================================================
 --- /dev/null
-+++ linux/drivers/clk/renesas/rcar-gen2-cpg.h
++++ renesas/drivers/clk/renesas/rcar-gen2-cpg.h
 @@ -0,0 +1,42 @@
 +/*
 + * R-Car Gen2 Clock Pulse Generator
