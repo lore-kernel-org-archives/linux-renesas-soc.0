@@ -1,55 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60488 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755396AbcK2JFJ (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35535 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752656AbcKBKOq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 04:05:09 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>
-Subject: [PATCH v3 09/13] drm: Add encoder_type field to the drm_bridge structure
-Date: Tue, 29 Nov 2016 11:04:39 +0200
-Message-Id: <1480410283-28698-10-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 2 Nov 2016 06:14:46 -0400
+MIME-Version: 1.0
+In-Reply-To: <2084001.a6ZvYb0cOj@wasted.cogentembedded.com>
+References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <2084001.a6ZvYb0cOj@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 11:14:44 +0100
+Message-ID: <CAMuHMdVju0Vs7Vf9aN3TKsKUB2oaL6pymynyJ8ZBW1mJU6YKBA@mail.gmail.com>
+Subject: Re: [PATCH 07/11] ARM: dts: r8a7745: add Ether support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The drm_bridge object models on- or off-chip hardware encoders and
-provide an abstract control API to display drivers. In order to help
-display drivers creating the right kind of drm_encoder object, expose
-the type of the hardware encoder associated with each bridge.
+On Sat, Oct 29, 2016 at 12:21 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Define the generic R8A7745 part of the Ether device node.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-- Clarify documentation
----
- include/drm/drm_bridge.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index 94e5ee96b3b5..0643b6ce27de 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -194,6 +194,14 @@ struct drm_bridge {
- #endif
- 	struct list_head list;
- 
-+	/**
-+	 * @encoder_type:
-+	 *
-+	 * Type of the hardware encoder modeled by the bridge as one of the
-+	 * DRM_MODE_ENCODER_* types. For the last bridge in the chain this will
-+	 * usually be identical to the bridge's &drm_encoder encoder_type.
-+	 */
-+	int encoder_type;
- 	const struct drm_bridge_funcs *funcs;
- 	void *driver_private;
- };
--- 
-Regards,
+                        Geert
 
-Laurent Pinchart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
