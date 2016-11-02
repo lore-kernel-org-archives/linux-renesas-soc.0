@@ -1,46 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932196AbcKDJpI (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49502 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754253AbcKBN3j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:45:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/29] ARM: dts: r8a7779: marzen: Configure pinmuxing for the DU0 input clock
-Date: Fri,  4 Nov 2016 10:44:27 +0100
-Message-Id: <8698d83dcf1b348eb54bcd1d52b8c636d8d7d494.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        Wed, 2 Nov 2016 09:29:39 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 10/32] media: rcar-vin: use pad information when verifying media bus format
+Date: Wed,  2 Nov 2016 14:23:07 +0100
+Message-Id: <20161102132329.436-11-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Now that the pad information is present in struct rvin_graph_entity use
+it when verifying the media bus format.
 
-DU0 uses an externally provided clock, but the corresponding pin isn't
-correctly muxed. Fix it.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7779-marzen.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
-index 541678df90a9..676151b70185 100644
---- a/arch/arm/boot/dts/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/r8a7779-marzen.dts
-@@ -170,7 +170,7 @@
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 2c40b6a..fb6368c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -48,6 +48,7 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+ 	};
  
- 	du_pins: du {
- 		du0 {
--			groups = "du0_rgb888", "du0_sync_1", "du0_clk_out_0";
-+			groups = "du0_rgb888", "du0_sync_1", "du0_clk_out_0", "du0_clk_in";
- 			function = "du0";
- 		};
- 		du1 {
+ 	code.index = 0;
++	code.pad = entity->source_pad_idx;
+ 	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
+ 		code.index++;
+ 		switch (code.code) {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
