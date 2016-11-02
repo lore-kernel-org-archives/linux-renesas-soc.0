@@ -1,218 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49486 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754186AbcKBN3j (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36014 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbcKBLRs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:39 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 08/32] media: rcar-vin: move subdev source and sink pad index to rvin_graph_entity
-Date: Wed,  2 Nov 2016 14:23:05 +0100
-Message-Id: <20161102132329.436-9-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 2 Nov 2016 07:17:48 -0400
 MIME-Version: 1.0
+In-Reply-To: <2946846.zhWOBzBeGa@wasted.cogentembedded.com>
+References: <13079532.zQoaX56ouR@wasted.cogentembedded.com> <2946846.zhWOBzBeGa@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 12:17:46 +0100
+Message-ID: <CAMuHMdUkJR_jDUbswWDq9WK12-mKmN4XLbAZzXvuR-mYbVzD0A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the sink and source pad index from struct rvin_dev to struct
-rvin_graph_entity. This is done in preparation of Gen3 support where the
-active subdeivce can be changed during runtime. And if the subdevice is
-changed the pad numbers are different so it's better to read them a
-rvin_graph_entity then from directly from the rvin_dev.
+On Thu, Oct 27, 2016 at 10:42 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by  the device tree sources to reference the R8A7745 CPG
+> clocks  by index. The data comes from the  table 7.2c in the revision 0.50
+> of the RZ/G Series User's Manual.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 45 ++++++++++++++++++++++-------
- drivers/media/platform/rcar-vin/rcar-vin.h  | 17 ++++++-----
- 2 files changed, 44 insertions(+), 18 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 370bb18..f8ff7c4 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -109,9 +109,14 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
- 	};
- 	struct v4l2_mbus_framefmt *mf = &fmt.format;
-+	struct rvin_graph_entity *rent;
- 	int ret;
- 
--	fmt.pad = vin->src_pad_idx;
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
-+
-+	fmt.pad = rent->source_pad_idx;
- 
- 	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
- 	if (ret)
-@@ -182,7 +187,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	if (pad_cfg == NULL)
- 		return -ENOMEM;
- 
--	format.pad = vin->src_pad_idx;
-+	format.pad = rent->source_pad_idx;
- 
- 	field = pix->field;
- 
-@@ -560,12 +565,17 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
-+	struct rvin_graph_entity *rent;
- 	int ret;
- 
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
-+
- 	if (timings->pad)
- 		return -EINVAL;
- 
--	timings->pad = vin->sink_pad_idx;
-+	timings->pad = rent->sink_pad_idx;
- 
- 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
- 
-@@ -612,12 +622,17 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
-+	struct rvin_graph_entity *rent;
- 	int ret;
- 
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
-+
- 	if (cap->pad)
- 		return -EINVAL;
- 
--	cap->pad = vin->sink_pad_idx;
-+	cap->pad = rent->sink_pad_idx;
- 
- 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
- 
-@@ -630,12 +645,17 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
-+	struct rvin_graph_entity *rent;
- 	int ret;
- 
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
-+
- 	if (edid->pad)
- 		return -EINVAL;
- 
--	edid->pad = vin->sink_pad_idx;
-+	edid->pad = rent->sink_pad_idx;
- 
- 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
- 
-@@ -648,12 +668,17 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 	struct v4l2_subdev *sd = vin_to_source(vin);
-+	struct rvin_graph_entity *rent;
- 	int ret;
- 
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
-+
- 	if (edid->pad)
- 		return -EINVAL;
- 
--	edid->pad = vin->sink_pad_idx;
-+	edid->pad = rent->sink_pad_idx;
- 
- 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
- 
-@@ -926,19 +951,19 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
- 
--	vin->src_pad_idx = 0;
-+	vin->digital.source_pad_idx = 0;
- 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
- 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
- 			break;
- 	if (pad_idx >= sd->entity.num_pads)
- 		return -EINVAL;
- 
--	vin->src_pad_idx = pad_idx;
-+	vin->digital.source_pad_idx = pad_idx;
- 
--	vin->sink_pad_idx = 0;
-+	vin->digital.sink_pad_idx = 0;
- 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
- 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
--			vin->sink_pad_idx = pad_idx;
-+			vin->digital.sink_pad_idx = pad_idx;
- 			break;
- 		}
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index daec26a..d31212a 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -70,10 +70,12 @@ struct rvin_video_format {
- 
- /**
-  * struct rvin_graph_entity - Video endpoint from async framework
-- * @asd:	sub-device descriptor for async framework
-- * @subdev:	subdevice matched using async framework
-- * @code:	Media bus format from source
-- * @mbus_cfg:	Media bus format from DT
-+ * @asd:		sub-device descriptor for async framework
-+ * @subdev:		subdevice matched using async framework
-+ * @code:		Media bus format from source
-+ * @mbus_cfg:		Media bus format from DT
-+ * @source_pad_idx:	source pad index on remote device
-+ * @sink_pad_idx:	sink pad index on remote device
-  */
- struct rvin_graph_entity {
- 	struct v4l2_async_subdev asd;
-@@ -81,6 +83,9 @@ struct rvin_graph_entity {
- 
- 	u32 code;
- 	struct v4l2_mbus_config mbus_cfg;
-+
-+	int source_pad_idx;
-+	int sink_pad_idx;
- };
- 
- /**
-@@ -91,8 +96,6 @@ struct rvin_graph_entity {
-  *
-  * @vdev:		V4L2 video device associated with VIN
-  * @v4l2_dev:		V4L2 device
-- * @src_pad_idx:	source pad index for media controller drivers
-- * @sink_pad_idx:	sink pad index for media controller drivers
-  * @ctrl_handler:	V4L2 control handler
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-@@ -121,8 +124,6 @@ struct rvin_dev {
- 
- 	struct video_device vdev;
- 	struct v4l2_device v4l2_dev;
--	int src_pad_idx;
--	int sink_pad_idx;
- 	struct v4l2_ctrl_handler ctrl_handler;
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity digital;
--- 
-2.10.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
