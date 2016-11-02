@@ -1,89 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760474AbcKDJom (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33350 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752199AbcKBIJR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:42 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 2 Nov 2016 04:09:17 -0400
+MIME-Version: 1.0
+In-Reply-To: <722d91fe-574a-8613-34ff-d44be19157be@cogentembedded.com>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+ <1477055857-17936-21-git-send-email-geert+renesas@glider.be> <722d91fe-574a-8613-34ff-d44be19157be@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 09:09:15 +0100
+Message-ID: <CAMuHMdVdY6c3C+zLAhBCVvxmWD-HhTOis7rU-+_iFQkER3t3fg@mail.gmail.com>
+Subject: Re: [PATCH v4 20/23] ARM: shmobile: rcar-gen2: Stop passing mode pins
+ state to clock driver
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/29] ARM: dts: alt: enable UHS for SDHI 0 & 1
-Date: Fri,  4 Nov 2016 10:44:04 +0100
-Message-Id: <9510f3492589866a1aa738951bd30e68b2aae7a7.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,1}.
+On Tue, Nov 1, 2016 at 2:35 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+>> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
+>> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+>
+> [...]
+>>
+>> @@ -130,7 +129,7 @@ void __init rcar_gen2_timer_init(void)
+>>         iounmap(base);
+>>  #endif /* CONFIG_ARM_ARCH_TIMER */
+>>
+>> -       rcar_gen2_clocks_init(mode);
+>> +       of_clk_init(NULL);
+>>         clocksource_probe();
+>>  }
+>>
+>
+>   This hunk no longer applies to devel.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+Indeed, but I can't update it, as we can't have all mach-shmobile changes in
+the clock tree. So Simon will have to resolve the conflict later.
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 8d1b35afaf82..325d3f972c57 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -207,11 +207,25 @@
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
- 	};
- 
- 	sdhi1_pins: sd1 {
- 		groups = "sdhi1_data4", "sdhi1_ctrl";
- 		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
- 	};
- };
- 
-@@ -255,23 +269,27 @@
- 
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi1 {
- 	pinctrl-0 = <&sdhi1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi1>;
- 	vqmmc-supply = <&vccq_sdhi1>;
- 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
