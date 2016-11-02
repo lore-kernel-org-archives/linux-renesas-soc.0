@@ -1,16 +1,11 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36468 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753137AbcKBK0Q (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 06:26:16 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <17390303.uDhVlFKVKX@wasted.cogentembedded.com>
-References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <17390303.uDhVlFKVKX@wasted.cogentembedded.com>
+In-Reply-To: <4144867.5S9itKOJEU@wasted.cogentembedded.com>
+References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <4144867.5S9itKOJEU@wasted.cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 11:26:14 +0100
-Message-ID: <CAMuHMdWtAtALtfpKiVf7sZSd=91v-9gy33apU=gYxT+g66s+GA@mail.gmail.com>
-Subject: Re: [PATCH 10/12] ARM: dts: sk-rzg1e: initial device tree
+Date: Wed, 2 Nov 2016 11:03:07 +0100
+Message-ID: <CAMuHMdVcHVZmZ_b4UXgG9-3kbAOydocS2mvLLFB1FAhSMQwbow@mail.gmail.com>
+Subject: Re: [PATCH 04/11] ARM: dts: r8a7745: initial SoC device tree
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -22,23 +17,60 @@ Cc: Simon Horman <horms@verge.net.au>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Oct 29, 2016 at 12:29 AM, Sergei Shtylyov
+On Sat, Oct 29, 2016 at 12:17 AM, Sergei Shtylyov
 <sergei.shtylyov@cogentembedded.com> wrote:
-> Add the initial  device tree for the R8A7745 SoC based SK-RZG1E board.
-> The board has 1  debug  serial  port (SCIF2); include support for it,
-> so that the serial console can  work.
+> The  initial R8A7745 SoC device tree including CPU0, GIC, timer, SYSC, RST,
+> CPG, and the required clock descriptions.
 >
 > Based on the original (and large) patch by Dmitry Shifrin
 > <dmitry.shifrin@cogentembedded.com>.
 >
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Subject is off-by-one (the series has only 11 patches)
-
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> ---
+>  arch/arm/boot/dts/r8a7745.dtsi |  120 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 120 insertions(+)
+>
+> Index: renesas/arch/arm/boot/dts/r8a7745.dtsi
+> ===================================================================
+> --- /dev/null
+> +++ renesas/arch/arm/boot/dts/r8a7745.dtsi
+
+> +               gic: interrupt-controller@f1001000 {
+> +                       compatible = "arm,gic-400";
+> +                       #interrupt-cells = <3>;
+> +                       #address-cells = <0>;
+> +                       interrupt-controller;
+> +                       reg = <0 0xf1001000 0 0x1000>,
+> +                             <0 0xf1002000 0 0x1000>,
+> +                             <0 0xf1004000 0 0x2000>,
+> +                             <0 0xf1006000 0 0x2000>;
+> +                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
+> +                                     IRQ_TYPE_LEVEL_HIGH)>;
+
+You may want to align IRQ_TYPE_LEVEL_HIGH with GIC_CPU_MASK_SIMPLE.
+
+> +               };
+> +
+> +               timer {
+> +                       compatible = "arm,armv7-timer";
+> +                       interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+> +                                     IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
+> +                                     IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
+> +                                     IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
+> +                                     IRQ_TYPE_LEVEL_LOW)>;
+
+Likewise.
+
+> +               };
 
 Gr{oetje,eeting}s,
 
