@@ -1,34 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:35148 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752839AbcKBNa0 (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34978 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbcKBLig (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:30:26 -0400
-Received: by mail-lf0-f52.google.com with SMTP id b14so12538011lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Nov 2016 06:30:25 -0700 (PDT)
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Wed, 2 Nov 2016 07:38:36 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
 References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
- <3797605.lKJkRScdp8@wasted.cogentembedded.com>
- <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
+ <3797605.lKJkRScdp8@wasted.cogentembedded.com> <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 12:38:34 +0100
+Message-ID: <CAMuHMdW-X6jxcyV1GKtUZEAuiLiCqC47cB6ZcFys6mODRbYq8Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <3ec05522-108c-64df-de6b-1329c78ce9e0@cogentembedded.com>
-Date: Wed, 2 Nov 2016 16:30:21 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Hi Sergei,
 
-On 11/02/2016 02:08 PM, Geert Uytterhoeven wrote:
-
+On Wed, Nov 2, 2016 at 12:08 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Oct 27, 2016 at 9:53 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
 >> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
 >> and Software Reset support code, using the CPG/MSSR driver core.
 >>
@@ -71,9 +69,7 @@ On 11/02/2016 02:08 PM, Geert Uytterhoeven wrote:
 >> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
 >
 > ... and V2H.
-
-    Indeed. But at least on E2 PLL0CR.STC can be read...
-
+>
 >> +                * Register the PLL0 clock as a fixed factor clock for now as
 >> +                * there's  no generic multiplier clock implementation and we
 >> +                * currently have no need to change the multiplier value.
@@ -83,11 +79,16 @@ On 11/02/2016 02:08 PM, Geert Uytterhoeven wrote:
 >> +                       /* PLL0 is VCO/3 on R-Car E2 */
 >
 > ... and V2H.
-
-    No, it's still VCO/2 on V2H, according to the manual. Perhaps I'll have to 
-store the PLL0 divisor separately (and maybe even instead of the PLL0 multiplier).
-
+>
 >> +                       div  = 3;
+
+After seeing the r8a7745 driver, I think it would be better to use a divider
+value of 1 here (dropping the need for this branch), and handle the /3 in the
+SoC-specific driver.
+This would make it more similar to the other SoCs here (div = 1 in the else
+branch below), and to similar clocks in the SoC-specific driver
+(e.g. DEF_FIXED("zg", ..., 3, 1) in r8a7743-cpg-mssr.c).
+
 >> +               } else  {
 >> +                       u32 pll0cr = readl(base + CPG_PLL0CR);
 >> +
@@ -98,10 +99,13 @@ store the PLL0 divisor separately (and maybe even instead of the PLL0 multiplier
 > Looks OK to me. I assume you've verified the Z2 clock frequency in
 > /sys/kernel/debug/clk/clk_summary?
 
-    Not yet. :-/
+Gr{oetje,eeting}s,
 
-> Gr{oetje,eeting}s,
->
->                         Geert
+                        Geert
 
-MBR, Sergei
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
