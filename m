@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49502 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49472 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754569AbcKBN3r (ORCPT
+        with ESMTP id S1752586AbcKBN3i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:47 -0400
+        Wed, 2 Nov 2016 09:29:38 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -13,9 +13,9 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 26/32] media: rcar-vin: add helpers for bridge
-Date: Wed,  2 Nov 2016 14:23:23 +0100
-Message-Id: <20161102132329.436-27-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 06/32] media: rcar-vin: fix standard in input enumeration
+Date: Wed,  2 Nov 2016 14:23:03 +0100
+Message-Id: <20161102132329.436-7-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -24,66 +24,38 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 there might be a CSI2 bridge between the video source and the
-VIN. Add helpers to check for this and to fetch the bridge subdevice.
+If the subdevice supports dv_timings_cap the driver should not fill in
+the standard. Also don't use the standard from probe time ask the
+subdevice each time, this is done in preparation for Gen3 support where
+the source subdevice might change during runtime.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 19 +++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
- 2 files changed, 21 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f382f91..a409157 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -369,6 +369,11 @@ static int rvin_group_vin_to_csi(struct rvin_dev *vin)
- 	return csi;
- }
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 610f59e..f9218f2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -483,10 +483,16 @@ static int rvin_enum_input(struct file *file, void *priv,
+ 		return ret;
  
-+bool vin_have_bridge(struct rvin_dev *vin)
-+{
-+	return vin->digital.subdev == NULL;
-+}
-+
- struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
- {
- 	int csi;
-@@ -399,6 +404,20 @@ struct v4l2_subdev *vin_to_source(struct rvin_dev *vin)
- 	return vin->group->source[csi].subdev;
- }
+ 	i->type = V4L2_INPUT_TYPE_CAMERA;
+-	i->std = vin->vdev.tvnorms;
  
-+struct v4l2_subdev *vin_to_bridge(struct rvin_dev *vin)
-+{
-+	int csi;
-+
-+	if (vin->digital.subdev)
-+		return NULL;
-+
-+	csi = rvin_group_vin_to_csi(vin);
-+	if (csi < 0)
-+		return NULL;
-+
-+	return vin->group->bridge[csi].subdev;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier helpers
-  */
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 2f1e087..acaed2b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -206,8 +206,10 @@ struct rvin_dev {
- 	struct v4l2_rect compose;
- };
+-	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
++	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap)) {
+ 		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
++		i->std = 0;
++	} else {
++		i->capabilities = V4L2_IN_CAP_STD;
++		ret = v4l2_subdev_call(sd, video, g_tvnorms, &i->std);
++		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
++			return ret;
++	}
  
-+bool vin_have_bridge(struct rvin_dev *vin);
- struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
- struct v4l2_subdev *vin_to_source(struct rvin_dev *vin);
-+struct v4l2_subdev *vin_to_bridge(struct rvin_dev *vin);
+ 	strlcpy(i->name, "Camera", sizeof(i->name));
  
- /* Debug */
- #define vin_dbg(d, fmt, arg...)		dev_dbg(d->dev, fmt, ##arg)
 -- 
 2.10.2
