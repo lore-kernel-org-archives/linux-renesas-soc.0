@@ -1,122 +1,218 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49472 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932271AbcKQO10 (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49486 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754186AbcKBN3j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 09:27:26 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for v4.10
-Date: Thu, 17 Nov 2016 15:11:45 +0100
-Message-Id: <cover.1479391750.git.horms+renesas@verge.net.au>
+        Wed, 2 Nov 2016 09:29:39 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 08/32] media: rcar-vin: move subdev source and sink pad index to rvin_graph_entity
+Date: Wed,  2 Nov 2016 14:23:05 +0100
+Message-Id: <20161102132329.436-9-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Move the sink and source pad index from struct rvin_dev to struct
+rvin_graph_entity. This is done in preparation of Gen3 support where the
+active subdeivce can be changed during runtime. And if the subdevice is
+changed the pad numbers are different so it's better to read them a
+rvin_graph_entity then from directly from the rvin_dev.
 
-Please consider these second round of Renesas ARM based SoC DT updates for v4.10.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 45 ++++++++++++++++++++++-------
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 17 ++++++-----
+ 2 files changed, 44 insertions(+), 18 deletions(-)
 
-This pull request is based on a merge of:
-
-* The previous round of such requests, tagged as renesas-dt-for-v4.10,
-  which I have already sent a pull-request for.
-* The rzg-clock-defs tag of Geert Uytterhoeven's renesas-driver's tree.
-  This is to provide dependencies for adding the r8a7743 and r8a7745 SoCs.
-* The "Second Round of Renesas ARM Based SoC Drivers Updates for v4.10",
-  tagged as renesas-drivers2-for-v4.10, which I have also sent a pull
-  request for. This is included to provide dependencies for adding device
-  nodes for PRR, and adding the r8a7743 and r8a7745 SoCs..
-
-
-The following changes since commit 71eaf88fb7784932956a998968f609c9a89cd739:
-
-  Merge branch 'rzg-clock-defs' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into dt-for-v4.10 (2016-11-17 14:58:57 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.10
-
-for you to fetch changes up to cb74f5808db5105baaf127c51660bbb1a10313c4:
-
-  ARM: dts: r8a7794: Add device node for PRR (2016-11-17 15:07:49 +0100)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC DT Updates for v4.10
-
-Enhancements:
-* Add device nodes for PRR
-* Add r8a7745 SoC and sk-rzg1e board
-* Add r8a7743 SoC and sk-rzg1m board
-* Enable SDR-104 and I2C demuxer on alt, koelsch and lager boards
-
-Corrections:
-* Use SYSC "always-on" PM Domain for sound on r8a7794 SoC
-* Correct hsusb parent clock on r8a7794 SoC
-* Correct PFC names for DU on alt board
-
-----------------------------------------------------------------
-Geert Uytterhoeven (9):
-      ARM: dts: r8a7794: Correct hsusb parent clock
-      ARM: dts: r8a7794: Use SYSC "always-on" PM Domain for sound
-      ARM: dts: r8a73a4: Add device node for PRR
-      ARM: dts: r8a7779: Add device node for PRR
-      ARM: dts: r8a7790: Add device node for PRR
-      ARM: dts: r8a7791: Add device node for PRR
-      ARM: dts: r8a7792: Add device node for PRR
-      ARM: dts: r8a7793: Add device node for PRR
-      ARM: dts: r8a7794: Add device node for PRR
-
-Jacopo Mondi (1):
-      ARM: dts: alt: Fix PFC names for DU
-
-Sergei Shtylyov (14):
-      ARM: dts: r8a7743: initial SoC device tree
-      ARM: dts: r8a7743: add SYS-DMAC support
-      ARM: dts: r8a7743: add [H]SCIF{A|B} support
-      ARM: dts: r8a7743: add Ether support
-      ARM: dts: r8a7743: add IRQC support
-      ARM: dts: sk-rzg1m: initial device tree
-      ARM: dts: sk-rzg1m: add Ether support
-      ARM: dts: r8a7745: initial SoC device tree
-      ARM: dts: r8a7745: add SYS-DMAC support
-      ARM: dts: r8a7745: add [H]SCIF{|A|B} support
-      ARM: dts: r8a7745: add Ether support
-      ARM: dts: r8a7745: add IRQC support
-      ARM: dts: sk-rzg1e: initial device tree
-      ARM: dts: sk-rzg1e: add Ether support
-
-Simon Horman (7):
-      ARM: dts: lager: rename and reindex i2cexio
-      ARM: dts: lager: use demuxer for IIC1/I2C1
-      ARM: dts: koelsch: use demuxer for I2C1
-      ARM: dts: alt: use demuxer for I2C4
-      ARM: dts: lager: Enable UHS-I SDR-104
-      ARM: dts: koelsch: Enable UHS-I SDR-104
-      ARM: dts: alt: Enable UHS-I SDR-104
-
- arch/arm/boot/dts/Makefile             |   2 +
- arch/arm/boot/dts/r8a73a4.dtsi         |   5 +
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |  57 ++++
- arch/arm/boot/dts/r8a7743.dtsi         | 476 +++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |  52 ++++
- arch/arm/boot/dts/r8a7745.dtsi         | 476 +++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7779.dtsi         |   5 +
- arch/arm/boot/dts/r8a7790-lager.dts    |  52 +++-
- arch/arm/boot/dts/r8a7790.dtsi         |   5 +
- arch/arm/boot/dts/r8a7791-koelsch.dts  |  36 +++
- arch/arm/boot/dts/r8a7791.dtsi         |   5 +
- arch/arm/boot/dts/r8a7792.dtsi         |   5 +
- arch/arm/boot/dts/r8a7793.dtsi         |   5 +
- arch/arm/boot/dts/r8a7794-alt.dts      |  40 ++-
- arch/arm/boot/dts/r8a7794.dtsi         |  11 +-
- 15 files changed, 1220 insertions(+), 12 deletions(-)
- create mode 100644 arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
- create mode 100644 arch/arm/boot/dts/r8a7743.dtsi
- create mode 100644 arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
- create mode 100644 arch/arm/boot/dts/r8a7745.dtsi
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 370bb18..f8ff7c4 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -109,9 +109,14 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+ 	};
+ 	struct v4l2_mbus_framefmt *mf = &fmt.format;
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
+-	fmt.pad = vin->src_pad_idx;
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
++	fmt.pad = rent->source_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
+ 	if (ret)
+@@ -182,7 +187,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	if (pad_cfg == NULL)
+ 		return -ENOMEM;
+ 
+-	format.pad = vin->src_pad_idx;
++	format.pad = rent->source_pad_idx;
+ 
+ 	field = pix->field;
+ 
+@@ -560,12 +565,17 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (timings->pad)
+ 		return -EINVAL;
+ 
+-	timings->pad = vin->sink_pad_idx;
++	timings->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+ 
+@@ -612,12 +622,17 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (cap->pad)
+ 		return -EINVAL;
+ 
+-	cap->pad = vin->sink_pad_idx;
++	cap->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+ 
+@@ -630,12 +645,17 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	edid->pad = vin->sink_pad_idx;
++	edid->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
+ 
+@@ -648,12 +668,17 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	edid->pad = vin->sink_pad_idx;
++	edid->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
+ 
+@@ -926,19 +951,19 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
+ 
+-	vin->src_pad_idx = 0;
++	vin->digital.source_pad_idx = 0;
+ 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+ 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
+ 			break;
+ 	if (pad_idx >= sd->entity.num_pads)
+ 		return -EINVAL;
+ 
+-	vin->src_pad_idx = pad_idx;
++	vin->digital.source_pad_idx = pad_idx;
+ 
+-	vin->sink_pad_idx = 0;
++	vin->digital.sink_pad_idx = 0;
+ 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+ 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
+-			vin->sink_pad_idx = pad_idx;
++			vin->digital.sink_pad_idx = pad_idx;
+ 			break;
+ 		}
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index daec26a..d31212a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -70,10 +70,12 @@ struct rvin_video_format {
+ 
+ /**
+  * struct rvin_graph_entity - Video endpoint from async framework
+- * @asd:	sub-device descriptor for async framework
+- * @subdev:	subdevice matched using async framework
+- * @code:	Media bus format from source
+- * @mbus_cfg:	Media bus format from DT
++ * @asd:		sub-device descriptor for async framework
++ * @subdev:		subdevice matched using async framework
++ * @code:		Media bus format from source
++ * @mbus_cfg:		Media bus format from DT
++ * @source_pad_idx:	source pad index on remote device
++ * @sink_pad_idx:	sink pad index on remote device
+  */
+ struct rvin_graph_entity {
+ 	struct v4l2_async_subdev asd;
+@@ -81,6 +83,9 @@ struct rvin_graph_entity {
+ 
+ 	u32 code;
+ 	struct v4l2_mbus_config mbus_cfg;
++
++	int source_pad_idx;
++	int sink_pad_idx;
+ };
+ 
+ /**
+@@ -91,8 +96,6 @@ struct rvin_graph_entity {
+  *
+  * @vdev:		V4L2 video device associated with VIN
+  * @v4l2_dev:		V4L2 device
+- * @src_pad_idx:	source pad index for media controller drivers
+- * @sink_pad_idx:	sink pad index for media controller drivers
+  * @ctrl_handler:	V4L2 control handler
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+@@ -121,8 +124,6 @@ struct rvin_dev {
+ 
+ 	struct video_device vdev;
+ 	struct v4l2_device v4l2_dev;
+-	int src_pad_idx;
+-	int sink_pad_idx;
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity digital;
+-- 
+2.10.2
