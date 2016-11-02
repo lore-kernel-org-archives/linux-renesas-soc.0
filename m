@@ -1,68 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932196AbcKDJpN (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34706 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752103AbcKBJse (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:45:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] ARM: shmobile: only call rcar_gen2_clocks_init() if present
-Date: Fri,  4 Nov 2016 10:44:36 +0100
-Message-Id: <e11fc795215eca872d8d64087568c28ba739f659.1478251657.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
-References: <cover.1478251657.git.horms+renesas@verge.net.au>
+        Wed, 2 Nov 2016 05:48:34 -0400
+MIME-Version: 1.0
+In-Reply-To: <5689104.8HluMoeKiR@wasted.cogentembedded.com>
+References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <5689104.8HluMoeKiR@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Nov 2016 10:48:33 +0100
+Message-ID: <CAMuHMdU0x=U3pQKVvAjza_5KGh0YmGDiGSHse2BC_Did82kxAA@mail.gmail.com>
+Subject: Re: [PATCH 02/11] soc: renesas: rcar-sysc: add R8A7745 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms@verge.net.au>
+On Sat, Oct 29, 2016 at 12:09 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add support for RZ/G1E (R8A7745) SoC power areas to the R-Car SYSC driver.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the R-Car Gen2 clock
-driver. This is a harbinger of a transition for R-Car Gen2 SoCs. As the
-process to get all the required pieces in place is somewhat complex it
-seems useful to try to disentangle dependencies where possible.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The approach here is to temporarily disable calling rcar_gen2_clocks_init()
-if no R-Car Gen2 SoC are configured and thus the symbol will not be
-present.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+                        Geert
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index afb9fdcd3d90..154e8051825a 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -15,6 +15,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk-provider.h>
- #include <linux/clk/renesas.h>
- #include <linux/clocksource.h>
- #include <linux/device.h>
-@@ -130,7 +131,15 @@ void __init rcar_gen2_timer_init(void)
- 	iounmap(base);
- #endif /* CONFIG_ARM_ARCH_TIMER */
- 
--	rcar_gen2_clocks_init(mode);
-+	if (IS_ENABLED(CONFIG_ARCH_R8A7790) ||
-+	    IS_ENABLED(CONFIG_ARCH_R8A7791) ||
-+	    IS_ENABLED(CONFIG_ARCH_R8A7792) ||
-+	    IS_ENABLED(CONFIG_ARCH_R8A7793) ||
-+	    IS_ENABLED(CONFIG_ARCH_R8A7794))
-+		rcar_gen2_clocks_init(mode);
-+	else
-+		of_clk_init(NULL);
-+
- 	clocksource_probe();
- }
- 
--- 
-2.7.0.rc3.207.g0ac5344
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
