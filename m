@@ -1,71 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:35821 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759045AbcKDWFb (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49502 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754569AbcKBN3r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 18:05:31 -0400
-Received: by mail-lf0-f48.google.com with SMTP id b14so74233044lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Nov 2016 15:05:31 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 11/11] ARM: dts: sk-rzg1e: add Ether support
-Date: Sat, 05 Nov 2016 01:05:28 +0300
-Message-ID: <1633148.RWrrAXQYR6@wasted.cogentembedded.com>
-In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+        Wed, 2 Nov 2016 09:29:47 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 26/32] media: rcar-vin: add helpers for bridge
+Date: Wed,  2 Nov 2016 14:23:23 +0100
+Message-Id: <20161102132329.436-27-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the SK-RZG1E board dependent part of the Ether device node.
-Enable DHCP and NFS root  for the kernel booting.
+On Gen3 there might be a CSI2 bridge between the video source and the
+VIN. Add helpers to check for this and to fetch the bridge subdevice.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Changes in version 2:
-- added Geert's tag.
+ drivers/media/platform/rcar-vin/rcar-core.c | 19 +++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
+ 2 files changed, 21 insertions(+)
 
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-Index: renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-+++ renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -20,7 +20,7 @@
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index f382f91..a409157 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -369,6 +369,11 @@ static int rvin_group_vin_to_csi(struct rvin_dev *vin)
+ 	return csi;
+ }
  
- 	chosen {
--		bootargs = "ignore_loglevel";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial0:115200n8";
- 	};
++bool vin_have_bridge(struct rvin_dev *vin)
++{
++	return vin->digital.subdev == NULL;
++}
++
+ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
+ {
+ 	int csi;
+@@ -399,6 +404,20 @@ struct v4l2_subdev *vin_to_source(struct rvin_dev *vin)
+ 	return vin->group->source[csi].subdev;
+ }
  
-@@ -37,3 +37,16 @@
- &scif2 {
- 	status = "okay";
++struct v4l2_subdev *vin_to_bridge(struct rvin_dev *vin)
++{
++	int csi;
++
++	if (vin->digital.subdev)
++		return NULL;
++
++	csi = rvin_group_vin_to_csi(vin);
++	if (csi < 0)
++		return NULL;
++
++	return vin->group->bridge[csi].subdev;
++}
++
+ /* -----------------------------------------------------------------------------
+  * Async notifier helpers
+  */
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 2f1e087..acaed2b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -206,8 +206,10 @@ struct rvin_dev {
+ 	struct v4l2_rect compose;
  };
-+
-+&ether {
-+	phy-handle = <&phy1>;
-+	renesas,ether-link-active-low;
-+	status = "okay";
-+
-+	phy1: ethernet-phy@1 {
-+		reg = <1>;
-+		interrupt-parent = <&irqc>;
-+		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-+		micrel,led-mode = <1>;
-+	};
-+};
+ 
++bool vin_have_bridge(struct rvin_dev *vin);
+ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
+ struct v4l2_subdev *vin_to_source(struct rvin_dev *vin);
++struct v4l2_subdev *vin_to_bridge(struct rvin_dev *vin);
+ 
+ /* Debug */
+ #define vin_dbg(d, fmt, arg...)		dev_dbg(d->dev, fmt, ##arg)
+-- 
+2.10.2
