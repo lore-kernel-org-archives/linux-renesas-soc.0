@@ -1,16 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34978 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750776AbcKBLig (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35041 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751098AbcKBLIR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 07:38:36 -0400
+        Wed, 2 Nov 2016 07:08:17 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
- <3797605.lKJkRScdp8@wasted.cogentembedded.com> <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
+In-Reply-To: <3797605.lKJkRScdp8@wasted.cogentembedded.com>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com> <3797605.lKJkRScdp8@wasted.cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 12:38:34 +0100
-Message-ID: <CAMuHMdW-X6jxcyV1GKtUZEAuiLiCqC47cB6ZcFys6mODRbYq8Q@mail.gmail.com>
+Date: Wed, 2 Nov 2016 12:08:15 +0100
+Message-ID: <CAMuHMdWZ4uCMinq_RbmimH0Gz72a51ac0sCoBMZo97x2mGyJLQ@mail.gmail.com>
 Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: add common R-Car Gen2 support
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -23,81 +22,71 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Sergei,
 
-On Wed, Nov 2, 2016 at 12:08 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Oct 27, 2016 at 9:53 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
->> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
->> and Software Reset support code, using the CPG/MSSR driver core.
->>
->> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
->> <geert+renesas@glider.be>.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> ---
->> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
->>
->> Changes in version 2:
->> - added support  for non-existing PLL0CR;
->> - removed the function reading the mode pins;
->> - added/used the #define's for PLL0CR.STC;
->> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
->> - removed rcar_gen2_read_modemr();
->> - added Geert's tag.
->>
->>  drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
->>  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
->>  2 files changed, 411 insertions(+)
->>
->> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
->> ===================================================================
->> --- /dev/null
->> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
->> @@ -0,0 +1,369 @@
+On Thu, Oct 27, 2016 at 9:53 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
+> and Software Reset support code, using the CPG/MSSR driver core.
 >
->> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
->> +                                              const struct cpg_core_clk *core,
->> +                                              const struct cpg_mssr_info *info,
->> +                                              struct clk **clks,
->> +                                              void __iomem *base)
->> +{
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
 >
->> +       case CLK_TYPE_GEN2_PLL0:
->> +               /*
->> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> ... and V2H.
+> ---
+> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
 >
->> +                * Register the PLL0 clock as a fixed factor clock for now as
->> +                * there's  no generic multiplier clock implementation and we
->> +                * currently have no need to change the multiplier value.
->> +                */
->> +               mult = cpg_pll_config->pll0_mult;
->> +               if (mult) {
->> +                       /* PLL0 is VCO/3 on R-Car E2 */
+> Changes in version 2:
+> - added support  for non-existing PLL0CR;
+> - removed the function reading the mode pins;
+> - added/used the #define's for PLL0CR.STC;
+> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
+> - removed rcar_gen2_read_modemr();
+> - added Geert's tag.
 >
-> ... and V2H.
+>  drivers/clk/renesas/rcar-gen2-cpg.c |  369 ++++++++++++++++++++++++++++++++++++
+>  drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
+>  2 files changed, 411 insertions(+)
 >
->> +                       div  = 3;
+> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
+> ===================================================================
+> --- /dev/null
+> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
+> @@ -0,0 +1,369 @@
 
-After seeing the r8a7745 driver, I think it would be better to use a divider
-value of 1 here (dropping the need for this branch), and handle the /3 in the
-SoC-specific driver.
-This would make it more similar to the other SoCs here (div = 1 in the else
-branch below), and to similar clocks in the SoC-specific driver
-(e.g. DEF_FIXED("zg", ..., 3, 1) in r8a7743-cpg-mssr.c).
+> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+> +                                              const struct cpg_core_clk *core,
+> +                                              const struct cpg_mssr_info *info,
+> +                                              struct clk **clks,
+> +                                              void __iomem *base)
+> +{
 
->> +               } else  {
->> +                       u32 pll0cr = readl(base + CPG_PLL0CR);
->> +
->> +                       mult = ((pll0cr & CPG_PLL0CR_STC_MASK) >>
->> +                               CPG_PLL0CR_STC_SHIFT) + 1;
->> +               }
->
-> Looks OK to me. I assume you've verified the Z2 clock frequency in
-> /sys/kernel/debug/clk/clk_summary?
+> +       case CLK_TYPE_GEN2_PLL0:
+> +               /*
+> +                * PLL0  is a configurable multiplier clock except on  R-Car E2.
+
+... and V2H.
+
+> +                * Register the PLL0 clock as a fixed factor clock for now as
+> +                * there's  no generic multiplier clock implementation and we
+> +                * currently have no need to change the multiplier value.
+> +                */
+> +               mult = cpg_pll_config->pll0_mult;
+> +               if (mult) {
+> +                       /* PLL0 is VCO/3 on R-Car E2 */
+
+... and V2H.
+
+> +                       div  = 3;
+> +               } else  {
+> +                       u32 pll0cr = readl(base + CPG_PLL0CR);
+> +
+> +                       mult = ((pll0cr & CPG_PLL0CR_STC_MASK) >>
+> +                               CPG_PLL0CR_STC_SHIFT) + 1;
+> +               }
+
+Looks OK to me. I assume you've verified the Z2 clock frequency in
+/sys/kernel/debug/clk/clk_summary?
 
 Gr{oetje,eeting}s,
 
