@@ -1,250 +1,388 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754218AbcKCOQ7 (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49477 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752844AbcKBN3l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 10:16:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v8 5/6] mmc: tmio: Add tuning support
-Date: Thu,  3 Nov 2016 15:16:03 +0100
-Message-Id: <1478182564-18762-6-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
-References: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 2 Nov 2016 09:29:41 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 13/32] media: rcar-vin: register the video device early
+Date: Wed,  2 Nov 2016 14:23:10 +0100
+Message-Id: <20161102132329.436-14-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+This is done to prepare for Gen3 support where there can be more then
+one video pipeline which can terminate in a particular VIN instance.
+Each pipeline have its own set of subdevices so to attach to a specific
+subdevice at probe time is not possible. The pipelines will be
+configured using the media controller API.
 
-Add tuning support for use with SDR104 mode
+This patch changes the rcar-vin behavior so that the video device is
+registered at probe time but attaching to a subdeivce is only once the
+video device node is opened. If at that time there is no video source
+subdevice for the VIN to use the open will fail with -EBUSY.
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v7 [Simon Horman]
-* As per review by Ulf Hansson:
-  - Use tmio_mmc_hw_reset() rather than mmc_hw_reset() in
-    tmio_mmc_execute_tuning()
-  - Do not zero host->mmc->retune_period in tmio_mmc_execute_tuning()
-  - Do not perform a reset if host->select_tuning() fails in
-    tmio_mmc_host_runtime_resume() retuning should be
-    performed if a request subsequently fails.
-* Do not implicitly trigger retuning if host->check_scc_error() returns true
+ drivers/media/platform/rcar-vin/rcar-core.c |  10 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 226 ++++++++++++++--------------
+ drivers/media/platform/rcar-vin/rcar-vin.h  |   2 +
+ 3 files changed, 121 insertions(+), 117 deletions(-)
 
-v6 [Simon Horman]
-* As suggested by Ulf Hansson:
-  - Restore saved tuning parameters on resume
-
-v5 [Simon Horman]
-* As suggested by Ulf Hansson:
-  - Move hw reset support into a separate patch
-  - Use more descriptive name for callback to check for SSC error
-  - Rely on core to retune in case of -EILSEQ
-  - Document mandatory and optional callbacks
-
-v4 [Simon Horman]
-* As suggested by Wolfram Sang:
-  - Do not perform tuning if host->select_tuning is not set:
-    it seems to make little sense to do so and moreover there is currently
-    no such use-case
-  - Do not add mrc->sbc handling from tmio_mmc_request,
-    this is a hang-over from earlier versions of this patchset which
-    did not use core infrastructure for retuning
-  - Tidy up local variable usage
-* Correct index passed to prepare_tuning(): this seems to have
-  been the last piece of resolving the timeouts during tuning puzzle
-* Further cleanups to tmio_mmc_execute_tuning():
-  - Ensure tap is sized proportionally to its members
-  - Remove stray '*' in comment
-  - Use mmc rather than host->mmc, these are equivalent but
-    the former seems tidier
-  - Correct inverted logic in setting tap values
-* Re-introduce retuning support. This was removed in v3.
-
-v3 [Simon Horman]
-* As suggested by Kuninori Morimoto:
-  - Do not add unused retuning callback to struct tmio_mmc_host
-  - Change return type of prepare_tuning callback to void
-  - Add tap_size parameter to select_tuning callback
-
-v2 [Simon Horman]
-* As suggested by Kuninori Morimoto:
-  - Actually remove unnecessary TMIO_MMC_HAS_UHS_SCC define
-* As suggested by Wolfram Sang:
-  - Rely on core to call tuning. This simplifies things somewhat.
-  - Use mmc_send_tuning()
-    - A side affect of this appears to be that we now see some recoverable
-      errors logged during tuning. These are typically corrected by
-      subsequent tuning. It is the logging that is the apparent side effect
-      of this change.
-      e.g.
-      sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-      sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-* Use bool rather than unsigned long to pass test status
-  to select_tuning() callback
-* Do not retune if init_tuning callback is not present or
-  indicates that there are no taps present
-* Retune on hardware reset
-
-v1 [Simon Horman]
-* Omit start_signal_voltage_switch and tmio_mmc_card_busy changes which are
-  already present in mainline in a different form
-* Return num from init_tuning rather than passing an extra parameter
-  to hold the return value
-* Only call host->init_tuning if it is non-NULL
-* Place tmio_mmc_execute_tuning() such that no new forward declarations are
-  required
-* Remove unused TMIO_MMC_HAS_UHS_SCC define
-
-v0 [Ai Kyuse]
----
- drivers/mmc/host/tmio_mmc.h     | 12 ++++++++
- drivers/mmc/host/tmio_mmc_pio.c | 63 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 75 insertions(+)
-
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index c5adf52fc049..637581faf756 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -153,6 +153,7 @@ struct tmio_mmc_host {
- 	struct mutex		ios_lock;	/* protect set_ios() context */
- 	bool			native_hotplug;
- 	bool			sdio_irq_enabled;
-+	u32			scc_tappos;
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 50058fe..5807d8d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -107,7 +107,7 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ 		return ret;
+ 	}
  
- 	/* Mandatory callback */
- 	int (*clk_enable)(struct tmio_mmc_host *host);
-@@ -168,6 +169,17 @@ struct tmio_mmc_host {
- 					   struct mmc_ios *ios);
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
- 	void (*hw_reset)(struct tmio_mmc_host *host);
-+	void (*prepare_tuning)(struct tmio_mmc_host *host, unsigned long tap);
-+	bool (*check_scc_error)(struct tmio_mmc_host *host);
-+
-+	/* Mandatory callback for tuning to occur which is
-+	 * optional for SDR50 and mandatory for SDR104 */
-+	unsigned int (*init_tuning)(struct tmio_mmc_host *host);
-+	int (*select_tuning)(struct tmio_mmc_host *host);
-+
-+	/* Tuning values: 1 for success, 0 for failure */
-+	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
-+	unsigned int tap_num;
- };
- 
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index ce6e93758576..a0f05eb4f344 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -36,6 +36,7 @@
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/mfd/tmio.h>
-+#include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
- #include <linux/mmc/slot-gpio.h>
-@@ -298,6 +299,9 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
- 
-+	if (host->check_scc_error)
-+		host->check_scc_error(host);
-+
- 	mmc_request_done(host->mmc, mrq);
+-	return rvin_v4l2_probe(vin);
++	return 0;
  }
  
-@@ -767,6 +771,56 @@ static void tmio_mmc_hw_reset(struct mmc_host *mmc)
- 		host->hw_reset(host);
+ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+@@ -118,7 +118,6 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+ 
+ 	if (vin->digital.subdev == subdev) {
+ 		vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
+-		rvin_v4l2_remove(vin);
+ 		vin->digital.subdev = NULL;
+ 		return;
+ 	}
+@@ -283,6 +282,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 
+ 	vin->dev = &pdev->dev;
+ 	vin->chip = (enum chip_id)match->data;
++	vin->last_input = NULL;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (mem == NULL)
+@@ -304,6 +304,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto error;
+ 
++	ret = rvin_v4l2_probe(vin);
++	if (ret)
++		goto error;
++
+ 	pm_suspend_ignore_children(&pdev->dev, true);
+ 	pm_runtime_enable(&pdev->dev);
+ 
+@@ -322,6 +326,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	rvin_v4l2_remove(vin);
++
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 
+ 	rvin_dma_remove(vin);
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 929f58b..47137d7 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -483,6 +483,94 @@ static int rvin_cropcap(struct file *file, void *priv,
+ 	return v4l2_subdev_call(sd, video, g_pixelaspect, &crop->pixelaspect);
  }
  
-+static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
++static int rvin_attach_subdevices(struct rvin_dev *vin)
 +{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	int i, ret = 0;
++	struct v4l2_subdev_format fmt = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
++	struct v4l2_mbus_framefmt *mf = &fmt.format;
++	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
++	struct v4l2_format f;
++	int ret;
 +
-+	if (!host->tap_num) {
-+		if (!host->init_tuning || !host->select_tuning)
-+			/* Tuning is not supported */
-+			goto out;
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
 +
-+		host->tap_num = host->init_tuning(host);
-+		if (!host->tap_num)
-+			/* Tuning is not supported */
-+			goto out;
++	ret = v4l2_subdev_call(sd, core, s_power, 1);
++	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
++		return ret;
++
++	if (rent != vin->last_input) {
++		/* Input source have changed, reset our format */
++
++		vin->vdev.tvnorms = 0;
++		ret = v4l2_subdev_call(sd, video, g_tvnorms,
++				       &vin->vdev.tvnorms);
++		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
++			goto error;
++
++		/* Free old controls (safe even if there where none) */
++		v4l2_ctrl_handler_free(&vin->ctrl_handler);
++
++		ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
++		if (ret < 0)
++			goto error;
++
++		/* Add new controls */
++		ret = v4l2_ctrl_add_handler(&vin->ctrl_handler,
++					    sd->ctrl_handler, NULL);
++		if (ret < 0)
++			goto error;
++
++		v4l2_ctrl_handler_setup(&vin->ctrl_handler);
++
++		fmt.pad = rent->source_pad_idx;
++
++		/* Try to improve our guess of a reasonable window format */
++		ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt);
++		if (ret)
++			goto error;
++
++		/* Set default format */
++		vin->format.width	= mf->width;
++		vin->format.height	= mf->height;
++		vin->format.colorspace	= mf->colorspace;
++		vin->format.field	= mf->field;
++		vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
++
++		/* Set initial crop and compose */
++		vin->crop.top = vin->crop.left = 0;
++		vin->crop.width = mf->width;
++		vin->crop.height = mf->height;
++
++		vin->compose.top = vin->compose.left = 0;
++		vin->compose.width = mf->width;
++		vin->compose.height = mf->height;
++
++		f.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
++		f.fmt.pix = vin->format;
++		ret = __rvin_s_fmt_vid_cap(vin, &f);
++		if (ret)
++			goto error;
 +	}
 +
-+	if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
-+		dev_warn_once(&host->pdev->dev,
-+		      "Too many taps, skipping tuning. Please consider "
-+		      "updating size of taps field of tmio_mmc_host\n");
-+		goto out;
-+	}
++	vin->last_input = rent;
 +
-+	bitmap_zero(host->taps, host->tap_num * 2);
-+
-+	/* Issue CMD19 twice for each tap */
-+	for (i = 0; i < 2 * host->tap_num; i++) {
-+		if (host->prepare_tuning)
-+			host->prepare_tuning(host, i % host->tap_num);
-+
-+		ret = mmc_send_tuning(mmc, opcode, NULL);
-+		if (ret && ret != -EILSEQ)
-+			goto out;
-+		if (ret == 0)
-+			set_bit(i, host->taps);
-+
-+		mdelay(1);
-+	}
-+
-+	ret = host->select_tuning(host);
-+
-+out:
-+	if (ret < 0) {
-+		dev_warn(&host->pdev->dev, "Tuning procedure failed\n");
-+		tmio_mmc_hw_reset(mmc);
-+	}
-+
++	return 0;
++error:
++	v4l2_subdev_call(sd, core, s_power, 0);
 +	return ret;
 +}
 +
- /* Process requests from the MMC layer */
- static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
-@@ -984,6 +1038,7 @@ static struct mmc_host_ops tmio_mmc_ops = {
- 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
- 	.multi_io_quirk	= tmio_multi_io_quirk,
- 	.hw_reset	= tmio_mmc_hw_reset,
-+	.execute_tuning = tmio_mmc_execute_tuning,
- };
- 
- static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
-@@ -1230,6 +1285,11 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
- }
- EXPORT_SYMBOL(tmio_mmc_host_runtime_suspend);
- 
-+static bool tmio_mmc_can_retune(struct tmio_mmc_host *host)
++static void rvin_detach_subdevices(struct rvin_dev *vin)
 +{
-+	return host->tap_num && mmc_can_retune(host->mmc);
++	struct v4l2_subdev *sd = vin_to_source(vin);
++
++	v4l2_subdev_call(sd, core, s_power, 0);
 +}
 +
- int tmio_mmc_host_runtime_resume(struct device *dev)
+ static int rvin_enum_input(struct file *file, void *priv,
+ 			   struct v4l2_input *i)
  {
- 	struct mmc_host *mmc = dev_get_drvdata(dev);
-@@ -1243,6 +1303,9 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+@@ -741,80 +829,6 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+  * File Operations
+  */
  
- 	tmio_mmc_enable_dma(host, true);
+-static int rvin_power_on(struct rvin_dev *vin)
+-{
+-	int ret;
+-	struct v4l2_subdev *sd = vin_to_source(vin);
+-
+-	pm_runtime_get_sync(vin->v4l2_dev.dev);
+-
+-	ret = v4l2_subdev_call(sd, core, s_power, 1);
+-	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+-		return ret;
+-	return 0;
+-}
+-
+-static int rvin_power_off(struct rvin_dev *vin)
+-{
+-	int ret;
+-	struct v4l2_subdev *sd = vin_to_source(vin);
+-
+-	ret = v4l2_subdev_call(sd, core, s_power, 0);
+-
+-	pm_runtime_put(vin->v4l2_dev.dev);
+-
+-	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+-		return ret;
+-
+-	return 0;
+-}
+-
+-static int rvin_initialize_device(struct file *file)
+-{
+-	struct rvin_dev *vin = video_drvdata(file);
+-	int ret;
+-
+-	struct v4l2_format f = {
+-		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE,
+-		.fmt.pix = {
+-			.width		= vin->format.width,
+-			.height		= vin->format.height,
+-			.field		= vin->format.field,
+-			.colorspace	= vin->format.colorspace,
+-			.pixelformat	= vin->format.pixelformat,
+-		},
+-	};
+-
+-	ret = rvin_power_on(vin);
+-	if (ret < 0)
+-		return ret;
+-
+-	pm_runtime_enable(&vin->vdev.dev);
+-	ret = pm_runtime_resume(&vin->vdev.dev);
+-	if (ret < 0 && ret != -ENOSYS)
+-		goto eresume;
+-
+-	/*
+-	 * Try to configure with default parameters. Notice: this is the
+-	 * very first open, so, we cannot race against other calls,
+-	 * apart from someone else calling open() simultaneously, but
+-	 * .host_lock is protecting us against it.
+-	 */
+-	ret = rvin_s_fmt_vid_cap(file, NULL, &f);
+-	if (ret < 0)
+-		goto esfmt;
+-
+-	v4l2_ctrl_handler_setup(&vin->ctrl_handler);
+-
+-	return 0;
+-esfmt:
+-	pm_runtime_disable(&vin->vdev.dev);
+-eresume:
+-	rvin_power_off(vin);
+-
+-	return ret;
+-}
+-
+ static int rvin_open(struct file *file)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+@@ -826,17 +840,31 @@ static int rvin_open(struct file *file)
  
-+	if (tmio_mmc_can_retune(host) && host->select_tuning(host))
-+		dev_warn(&host->pdev->dev, "Tuning selection failed\n");
+ 	ret = v4l2_fh_open(file);
+ 	if (ret)
+-		goto unlock;
++		goto err_out;
+ 
+-	if (!v4l2_fh_is_singular_file(file))
+-		goto unlock;
++	/* If there is no subdevice there is not much we can do */
++	if (!vin_to_source(vin)) {
++		ret = -EBUSY;
++		goto err_open;
++	}
+ 
+-	if (rvin_initialize_device(file)) {
+-		v4l2_fh_release(file);
+-		ret = -ENODEV;
++	if (v4l2_fh_is_singular_file(file)) {
++		pm_runtime_get_sync(vin->dev);
++		ret = rvin_attach_subdevices(vin);
++		if (ret) {
++			vin_err(vin, "Error attaching subdevice\n");
++			goto err_power;
++		}
+ 	}
+ 
+-unlock:
++	mutex_unlock(&vin->lock);
 +
- 	return 0;
++	return 0;
++err_power:
++	pm_runtime_put(vin->dev);
++err_open:
++	v4l2_fh_release(file);
++err_out:
+ 	mutex_unlock(&vin->lock);
+ 	return ret;
  }
- EXPORT_SYMBOL(tmio_mmc_host_runtime_resume);
+@@ -860,9 +888,8 @@ static int rvin_release(struct file *file)
+ 	 * Then de-initialize hw module.
+ 	 */
+ 	if (fh_singular) {
+-		pm_runtime_suspend(&vin->vdev.dev);
+-		pm_runtime_disable(&vin->vdev.dev);
+-		rvin_power_off(vin);
++		rvin_detach_subdevices(vin);
++		pm_runtime_put(vin->dev);
+ 	}
+ 
+ 	mutex_unlock(&vin->lock);
+@@ -910,41 +937,10 @@ static void rvin_notify(struct v4l2_subdev *sd,
+ int rvin_v4l2_probe(struct rvin_dev *vin)
+ {
+ 	struct video_device *vdev = &vin->vdev;
+-	struct v4l2_subdev *sd = vin_to_source(vin);
+ 	int ret;
+ 
+-	v4l2_set_subdev_hostdata(sd, vin);
+-
+ 	vin->v4l2_dev.notify = rvin_notify;
+ 
+-	ret = v4l2_subdev_call(sd, video, g_tvnorms, &vin->vdev.tvnorms);
+-	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+-		return ret;
+-
+-	if (vin->vdev.tvnorms == 0) {
+-		/* Disable the STD API if there are no tvnorms defined */
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_G_STD);
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_S_STD);
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_QUERYSTD);
+-		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
+-	}
+-
+-	/* Add the controls */
+-	/*
+-	 * Currently the subdev with the largest number of controls (13) is
+-	 * ov6550. So let's pick 16 as a hint for the control handler. Note
+-	 * that this is a hint only: too large and you waste some memory, too
+-	 * small and there is a (very) small performance hit when looking up
+-	 * controls in the internal hash.
+-	 */
+-	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler, NULL);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/* video node */
+ 	vdev->fops = &rvin_fops;
+ 	vdev->v4l2_dev = &vin->v4l2_dev;
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index d31212a..2a1b190 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -111,6 +111,7 @@ struct rvin_graph_entity {
+  * @sequence:		V4L2 buffers sequence number
+  * @state:		keeps track of operation state
+  *
++ * @last_input:		points to the last active input source
+  * @source:		active format from the video source
+  * @format:		active V4L2 pixel format
+  *
+@@ -138,6 +139,7 @@ struct rvin_dev {
+ 	unsigned int sequence;
+ 	enum rvin_dma_state state;
+ 
++	struct rvin_graph_entity *last_input;
+ 	struct rvin_source_fmt source;
+ 	struct v4l2_pix_format format;
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
