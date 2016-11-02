@@ -1,73 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:19898 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755506AbcKXQN6 (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:34923 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbcKBQnb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 11:13:58 -0500
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 3/3] arm64: dts: r8a7796: Add CAN FD support
-Date: Thu, 24 Nov 2016 16:13:41 +0000
-Message-Id: <1480004021-4037-4-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1480004021-4037-1-git-send-email-chris.paterson2@renesas.com>
-References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
- <1480004021-4037-1-git-send-email-chris.paterson2@renesas.com>
+        Wed, 2 Nov 2016 12:43:31 -0400
+Received: by mail-lf0-f41.google.com with SMTP id b14so17852840lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Nov 2016 09:43:30 -0700 (PDT)
+Subject: Re: [PATCH 03/32] media: rcar-vin: reset bytesperline and sizeimage
+ when resetting format
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+ <20161102132329.436-4-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <2f6c92a8-6d07-d355-41c9-ce7bc73093da@cogentembedded.com>
+Date: Wed, 2 Nov 2016 19:43:27 +0300
+MIME-Version: 1.0
+In-Reply-To: <20161102132329.436-4-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds CAN FD controller node for r8a7796.
+Hello.
 
-Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
+On 11/02/2016 04:23 PM, Niklas Söderlund wrote:
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> These two fields where forgotten when refactoring the format reset code
+> path. If they are not also reset at the same time as width and hight the
+> format read using G_FMT will not match realty.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 47fa29c..1ed1886 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -392,6 +392,30 @@
- 			status = "disabled";
- 		};
- 
-+		canfd: can@e66c0000 {
-+			compatible = "renesas,r8a7796-canfd",
-+				     "renesas,rcar-gen3-canfd";
-+			reg = <0 0xe66c0000 0 0x8000>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 914>,
-+			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+
-+			channel0 {
-+				status = "disabled";
-+			};
-+
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
--- 
-1.9.1
+    Reality?
+
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+[...]
+
+MBR, Sergei
