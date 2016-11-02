@@ -1,147 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41388 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759922AbcKDJoY (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49455 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753543AbcKBN3g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/12] arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
-Date: Fri,  4 Nov 2016 10:44:02 +0100
-Message-Id: <e2420b92de4941bdca05d7c93acfddb48f036d0b.1478251192.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
-References: <cover.1478251192.git.horms+renesas@verge.net.au>
+        Wed, 2 Nov 2016 09:29:36 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 04/32] media: rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
+Date: Wed,  2 Nov 2016 14:23:01 +0100
+Message-Id: <20161102132329.436-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the exposed SD card slots in the DT of the r8a7796/salvator-x.
+Use rvin_reset_format() in rvin_s_dv_timings() instead if just resetting
+a few fields. This fixes an issue where the field format was not
+properly set after S_DV_TIMINGS.
 
-Based on work for the r8a7795/salvator-x by Ai Kyuse.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 84 ++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 90e9a76c8b30..c946569accb1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -10,6 +10,7 @@
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 69bc4cf..7ca2759 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, void *priv_fh,
+ 	if (ret)
+ 		return ret;
  
- /dts-v1/;
- #include "r8a7796.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
+-	vin->source.width = timings->bt.width;
+-	vin->source.height = timings->bt.height;
+-	vin->format.width = timings->bt.width;
+-	vin->format.height = timings->bt.height;
+-
+-	return 0;
++	/* Changing the timings will change the width/height */
++	return rvin_reset_format(vin);
+ }
  
- / {
- 	model = "Renesas Salvator-X board based on r8a7796";
-@@ -29,6 +30,55 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
-+	vcc_sdhi3: regulator-vcc-sdhi3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI3 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio3 15 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi3: regulator-vccq-sdhi3 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI3 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
- };
- 
- &pfc {
-@@ -43,6 +93,16 @@
- 		groups = "scif_clk_a";
- 		function = "scif_clk";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+	};
-+
-+	sdhi3_pins: sd3 {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+	};
- };
- 
- &extal_clk {
-@@ -53,6 +113,30 @@
- 	clock-frequency = <32768>;
- };
- 
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
-+&sdhi3 {
-+	pinctrl-0 = <&sdhi3_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_sdhi3>;
-+	vqmmc-supply = <&vccq_sdhi3>;
-+	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
+ static int rvin_g_dv_timings(struct file *file, void *priv_fh,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
