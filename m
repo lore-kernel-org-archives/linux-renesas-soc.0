@@ -1,44 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:33484 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932477AbcKHMoC (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:49425 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752586AbcKBN3f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 07:44:02 -0500
-Date: Tue, 8 Nov 2016 14:43:27 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        Wed, 2 Nov 2016 09:29:35 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH 01/32] media: entity: Add has_route entity operation
-Message-ID: <20161108124327.GN3217@valkosipuli.retiisi.org.uk>
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 01/32] media: entity: Add has_route entity operation
+Date: Wed,  2 Nov 2016 14:22:58 +0100
+Message-Id: <20161102132329.436-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
- <20161102132329.436-2-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20161102132329.436-2-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 02, 2016 at 02:22:58PM +0100, Niklas S�derlund wrote:
-> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> The optional operation can be used by entities to report whether two
-> pads are internally connected.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Thanks!
+The optional operation can be used by entities to report whether two
+pads are internally connected.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ include/media/media-entity.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index b2203ee..8f9fc85 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -181,6 +181,9 @@ struct media_pad {
+  * @link_validate:	Return whether a link is valid from the entity point of
+  *			view. The media_entity_pipeline_start() function
+  *			validates all links by calling this operation. Optional.
++ * @has_route:		Return whether a route exists inside the entity between
++ *			two given pads. Optional. If the operation isn't
++ *			implemented all pads will be considered as connected.
+  *
+  * .. note::
+  *
+@@ -192,6 +195,8 @@ struct media_entity_operations {
+ 			  const struct media_pad *local,
+ 			  const struct media_pad *remote, u32 flags);
+ 	int (*link_validate)(struct media_link *link);
++	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
++			  unsigned int pad1);
+ };
+ 
+ /**
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+2.10.2
