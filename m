@@ -1,56 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sat, 5 Nov 2016 15:40:19 -0400
-From: Konrad Rzeszutek Wilk <konrad@darnok.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] swiotlb: Rate-limit printing when running out of
- SW-IOMMU space
-Message-ID: <20161105194018.GB26349@localhost.localdomain>
-References: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
- <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:36421 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756792AbcKCQ5r (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 3 Nov 2016 12:57:47 -0400
+Received: by mail-lf0-f41.google.com with SMTP id t196so44529647lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 09:57:46 -0700 (PDT)
+Subject: Re: [PATCH] ARM: DTS: r8a7794: alt: Fix PCF names for DU
+To: Jacopo Mondi <jacopo@jmondi.org>, horms@verge.net.au,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk
+References: <1478180574-15464-1-git-send-email-jacopo@jmondi.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <085d178c-b0fb-ed42-79ce-590507baeba7@cogentembedded.com>
+Date: Thu, 3 Nov 2016 19:57:43 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1478180574-15464-1-git-send-email-jacopo@jmondi.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 04:45:03PM +0100, Geert Uytterhoeven wrote:
-> If the system runs out of SW-IOMMU space, changes are high successive
-> requests will fail, too, flooding the kernel log.  This is true
-> especially for streaming DMA, which is typically used repeatedly outside
-> the driver's initialization routine.  Add rate-limiting to fix this.
-> 
-> While at it, get rid of the open-coded dev_name() handling by using the
-> appropriate dev_err_*() variant.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello.
 
-applied.
+On 11/03/2016 04:42 PM, Jacopo Mondi wrote:
+
+> Update the PCF pin groups and function names of DU interface for
+
+    PFC maybe?
+
+> r8a7794 ALT board.
+>
+> The currently specified pin groups and function names prevented PCF and
+> DU interfaces from being correctly configured:
+>
+> sh-pfc e6060000.pin-controller: function 'du' not supported
+> sh-pfc e6060000.pin-controller: invalid function du in map table
+> sh-pfc e6060000.pin-controller: function 'du' not supported
+> sh-pfc e6060000.pin-controller: invalid function du in map table
+> sh-pfc e6060000.pin-controller: function 'du' not supported
+> sh-pfc e6060000.pin-controller: invalid function du in map table
+> sh-pfc e6060000.pin-controller: function 'du' not supported
+> sh-pfc e6060000.pin-controller: invalid function du in map table
+> rcar-du: probe of feb00000.display failed with error -22
+>
+> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
 > ---
->  lib/swiotlb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-> index 22e13a0e19d76a2b..6ce764410ae475cc 100644
-> --- a/lib/swiotlb.c
-> +++ b/lib/swiotlb.c
-> @@ -714,8 +714,8 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
->  	 * When the mapping is small enough return a static buffer to limit
->  	 * the damage, or panic when the transfer is too big.
->  	 */
-> -	printk(KERN_ERR "DMA: Out of SW-IOMMU space for %zu bytes at "
-> -	       "device %s\n", size, dev ? dev_name(dev) : "?");
-> +	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
-> +			    size);
->  
->  	if (size <= io_tlb_overflow || !do_panic)
->  		return;
-> -- 
-> 1.9.1
-> 
+>
+> Patch applied against Simon Horman's renesas/master branch.
+> The PCF pin groups and function renaming was introduced by commit 56ed4bb9 and
+> DTS for ALT board has never been update accordingly.
+
+    We didn't care about Alt at the time, the patch was done in the interests 
+of the SILK board. I didn't realize the DU pin groups were used for Alt before 
+the actual support was added for them. Thank you for finally fixing this!
+
+> Tested displaying frames on VGA interface: the rcar-du driver loads correctly.
+
+MBR, Sergei
