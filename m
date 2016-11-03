@@ -1,66 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:34156 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1168582AbcKAL1N (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49962 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756414AbcKCPHh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Nov 2016 07:27:13 -0400
-Received: by mail-lf0-f53.google.com with SMTP id b81so123616002lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 01 Nov 2016 04:27:12 -0700 (PDT)
-Subject: Re: [PATCH/RFC 4/5] arm64: dts: r8a7796: Enable ipmmu_ds0 and
- ipmmu_mm
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thu, 3 Nov 2016 11:07:37 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-References: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
- <1477933702-13423-5-git-send-email-geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e3922d22-eb18-0260-c57f-1b9b85b09678@cogentembedded.com>
-Date: Tue, 1 Nov 2016 14:27:10 +0300
-MIME-Version: 1.0
-In-Reply-To: <1477933702-13423-5-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v8 3/3] ARM: dts: alt: Enable UHS-I SDR-104
+Date: Thu,  3 Nov 2016 16:07:25 +0100
+Message-Id: <1478185645-25556-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1478185645-25556-1-git-send-email-horms+renesas@verge.net.au>
+References: <1478185645-25556-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+And the sd-uhs-sdr104 property to SDHI0.
 
-On 10/31/2016 8:08 PM, Geert Uytterhoeven wrote:
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7794-alt.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Enable the IPMMU for Ethernet AVB.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> index f6d15805b75031bb..dc416c300968b0e2 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -303,7 +303,7 @@
->  			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
->  			renesas,ipmmu-main = <&ipmmu_mm 0>;
->  			#iommu-cells = <1>;
-> -			status = "disabled";
-> +			status = "okay";
->  		};
->
->  		ipmmu_ds1: mmu@e7740000 {
-> @@ -320,7 +320,7 @@
->  			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
->  			#iommu-cells = <1>;
-> -			status = "disabled";
-> +			status = "okay";
-
-    You could just omit the "status" prop in .dtsi -- the result should be the 
-same.
-
-[...]
-
-MBR, Sergei
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 325d3f972c57..ccb80d66076f 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -277,6 +277,7 @@
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
