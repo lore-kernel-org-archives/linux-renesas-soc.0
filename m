@@ -1,78 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:39436 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933392AbcKWMdG (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:35714 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758380AbcKCSEE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 07:33:06 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: arm@kernel.org
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Thu, 3 Nov 2016 14:04:04 -0400
+Received: by mail-lf0-f44.google.com with SMTP id b14so45931747lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 11:04:03 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
-        lf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] soc_device_match() interface for matching against soc_bus attributes
-Date: Wed, 23 Nov 2016 13:32:56 +0100
-Message-Id: <1479904376-12453-1-git-send-email-geert+renesas@glider.be>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 0/3] arm64: renesas: enable H3ULCB board peripherals
+Date: Thu,  3 Nov 2016 21:04:02 +0300
+Message-Id: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Olof, Kevin, Arnd,
+Hello,
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+This adds the folowing:
+- Update DT bindings documentation
+- add R8A7795 SoC based H3ULCB board peripherals
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+Vladimir Barinov (3):
+[1/3] dt: arm: shmobile: update H3ULCB board Documentation
+[2/3] arm64: dts: h3ulcb: update header
+[3/3] arm64: dts: h3ulcb: enable SDHI2
 
-are available in the git repository at:
+---
+This patchset is against the 'kernel/git/horms/renesas.git' repo.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/soc-device-match-tag1
-
-for you to fetch changes up to da65a1589dacc7ec44ea0557a14d70a39d991f32:
-
-  base: soc: Provide a dummy implementation of soc_device_match() (2016-11-10 10:10:37 +0100)
-
-----------------------------------------------------------------
-soc_device_match() interface for matching against soc_bus attributes
-
-This provides core infrastructure as a dependency for several users
-(Freescale/NXP, Samsung, Renesas).
-
-Its core parts have been acked by Greg, and the fixes by Arnd and/or
-Greg (the last fix only received an informal ack, that's why I hadn't
-added the ack).
-
-This has already been pulled by Ulf, and is present in mmc/next, as a
-dependency for a Freescale/NXP driver update.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      base: soc: Introduce soc_device_match() interface
-
-Geert Uytterhoeven (3):
-      base: soc: Early register bus when needed
-      base: soc: Check for NULL SoC device attributes
-      base: soc: Provide a dummy implementation of soc_device_match()
-
- drivers/base/Kconfig    |  1 +
- drivers/base/soc.c      | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/sys_soc.h |  9 ++++++
- 3 files changed, 89 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     | 48 +++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 2 deletions(-)
