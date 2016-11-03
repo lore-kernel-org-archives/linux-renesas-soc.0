@@ -1,52 +1,42 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kbingham@kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH 3/5] logger: Log to the FTrace buffer if tracing is enabled
-Date: Fri, 25 Nov 2016 13:59:14 +0000
-Message-Id: <1480082356-23380-4-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1480082356-23380-1-git-send-email-kbingham@kernel.org>
-References: <1480082356-23380-1-git-send-email-kbingham@kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45894 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752132AbcKCPey (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 3 Nov 2016 11:34:54 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: Fixups for bias handeling
+Date: Thu,  3 Nov 2016 16:34:19 +0100
+Message-Id: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran@bingham.xyz>
+Hi Geert and Laurent,
 
-Extend the logger such that it will detect the tracing system, and also
-append print statement to this ring buffer.
+This series fixes two issues I encounter for bias handling in the PFC 
+while preparing my drive strength patch set.
 
-This provides the relevant logging output interspersed in the ftrace
-logs for an effective solution to identifying the actions that caused
-the traces to occur
+I do believe we should try to get the r8a7795 specific fix in to v4.9, 
+do you agree (if the fix itself is acceptable ofc)?
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
----
- scripts/logger.sh | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Niklas Söderlund (2):
+  pinctrl: sh-pfc: Do not unconditionally support
+    PIN_CONFIG_BIAS_DISABLE
+  pinctrl: sh-pfc: r8a7795: Use lookup function for bias data
 
-diff --git a/scripts/logger.sh b/scripts/logger.sh
-index 8123f0c9f6e3..8412b0ba9a08 100755
---- a/scripts/logger.sh
-+++ b/scripts/logger.sh
-@@ -6,6 +6,17 @@ now() {
- 
- label=${1:+ [$1]}
- 
-+TRACE_MARKER=/sys/kernel/debug/tracing/trace_marker
-+if [ -e $TRACE_MARKER ]; then
-+	extra_log_files=$TRACE_MARKER
-+fi
-+
- while read line ; do
--	echo "$(now)$label $line"
-+	newline="$(now)$label $line"
-+
-+	echo "$newline"
-+
-+	for f in $extra_log_files; do
-+		echo "$newline" >> $f;
-+	done;
- done
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 350 ++++++++++++++++++-----------------
+ drivers/pinctrl/sh-pfc/pinctrl.c     |   3 +-
+ 2 files changed, 182 insertions(+), 171 deletions(-)
+
 -- 
-2.7.4
+2.10.2
