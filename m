@@ -1,83 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49629 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755028AbcKCO6d (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:33560 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759073AbcKCVJc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 10:58:33 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v8 4/6] mmc: tmio: Add hw reset support
-Date: Thu,  3 Nov 2016 15:16:02 +0100
-Message-Id: <1478182564-18762-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
-References: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 3 Nov 2016 17:09:32 -0400
+Received: by mail-lf0-f41.google.com with SMTP id c13so49629301lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 14:09:32 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, horms+renesas@verge.net.au
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+Date: Fri, 04 Nov 2016 00:09:28 +0300
+Message-ID: <1764252.Q3lPMOJFSH@wasted.cogentembedded.com>
+In-Reply-To: <9992368.desJvZIsUT@wasted.cogentembedded.com>
+References: <9992368.desJvZIsUT@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Add macros usable by  the device tree sources to reference the R8A7745 CPG
+clocks  by index. The data comes from the  table 7.2c in the revision 0.50
+of the RZ/G Series User's Manual.
 
-Add hw reset support.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This is required by tuning support which will
-be introduced by follow-up patches.
+Changes in version 2:
+- added Geert's tag.
 
-v6
-* Rely on core to retune on reset
+ include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-v5
-* As suggested by Ulf Hansson
-  - Broke out of a larger patch
----
- drivers/mmc/host/tmio_mmc.h     | 1 +
- drivers/mmc/host/tmio_mmc_pio.c | 9 +++++++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index b93762950e8f..c5adf52fc049 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -167,6 +167,7 @@ struct tmio_mmc_host {
- 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
- 					   struct mmc_ios *ios);
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
-+	void (*hw_reset)(struct tmio_mmc_host *host);
- };
- 
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 0ae967087ea1..ce6e93758576 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -759,6 +759,14 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 	return 0;
- }
- 
-+static void tmio_mmc_hw_reset(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
+Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
 +
-+	if (host->hw_reset)
-+		host->hw_reset(host);
-+}
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
- /* Process requests from the MMC layer */
- static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
-@@ -975,6 +983,7 @@ static struct mmc_host_ops tmio_mmc_ops = {
- 	.get_cd		= mmc_gpio_get_cd,
- 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
- 	.multi_io_quirk	= tmio_multi_io_quirk,
-+	.hw_reset	= tmio_mmc_hw_reset,
- };
- 
- static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
--- 
-2.7.0.rc3.207.g0ac5344
++/* r8a7745 CPG Core Clocks */
++#define R8A7745_CLK_Z2		0
++#define R8A7745_CLK_ZG		1
++#define R8A7745_CLK_ZTR		2
++#define R8A7745_CLK_ZTRD2	3
++#define R8A7745_CLK_ZT		4
++#define R8A7745_CLK_ZX		5
++#define R8A7745_CLK_ZS		6
++#define R8A7745_CLK_HP		7
++#define R8A7745_CLK_B		9
++#define R8A7745_CLK_LB		10
++#define R8A7745_CLK_P		11
++#define R8A7745_CLK_CL		12
++#define R8A7745_CLK_CP		13
++#define R8A7745_CLK_M2		14
++#define R8A7745_CLK_ZB3		16
++#define R8A7745_CLK_ZB3D2	17
++#define R8A7745_CLK_DDR		18
++#define R8A7745_CLK_SDH		19
++#define R8A7745_CLK_SD0		20
++#define R8A7745_CLK_SD2		21
++#define R8A7745_CLK_SD3		22
++#define R8A7745_CLK_MMC0	23
++#define R8A7745_CLK_MP		24
++#define R8A7745_CLK_QSPI	25
++#define R8A7745_CLK_ACP		26
++#define R8A7745_CLK_RCAN	27
++#define R8A7745_CLK_R		28
++#define R8A7745_CLK_OSC		29
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
