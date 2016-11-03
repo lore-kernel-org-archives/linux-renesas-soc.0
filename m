@@ -1,48 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48874 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751064AbcKBJXv (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33798 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759475AbcKCSHo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:23:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Thu, 3 Nov 2016 14:07:44 -0400
+Received: by mail-lf0-f43.google.com with SMTP id b81so45960683lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 11:07:43 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.10
-Date: Wed,  2 Nov 2016 10:23:40 +0100
-Message-Id: <cover.1478078567.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 5/9] arm64: dts: m3ulcb: enable GPIO keys
+Date: Thu,  3 Nov 2016 21:07:43 +0300
+Message-Id: <1478196463-1342-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+This supports GPIO keys on M3ULCB board
 
-Please consider these Renesas ARM64 based SoC defconfig updates for v4.10.
-
-
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.10
-
-for you to fetch changes up to 833c97254724a620d1d9fb9a580681fb52536fbf:
-
-  arm64: defconfig: Enable DRM DU and V4L2 FCP + VSP modules (2016-10-27 09:07:35 +0200)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC Defconfig Updates for v4.10
-
-* Enable R-Car DU and related drivers as modules in defconfig
-
-----------------------------------------------------------------
-Magnus Damm (1):
-      arm64: defconfig: Enable DRM DU and V4L2 FCP + VSP modules
-
- arch/arm64/configs/defconfig | 14 ++++++++++++++
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 14 +++++++++++++
  1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index fb694b8..3329f78 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -12,6 +12,7 @@
+ /dts-v1/;
+ #include "r8a7796.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	model = "Renesas M3ULCB board based on r8a7796";
+@@ -31,6 +31,18 @@
+ 			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
++
++	keyboard {
++		compatible = "gpio-keys";
++
++		key-1 {
++			linux,code = <KEY_1>;
++			label = "SW3";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &extal_clk {
+-- 
+1.9.1
