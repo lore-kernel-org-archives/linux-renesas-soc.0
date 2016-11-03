@@ -1,94 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41088 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751368AbcKDJCb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:02:31 -0400
-Date: Fri, 4 Nov 2016 10:02:23 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo@jmondi.org>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ARM: DTS: r8a7794: alt: Fix PFC names for DU
-Message-ID: <20161104090223.GA4801@verge.net.au>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo@jmondi.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: [PATCH v2] ARM: DTS: r8a7794: alt: Fix PFC names for DU
+Date: Thu,  3 Nov 2016 20:34:46 +0100
+Message-Id: <1478201686-25488-1-git-send-email-jacopo@jmondi.org>
+In-Reply-To: <1478180574-15464-1-git-send-email-jacopo@jmondi.org>
 References: <1478180574-15464-1-git-send-email-jacopo@jmondi.org>
- <1478201686-25488-1-git-send-email-jacopo@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1478201686-25488-1-git-send-email-jacopo@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Update the PFC pin groups and function names of DU interface for
+r8a7794 ALT board.
 
-On Thu, Nov 03, 2016 at 08:34:46PM +0100, Jacopo Mondi wrote:
-> Update the PFC pin groups and function names of DU interface for
-> r8a7794 ALT board.
-> 
-> The currently specified pin groups and function names prevented PFC and
-> DU interfaces from being correctly configured:
-> 
-> sh-pfc e6060000.pin-controller: function 'du' not supported
-> sh-pfc e6060000.pin-controller: invalid function du in map table
-> sh-pfc e6060000.pin-controller: function 'du' not supported
-> sh-pfc e6060000.pin-controller: invalid function du in map table
-> sh-pfc e6060000.pin-controller: function 'du' not supported
-> sh-pfc e6060000.pin-controller: invalid function du in map table
-> sh-pfc e6060000.pin-controller: function 'du' not supported
-> sh-pfc e6060000.pin-controller: invalid function du in map table
-> rcar-du: probe of feb00000.display failed with error -22
-> 
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> ---
-> 
-> v1->v2:
->     - s/PCF/PFC/ in commit message according to Sergei Shtylyov's comment
-> 
-> Patch applied against Simon Horman's renesas/master branch.
-> The PCF pin groups and function renaming was introduced by commit 56ed4bb9 and
-> DTS for ALT board has never been update accordingly.
-> Tested displaying frames on VGA interface: the rcar-du driver loads correctly.
+The currently specified pin groups and function names prevented PFC and
+DU interfaces from being correctly configured:
 
-Thanks for noticing this.
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+rcar-du: probe of feb00000.display failed with error -22
 
-There is no need to repost to update the subject, but for reference I would
-prefer the prefix to be "ARM: dts: alt:". Assuming there are no other
-changes I can fix that up when queuing up this change.
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+---
 
-I am wondering if this should be queued up as a fix for v4.9 and in turn
-v4.8-stable. Or if it should just be queued up for v4.10.
+v1->v2:
+    - s/PCF/PFC/ in commit message according to Sergei Shtylyov's comment
 
-In the case of the former I'd advocate adding the following tag
-(again no need to repost just to update this):
+Patch applied against Simon Horman's renesas/master branch.
+The PCF pin groups and function renaming was introduced by commit 56ed4bb9 and
+DTS for ALT board has never been update accordingly.
+Tested displaying frames on VGA interface: the rcar-du driver loads correctly.
 
-Fixes: 56ed4bb984ac ("pinctrl: sh-pfc: r8a7794: Add DU pin groups")
+ arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->  arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-> index 8d1b35a..9d65fb3 100644
-> --- a/arch/arm/boot/dts/r8a7794-alt.dts
-> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
-> @@ -165,8 +165,8 @@
->  	pinctrl-names = "default";
->  
->  	du_pins: du {
-> -		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_dotclkout0";
-> -		function = "du";
-> +		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
-> +		function = "du1";
->  	};
->  
->  	scif2_pins: scif2 {
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 8d1b35a..9d65fb3 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -165,8 +165,8 @@
+ 	pinctrl-names = "default";
+ 
+ 	du_pins: du {
+-		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_dotclkout0";
+-		function = "du";
++		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
++		function = "du1";
+ 	};
+ 
+ 	scif2_pins: scif2 {
+-- 
+2.7.4
+
