@@ -1,103 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46886 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751765AbcKFUU4 (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:35501 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759718AbcKCSID (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Nov 2016 15:20:56 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 05/14] ARM: dts: koelsch: use demuxer for I2C1
-Date: Sun,  6 Nov 2016 21:20:23 +0100
-Message-Id: <20161106202032.5227-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+        Thu, 3 Nov 2016 14:08:03 -0400
+Received: by mail-lf0-f43.google.com with SMTP id b14so46021691lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 11:08:03 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 7/9] arm64: dts: m3ulcb: enable EXTALR clk
+Date: Thu,  3 Nov 2016 21:08:02 +0300
+Message-Id: <1478196482-1434-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
+This enables EXTALR clock that can be used for the watchdog.
 
-Make it possible to fallback to GPIO for I2C1 on the EXIO-C connector.
-
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 57e69af6513619..5405d337d74486 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -50,6 +50,8 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scif1;
-+		i2c9 = &gpioi2c1;
-+		i2c12 = &i2cexio1;
- 	};
- 
- 	chosen {
-@@ -298,6 +300,29 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
-+
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio7 16 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio7 15 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio1: i2c-12 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-exio1";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index 3682bcc..6936288 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -74,6 +74,10 @@
+ 	clock-frequency = <16666666>;
  };
  
- &du {
-@@ -333,6 +358,11 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1";
-+		function = "i2c1";
-+	};
-+
- 	i2c2_pins: i2c2 {
- 		groups = "i2c2";
- 		function = "i2c2";
-@@ -582,6 +612,11 @@
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "i2c-exio1";
++&extalr_clk {
++	clock-frequency = <32768>;
 +};
 +
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
  	pinctrl-names = "default";
 -- 
-2.9.3
+1.9.1
