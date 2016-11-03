@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35768 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932619AbcKHVR3 (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36352 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758992AbcKCUsw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 16:17:29 -0500
-Received: by mail-lf0-f44.google.com with SMTP id b14so149470018lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Nov 2016 13:17:28 -0800 (PST)
+        Thu, 3 Nov 2016 16:48:52 -0400
+Received: by mail-lf0-f53.google.com with SMTP id t196so49377808lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 13:48:51 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
         sboyd@codeaurora.org
 Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4] clk: renesas: cpg-mssr: add common R-Car Gen2 support
-Date: Wed, 09 Nov 2016 00:17:25 +0300
-Message-ID: <2398984.AXNDaupAxO@wasted.cogentembedded.com>
+Subject: [PATCH v3 RESEND] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+Date: Thu, 03 Nov 2016 23:48:47 +0300
+Message-ID: <2777851.5TLojugvYX@wasted.cogentembedded.com>
 In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
 References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
 MIME-Version: 1.0
@@ -33,13 +33,9 @@ Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
 
-Changes in version 4:
-- added a static variable for the PLL0 divisor and a parameter of the same kind
-  to rcar_gen2_cpg_init(), used that  variable in rcar_gen2_cpg_clk_register().
-
 Changes in version 3:
-- removed  the divisor logic from the PLL0 related code;
-- also mentioned R-Car V2H as not having the PLL0CR register.
+- remove the divisor logic from the PLL0  related code;
+- also mention R-Car V2H as not having the PLL0CR register.
 
 Changes in version 2:
 - added support  for non-existing PLL0CR;
@@ -49,15 +45,15 @@ Changes in version 2:
 - removed rcar_gen2_read_modemr();
 - added Geert's tag.
 
- drivers/clk/renesas/rcar-gen2-cpg.c |  370 ++++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen2-cpg.h |   43 ++++
- 2 files changed, 413 insertions(+)
+ drivers/clk/renesas/rcar-gen2-cpg.c |  366 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen2-cpg.h |   42 ++++
+ 2 files changed, 408 insertions(+)
 
 Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
 ===================================================================
 --- /dev/null
 +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
-@@ -0,0 +1,370 @@
+@@ -0,0 +1,366 @@
 +/*
 + * R-Car Gen2 Clock Pulse Generator
 + *
@@ -318,7 +314,6 @@ Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
 +};
 +
 +static const struct rcar_gen2_cpg_pll_config *cpg_pll_config __initdata;
-+static unsigned int cpg_pll0_div __initdata;
 +static u32 cpg_mode __initdata;
 +
 +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
@@ -354,7 +349,6 @@ Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
 +		 * we  currently  have no need to change  the multiplier value.
 +		 */
 +		mult = cpg_pll_config->pll0_mult;
-+		div  = cpg_pll0_div;
 +		if (!mult) {
 +			u32 pll0cr = readl(base + CPG_PLL0CR);
 +
@@ -418,11 +412,9 @@ Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
 +						  0, table, &cpg_lock);
 +}
 +
-+int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
-+			      unsigned int pll0_div)
++int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config)
 +{
 +	cpg_pll_config = config;
-+	cpg_pll0_div = pll0_div;
 +
 +	spin_lock_init(&cpg_lock);
 +
@@ -432,7 +424,7 @@ Index: linux/drivers/clk/renesas/rcar-gen2-cpg.h
 ===================================================================
 --- /dev/null
 +++ linux/drivers/clk/renesas/rcar-gen2-cpg.h
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,42 @@
 +/*
 + * R-Car Gen2 Clock Pulse Generator
 + *
@@ -472,7 +464,6 @@ Index: linux/drivers/clk/renesas/rcar-gen2-cpg.h
 +				       const struct cpg_core_clk *core,
 +				       const struct cpg_mssr_info *info,
 +				       struct clk **clks, void __iomem *base);
-+int rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
-+		       unsigned int pll0_div);
++int rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config);
 +
 +#endif
