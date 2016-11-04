@@ -1,129 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53075 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752104AbcKGPOv (ORCPT
+        with ESMTP id S1760485AbcKDJpV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 10:14:51 -0500
+        Fri, 4 Nov 2016 05:45:21 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@sang-engineering.com>,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC] serial: sh-sci: Fix deadlock caused by serial output request
-Date: Mon,  7 Nov 2016 16:14:41 +0100
-Message-Id: <1478531681-1561-1-git-send-email-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 6/9] ARM: shmobile: r8a7793/gose: Add board part number to DT bindings
+Date: Fri,  4 Nov 2016 10:44:40 +0100
+Message-Id: <4b8f5955be83c539d2defe0a81313c11c0e3b3ad.1478251657.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
+References: <cover.1478251657.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-While spin is already locked, serial output request causes the deadlock,
-because serial output process also tries to lock the spin.
-This patch removes serial output with spin locked.
-
-Signed-off-by: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This is a patch from the Gen3 3.3.2 BSP.
-Geert, please consider it for mainline.
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Two approaches are mixed here: simply removing log messages that would
-cause a deadlock; and moving log messages to outside the lock. Some
-consideration was given (by Simon) to a more consistent approach of
-simply removing all log messages in question. However this was taken as
-logging ouside of the lock seems consistent with other logging in
-rx_timer_fn() and sci_dma_rx_complete().
----
- drivers/tty/serial/sh-sci.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 4b26252c2885..91e7dddbf72c 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1142,11 +1142,8 @@ static int sci_dma_rx_push(struct sci_port *s, void *buf, size_t count)
- 	int copied;
- 
- 	copied = tty_insert_flip_string(tport, buf, count);
--	if (copied < count) {
--		dev_warn(port->dev, "Rx overrun: dropping %zu bytes\n",
--			 count - copied);
-+	if (copied < count)
- 		port->icount.buf_overrun++;
--	}
- 
- 	port->icount.rx += copied;
- 
-@@ -1161,8 +1158,6 @@ static int sci_dma_rx_find_active(struct sci_port *s)
- 		if (s->active_rx == s->cookie_rx[i])
- 			return i;
- 
--	dev_err(s->port.dev, "%s: Rx cookie %d not found!\n", __func__,
--		s->active_rx);
- 	return -1;
- }
- 
-@@ -1223,9 +1218,9 @@ static void sci_dma_rx_complete(void *arg)
- 
- 	dma_async_issue_pending(chan);
- 
-+	spin_unlock_irqrestore(&port->lock, flags);
- 	dev_dbg(port->dev, "%s: cookie %d #%d, new active cookie %d\n",
- 		__func__, s->cookie_rx[active], active, s->active_rx);
--	spin_unlock_irqrestore(&port->lock, flags);
- 	return;
- 
- fail:
-@@ -1273,8 +1268,6 @@ static void sci_submit_rx(struct sci_port *s)
- 		if (dma_submit_error(s->cookie_rx[i]))
- 			goto fail;
- 
--		dev_dbg(s->port.dev, "%s(): cookie %d to #%d\n", __func__,
--			s->cookie_rx[i], i);
- 	}
- 
- 	s->active_rx = s->cookie_rx[0];
-@@ -1288,7 +1281,6 @@ static void sci_submit_rx(struct sci_port *s)
- 	for (i = 0; i < 2; i++)
- 		s->cookie_rx[i] = -EINVAL;
- 	s->active_rx = -EINVAL;
--	dev_warn(s->port.dev, "Failed to re-start Rx DMA, using PIO\n");
- 	sci_rx_dma_release(s, true);
- }
- 
-@@ -1358,10 +1350,10 @@ static void rx_timer_fn(unsigned long arg)
- 	int active, count;
- 	u16 scr;
- 
--	spin_lock_irqsave(&port->lock, flags);
--
- 	dev_dbg(port->dev, "DMA Rx timed out\n");
- 
-+	spin_lock_irqsave(&port->lock, flags);
-+
- 	active = sci_dma_rx_find_active(s);
- 	if (active < 0) {
- 		spin_unlock_irqrestore(&port->lock, flags);
-@@ -1370,9 +1362,9 @@ static void rx_timer_fn(unsigned long arg)
- 
- 	status = dmaengine_tx_status(s->chan_rx, s->active_rx, &state);
- 	if (status == DMA_COMPLETE) {
-+		spin_unlock_irqrestore(&port->lock, flags);
- 		dev_dbg(port->dev, "Cookie %d #%d has already completed\n",
- 			s->active_rx, active);
--		spin_unlock_irqrestore(&port->lock, flags);
- 
- 		/* Let packet complete handler take care of the packet */
- 		return;
-@@ -1396,8 +1388,6 @@ static void rx_timer_fn(unsigned long arg)
- 	/* Handle incomplete DMA receive */
- 	dmaengine_terminate_all(s->chan_rx);
- 	read = sg_dma_len(&s->sg_rx[active]) - state.residue;
--	dev_dbg(port->dev, "Read %u bytes with cookie %d\n", read,
--		s->active_rx);
- 
- 	if (read) {
- 		count = sci_dma_rx_push(s, s->rx_buf[active], read);
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 106b542c27c9..15669642b532 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -49,7 +49,7 @@ Boards:
+     compatible = "renesas,bockw", "renesas,r8a7778"
+   - Genmai (RTK772100BC00000BR)
+     compatible = "renesas,genmai", "renesas,r7s72100"
+-  - Gose
++  - Gose (RTP0RC7793SEB00010S)
+     compatible = "renesas,gose", "renesas,r8a7793"
+   - H3ULCB (RTP0RC7795SKB00010S)
+     compatible = "renesas,h3ulcb", "renesas,r8a7795";
 -- 
 2.7.0.rc3.207.g0ac5344
