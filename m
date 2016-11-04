@@ -1,69 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:26465 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753502AbcKBB3F (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41388 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760363AbcKDJoa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Nov 2016 21:29:05 -0400
-Subject: Re: The failure summary report of GEN3(RCAR H3) for linux upstream
- v4.9-rc2
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <57A46D20.7040106@jinso.co.jp> <57C9764F.2070802@jinso.co.jp>
- <f2bb791e-8973-10a9-a2ac-1a944b38d4ad@jinso.co.jp>
- <9d9a647b-d75f-e89a-2d4d-55e409ccabae@jinso.co.jp>
- <58060015.3020702@jinso.co.jp>
- <b4efb8cc-bf55-cf34-a537-4ffa5041291a@jinso.co.jp>
- <CAMuHMdU4Siv1ogpv9S-Bq8BRHP0uiXjYAa0Zkdvcts4X+VU10w@mail.gmail.com>
-Cc: Xuan Truong Nguyen <nx-truong@jinso.co.jp>,
-        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Fri, 4 Nov 2016 05:44:30 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
-        Cao Minh Hiep <cm-hiep@jinso.co.jp>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@sang-engineering.com>
-From: duclm <lm-duc@jinso.co.jp>
-Message-ID: <72e82c60-9fa5-c3d8-12e6-e74b2c96ab6f@jinso.co.jp>
-Date: Wed, 2 Nov 2016 10:29:00 +0900
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU4Siv1ogpv9S-Bq8BRHP0uiXjYAa0Zkdvcts4X+VU10w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/12] arm64: dts: r8a7795: salvator: enable on-board eMMC
+Date: Fri,  4 Nov 2016 10:44:04 +0100
+Message-Id: <7c827d1fda99d4a80e317b1fbb1ba359b082bda2.1478251192.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
+References: <cover.1478251192.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear Mr Geert,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thank you for your information.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-Sorry for my stupid question, could you tell me what kind of firmware 
-(v2.12.0) are you mentioning?
-
-On 2016年10月31日 22:16, Geert Uytterhoeven wrote:
-
-> Hi Duc-san,
->
-> On Mon, Oct 31, 2016 at 2:10 PM, duclm <lm-duc@jinso.co.jp> wrote:
->> We have tested the linux upstream v4.9-rc2 for Gen3(RCAR H3).
->>
->> So we would like to report the summary of the failure.
-> Issue 1 ("PM: Automatically resumes after suspending system. "): suspend
-> and resume are handled by PSCI. To gix the issue, you have to upgrade the
-> firmware to v2.12.0, and follow the accompanying procedures to prepare the
-> system for suspend, and to resume.
->
-> Gr{oetje,eeting}s,
->
->                          Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                  -- Linus Torvalds
->
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index c8f6023c4667..da3e996ba121 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -62,6 +62,24 @@
+ 		clock-frequency = <24576000>;
+ 	};
+ 
++	reg_1p8v: regulator0 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -250,6 +268,18 @@
+ 		power-source = <1800>;
+ 	};
+ 
++	sdhi2_pins: sd2 {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <3300>;
++	};
++
++	sdhi2_pins_uhs: sd2_uhs {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <1800>;
++	};
++
+ 	sdhi3_pins: sd3 {
+ 		groups = "sdhi3_data4", "sdhi3_ctrl";
+ 		function = "sdhi3";
+@@ -401,6 +431,19 @@
+ 	status = "okay";
+ };
+ 
++&sdhi2 {
++	/* used for on-board 8bit eMMC */
++	pinctrl-0 = <&sdhi2_pins>;
++	pinctrl-1 = <&sdhi2_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_1p8v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
+ &sdhi3 {
+ 	pinctrl-0 = <&sdhi3_pins>;
+ 	pinctrl-1 = <&sdhi3_pins_uhs>;
+-- 
+2.7.0.rc3.207.g0ac5344
