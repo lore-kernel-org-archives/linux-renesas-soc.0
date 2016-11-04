@@ -1,53 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49962 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757799AbcKCPHf (ORCPT
+        with ESMTP id S1760475AbcKDJpU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 11:07:35 -0400
+        Fri, 4 Nov 2016 05:45:20 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v8 0/3] ARM, arm64: renesas: Enable UHS-I SDR-104
-Date: Thu,  3 Nov 2016 16:07:22 +0100
-Message-Id: <1478185645-25556-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 8/9] ARM: shmobile: select errata 798181 for SoCs with CA15 cores
+Date: Fri,  4 Nov 2016 10:44:42 +0100
+Message-Id: <44c1a893820d3ce4806c5248ad0c0fa7ffcbe380.1478251657.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
+References: <cover.1478251657.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Select ARM errata 798181 on SoCs cores affected CA15 cores.
 
-this series enables SDHI UHS-I SDR-104 on:
-* r8a7790/lager
-* r8a7791/koelsch
-* r8a7794/alt
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/mach-shmobile/Kconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-It is based on renesas-next-20161102-v4.9-rc1.
-
-For functional SDR-104 support the following dependencies are needed:
-* [PATCH v8 0/6] UHS-I SDR-104 support for sh_mobile_sdhi
-
-To aid review the following git branches are provided:
-* This patchset:
-  https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-integration-v8
-* This patch-set and above dependency
-  https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v8
-
-Changes since v7:
-* Dropped merged matches
-* Dropped r8a779[56]/salvator-x patches for now as it seems further work is
-  required in order to reliably enable SDR104 on those SoCs.
-
-Simon Horman (3):
-  ARM: dts: lager: Enable UHS-I SDR-104
-  ARM: dts: koelsch: Enable UHS-I SDR-104
-  ARM: dts: alt: Enable UHS-I SDR-104
-
- arch/arm/boot/dts/r8a7790-lager.dts   | 1 +
- arch/arm/boot/dts/r8a7791-koelsch.dts | 1 +
- arch/arm/boot/dts/r8a7794-alt.dts     | 1 +
- 3 files changed, 3 insertions(+)
-
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index c48be1d332ed..6fbd9b7d2d67 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -60,6 +60,7 @@ config ARCH_R7S72100
+ config ARCH_R8A73A4
+ 	bool "R-Mobile APE6 (R8A73A40)"
+ 	select ARCH_RMOBILE
++	select ARM_ERRATA_798181 if SMP
+ 	select RENESAS_IRQC
+ 
+ config ARCH_R8A7740
+@@ -70,6 +71,7 @@ config ARCH_R8A7740
+ config ARCH_R8A7743
+ 	bool "RZ/G1M (R8A77430)"
+ 	select ARCH_RCAR_GEN2
++	select ARM_ERRATA_798181 if SMP
+ 
+ config ARCH_R8A7778
+ 	bool "R-Car M1A (R8A77781)"
+@@ -82,20 +84,24 @@ config ARCH_R8A7779
+ config ARCH_R8A7790
+ 	bool "R-Car H2 (R8A77900)"
+ 	select ARCH_RCAR_GEN2
++	select ARM_ERRATA_798181 if SMP
+ 	select I2C
+ 
+ config ARCH_R8A7791
+ 	bool "R-Car M2-W (R8A77910)"
+ 	select ARCH_RCAR_GEN2
++	select ARM_ERRATA_798181 if SMP
+ 	select I2C
+ 
+ config ARCH_R8A7792
+ 	bool "R-Car V2H (R8A77920)"
+ 	select ARCH_RCAR_GEN2
++	select ARM_ERRATA_798181 if SMP
+ 
+ config ARCH_R8A7793
+ 	bool "R-Car M2-N (R8A7793)"
+ 	select ARCH_RCAR_GEN2
++	select ARM_ERRATA_798181 if SMP
+ 	select I2C
+ 
+ config ARCH_R8A7794
 -- 
 2.7.0.rc3.207.g0ac5344
