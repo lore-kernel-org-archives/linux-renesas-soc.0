@@ -1,106 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36194 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758005AbcKCSHK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932196AbcKDJpM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 14:07:10 -0400
-Received: by mail-lf0-f48.google.com with SMTP id t196so46117848lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 11:07:09 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 4 Nov 2016 05:45:12 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 2/9] arm64: dts: m3ulcb: initial device tree
-Date: Thu,  3 Nov 2016 21:07:09 +0300
-Message-Id: <1478196429-1219-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/9] ARM: shmobile: Sort Kconfig selections
+Date: Fri,  4 Nov 2016 10:44:35 +0100
+Message-Id: <9255f6fd453e1ba7ffa58427a04c52f68b96862f.1478251657.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
+References: <cover.1478251657.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device tree for the R8A7796 SoC based M3ULCB low cost
-board (R-Car Starter Kit Pro)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This commit supports the following peripherals:
-- SCIF (console)
+Sort alphabetically all symbols selected by ARCH_RENESAS
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/Makefile           |  2 +-
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 51 ++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+ arch/arm/mach-shmobile/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index eb72830..1618e0a 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,5 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
--dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb
-+dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 09817bae4558..84fd4e959147 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -32,15 +32,15 @@ config ARCH_RMOBILE
+ menuconfig ARCH_RENESAS
+ 	bool "Renesas ARM SoCs"
+ 	depends on ARCH_MULTI_V7 && MMU
++	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+ 	select ARCH_SHMOBILE
+ 	select ARCH_SHMOBILE_MULTI
++	select ARM_GIC
++	select GPIOLIB
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+-	select ARM_GIC
+-	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+ 	select NO_IOPORT_MAP
+ 	select PINCTRL
+-	select GPIOLIB
+ 	select ZONE_DMA if ARM_LPAE
  
- always		:= $(dtb-y)
- clean-files	:= *.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-new file mode 100644
-index 0000000..ecb9e11
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -0,0 +1,51 @@
-+/*
-+ * Device Tree Source for the M3ULCB (R-Car Starter Kit Pro) board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7796.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Renesas M3ULCB board based on r8a7796";
-+	compatible = "renesas,m3ulcb", "renesas,r8a7796";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&pfc {
-+	scif2_pins: scif2 {
-+		groups = "scif2_data_a";
-+		function = "scif2";
-+	};
-+};
-+
-+&scif2 {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+ if ARCH_RENESAS
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
