@@ -1,34 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34763 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757493AbcKBVx5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755983AbcKDJos (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 17:53:57 -0400
-Received: by mail-lf0-f51.google.com with SMTP id b81so23813991lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Nov 2016 14:53:56 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v5 0/2] Renesas R8A7743 CPG/MSSR clock support
-Date: Thu, 03 Nov 2016 00:53:53 +0300
-Message-ID: <1737840.BeMyoUTlpl@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 4 Nov 2016 05:44:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/29] ARM: dts: r8a7792: add MSIOF clocks
+Date: Fri,  4 Nov 2016 10:44:10 +0100
+Message-Id: <5cef452bf895cc38af3a4e20f85c20c1a4d41001.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo. I've split them from the R-Car gen2 common support patch.
-As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
-patch #1 of this series, it might make sense to merge this patch to the
-'renesas.git' repo as well...
+Describe the MSIOF0/1 clocks and their parent, MP clock in the R8A7792
+device  tree.
 
-[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7743 support
+Based  on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
 
-MBR, Sergei
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7792.dtsi | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 713141d38b3e..839cd70c4c75 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -763,6 +763,13 @@
+ 			clock-div = <48>;
+ 			clock-mult = <1>;
+ 		};
++		mp_clk: mp {
++			compatible = "fixed-factor-clock";
++			clocks = <&pll1_div2_clk>;
++			#clock-cells = <0>;
++			clock-div = <15>;
++			clock-mult = <1>;
++		};
+ 		m2_clk: m2 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
+@@ -793,6 +800,15 @@
+ 		};
+ 
+ 		/* Gate clocks */
++		mstp0_clks: mstp0_clks@e6150130 {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150130 0 4>, <0 0xe6150030 0 4>;
++			clocks = <&mp_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7792_CLK_MSIOF0>;
++			clock-output-names = "msiof0";
++		};
+ 		mstp1_clks: mstp1_clks@e6150134 {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
+@@ -811,12 +827,13 @@
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
+-			clocks = <&zs_clk>, <&zs_clk>;
++			clocks = <&mp_clk>, <&zs_clk>, <&zs_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
++				R8A7792_CLK_MSIOF1
+ 				R8A7792_CLK_SYS_DMAC1 R8A7792_CLK_SYS_DMAC0
+ 			>;
+-			clock-output-names = "sys-dmac1", "sys-dmac0";
++			clock-output-names = "msiof1", "sys-dmac1", "sys-dmac0";
+ 		};
+ 		mstp3_clks: mstp3_clks@e615013c {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+-- 
+2.7.0.rc3.207.g0ac5344
