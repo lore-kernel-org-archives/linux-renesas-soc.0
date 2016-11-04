@@ -1,36 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:37745 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754324AbcKAUPO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41388 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758005AbcKDJoU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Nov 2016 16:15:14 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] Add r8a7796 clocks to capture video
-Date: Tue,  1 Nov 2016 21:12:23 +0100
-Message-Id: <20161101201225.14810-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Nov 2016 05:44:20 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/12] arm64: dts: r8a7795: salvator-x: Add DU LVDS output endpoint
+Date: Fri,  4 Nov 2016 10:43:58 +0100
+Message-Id: <ea3c17b03b9bb57c0ea05a8afac934649128c2f0.1478251192.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
+References: <cover.1478251192.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert and everyone else,
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Add the clocks for VIN and CSI2 which are needed to be able to capture 
-video on r8a7796. Tested by capturing video using the VIN and CSI2 IP 
-cores on M3-W.
+Declaring the endpoint makes LVDS enablement easier by just including
+the corresponding panel's dtsi file.
 
-Niklas Söderlund (2):
-  clk: renesas: r8a7796: Add CSI2 clocks
-  clk: renesas: r8a7796: Add VIN clocks
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index ff4e4fe843ed..c8f6023c4667 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -191,6 +191,10 @@
+ 				remote-endpoint = <&adv7123_in>;
+ 			};
+ 		};
++		port@3 {
++			lvds_connector: endpoint {
++			};
++		};
+ 	};
+ };
+ 
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
