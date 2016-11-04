@@ -1,86 +1,144 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Johan Hovold <johan@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Vince Bridgers <vbridger@opensource.altera.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Li Yang <leoli@freescale.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Felix Fietkau <nbd@openwrt.org>,
-        John Crispin <blogic@openwrt.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars Persson <lars.persson@axis.com>,
-        Mugunthan V N <mugunthanvnm@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH net 04/16] net: ethernet: aurora: nb8800: fix fixed-link phydev leaks
-Date: Mon, 28 Nov 2016 19:24:57 +0100
-Message-Id: <1480357509-28074-5-git-send-email-johan@kernel.org>
-In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
-References: <1480357509-28074-1-git-send-email-johan@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759924AbcKDJo4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 4 Nov 2016 05:44:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        William Towle <william.towle@codethink.co.uk>,
+        Rob Taylor <rob.taylor@codethink.co.uk>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/29] ARM: dts: lager: Add entries for VIN HDMI input support
+Date: Fri,  4 Nov 2016 10:44:18 +0100
+Message-Id: <56548d0c5aead2a1f7df43fcb29f93575ff713b4.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make sure to deregister and free any fixed-link PHY registered using
-of_phy_register_fixed_link() on probe errors and on driver unbind.
+From: William Towle <william.towle@codethink.co.uk>
 
-Fixes: c7dfe3abf40e ("net: ethernet: nb8800: support fixed-link DT
-node")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Add DT entries for vin0, vin0_pins, and adv7612.
+
+Sets the 'default-input' property for ADV7612, enabling image and video
+capture without the need to have userspace specifying routing.
+
+Signed-off-by: William Towle <william.towle@codethink.co.uk>
+Signed-off-by: Rob Taylor <rob.taylor@codethink.co.uk>
+[uli: added interrupt, renamed endpoint, merged default-input]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/net/ethernet/aurora/nb8800.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 66 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 64 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/aurora/nb8800.c b/drivers/net/ethernet/aurora/nb8800.c
-index 00c38bf151e6..e078d8da978c 100644
---- a/drivers/net/ethernet/aurora/nb8800.c
-+++ b/drivers/net/ethernet/aurora/nb8800.c
-@@ -1466,12 +1466,12 @@ static int nb8800_probe(struct platform_device *pdev)
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 52b56fcaddf2..434268262d88 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -231,12 +231,23 @@
+ 		};
+ 	};
  
- 	ret = nb8800_hw_init(dev);
- 	if (ret)
--		goto err_free_bus;
-+		goto err_deregister_fixed_link;
++	hdmi-in {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&adv7612_in>;
++			};
++		};
++	};
++
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
  
- 	if (ops && ops->init) {
- 		ret = ops->init(dev);
- 		if (ret)
--			goto err_free_bus;
-+			goto err_deregister_fixed_link;
- 	}
+ 		port {
+-			hdmi_con: endpoint {
++			hdmi_con_out: endpoint {
+ 				remote-endpoint = <&adv7511_out>;
+ 			};
+ 		};
+@@ -427,6 +438,11 @@
+ 		function = "usb2";
+ 	};
  
- 	dev->netdev_ops = &nb8800_netdev_ops;
-@@ -1504,6 +1504,9 @@ static int nb8800_probe(struct platform_device *pdev)
++	vin0_pins: vin0 {
++		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
++		function = "vin0";
++	};
++
+ 	vin1_pins: vin1 {
+ 		groups = "vin1_data8", "vin1_clk";
+ 		function = "vin1";
+@@ -646,7 +662,34 @@
+ 			port@1 {
+ 				reg = <1>;
+ 				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
++
++	hdmi-in@4c {
++		compatible = "adi,adv7612";
++		reg = <0x4c>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++		default-input = <0>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7612_in: endpoint {
++					remote-endpoint = <&hdmi_con_in>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				adv7612_out: endpoint {
++					remote-endpoint = <&vin0ep2>;
+ 				};
+ 			};
+ 		};
+@@ -722,6 +765,25 @@
+ 	status = "okay";
+ };
  
- err_free_dma:
- 	nb8800_dma_free(dev);
-+err_deregister_fixed_link:
-+	if (of_phy_is_fixed_link(pdev->dev.of_node))
-+		of_phy_deregister_fixed_link(pdev->dev.of_node);
- err_free_bus:
- 	of_node_put(priv->phy_node);
- 	mdiobus_unregister(bus);
-@@ -1521,6 +1524,8 @@ static int nb8800_remove(struct platform_device *pdev)
- 	struct nb8800_priv *priv = netdev_priv(ndev);
- 
- 	unregister_netdev(ndev);
-+	if (of_phy_is_fixed_link(pdev->dev.of_node))
-+		of_phy_deregister_fixed_link(pdev->dev.of_node);
- 	of_node_put(priv->phy_node);
- 
- 	mdiobus_unregister(priv->mii_bus);
++/* HDMI video input */
++&vin0 {
++	pinctrl-0 = <&vin0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	port {
++		vin0ep2: endpoint {
++			remote-endpoint = <&adv7612_out>;
++			bus-width = <24>;
++			hsync-active = <0>;
++			vsync-active = <0>;
++			pclk-sample = <1>;
++			data-active = <1>;
++		};
++	};
++};
++
+ /* composite video input */
+ &vin1 {
+ 	pinctrl-0 = <&vin1_pins>;
 -- 
-2.7.3
+2.7.0.rc3.207.g0ac5344
