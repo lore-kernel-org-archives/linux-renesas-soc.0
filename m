@@ -1,55 +1,63 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
-        chanwoo@kernel.org
-Subject: [PATCH 02/12] phy: sun4i-usb: Replace the deprecated extcon API
-Date: Wed, 30 Nov 2016 14:57:30 +0900
-Message-id: <1480485460-2663-3-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35925 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754957AbcKDV5D (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 4 Nov 2016 17:57:03 -0400
+Received: by mail-lf0-f47.google.com with SMTP id t196so74372602lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Nov 2016 14:57:03 -0700 (PDT)
+Date: Fri, 04 Nov 2016 14:57:01 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 07/11] ARM: dts: r8a7745: add Ether support
+Message-ID: <3730528.dQt2IAcchy@wasted.cogentembedded.com>
+In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch replaces the deprecated extcon API as following:
-- extcon_set_cable_state_() -> extcon_set_state_sync()
+Define the generic R8A7745 part of the Ether device node.
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/phy/phy-sun4i-usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in version 2:
+- added Geert's tag.
 
-diff --git a/drivers/phy/phy-sun4i-usb.c b/drivers/phy/phy-sun4i-usb.c
-index eeda5134c777..95cdb08c339f 100644
---- a/drivers/phy/phy-sun4i-usb.c
-+++ b/drivers/phy/phy-sun4i-usb.c
-@@ -528,7 +528,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
- 	mutex_unlock(&phy0->mutex);
+ arch/arm/boot/dts/r8a7745.dtsi |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7745.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7745.dtsi
++++ renesas/arch/arm/boot/dts/r8a7745.dtsi
+@@ -418,6 +418,18 @@
+ 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		ether: ethernet@ee700000 {
++			compatible = "renesas,ether-r8a7745";
++			reg = <0 0xee700000 0 0x400>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 813>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			phy-mode = "rmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
+ 	};
  
- 	if (id_notify) {
--		extcon_set_cable_state_(data->extcon, EXTCON_USB_HOST,
-+		extcon_set_state_sync(data->extcon, EXTCON_USB_HOST,
- 					!id_det);
- 		/* When leaving host mode force end the session here */
- 		if (force_session_end && id_det == 1) {
-@@ -541,7 +541,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
- 	}
- 
- 	if (vbus_notify)
--		extcon_set_cable_state_(data->extcon, EXTCON_USB, vbus_det);
-+		extcon_set_state_sync(data->extcon, EXTCON_USB, vbus_det);
- 
- 	if (sun4i_usb_phy0_poll(data))
- 		queue_delayed_work(system_wq, &data->detect, POLL_TIME);
--- 
-1.9.1
+ 	/* External root clock */
