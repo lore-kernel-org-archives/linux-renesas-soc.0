@@ -1,139 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:58747 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935596AbcKKUeD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759924AbcKDJoz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 15:34:03 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 3/3] pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
-Date: Fri, 11 Nov 2016 21:33:41 +0100
-Message-Id: <20161111203341.3636-4-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
-References: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Nov 2016 05:44:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 17/29] ARM: dts: r7s72100: add sdhi to device tree
+Date: Fri,  4 Nov 2016 10:44:16 +0100
+Message-Id: <66474697923cd166567b06b492e52adce12393eb.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-Group the QSPI0 and QSPI1 pins into similar groups found in other sh-pfc
-drivers. The pins can not be muxed between functions other then QSPI
-but there drive strength can be controlled.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 69 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
+ arch/arm/boot/dts/r7s72100.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index bb16ff8..52eb595 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3719,6 +3719,55 @@ static const unsigned int usb2_mux[] = {
- 	USB2_PWEN_MARK, USB2_OVC_MARK,
- };
- 
-+/* - QSPI0 ------------------------------------------------------------------ */
-+static const unsigned int qspi0_ctrl_pins[] = {
-+	/* QSPI0_SPCLK, QSPI0_SSL */
-+	PIN_NUMBER('W', 3), PIN_NUMBER('Y', 3),
-+};
-+static const unsigned int qspi0_ctrl_mux[] = {
-+	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
-+};
-+static const unsigned int qspi0_data2_pins[] = {
-+	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
-+	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
-+};
-+static const unsigned int qspi0_data2_mux[] = {
-+	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
-+};
-+static const unsigned int qspi0_data4_pins[] = {
-+	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1, QSPI0_IO2, QSPI0_IO3 */
-+	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
-+	PIN_NUMBER('Y', 6), PIN_A_NUMBER('B', 6),
-+};
-+static const unsigned int qspi0_data4_mux[] = {
-+	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
-+	QSPI0_IO2_MARK, QSPI0_IO3_MARK,
-+};
-+/* - QSPI1 ------------------------------------------------------------------ */
-+static const unsigned int qspi1_ctrl_pins[] = {
-+	/* QSPI1_SPCLK, QSPI1_SSL */
-+	PIN_NUMBER('V', 3), PIN_NUMBER('V', 5),
-+};
-+static const unsigned int qspi1_ctrl_mux[] = {
-+	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
-+};
-+static const unsigned int qspi1_data2_pins[] = {
-+	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
-+	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
-+};
-+static const unsigned int qspi1_data2_mux[] = {
-+	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
-+};
-+static const unsigned int qspi1_data4_pins[] = {
-+	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1, QSPI1_IO2, QSPI1_IO3 */
-+	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
-+	PIN_A_NUMBER('E', 4), PIN_A_NUMBER('C', 3),
-+};
-+static const unsigned int qspi1_data4_mux[] = {
-+	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
-+	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
-+};
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index eab06701ef11..3dd427d68c83 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -470,4 +470,30 @@
+ 		bus-width = <8>;
+ 		status = "disabled";
+ 	};
 +
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
-@@ -4019,6 +4068,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-+	SH_PFC_PIN_GROUP(qspi0_ctrl),
-+	SH_PFC_PIN_GROUP(qspi0_data2),
-+	SH_PFC_PIN_GROUP(qspi0_data4),
-+	SH_PFC_PIN_GROUP(qspi1_ctrl),
-+	SH_PFC_PIN_GROUP(qspi1_data2),
-+	SH_PFC_PIN_GROUP(qspi1_data4),
- };
- 
- static const char * const audio_clk_groups[] = {
-@@ -4464,6 +4519,18 @@ static const char * const usb2_groups[] = {
- 	"usb2",
- };
- 
-+static const char * const qspi0_groups[] = {
-+	"qspi0_ctrl",
-+	"qspi0_data2",
-+	"qspi0_data4",
-+};
++	sdhi0: sd@e804e000 {
++		compatible = "renesas,sdhi-r7s72100";
++		reg = <0xe804e000 0x100>;
++		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
 +
-+static const char * const qspi1_groups[] = {
-+	"qspi1_ctrl",
-+	"qspi1_data2",
-+	"qspi1_data4",
-+};
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
++		cap-sd-highspeed;
++		cap-sdio-irq;
++		status = "disabled";
++	};
 +
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -4513,6 +4580,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
-+	SH_PFC_FUNCTION(qspi0),
-+	SH_PFC_FUNCTION(qspi1),
++	sdhi1: sd@e804e800 {
++		compatible = "renesas,sdhi-r7s72100";
++		reg = <0xe804e800 0x100>;
++		interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
++
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
++		cap-sd-highspeed;
++		cap-sdio-irq;
++		status = "disabled";
++	};
  };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
