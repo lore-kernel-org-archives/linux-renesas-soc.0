@@ -1,87 +1,143 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:33560 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759073AbcKCVJc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41388 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759922AbcKDJoV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 17:09:32 -0400
-Received: by mail-lf0-f41.google.com with SMTP id c13so49629301lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 14:09:32 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, horms+renesas@verge.net.au
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-Date: Fri, 04 Nov 2016 00:09:28 +0300
-Message-ID: <1764252.Q3lPMOJFSH@wasted.cogentembedded.com>
-In-Reply-To: <9992368.desJvZIsUT@wasted.cogentembedded.com>
-References: <9992368.desJvZIsUT@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 4 Nov 2016 05:44:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/12] arm64: dts: r8a7795: Remove FCP SoC-specific compatible strings
+Date: Fri,  4 Nov 2016 10:44:00 +0100
+Message-Id: <ab33da0bd8f9b6a8b16a61bb5baae365a87cd52c.1478251192.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
+References: <cover.1478251192.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by  the device tree sources to reference the R8A7745 CPG
-clocks  by index. The data comes from the  table 7.2c in the revision 0.50
-of the RZ/G Series User's Manual.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The SoC-specific compatible strings have been removed from the FCP DT
+bindings, removed them from the device tree.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- added Geert's tag.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
- include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7745 CPG Core Clocks */
-+#define R8A7745_CLK_Z2		0
-+#define R8A7745_CLK_ZG		1
-+#define R8A7745_CLK_ZTR		2
-+#define R8A7745_CLK_ZTRD2	3
-+#define R8A7745_CLK_ZT		4
-+#define R8A7745_CLK_ZX		5
-+#define R8A7745_CLK_ZS		6
-+#define R8A7745_CLK_HP		7
-+#define R8A7745_CLK_B		9
-+#define R8A7745_CLK_LB		10
-+#define R8A7745_CLK_P		11
-+#define R8A7745_CLK_CL		12
-+#define R8A7745_CLK_CP		13
-+#define R8A7745_CLK_M2		14
-+#define R8A7745_CLK_ZB3		16
-+#define R8A7745_CLK_ZB3D2	17
-+#define R8A7745_CLK_DDR		18
-+#define R8A7745_CLK_SDH		19
-+#define R8A7745_CLK_SD0		20
-+#define R8A7745_CLK_SD2		21
-+#define R8A7745_CLK_SD3		22
-+#define R8A7745_CLK_MMC0	23
-+#define R8A7745_CLK_MP		24
-+#define R8A7745_CLK_QSPI	25
-+#define R8A7745_CLK_ACP		26
-+#define R8A7745_CLK_RCAN	27
-+#define R8A7745_CLK_R		28
-+#define R8A7745_CLK_OSC		29
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 8c15040f2540..681f54422375 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1306,28 +1306,28 @@
+ 		};
+ 
+ 		fcpvb1: fcp@fe92f000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe92f000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 606>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
+ 		fcpf0: fcp@fe950000 {
+-			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
++			compatible = "renesas,fcpf";
+ 			reg = <0 0xfe950000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 615>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
+ 		fcpf1: fcp@fe951000 {
+-			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
++			compatible = "renesas,fcpf";
+ 			reg = <0 0xfe951000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 614>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
+ 		fcpf2: fcp@fe952000 {
+-			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
++			compatible = "renesas,fcpf";
+ 			reg = <0 0xfe952000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 613>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+@@ -1344,7 +1344,7 @@
+ 		};
+ 
+ 		fcpvb0: fcp@fe96f000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe96f000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 607>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+@@ -1361,7 +1361,7 @@
+ 		};
+ 
+ 		fcpvi0: fcp@fe9af000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe9af000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 611>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+@@ -1378,7 +1378,7 @@
+ 		};
+ 
+ 		fcpvi1: fcp@fe9bf000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe9bf000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 610>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+@@ -1395,7 +1395,7 @@
+ 		};
+ 
+ 		fcpvi2: fcp@fe9cf000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe9cf000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 609>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+@@ -1412,7 +1412,7 @@
+ 		};
+ 
+ 		fcpvd0: fcp@fea27000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea27000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 603>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+@@ -1429,7 +1429,7 @@
+ 		};
+ 
+ 		fcpvd1: fcp@fea2f000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea2f000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 602>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+@@ -1446,7 +1446,7 @@
+ 		};
+ 
+ 		fcpvd2: fcp@fea37000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea37000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 601>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+@@ -1463,7 +1463,7 @@
+ 		};
+ 
+ 		fcpvd3: fcp@fea3f000 {
+-			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea3f000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 600>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-- 
+2.7.0.rc3.207.g0ac5344
