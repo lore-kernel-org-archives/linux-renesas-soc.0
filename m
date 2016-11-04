@@ -5,97 +5,140 @@ To: laurent.pinchart@ideasonboard.com
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-media@vger.kernel.org,
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 3/4] v4l: vsp1: Calculate partition sizes at stream start.
-Date: Fri,  4 Nov 2016 18:19:29 +0000
-Message-Id: <1478283570-19688-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 1/4] v4l: vsp1: Implement partition algorithm restrictions
+Date: Fri,  4 Nov 2016 18:19:27 +0000
+Message-Id: <1478283570-19688-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 In-Reply-To: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Previously the active window and partition sizes for each partition is
-calculated for each partition every frame. This data is constant and
-only needs to be calculated once at the start of the stream.
+The partition algorithm introduced to support scaling, and rotation on
+Gen3 hardware has some restrictions on pipeline configuration.
 
-Extend the vsp1_pipe object to store the maximum number of partitions
-possible and pre-calculate the partition sizes into this table.
+The UDS must not be connected after the SRU in a pipeline, and whilst an
+SRU can be connected before the UDS, it can only do so in identity mode.
+
+On Gen3 hardware, the use of an SRU will always engage the partition
+algorithm, therefore we must always ensure the restrictions are met on
+Gen3 hardware utilising an SRU in the pipeline.
+
+A pipeline with an SRU connected after the UDS will disable any scaling
+features of the SRU.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_pipe.h  | 6 ++++++
- drivers/media/platform/vsp1/vsp1_video.c | 8 ++++++--
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_sru.c   |  7 +++++--
+ drivers/media/platform/vsp1/vsp1_sru.h   |  1 +
+ drivers/media/platform/vsp1/vsp1_video.c | 29 ++++++++++++++++++++++++++++-
+ 3 files changed, 34 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index f181949824c9..3af96c4ea244 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -20,6 +20,9 @@
+diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
+index b4e568a3b4ed..42a3ed6d9461 100644
+--- a/drivers/media/platform/vsp1/vsp1_sru.c
++++ b/drivers/media/platform/vsp1/vsp1_sru.c
+@@ -152,7 +152,8 @@ static int sru_enum_frame_size(struct v4l2_subdev *subdev,
+ 		fse->min_width = format->width;
+ 		fse->min_height = format->height;
+ 		if (format->width <= SRU_MAX_SIZE / 2 &&
+-		    format->height <= SRU_MAX_SIZE / 2) {
++		    format->height <= SRU_MAX_SIZE / 2 &&
++		    sru->force_identity_mode == false) {
+ 			fse->max_width = format->width * 2;
+ 			fse->max_height = format->height * 2;
+ 		} else {
+@@ -203,7 +204,8 @@ static void sru_try_format(struct vsp1_sru *sru,
  
- #include <media/media-entity.h>
+ 		if (fmt->width <= SRU_MAX_SIZE / 2 &&
+ 		    fmt->height <= SRU_MAX_SIZE / 2 &&
+-		    output_area > input_area * 9 / 4) {
++		    output_area > input_area * 9 / 4 &&
++		    sru->force_identity_mode == false) {
+ 			fmt->width = format->width * 2;
+ 			fmt->height = format->height * 2;
+ 		} else {
+@@ -355,6 +357,7 @@ struct vsp1_sru *vsp1_sru_create(struct vsp1_device *vsp1)
+ 	v4l2_ctrl_new_custom(&sru->ctrls, &sru_intensity_control, NULL);
  
-+/* Max Video Width / Min Partition Size = 8190/128 */
-+#define VSP1_PIPE_MAX_PARTITIONS 64
-+
- struct vsp1_dl_list;
- struct vsp1_rwpf;
+ 	sru->intensity = 1;
++	sru->force_identity_mode = false;
  
-@@ -81,7 +84,9 @@ enum vsp1_pipeline_state {
-  * @dl: display list associated with the pipeline
-  * @div_size: The maximum allowed partition size for the pipeline
-  * @partitions: The number of partitions used to process one frame
-+ * @partition: The current partition for configuration to process
-  * @current_partition: The partition number currently being configured
-+ * @part_table: The pre-calculated partitions used by the pipeline
-  */
- struct vsp1_pipeline {
- 	struct media_pipeline pipe;
-@@ -116,6 +121,7 @@ struct vsp1_pipeline {
- 	unsigned int partitions;
- 	struct v4l2_rect partition;
- 	unsigned int current_partition;
-+	struct v4l2_rect part_table[VSP1_PIPE_MAX_PARTITIONS];
+ 	sru->entity.subdev.ctrl_handler = &sru->ctrls;
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_sru.h b/drivers/media/platform/vsp1/vsp1_sru.h
+index 85e241457af2..f8652c04268e 100644
+--- a/drivers/media/platform/vsp1/vsp1_sru.h
++++ b/drivers/media/platform/vsp1/vsp1_sru.h
+@@ -30,6 +30,7 @@ struct vsp1_sru {
+ 	struct v4l2_ctrl_handler ctrls;
+ 
+ 	unsigned int intensity;
++	bool force_identity_mode;
  };
  
- void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
+ static inline struct vsp1_sru *to_sru(struct v4l2_subdev *subdev)
 diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 6d43c02bbc56..c4a8c30df108 100644
+index f19d879ce5ee..d1d3413c6fdf 100644
 --- a/drivers/media/platform/vsp1/vsp1_video.c
 +++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -255,6 +255,7 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 	const struct v4l2_mbus_framefmt *format;
- 	struct vsp1_entity *entity;
- 	unsigned int div_size;
-+	int i;
+@@ -35,6 +35,7 @@
+ #include "vsp1_hgt.h"
+ #include "vsp1_pipe.h"
+ #include "vsp1_rwpf.h"
++#include "vsp1_sru.h"
+ #include "vsp1_uds.h"
+ #include "vsp1_video.h"
  
- 	/*
- 	 * Partitions are computed on the size before rotation, use the format
-@@ -269,6 +270,7 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 	if (vsp1->info->gen == 2) {
- 		pipe->div_size = div_size;
- 		pipe->partitions = 1;
-+		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
- 		return;
- 	}
- 
-@@ -284,6 +286,9 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 
- 	pipe->div_size = div_size;
- 	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
-+
-+	for (i = 0; i < pipe->partitions; i++)
-+		pipe->part_table[i] = vsp1_video_partition(pipe, div_size, i);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -355,8 +360,7 @@ static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
+@@ -458,10 +459,12 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
+ 					    struct vsp1_rwpf *input,
+ 					    struct vsp1_rwpf *output)
  {
++	struct vsp1_device *vsp1 = output->entity.vsp1;
+ 	struct media_entity_enum ent_enum;
  	struct vsp1_entity *entity;
+ 	struct media_pad *pad;
+ 	bool bru_found = false;
++	bool sru_found = false;
+ 	int ret;
  
--	pipe->partition = vsp1_video_partition(pipe, pipe->div_size,
--					       pipe->current_partition);
-+	pipe->partition = pipe->part_table[pipe->current_partition];
+ 	ret = media_entity_enum_init(&ent_enum, &input->entity.vsp1->media_dev);
+@@ -512,13 +515,37 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
+ 			goto out;
+ 		}
  
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
- 		if (entity->ops->configure)
+-		/* UDS can't be chained. */
++		if (entity->type == VSP1_ENTITY_SRU) {
++			struct vsp1_sru *sru = to_sru(&entity->subdev);
++
++			/*
++			 * Gen3 partition algorithm restricts SRU double-scaled
++			 * resolution if it is connected after a UDS entity
++			 */
++			if (vsp1->info->gen == 3 && pipe->uds)
++				sru->force_identity_mode = true;
++
++			sru_found = true;
++		}
++
+ 		if (entity->type == VSP1_ENTITY_UDS) {
++			/* UDS can't be chained. */
+ 			if (pipe->uds) {
+ 				ret = -EPIPE;
+ 				goto out;
+ 			}
+ 
++			/*
++			 * On Gen3 hardware using the partition algorithm, the
++			 * UDS must not be connected after the SRU. Using the
++			 * SRU on Gen3 will always engage the partition
++			 * algorithm
++			 */
++			if (vsp1->info->gen == 3 && sru_found) {
++				ret = -EPIPE;
++				goto out;
++			}
++
+ 			pipe->uds = entity;
+ 			pipe->uds_input = bru_found ? pipe->bru
+ 					: &input->entity;
 -- 
 2.7.4
