@@ -1,388 +1,183 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49477 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752844AbcKBN3l (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760512AbcKDJop (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:41 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 13/32] media: rcar-vin: register the video device early
-Date: Wed,  2 Nov 2016 14:23:10 +0100
-Message-Id: <20161102132329.436-14-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Nov 2016 05:44:45 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/29] ARM: dts: wheat: add DU support
+Date: Fri,  4 Nov 2016 10:44:09 +0100
+Message-Id: <f6eea82a87db2753e2f7c0454f078fb630eb72cd.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is done to prepare for Gen3 support where there can be more then
-one video pipeline which can terminate in a particular VIN instance.
-Each pipeline have its own set of subdevices so to attach to a specific
-subdevice at probe time is not possible. The pipelines will be
-configured using the media controller API.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This patch changes the rcar-vin behavior so that the video device is
-registered at probe time but attaching to a subdeivce is only once the
-video device node is opened. If at that time there is no video source
-subdevice for the VIN to use the open will fail with -EBUSY.
+Define  the  Wheat board dependent  part of the DU device node.
+Add the device nodes for the Analog Devices ADV7513 HDMI transmitters
+connected to DU0/1.  Add the necessary subnodes to interconnect DU with
+HDMI transmitters/connectors.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c |  10 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 226 ++++++++++++++--------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |   2 +
- 3 files changed, 121 insertions(+), 117 deletions(-)
+ arch/arm/boot/dts/r8a7792-wheat.dts | 126 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 50058fe..5807d8d 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -107,7 +107,7 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- 		return ret;
- 	}
- 
--	return rvin_v4l2_probe(vin);
-+	return 0;
- }
- 
- static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
-@@ -118,7 +118,6 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
- 
- 	if (vin->digital.subdev == subdev) {
- 		vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
--		rvin_v4l2_remove(vin);
- 		vin->digital.subdev = NULL;
- 		return;
- 	}
-@@ -283,6 +282,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 
- 	vin->dev = &pdev->dev;
- 	vin->chip = (enum chip_id)match->data;
-+	vin->last_input = NULL;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (mem == NULL)
-@@ -304,6 +304,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto error;
- 
-+	ret = rvin_v4l2_probe(vin);
-+	if (ret)
-+		goto error;
+diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
+index 6dbb94114a93..c24f26fdab1f 100644
+--- a/arch/arm/boot/dts/r8a7792-wheat.dts
++++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -86,6 +86,34 @@
+ 		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
 +
- 	pm_suspend_ignore_children(&pdev->dev, true);
- 	pm_runtime_enable(&pdev->dev);
- 
-@@ -322,6 +326,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 
- 	pm_runtime_disable(&pdev->dev);
- 
-+	rvin_v4l2_remove(vin);
++	hdmi-out0 {
++		compatible = "hdmi-connector";
++		type = "a";
 +
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 
- 	rvin_dma_remove(vin);
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 929f58b..47137d7 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -483,6 +483,94 @@ static int rvin_cropcap(struct file *file, void *priv,
- 	return v4l2_subdev_call(sd, video, g_pixelaspect, &crop->pixelaspect);
- }
- 
-+static int rvin_attach_subdevices(struct rvin_dev *vin)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++		port {
++			hdmi_con0: endpoint {
++				remote-endpoint = <&adv7513_0_out>;
++			};
++		};
 +	};
-+	struct v4l2_mbus_framefmt *mf = &fmt.format;
-+	struct v4l2_subdev *sd = vin_to_source(vin);
-+	struct rvin_graph_entity *rent;
-+	struct v4l2_format f;
-+	int ret;
 +
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
++	hdmi-out1 {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+	ret = v4l2_subdev_call(sd, core, s_power, 1);
-+	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-+		return ret;
++		port {
++			hdmi_con1: endpoint {
++				remote-endpoint = <&adv7513_1_out>;
++			};
++		};
++	};
 +
-+	if (rent != vin->last_input) {
-+		/* Input source have changed, reset our format */
-+
-+		vin->vdev.tvnorms = 0;
-+		ret = v4l2_subdev_call(sd, video, g_tvnorms,
-+				       &vin->vdev.tvnorms);
-+		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-+			goto error;
-+
-+		/* Free old controls (safe even if there where none) */
-+		v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+
-+		ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
-+		if (ret < 0)
-+			goto error;
-+
-+		/* Add new controls */
-+		ret = v4l2_ctrl_add_handler(&vin->ctrl_handler,
-+					    sd->ctrl_handler, NULL);
-+		if (ret < 0)
-+			goto error;
-+
-+		v4l2_ctrl_handler_setup(&vin->ctrl_handler);
-+
-+		fmt.pad = rent->source_pad_idx;
-+
-+		/* Try to improve our guess of a reasonable window format */
-+		ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt);
-+		if (ret)
-+			goto error;
-+
-+		/* Set default format */
-+		vin->format.width	= mf->width;
-+		vin->format.height	= mf->height;
-+		vin->format.colorspace	= mf->colorspace;
-+		vin->format.field	= mf->field;
-+		vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
-+
-+		/* Set initial crop and compose */
-+		vin->crop.top = vin->crop.left = 0;
-+		vin->crop.width = mf->width;
-+		vin->crop.height = mf->height;
-+
-+		vin->compose.top = vin->compose.left = 0;
-+		vin->compose.width = mf->width;
-+		vin->compose.height = mf->height;
-+
-+		f.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+		f.fmt.pix = vin->format;
-+		ret = __rvin_s_fmt_vid_cap(vin, &f);
-+		if (ret)
-+			goto error;
-+	}
-+
-+	vin->last_input = rent;
-+
-+	return 0;
-+error:
-+	v4l2_subdev_call(sd, core, s_power, 0);
-+	return ret;
-+}
-+
-+static void rvin_detach_subdevices(struct rvin_dev *vin)
-+{
-+	struct v4l2_subdev *sd = vin_to_source(vin);
-+
-+	v4l2_subdev_call(sd, core, s_power, 0);
-+}
-+
- static int rvin_enum_input(struct file *file, void *priv,
- 			   struct v4l2_input *i)
- {
-@@ -741,80 +829,6 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
-  * File Operations
-  */
++	osc2_clk: osc2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <74250000>;
++	};
+ };
  
--static int rvin_power_on(struct rvin_dev *vin)
--{
--	int ret;
--	struct v4l2_subdev *sd = vin_to_source(vin);
--
--	pm_runtime_get_sync(vin->v4l2_dev.dev);
--
--	ret = v4l2_subdev_call(sd, core, s_power, 1);
--	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
--		return ret;
--	return 0;
--}
--
--static int rvin_power_off(struct rvin_dev *vin)
--{
--	int ret;
--	struct v4l2_subdev *sd = vin_to_source(vin);
--
--	ret = v4l2_subdev_call(sd, core, s_power, 0);
--
--	pm_runtime_put(vin->v4l2_dev.dev);
--
--	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
--		return ret;
--
--	return 0;
--}
--
--static int rvin_initialize_device(struct file *file)
--{
--	struct rvin_dev *vin = video_drvdata(file);
--	int ret;
--
--	struct v4l2_format f = {
--		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE,
--		.fmt.pix = {
--			.width		= vin->format.width,
--			.height		= vin->format.height,
--			.field		= vin->format.field,
--			.colorspace	= vin->format.colorspace,
--			.pixelformat	= vin->format.pixelformat,
--		},
--	};
--
--	ret = rvin_power_on(vin);
--	if (ret < 0)
--		return ret;
--
--	pm_runtime_enable(&vin->vdev.dev);
--	ret = pm_runtime_resume(&vin->vdev.dev);
--	if (ret < 0 && ret != -ENOSYS)
--		goto eresume;
--
--	/*
--	 * Try to configure with default parameters. Notice: this is the
--	 * very first open, so, we cannot race against other calls,
--	 * apart from someone else calling open() simultaneously, but
--	 * .host_lock is protecting us against it.
--	 */
--	ret = rvin_s_fmt_vid_cap(file, NULL, &f);
--	if (ret < 0)
--		goto esfmt;
--
--	v4l2_ctrl_handler_setup(&vin->ctrl_handler);
--
--	return 0;
--esfmt:
--	pm_runtime_disable(&vin->vdev.dev);
--eresume:
--	rvin_power_off(vin);
--
--	return ret;
--}
--
- static int rvin_open(struct file *file)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
-@@ -826,17 +840,31 @@ static int rvin_open(struct file *file)
- 
- 	ret = v4l2_fh_open(file);
- 	if (ret)
--		goto unlock;
-+		goto err_out;
- 
--	if (!v4l2_fh_is_singular_file(file))
--		goto unlock;
-+	/* If there is no subdevice there is not much we can do */
-+	if (!vin_to_source(vin)) {
-+		ret = -EBUSY;
-+		goto err_open;
-+	}
- 
--	if (rvin_initialize_device(file)) {
--		v4l2_fh_release(file);
--		ret = -ENODEV;
-+	if (v4l2_fh_is_singular_file(file)) {
-+		pm_runtime_get_sync(vin->dev);
-+		ret = rvin_attach_subdevices(vin);
-+		if (ret) {
-+			vin_err(vin, "Error attaching subdevice\n");
-+			goto err_power;
-+		}
- 	}
- 
--unlock:
-+	mutex_unlock(&vin->lock);
+ &extal_clk {
+@@ -128,6 +156,16 @@
+ 		groups = "qspi_ctrl", "qspi_data4";
+ 		function = "qspi";
+ 	};
 +
-+	return 0;
-+err_power:
-+	pm_runtime_put(vin->dev);
-+err_open:
-+	v4l2_fh_release(file);
-+err_out:
- 	mutex_unlock(&vin->lock);
- 	return ret;
- }
-@@ -860,9 +888,8 @@ static int rvin_release(struct file *file)
- 	 * Then de-initialize hw module.
- 	 */
- 	if (fh_singular) {
--		pm_runtime_suspend(&vin->vdev.dev);
--		pm_runtime_disable(&vin->vdev.dev);
--		rvin_power_off(vin);
-+		rvin_detach_subdevices(vin);
-+		pm_runtime_put(vin->dev);
- 	}
++	du0_pins: du0 {
++		groups = "du0_rgb888", "du0_sync", "du0_disp";
++		function = "du0";
++	};
++
++	du1_pins: du1 {
++		groups = "du1_rgb666", "du1_sync", "du1_disp";
++		function = "du1";
++	};
+ };
  
- 	mutex_unlock(&vin->lock);
-@@ -910,41 +937,10 @@ static void rvin_notify(struct v4l2_subdev *sd,
- int rvin_v4l2_probe(struct rvin_dev *vin)
- {
- 	struct video_device *vdev = &vin->vdev;
--	struct v4l2_subdev *sd = vin_to_source(vin);
- 	int ret;
- 
--	v4l2_set_subdev_hostdata(sd, vin);
--
- 	vin->v4l2_dev.notify = rvin_notify;
- 
--	ret = v4l2_subdev_call(sd, video, g_tvnorms, &vin->vdev.tvnorms);
--	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
--		return ret;
--
--	if (vin->vdev.tvnorms == 0) {
--		/* Disable the STD API if there are no tvnorms defined */
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_G_STD);
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_S_STD);
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_QUERYSTD);
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
--	}
--
--	/* Add the controls */
--	/*
--	 * Currently the subdev with the largest number of controls (13) is
--	 * ov6550. So let's pick 16 as a hint for the control handler. Note
--	 * that this is a hint only: too large and you waste some memory, too
--	 * small and there is a (very) small performance hit when looking up
--	 * controls in the internal hash.
--	 */
--	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
--	if (ret < 0)
--		return ret;
--
--	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler, NULL);
--	if (ret < 0)
--		return ret;
--
- 	/* video node */
- 	vdev->fops = &rvin_fops;
- 	vdev->v4l2_dev = &vin->v4l2_dev;
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index d31212a..2a1b190 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -111,6 +111,7 @@ struct rvin_graph_entity {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-+ * @last_input:		points to the last active input source
-  * @source:		active format from the video source
-  * @format:		active V4L2 pixel format
-  *
-@@ -138,6 +139,7 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
-+	struct rvin_graph_entity *last_input;
- 	struct rvin_source_fmt source;
- 	struct v4l2_pix_format format;
- 
+ &scif0 {
+@@ -197,3 +235,91 @@
+ 		};
+ 	};
+ };
++
++&i2c4 {
++	status = "okay";
++	clock-frequency = <400000>;
++
++	hdmi@3d {
++		compatible = "adi,adv7513";
++		reg = <0x3d>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7513_0_in: endpoint {
++					remote-endpoint = <&du_out_rgb0>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7513_0_out: endpoint {
++					remote-endpoint = <&hdmi_con0>;
++				};
++			};
++		};
++	};
++
++	hdmi@39 {
++		compatible = "adi,adv7513";
++		reg = <0x39>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7513_1_in: endpoint {
++					remote-endpoint = <&du_out_rgb1>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7513_1_out: endpoint {
++					remote-endpoint = <&hdmi_con1>;
++				};
++			};
++		};
++	};
++};
++
++&du {
++	pinctrl-0 = <&du0_pins &du1_pins>;
++	pinctrl-names = "default";
++
++	clocks = <&mstp7_clks R8A7792_CLK_DU0>, <&mstp7_clks R8A7792_CLK_DU1>,
++		 <&osc2_clk>;
++	clock-names = "du.0", "du.1", "dclkin.0";
++	status = "okay";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7513_0_in>;
++			};
++		};
++		port@1 {
++			endpoint {
++				remote-endpoint = <&adv7513_1_in>;
++			};
++		};
++	};
++};
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
