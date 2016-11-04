@@ -1,80 +1,127 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:52989 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1168074AbcKAIt5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Nov 2016 04:49:57 -0400
-Date: Tue, 1 Nov 2016 09:49:38 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
-Message-ID: <20161101084938.GA1576@katana>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
- <20160912141507.6837-3-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Content-Disposition: inline
-In-Reply-To: <20160912141507.6837-3-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran.bingham+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 4/4] v4l: vsp1: Remove redundant context variables
+Date: Fri,  4 Nov 2016 18:19:30 +0000
+Message-Id: <1478283570-19688-5-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The vsp1_pipe object context variables for div_size and
+current_partition allowed state to be maintained through processing the
+partitions during processing.
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Now that the partition tables are calculated during stream on, there is
+no requirement to store these variables in the pipe object.
 
-Hi Chris,
+Utilise local variables for the processing as required.
 
-On Mon, Sep 12, 2016 at 10:15:06AM -0400, Chris Brandt wrote:
-> For the r7s72100 SOC, the DATA_PORT register was changed to 32-bits wide.
-> Therefore a new flag has been created that will allow 32-bit reads/writes
-> to the DATA_PORT register instead of 16-bit (because 16-bits accesses are
-> not supported).
->=20
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_pipe.h  |  4 ----
+ drivers/media/platform/vsp1/vsp1_video.c | 19 +++++++++----------
+ 2 files changed, 9 insertions(+), 14 deletions(-)
 
-Okay, I have a sketch how to add this feature to R-Car SoCs at a later
-stage. This patch is fine with one minor nit which can be done now or I
-can do it later when I add the R-Car support.
-
-> + * Some controllers have a 32-bit wide data port register
-> + */
-> +#define TMIO_MMC_32BIT_DATA_PORT	(1 << 9)
-
-Since R-Car Gen3 has 64 bit port, I'd suggest to use
-TMIO_MMC_BIG_DATA_PORT or something. But as I said, I can also do this
-later. So
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYGFchAAoJEBQN5MwUoCm2UvMQALIymU6qq6pXHb/9NTwnb4mp
-gbPv4ggxF1fULDql025Aj/WTdGPH7Iaq5HGxcK3v8zBDYuPyJwrlSNbF8Pi6aofE
-YzpKOiRl6Dit4cXvLAywLzUQarUQuPWFi1KF8UCXhfMRNP5nXVfHA/AtLWt1P7/v
-KUAXuH6XEw7wc3+L94bXvncLrmK7Y29chqi83ZsyVN+r34nDKG0MaMnLcjssmQUa
-6b2FyYYDtrztl8rpg2x1naJHsY/P44dY3sa9+Gq7SQDVdx9ovqIXDLri46ydtGuZ
-/5MQD6srGzTnxA/8NvvPYItoPAgbfZXNDTWkRk3fkH1YXTisv0+XQ7Acs/QFazs4
-cK2EHpU4BrWyYfl7moO2KemU3EAMr5zRkoPwMhJSduMeN8V33csPANsc/Wed0Zai
-Qs7uQc4qawTfcaaZY2CM2ujTb6tjyLzCqLkB6DpKjO47proOExhx8WLouPGDVCjj
-ThnjHp7i6aq5wPyFZ+rCa8TWgjZHXi8oThgVm/Jo6v5tgoUaTZDiHfXkY2x9iZqZ
-4lgh/5h6ioRG+JAKOpaF3rM2+/Rp5/fo/Z1219N9fKYVnZOuJEap5Dv7uUm/uS6r
-BABsu8ziSHIadT8GysoRO//FveXkT6lVKIbzXorL/H2/4wGNwPDUTFIarXumUv43
-MydWgJwOpPP9o9fMsOeB
-=ez1g
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
+index 3af96c4ea244..9e108ddcceb6 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.h
++++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+@@ -82,10 +82,8 @@ enum vsp1_pipeline_state {
+  * @uds_input: entity at the input of the UDS, if the UDS is present
+  * @entities: list of entities in the pipeline
+  * @dl: display list associated with the pipeline
+- * @div_size: The maximum allowed partition size for the pipeline
+  * @partitions: The number of partitions used to process one frame
+  * @partition: The current partition for configuration to process
+- * @current_partition: The partition number currently being configured
+  * @part_table: The pre-calculated partitions used by the pipeline
+  */
+ struct vsp1_pipeline {
+@@ -117,10 +115,8 @@ struct vsp1_pipeline {
+ 
+ 	struct vsp1_dl_list *dl;
+ 
+-	unsigned int div_size;
+ 	unsigned int partitions;
+ 	struct v4l2_rect partition;
+-	unsigned int current_partition;
+ 	struct v4l2_rect part_table[VSP1_PIPE_MAX_PARTITIONS];
+ };
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index c4a8c30df108..9efaab2cc982 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -268,7 +268,6 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+ 
+ 	/* Gen2 hardware doesn't require image partitioning. */
+ 	if (vsp1->info->gen == 2) {
+-		pipe->div_size = div_size;
+ 		pipe->partitions = 1;
+ 		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
+ 		return;
+@@ -284,7 +283,6 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+ 		}
+ 	}
+ 
+-	pipe->div_size = div_size;
+ 	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+ 
+ 	for (i = 0; i < pipe->partitions; i++)
+@@ -356,11 +354,12 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
+ }
+ 
+ static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
+-					      struct vsp1_dl_list *dl)
++					      struct vsp1_dl_list *dl,
++					      unsigned int partition_number)
+ {
+ 	struct vsp1_entity *entity;
+ 
+-	pipe->partition = pipe->part_table[pipe->current_partition];
++	pipe->partition = pipe->part_table[partition_number];
+ 
+ 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+ 		if (entity->ops->configure)
+@@ -373,6 +372,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
+ {
+ 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
+ 	struct vsp1_entity *entity;
++	unsigned int current_partition = 0;
+ 
+ 	if (!pipe->dl)
+ 		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
+@@ -389,13 +389,12 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
+ 	}
+ 
+ 	/* Run the first partition */
+-	pipe->current_partition = 0;
+-	vsp1_video_pipeline_run_partition(pipe, pipe->dl);
++	vsp1_video_pipeline_run_partition(pipe, pipe->dl, current_partition);
+ 
+ 	/* Process consecutive partitions as necessary */
+-	for (pipe->current_partition = 1;
+-	     pipe->current_partition < pipe->partitions;
+-	     pipe->current_partition++) {
++	for (current_partition = 1;
++	     current_partition < pipe->partitions;
++	     current_partition++) {
+ 		struct vsp1_dl_list *dl;
+ 
+ 		/*
+@@ -415,7 +414,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
+ 			break;
+ 		}
+ 
+-		vsp1_video_pipeline_run_partition(pipe, dl);
++		vsp1_video_pipeline_run_partition(pipe, dl, current_partition);
+ 		vsp1_dl_list_add_chain(pipe->dl, dl);
+ 	}
+ 
+-- 
+2.7.4
