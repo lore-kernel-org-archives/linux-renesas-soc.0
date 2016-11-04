@@ -1,68 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760512AbcKDJor (ORCPT
+        with ESMTP id S1760720AbcKDJou (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:47 -0400
+        Fri, 4 Nov 2016 05:44:50 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/29] ARM: dts: r8a7793: Correct SCIFB reg properties to cover all registers
-Date: Fri,  4 Nov 2016 10:44:07 +0100
-Message-Id: <88b8596ba95599fefa5a5f1a709c70796a0e8163.1478252309.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/29] ARM: dts: r8a7792: add MSIOF support
+Date: Fri,  4 Nov 2016 10:44:11 +0100
+Message-Id: <b0663cd4211a26eb7fcaed98a26b3d117dc34926.1478252309.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
 References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Several SCIFB registers reside outside the reported register ranges.
-Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
-ioremap().
+Define the generic R8A7792 parts of the MSIOF0/1 device nodes.
 
-Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
-SH/R-Mobile SoCs.
+Based  on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 8d02aacf2892..a7d11b9f3555 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -666,7 +666,7 @@
- 	scifb0: serial@e6c20000 {
- 		compatible = "renesas,scifb-r8a7793",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c20000 0 64>;
-+		reg = <0 0xe6c20000 0 0x100>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB0>;
- 		clock-names = "fck";
-@@ -680,7 +680,7 @@
- 	scifb1: serial@e6c30000 {
- 		compatible = "renesas,scifb-r8a7793",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c30000 0 64>;
-+		reg = <0 0xe6c30000 0 0x100>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB1>;
- 		clock-names = "fck";
-@@ -694,7 +694,7 @@
- 	scifb2: serial@e6ce0000 {
- 		compatible = "renesas,scifb-r8a7793",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6ce0000 0 64>;
-+		reg = <0 0xe6ce0000 0 0x100>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB2>;
- 		clock-names = "fck";
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 839cd70c4c75..a75e0cd312c5 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -26,6 +26,8 @@
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
+ 		spi0 = &qspi;
++		spi1 = &msiof0;
++		spi2 = &msiof1;
+ 		vin0 = &vin0;
+ 		vin1 = &vin1;
+ 		vin2 = &vin2;
+@@ -572,6 +574,34 @@
+ 			status = "disabled";
+ 		};
+ 
++		msiof0: spi@e6e20000 {
++			compatible = "renesas,msiof-r8a7792";
++			reg = <0 0xe6e20000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp0_clks R8A7792_CLK_MSIOF0>;
++			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++			       <&dmac1 0x51>, <&dmac1 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6e10000 {
++			compatible = "renesas,msiof-r8a7792";
++			reg = <0 0xe6e10000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7792_CLK_MSIOF1>;
++			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++			       <&dmac1 0x55>, <&dmac1 0x56>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7792";
+ 			reg = <0 0xfeb00000 0 0x40000>;
 -- 
 2.7.0.rc3.207.g0ac5344
