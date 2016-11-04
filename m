@@ -1,64 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41388 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758005AbcKDJoR (ORCPT
+        with ESMTP id S1760422AbcKDJpQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:17 -0400
+        Fri, 4 Nov 2016 05:45:16 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/12] dt-bindings: media: renesas-fcp: Remove SoC-specific compatible strings
-Date: Fri,  4 Nov 2016 10:43:59 +0100
-Message-Id: <a733c81115da9aa501f3cd918fe5b9f3bbe03b11.1478251192.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
-References: <cover.1478251192.git.horms+renesas@verge.net.au>
+Subject: [PATCH 29/29] ARM: dts: r8a7794: remove Z clock
+Date: Fri,  4 Nov 2016 10:44:28 +0100
+Message-Id: <68cc085a4daaa32f7138de1e918331c05165a484.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The FCP IP cores include a version register that identifies which SoC
-model the IP is integrated in. SoC-specific compatible strings are not
-needed.
+R8A7794 doesn't have Cortex-A15 CPUs, thus there's no Z clock...
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 0dce5454d5c2 ("ARM: shmobile: Initial r8a7794 SoC device tree")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/media/renesas,fcp.txt | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi            | 3 +--
+ include/dt-bindings/clock/r8a7794-clock.h | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-index 27f9b8e459ac..3ec91803ba58 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -11,15 +11,9 @@ are paired with. These DT bindings currently support the FCPV and FCPF.
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 44ce62938417..01816ac775a8 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1028,8 +1028,7 @@
+ 			clocks = <&extal_clk &usb_extal_clk>;
+ 			#clock-cells = <1>;
+ 			clock-output-names = "main", "pll0", "pll1", "pll3",
+-					     "lb", "qspi", "sdh", "sd0", "z",
+-					     "rcan";
++					     "lb", "qspi", "sdh", "sd0", "rcan";
+ 			#power-domain-cells = <0>;
+ 		};
+ 		/* Variable factor clocks */
+diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
+index 9d02f5317c7c..88e64846cf37 100644
+--- a/include/dt-bindings/clock/r8a7794-clock.h
++++ b/include/dt-bindings/clock/r8a7794-clock.h
+@@ -20,8 +20,7 @@
+ #define R8A7794_CLK_QSPI		5
+ #define R8A7794_CLK_SDH			6
+ #define R8A7794_CLK_SD0			7
+-#define R8A7794_CLK_Z			8
+-#define R8A7794_CLK_RCAN		9
++#define R8A7794_CLK_RCAN		8
  
-  - compatible: Must be one or more of the following
- 
--   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
--   - "renesas,r8a7795-fcpf" for R8A7795 (R-Car H3) compatible 'FCP for FDP'
-    - "renesas,fcpv" for generic compatible 'FCP for VSP'
-    - "renesas,fcpf" for generic compatible 'FCP for FDP'
- 
--   When compatible with the generic version, nodes must list the
--   SoC-specific version corresponding to the platform first, followed by the
--   family-specific and/or generic versions.
--
-  - reg: the register base and size for the device registers
-  - clocks: Reference to the functional clock
- 
-@@ -32,7 +26,7 @@ Device node example
- -------------------
- 
- 	fcpvd1: fcp@fea2f000 {
--		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+		compatible = "renesas,fcpv";
- 		reg = <0 0xfea2f000 0 0x200>;
- 		clocks = <&cpg CPG_MOD 602>;
- 		power-domains = <&sysc R8A7795_PD_A3VP>;
+ /* MSTP0 */
+ #define R8A7794_CLK_MSIOF0		0
 -- 
 2.7.0.rc3.207.g0ac5344
