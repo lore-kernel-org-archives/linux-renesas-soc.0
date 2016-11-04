@@ -1,153 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46882 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751918AbcKFUUz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760391AbcKDJpP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Nov 2016 15:20:55 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 04/14] ARM: dts: lager: use demuxer for IIC3/I2C3
-Date: Sun,  6 Nov 2016 21:20:22 +0100
-Message-Id: <20161106202032.5227-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+        Fri, 4 Nov 2016 05:45:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/9] ARM: shmobile: r8a7743: basic SoC support
+Date: Fri,  4 Nov 2016 10:44:37 +0100
+Message-Id: <e920565a1cc4a352719b42ba5e83d952a9a26507.1478251657.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
+References: <cover.1478251657.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Create a separate bus for da9063 PMIC and da9210 regulator
-related I2C slaves.
+Add minimal support for the RZ/G1M (R8A7743) SoC.
 
-Based on similar work for HDMI by Wolfram Sang.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, corrected chip name in commit msg, updated aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 84 +++++++++++++++++++++++--------------
- 1 file changed, 53 insertions(+), 31 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt |  2 ++
+ arch/arm/mach-shmobile/Kconfig                     |  4 +++
+ arch/arm/mach-shmobile/Makefile                    |  1 +
+ arch/arm/mach-shmobile/setup-r8a7743.c             | 34 ++++++++++++++++++++++
+ 4 files changed, 41 insertions(+)
+ create mode 100644 arch/arm/mach-shmobile/setup-r8a7743.c
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 2659bf854b3bd5..e4ac480b0e229a 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -55,6 +55,7 @@
- 		i2c10 = &i2cexio0;
- 		i2c11 = &i2cexio1;
- 		i2c12 = &i2chdmi;
-+		i2c13 = &i2cpwr;
- 	};
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 2f0b7169f132..058be8180bc4 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -13,6 +13,8 @@ SoCs:
+     compatible = "renesas,r8a73a4"
+   - R-Mobile A1 (R8A77400)
+     compatible = "renesas,r8a7740"
++  - RZ/G1M (R8A77430)
++    compatible = "renesas,r8a7743"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 84fd4e959147..c48be1d332ed 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -67,6 +67,10 @@ config ARCH_R8A7740
+ 	select ARCH_RMOBILE
+ 	select RENESAS_INTC_IRQPIN
  
- 	chosen {
-@@ -412,6 +413,46 @@
- 			};
- 		};
- 	};
++config ARCH_R8A7743
++	bool "RZ/G1M (R8A77430)"
++	select ARCH_RCAR_GEN2
 +
-+	/*
-+	 * IIC3 and I2C3 may be switched using pinmux.
-+	 * IIC3/I2C3 does not appear to support fallback to GPIO.
-+	 */
-+	i2cpwr: i2c-13 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic3>, <&i2c3>;
-+		i2c-bus-name = "i2c-pwr";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
+ config ARCH_R8A7778
+ 	bool "R-Car M1A (R8A77781)"
+ 	select ARCH_RCAR_GEN1
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 3fc48b02eb4f..332b84f8261f 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -9,6 +9,7 @@ obj-y				:= timer.o
+ obj-$(CONFIG_ARCH_SH73A0)	+= setup-sh73a0.o
+ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
+ obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
++obj-$(CONFIG_ARCH_R8A7743)	+= setup-r8a7743.o
+ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
+diff --git a/arch/arm/mach-shmobile/setup-r8a7743.c b/arch/arm/mach-shmobile/setup-r8a7743.c
+new file mode 100644
+index 000000000000..a7ecb82d219f
+--- /dev/null
++++ b/arch/arm/mach-shmobile/setup-r8a7743.c
+@@ -0,0 +1,34 @@
++/*
++ * r8a7743 processor support
++ *
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ *  published by the Free Software Foundation; of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+		pmic@58 {
-+			compatible = "dlg,da9063";
-+			reg = <0x58>;
-+			interrupt-parent = <&irqc0>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-controller;
++#include <linux/init.h>
 +
-+			rtc {
-+				compatible = "dlg,da9063-rtc";
-+			};
++#include <asm/mach/arch.h>
 +
-+			wdt {
-+				compatible = "dlg,da9063-watchdog";
-+			};
-+		};
++#include "common.h"
++#include "rcar-gen2.h"
 +
-+		vdd_dvfs: regulator@68 {
-+			compatible = "dlg,da9210";
-+			reg = <0x68>;
-+			interrupt-parent = <&irqc0>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1000000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+	};
- };
- 
- &du {
-@@ -554,6 +595,11 @@
- 		function = "iic2";
- 	};
- 
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3";
-+		function = "i2c3";
-+	};
-+
- 	iic3_pins: iic3 {
- 		groups = "iic3";
- 		function = "iic3";
-@@ -770,38 +816,14 @@
- 	clock-frequency = <100000>;
- };
- 
--&iic3 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&iic3_pins>;
--	status = "okay";
--
--	pmic@58 {
--		compatible = "dlg,da9063";
--		reg = <0x58>;
--		interrupt-parent = <&irqc0>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
--		interrupt-controller;
--
--		rtc {
--			compatible = "dlg,da9063-rtc";
--		};
--
--		wdt {
--			compatible = "dlg,da9063-watchdog";
--		};
--	};
--
--	vdd_dvfs: regulator@68 {
--		compatible = "dlg,da9210";
--		reg = <0x68>;
--		interrupt-parent = <&irqc0>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+&i2c3	{
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "i2c-pwr";
++static const char * const r8a7743_boards_compat_dt[] __initconst = {
++	"renesas,r8a7743",
++	NULL,
 +};
- 
--		regulator-min-microvolt = <1000000>;
--		regulator-max-microvolt = <1000000>;
--		regulator-boot-on;
--		regulator-always-on;
--	};
-+&iic3	{
-+	pinctrl-0 = <&iic3_pins>;
-+	pinctrl-names = "i2c-pwr";
- };
- 
- &pci0 {
++
++DT_MACHINE_START(R8A7743_DT, "Generic R8A7743 (Flattened Device Tree)")
++	.init_early	= shmobile_init_delay,
++	.init_time	= rcar_gen2_timer_init,
++	.init_late	= shmobile_init_late,
++	.reserve	= rcar_gen2_reserve,
++	.dt_compat	= r8a7743_boards_compat_dt,
++MACHINE_END
 -- 
-2.9.3
+2.7.0.rc3.207.g0ac5344
