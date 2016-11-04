@@ -1,61 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49472 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752586AbcKBN3i (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:36364 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754998AbcKDVyz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:38 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 06/32] media: rcar-vin: fix standard in input enumeration
-Date: Wed,  2 Nov 2016 14:23:03 +0100
-Message-Id: <20161102132329.436-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 4 Nov 2016 17:54:55 -0400
+Received: by mail-lf0-f54.google.com with SMTP id t196so74342045lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Nov 2016 14:54:54 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 05/11] ARM: dts: r8a7745: add SYS-DMAC support
+Date: Sat, 05 Nov 2016 00:54:51 +0300
+Message-ID: <1587924.yDT07Am27A@wasted.cogentembedded.com>
+In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the subdevice supports dv_timings_cap the driver should not fill in
-the standard. Also don't use the standard from probe time ask the
-subdevice each time, this is done in preparation for Gen3 support where
-the source subdevice might change during runtime.
+Describe SYS-DMAC0/1 in the R8A7745 device tree.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Changes in version 2:
+- added Geert's tag;
+- refreshed the patch.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 610f59e..f9218f2 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -483,10 +483,16 @@ static int rvin_enum_input(struct file *file, void *priv,
- 		return ret;
+ arch/arm/boot/dts/r8a7745.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7745.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7745.dtsi
++++ renesas/arch/arm/boot/dts/r8a7745.dtsi
+@@ -93,6 +93,70 @@
+ 			compatible = "renesas,r8a7745-rst";
+ 			reg = <0 0xe6160000 0 0x0200>;
+ 		};
++
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a7745",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x20000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 219>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
++
++		dmac1: dma-controller@e6720000 {
++			compatible = "renesas,dmac-r8a7745",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6720000 0 0x20000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
+ 	};
  
- 	i->type = V4L2_INPUT_TYPE_CAMERA;
--	i->std = vin->vdev.tvnorms;
- 
--	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
-+	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap)) {
- 		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
-+		i->std = 0;
-+	} else {
-+		i->capabilities = V4L2_IN_CAP_STD;
-+		ret = v4l2_subdev_call(sd, video, g_tvnorms, &i->std);
-+		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-+			return ret;
-+	}
- 
- 	strlcpy(i->name, "Camera", sizeof(i->name));
- 
--- 
-2.10.2
+ 	/* External root clock */
