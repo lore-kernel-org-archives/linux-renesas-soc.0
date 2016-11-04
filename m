@@ -1,63 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:33798 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759475AbcKCSHo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932196AbcKDJpN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 14:07:44 -0400
-Received: by mail-lf0-f43.google.com with SMTP id b81so45960683lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 11:07:43 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 4 Nov 2016 05:45:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 5/9] arm64: dts: m3ulcb: enable GPIO keys
-Date: Thu,  3 Nov 2016 21:07:43 +0300
-Message-Id: <1478196463-1342-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Simon Horman <horms@verge.net.au>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] ARM: shmobile: only call rcar_gen2_clocks_init() if present
+Date: Fri,  4 Nov 2016 10:44:36 +0100
+Message-Id: <e11fc795215eca872d8d64087568c28ba739f659.1478251657.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
+References: <cover.1478251657.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports GPIO keys on M3ULCB board
+From: Simon Horman <horms@verge.net.au>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+The RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the R-Car Gen2 clock
+driver. This is a harbinger of a transition for R-Car Gen2 SoCs. As the
+process to get all the required pieces in place is somewhat complex it
+seems useful to try to disentangle dependencies where possible.
+
+The approach here is to temporarily disable calling rcar_gen2_clocks_init()
+if no R-Car Gen2 SoC are configured and thus the symbol will not be
+present.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 14 +++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index fb694b8..3329f78 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -12,6 +12,7 @@
- /dts-v1/;
- #include "r8a7796.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index afb9fdcd3d90..154e8051825a 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -15,6 +15,7 @@
+  * GNU General Public License for more details.
+  */
  
- / {
- 	model = "Renesas M3ULCB board based on r8a7796";
-@@ -31,6 +31,18 @@
- 			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
- 		};
- 	};
-+
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		key-1 {
-+			linux,code = <KEY_1>;
-+			label = "SW3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
++#include <linux/clk-provider.h>
+ #include <linux/clk/renesas.h>
+ #include <linux/clocksource.h>
+ #include <linux/device.h>
+@@ -130,7 +131,15 @@ void __init rcar_gen2_timer_init(void)
+ 	iounmap(base);
+ #endif /* CONFIG_ARM_ARCH_TIMER */
  
- &extal_clk {
+-	rcar_gen2_clocks_init(mode);
++	if (IS_ENABLED(CONFIG_ARCH_R8A7790) ||
++	    IS_ENABLED(CONFIG_ARCH_R8A7791) ||
++	    IS_ENABLED(CONFIG_ARCH_R8A7792) ||
++	    IS_ENABLED(CONFIG_ARCH_R8A7793) ||
++	    IS_ENABLED(CONFIG_ARCH_R8A7794))
++		rcar_gen2_clocks_init(mode);
++	else
++		of_clk_init(NULL);
++
+ 	clocksource_probe();
+ }
+ 
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
