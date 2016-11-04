@@ -1,92 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33429 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965750AbcKLNNo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760378AbcKDJpF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:44 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 11/32] media: rcar-vin: refactor pad lookup code
-Date: Sat, 12 Nov 2016 14:11:55 +0100
-Message-Id: <20161112131216.22635-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Nov 2016 05:45:05 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 25/29] ARM: dts: r8a7779: Remove skeleton.dtsi inclusion
+Date: Fri,  4 Nov 2016 10:44:24 +0100
+Message-Id: <1cfc0c03602b8e876672ba895377f0ba1445a2d8.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The code to lookup which pad is source and sink can be broken out to a
-helper function.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-A bad check is also dropped in this refactoring. If the subdeivce don't
-supply pad information the driver would not be able to use it if the
-check is kept.
+As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
+as deprecated"), including skeleton.dtsi is deprecated.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This fixes the following warning with W=1:
+
+    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index fb6368c..50058fe 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -66,11 +66,21 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
- 	return false;
- }
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 9d5b8fa3da8b..3005308a1807 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -9,8 +9,6 @@
+  * kind, whether express or implied.
+  */
  
-+static unsigned int rvin_pad_idx(struct v4l2_subdev *sd, int direction)
-+{
-+	unsigned int pad_idx;
-+
-+	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
-+		if (sd->entity.pads[pad_idx].flags == direction)
-+			return pad_idx;
-+
-+	return 0;
-+}
-+
- static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
- 	struct v4l2_subdev *sd = vin->digital.subdev;
--	unsigned int pad_idx;
- 	int ret;
- 
- 	/* Verify subdevices mbus format */
-@@ -84,21 +94,8 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- 		vin->digital.subdev->name, vin->digital.code);
- 
- 	/* Figure out source and sink pad ids */
--	vin->digital.source_pad_idx = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
--			break;
--	if (pad_idx >= sd->entity.num_pads)
--		return -EINVAL;
+-/include/ "skeleton.dtsi"
 -
--	vin->digital.source_pad_idx = pad_idx;
--
--	vin->digital.sink_pad_idx = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
--			vin->digital.sink_pad_idx = pad_idx;
--			break;
--		}
-+	vin->digital.source_pad_idx = rvin_pad_idx(sd, MEDIA_PAD_FL_SOURCE);
-+	vin->digital.sink_pad_idx = rvin_pad_idx(sd, MEDIA_PAD_FL_SINK);
+ #include <dt-bindings/clock/r8a7779-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -19,6 +17,8 @@
+ / {
+ 	compatible = "renesas,r8a7779";
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
  
- 	vin_dbg(vin, "Found media pads for %s source: %d sink %d\n",
- 		vin->digital.subdev->name, vin->digital.source_pad_idx,
+ 	cpus {
+ 		#address-cells = <1>;
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
