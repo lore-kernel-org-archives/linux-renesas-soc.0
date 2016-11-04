@@ -1,62 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33429 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965548AbcKLNNl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760512AbcKDJor (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:41 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 06/32] media: rcar-vin: fix standard in input enumeration
-Date: Sat, 12 Nov 2016 14:11:50 +0100
-Message-Id: <20161112131216.22635-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Nov 2016 05:44:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/29] ARM: dts: r8a7793: Correct SCIFB reg properties to cover all registers
+Date: Fri,  4 Nov 2016 10:44:07 +0100
+Message-Id: <88b8596ba95599fefa5a5f1a709c70796a0e8163.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the subdevice supports dv_timings_cap the driver should not fill in
-the standard. Also don't use the standard from probe time ask the
-subdevice each time, this is done in preparation for Gen3 support where
-the source subdevice might change during runtime.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Several SCIFB registers reside outside the reported register ranges.
+Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
+ioremap().
+
+Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
+SH/R-Mobile SoCs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 610f59e..f9218f2 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -483,10 +483,16 @@ static int rvin_enum_input(struct file *file, void *priv,
- 		return ret;
- 
- 	i->type = V4L2_INPUT_TYPE_CAMERA;
--	i->std = vin->vdev.tvnorms;
- 
--	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
-+	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap)) {
- 		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
-+		i->std = 0;
-+	} else {
-+		i->capabilities = V4L2_IN_CAP_STD;
-+		ret = v4l2_subdev_call(sd, video, g_tvnorms, &i->std);
-+		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-+			return ret;
-+	}
- 
- 	strlcpy(i->name, "Camera", sizeof(i->name));
- 
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 8d02aacf2892..a7d11b9f3555 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -666,7 +666,7 @@
+ 	scifb0: serial@e6c20000 {
+ 		compatible = "renesas,scifb-r8a7793",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c20000 0 64>;
++		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB0>;
+ 		clock-names = "fck";
+@@ -680,7 +680,7 @@
+ 	scifb1: serial@e6c30000 {
+ 		compatible = "renesas,scifb-r8a7793",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c30000 0 64>;
++		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB1>;
+ 		clock-names = "fck";
+@@ -694,7 +694,7 @@
+ 	scifb2: serial@e6ce0000 {
+ 		compatible = "renesas,scifb-r8a7793",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6ce0000 0 64>;
++		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB2>;
+ 		clock-names = "fck";
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
