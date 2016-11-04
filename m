@@ -1,143 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41388 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759922AbcKDJoV (ORCPT
+        with ESMTP id S1760474AbcKDJon (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:21 -0400
+        Fri, 4 Nov 2016 05:44:43 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/12] arm64: dts: r8a7795: Remove FCP SoC-specific compatible strings
-Date: Fri,  4 Nov 2016 10:44:00 +0100
-Message-Id: <ab33da0bd8f9b6a8b16a61bb5baae365a87cd52c.1478251192.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
-References: <cover.1478251192.git.horms+renesas@verge.net.au>
+Subject: [PATCH 07/29] ARM: dts: r8a7791: Correct SCIFB reg properties to cover all registers
+Date: Fri,  4 Nov 2016 10:44:06 +0100
+Message-Id: <5f25f9f52e1954d3ccec43976e10ea1a8075e536.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The SoC-specific compatible strings have been removed from the FCP DT
-bindings, removed them from the device tree.
+Several SCIFB registers reside outside the reported register ranges.
+Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
+ioremap().
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
+SH/R-Mobile SoCs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8c15040f2540..681f54422375 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1306,28 +1306,28 @@
- 		};
- 
- 		fcpvb1: fcp@fe92f000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfe92f000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 606>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
- 		fcpf0: fcp@fe950000 {
--			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			compatible = "renesas,fcpf";
- 			reg = <0 0xfe950000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 615>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
- 		fcpf1: fcp@fe951000 {
--			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			compatible = "renesas,fcpf";
- 			reg = <0 0xfe951000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 614>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
- 		fcpf2: fcp@fe952000 {
--			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			compatible = "renesas,fcpf";
- 			reg = <0 0xfe952000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 613>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1344,7 +1344,7 @@
- 		};
- 
- 		fcpvb0: fcp@fe96f000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfe96f000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 607>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1361,7 +1361,7 @@
- 		};
- 
- 		fcpvi0: fcp@fe9af000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfe9af000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 611>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1378,7 +1378,7 @@
- 		};
- 
- 		fcpvi1: fcp@fe9bf000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfe9bf000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 610>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1395,7 +1395,7 @@
- 		};
- 
- 		fcpvi2: fcp@fe9cf000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfe9cf000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 609>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
-@@ -1412,7 +1412,7 @@
- 		};
- 
- 		fcpvd0: fcp@fea27000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfea27000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 603>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -1429,7 +1429,7 @@
- 		};
- 
- 		fcpvd1: fcp@fea2f000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfea2f000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 602>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -1446,7 +1446,7 @@
- 		};
- 
- 		fcpvd2: fcp@fea37000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfea37000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 601>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -1463,7 +1463,7 @@
- 		};
- 
- 		fcpvd3: fcp@fea3f000 {
--			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+			compatible = "renesas,fcpv";
- 			reg = <0 0xfea3f000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 600>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index b07c799f72f2..091d7fb6ee7d 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -702,7 +702,7 @@
+ 	scifb0: serial@e6c20000 {
+ 		compatible = "renesas,scifb-r8a7791",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c20000 0 64>;
++		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
+ 		clock-names = "fck";
+@@ -716,7 +716,7 @@
+ 	scifb1: serial@e6c30000 {
+ 		compatible = "renesas,scifb-r8a7791",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c30000 0 64>;
++		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
+ 		clock-names = "fck";
+@@ -730,7 +730,7 @@
+ 	scifb2: serial@e6ce0000 {
+ 		compatible = "renesas,scifb-r8a7791",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6ce0000 0 64>;
++		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
+ 		clock-names = "fck";
 -- 
 2.7.0.rc3.207.g0ac5344
