@@ -1,61 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54128 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754380AbcKDPus (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:47900 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756489AbcKDJe1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 11:50:48 -0400
-Date: Fri, 4 Nov 2016 09:49:30 -0600
-From: Mark Brown <broonie@kernel.org>
-To: Cao Minh Hiep <cm-hiep@jinso.co.jp>
-Cc: geert+renesas@glider.be, linux-spi@vger.kernel.org,
-        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        Fri, 4 Nov 2016 05:34:27 -0400
+From: Cao Minh Hiep <cm-hiep@jinso.co.jp>
+To: broonie@kernel.org, geert+renesas@glider.be,
+        linux-spi@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
         ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
         nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp
-Message-ID: <20161104154930.6fepg25wma2l2gz2@sirena.org.uk>
-References: <1478248734-32044-1-git-send-email-cm-hiep@jinso.co.jp>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ejjqwutpjpvbq2in"
-Content-Disposition: inline
+Subject: [PATCH 1/1] ARM: spi supports 32bytes buffer for DUAL and QUAD
+Date: Fri,  4 Nov 2016 17:38:54 +0900
+Message-Id: <1478248734-32044-2-git-send-email-cm-hiep@jinso.co.jp>
 In-Reply-To: <1478248734-32044-1-git-send-email-cm-hiep@jinso.co.jp>
-Subject: Re: [PATCH 0/1] ARM: spi supports 32bytes buffer for DUAL and QUAD
+References: <1478248734-32044-1-git-send-email-cm-hiep@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 
---ejjqwutpjpvbq2in
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch supports 32bytes of buffer for DUAL and QUAD in QSPI by
+Using Transmit/Receive Buffer Data Triggering Number.
+In order to improve the DUAL and QUAD's performance of SPI 
+while transferring data in PIO mode, it sends/receives each 32bytes 
+data instead of each byte data as current situation.
 
-On Fri, Nov 04, 2016 at 05:38:53PM +0900, Cao Minh Hiep wrote:
-> From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
->=20
-> Hi,
->=20
-> This patch will improve the DUAL and QUAD's performance of SPI,
-> that supported for GEN2 r8a7790 SOC in PIO mode.=20
-> It sends/receives each 32bytes of data instead of each byte data=20
-> as current situation.
+Signed-off-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+---
+ drivers/spi/spi-rspi.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 49 insertions(+), 3 deletions(-)
 
-Please don't send cover letters for single patches, if there is anything
-that needs saying put it in the changelog of the patch or after the ---
-if it's administrative stuff.  This reduces mail volume and ensures that=20
-any important information is recorded in the changelog rather than being
-lost.=20
-
---ejjqwutpjpvbq2in
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAABCAAGBQJYHK4GAAoJECTWi3JdVIfQjy4H/idxpMwb3CKN0976NMcAiCRF
-G7xWmCTPQIhBYe9JN1GyL59jIKM/at5hyM6AcnLUdY+xbOEXd8QLa9wkJCRUEKt+
-GfNLwRcHL0Rz3UDxQ1SYdZZE2r1w+ELHDG8CG33AJi8te5F0px1YzcxpLjeZWSKv
-a+W9dnKc/xn74WSKP8tCbkSLMMGd8UCatNTH11OgkN5N3Tshx+RTU9Tp+Ki7v/9x
-3+LucSRtr5cL01vNMopI6r/cDpBAgwGgqMTlpgggAk7lYlrpJWlKqS64pSqtV4/y
-rE4olzapfHWcAUy8vH+Q9k/+Sk7KoZiGxDFbZkMo2Q81crLl0KPr+qtYOhCqCrw=
-=EDrK
------END PGP SIGNATURE-----
-
---ejjqwutpjpvbq2in--
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index a816f07..fb12bc5 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -413,7 +413,7 @@ static unsigned int qspi_set_send_trigger(struct rspi_data *rspi,
+ 	return n;
+ }
+ 
+-static void qspi_set_receive_trigger(struct rspi_data *rspi, unsigned int len)
++static int qspi_set_receive_trigger(struct rspi_data *rspi, unsigned int len)
+ {
+ 	unsigned int n;
+ 
+@@ -428,6 +428,7 @@ static void qspi_set_receive_trigger(struct rspi_data *rspi, unsigned int len)
+ 		qspi_update(rspi, SPBFCR_RXTRG_MASK,
+ 			     SPBFCR_RXTRG_1B, QSPI_SPBFCR);
+ 	}
++	return n;
+ }
+ 
+ #define set_config_register(spi, n) spi->ops->set_config_register(spi, n)
+@@ -514,6 +515,51 @@ static int rspi_pio_transfer(struct rspi_data *rspi, const u8 *tx, u8 *rx,
+ 	return 0;
+ }
+ 
++static int rspi_pio_transfer_in_or_our(struct rspi_data *rspi, const u8 *tx,
++				       u8 *rx, unsigned int n)
++{
++	unsigned int i, len;
++	int ret;
++
++	while (n > 0) {
++		if (tx) {
++			len = qspi_set_send_trigger(rspi, n);
++			if (len == QSPI_BUFFER_SIZE) {
++				ret = rspi_wait_for_tx_empty(rspi);
++				if (ret < 0) {
++					dev_err(&rspi->master->dev, "transmit timeout\n");
++					return ret;
++				}
++				for (i = 0; i < len; i++)
++					rspi_write_data(rspi, *tx++);
++			} else {
++				ret = rspi_pio_transfer(rspi, tx, NULL, n);
++				if (ret < 0)
++					return ret;
++			}
++		}
++		if (rx) {
++			len = qspi_set_receive_trigger(rspi, n);
++			if (len == QSPI_BUFFER_SIZE) {
++				ret = rspi_wait_for_rx_full(rspi);
++				if (ret < 0) {
++					dev_err(&rspi->master->dev, "receive timeout\n");
++					return ret;
++				}
++				for (i = 0; i < len; i++)
++					*rx++ = rspi_read_data(rspi);
++			} else {
++				ret = rspi_pio_transfer(rspi, NULL, rx, n);
++				if (ret < 0)
++					return ret;
++				*rx++ = ret;
++			}
++		}
++		n -= len;
++	}
++	return 0;
++}
++
+ static void rspi_dma_complete(void *arg)
+ {
+ 	struct rspi_data *rspi = arg;
+@@ -793,7 +839,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			return ret;
+ 	}
+ 
+-	ret = rspi_pio_transfer(rspi, xfer->tx_buf, NULL, xfer->len);
++	ret = rspi_pio_transfer_in_or_our(rspi, xfer->tx_buf, NULL, xfer->len);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -811,7 +857,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			return ret;
+ 	}
+ 
+-	return rspi_pio_transfer(rspi, NULL, xfer->rx_buf, xfer->len);
++	return rspi_pio_transfer_in_or_our(rspi, NULL, xfer->rx_buf, xfer->len);
+ }
+ 
+ static int qspi_transfer_one(struct spi_master *master, struct spi_device *spi,
+-- 
+1.9.1
