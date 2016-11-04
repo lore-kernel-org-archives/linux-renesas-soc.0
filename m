@@ -1,39 +1,101 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 24 Nov 2016 11:58:43 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        robh@kernel.org, daniel.lezcano@linaro.org,
-        linux-renesas-soc@vger.kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH v4 00/06] clocksource: sh_cmt: DT binding rework V4
-Message-ID: <20161124105843.GA26737@verge.net.au>
-References: <20160314142342.17180.21352.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160314142342.17180.21352.sendpatchset@little-apple>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran.bingham+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 3/4] v4l: vsp1: Calculate partition sizes at stream start.
+Date: Fri,  4 Nov 2016 18:19:29 +0000
+Message-Id: <1478283570-19688-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+Previously the active window and partition sizes for each partition is
+calculated for each partition every frame. This data is constant and
+only needs to be calculated once at the start of the stream.
 
-On Mon, Mar 14, 2016 at 11:23:42PM +0900, Magnus Damm wrote:
-> clocksource: sh_cmt: DT binding rework V4
-> 
-> [PATCH v4 01/06] devicetree: bindings: Remove sh7372 CMT binding
-> [PATCH v4 02/06] devicetree: bindings: R-Car Gen2 CMT0 and CMT1 bindings
-> [PATCH v4 03/06] devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings
-> [PATCH v4 04/06] devicetree: bindings: Deprecate property, update example
-> [PATCH v4 05/06] devicetree: bindings: Remove unused 32-bit CMT bindings
-> [PATCH v4 06/06] devicetree: bindings: Remove deprecated properties
-> 
-> Here is the latest and hopefully final take on updating the CMT DT
-> bindings for R-Car Gen2. In total there are 6 patches that have acks
-> and are ready to be picked up and merged. Other earlier posted changes
-> such as driver modification and SoC DTS bits depend on this series.
+Extend the vsp1_pipe object to store the maximum number of partitions
+possible and pre-calculate the partition sizes into this table.
 
-I am wondering what the state of this work is.
-I see only one minor review comment for this series.
-It would be great to see it merged.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_pipe.h  | 6 ++++++
+ drivers/media/platform/vsp1/vsp1_video.c | 8 ++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
+index f181949824c9..3af96c4ea244 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.h
++++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+@@ -20,6 +20,9 @@
+ 
+ #include <media/media-entity.h>
+ 
++/* Max Video Width / Min Partition Size = 8190/128 */
++#define VSP1_PIPE_MAX_PARTITIONS 64
++
+ struct vsp1_dl_list;
+ struct vsp1_rwpf;
+ 
+@@ -81,7 +84,9 @@ enum vsp1_pipeline_state {
+  * @dl: display list associated with the pipeline
+  * @div_size: The maximum allowed partition size for the pipeline
+  * @partitions: The number of partitions used to process one frame
++ * @partition: The current partition for configuration to process
+  * @current_partition: The partition number currently being configured
++ * @part_table: The pre-calculated partitions used by the pipeline
+  */
+ struct vsp1_pipeline {
+ 	struct media_pipeline pipe;
+@@ -116,6 +121,7 @@ struct vsp1_pipeline {
+ 	unsigned int partitions;
+ 	struct v4l2_rect partition;
+ 	unsigned int current_partition;
++	struct v4l2_rect part_table[VSP1_PIPE_MAX_PARTITIONS];
+ };
+ 
+ void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 6d43c02bbc56..c4a8c30df108 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -255,6 +255,7 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+ 	const struct v4l2_mbus_framefmt *format;
+ 	struct vsp1_entity *entity;
+ 	unsigned int div_size;
++	int i;
+ 
+ 	/*
+ 	 * Partitions are computed on the size before rotation, use the format
+@@ -269,6 +270,7 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+ 	if (vsp1->info->gen == 2) {
+ 		pipe->div_size = div_size;
+ 		pipe->partitions = 1;
++		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
+ 		return;
+ 	}
+ 
+@@ -284,6 +286,9 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+ 
+ 	pipe->div_size = div_size;
+ 	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
++
++	for (i = 0; i < pipe->partitions; i++)
++		pipe->part_table[i] = vsp1_video_partition(pipe, div_size, i);
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -355,8 +360,7 @@ static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
+ {
+ 	struct vsp1_entity *entity;
+ 
+-	pipe->partition = vsp1_video_partition(pipe, pipe->div_size,
+-					       pipe->current_partition);
++	pipe->partition = pipe->part_table[pipe->current_partition];
+ 
+ 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+ 		if (entity->ops->configure)
+-- 
+2.7.4
