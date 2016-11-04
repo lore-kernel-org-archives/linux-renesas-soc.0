@@ -1,69 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48964 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41388 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754021AbcKBJYS (ORCPT
+        with ESMTP id S1758005AbcKDJoR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:24:18 -0400
+        Fri, 4 Nov 2016 05:44:17 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] ARM: shmobile: r8a7743: add power domain index macros
-Date: Wed,  2 Nov 2016 10:24:09 +0100
-Message-Id: <538321bd97188563d739e28a2f21ad874bd28b2e.1478077617.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478077617.git.horms+renesas@verge.net.au>
-References: <cover.1478077617.git.horms+renesas@verge.net.au>
+Subject: [PATCH 04/12] dt-bindings: media: renesas-fcp: Remove SoC-specific compatible strings
+Date: Fri,  4 Nov 2016 10:43:59 +0100
+Message-Id: <a733c81115da9aa501f3cd918fe5b9f3bbe03b11.1478251192.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
+References: <cover.1478251192.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Add macros usable by the device tree sources to reference R8A7743 SYSC power
-domains by index.
+The FCP IP cores include a version register that identifies which SoC
+model the IP is integrated in. SoC-specific compatible strings are not
+needed.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/dt-bindings/power/r8a7743-sysc.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7743-sysc.h
+ Documentation/devicetree/bindings/media/renesas,fcp.txt | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/dt-bindings/power/r8a7743-sysc.h b/include/dt-bindings/power/r8a7743-sysc.h
-new file mode 100644
-index 000000000000..61cfbb2907ea
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7743-sysc.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7743_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7743_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7743_PD_CA15_CPU0		 0
-+#define R8A7743_PD_CA15_CPU1		 1
-+#define R8A7743_PD_CA15_SCU		12
-+#define R8A7743_PD_SGX			20
-+
-+/* Always-on power area */
-+#define R8A7743_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7743_SYSC_H__ */
+diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+index 27f9b8e459ac..3ec91803ba58 100644
+--- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
++++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+@@ -11,15 +11,9 @@ are paired with. These DT bindings currently support the FCPV and FCPF.
+ 
+  - compatible: Must be one or more of the following
+ 
+-   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
+-   - "renesas,r8a7795-fcpf" for R8A7795 (R-Car H3) compatible 'FCP for FDP'
+    - "renesas,fcpv" for generic compatible 'FCP for VSP'
+    - "renesas,fcpf" for generic compatible 'FCP for FDP'
+ 
+-   When compatible with the generic version, nodes must list the
+-   SoC-specific version corresponding to the platform first, followed by the
+-   family-specific and/or generic versions.
+-
+  - reg: the register base and size for the device registers
+  - clocks: Reference to the functional clock
+ 
+@@ -32,7 +26,7 @@ Device node example
+ -------------------
+ 
+ 	fcpvd1: fcp@fea2f000 {
+-		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++		compatible = "renesas,fcpv";
+ 		reg = <0 0xfea2f000 0 0x200>;
+ 		clocks = <&cpg CPG_MOD 602>;
+ 		power-domains = <&sysc R8A7795_PD_A3VP>;
 -- 
 2.7.0.rc3.207.g0ac5344
