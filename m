@@ -1,95 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49437 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752795AbcKBN3g (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932196AbcKDJpH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:36 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 02/32] media: entity: Add media_entity_has_route() function
-Date: Wed,  2 Nov 2016 14:22:59 +0100
-Message-Id: <20161102132329.436-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 4 Nov 2016 05:45:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/29] ARM: dts: emev2: Remove skeleton.dtsi inclusion
+Date: Fri,  4 Nov 2016 10:44:22 +0100
+Message-Id: <51b884d0e1d881d7b2f4f79d806375cd2b03c50d.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is a wrapper around the media entity has_route operation.
+As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
+as deprecated"), including skeleton.dtsi is deprecated.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This fixes the following warning with W=1:
+
+    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/media-entity.c | 29 +++++++++++++++++++++++++++++
- include/media/media-entity.h |  3 +++
- 2 files changed, 32 insertions(+)
+ arch/arm/boot/dts/emev2.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index c68239e..4d03ea7 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -242,6 +242,35 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
-  * Graph traversal
+diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
+index cd119400f440..0124faf175c8 100644
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -8,13 +8,14 @@
+  * kind, whether express or implied.
   */
  
-+/**
-+ * media_entity_has_route - Check if two entity pads are connected internally
-+ * @entity: The entity
-+ * @pad0: The first pad index
-+ * @pad1: The second pad index
-+ *
-+ * This function can be used to check whether two pads of an entity are
-+ * connected internally in the entity.
-+ *
-+ * The caller must hold entity->source->parent->mutex.
-+ *
-+ * Return: true if the pads are connected internally and false otherwise.
-+ */
-+bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-+			    unsigned int pad1)
-+{
-+	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
-+		return false;
-+
-+	if (pad0 == pad1)
-+		return true;
-+
-+	if (!entity->ops || !entity->ops->has_route)
-+		return true;
-+
-+	return entity->ops->has_route(entity, pad0, pad1);
-+}
-+EXPORT_SYMBOL_GPL(media_entity_has_route);
-+
- static struct media_entity *
- media_entity_other(struct media_entity *entity, struct media_link *link)
- {
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 8f9fc85..5fb3f06 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -851,6 +851,9 @@ void media_entity_graph_walk_cleanup(struct media_entity_graph *graph);
-  */
- void media_entity_put(struct media_entity *entity);
+-#include "skeleton.dtsi"
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
  
-+bool media_entity_has_route(struct media_entity *entity, unsigned int sink,
-+			    unsigned int source);
-+
- /**
-  * media_entity_graph_walk_start - Start walking the media graph at a
-  *	given entity
+ / {
+ 	compatible = "renesas,emev2";
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	aliases {
+ 		gpio0 = &gpio0;
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
