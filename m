@@ -1,82 +1,120 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42591 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934857AbcKOTMC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 14:12:02 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 3/4] arm64: dts: renesas: r8a7796: Add DU device to DT
-Date: Tue, 15 Nov 2016 21:12:11 +0200
-Message-ID: <6140360.DygU3qqRMK@avalon>
-In-Reply-To: <1850959.FHUakZUkzN@avalon>
-References: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CANqRtoRdvxgXvbLUGtUGZmeochHc2f7-MDT0Ft_X26jkSDM1Fw@mail.gmail.com> <1850959.FHUakZUkzN@avalon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran.bingham+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 2/4] v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
+Date: Fri,  4 Nov 2016 18:19:28 +0000
+Message-Id: <1478283570-19688-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Magnus,
+Separate the code change from the function move so that code changes can
+be clearly identified. This commit has no functional change.
 
-On Thursday 27 Oct 2016 18:40:31 Laurent Pinchart wrote:
-> On Thursday 27 Oct 2016 16:25:35 Magnus Damm wrote:
-> > On Thu, Oct 27, 2016 at 4:13 PM, Simon Horman wrote:
-> >> On Thu, Oct 27, 2016 at 03:52:44PM +0900, Magnus Damm wrote:
-> >>> On Thu, Oct 20, 2016 at 5:56 PM, Simon Horman wrote:
-> >>>> On Tue, Oct 18, 2016 at 12:19:26PM +0300, Laurent Pinchart wrote:
-> >>>>> On Tuesday 18 Oct 2016 11:05:32 Geert Uytterhoeven wrote:
-> >>>>>> On Mon, Oct 17, 2016 at 11:34 PM, Laurent Pinchart wrote:
-> >>>>>>> Add the DU device to r8a7796.dtsi in a disabled state.
-> >>>>>>> 
-> >>>>>>> Signed-off-by: Laurent Pinchart
-> >>>>>>> <laurent.pinchart+renesas@ideasonboard.com>
-> >>>>>> 
-> >>>>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>>>> 
-> >>>>> Could you please pick patches 1/4 to 3/4 from this series and apply
-> >>>>> them to your tree ? For convenience I've pushed them to
-> >>>>> 
-> >>>>>       git://linuxtv.org/pinchartl/media.git drm/r8a7796/dt
-> >>>>> 
-> >>>>> along with patch "arm64: dts: renesas: r8a7795: Remove FCP
-> >>>>> SoC-specific compatible strings" that has been acked too. If you pull
-> >>>>> from that branch please make sure you skip the top-most patch "arm64:
-> >>>>> dts: renesas: r8a7796-salvator-x: Enable DU" for now.
-> >>>> 
-> >>>> Sure, done.
-> >>> 
-> >>> I think we should hold off with the upstreaming of the DU and VSP
-> >>> integration code for now. Sorry for noticing this late, but I thought
-> >>> we had already discussed the integration order and that merge of
-> >>> non-64-bit capable devices need to be put on hold.
-> >>> 
-> >>> In particular, not so much the DU device (this patch) but more the VSP
-> >>> instances. The reason for that is that VSP devices can only perform
-> >>> 32-bit bus mastering without IOMMU. I believe next step for all this
-> >>> would be to enable all on-board memory on r8a7796 Salvator-x, but I
-> >>> think Geert is working on that.
-> >> 
-> >> So you would like to see the following patches dropped?
-> >> 
-> >> ee73acb13978 arm64: dts: renesas: r8a7796: Add VSP instances
-> >> 0a6519d782fd arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
-> > 
-> > Yes, that would be great. Sorry for not noticing earlier.
-> 
-> I'm sorry, but I don't agree with that. First of all the FCP has no issue
-> with >4GB memory as it doesn't perform DMA itself. Then, while the IPMMU is
-> 
-> required to operate the VSP with >4GB memory, enabling the VSP instances
-> won't break anything as unlike the DU the VSPs won't be used by standard
-> kernel or userspace components.
+The partition algorithm functions will be changed, and
+vsp1_video_partition() will call vsp1_video_pipeline_setup_partitions().
+To prepare for that, move the function without any code change.
 
-Ping ?
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_video.c | 74 ++++++++++++++++----------------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
 
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index d1d3413c6fdf..6d43c02bbc56 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -175,43 +175,6 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
+  * VSP1 Partition Algorithm support
+  */
+ 
+-static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+-{
+-	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
+-	const struct v4l2_mbus_framefmt *format;
+-	struct vsp1_entity *entity;
+-	unsigned int div_size;
+-
+-	/*
+-	 * Partitions are computed on the size before rotation, use the format
+-	 * at the WPF sink.
+-	 */
+-	format = vsp1_entity_get_pad_format(&pipe->output->entity,
+-					    pipe->output->entity.config,
+-					    RWPF_PAD_SINK);
+-	div_size = format->width;
+-
+-	/* Gen2 hardware doesn't require image partitioning. */
+-	if (vsp1->info->gen == 2) {
+-		pipe->div_size = div_size;
+-		pipe->partitions = 1;
+-		return;
+-	}
+-
+-	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+-		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
+-
+-		if (entity->ops->max_width) {
+-			entity_max = entity->ops->max_width(entity, pipe);
+-			if (entity_max)
+-				div_size = min(div_size, entity_max);
+-		}
+-	}
+-
+-	pipe->div_size = div_size;
+-	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+-}
+-
+ /**
+  * vsp1_video_partition - Calculate the active partition output window
+  *
+@@ -286,6 +249,43 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
+ 	return partition;
+ }
+ 
++static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
++{
++	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
++	const struct v4l2_mbus_framefmt *format;
++	struct vsp1_entity *entity;
++	unsigned int div_size;
++
++	/*
++	 * Partitions are computed on the size before rotation, use the format
++	 * at the WPF sink.
++	 */
++	format = vsp1_entity_get_pad_format(&pipe->output->entity,
++					    pipe->output->entity.config,
++					    RWPF_PAD_SINK);
++	div_size = format->width;
++
++	/* Gen2 hardware doesn't require image partitioning. */
++	if (vsp1->info->gen == 2) {
++		pipe->div_size = div_size;
++		pipe->partitions = 1;
++		return;
++	}
++
++	list_for_each_entry(entity, &pipe->entities, list_pipe) {
++		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
++
++		if (entity->ops->max_width) {
++			entity_max = entity->ops->max_width(entity, pipe);
++			if (entity_max)
++				div_size = min(div_size, entity_max);
++		}
++	}
++
++	pipe->div_size = div_size;
++	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
++}
++
+ /* -----------------------------------------------------------------------------
+  * Pipeline Management
+  */
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
