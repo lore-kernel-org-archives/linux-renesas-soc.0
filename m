@@ -1,61 +1,218 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:50506 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932194AbcKGPfa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760538AbcKDJox (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 10:35:30 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.10
-Date: Mon,  7 Nov 2016 16:35:32 +0100
-Message-Id: <1478532932-5713-1-git-send-email-geert+renesas@glider.be>
+        Fri, 4 Nov 2016 05:44:53 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/29] ARM: dts: r8a7794: Fix W=1 dtc warnings
+Date: Fri,  4 Nov 2016 10:44:15 +0100
+Message-Id: <0f4eebb63eb779b50e05bde0f46ea21213f4c465.1478252309.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
+References: <cover.1478252308.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@8 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@9 has a unit name, but no reg property
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 58 +++++++++++++++++++++---------------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.10-tag1
-
-for you to fetch changes up to 0f866a9679215838328e1c0ed1892224672bb396:
-
-  pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3 (2016-11-07 10:39:11 +0100)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.10
-
-  - I2C and DRIF pin groups for R-Car M3-W,
-  - Bug fixes for SDHI2/3 on R-Car M3-W.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
-
-Ramesh Shanmugasundaram (1):
-      pinctrl: sh-pfc: r8a7796: Add DRIF support
-
-Ulrich Hecht (1):
-      pinctrl: sh-pfc: r8a7796: Add I2C pin support
-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 388 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 378 insertions(+), 10 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 8cfc1385f58a..44ce62938417 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1491,62 +1491,62 @@
+ 		status = "disabled";
+ 
+ 		rcar_sound,dvc {
+-			dvc0: dvc@0 {
++			dvc0: dvc-0 {
+ 				dmas = <&audma0 0xbc>;
+ 				dma-names = "tx";
+ 			};
+-			dvc1: dvc@1 {
++			dvc1: dvc-1 {
+ 				dmas = <&audma0 0xbe>;
+ 				dma-names = "tx";
+ 			};
+ 		};
+ 
+ 		rcar_sound,mix {
+-			mix0: mix@0 { };
+-			mix1: mix@1 { };
++			mix0: mix-0 { };
++			mix1: mix-1 { };
+ 		};
+ 
+ 		rcar_sound,ctu {
+-			ctu00: ctu@0 { };
+-			ctu01: ctu@1 { };
+-			ctu02: ctu@2 { };
+-			ctu03: ctu@3 { };
+-			ctu10: ctu@4 { };
+-			ctu11: ctu@5 { };
+-			ctu12: ctu@6 { };
+-			ctu13: ctu@7 { };
++			ctu00: ctu-0 { };
++			ctu01: ctu-1 { };
++			ctu02: ctu-2 { };
++			ctu03: ctu-3 { };
++			ctu10: ctu-4 { };
++			ctu11: ctu-5 { };
++			ctu12: ctu-6 { };
++			ctu13: ctu-7 { };
+ 		};
+ 
+ 		rcar_sound,src {
+-			src@0 {
++			src-0 {
+ 				status = "disabled";
+ 			};
+-			src1: src@1 {
++			src1: src-1 {
+ 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x87>, <&audma0 0x9c>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src2: src@2 {
++			src2: src-2 {
+ 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x89>, <&audma0 0x9e>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src3: src@3 {
++			src3: src-3 {
+ 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x8b>, <&audma0 0xa0>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src4: src@4 {
++			src4: src-4 {
+ 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x8d>, <&audma0 0xb0>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src5: src@5 {
++			src5: src-5 {
+ 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x8f>, <&audma0 0xb2>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src6: src@6 {
++			src6: src-6 {
+ 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x91>, <&audma0 0xb4>;
+ 				dma-names = "rx", "tx";
+@@ -1554,61 +1554,61 @@
+ 		};
+ 
+ 		rcar_sound,ssi {
+-			ssi0: ssi@0 {
++			ssi0: ssi-0 {
+ 				interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x01>, <&audma0 0x02>,
+ 				       <&audma0 0x15>, <&audma0 0x16>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi1: ssi@1 {
++			ssi1: ssi-1 {
+ 				interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x03>, <&audma0 0x04>,
+ 				       <&audma0 0x49>, <&audma0 0x4a>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi2: ssi@2 {
++			ssi2: ssi-2 {
+ 				interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x05>, <&audma0 0x06>,
+ 				       <&audma0 0x63>, <&audma0 0x64>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi3: ssi@3 {
++			ssi3: ssi-3 {
+ 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x07>, <&audma0 0x08>,
+ 				       <&audma0 0x6f>, <&audma0 0x70>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi4: ssi@4 {
++			ssi4: ssi-4 {
+ 				interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x09>, <&audma0 0x0a>,
+ 				       <&audma0 0x71>, <&audma0 0x72>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi5: ssi@5 {
++			ssi5: ssi-5 {
+ 				interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x0b>, <&audma0 0x0c>,
+ 				       <&audma0 0x73>, <&audma0 0x74>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi6: ssi@6 {
++			ssi6: ssi-6 {
+ 				interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x0d>, <&audma0 0x0e>,
+ 				       <&audma0 0x75>, <&audma0 0x76>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi7: ssi@7 {
++			ssi7: ssi-7 {
+ 				interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x0f>, <&audma0 0x10>,
+ 				       <&audma0 0x79>, <&audma0 0x7a>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi8: ssi@8 {
++			ssi8: ssi-8 {
+ 				interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x11>, <&audma0 0x12>,
+ 				       <&audma0 0x7b>, <&audma0 0x7c>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi9: ssi@9 {
++			ssi9: ssi-9 {
+ 				interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x13>, <&audma0 0x14>,
+ 				       <&audma0 0x7d>, <&audma0 0x7e>;
+-- 
+2.7.0.rc3.207.g0ac5344
