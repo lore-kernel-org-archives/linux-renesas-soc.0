@@ -1,107 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49495 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752586AbcKBN3m (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:42 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 15/32] media: rcar-vin: move max width and height information to chip information
-Date: Wed,  2 Nov 2016 14:23:12 +0100
-Message-Id: <20161102132329.436-16-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sat, 5 Nov 2016 15:40:19 -0400
+From: Konrad Rzeszutek Wilk <konrad@darnok.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] swiotlb: Rate-limit printing when running out of
+ SW-IOMMU space
+Message-ID: <20161105194018.GB26349@localhost.localdomain>
+References: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
+ <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the max supported width and height will be different from Gen2.
-Move the limits to the struct chip_info to prepare for Gen3 support.
+On Mon, Oct 31, 2016 at 04:45:03PM +0100, Geert Uytterhoeven wrote:
+> If the system runs out of SW-IOMMU space, changes are high successive
+> requests will fail, too, flooding the kernel log.  This is true
+> especially for streaming DMA, which is typically used repeatedly outside
+> the driver's initialization routine.  Add rate-limiting to fix this.
+> 
+> While at it, get rid of the open-coded dev_name() handling by using the
+> appropriate dev_err_*() variant.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
- drivers/media/platform/rcar-vin/rcar-vin.h  | 6 ++++++
- 3 files changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 372443e..e3dea60 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -255,14 +255,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static const struct rvin_info rcar_info_h1 = {
- 	.chip = RCAR_H1,
-+	.max_width = 2048,
-+	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_m1 = {
- 	.chip = RCAR_M1,
-+	.max_width = 2048,
-+	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_gen2 = {
- 	.chip = RCAR_GEN2,
-+	.max_width = 2048,
-+	.max_height = 2048,
- };
- 
- static const struct of_device_id rvin_of_id_table[] = {
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 05b0181..f5fbe9f 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -23,8 +23,6 @@
- #include "rcar-vin.h"
- 
- #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
--#define RVIN_MAX_WIDTH		2048
--#define RVIN_MAX_HEIGHT		2048
- 
- /* -----------------------------------------------------------------------------
-  * Format Conversions
-@@ -271,8 +269,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
- 
- 	/* Limit to VIN capabilities */
--	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
--			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
-+	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-+			      &pix->height, 4, vin->info->max_height, 2, 0);
- 
- 	pix->bytesperline = max_t(u32, pix->bytesperline,
- 				  rvin_format_bytesperline(pix));
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 17a5fce..ddeca9f 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -91,9 +91,15 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info- Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-+ *
-+ * max_width:		max input with the VIN supports
-+ * max_height:		max input height the VIN supports
-  */
- struct rvin_info {
- 	enum chip_id chip;
-+
-+	unsigned int max_width;
-+	unsigned int max_height;
- };
- 
- /**
--- 
-2.10.2
+applied.
+> ---
+>  lib/swiotlb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+> index 22e13a0e19d76a2b..6ce764410ae475cc 100644
+> --- a/lib/swiotlb.c
+> +++ b/lib/swiotlb.c
+> @@ -714,8 +714,8 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
+>  	 * When the mapping is small enough return a static buffer to limit
+>  	 * the damage, or panic when the transfer is too big.
+>  	 */
+> -	printk(KERN_ERR "DMA: Out of SW-IOMMU space for %zu bytes at "
+> -	       "device %s\n", size, dev ? dev_name(dev) : "?");
+> +	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
+> +			    size);
+>  
+>  	if (size <= io_tlb_overflow || !do_panic)
+>  		return;
+> -- 
+> 1.9.1
+> 
