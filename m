@@ -1,164 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33623 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966087AbcKLNNy (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:36353 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750846AbcKEW3B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:54 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 27/32] media: rcar-vin: start/stop the CSI2 bridge stream
-Date: Sat, 12 Nov 2016 14:12:11 +0100
-Message-Id: <20161112131216.22635-28-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 5 Nov 2016 18:29:01 -0400
+Received: by mail-lf0-f47.google.com with SMTP id t196so88546651lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Nov 2016 15:29:00 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v3 0/2] Renesas R8A7745 CPG/MSSR clock support
+Date: Sun, 06 Nov 2016 01:28:57 +0300
+Message-ID: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the CSI2 bridge stream needs to be start/stop in conjunction
-with the video source. Create helpers to deal with both the Gen2 single
-subdevice case and the Gen3 CSI2 group case.
+Hello.
 
-In the Gen3 case there might be other simultaneous users of the bridge
-and source devices so examine each entity stream_count before acting on
-any particular device.
+   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+'linux.git' repo plus the R8A7743 CPG/MSSR patches just re-posted. They also
+depend on the common R-Car Gen2 support patch. As the DT patches in the
+R8A7745/SK-RZG1E board support series depend on the patch #1 of this series,
+it might make sense to merge this patch to the 'renesas.git' repo as well...
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 84 +++++++++++++++++++++++++++---
- 1 file changed, 77 insertions(+), 7 deletions(-)
+[1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+[2/2] clk: renesas: cpg-mssr: add R8A7745 support
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 322e4c1..872f138 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1089,15 +1089,87 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- }
- 
-+static int __rvin_start_streaming(struct rvin_dev *vin)
-+{
-+	struct v4l2_subdev *source, *bridge = NULL;
-+	struct media_pipeline *pipe;
-+	int ret;
-+
-+	source = vin_to_source(vin);
-+	if (!source)
-+		return -EINVAL;
-+
-+	if (vin_have_bridge(vin)) {
-+		bridge = vin_to_bridge(vin);
-+
-+		if (!bridge)
-+			return -EINVAL;
-+
-+		mutex_lock(&vin->group->lock);
-+
-+		pipe = bridge->entity.pipe ? bridge->entity.pipe :
-+			&vin->vdev.pipe;
-+		ret = media_entity_pipeline_start(&vin->vdev.entity, pipe);
-+		if (ret) {
-+			mutex_unlock(&vin->group->lock);
-+			return ret;
-+		}
-+
-+		/* Only need to start stream if it's not running */
-+		if (bridge->entity.stream_count <= 1)
-+			v4l2_subdev_call(bridge, video, s_stream, 1);
-+		if (source->entity.stream_count <= 1)
-+			v4l2_subdev_call(source, video, s_stream, 1);
-+
-+		mutex_unlock(&vin->group->lock);
-+	} else {
-+		v4l2_subdev_call(source, video, s_stream, 1);
-+	}
-+
-+	return 0;
-+}
-+
-+static int __rvin_stop_streaming(struct rvin_dev *vin)
-+{
-+	struct v4l2_subdev *source, *bridge = NULL;
-+
-+	source = vin_to_source(vin);
-+	if (!source)
-+		return -EINVAL;
-+
-+	if (vin_have_bridge(vin)) {
-+		bridge = vin_to_bridge(vin);
-+
-+		if (!bridge)
-+			return -EINVAL;
-+
-+		mutex_lock(&vin->group->lock);
-+
-+		media_entity_pipeline_stop(&vin->vdev.entity);
-+
-+		/* Only need to stop stream if there are no other users */
-+		if (bridge->entity.stream_count <= 0)
-+			v4l2_subdev_call(bridge, video, s_stream, 0);
-+		if (source->entity.stream_count <= 0)
-+			v4l2_subdev_call(source, video, s_stream, 0);
-+
-+		mutex_unlock(&vin->group->lock);
-+	} else {
-+		v4l2_subdev_call(source, video, s_stream, 0);
-+	}
-+
-+	return 0;
-+}
-+
- static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int ret;
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 1);
-+	ret = __rvin_start_streaming(vin);
-+	if (ret)
-+		return ret;
- 
- 	spin_lock_irqsave(&vin->qlock, flags);
- 
-@@ -1122,7 +1194,7 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	/* Return all buffers if something went wrong */
- 	if (ret) {
- 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
--		v4l2_subdev_call(sd, video, s_stream, 0);
-+		__rvin_stop_streaming(vin);
- 	}
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
-@@ -1133,7 +1205,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- static void rvin_stop_streaming(struct vb2_queue *vq)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int retries = 0;
- 
-@@ -1172,8 +1243,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 0);
-+	__rvin_stop_streaming(vin);
- 
- 	/* disable interrupts */
- 	rvin_disable_interrupts(vin);
--- 
-2.10.2
+MBR, Sergei
