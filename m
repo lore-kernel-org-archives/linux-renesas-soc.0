@@ -1,64 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34088 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbcKGIfb (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:33828 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750928AbcKEWbf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 03:35:31 -0500
+        Sat, 5 Nov 2016 18:31:35 -0400
+Received: by mail-lf0-f41.google.com with SMTP id o141so16282266lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Nov 2016 15:31:34 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v3 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
+Date: Sun, 06 Nov 2016 01:31:31 +0300
+Message-ID: <6619847.B5XdH7v7xE@wasted.cogentembedded.com>
+In-Reply-To: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
+References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <6619847.B5XdH7v7xE@wasted.cogentembedded.com>
-References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com> <6619847.B5XdH7v7xE@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Nov 2016 09:34:35 +0100
-Message-ID: <CAMuHMdVcCwbXRCVy50k=tm=PKi3F3nnyq8UMjdq71k7Yd1tBtA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Add macros usable by  the device tree sources to reference the R8A7745 CPG
+clocks  by index. The data comes from the  table 7.2c in the revision 0.50
+of the RZ/G Series User's Manual.
 
-On Sat, Nov 5, 2016 at 11:31 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add macros usable by  the device tree sources to reference the R8A7745 CPG
-> clocks  by index. The data comes from the  table 7.2c in the revision 0.50
-> of the RZ/G Series User's Manual.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> ---
-> Changes in version 2:
-> - added Geert's tag.
->
->  include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->
-> Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-> ===================================================================
-> --- /dev/null
-> +++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +#define R8A7745_CLK_ACP                26
+---
+Changes in version 2:
+- added Geert's tag.
 
-This clock is called CPEX instead of ACP in rev. 1.00 of the RZ/G Series User's
-Manual: Hardware.
+ include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7745 CPG Core Clocks */
++#define R8A7745_CLK_Z2		0
++#define R8A7745_CLK_ZG		1
++#define R8A7745_CLK_ZTR		2
++#define R8A7745_CLK_ZTRD2	3
++#define R8A7745_CLK_ZT		4
++#define R8A7745_CLK_ZX		5
++#define R8A7745_CLK_ZS		6
++#define R8A7745_CLK_HP		7
++#define R8A7745_CLK_B		9
++#define R8A7745_CLK_LB		10
++#define R8A7745_CLK_P		11
++#define R8A7745_CLK_CL		12
++#define R8A7745_CLK_CP		13
++#define R8A7745_CLK_M2		14
++#define R8A7745_CLK_ZB3		16
++#define R8A7745_CLK_ZB3D2	17
++#define R8A7745_CLK_DDR		18
++#define R8A7745_CLK_SDH		19
++#define R8A7745_CLK_SD0		20
++#define R8A7745_CLK_SD2		21
++#define R8A7745_CLK_SD3		22
++#define R8A7745_CLK_MMC0	23
++#define R8A7745_CLK_MP		24
++#define R8A7745_CLK_QSPI	25
++#define R8A7745_CLK_ACP		26
++#define R8A7745_CLK_RCAN	27
++#define R8A7745_CLK_R		28
++#define R8A7745_CLK_OSC		29
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
