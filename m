@@ -1,61 +1,114 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34121 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbcKHOQh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 09:16:37 -0500
-Received: by mail-lf0-f50.google.com with SMTP id o141so68357246lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Nov 2016 06:16:24 -0800 (PST)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 4/4 v2] arm64: dts: h3ulcb: rename SDHI0 pins
-Date: Tue,  8 Nov 2016 17:16:29 +0300
-Message-Id: <1478614589-10045-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-i2c@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 02/14] ARM: dts: lager: use demuxer for IIC1/I2C1
+Date: Sun,  6 Nov 2016 21:20:20 +0100
+Message-Id: <20161106202032.5227-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This changes SDHI0 pin names for H3ULCB board
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Make it possible to select which I2C1 IP core you want to run on the
+EXIO-A connector.
+
+This is based on reference work for the I2C0 core of the lager board
+by Wolfram Sang.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased and fixed aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Changes in version 2:
-- Initially added
+ arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 8d0ac07..6ffb051 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -163,13 +163,13 @@
- 		function = "avb";
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index dafa49f837118e..bd512c86e85222 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -50,7 +50,9 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
++		i2c8 = &gpioi2c1;
+ 		i2c10 = &i2cexio0;
++		i2c11 = &i2cexio1;
  	};
  
--	sdhi0_pins_3v3: sd0_3v3 {
-+	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
- 		power-source = <3300>;
+ 	chosen {
+@@ -265,6 +267,17 @@
+ 		clock-frequency = <148500000>;
  	};
  
--	sdhi0_pins_1v8: sd0_1v8 {
-+	sdhi0_pins_uhs: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
- 		power-source = <1800>;
-@@ -291,8 +291,8 @@
++	gpioi2c1: i2c-8 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio1 16 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
+ 	/*
+ 	 * IIC0/I2C0 is routed to EXIO connector A, pins 114 (SCL) + 116 (SDA) only.
+ 	 * We use the I2C demuxer, so the desired IP core can be selected at runtime
+@@ -283,6 +296,19 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
++
++	/*
++	 * IIC1/I2C1 is routed to EXIO connector A, pins 78 (SCL) + 80 (SDA).
++	 * This is similar to the arangement described for i2cexio0 (above)
++	 * with a fallback to GPIO also provided.
++	 */
++	i2cexio1: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic1>, <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-exio1";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
  };
  
- &sdhi0 {
--	pinctrl-0 = <&sdhi0_pins_3v3>;
--	pinctrl-1 = <&sdhi0_pins_1v8>;
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
- 	pinctrl-names = "default", "state_uhs";
+ &du {
+@@ -405,6 +431,11 @@
+ 		function = "iic0";
+ 	};
  
- 	vmmc-supply = <&vcc_sdhi0>;
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
++
+ 	iic1_pins: iic1 {
+ 		groups = "iic1";
+ 		function = "iic1";
+@@ -607,10 +638,14 @@
+ 	pinctrl-names = "i2c-exio0";
+ };
+ 
++&i2c1	{
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "i2c-exio1";
++};
++
+ &iic1	{
+-	status = "okay";
+ 	pinctrl-0 = <&iic1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-exio1";
+ };
+ 
+ &iic2	{
+-- 
+2.9.3
+
