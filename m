@@ -1,135 +1,153 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49495 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754501AbcKBN3r (ORCPT
+Received: from sauhun.de ([89.238.76.85]:46882 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751918AbcKFUUz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:47 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 25/32] media: rcar-vin: enable CSI2 group subdevices in lookup helpers
-Date: Wed,  2 Nov 2016 14:23:22 +0100
-Message-Id: <20161102132329.436-26-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 6 Nov 2016 15:20:55 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-i2c@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 04/14] ARM: dts: lager: use demuxer for IIC3/I2C3
+Date: Sun,  6 Nov 2016 21:20:22 +0100
+Message-Id: <20161106202032.5227-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make the subdevice helpers look not only at the local digital subdevice
-but also for the CSI2 group subdevices which can be present on Gen3.
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Which CSI2 group subdevices are found depends on the CSI2 subgroup
-routing which is stored in the CHSEL register of the subgroup master
-(VIN0 for VIN0-3 and VIN4 for VIN4-7). The lookup functions look at this
-value and returns the correct information or NULL if there is no
-attached subdevices for the current routing for this device.
+Create a separate bus for da9063 PMIC and da9210 regulator
+related I2C slaves.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Based on similar work for HDMI by Wolfram Sang.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, corrected chip name in commit msg, updated aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 66 ++++++++++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 +-
- 2 files changed, 66 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 84 +++++++++++++++++++++++--------------
+ 1 file changed, 53 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 06876a8..f382f91 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -330,9 +330,73 @@ static void rvin_group_delete(struct rvin_dev *vin)
-  * Subdevice helpers
-  */
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 2659bf854b3bd5..e4ac480b0e229a 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -55,6 +55,7 @@
+ 		i2c10 = &i2cexio0;
+ 		i2c11 = &i2cexio1;
+ 		i2c12 = &i2chdmi;
++		i2c13 = &i2cpwr;
+ 	};
  
-+static int rvin_group_vin_to_csi(struct rvin_dev *vin)
-+{
-+	int i, vin_num, vin_master, chsel, csi;
+ 	chosen {
+@@ -412,6 +413,46 @@
+ 			};
+ 		};
+ 	};
 +
 +	/*
-+	 * Only try to translate to a CSI2 number if there is a enabled
-+	 * link from the VIN sink pad. However if there are no links at
-+	 * all we are at probe time so ignore the need for enabled links
-+	 * to be able to make a better guess of initial format
++	 * IIC3 and I2C3 may be switched using pinmux.
++	 * IIC3/I2C3 does not appear to support fallback to GPIO.
 +	 */
-+	if (vin->pads[RVIN_SINK].entity->num_links &&
-+	    !media_entity_remote_pad(&vin->pads[RVIN_SINK]))
-+		return -1;
++	i2cpwr: i2c-13 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic3>, <&i2c3>;
++		i2c-bus-name = "i2c-pwr";
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+	/* Find which VIN we are */
-+	vin_num = -1;
-+	for (i = 0; i < RCAR_VIN_NUM; i++)
-+		if (vin == vin->group->vin[i])
-+			vin_num = i;
++		pmic@58 {
++			compatible = "dlg,da9063";
++			reg = <0x58>;
++			interrupt-parent = <&irqc0>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-controller;
 +
-+	if (vin_num == -1)
-+		return -1;
++			rtc {
++				compatible = "dlg,da9063-rtc";
++			};
 +
-+	vin_master = vin_num < 4 ? 0 : 4;
-+	if (!vin->group->vin[vin_master])
-+		return -1;
++			wdt {
++				compatible = "dlg,da9063-watchdog";
++			};
++		};
 +
-+	chsel = rvin_get_chsel(vin->group->vin[vin_master]);
++		vdd_dvfs: regulator@68 {
++			compatible = "dlg,da9210";
++			reg = <0x68>;
++			interrupt-parent = <&irqc0>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
 +
-+	csi = vin->info->chsels[vin_num][chsel].csi;
-+	if (csi >= RVIN_CSI_MAX)
-+		return -1;
-+
-+	if (!vin->group->source[csi].subdev || !vin->group->bridge[csi].subdev)
-+		return -1;
-+
-+	return csi;
-+}
-+
- struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
- {
--	return &vin->digital;
-+	int csi;
-+
-+	/* If there is a digital subdev use it */
-+	if (vin->digital.subdev)
-+		return &vin->digital;
-+
-+	csi = rvin_group_vin_to_csi(vin);
-+	if (csi < 0)
-+		return NULL;
-+
-+	return &vin->group->source[csi];
-+}
-+
-+struct v4l2_subdev *vin_to_source(struct rvin_dev *vin)
-+{
-+	int csi;
-+
-+	/* If there is a digital subdev use it */
-+	if (vin->digital.subdev)
-+		return vin->digital.subdev;
-+
-+	csi = rvin_group_vin_to_csi(vin);
-+	if (csi < 0)
-+		return NULL;
-+
-+	return vin->group->source[csi].subdev;
- }
- 
- /* -----------------------------------------------------------------------------
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index cd7d959..2f1e087 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -207,7 +207,7 @@ struct rvin_dev {
++			regulator-min-microvolt = <1000000>;
++			regulator-max-microvolt = <1000000>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++	};
  };
  
- struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
--#define vin_to_source(vin)		vin->digital.subdev
-+struct v4l2_subdev *vin_to_source(struct rvin_dev *vin);
+ &du {
+@@ -554,6 +595,11 @@
+ 		function = "iic2";
+ 	};
  
- /* Debug */
- #define vin_dbg(d, fmt, arg...)		dev_dbg(d->dev, fmt, ##arg)
++	i2c3_pins: i2c3 {
++		groups = "i2c3";
++		function = "i2c3";
++	};
++
+ 	iic3_pins: iic3 {
+ 		groups = "iic3";
+ 		function = "iic3";
+@@ -770,38 +816,14 @@
+ 	clock-frequency = <100000>;
+ };
+ 
+-&iic3 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&iic3_pins>;
+-	status = "okay";
+-
+-	pmic@58 {
+-		compatible = "dlg,da9063";
+-		reg = <0x58>;
+-		interrupt-parent = <&irqc0>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-controller;
+-
+-		rtc {
+-			compatible = "dlg,da9063-rtc";
+-		};
+-
+-		wdt {
+-			compatible = "dlg,da9063-watchdog";
+-		};
+-	};
+-
+-	vdd_dvfs: regulator@68 {
+-		compatible = "dlg,da9210";
+-		reg = <0x68>;
+-		interrupt-parent = <&irqc0>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++&i2c3	{
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "i2c-pwr";
++};
+ 
+-		regulator-min-microvolt = <1000000>;
+-		regulator-max-microvolt = <1000000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
++&iic3	{
++	pinctrl-0 = <&iic3_pins>;
++	pinctrl-names = "i2c-pwr";
+ };
+ 
+ &pci0 {
 -- 
-2.10.2
+2.9.3
