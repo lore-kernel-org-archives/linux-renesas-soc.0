@@ -1,59 +1,107 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45908 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754230AbcKCPey (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 11:34:54 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: Do not unconditionally support PIN_CONFIG_BIAS_DISABLE
-Date: Thu,  3 Nov 2016 16:34:20 +0100
-Message-Id: <20161103153421.15527-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-i2c@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 10/14] ARM: dts: gose: use demuxer for I2C4
+Date: Sun,  6 Nov 2016 21:20:28 +0100
+Message-Id: <20161106202032.5227-11-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Always stating PIN_CONFIG_BIAS_DISABLE is supported gives untrue output
-when examining /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins if
-the operation get_bias() are implemented but the pin are not handled by
-the get_bias() implementation. In that case the output will state that
-"input bias disabled" indicating that this pin have bias control
-support.
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Make support for PIN_CONFIG_BIAS_DISABLE depend on that the pin either
-support SH_PFC_PIN_CFG_PULL_UP or SH_PFC_PIN_CFG_PULL_DOWN. This also
-solves the issue where SoC specific implementations print error messages
-if there particular implementation of {set,get}_bias() is called with a
-pin it do not know about.
+Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, corrected board name in subject, and fixed aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/pinctrl/sh-pfc/pinctrl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7793-gose.dts | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index c577258..fcacfa7 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -570,7 +570,8 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index df07dc252537fe..d22b9f969eaba8 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -49,7 +49,9 @@
+ 		serial0 = &scif0;
+ 		serial1 = &scif1;
+ 		i2c9 = &gpioi2c2;
++		i2c10 = &gpioi2c4;
+ 		i2c11 = &i2chdmi;
++		i2c12 = &i2cexio4;
+ 	};
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		return true;
-+		return pin->configs &
-+			(SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN);
+ 	chosen {
+@@ -289,6 +291,17 @@
+ 		i2c-gpio,delay-us = <5>;
+ 	};
  
- 	case PIN_CONFIG_BIAS_PULL_UP:
- 		return pin->configs & SH_PFC_PIN_CFG_PULL_UP;
++	gpioi2c4: i2c-10 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio7 14 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio7 13 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
+ 	/*
+ 	 * A fallback to GPIO is provided for I2C2.
+ 	 */
+@@ -371,6 +384,18 @@
+ 			pagesize = <16>;
+ 		};
+ 	};
++
++	/*
++	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio4: i2c-12 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c4>, <&gpioi2c4>;
++		i2c-bus-name = "i2c-exio4";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -411,6 +436,11 @@
+ 		function = "i2c2";
+ 	};
+ 
++	i2c4_pins: i2c4 {
++		groups = "i2c4";
++		function = "i2c4";
++	};
++
+ 	du_pins: du {
+ 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+ 		function = "du";
+@@ -600,6 +630,11 @@
+ 	clock-frequency = <100000>;
+ };
+ 
++&i2c4 {
++	pinctrl-0 = <&i2c4_pins>;
++	pinctrl-names = "i2c-exio4";
++};
++
+ &rcar_sound {
+ 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.10.2
+2.9.3
+
