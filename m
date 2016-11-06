@@ -1,70 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:58718 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934523AbcKKUeC (ORCPT
+Received: from sauhun.de ([89.238.76.85]:46886 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751765AbcKFUU4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 15:34:02 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 0/3]  pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable drive-strength
-Date: Fri, 11 Nov 2016 21:33:38 +0100
-Message-Id: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 6 Nov 2016 15:20:56 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-i2c@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 05/14] ARM: dts: koelsch: use demuxer for I2C1
+Date: Sun,  6 Nov 2016 21:20:23 +0100
+Message-Id: <20161106202032.5227-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Hi,
+Make it possible to fallback to GPIO for I2C1 on the EXIO-C connector.
 
-This series adds support to control the drive strength for none GPIO
-pins. All pins which can have its drive strength controlled is now supported. I
-have also added the new pins to the correct groups, or added groups to mimic
-other sh-pfc drivers. One notable exception is the group avb_mdc which on other
-SoC are called avb_mdio, see commit 2/3 for explanation.
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
 
-The series depends on the series '[PATCHv2 0/6] pinctrl: sh-pfc: Fixups
-for bias handling and preparation for none GPIO pins'.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased and fixed aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-My test is a bit crude and is setting a few of the AVB pins to a higher
-drive-strength value then the others and observing that the AVB fails to
-work after the pfc settings are applied (NFS root failing to mount after
-kernel is fetched over TFTP). I also tested setting the drive strength for
-individual pins and for whole groups.
-
-Changes since v2
-- Dropped a patch to the sh-pfc driver core which is now part of the
-  series this series now depends upon (this is done to simplify other
-  dependencies).
-- Add Reviewed-by tag
-
-Changes since v1
-- Add comment about that it's the R-Car H3SiP pin matrix which is used to
-  generate a unique id number for each pin. Even if the pin matrix are
-  different on other packages all the driver care about is that it's a unique
-  number.
-- Add FSCLKST pin after discussion with Geert
-- Moved avb_mii group relative to other avb pin groups for a more logical
-  order, thanks Sergei for pointing this out
-- Add Acked-by and Reviewed-by tags
-- Fixed spelling error
-
-
-Niklas Söderlund (3):
-  pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable
-    drive-strength
-  pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
-  pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 263 ++++++++++++++++++++++++++++++++---
- 1 file changed, 244 insertions(+), 19 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 57e69af6513619..5405d337d74486 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -50,6 +50,8 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scif1;
++		i2c9 = &gpioi2c1;
++		i2c12 = &i2cexio1;
+ 	};
+ 
+ 	chosen {
+@@ -298,6 +300,29 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio7 16 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio7 15 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio1: i2c-12 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-exio1";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -333,6 +358,11 @@
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
++
+ 	i2c2_pins: i2c2 {
+ 		groups = "i2c2";
+ 		function = "i2c2";
+@@ -582,6 +612,11 @@
+ 	};
+ };
+ 
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "i2c-exio1";
++};
++
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.10.2
+2.9.3
