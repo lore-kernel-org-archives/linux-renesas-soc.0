@@ -1,48 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50313 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbcKGMcZ (ORCPT
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:35991 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752823AbcKGLq5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 07:32:25 -0500
-Date: Mon, 7 Nov 2016 13:32:18 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        magnus.damm@gmail.com, wsa@the-dreams.de
-Subject: Re: [PATCH v2 0/5] r8a7796 I2C integration
-Message-ID: <20161107123218.GB12319@verge.net.au>
-References: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 7 Nov 2016 06:46:57 -0500
+Received: by mail-wm0-f42.google.com with SMTP id p190so177195023wmp.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Nov 2016 03:46:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <CAO3366yTp0NpXRCahyjbiVGT=aScUStcZ+PCskwgdmd_AKGb7Q@mail.gmail.com>
+References: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20161031114625.GB1435@katana> <CAO3366yTp0NpXRCahyjbiVGT=aScUStcZ+PCskwgdmd_AKGb7Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Nov 2016 10:25:24 +0100
+Message-ID: <CAMuHMdUiyCxCUSc1wMNEL0KBNC4iwbNNGUzhyi29OetipqpG9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] r8a7796 I2C integration
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 26, 2016 at 04:14:04PM +0200, Ulrich Hecht wrote:
-> Hi!
-> 
-> This revision is based on renesas-devel-20161024-v4.9-rc2.  It adds the
-> Reviewed-bys and the entries for SYS-DMAC2 in the applicable I2C nodes.  I
-> have also made sure it works with 64-bit memory enabled.
-> 
-> CU
-> Uli
-> 
-> 
-> Changes since v1:
-> - added sys-dmac2 entries to i2c0-2
-> - added Reviewed-bys
-> - dropped "i2c: rcar: add support for r8a7796 (R-Car M3-W)" (picked up)
-> 
-> 
-> Ulrich Hecht (5):
->   clk: renesas: r8a7796: Add I2C clocks
->   pinctrl: sh-pfc: r8a7796: add I2C pin support
->   arm64: renesas: r8a7796: add I2C support
->   arm64: renesas: r8a7796: Enable I2C DMA
->   arm64: renesas: r8a7796: salvator-x: enable I2C
+On Thu, Nov 3, 2016 at 5:06 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Thank you. Please check branch r8a7796-dmac-v2 at
+> https://github.com/uli/kernel.git, that should contain everything you
+> need.
 
-Thanks Ulrich,
+FWIW, git://github.com/uli/kernel.git is much faster.
 
-I have queued up the "arm64" patches for v4.10.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
