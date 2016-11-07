@@ -1,46 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36014 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751111AbcKBLRs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53583 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753270AbcKGPln (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 07:17:48 -0400
+        Mon, 7 Nov 2016 10:41:43 -0500
+Date: Mon, 7 Nov 2016 16:41:38 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC] arm64: dts: r8a7796-salvator-x: Disable sdr104 of
+ SDHI
+Message-ID: <20161107154137.GC9233@verge.net.au>
+References: <1478532814-8652-1-git-send-email-horms@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <2946846.zhWOBzBeGa@wasted.cogentembedded.com>
-References: <13079532.zQoaX56ouR@wasted.cogentembedded.com> <2946846.zhWOBzBeGa@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 12:17:46 +0100
-Message-ID: <CAMuHMdUkJR_jDUbswWDq9WK12-mKmN4XLbAZzXvuR-mYbVzD0A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1478532814-8652-1-git-send-email-horms@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 27, 2016 at 10:42 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add macros usable by  the device tree sources to reference the R8A7745 CPG
-> clocks  by index. The data comes from the  table 7.2c in the revision 0.50
-> of the RZ/G Series User's Manual.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Mon, Nov 07, 2016 at 04:33:34PM +0100, Simon Horman wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> 
+> The problem which the card inserted in the slot of SDHI{0,3} does not
+> recognize in the combination of some boards and UHS-I sdcard occurred.
+> 
+> Therefore, this patch repealed SDR104 of SDHI0 and SDHI3.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sorry, I withdraw this patch; it is not relevant to mainline.
+I meant to send a completely different patch.
