@@ -1,150 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55231 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752778AbcKSDsT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50313 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbcKGMcZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:48:19 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 6/9] drm: bridge: Set bridges' encoder type
-Date: Sat, 19 Nov 2016 05:48:19 +0200
-Message-Id: <1479527302-7674-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 7 Nov 2016 07:32:25 -0500
+Date: Mon, 7 Nov 2016 13:32:18 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        magnus.damm@gmail.com, wsa@the-dreams.de
+Subject: Re: [PATCH v2 0/5] r8a7796 I2C integration
+Message-ID: <20161107123218.GB12319@verge.net.au>
+References: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Initialize the new drm_bridge::encoder_type field to the right value for
-all external bridge drivers.
+On Wed, Oct 26, 2016 at 04:14:04PM +0200, Ulrich Hecht wrote:
+> Hi!
+> 
+> This revision is based on renesas-devel-20161024-v4.9-rc2.  It adds the
+> Reviewed-bys and the entries for SYS-DMAC2 in the applicable I2C nodes.  I
+> have also made sure it works with 64-bit memory enabled.
+> 
+> CU
+> Uli
+> 
+> 
+> Changes since v1:
+> - added sys-dmac2 entries to i2c0-2
+> - added Reviewed-bys
+> - dropped "i2c: rcar: add support for r8a7796 (R-Car M3-W)" (picked up)
+> 
+> 
+> Ulrich Hecht (5):
+>   clk: renesas: r8a7796: Add I2C clocks
+>   pinctrl: sh-pfc: r8a7796: add I2C pin support
+>   arm64: renesas: r8a7796: add I2C support
+>   arm64: renesas: r8a7796: Enable I2C DMA
+>   arm64: renesas: r8a7796: salvator-x: enable I2C
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 1 +
- drivers/gpu/drm/bridge/analogix-anx78xx.c          | 1 +
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1 +
- drivers/gpu/drm/bridge/dumb-vga-dac.c              | 1 +
- drivers/gpu/drm/bridge/dw-hdmi.c                   | 2 ++
- drivers/gpu/drm/bridge/nxp-ptn3460.c               | 2 ++
- drivers/gpu/drm/bridge/parade-ps8622.c             | 2 ++
- drivers/gpu/drm/bridge/sii902x.c                   | 2 ++
- drivers/gpu/drm/bridge/tc358767.c                  | 2 ++
- 9 files changed, 14 insertions(+)
+Thanks Ulrich,
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 8ed3906dd411..66bbd2073529 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -1030,6 +1030,7 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
- 
- 	adv7511->bridge.funcs = &adv7511_bridge_funcs;
- 	adv7511->bridge.of_node = dev->of_node;
-+	adv7511->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
- 
- 	ret = drm_bridge_add(&adv7511->bridge);
- 	if (ret) {
-diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-index a2a82366a771..62be93f7ffaa 100644
---- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-+++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-@@ -1437,6 +1437,7 @@ static int anx78xx_i2c_probe(struct i2c_client *client,
- 	}
- 
- 	anx78xx->bridge.funcs = &anx78xx_bridge_funcs;
-+	anx78xx->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
- 
- 	err = drm_bridge_add(&anx78xx->bridge);
- 	if (err < 0) {
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 6e0447f329a2..d7eda99e5b8a 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1231,6 +1231,7 @@ static int analogix_dp_create_bridge(struct drm_device *drm_dev,
- 	bridge->driver_private = dp;
- 	bridge->encoder = dp->encoder;
- 	bridge->funcs = &analogix_dp_bridge_funcs;
-+	bridge->encoder_type = DRM_MODE_ENCODER_TMDS;
- 
- 	ret = drm_bridge_attach(drm_dev, bridge);
- 	if (ret) {
-diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-index b33e3f829e4f..036c54c849e6 100644
---- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-+++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-@@ -182,6 +182,7 @@ static int dumb_vga_probe(struct platform_device *pdev)
- 
- 	vga->bridge.funcs = &dumb_vga_bridge_funcs;
- 	vga->bridge.of_node = pdev->dev.of_node;
-+	vga->bridge.encoder_type = DRM_MODE_ENCODER_DAC;
- 
- 	ret = drm_bridge_add(&vga->bridge);
- 	if (ret && !IS_ERR(vga->ddc))
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index ab7023e5dfde..f6485885c4ff 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1609,6 +1609,8 @@ static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
- 	hdmi->bridge = bridge;
- 	bridge->driver_private = hdmi;
- 	bridge->funcs = &dw_hdmi_bridge_funcs;
-+	bridge->encoder_type = DRM_MODE_ENCODER_TMDS;
-+
- 	ret = drm_bridge_attach(drm, bridge);
- 	if (ret) {
- 		DRM_ERROR("Failed to initialize bridge with drm\n");
-diff --git a/drivers/gpu/drm/bridge/nxp-ptn3460.c b/drivers/gpu/drm/bridge/nxp-ptn3460.c
-index f1a99938e924..8be117cc024f 100644
---- a/drivers/gpu/drm/bridge/nxp-ptn3460.c
-+++ b/drivers/gpu/drm/bridge/nxp-ptn3460.c
-@@ -349,6 +349,8 @@ static int ptn3460_probe(struct i2c_client *client,
- 
- 	ptn_bridge->bridge.funcs = &ptn3460_bridge_funcs;
- 	ptn_bridge->bridge.of_node = dev->of_node;
-+	ptn_bridge->bridge.encoder_type = DRM_MODE_ENCODER_LVDS;
-+
- 	ret = drm_bridge_add(&ptn_bridge->bridge);
- 	if (ret) {
- 		DRM_ERROR("Failed to add bridge\n");
-diff --git a/drivers/gpu/drm/bridge/parade-ps8622.c b/drivers/gpu/drm/bridge/parade-ps8622.c
-index 6f7c2f9860d2..37ac7211139a 100644
---- a/drivers/gpu/drm/bridge/parade-ps8622.c
-+++ b/drivers/gpu/drm/bridge/parade-ps8622.c
-@@ -615,6 +615,8 @@ static int ps8622_probe(struct i2c_client *client,
- 
- 	ps8622->bridge.funcs = &ps8622_bridge_funcs;
- 	ps8622->bridge.of_node = dev->of_node;
-+	ps8622->bridge.encoder_type = DRM_MODE_ENCODER_LVDS;
-+
- 	ret = drm_bridge_add(&ps8622->bridge);
- 	if (ret) {
- 		DRM_ERROR("Failed to add bridge\n");
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index 9126d0306ab5..ad4663dea333 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -418,6 +418,8 @@ static int sii902x_probe(struct i2c_client *client,
- 
- 	sii902x->bridge.funcs = &sii902x_bridge_funcs;
- 	sii902x->bridge.of_node = dev->of_node;
-+	sii902x->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
-+
- 	ret = drm_bridge_add(&sii902x->bridge);
- 	if (ret) {
- 		dev_err(dev, "Failed to add drm_bridge\n");
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 44d476ea6d2e..934333cb647b 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -1353,6 +1353,8 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 
- 	tc->bridge.funcs = &tc_bridge_funcs;
- 	tc->bridge.of_node = dev->of_node;
-+	tc->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
-+
- 	ret = drm_bridge_add(&tc->bridge);
- 	if (ret) {
- 		dev_err(dev, "Failed to add drm_bridge: %d\n", ret);
--- 
-Regards,
-
-Laurent Pinchart
+I have queued up the "arm64" patches for v4.10.
