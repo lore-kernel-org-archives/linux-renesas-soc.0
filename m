@@ -1,49 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36833 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbcKNQjK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51514 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752673AbcKGNf6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 11:39:10 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: [PATCH 3/4] drm: rcar-du: Fix H/V sync signal polarity configuration
-Date: Mon, 14 Nov 2016 18:39:11 +0200
-Message-Id: <1479141552-8509-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 7 Nov 2016 08:35:58 -0500
+Date: Mon, 7 Nov 2016 14:35:51 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/9] arm64: renesas: add M3ULCB board
+Message-ID: <20161107133551.GD29721@verge.net.au>
+References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+On Thu, Nov 03, 2016 at 09:06:15PM +0300, Vladimir Barinov wrote:
+> Hello,
+> 
+> This adds the folowing:
+> - R8A7796 SoC based M3ULCB (R-Car Starter Kit Pro) device tree
+> - Document DT bindings
+> 
+> Vladimir Barinov (9):
+> [1/9] dt: arm: shmobile: add M3ULCB board DT bindings
 
-The VSL and HSL bits in the DSMR register set the corresponding
-horizontal and vertical sync signal polarity to active high. The code
-got it the wrong way around, fix it.
+I took the liberty of changing the subject of the above patch to:
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+arm64: dts: m3ulcb: add M3ULCB board DT bindings
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index aca26eed93b1..a2ec6d8796a0 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -149,8 +149,8 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
- 
- 	/* Signal polarities */
--	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? 0 : DSMR_VSL)
--	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? 0 : DSMR_HSL)
-+	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-+	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
- 	      | DSMR_DIPM_DISP | DSMR_CSPM;
- 	rcar_du_crtc_write(rcrtc, DSMR, value);
- 
--- 
-Regards,
+> [2/9] arm64: dts: m3ulcb: initial device tree
+> [3/9] arm64: dts: m3ulcb: enable SCIF clk and pins
+> [4/9] arm64: dts: m3ulcb: enable GPIO leds
+> [5/9] arm64: dts: m3ulcb: enable GPIO keys
+> [6/9] arm64: dts: m3ulcb: enable SDHI0
+> [7/9] arm64: dts: m3ulcb: enable EXTALR clk
+> [8/9] arm64: dts: m3ulcb: enable WDT
+> [9/9] arm64: dts: m3ulcb: enable SDHI2
 
-Laurent Pinchart
+I have queued up patches 1-5,7,8.
+Please repost the SDHI patches when you are ready.
