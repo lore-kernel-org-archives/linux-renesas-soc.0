@@ -1,138 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:59063 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757832AbcKCQQs (ORCPT
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:38679 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932635AbcKGSid (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 12:16:48 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 4/4] pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
-Date: Thu,  3 Nov 2016 17:15:30 +0100
-Message-Id: <20161103161530.11763-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161103161530.11763-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161103161530.11763-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 7 Nov 2016 13:38:33 -0500
+Received: by mail-wm0-f52.google.com with SMTP id f82so136408182wmf.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Nov 2016 10:38:32 -0800 (PST)
 MIME-Version: 1.0
+In-Reply-To: <20160912141507.6837-1-chris.brandt@renesas.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 7 Nov 2016 19:38:30 +0100
+Message-ID: <CAPDyKFp=d7nQ94wv_LnvuJ4HMD8Hv3X+BanhRoc1wu1i+pmEPw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] mmc: sh_mobile_sdhi: Add r7s72100 support
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Group the QSPI0 and QSPI1 pins into similar groups found in other sh-pfc
-drivers.  The pins can not be muxed between functions other then QSPI
-but there drive strength can be controlled.
+On 12 September 2016 at 16:15, Chris Brandt <chris.brandt@renesas.com> wrote:
+> For the most part, the SDHI controller in the RZ/A1 (r7s72100)
+> is the same as other Renesas SoC...except for the fact that the
+> data port register was widened to 32-bits and the 16-bit accesses
+> in the current tmio driver aren't going to cut it.
+>
+> Also, the tmio driver allows you to pass in what voltages you
+> support via the ocr_mask. For the RZ/A1, it's just simple 3.3v.
+> So, I added the ability to pass that when using DT.
+>
+> Chris Brandt (3):
+>   mmc: sh_mobile_sdhi: add ocr_mask option
+>   mmc: tmio-mmc: add support for 32bit data port
+>   mmc: sh_mobile_sdhi: Add r7s72100 support
+>
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
+>  drivers/mmc/host/sh_mobile_sdhi.c                  |  9 +++++++
+>  drivers/mmc/host/tmio_mmc.h                        | 12 +++++++++
+>  drivers/mmc/host/tmio_mmc_pio.c                    | 30 ++++++++++++++++++++++
+>  include/linux/mfd/tmio.h                           |  5 ++++
+>  5 files changed, 57 insertions(+)
+>
+> --
+> 2.9.2
+>
+>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 69 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
+Thanks, applied for next!
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index c503f97..f90cb7f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3719,6 +3719,55 @@ static const unsigned int usb2_mux[] = {
- 	USB2_PWEN_MARK, USB2_OVC_MARK,
- };
- 
-+/* - QSPI0 ------------------------------------------------------------------ */
-+static const unsigned int qspi0_ctrl_pins[] = {
-+	/* QSPI0_SPCLK, QSPI0_SSL */
-+	PIN_NUMBER('W', 3), PIN_NUMBER('Y', 3),
-+};
-+static const unsigned int qspi0_ctrl_mux[] = {
-+	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
-+};
-+static const unsigned int qspi0_data2_pins[] = {
-+	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
-+	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
-+};
-+static const unsigned int qspi0_data2_mux[] = {
-+	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
-+};
-+static const unsigned int qspi0_data4_pins[] = {
-+	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1, QSPI0_IO2, QSPI0_IO3 */
-+	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
-+	PIN_NUMBER('Y', 6), PIN_A_NUMBER('B', 6),
-+};
-+static const unsigned int qspi0_data4_mux[] = {
-+	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
-+	QSPI0_IO2_MARK, QSPI0_IO3_MARK,
-+};
-+/* - QSPI1 ------------------------------------------------------------------ */
-+static const unsigned int qspi1_ctrl_pins[] = {
-+	/* QSPI1_SPCLK, QSPI1_SSL */
-+	PIN_NUMBER('V', 3), PIN_NUMBER('V', 5),
-+};
-+static const unsigned int qspi1_ctrl_mux[] = {
-+	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
-+};
-+static const unsigned int qspi1_data2_pins[] = {
-+	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
-+	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
-+};
-+static const unsigned int qspi1_data2_mux[] = {
-+	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
-+};
-+static const unsigned int qspi1_data4_pins[] = {
-+	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1, QSPI1_IO2, QSPI1_IO3 */
-+	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
-+	PIN_A_NUMBER('E', 4), PIN_A_NUMBER('C', 3),
-+};
-+static const unsigned int qspi1_data4_mux[] = {
-+	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
-+	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
-@@ -4019,6 +4068,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-+	SH_PFC_PIN_GROUP(qspi0_ctrl),
-+	SH_PFC_PIN_GROUP(qspi0_data2),
-+	SH_PFC_PIN_GROUP(qspi0_data4),
-+	SH_PFC_PIN_GROUP(qspi1_ctrl),
-+	SH_PFC_PIN_GROUP(qspi1_data2),
-+	SH_PFC_PIN_GROUP(qspi1_data4),
- };
- 
- static const char * const audio_clk_groups[] = {
-@@ -4464,6 +4519,18 @@ static const char * const usb2_groups[] = {
- 	"usb2",
- };
- 
-+static const char * const qspi0_groups[] = {
-+	"qspi0_ctrl",
-+	"qspi0_data2",
-+	"qspi0_data4",
-+};
-+
-+static const char * const qspi1_groups[] = {
-+	"qspi1_ctrl",
-+	"qspi1_data2",
-+	"qspi1_data4",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -4513,6 +4580,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
-+	SH_PFC_FUNCTION(qspi0),
-+	SH_PFC_FUNCTION(qspi1),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-2.10.2
+Kind regards
+Uffe
