@@ -1,155 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35416 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754473AbcKBJCz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53889 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932546AbcKGP5E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:02:55 -0400
-MIME-Version: 1.0
-In-Reply-To: <20161031232537.GT16026@codeaurora.org>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
- <CAMuHMdVbpuv94x-ocTSDoEj+SbnESDbkuMXsXExQvoyZepp+Zg@mail.gmail.com>
- <20161031081923.GF18195@verge.net.au> <CAMuHMdXA-hemOT=ZysEfettei9=HsDddGhqddkw38hwRrdeagw@mail.gmail.com>
- <20161031232537.GT16026@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 10:02:53 +0100
-Message-ID: <CAMuHMdXOW4Ubafu=x9pCw_W-MtLGe3N974dbfHCH5TJuUAeYrQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/23] soc: renesas: Add R-Car RST driver for obtaining
- mode pin state
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mon, 7 Nov 2016 10:57:04 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] serial: sh-sci: Fix deadlock caused by serial output request
+Date: Mon,  7 Nov 2016 16:56:50 +0100
+Message-Id: <1478534210-14124-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Stephen,
+From: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
 
-Thanks for your answers!
+While spin is already locked, serial output request causes the deadlock,
+because serial output process also tries to lock the spin.
+This patch removes serial output with spin locked.
 
-On Tue, Nov 1, 2016 at 12:25 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/31, Geert Uytterhoeven wrote:
->> Hi Mike, Stephen, Arnd, Olof, Kevin,
->>
->> Is the merge strategy [see ##### below] OK for you?
->> Thanks a lot!
->>
->> On Mon, Oct 31, 2016 at 9:19 AM, Simon Horman <horms@verge.net.au> wrote:
->> > On Wed, Oct 26, 2016 at 02:00:24PM +0200, Geert Uytterhoeven wrote:
->> >> On Fri, Oct 21, 2016 at 3:17 PM, Geert Uytterhoeven
->> >> <geert+renesas@glider.be> wrote:
->> >> > Currently the R-Car Clock Pulse Generator (CPG) drivers obtains the
->> >> > state of the mode pins either by a call from the platform code, or
->> >> > directly by using a hardcoded register access. This is a bit messy, and
->> >> > creates a dependency between driver and platform code.
->> >> >
->> >> > This patch series converts the various Renesas R-Car clock drivers
->> >> > and support code from reading the mode pin states using a hardcoded
->> >> > register access to using a new minimalistic R-Car RST driver.
->> >> >
->> >> > All R-Car clock drivers will rely on the presence in DT of a device node
->> >> > for the RST module.  Backwards compatibility with old DTBs is retained
->> >> > only for R-Car Gen2, which has fallback code using its own private copy
->> >> > of rcar_gen2_read_mode_pins().
->> >> >
->> >> > After this, there is still one remaining user of
->> >> > rcar_gen2_read_mode_pins() left in platform code. A patch series to
->> >> > remove that user has already been posted, though ("[PATCH/RFT 0/4] ARM:
->> >> > shmobile: R-Car Gen2: Allow booting secondary CPU cores in debug mode").
->> >> > Since v3, the other user has been removed in commit 9f5ce39ddb8f68b3
->> >> > ("ARM: shmobile: rcar-gen2: Obtain extal frequency from DT").
->> >> >
->> >> > This series consists of 5 parts:
->> >> >   A. Patches 1 and 2 add DT bindings and driver code for the R-Car RST
->> >> >      driver,
->> >> >   B. Patches 3-11 add device nodes for the RST modules to the R-Car DTS
->> >> >      files,
->> >> >   C. Patches 12-17 convert the clock drivers to call into the new R-Car
->> >> >      RST driver,
->> >> >   D. Patches 18-20 remove passing mode pin state to the clock drivers
->> >> >      from the platform code,
->> >> >   E. Patches 21-23 remove dead code from the clock drivers.
->> >> >
->> >> > As is usually the case with moving functionality from platform code to
->> >> > DT, there are lots of hard dependencies:
->> >> >   - The DT updates in Part B can be merged as soon as the DT bindings in
->> >> >     Part A have been approved,
->> >> >   - The clock driver updates in Part C depend functionally on the driver
->> >> >     code in Part A, and on the DT updates in Part B,
->> >> >   - The board code cleanups in Part D depend on the clock driver updates
->> >> >     in Part C,
->> >> >   - The block driver cleanups in part E depend on the board code
->> >> >     cleanups in part D.
->> >> >
->> >> > Hence to maintain the required lockstep between SoC driver, clock
->> >> > drivers, shmobile platform code, and shmobile DT, I propose to queue up
->> >> > all patches in a single branch against v4.9-rc1, and send pull requests
->> >> > to both Mike/Stephen (clock) and Simon (rest).
->> >> >
->> >> > ***
->> >>
->> >> >   - Mike/Stephen/Simon/Magnus: Are you OK with the suggested merge
->> >> >     approach above?
->> >>
->> >> Is this OK for you?
->>
->> #####
->>
->> (link to the full series at
->>  https://groups.google.com/forum/#!topic/linux.kernel/fLSFsjOgPT8)
->
-> Would the pull requests for clk also have dts changes at the base
-> of the tree? Perhaps clk side can just ack the clk patches and
+Signed-off-by: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/tty/serial/sh-sci.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-Yes they would: this is moving functionality from platform code to DT.
-Without the DT updates, it will break bisection (except for R-Car Gen2,
-where we have fallback code to handle old DTBs).
+Changes since RFC:
+* Add tags from Geert and Wolgram
+* Drop RFC designation
 
-> then have it all routed through arm-soc? The only worry I have is
-> if we need to make some sort of change in clk side that conflicts
-> with these changes. I don't usually like taking dts changes
-> through clk tree, so I'd like to avoid that if possible.
-
-Everything could go through arm-soc only with your Acked-by.
-However, there are new clock drivers pending on this series.
-Either they have to go through arm-soc, too, or this series would
-be pulled into the clk tree with these new clock drivers.
-
-> Part E could happen anytime after everything else happens, so
-> that doesn't seem like a concern.
-
-Part E can indeed by postponed.
-But if parts A-D are applied together, there's no reason to postpone part E.
-
-> Part C could also be made to
-> only call into the new reset drivers if the reset dts nodes are
-> present? If that's done then we could merge clk patches anytime
-> and remove the dead code and the node search at some later time
-> when everything has settled?
-
-That would require adding more backwards compatibility code for
-old DTBs, even for platform where we're not interested in maintaining
-that. In addition, Part C depends on the header file for the reset driver
-to compile the clock driver, even if you would add some DT detection,
-and on the reset driver to link. So I'm afraid this is not feasible.
-
-Thanks again!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 4b26252c2885..91e7dddbf72c 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1142,11 +1142,8 @@ static int sci_dma_rx_push(struct sci_port *s, void *buf, size_t count)
+ 	int copied;
+ 
+ 	copied = tty_insert_flip_string(tport, buf, count);
+-	if (copied < count) {
+-		dev_warn(port->dev, "Rx overrun: dropping %zu bytes\n",
+-			 count - copied);
++	if (copied < count)
+ 		port->icount.buf_overrun++;
+-	}
+ 
+ 	port->icount.rx += copied;
+ 
+@@ -1161,8 +1158,6 @@ static int sci_dma_rx_find_active(struct sci_port *s)
+ 		if (s->active_rx == s->cookie_rx[i])
+ 			return i;
+ 
+-	dev_err(s->port.dev, "%s: Rx cookie %d not found!\n", __func__,
+-		s->active_rx);
+ 	return -1;
+ }
+ 
+@@ -1223,9 +1218,9 @@ static void sci_dma_rx_complete(void *arg)
+ 
+ 	dma_async_issue_pending(chan);
+ 
++	spin_unlock_irqrestore(&port->lock, flags);
+ 	dev_dbg(port->dev, "%s: cookie %d #%d, new active cookie %d\n",
+ 		__func__, s->cookie_rx[active], active, s->active_rx);
+-	spin_unlock_irqrestore(&port->lock, flags);
+ 	return;
+ 
+ fail:
+@@ -1273,8 +1268,6 @@ static void sci_submit_rx(struct sci_port *s)
+ 		if (dma_submit_error(s->cookie_rx[i]))
+ 			goto fail;
+ 
+-		dev_dbg(s->port.dev, "%s(): cookie %d to #%d\n", __func__,
+-			s->cookie_rx[i], i);
+ 	}
+ 
+ 	s->active_rx = s->cookie_rx[0];
+@@ -1288,7 +1281,6 @@ static void sci_submit_rx(struct sci_port *s)
+ 	for (i = 0; i < 2; i++)
+ 		s->cookie_rx[i] = -EINVAL;
+ 	s->active_rx = -EINVAL;
+-	dev_warn(s->port.dev, "Failed to re-start Rx DMA, using PIO\n");
+ 	sci_rx_dma_release(s, true);
+ }
+ 
+@@ -1358,10 +1350,10 @@ static void rx_timer_fn(unsigned long arg)
+ 	int active, count;
+ 	u16 scr;
+ 
+-	spin_lock_irqsave(&port->lock, flags);
+-
+ 	dev_dbg(port->dev, "DMA Rx timed out\n");
+ 
++	spin_lock_irqsave(&port->lock, flags);
++
+ 	active = sci_dma_rx_find_active(s);
+ 	if (active < 0) {
+ 		spin_unlock_irqrestore(&port->lock, flags);
+@@ -1370,9 +1362,9 @@ static void rx_timer_fn(unsigned long arg)
+ 
+ 	status = dmaengine_tx_status(s->chan_rx, s->active_rx, &state);
+ 	if (status == DMA_COMPLETE) {
++		spin_unlock_irqrestore(&port->lock, flags);
+ 		dev_dbg(port->dev, "Cookie %d #%d has already completed\n",
+ 			s->active_rx, active);
+-		spin_unlock_irqrestore(&port->lock, flags);
+ 
+ 		/* Let packet complete handler take care of the packet */
+ 		return;
+@@ -1396,8 +1388,6 @@ static void rx_timer_fn(unsigned long arg)
+ 	/* Handle incomplete DMA receive */
+ 	dmaengine_terminate_all(s->chan_rx);
+ 	read = sg_dma_len(&s->sg_rx[active]) - state.residue;
+-	dev_dbg(port->dev, "Read %u bytes with cookie %d\n", read,
+-		s->active_rx);
+ 
+ 	if (read) {
+ 		count = sci_dma_rx_push(s, s->rx_buf[active], read);
+-- 
+2.7.0.rc3.207.g0ac5344
