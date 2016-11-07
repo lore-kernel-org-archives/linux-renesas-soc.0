@@ -1,56 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from [202.4.237.240] ([202.4.237.240]:50135 "EHLO
-        kirsty.vergenet.net" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1750776AbcKGMT4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49949 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752013AbcKGMBZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 07:19:56 -0500
-Date: Mon, 7 Nov 2016 13:19:24 +0100
-From: Simon Horman <horms@verge.net.au>
+        Mon, 7 Nov 2016 07:01:25 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: Phil Edworthy <phil.edworthy@renesas.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFC] PCI: rcar: Restrict pci_fixup_irqs to the same PCI
- domain
-Message-ID: <20161107121924.GA12319@verge.net.au>
-References: <1478520048-25430-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1478520048-25430-1-git-send-email-horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC] PCI: rcar: Restrict pci_fixup_irqs to the same PCI domain
+Date: Mon,  7 Nov 2016 13:00:48 +0100
+Message-Id: <1478520048-25430-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Nov 07, 2016 at 01:00:48PM +0100, Simon Horman wrote:
-> From: Phil Edworthy <phil.edworthy@renesas.com>
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> 
-> Phil, this is from the 3.3.2 BSP.
-> Is it appropriate for mainline?
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-I see there is also an infrastructure patch (by you) required for this
-change: one to add pci_fixup_irqs_local(). I'll hold off on posting that
-pending your answer to the question above.
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
 
-> ---
->  drivers/pci/host/pcie-rcar.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index 62700d1896f4..06e7a75094c7 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -472,7 +472,7 @@ static int rcar_pcie_enable(struct rcar_pcie *pcie)
->  		return -ENODEV;
->  	}
->  
-> -	pci_fixup_irqs(pci_common_swizzle, of_irq_parse_and_map_pci);
-> +	pci_fixup_irqs_local(bus, pci_common_swizzle, of_irq_parse_and_map_pci);
->  
->  	pci_bus_size_bridges(bus);
->  	pci_bus_assign_resources(bus);
-> -- 
-> 2.7.0.rc3.207.g0ac5344
-> 
+Phil, this is from the 3.3.2 BSP.
+Is it appropriate for mainline?
+---
+ drivers/pci/host/pcie-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 62700d1896f4..06e7a75094c7 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -472,7 +472,7 @@ static int rcar_pcie_enable(struct rcar_pcie *pcie)
+ 		return -ENODEV;
+ 	}
+ 
+-	pci_fixup_irqs(pci_common_swizzle, of_irq_parse_and_map_pci);
++	pci_fixup_irqs_local(bus, pci_common_swizzle, of_irq_parse_and_map_pci);
+ 
+ 	pci_bus_size_bridges(bus);
+ 	pci_bus_assign_resources(bus);
+-- 
+2.7.0.rc3.207.g0ac5344
