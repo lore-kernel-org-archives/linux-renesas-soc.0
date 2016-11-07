@@ -1,34 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:36353 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbcKEW3B (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50340 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbcKGMc4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Nov 2016 18:29:01 -0400
-Received: by mail-lf0-f47.google.com with SMTP id t196so88546651lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Nov 2016 15:29:00 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v3 0/2] Renesas R8A7745 CPG/MSSR clock support
-Date: Sun, 06 Nov 2016 01:28:57 +0300
-Message-ID: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
+        Mon, 7 Nov 2016 07:32:56 -0500
+Date: Mon, 7 Nov 2016 13:32:50 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v7 11/11] arm64: dts: r8a7796: salvator-x: Enable UHS-I
+ SDR-104
+Message-ID: <20161107123249.GD12319@verge.net.au>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-12-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdVLAK0TKLoB07_U1XNW9kCOyen80gPrkaXOLqAq0=BA+Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVLAK0TKLoB07_U1XNW9kCOyen80gPrkaXOLqAq0=BA+Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Tue, Oct 25, 2016 at 12:49:42PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Sep 13, 2016 at 12:57 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Add the sd-uhs-sdr104 property to SDHI0 and SDHI1.
+> 
+> SDHI0 and SDHI3.
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo plus the R8A7743 CPG/MSSR patches just re-posted. They also
-depend on the common R-Car Gen2 support patch. As the DT patches in the
-R8A7745/SK-RZG1E board support series depend on the patch #1 of this series,
-it might make sense to merge this patch to the 'renesas.git' repo as well...
-
-[1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7745 support
-
-MBR, Sergei
+Thanks, I will fix that.
