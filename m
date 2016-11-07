@@ -1,81 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:33953 "EHLO
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:24665 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbcKGA1r (ORCPT
+        with ESMTP id S1751130AbcKGARz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Nov 2016 19:27:47 -0500
-Message-ID: <581FCA80.7000007@jinso.co.jp>
-Date: Mon, 07 Nov 2016 09:27:44 +0900
+        Sun, 6 Nov 2016 19:17:55 -0500
+Message-ID: <581FC82E.5050202@jinso.co.jp>
+Date: Mon, 07 Nov 2016 09:17:50 +0900
 From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 MIME-Version: 1.0
-To: =?windows-1252?Q?Niklas_S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-CC: broonie@kernel.org, geert+renesas@glider.be,
-        linux-spi@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
-        linux-renesas-soc@vger.kernel.org, nv-dung@jinso.co.jp,
-        h-inayoshi@jinso.co.jp
-Subject: Re: [PATCH 1/1] ARM: spi supports 32bytes buffer for DUAL and QUAD
-References: <1478248734-32044-1-git-send-email-cm-hiep@jinso.co.jp> <1478248734-32044-2-git-send-email-cm-hiep@jinso.co.jp> <20161105073239.GA30888@bigcity.dyn.berto.se>
-In-Reply-To: <20161105073239.GA30888@bigcity.dyn.berto.se>
+To: Mark Brown <broonie@kernel.org>
+CC: geert+renesas@glider.be, linux-spi@vger.kernel.org,
+        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
+        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp
+Subject: Re: [PATCH 0/1] ARM: spi supports 32bytes buffer for DUAL and QUAD
+References: <1478248734-32044-1-git-send-email-cm-hiep@jinso.co.jp> <20161104154930.6fepg25wma2l2gz2@sirena.org.uk>
+In-Reply-To: <20161104154930.6fepg25wma2l2gz2@sirena.org.uk>
 Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Hi Mark
 
-Thanks for your comment.
 
-On 11/05/2016 04:32 PM, Niklas S�derlund wrote:
-> Hi Cao,
->
-> On 2016-11-04 17:38:54 +0900, Cao Minh Hiep wrote:
+On 11/05/2016 12:49 AM, Mark Brown wrote:
+> On Fri, Nov 04, 2016 at 05:38:53PM +0900, Cao Minh Hiep wrote:
 >> From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 >>
->> This patch supports 32bytes of buffer for DUAL and QUAD in QSPI by
->> Using Transmit/Receive Buffer Data Triggering Number.
->> In order to improve the DUAL and QUAD's performance of SPI
->> while transferring data in PIO mode, it sends/receives each 32bytes
->> data instead of each byte data as current situation.
+>> Hi,
 >>
->> Signed-off-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
->> ---
->>   drivers/spi/spi-rspi.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++---
->>   1 file changed, 49 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
->> index a816f07..fb12bc5 100644
->> --- a/drivers/spi/spi-rspi.c
->> +++ b/drivers/spi/spi-rspi.c
->> @@ -413,7 +413,7 @@ static unsigned int qspi_set_send_trigger(struct rspi_data *rspi,
->>   	return n;
->>   }
->>   
->> -static void qspi_set_receive_trigger(struct rspi_data *rspi, unsigned int len)
->> +static int qspi_set_receive_trigger(struct rspi_data *rspi, unsigned int len)
->>   {
->>   	unsigned int n;
->>   
->> @@ -428,6 +428,7 @@ static void qspi_set_receive_trigger(struct rspi_data *rspi, unsigned int len)
->>   		qspi_update(rspi, SPBFCR_RXTRG_MASK,
->>   			     SPBFCR_RXTRG_1B, QSPI_SPBFCR);
->>   	}
->> +	return n;
->>   }
->>   
->>   #define set_config_register(spi, n) spi->ops->set_config_register(spi, n)
->> @@ -514,6 +515,51 @@ static int rspi_pio_transfer(struct rspi_data *rspi, const u8 *tx, u8 *rx,
->>   	return 0;
->>   }
->>   
->> +static int rspi_pio_transfer_in_or_our(struct rspi_data *rspi, const u8 *tx,
->> +				       u8 *rx, unsigned int n)
-> Nitpicking, s/rspi_pio_transfer_in_or_our/rspi_pio_transfer_in_or_out/
-> or am I missing something?
-You're right!. It should be "rspi_pio_transfer_in_or_out"
-I'll update it in an other patch.
+>> This patch will improve the DUAL and QUAD's performance of SPI,
+>> that supported for GEN2 r8a7790 SOC in PIO mode.
+>> It sends/receives each 32bytes of data instead of each byte data
+>> as current situation.
+> Please don't send cover letters for single patches, if there is anything
+> that needs saying put it in the changelog of the patch or after the ---
+> if it's administrative stuff.  This reduces mail volume and ensures that
+> any important information is recorded in the changelog rather than being
+> lost.
+Thanks, I will do it next time.
 
-Thanks.
-Jinzai Solution Inc,
+Best regards,
+Jinzai solution Inc.
 Hiep.
