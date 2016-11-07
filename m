@@ -1,64 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53682 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755983AbcKDJow (ORCPT
+        with ESMTP id S932181AbcKGPoZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 7 Nov 2016 10:44:25 -0500
+Date: Mon, 7 Nov 2016 16:44:19 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/29] ARM: dts: r7s72100: add sdhi clock to device tree
-Date: Fri,  4 Nov 2016 10:44:13 +0100
-Message-Id: <7c8522b7047c77ef598e8b5f9ff6e349c22e0622.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH/RFC] serial: sh-sci: Fix deadlock caused by serial output
+ request
+Message-ID: <20161107154418.GA10737@verge.net.au>
+References: <1478531681-1561-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdW8VPo5Vx08CdN9ZHw=ujamNc+Th5VftE5CxJdxbGwZVg@mail.gmail.com>
+ <20161107154000.GB9233@verge.net.au>
+ <CAMuHMdWXEx0OSs_eedL+kzAqJ-=odOV90mE-+CCYM=a9qDbeTg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWXEx0OSs_eedL+kzAqJ-=odOV90mE-+CCYM=a9qDbeTg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+On Mon, Nov 07, 2016 at 04:42:39PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Mon, Nov 7, 2016 at 4:40 PM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Nov 07, 2016 at 04:20:56PM +0100, Geert Uytterhoeven wrote:
+> >> On Mon, Nov 7, 2016 at 4:14 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> >> > From: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
+> >> >
+> >> > While spin is already locked, serial output request causes the deadlock,
+> >> > because serial output process also tries to lock the spin.
+> >> > This patch removes serial output with spin locked.
+> >> >
+> >> > Signed-off-by: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
+> >> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >>
+> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>
+> >> Gr{oetje,eeting}s,
+> >
+> > Thanks. Will you pass this on to Greg or should I do so?
+> 
+> Feel free to pass to Greg (doesn't he use patchwork on linux-serial?).
+> Thanks!
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100.dtsi            | 8 ++++++++
- include/dt-bindings/clock/r7s72100-clock.h | 4 ++++
- 2 files changed, 12 insertions(+)
+Probably. I'll repost it as a non-RFC just to be on the safe side.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 50f9f3bc109d..eab06701ef11 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -149,6 +149,14 @@
- 			>;
- 			clock-output-names = "spi0", "spi1", "spi2", "spi3", "spi4";
- 		};
-+		mstp12_clks: mstp12_clks@fcfe0444 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0444 4>;
-+			clocks = <&p1_clk>, <&p1_clk>;
-+			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
-+			clock-output-names = "sdhi1", "sdhi0";
-+		};
- 	};
- 
- 	cpus {
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index 5eaf0fb469c2..29e01ed10e74 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -44,4 +44,8 @@
- #define R7S72100_CLK_SPI3	4
- #define R7S72100_CLK_SPI4	3
- 
-+/* MSTP12 */
-+#define R7S72100_CLK_SDHI0	3
-+#define R7S72100_CLK_SDHI1	2
-+
- #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
--- 
-2.7.0.rc3.207.g0ac5344
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
