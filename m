@@ -1,42 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53540 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53520 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753258AbcKGPkH (ORCPT
+        with ESMTP id S932342AbcKGPif (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 10:40:07 -0500
-Date: Mon, 7 Nov 2016 16:40:01 +0100
+        Mon, 7 Nov 2016 10:38:35 -0500
+Date: Mon, 7 Nov 2016 16:38:24 +0100
 From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@sang-engineering.com>,
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH/RFC] serial: sh-sci: Fix deadlock caused by serial output
  request
-Message-ID: <20161107154000.GB9233@verge.net.au>
+Message-ID: <20161107153823.GA9233@verge.net.au>
 References: <1478531681-1561-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdW8VPo5Vx08CdN9ZHw=ujamNc+Th5VftE5CxJdxbGwZVg@mail.gmail.com>
+ <20161107152618.GB5140@katana>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdW8VPo5Vx08CdN9ZHw=ujamNc+Th5VftE5CxJdxbGwZVg@mail.gmail.com>
+In-Reply-To: <20161107152618.GB5140@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Nov 07, 2016 at 04:20:56PM +0100, Geert Uytterhoeven wrote:
-> On Mon, Nov 7, 2016 at 4:14 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+On Mon, Nov 07, 2016 at 04:26:18PM +0100, Wolfram Sang wrote:
+> On Mon, Nov 07, 2016 at 04:14:41PM +0100, Simon Horman wrote:
 > > From: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
-> >
+> > 
 > > While spin is already locked, serial output request causes the deadlock,
 > > because serial output process also tries to lock the spin.
 > > This patch removes serial output with spin locked.
-> >
+> > 
 > > Signed-off-by: Takatoshi Akiyama <takatoshi.akiyama.kj@ps.hitachi-solutions.com>
 > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > This is a patch from the Gen3 3.3.2 BSP.
+> > Geert, please consider it for mainline.
+> > 
+> > Two approaches are mixed here: simply removing log messages that would
+> > cause a deadlock; and moving log messages to outside the lock. Some
+> > consideration was given (by Simon) to a more consistent approach of
+> > simply removing all log messages in question. However this was taken as
+> > logging ouside of the lock seems consistent with other logging in
+> > rx_timer_fn() and sci_dma_rx_complete().
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > 
-> Gr{oetje,eeting}s,
+> Simon, could you use the 'wsa+renesas' email address in the future? That
+> would make things a tad easier for me. Thanks!
 
-Thanks. Will you pass this on to Greg or should I do so?
+Sure, I will try to do that.
