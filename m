@@ -1,56 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:45750 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755095AbcKNShS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51398 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752345AbcKGN1w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 13:37:18 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Mon, 7 Nov 2016 08:27:52 -0500
+Date: Mon, 7 Nov 2016 14:27:46 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 03/11] ARM: dts: r8a73a4: Add device node for PRR
-Date: Mon, 14 Nov 2016 19:37:09 +0100
-Message-Id: <1479148637-5399-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: h3ulcb: update header
+Message-ID: <20161107132746.GC29721@verge.net.au>
+References: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1478196294-1021-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1478196294-1021-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+On Thu, Nov 03, 2016 at 09:04:54PM +0300, Vladimir Barinov wrote:
+> This updates H3ULCB device tree header with official board name
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Drop CCCR, as it is not a lone register, but part of the HPB/APB
-    block,
-
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a73a4.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index ca8672778fe067e1..53183ffe04c11c11 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -751,6 +751,11 @@
- 		};
- 	};
- 
-+	prr: chipid@ff000044 {
-+		compatible = "renesas,prr";
-+		reg = <0 0xff000044 0 4>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,sysc-r8a73a4", "renesas,sysc-rmobile";
- 		reg = <0 0xe6180000 0 0x8000>, <0 0xe6188000 0 0x8000>;
--- 
-1.9.1
+Thanks, I have queued this up.
