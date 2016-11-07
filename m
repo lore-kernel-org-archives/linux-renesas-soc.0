@@ -1,57 +1,57 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Thu, 10 Nov 2016 21:12:42 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>, linux-i2c@vger.kernel.org
+MIME-Version: 1.0
+In-Reply-To: <20161106202032.5227-15-wsa+renesas@sang-engineering.com>
+References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com> <20161106202032.5227-15-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Nov 2016 14:10:12 +0100
+Message-ID: <CAMuHMdX6aV0htv+zFqoaGZpjs=JYwVBegOdzye3z0wB6PeGMvQ@mail.gmail.com>
 Subject: Re: [PATCH v4 14/14] i2c: mux: demux-pinctrl: make drivers with no
  pinctrl work again
-Message-ID: <20161110201242.GD1585@katana>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
- <20161106202032.5227-15-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="veXX9dWIonWZEC6h"
-Content-Disposition: inline
-In-Reply-To: <20161106202032.5227-15-wsa+renesas@sang-engineering.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---veXX9dWIonWZEC6h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Nov 06, 2016 at 09:20:32PM +0100, Wolfram Sang wrote:
+On Sun, Nov 6, 2016 at 9:20 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 > Some drivers like i2c-gpio do not have dedicated pinctrl states. They
 > broke when error checking for pinctrl was added. Detect them now, and in
 > their case, simply skip over pinctrl configuration.
->=20
+>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/muxes/i2c-demux-pinctrl.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+> index b3893f6282ba5b..3e6fe1760d82fc 100644
+> --- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
+> +++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+> @@ -69,10 +69,28 @@ static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 ne
+>                 goto err_with_revert;
+>         }
+>
+> -       p = devm_pinctrl_get_select(adap->dev.parent, priv->bus_name);
+> +       /*
+> +        * Check if there are pinctrl states at all. Note: we cant' use
 
-Applied to for-current with Geert's typo fix, thanks!
+can't
 
+> +        * devm_pinctrl_get_select() because we need to distinguish between
+> +        * the -ENODEV from devm_pinctrl_get() and pinctrl_lookup_state().
+> +        */
+> +       p = devm_pinctrl_get(adap->dev.parent);
 
---veXX9dWIonWZEC6h
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+                        Geert
 
-iQIcBAEBAgAGBQJYJNS6AAoJEBQN5MwUoCm2qHUP/1D4MO6UdqoA5ezd0dA+Vuoi
-4z6FiY+CjkT3OzSdG6yv1lccGQOw5sF86uJV7fbaQTwVbH/qvOdOxkHS8framXiI
-37AFDoF5jEHccLaSeaKgjAvmIk49rsN5LEFb9UyzXmsvNH9QplUBMOtObBBUyp65
-1quL4yEkdclv4H60xr9qIjLnw5ojmS1WxJSd8RV3RFAdwt3WCMHAIoyfkE8Qtl3v
-b3ELLJ7W9cR62dXHjWoQyJIhJsFuJrADYk0YgC3m2gXiNRgezUwB78qM4wkPz42d
-gMJ4YWALTZ1jkkjBW7nBPATV+ohv4hL82nmZx3wBaISVFarbckUBWsMPZ4i49bnk
-ifbK9kK7H7Xjdx6q6gItgGqLLeGgKPrukLYEX3zVDS3NUcfTyt2KM6ZbiW1S0RsF
-qEdb1O3KC90PI4g9TYF+p/Pd2IuLIMuSAeESz8hgtR786g1DQYPE8DH7A3FZgEju
-m0tzkJd9ohzsIiEzYsdjyjnJ3r94U2rK9LHNNVEIZWmY0YqeCxfDf8bvh75TW6GJ
-6EvBrhXiciYC/+K7g/dS+v4Cr1x2HJMdg2o70eK6xAB/MupeFPz3GcoPu92Zw3pp
-UtjLutLrK8DYsJ+iseCgtaRmRQPDbcU4ljs+64r/GhCd2UpFvv3kucHri9qay9t5
-OVVE0k9tkoFaqWhAeq26
-=iA5Y
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---veXX9dWIonWZEC6h--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
