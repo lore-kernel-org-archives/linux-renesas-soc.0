@@ -1,43 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760472AbcKDJpS (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34564 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752858AbcKGOwP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:45:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 7 Nov 2016 09:52:15 -0500
+MIME-Version: 1.0
+In-Reply-To: <1478527623-17960-1-git-send-email-horms+renesas@verge.net.au>
+References: <1478527623-17960-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Nov 2016 15:52:13 +0100
+Message-ID: <CAMuHMdW=uwsAM-ZpwgdYy5uj2tNmEmTf8OtoxB=8BLL0cgTqew@mail.gmail.com>
+Subject: Re: [PATCH/RFC] spi: sh-msiof: Fix DMA transfer size check
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/9] ARM: shmobile: r8a7794/alt: Add board part number to DT bindings
-Date: Fri,  4 Nov 2016 10:44:39 +0100
-Message-Id: <d4a2c642ec968970fef015aa1f450b20cc37b67a.1478251657.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
-References: <cover.1478251657.git.horms+renesas@verge.net.au>
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Simon,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Nov 7, 2016 at 3:07 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>
+> DMA supports 32-bit words only,
+> even if BITLEN1 of SITMDR2 register is 16bit.
+>
+> Fixes: b0d0ce8b6b91 ("spi: sh-msiof: Add DMA support")
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> Geert, this is a patch from the Gen3 BSP 3.3.2 kernel.
+> Please consider if it is appropriate for mainline.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 785d1f847acb..106b542c27c9 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -37,7 +37,7 @@ SoCs:
- 
- Boards:
- 
--  - Alt
-+  - Alt (RTP0RC7794SEB00010S)
-     compatible = "renesas,alt", "renesas,r8a7794"
-   - APE6-EVM
-     compatible = "renesas,ape6evm", "renesas,r8a73a4"
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks, looks correct to me. Probably I treated "l" as the number
+of words to transfer, while it is the number of bytes to transfer.
+
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> ---
+>  drivers/spi/spi-sh-msiof.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+> index 1de3a772eb7d..cbf02ebb30a2 100644
+> --- a/drivers/spi/spi-sh-msiof.c
+> +++ b/drivers/spi/spi-sh-msiof.c
+> @@ -862,7 +862,7 @@ static int sh_msiof_transfer_one(struct spi_master *master,
+>                                 break;
+>                         copy32 = copy_bswap32;
+>                 } else if (bits <= 16) {
+> -                       if (l & 1)
+> +                       if (l & 3)
+>                                 break;
+>                         copy32 = copy_wswap32;
+>                 } else {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
