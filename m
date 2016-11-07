@@ -1,17 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33280 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbcKGLsM (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:34977 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751537AbcKGKfL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 06:48:12 -0500
-MIME-Version: 1.0
-In-Reply-To: <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
-References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com> <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Nov 2016 11:09:22 +0100
-Message-ID: <CAMuHMdXmoGoTQP0QdG_1xg7fTyaa8x5ujbVW9XoJ5GQgg+oEpQ@mail.gmail.com>
+        Mon, 7 Nov 2016 05:35:11 -0500
+Received: by mail-lf0-f51.google.com with SMTP id b14so109505647lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Nov 2016 02:35:10 -0800 (PST)
 Subject: Re: [PATCH v5 2/2] clk: renesas: cpg-mssr: add R8A7743 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com>
+ <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
+ <CAMuHMdXmoGoTQP0QdG_1xg7fTyaa8x5ujbVW9XoJ5GQgg+oEpQ@mail.gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -20,50 +19,56 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <d6c20d8f-3406-bba7-62f9-2f409f8da44a@cogentembedded.com>
+Date: Mon, 7 Nov 2016 13:35:09 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXmoGoTQP0QdG_1xg7fTyaa8x5ujbVW9XoJ5GQgg+oEpQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hello.
 
-On Wed, Nov 2, 2016 at 10:59 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
-> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-> (and RZ/G) code.
+On 11/7/2016 1:09 PM, Geert Uytterhoeven wrote:
+
+>> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+>> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+>> (and RZ/G) code.
+>>
+>> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+>> <geert+renesas@glider.be>.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> ---
+>> Changes in version 5:
+>> - describe the Z clock as PLL0/VCO divided by 2.
 >
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
+> Why did you do that?
+
+    I did it because I removed the divisor-by-2 from PLL0.
+
+>> --- /dev/null
+>> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
+>> @@ -0,0 +1,270 @@
 >
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> +       DEF_FIXED("z",     R8A7743_CLK_Z,       CLK_PLL0,           2, 1),
 >
-> ---
-> Changes in version 5:
-> - describe the Z clock as PLL0/VCO divided by 2.
+> FTR, previous version had
+>
+>        DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,     CLK_PLL0),
+>
+> which made the "z" clock configurable.
 
-Why did you do that?
+     I see your point -- I should have included the divisor-by-2 into the 
+common R-Car gen2 driver code instead...
 
-> --- /dev/null
-> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
-> @@ -0,0 +1,270 @@
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
-> +       DEF_FIXED("z",     R8A7743_CLK_Z,       CLK_PLL0,           2, 1),
-
-FTR, previous version had
-
-       DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,     CLK_PLL0),
-
-which made the "z" clock configurable.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
