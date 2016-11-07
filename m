@@ -1,70 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:34858 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751543AbcKGNCH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50791 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752431AbcKGM5n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 08:02:07 -0500
-Received: by mail-pf0-f171.google.com with SMTP id i88so90743772pfk.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Nov 2016 05:02:07 -0800 (PST)
-Subject: Re: [PATCH 4/9] arm64: dts: m3ulcb: enable GPIO leds
-To: Simon Horman <horms@verge.net.au>
-References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1478196451-1298-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <20161107125737.GF12319@verge.net.au>
+        Mon, 7 Nov 2016 07:57:43 -0500
+Date: Mon, 7 Nov 2016 13:57:37 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Message-ID: <7749722a-93d5-0d8b-a18c-8858e448f216@cogentembedded.com>
-Date: Mon, 7 Nov 2016 16:02:05 +0300
+Subject: Re: [PATCH 4/9] arm64: dts: m3ulcb: enable GPIO leds
+Message-ID: <20161107125737.GF12319@verge.net.au>
+References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1478196451-1298-1-git-send-email-vladimir.barinov@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20161107125737.GF12319@verge.net.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1478196451-1298-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Thu, Nov 03, 2016 at 09:07:31PM +0300, Vladimir Barinov wrote:
+> This supports GPIO leds on M3ULCB board
 
-On 07.11.2016 15:57, Simon Horman wrote:
-> On Thu, Nov 03, 2016 at 09:07:31PM +0300, Vladimir Barinov wrote:
->> This supports GPIO leds on M3ULCB board
-> Are GPIO leds and keys also present on the H3ULCB.
-Yes.
-> If so could you consider sending patches to enable them?
-H3ULCB already includes GPIO leds and keys support in upstream kernel.
+Are GPIO leds and keys also present on the H3ULCB.
+If so could you consider sending patches to enable them?
 
-Regards,
-Vladimir
->
->> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->> ---
->>   arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
->> index fb694b8..3329f78 100644
->> --- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
->> +++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
->> @@ -31,6 +31,17 @@
->>   		/* first 128MB is reserved for secure area. */
->>   		reg = <0x0 0x48000000 0x0 0x38000000>;
->>   	};
->> +
->> +	leds {
->> +		compatible = "gpio-leds";
->> +
->> +		led5 {
->> +			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
->> +		};
->> +		led6 {
->> +			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
->> +		};
->> +	};
->>   };
->>   
->>   &extal_clk {
->> -- 
->> 1.9.1
->>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+> index fb694b8..3329f78 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+> @@ -31,6 +31,17 @@
+>  		/* first 128MB is reserved for secure area. */
+>  		reg = <0x0 0x48000000 0x0 0x38000000>;
+>  	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		led5 {
+> +			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
+> +		};
+> +		led6 {
+> +			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+>  };
+>  
+>  &extal_clk {
+> -- 
+> 1.9.1
+> 
