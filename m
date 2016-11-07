@@ -1,62 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753528AbcKUMF5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 07:05:57 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20161104194914.GB16026@codeaurora.org>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+ <CAMuHMdVbpuv94x-ocTSDoEj+SbnESDbkuMXsXExQvoyZepp+Zg@mail.gmail.com>
+ <20161031081923.GF18195@verge.net.au> <CAMuHMdXA-hemOT=ZysEfettei9=HsDddGhqddkw38hwRrdeagw@mail.gmail.com>
+ <20161031232537.GT16026@codeaurora.org> <CAMuHMdXOW4Ubafu=x9pCw_W-MtLGe3N974dbfHCH5TJuUAeYrQ@mail.gmail.com>
+ <20161104194914.GB16026@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Nov 2016 10:30:05 +0100
+Message-ID: <CAMuHMdUL3GcOoNjd78wn_m0YRQvh8D5RGcC+RaRxEDpQCQxB5g@mail.gmail.com>
+Subject: Re: [PATCH v4 00/23] soc: renesas: Add R-Car RST driver for obtaining
+ mode pin state
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/18] arm64: dts: r8a7796: salvator-x: enable I2C
-Date: Mon, 21 Nov 2016 13:05:32 +0100
-Message-Id: <20b93fbb08bd38f094186f604e4e5bdafe23f817.1479726397.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
-References: <cover.1479726397.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Hi Stephen,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Fri, Nov 4, 2016 at 8:49 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 11/02, Geert Uytterhoeven wrote:
+>> On Tue, Nov 1, 2016 at 12:25 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> >
+>> > Would the pull requests for clk also have dts changes at the base
+>> > of the tree? Perhaps clk side can just ack the clk patches and
+>>
+>> Yes they would: this is moving functionality from platform code to DT.
+>> Without the DT updates, it will break bisection (except for R-Car Gen2,
+>> where we have fallback code to handle old DTBs).
+>>
+>> > then have it all routed through arm-soc? The only worry I have is
+>> > if we need to make some sort of change in clk side that conflicts
+>> > with these changes. I don't usually like taking dts changes
+>> > through clk tree, so I'd like to avoid that if possible.
+>>
+>> Everything could go through arm-soc only with your Acked-by.
+>> However, there are new clock drivers pending on this series.
+>> Either they have to go through arm-soc, too, or this series would
+>> be pulled into the clk tree with these new clock drivers.
+>>
+>> > Part E could happen anytime after everything else happens, so
+>> > that doesn't seem like a concern.
+>>
+>> Part E can indeed by postponed.
+>> But if parts A-D are applied together, there's no reason to postpone part E.
+>>
+>> > Part C could also be made to
+>> > only call into the new reset drivers if the reset dts nodes are
+>> > present? If that's done then we could merge clk patches anytime
+>> > and remove the dead code and the node search at some later time
+>> > when everything has settled?
+>>
+>> That would require adding more backwards compatibility code for
+>> old DTBs, even for platform where we're not interested in maintaining
+>> that. In addition, Part C depends on the header file for the reset driver
+>> to compile the clock driver, even if you would add some DT detection,
+>> and on the reset driver to link. So I'm afraid this is not feasible.
+>
+> TL;DR: Sounds fine, I'll be on the lookout for the PR.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index a9c296b1e1b7..f35e96ca7d60 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -111,6 +111,11 @@
- 		function = "scif_clk";
- 	};
- 
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2_a";
-+		function = "i2c2";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -208,6 +213,13 @@
- 	status = "okay";
- };
- 
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
--- 
-2.7.0.rc3.207.g0ac5344
+Thank you very much!
+
+> Longer version: Let me step back a bit and actually think about
+> this longer than 2 minutes. From what I see
+> rcar_rst_read_mode_pins() already returns -ENODEV if the nodes
+> aren't present. Great.
+>
+> So clk tree could be given a pull for the clk patches, part C, on
+> top of part A, the reset driver. If the rcar_rst_read_mode_pins()
+> returns failure because the node is missing, we fall back to the
+> old style of doing things. Some drivers already do that anyway,
+
+For R-Car Gen2, we want to keep backwards compatibility for a while.
+But not for the others, and I didn't want to add more code that was going
+to be removed again soon.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
