@@ -1,100 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:58733 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935582AbcKKUeD (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35417 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752280AbcKGMkm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 15:34:03 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 2/3] pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
-Date: Fri, 11 Nov 2016 21:33:40 +0100
-Message-Id: <20161111203341.3636-3-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
-References: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
+        Mon, 7 Nov 2016 07:40:42 -0500
 MIME-Version: 1.0
+In-Reply-To: <20161102132329.436-15-niklas.soderlund+renesas@ragnatech.se>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se> <20161102132329.436-15-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Nov 2016 13:40:39 +0100
+Message-ID: <CAMuHMdUkLsewwpujNR9d8wahRZibrK+b5Zme2RoyVBZ2wMFi5A@mail.gmail.com>
+Subject: Re: [PATCH 14/32] media: rcar-vin: move chip information to own struct
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Fukawa <tomoharu.fukawa.eb@renesas.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Wed, Nov 2, 2016 at 2:23 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> When Gen3 support is added to the driver more then chip id will be
+> different for the different Soc. To avoid a lot of if statements in the
+> code create a struct chip_info to contain this information.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 49 +++++++++++++++++++++++=
++-----
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  3 +-
+>  drivers/media/platform/rcar-vin/rcar-vin.h  | 12 +++++--
+>  3 files changed, 53 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/=
+platform/rcar-vin/rcar-core.c
+> index 5807d8d..372443e 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -253,14 +253,47 @@ static int rvin_digital_graph_init(struct rvin_dev =
+*vin)
+>   * Platform Device Driver
+>   */
+>
+> +static const struct rvin_info rcar_info_h1 =3D {
+> +       .chip =3D RCAR_H1,
+> +};
+> +
+> +static const struct rvin_info rcar_info_m1 =3D {
+> +       .chip =3D RCAR_M1,
+> +};
+> +
+> +static const struct rvin_info rcar_info_gen2 =3D {
+> +       .chip =3D RCAR_GEN2,
+> +};
+> +
+>  static const struct of_device_id rvin_of_id_table[] =3D {
+> -       { .compatible =3D "renesas,vin-r8a7794", .data =3D (void *)RCAR_G=
+EN2 },
+> -       { .compatible =3D "renesas,vin-r8a7793", .data =3D (void *)RCAR_G=
+EN2 },
+> -       { .compatible =3D "renesas,vin-r8a7791", .data =3D (void *)RCAR_G=
+EN2 },
+> -       { .compatible =3D "renesas,vin-r8a7790", .data =3D (void *)RCAR_G=
+EN2 },
+> -       { .compatible =3D "renesas,vin-r8a7779", .data =3D (void *)RCAR_H=
+1 },
+> -       { .compatible =3D "renesas,vin-r8a7778", .data =3D (void *)RCAR_M=
+1 },
+> -       { .compatible =3D "renesas,rcar-gen2-vin", .data =3D (void *)RCAR=
+_GEN2 },
+> +       {
+> +               .compatible =3D "renesas,vin-r8a7794",
+> +               .data =3D (void *)&rcar_info_gen2,
 
-Group the AVB pins into similar groups found in other sh-pfc drivers.
-The pins can not be muxed between functions other then AVB but their
-drive strength can be controlled.
+These casts are not needed.
 
-The group avb_mdc containing ADV_MDC and ADV_MDIO are on other SoCs
-called avb_mdio. In pfc-r8a7795 the avb_mdc group already existed and
-is in use in DT. Therefore add the ADV_MDIO pin to the existing group
-instead of renaming it.
+> +       },
+> +       {
+> +               .compatible =3D "renesas,vin-r8a7793",
+> +               .data =3D (void *)&rcar_info_gen2,
+> +       },
+> +       {
+> +               .compatible =3D "renesas,vin-r8a7791",
+> +               .data =3D (void *)&rcar_info_gen2,
+> +       },
+> +       {
+> +               .compatible =3D "renesas,vin-r8a7790",
+> +               .data =3D (void *)&rcar_info_gen2,
+> +       },
+> +       {
+> +               .compatible =3D "renesas,vin-r8a7779",
+> +               .data =3D (void *)&rcar_info_h1,
+> +       },
+> +       {
+> +               .compatible =3D "renesas,vin-r8a7778",
+> +               .data =3D (void *)&rcar_info_m1,
+> +       },
+> +       {
+> +               .compatible =3D "renesas,rcar-gen2-vin",
+> +               .data =3D (void *)&rcar_info_gen2,
+> +       },
+>         { },
+>  };
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+> @@ -281,7 +314,7 @@ static int rcar_vin_probe(struct platform_device *pde=
+v)
+>                 return -ENODEV;
+>
+>         vin->dev =3D &pdev->dev;
+> -       vin->chip =3D (enum chip_id)match->data;
+> +       vin->info =3D (const struct rvin_info *)match->data;
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+This cast is not needed.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 744292b..bb16ff8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1647,11 +1647,33 @@ static const unsigned int avb_phy_int_mux[] = {
- 	AVB_PHY_INT_MARK,
- };
- static const unsigned int avb_mdc_pins[] = {
--	/* AVB_MDC */
--	RCAR_GP_PIN(2, 9),
-+	/* AVB_MDC, AVB_MDIO */
-+	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
- };
- static const unsigned int avb_mdc_mux[] = {
--	AVB_MDC_MARK,
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
-+	/*
-+	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
-+	 * AVB_TD1, AVB_TD2, AVB_TD3,
-+	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
-+	 * AVB_RD1, AVB_RD2, AVB_RD3,
-+	 * AVB_TXCREFCLK
-+	 */
-+	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
-+	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
-+	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
-+	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
-+	PIN_NUMBER('A', 12),
-+
-+};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
-+	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
-+	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
-+	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
-+	AVB_TXCREFCLK_MARK,
- };
- static const unsigned int avb_avtp_pps_pins[] = {
- 	/* AVB_AVTP_PPS */
-@@ -3719,6 +3741,7 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_magic),
- 	SH_PFC_PIN_GROUP(avb_phy_int),
- 	SH_PFC_PIN_GROUP(avb_mdc),
-+	SH_PFC_PIN_GROUP(avb_mii),
- 	SH_PFC_PIN_GROUP(avb_avtp_pps),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_a),
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
-@@ -4023,6 +4046,7 @@ static const char * const avb_groups[] = {
- 	"avb_magic",
- 	"avb_phy_int",
- 	"avb_mdc",
-+	"avb_mii",
- 	"avb_avtp_pps",
- 	"avb_avtp_match_a",
- 	"avb_avtp_capture_a",
--- 
-2.10.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
