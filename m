@@ -1,30 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52929 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51381 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbcKOR6H (ORCPT
+        with ESMTP id S1750998AbcKGN1D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 12:58:07 -0500
-Received: from penelope.kanocho.kobe.vergenet.net (52D9BC73.cm-11-1c.dynamic.ziggo.nl [82.217.188.115])
-        by kirsty.vergenet.net (Postfix) with ESMTPSA id 6377925BEC6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Nov 2016 04:58:05 +1100 (AEDT)
-Date: Tue, 15 Nov 2016 18:58:01 +0100
+        Mon, 7 Nov 2016 08:27:03 -0500
+Date: Mon, 7 Nov 2016 14:26:56 +0100
 From: Simon Horman <horms@verge.net.au>
-To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: [ANNOUNCE] Renesas tree closed for v4.10
-Message-ID: <20161115175801.GG3979@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt: arm: shmobile: update H3ULCB board Documentation
+Message-ID: <20161107132656.GB29721@verge.net.au>
+References: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1478196284-982-1-git-send-email-vladimir.barinov@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1478196284-982-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Thu, Nov 03, 2016 at 09:04:44PM +0300, Vladimir Barinov wrote:
+> This updates H3ULCB Device tree bindings Documentation with
+> official board name
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-I would like to stop accepting non-bug-fix patches for v4.9 and get
-the last pull requests posted by the end of this week.  This is in order
-for them to be sent before the release of v4.8-rc6, the deadline set by the
-ARM SoC maintainers.  As patches should ideally progress from the renesas
-tree into linux-next before sending pull requests there is a few days lead
-time involved.
+Thanks, I have queued this up after updating the subject to:
 
-I intend to begin queueing up patches for v4.10 as new patches are ready.
+arm64: dts: h3ulcb: update documentation with official board name
