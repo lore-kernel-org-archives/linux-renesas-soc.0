@@ -1,73 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:56532 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752043AbcKQOa4 (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34121 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbcKHOQh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 09:30:56 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC] pinctrl: sh-pfc: r8a7790: initialize TDSEL register
-Date: Thu, 17 Nov 2016 14:30:43 +0100
-Message-Id: <20161117133043.20771-1-wsa+renesas@sang-engineering.com>
+        Tue, 8 Nov 2016 09:16:37 -0500
+Received: by mail-lf0-f50.google.com with SMTP id o141so68357246lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Nov 2016 06:16:24 -0800 (PST)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 4/4 v2] arm64: dts: h3ulcb: rename SDHI0 pins
+Date: Tue,  8 Nov 2016 17:16:29 +0300
+Message-Id: <1478614589-10045-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Documentation says that some bits in TDSEL must be set (ch 5.3.39 in R-Car H2
-v0.91). However, the reset value of the register is 0, so software has to do
-it. Add this to the kernel driver to ensure this is really done independent of
-firmware versions.
+This changes SDHI0 pin names for H3ULCB board
 
-This is needed for some SD cards supporting SDR104 transfer mode. For
-me, TDSEL was not initialized by the firmware and I had problems with
-the card when re-inserting it.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
+Changes in version 2:
+- Initially added
 
-* something like this is needed for all other Gen2 SoCs probably, but I can't
-  test it
-* I can also only verify the positive result for 'sd0tdsel'. For all other bits,
-  I follow the documentation. Dunno if we better only modify bits we really need?
-  Because of this, patch is still RFC. And values are hardcoded, but seems to be OK
-  with PFC at places, too?
-* Gen2 has no drive-strength capabilities to play around with, so it must be TDSEL
-  here
-* Simon: maybe a similar fix helps with the SDR issues you saw on Gose occasionally?
-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index b769c05480da68..f01ff6d7052fed 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -24,6 +24,7 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 8d0ac07..6ffb051 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -163,13 +163,13 @@
+ 		function = "avb";
+ 	};
  
-+#include "core.h"
- #include "sh_pfc.h"
+-	sdhi0_pins_3v3: sd0_3v3 {
++	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+ 		power-source = <3300>;
+ 	};
  
- /*
-@@ -5704,7 +5705,16 @@ static int r8a7790_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
- 	return 31 - (pin & 0x1f);
- }
- 
-+static int r8a7790_pinmux_soc_init(struct sh_pfc *pfc)
-+{
-+	/* Initialize TDSEL */
-+	sh_pfc_write_reg(pfc, 0xe6060088, 32, 0x00155554);
-+
-+	return 0;
-+}
-+
- static const struct sh_pfc_soc_operations r8a7790_pinmux_ops = {
-+	.init = r8a7790_pinmux_soc_init,
- 	.pin_to_pocctrl = r8a7790_pin_to_pocctrl,
+-	sdhi0_pins_1v8: sd0_1v8 {
++	sdhi0_pins_uhs: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+ 		power-source = <1800>;
+@@ -291,8 +291,8 @@
  };
  
--- 
-2.10.2
+ &sdhi0 {
+-	pinctrl-0 = <&sdhi0_pins_3v3>;
+-	pinctrl-1 = <&sdhi0_pins_1v8>;
++	pinctrl-0 = <&sdhi0_pins>;
++	pinctrl-1 = <&sdhi0_pins_uhs>;
+ 	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi0>;
