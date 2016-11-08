@@ -1,151 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33726 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751432AbcK1S13 (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:33484 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932477AbcKHMoC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Nov 2016 13:27:29 -0500
-From: Johan Hovold <johan@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Vince Bridgers <vbridger@opensource.altera.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Li Yang <leoli@freescale.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Felix Fietkau <nbd@openwrt.org>,
-        John Crispin <blogic@openwrt.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars Persson <lars.persson@axis.com>,
-        Mugunthan V N <mugunthanvnm@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH net 02/16] of_mdio: add helper to deregister fixed-link PHYs
-Date: Mon, 28 Nov 2016 19:24:55 +0100
-Message-Id: <1480357509-28074-3-git-send-email-johan@kernel.org>
-In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
-References: <1480357509-28074-1-git-send-email-johan@kernel.org>
+        Tue, 8 Nov 2016 07:44:02 -0500
+Date: Tue, 8 Nov 2016 14:43:27 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH 01/32] media: entity: Add has_route entity operation
+Message-ID: <20161108124327.GN3217@valkosipuli.retiisi.org.uk>
+References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+ <20161102132329.436-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20161102132329.436-2-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add helper to deregister fixed-link PHYs registered using
-of_phy_register_fixed_link().
+On Wed, Nov 02, 2016 at 02:22:58PM +0100, Niklas S�derlund wrote:
+> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> The optional operation can be used by entities to report whether two
+> pads are internally connected.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Convert the two drivers that care to deregister their fixed-link PHYs to
-use the new helper, but note that most drivers currently fail to do so.
+Thanks!
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/net/ethernet/ti/cpsw.c | 16 ++--------------
- drivers/of/of_mdio.c           | 15 +++++++++++++++
- include/linux/of_mdio.h        |  4 ++++
- net/dsa/dsa.c                  | 12 ++----------
- 4 files changed, 23 insertions(+), 24 deletions(-)
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 58947aae31c7..9f0646512624 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -2459,20 +2459,8 @@ static void cpsw_remove_dt(struct platform_device *pdev)
- 		if (strcmp(slave_node->name, "slave"))
- 			continue;
- 
--		if (of_phy_is_fixed_link(slave_node)) {
--			struct phy_device *phydev;
--
--			phydev = of_phy_find_device(slave_node);
--			if (phydev) {
--				fixed_phy_unregister(phydev);
--				/* Put references taken by
--				 * of_phy_find_device() and
--				 * of_phy_register_fixed_link().
--				 */
--				phy_device_free(phydev);
--				phy_device_free(phydev);
--			}
--		}
-+		if (of_phy_is_fixed_link(slave_node))
-+			of_phy_deregister_fixed_link(slave_node);
- 
- 		of_node_put(slave_data->phy_node);
- 
-diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
-index 5a3145a02547..262281bd68fa 100644
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -490,3 +490,18 @@ int of_phy_register_fixed_link(struct device_node *np)
- 	return -ENODEV;
- }
- EXPORT_SYMBOL(of_phy_register_fixed_link);
-+
-+void of_phy_deregister_fixed_link(struct device_node *np)
-+{
-+	struct phy_device *phydev;
-+
-+	phydev = of_phy_find_device(np);
-+	if (!phydev)
-+		return;
-+
-+	fixed_phy_unregister(phydev);
-+
-+	put_device(&phydev->mdio.dev);	/* of_phy_find_device() */
-+	phy_device_free(phydev);	/* fixed_phy_register() */
-+}
-+EXPORT_SYMBOL(of_phy_deregister_fixed_link);
-diff --git a/include/linux/of_mdio.h b/include/linux/of_mdio.h
-index 2ab233661ae5..a58cca8bcb29 100644
---- a/include/linux/of_mdio.h
-+++ b/include/linux/of_mdio.h
-@@ -29,6 +29,7 @@ struct phy_device *of_phy_attach(struct net_device *dev,
- extern struct mii_bus *of_mdio_find_bus(struct device_node *mdio_np);
- extern int of_mdio_parse_addr(struct device *dev, const struct device_node *np);
- extern int of_phy_register_fixed_link(struct device_node *np);
-+extern void of_phy_deregister_fixed_link(struct device_node *np);
- extern bool of_phy_is_fixed_link(struct device_node *np);
- 
- #else /* CONFIG_OF */
-@@ -83,6 +84,9 @@ static inline int of_phy_register_fixed_link(struct device_node *np)
- {
- 	return -ENOSYS;
- }
-+static inline void of_phy_deregister_fixed_link(struct device_node *np)
-+{
-+}
- static inline bool of_phy_is_fixed_link(struct device_node *np)
- {
- 	return false;
-diff --git a/net/dsa/dsa.c b/net/dsa/dsa.c
-index cb0091b99592..7899919cd9f0 100644
---- a/net/dsa/dsa.c
-+++ b/net/dsa/dsa.c
-@@ -506,16 +506,8 @@ dsa_switch_setup(struct dsa_switch_tree *dst, int index,
- 
- void dsa_cpu_dsa_destroy(struct device_node *port_dn)
- {
--	struct phy_device *phydev;
--
--	if (of_phy_is_fixed_link(port_dn)) {
--		phydev = of_phy_find_device(port_dn);
--		if (phydev) {
--			fixed_phy_unregister(phydev);
--			put_device(&phydev->mdio.dev);
--			phy_device_free(phydev);
--		}
--	}
-+	if (of_phy_is_fixed_link(port_dn))
-+		of_phy_deregister_fixed_link(port_dn);
- }
- 
- static void dsa_switch_destroy(struct dsa_switch *ds)
 -- 
-2.7.3
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
