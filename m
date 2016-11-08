@@ -1,107 +1,107 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 12/14] ARM: dts: alt: use demuxer for I2C4
-Date: Sun,  6 Nov 2016 21:20:30 +0100
-Message-Id: <20161106202032.5227-13-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:32910 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbcKHOOi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 8 Nov 2016 09:14:38 -0500
+Received: by mail-lf0-f49.google.com with SMTP id c13so140327303lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Nov 2016 06:14:37 -0800 (PST)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 9/9 v2] arm64: dts: m3ulcb: enable SDHI2
+Date: Tue,  8 Nov 2016 17:14:42 +0300
+Message-Id: <1478614482-9959-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
+This supports SDHI2 for M3ULCB onboard eMMC
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-B connector.
-
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Changes in version 2:
+- renamed sdhi2_pins_3v3 to sdhi2_pins
+- renamed sd2_3v3 to sd2
+- renamed sdhi2_pins_1v8 to sdhi2_pins_uhs
+- renamed sd2_1v8 to sd2_uhs
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 81368d11e4d3be..bd5b2d2c568c52 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -19,7 +19,9 @@
- 	aliases {
- 		serial0 = &scif2;
- 		i2c9 = &gpioi2c1;
-+		i2c10 = &gpioi2c4;
- 		i2c11 = &i2chdmi;
-+		i2c12 = &i2cexio4;
- 	};
- 
- 	chosen {
-@@ -149,6 +151,17 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	/*
- 	 * A fallback to GPIO is provided for I2C1.
- 	 */
-@@ -172,6 +185,18 @@
- 			};
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 43 ++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index a244edb..e46687e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -55,6 +55,24 @@
  		};
  	};
-+
-+	/*
-+	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
  
- &du {
-@@ -231,6 +256,11 @@
- 		function = "i2c1";
++	reg_1p8v: regulator0 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -113,6 +131,18 @@
+ 		function = "sdhi0";
+ 		power-source = <1800>;
  	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
++
++	sdhi2_pins: sd2 {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <3300>;
 +	};
 +
- 	vin0_pins: vin0 {
- 		groups = "vin0_data8", "vin0_clk";
- 		function = "vin0";
-@@ -338,6 +368,11 @@
- 	clock-frequency = <400000>;
++	sdhi2_pins_uhs: sd2_uhs {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <1800>;
++	};
  };
  
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
+ &sdhi0 {
+@@ -128,6 +158,19 @@
+ 	status = "okay";
+ };
+ 
++&sdhi2 {
++	/* used for on-board 8bit eMMC */
++	pinctrl-0 = <&sdhi2_pins>;
++	pinctrl-1 = <&sdhi2_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_1p8v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
 +};
 +
- &vin0 {
- 	status = "okay";
- 	pinctrl-0 = <&vin0_pins>;
+ &scif2 {
+ 	pinctrl-0 = <&scif2_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.9.3
-
+1.9.1
