@@ -1,41 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49954 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757744AbcKCPHd (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33844 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932125AbcKHU76 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 11:07:33 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v8 2/3] ARM: dts: koelsch: Enable UHS-I SDR-104
-Date: Thu,  3 Nov 2016 16:07:24 +0100
-Message-Id: <1478185645-25556-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1478185645-25556-1-git-send-email-horms+renesas@verge.net.au>
-References: <1478185645-25556-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 8 Nov 2016 15:59:58 -0500
+Received: by mail-pf0-f193.google.com with SMTP id y68so20843822pfb.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Nov 2016 12:59:58 -0800 (PST)
+Date: Mon, 7 Nov 2016 19:16:32 -0800
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.10
+Message-ID: <20161108031632.GD2106@localhost>
+References: <cover.1478078567.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1478078567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And the sd-uhs-sdr104 property to SDHI0.
+On Wed, Nov 02, 2016 at 10:23:40AM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM64 based SoC defconfig updates for v4.10.
+> 
+> 
+> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> 
+>   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.10
+> 
+> for you to fetch changes up to 833c97254724a620d1d9fb9a580681fb52536fbf:
+> 
+>   arm64: defconfig: Enable DRM DU and V4L2 FCP + VSP modules (2016-10-27 09:07:35 +0200)
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 1 +
- 1 file changed, 1 insertion(+)
+Merged, thanks.
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index c457b43deb7d..57e69af65136 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -499,6 +499,7 @@
- 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
--- 
-2.7.0.rc3.207.g0ac5344
+
+-Olof
