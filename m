@@ -1,33 +1,58 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2] irqchip/renesas-irqc: Postpone driver initialization
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>
-References: <1478633747-26878-1-git-send-email-geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <216fe100-556b-7f83-39b0-4cf54c1fa35c@gmail.com>
-Date: Tue, 8 Nov 2016 11:42:21 -0800
-MIME-Version: 1.0
-In-Reply-To: <1478633747-26878-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        netdev@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] irqchip/renesas-irqc: Postpone driver initialization
+Date: Tue,  8 Nov 2016 20:35:47 +0100
+Message-Id: <1478633747-26878-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/08/2016 11:35 AM, Geert Uytterhoeven wrote:
-> Currently the renesas-irqc driver uses postcore_initcall().
-> 
-> However, the new CPG/MSSR driver uses subsys_initcall(). Hence the
-> IRQC's probe will be deferred, which causes the Micrel Ethernet PHY to
-> not find its interrupt on R-Car Gen2 and RZ/G, as the of_mdio subsystem
-> does not support deferred probe yet.
+Currently the renesas-irqc driver uses postcore_initcall().
 
-Is not that the more correct fix to implement though?
+However, the new CPG/MSSR driver uses subsys_initcall(). Hence the
+IRQC's probe will be deferred, which causes the Micrel Ethernet PHY to
+not find its interrupt on R-Car Gen2 and RZ/G, as the of_mdio subsystem
+does not support deferred probe yet.
+
+Replace postcore_initcall() by device_initcall() to work around this.
+
+Note that on R-Mobile APE6, where the PFC/GPIO combo uses the IRQC as
+its parent interrupt controller, this does cause a few additional probe
+deferrals (for SCIFA0, SD0, SD1, and MMC). But the affected drivers
+handle that fine.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+v2:
+  - Drop RFC state,
+  - Add Tested-by,
+  - Improved description.
+---
+ drivers/irqchip/irq-renesas-irqc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index 52304b139aa46a60..992849e54d00ea77 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -295,7 +295,7 @@ static int __init irqc_init(void)
+ {
+ 	return platform_driver_register(&irqc_device_driver);
+ }
+-postcore_initcall(irqc_init);
++device_initcall(irqc_init);
+ 
+ static void __exit irqc_exit(void)
+ {
 -- 
-Florian
+1.9.1
