@@ -1,53 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42668 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752065AbcKIOGL (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:52106 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbcKHAgN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 09:06:11 -0500
-Date: Wed, 9 Nov 2016 14:05:38 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Cao Minh Hiep <cm-hiep@jinso.co.jp>
-Cc: geert+renesas@glider.be, linux-spi@vger.kernel.org,
-        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        Mon, 7 Nov 2016 19:36:13 -0500
+From: Cao Minh Hiep <cm-hiep@jinso.co.jp>
+To: broonie@kernel.org, geert+renesas@glider.be,
+        linux-spi@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
         ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
-        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp
-Message-ID: <20161109140538.2eeyrxrmjk2zaafd@sirena.org.uk>
-References: <1478565346-4320-1-git-send-email-cm-hiep@jinso.co.jp>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vpwbh5blonqwm46n"
-Content-Disposition: inline
-In-Reply-To: <1478565346-4320-1-git-send-email-cm-hiep@jinso.co.jp>
-Subject: Re: [PATCH v2] spi: rspi: rewrites the name of the function
+        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
+Subject: [PATCH v2] spi: rspi: rewrites the name of the function
+Date: Tue,  8 Nov 2016 09:35:46 +0900
+Message-Id: <1478565346-4320-1-git-send-email-cm-hiep@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 
---vpwbh5blonqwm46n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch rewrites the name of rspi_pio_transfer_in_or_out
+function.
 
-On Tue, Nov 08, 2016 at 09:35:46AM +0900, Cao Minh Hiep wrote:
-> From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
->=20
-> This patch rewrites the name of rspi_pio_transfer_in_or_out
-> function.
+Signed-off-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 
-This doesn't apply against current code, please check and resend.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/spi/spi-rspi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---vpwbh5blonqwm46n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAABCAAGBQJYIy0xAAoJECTWi3JdVIfQ0NIH/i16fHMGL/4tBiro9trCOBq5
-eGjFgESaVv4YYFOISIT60RjARnBV2olb0xMg6IbeyfdAzAH2x6WMafeYD9WJYmhe
-CpTN0poiogPAASQywz6vRlgzDcYlK2QwV9cTn5n7DI09roFTeEd2ItNf5osif+L7
-ySrSwhMmHKBcP32/eUY50Eb6OwG8Vk1CoywsbNVoIN3dzUuNwNRs4ib0445TQw7C
-qy11l4PKO+z0NppDxY1i7i+riai1IR6283RQm+/WRRbmVDHBZKQemx2LfTIGH0xm
-7xLdDdNVfznFcGdRKqZxC/kgwWgyXz72WgxDOz0afFNVfGAd80XPtSyjj8NAmiA=
-=jydZ
------END PGP SIGNATURE-----
-
---vpwbh5blonqwm46n--
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index fb12bc5..7d3a825 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -515,7 +515,7 @@ static int rspi_pio_transfer(struct rspi_data *rspi, const u8 *tx, u8 *rx,
+ 	return 0;
+ }
+ 
+-static int rspi_pio_transfer_in_or_our(struct rspi_data *rspi, const u8 *tx, 
++static int rspi_pio_transfer_in_or_out(struct rspi_data *rspi, const u8 *tx, 
+ 				       u8 *rx, unsigned int n)
+ {
+ 	unsigned int i, len;
+@@ -839,7 +839,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			return ret;
+ 	}
+ 
+-	ret = rspi_pio_transfer_in_or_our(rspi, xfer->tx_buf, NULL, xfer->len);
++	ret = rspi_pio_transfer_in_or_out(rspi, xfer->tx_buf, NULL, xfer->len);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -857,7 +857,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			return ret;
+ 	}
+ 
+-	return rspi_pio_transfer_in_or_our(rspi, NULL, xfer->rx_buf, xfer->len);
++	return rspi_pio_transfer_in_or_out(rspi, NULL, xfer->rx_buf, xfer->len);
+ }
+ 
+ static int qspi_transfer_one(struct spi_master *master, struct spi_device *spi,
+-- 
+1.9.1
