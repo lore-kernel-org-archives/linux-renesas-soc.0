@@ -1,72 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33424 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965873AbcKLNNr (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:21366 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752254AbcKHCGu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:47 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 17/32] media: rcar-vin: clarify error message from the digital notifier
-Date: Sat, 12 Nov 2016 14:12:01 +0100
-Message-Id: <20161112131216.22635-18-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 7 Nov 2016 21:06:50 -0500
+Message-ID: <58211988.2070801@jinso.co.jp>
+Date: Tue, 08 Nov 2016 09:17:12 +0900
+From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?B?RHVuZ++8muS6ug==?= =?UTF-8?B?44K9?=
+        <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>
+Subject: Re: [PATCH] ARM: spi: rewrites the name of the function.
+References: <1478480410-6320-1-git-send-email-cm-hiep@jinso.co.jp> <CAMuHMdVMgsBO6ou4wYSp3pmBWDy_ZCoWaZFN+Zpq9dryRsSANw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVMgsBO6ou4wYSp3pmBWDy_ZCoWaZFN+Zpq9dryRsSANw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some of the parser functions previously only used by the digital
-subdevice OF/V4L2 async code will be shared with the CSI2 group
-notifiers. Clarify which notifier register error message and mark which
-functions are generic helpers.
+Hi Geert,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Thanks for your comment.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index def240b1..26e438a 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -35,7 +35,7 @@ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
- }
- 
- /* -----------------------------------------------------------------------------
-- * Async notifier
-+ * Async notifier helpers
-  */
- 
- #define notifier_to_vin(n) container_of(n, struct rvin_dev, notifier)
-@@ -77,6 +77,10 @@ static unsigned int rvin_pad_idx(struct v4l2_subdev *sd, int direction)
- 	return 0;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
-@@ -242,7 +246,7 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- 	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
- 	if (ret < 0) {
--		vin_err(vin, "Notifier registration failed\n");
-+		vin_err(vin, "Digital notifier registration failed\n");
- 		return ret;
- 	}
- 
--- 
-2.10.2
+On 11/07/2016 07:25 PM, Geert Uytterhoeven wrote:
+> Hi Hiep,
+>
+> On Mon, Nov 7, 2016 at 2:00 AM, Cao Minh Hiep <cm-hiep@jinso.co.jp> wrote:
+>> From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+>>
+>> This patch rewrites the name of rspi_pio_transfer_in_or_out
+>> function.
+>>
+>> Signed-off-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> But you want to use proper prefixes matching the style of the subsystem,
+> to avoid Mark's canned message reply system.
+>
+> Always use e.g. "git log --oneline drivers/spi/spi-rspi.c" to find out...
+Thanks, I will make matching the style of the subsystem.
+
+Jinzai Solution.
+Hiep.
+
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                  -- Linus Torvalds
+>
