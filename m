@@ -1,15 +1,10 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <3dface9b-7602-b1f2-0dd6-37b444ac42e3@gmail.com>
-References: <1478633747-26878-1-git-send-email-geert+renesas@glider.be>
- <216fe100-556b-7f83-39b0-4cf54c1fa35c@gmail.com> <CAMuHMdWkXsAuRpbTWGw9Wp4m2M38zRAd8OpPpA-sCDb7Xb7skw@mail.gmail.com>
- <3dface9b-7602-b1f2-0dd6-37b444ac42e3@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Nov 2016 20:43:15 +0100
-Message-ID: <CAMuHMdXMYy+g4WWzCAq5Y1Y1Egbt9i6bGRpFpR86mg6AfxiqWA@mail.gmail.com>
 Subject: Re: [PATCH v2] irqchip/renesas-irqc: Postpone driver initialization
-To: Florian Fainelli <f.fainelli@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1478633747-26878-1-git-send-email-geert+renesas@glider.be>
+ <216fe100-556b-7f83-39b0-4cf54c1fa35c@gmail.com>
+ <CAMuHMdWkXsAuRpbTWGw9Wp4m2M38zRAd8OpPpA-sCDb7Xb7skw@mail.gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -19,43 +14,37 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <3dface9b-7602-b1f2-0dd6-37b444ac42e3@gmail.com>
+Date: Wed, 9 Nov 2016 11:17:05 -0800
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWkXsAuRpbTWGw9Wp4m2M38zRAd8OpPpA-sCDb7Xb7skw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Florian,
-
-On Wed, Nov 9, 2016 at 8:17 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> On 11/08/2016 11:50 AM, Geert Uytterhoeven wrote:
->> On Tue, Nov 8, 2016 at 8:42 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->>> On 11/08/2016 11:35 AM, Geert Uytterhoeven wrote:
->>>> Currently the renesas-irqc driver uses postcore_initcall().
->>>>
->>>> However, the new CPG/MSSR driver uses subsys_initcall(). Hence the
->>>> IRQC's probe will be deferred, which causes the Micrel Ethernet PHY to
->>>> not find its interrupt on R-Car Gen2 and RZ/G, as the of_mdio subsystem
->>>> does not support deferred probe yet.
+On 11/08/2016 11:50 AM, Geert Uytterhoeven wrote:
+> Hi Florian,
+> 
+> On Tue, Nov 8, 2016 at 8:42 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> On 11/08/2016 11:35 AM, Geert Uytterhoeven wrote:
+>>> Currently the renesas-irqc driver uses postcore_initcall().
 >>>
->>> Is not that the more correct fix to implement though?
+>>> However, the new CPG/MSSR driver uses subsys_initcall(). Hence the
+>>> IRQC's probe will be deferred, which causes the Micrel Ethernet PHY to
+>>> not find its interrupt on R-Car Gen2 and RZ/G, as the of_mdio subsystem
+>>> does not support deferred probe yet.
 >>
->> Sure it is. But nothing has happened since this was reported ca. 1 year ago.
->> Cfr. "of_mdiobus_register_phy() and deferred probe"
->> https://lkml.org/lkml/2015/10/22/377
->>
->> My MDIO foo is not that strong...
->
-> Let me try to cook something here which may require
-> of_mdiobus_register_phy(), are you okay testing patches?
+>> Is not that the more correct fix to implement though?
+> 
+> Sure it is. But nothing has happened since this was reported ca. 1 year ago.
+> Cfr. "of_mdiobus_register_phy() and deferred probe"
+> https://lkml.org/lkml/2015/10/22/377
+> 
+> My MDIO foo is not that strong...
 
-Of course I am. Thanks a lot!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Let me try to cook something here which may require
+of_mdiobus_register_phy(), are you okay testing patches?
+-- 
+Florian
