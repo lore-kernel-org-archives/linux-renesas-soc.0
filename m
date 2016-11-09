@@ -1,61 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:58519 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754549AbcKIR2Y (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753589AbcKIOfP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 12:28:24 -0500
-Date: Wed, 9 Nov 2016 18:28:14 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms@verge.net.au>
+        Wed, 9 Nov 2016 09:35:15 -0500
+Date: Wed, 9 Nov 2016 15:35:08 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 Subject: Re: [PATCH v4 00/14] ARM: dts: r8a779x: use demuxer for I2C
-Message-ID: <20161109172813.GA1545@katana>
+Message-ID: <20161109143508.GA19184@verge.net.au>
 References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
  <20161109084406.GA22213@verge.net.au>
+ <20161109085954.GA1807@katana>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20161109084406.GA22213@verge.net.au>
+In-Reply-To: <20161109085954.GA1807@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Wed, Nov 09, 2016 at 09:59:54AM +0100, Wolfram Sang wrote:
+> Hi Simon,
+> 
+> > I have tested these patches on alt, gose, lager and koelsch.
+> 
+> Wow, that was quick. Thank you!
+> 
+> > The switching part seems to work fine, in so far as my test script
+> > succeeds. However, it seems that some IP blocks are not able to handle
+> > this switching. In particular I needed to disable VIDEO_RCAR_VIN and 
+> > REGULATOR_DA9210 to avoid errors shown in the logs below.
+> 
+> Yes. Probably we should activate the shiny new DEBUG_TEST_DRIVER_REMOVE
+> and if that passes, we should be safe.
+> 
+> > My suggestion is to drop the following patches until those problems
+> > can be sorted out, most likely via driver updates.
+> > 
+> > ARM: dts: alt: use demuxer for I2C1
+> > ARM: dts: gose: use demuxer for I2C2
+> > ARM: dts: lager: use demuxer for IIC2/I2C2
+> > ARM: dts: lager: use demuxer for IIC3/I2C3
+> > ARM: dts: koelsch: use demuxer for I2C2
+> 
+> OK. I'll try to have a look at those drivers nonetheless, because
+> rebasing these patches is a bit of a hazzle once new i2c slaves were
+> added to the busses. But I'll juest resend the patches along with my
+> fixes if I really can find the time.
+> 
+> > I am not in a position to test silk or porter at this time.
+> > But by the same reasoning above I wonder if the following should
+> > be dropped for now.
+> > 
+> > ARM: dts: gose: use demuxer for I2C2
+> 
+> I assume you mean 'porter' here.
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, I meant porter.
 
+> > ARM: dts: silk: use demuxer for I2C1
+> 
+> Will you get access to these boards in the foreseeable future?
 
-> ARM: dts: lager: use demuxer for IIC3/I2C3
+As mentioned by Geert, there is a porter in Magnus's board farm.
+Unforunately I have never had much luck in getting it to boot.
 
-I think the sanest solution is to drop this patch forever. The WARN from
-the regulator core is sparse in describing the problem yet it is
-correct: The regulator is needed, by the CPU! :) And this will probably
-be the smallest problem when trying to demux the bus which is used to
-handle all DVFS operations. Let's stick to IIC3 here, I'd say. Gen3 even
-has this one IIC instance for exactly the DVFS purpose.
-
-
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYI1ytAAoJEBQN5MwUoCm2DaIQAK45sK2sbRCWpJnSJXTXkiv8
-TVKsR/cKQ2H+AmS2qKybtN8lrvDlt19Z+H9iK+EjZFKF7rXWrxRGJhJWEzYy5+xV
-bGmBksZSPtBsjjV+i6VLODHIvNFzgVIqJ8OQgVwBwDC4r6/PuoCis0gPEf8EKTwA
-N08xWkKaZbuBzGon7/S09pEngNhQZHmoXyjB7ApYd1ReX6ZU04bA2ReQ2JWBw2ql
-ni6PvJDP81m4/BDiXIht7PyHX0q/LxDpLy4KoD0sNT62i0WAn4iWsUTnDemfLT14
-8uUYuYis7Z/tS2gb8/5hI3qDcdTh3paPj7hEb+E9Yopzc2hvTFE+5N1nEiBHimw8
-bfOe+yfF3K03GRzzHMGwsnlKIer8/qxsLbA9xJ5sqhQodzG/uid5LDl8W7Dzq5kQ
-OMs0vJc9+bEnQsg6RBec7AlvSAvmR8DmKRd8zVo12M+dwJXIuQz/q6U/huISjsfX
-yapDGsqigMKe7ri71IId+QcWvlbYH+H0N+4C/3Y7kZjHMwP0oD/Ml/E/kEHnlKrd
-ttAmP3X+6ZcVUDjeN/ZjwNIGZjvKW5g8Y+v7QSEMsE7gwa9UzxAmjIagmnBbtP+1
-t4gUMzj0N2r1Ft1kKOGKbMOeH9aHump7Hc7JFvVfCxH+yngSO3hMzyORqDOzOJio
-v0JAZt5ozH84Amf5zr2A
-=Mt8Y
------END PGP SIGNATURE-----
-
---5vNYLRcllDrimb99--
+With regards to silk, I'm not aware of any plans at this time.
