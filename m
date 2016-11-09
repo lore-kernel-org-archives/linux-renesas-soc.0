@@ -1,50 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:34382 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753182AbcKJD4k (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33050 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754077AbcKITAF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 22:56:40 -0500
+        Wed, 9 Nov 2016 14:00:05 -0500
 MIME-Version: 1.0
-In-Reply-To: <20161109172813.GA1545@katana>
+In-Reply-To: <20161109143508.GA19184@verge.net.au>
 References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
- <20161109084406.GA22213@verge.net.au> <20161109172813.GA1545@katana>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 10 Nov 2016 12:56:38 +0900
-Message-ID: <CANqRtoRwSh602rjbHA2qo=XHyimpyyi_T=0sh2A4NOfzzVB+oQ@mail.gmail.com>
+ <20161109084406.GA22213@verge.net.au> <20161109085954.GA1807@katana> <20161109143508.GA19184@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 9 Nov 2016 20:00:01 +0100
+Message-ID: <CAMuHMdU_eLmb2ET0KvUyQEfeeUK7Vy3mk6+=FSvczBhy8snvNA@mail.gmail.com>
 Subject: Re: [PATCH v4 00/14] ARM: dts: r8a779x: use demuxer for I2C
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Simon Horman <horms@verge.net.au>,
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-I2C <linux-i2c@vger.kernel.org>
+        Linux I2C <linux-i2c@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
-
-On Thu, Nov 10, 2016 at 2:28 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+On Wed, Nov 9, 2016 at 3:35 PM, Simon Horman <horms@verge.net.au> wrote:
+>> Will you get access to these boards in the foreseeable future?
 >
->> ARM: dts: lager: use demuxer for IIC3/I2C3
->
-> I think the sanest solution is to drop this patch forever. The WARN from
-> the regulator core is sparse in describing the problem yet it is
-> correct: The regulator is needed, by the CPU! :) And this will probably
-> be the smallest problem when trying to demux the bus which is used to
-> handle all DVFS operations. Let's stick to IIC3 here, I'd say. Gen3 even
-> has this one IIC instance for exactly the DVFS purpose.
+> As mentioned by Geert, there is a porter in Magnus's board farm.
+> Unforunately I have never had much luck in getting it to boot.
 
-I think postponing merge of patches is one thing but I don't think
-dropping them forever is a long term solution. I think we should have
-a plan how to describe the hardware as-is in DT and work towards
-having software support for it.
+>From the point of view of the kernel, there's not much difference between
+Koelsch/Lager and Porter. The U-Boot is newer than the one on Lager,
+though, so no need for the "dtb" keyword in the bootz command.
 
-My hope has always been that it would be possible to switch I2C master
-during run time without deregister/register of all the slave devices.
-I do realise much work will be needed to make it happen, but from
-hardware point of view it must be possible to switch I2C master
-transparently between the messages on the bus.
+I use:
 
-Thanks,
+    setenv ethaddr 2e:01:02:03:04:05
+    tftp 41000000 porter/zImage
+    tftp 40f00000 porter/r8a7791-porter.dtb
+    bootz 41000000 - 40f00000
 
-/ magnus
+Perhaps you didn't have the MAC address set?
+
+BTW, for blanche, I had to add "setenv fdt_high 41000000".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
