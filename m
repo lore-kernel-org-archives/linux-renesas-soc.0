@@ -1,79 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33546 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965978AbcKLNNv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:51 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 22/32] media: rcar-vin: add chsel information to rvin_info
-Date: Sat, 12 Nov 2016 14:12:06 +0100
-Message-Id: <20161112131216.22635-23-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <3dface9b-7602-b1f2-0dd6-37b444ac42e3@gmail.com>
+References: <1478633747-26878-1-git-send-email-geert+renesas@glider.be>
+ <216fe100-556b-7f83-39b0-4cf54c1fa35c@gmail.com> <CAMuHMdWkXsAuRpbTWGw9Wp4m2M38zRAd8OpPpA-sCDb7Xb7skw@mail.gmail.com>
+ <3dface9b-7602-b1f2-0dd6-37b444ac42e3@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 9 Nov 2016 20:43:15 +0100
+Message-ID: <CAMuHMdXMYy+g4WWzCAq5Y1Y1Egbt9i6bGRpFpR86mg6AfxiqWA@mail.gmail.com>
+Subject: Re: [PATCH v2] irqchip/renesas-irqc: Postpone driver initialization
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each Gen3 SoC have a limited set of predefined routing possibilities for
-which CSI2 device and virtual channel can be routed to which VIN
-instance.  Prepare to store this information in the struct rvin_info.
+Hi Florian,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-vin.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On Wed, Nov 9, 2016 at 8:17 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> On 11/08/2016 11:50 AM, Geert Uytterhoeven wrote:
+>> On Tue, Nov 8, 2016 at 8:42 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>>> On 11/08/2016 11:35 AM, Geert Uytterhoeven wrote:
+>>>> Currently the renesas-irqc driver uses postcore_initcall().
+>>>>
+>>>> However, the new CPG/MSSR driver uses subsys_initcall(). Hence the
+>>>> IRQC's probe will be deferred, which causes the Micrel Ethernet PHY to
+>>>> not find its interrupt on R-Car Gen2 and RZ/G, as the of_mdio subsystem
+>>>> does not support deferred probe yet.
+>>>
+>>> Is not that the more correct fix to implement though?
+>>
+>> Sure it is. But nothing has happened since this was reported ca. 1 year ago.
+>> Cfr. "of_mdiobus_register_phy() and deferred probe"
+>> https://lkml.org/lkml/2015/10/22/377
+>>
+>> My MDIO foo is not that strong...
+>
+> Let me try to cook something here which may require
+> of_mdiobus_register_phy(), are you okay testing patches?
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 90c28a7..cd7d959 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -35,6 +35,9 @@
- /* Max number on VIN instances that can be in a system */
- #define RCAR_VIN_NUM 8
- 
-+/* Max number of CHSEL values for any Gen3 SoC */
-+#define RCAR_CHSEL_MAX 6
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -111,6 +114,16 @@ struct rvin_graph_entity {
- 
- struct rvin_group;
- 
-+
-+/** struct rvin_group_chsel - Map a CSI2 device and channel for a CHSEL value
-+ * @csi:		VIN internal number for CSI2 device
-+ * @chan:		CSI2 VC number on remote
-+ */
-+struct rvin_group_chsel {
-+	enum rvin_csi_id csi;
-+	int chan;
-+};
-+
- /**
-  * struct rvin_info- Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -123,6 +136,9 @@ struct rvin_info {
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
-+
-+	unsigned int num_chsels;
-+	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
- };
- 
- /**
--- 
-2.10.2
+Of course I am. Thanks a lot!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
