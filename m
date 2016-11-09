@@ -1,170 +1,204 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:30011 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753052AbcKYQz3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Nov 2016 11:55:29 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "pantelis.antoniou@konsulko.com" <pantelis.antoniou@konsulko.com>
-CC: Chris Paterson <Chris.Paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "laurent.pinchart+renesas@ideasonboard.com"
-        <laurent.pinchart+renesas@ideasonboard.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [RFC] New Device Tree property - "bonding"
-Date: Fri, 25 Nov 2016 16:55:05 +0000
-Message-ID: <KL1PR06MB1031872E5DC2C65F2A490D6BC3890@KL1PR06MB1031.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH 0/5] Add V4L2 SDR (DRIF & MAX2175) driver
+Date: Wed,  9 Nov 2016 15:44:39 +0000
+Message-Id: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello DT maintainers,
+Hi All,
 
-In one of the Renesas SoCs we have a device called DRIF (Digital Radio Inte=
-rface) controller. A DRIF channel contains 4 external pins - SCK, SYNC, Dat=
-a pins D0 & D1.=20
+This patch set contains two drivers
+ - R-Car Digital Radio Interface (DRIF) driver
+ - Maxim's MAX2175 RF to Bits tuner driver
 
-Internally a DRIF channel is made up of two SPI slave devices (also called =
-sub-channels here) that share common CLK & SYNC signals but have their own =
-resource set. The DRIF channel can have either one of the sub-channel activ=
-e at a time or both. When both sub-channels are active, they need to be man=
-aged together as one device as they share same CLK & SYNC. We plan to tie t=
-hese two sub-channels together with a new property called "renesas,bonding"=
-.
+These patches were based on top of media-next repo
+commit: 778de01402328ca88cda84491d819bfc949935ff
 
-We would appreciate your feedback on this regard. Below is an example usage=
- of this property.=20
+These two drivers combined together expose a V4L2 SDR device that is compliant
+with the V4L2 framework [1]. The RFC series of these two drivers were
+published few weeks ago and the discussion thread is here [2]. Agreed review
+comments are incorporated in this series.
 
-SoC common dtsi file:
----------------------
-"renesas,bonding" - phandles to similar devices that are part of the bond. =
-A bond between devices implies that they need to be managed together and ca=
-nnot operate independently when more than one member of the bond needs to b=
-e active.=20
+Brief description of devices below
 
-                drif00: rif@e6f40000 {
-                        compatible =3D "renesas,r8a7795-drif",
-                                     "renesas,rcar-gen3-drif";
-                        reg =3D <0 0xe6f40000 0 0x64>;
-                        interrupts =3D <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-                        clocks =3D <&cpg CPG_MOD 515>;
-                        clock-names =3D "fck";
-                        dmas =3D <&dmac1 0x20>, <&dmac2 0x20>;
-                        dma-names =3D "rx", "rx";
-                        renesas,bonding =3D <&drif01>;
-                        power-domains =3D <&sysc R8A7795_PD_ALWAYS_ON>;
-                        status =3D "disabled";
+DRIF:
+-----
+This is a receive only slave controller that receives data into a FIFO from a
+master device and uses DMA engine to move it from device to memory. It is a
+serial I/O like controller with a design goal to act as digital radio receiver
+targeting SDR solutions.
 
-                };
-
-                drif01: rif@e6f50000 {
-                        compatible =3D "renesas,r8a7795-drif",
-                                     "renesas,rcar-gen3-drif";
-                        reg =3D <0 0xe6f50000 0 0x64>;
-                        interrupts =3D <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-                        clocks =3D <&cpg CPG_MOD 514>;
-                        clock-names =3D "fck";
-                        dmas =3D <&dmac1 0x22>, <&dmac2 0x22>;
-                        dma-names =3D "rx", "rx";
-                        renesas,bonding =3D <&drif00>;
-                        power-domains =3D <&sysc R8A7795_PD_ALWAYS_ON>;
-                        status =3D "disabled";
-                };
-
-Board specific dts file:
--------------------------
-- When more than one member of the "bonding" property are available, anothe=
-r keyword ("primary" or "bonded" or ??) is expected on any one of the membe=
-rs. This "primary" member controls/accepts properties common to all members=
-.
-
-- When only a single member of the bond needs to be active, the "bonding" p=
-roperty has no effect.
-
-Note: "primary" keyword is found in "http://elinux.org/images/c/cf/Power_eP=
-APR_APPROVED_v1.1.pdf" Page 103, Line 10. It looks like a generic property =
-but documentation is not available.=20
-
-E.g.
-1) Both channels enabled case:
-------------------------------------
-&drif00 {
-        pinctrl-0 =3D <&drif0_pins>;
-        pinctrl-names =3D "default";
-        renesas,syncac-pol-high;
-        status =3D "okay";
-
-        primary; /* This can be changed to "renesas,primary or renesas,bond=
-ed or ??" */
-
-        port {
-                drif0_ep: endpoint {
-                     remote-endpoint =3D <&tuner_ep>;
-                }; =20
-        }; =20
-};
-
-&drif01 {
-        status =3D "okay";
-};
-
-2) Single channel enabled case:
--------------------------------
-&drif01 {
-        pinctrl-0 =3D <&drif0_pins>;
-        pinctrl-names =3D "default";
-        status =3D "okay";
-
-        port {
-                drif0_ep: endpoint {
-                     remote-endpoint =3D <&tuner_ep>;
-                }; =20
-        }; =20
-};
-
-
-Thanks,
-Ramesh.
-
-Note 1:
+MAX2175:
 --------
-Below is a pictorial representation of E.g. (1) and (2)
-
-A DRIF channel can interface with a Master device like this
-
-1) Master with two data pins - both sub-channels used
-+---------------------+                +---------------------+
-|                     |-----SCK------->|CLK                  |  =20
-|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-|                     |-----SD0------->|D0                   |  =20
-|                     |-----SD1------->|D1                   |  =20
-+---------------------+                +---------------------+
-
-2) Master with one data pin - sub-channel0 or 1 can be used based on the bo=
-ard.
-Below is e.g. where sub-channel1 alone is used. D0 pin is unused.
+This is a RF front end tuner device that supports tuning to different bands &
+frequency. It supports I2S output with programmable word lengths & single/dual
+data lines usage based on selected receive mode. Each receive mode is
+designated with a sample rate.
 
 +---------------------+                +---------------------+
-|                     |-----SCK------->|CLK                  |  =20
-|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-|                     |-----SD0------->|D1                   |  =20
-|                     |                |                     |  =20
+|                     |-----SCK------->|                     |
+| MAX2175 (master)    |-----SS-------->|  DRIF (slave)       |
+|                     |-----SD0------->|                     |
+|                     |-----SD1------->|                     |
 +---------------------+                +---------------------+
 
-Note 2:
---------
-This topic is discussed as part of the driver submission. The latest on tha=
-t is here -=20
-https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg09037.htm=
-l
+New SDR formats:
+----------------
+The combined driver exposes new SDR formats. DRIF as such requires the receive
+word length as the only programmable parameter in a normal case. Otherwise it is
+agnostic of the tuner.
 
-None of the models discussed are convincing. This new property proposal is =
-closest to option 3 discussed in the thread.
+V4L2 framework requires publishing SDR formats about position of I & Q data
+within the buffers. I have published three such formats to give an example. More
+such formats are possible and will be added when needed.
+
+References:
+------------
+[1] v4l2-compliance test report
+
+root@salvator-x:~# v4l2-compliance -S /dev/swradio0
+v4l2-compliance SHA   : 788b674f3827607c09c31be11c91638f816aa6ae
+
+Driver Info:
+        Driver name   : rcar_drif
+        Card type     : R-Car DRIF
+        Bus info      : platform:R-Car DRIF
+        Driver version: 4.9.0
+        Capabilities  : 0x85310000
+                SDR Capture
+                Tuner
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps   : 0x05310000
+                SDR Capture
+                Tuner
+                Read/Write
+                Streaming
+                Extended Pix Format
+
+Compliance test for device /dev/swradio0 (not using libv4l2):
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second sdr open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK
+        test VIDIOC_G/S_FREQUENCY: OK
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 1
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+        Control ioctls:
+                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+                test VIDIOC_QUERYCTRL: OK
+                test VIDIOC_G/S_CTRL: OK
+                test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+                Standard Controls: 5 Private Controls: 4
+
+        Format ioctls:
+                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+                test VIDIOC_G/S_PARM: OK (Not Supported)
+                test VIDIOC_G_FBUF: OK (Not Supported)
+                test VIDIOC_G_FMT: OK
+                test VIDIOC_TRY_FMT: OK
+                test VIDIOC_S_FMT: OK
+                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+                test Cropping: OK (Not Supported)
+                test Composing: OK (Not Supported)
+                test Scaling: OK (Not Supported)
+
+        Codec ioctls:
+                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+        Buffer ioctls:
+                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+                test VIDIOC_EXPBUF: OK (Not Supported)
+
+Test input 0:
+
+
+Total: 43, Succeeded: 43, Failed: 0, Warnings: 0
+root@salvator-x:~#
+
+[2] RFC patch set discussion thread
+https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg07968.html
+
+Ramesh Shanmugasundaram (5):
+  media: v4l2-ctrls: Reserve controls for MAX217X
+  media: i2c: max2175: Add MAX2175 support
+  media: Add new SDR formats SC16, SC18 & SC20
+  doc_rst: media: New SDR formats SC16, SC18 & SC20
+  media: platform: rcar_drif: Add DRIF support
+
+ .../devicetree/bindings/media/i2c/max2175.txt      |   61 +
+ .../devicetree/bindings/media/renesas,drif.txt     |  136 ++
+ .../media/uapi/v4l/pixfmt-sdr-scu16be.rst          |   80 +
+ .../media/uapi/v4l/pixfmt-sdr-scu18be.rst          |   80 +
+ .../media/uapi/v4l/pixfmt-sdr-scu20be.rst          |   80 +
+ Documentation/media/uapi/v4l/sdr-formats.rst       |    3 +
+ drivers/media/i2c/Kconfig                          |    4 +
+ drivers/media/i2c/Makefile                         |    2 +
+ drivers/media/i2c/max2175/Kconfig                  |    8 +
+ drivers/media/i2c/max2175/Makefile                 |    4 +
+ drivers/media/i2c/max2175/max2175.c                | 1558 +++++++++++++++++++
+ drivers/media/i2c/max2175/max2175.h                |  108 ++
+ drivers/media/platform/Kconfig                     |   25 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/rcar_drif.c                 | 1574 ++++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-ioctl.c               |    3 +
+ include/uapi/linux/v4l2-controls.h                 |    5 +
+ include/uapi/linux/videodev2.h                     |    3 +
+ 18 files changed, 3735 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-scu16be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-scu18be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-scu20be.rst
+ create mode 100644 drivers/media/i2c/max2175/Kconfig
+ create mode 100644 drivers/media/i2c/max2175/Makefile
+ create mode 100644 drivers/media/i2c/max2175/max2175.c
+ create mode 100644 drivers/media/i2c/max2175/max2175.h
+ create mode 100644 drivers/media/platform/rcar_drif.c
+
+-- 
+1.9.1
+
