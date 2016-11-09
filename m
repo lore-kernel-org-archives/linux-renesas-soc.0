@@ -1,58 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52777 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbcKORx7 (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33752 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751062AbcKITMt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 12:53:59 -0500
-Date: Tue, 15 Nov 2016 18:53:54 +0100
-From: Simon Horman <horms@verge.net.au>
-To: David Miller <davem@davemloft.net>
-Cc: geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
-        arnd@arndb.de, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFC] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
-Message-ID: <20161115175354.GA3979@verge.net.au>
-References: <1477934018-13968-1-git-send-email-geert+renesas@glider.be>
- <20161031.132431.648834397805808388.davem@davemloft.net>
- <20161101093216.GE28143@verge.net.au>
+        Wed, 9 Nov 2016 14:12:49 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20161101093216.GE28143@verge.net.au>
+In-Reply-To: <6c28b185-2283-fbbe-7850-4bc66c8581b0@cogentembedded.com>
+References: <1477934018-13968-1-git-send-email-geert+renesas@glider.be> <6c28b185-2283-fbbe-7850-4bc66c8581b0@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 9 Nov 2016 20:12:48 +0100
+Message-ID: <CAMuHMdVJe_N68mA44PnQndxNsPH9L2MyqRVoKdoctfhK1fHRaA@mail.gmail.com>
+Subject: Re: [PATCH/RFC] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 01, 2016 at 10:32:17AM +0100, Simon Horman wrote:
-> On Mon, Oct 31, 2016 at 01:24:31PM -0400, David Miller wrote:
-> > From: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Date: Mon, 31 Oct 2016 18:13:38 +0100
-> > 
-> > > The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
-> > > ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
-> > > revisions of R-Car H3, and on R-Car M3-W.
-> > > 
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > ---
-> > > Tested on:
-> > >   - r8a7795/salvator-x with R-Car H3 ES1.0 (limited to 100Mbps),
-> > >   - r8a7795/salvator-x with R-Car H3 ES1.1 (1Gbps),
-> > >   - r8a7796/salvator-x with R-Car M3-W ES1.0 (1Gbps).
-> > > 
-> > > This is marked as an RFC because it depends on:
-> > >   A) the soc_device_match() infrastructure,
-> > >   B) Renesas SoC core ESx.y handling.
-> > > Hence I think the best merge strategy is to let this patch go in through
-> > > Simon's Renesas tree.
-> > > 
-> > > David: If you agree, can you please provide your ack? Thanks!
-> > 
-> > Sure, no problem:
-> > 
-> > Acked-by: David S. Miller <davem@davemloft.net>
-> 
-> Thanks Dave.
-> 
-> Geert, please repost or otherwise ping me once the dependencies are in
-> place and I should queue this up.
+Hi Sergei,
 
-For the record, I have queued this up for v4.10.
+On Wed, Nov 9, 2016 at 8:02 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 10/31/2016 08:13 PM, Geert Uytterhoeven wrote:
+>
+>> The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
+>> ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
+>> revisions of R-Car H3, and on R-Car M3-W.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> Tested on:
+>>   - r8a7795/salvator-x with R-Car H3 ES1.0 (limited to 100Mbps),
+>>   - r8a7795/salvator-x with R-Car H3 ES1.1 (1Gbps),
+>>   - r8a7796/salvator-x with R-Car M3-W ES1.0 (1Gbps).
+>>
+>> This is marked as an RFC because it depends on:
+>>   A) the soc_device_match() infrastructure,
+>>   B) Renesas SoC core ESx.y handling.
+>> Hence I think the best merge strategy is to let this patch go in through
+>> Simon's Renesas tree.
+>
+>    I'm not seeing soc_device_match() and friends even in renesas.git repo...
+> What else do I need to review this patch?
+
+[PATCH v2 0/7] soc: renesas: Identify SoC and register with the SoC bus
+
+The dependencies are included in renesas-drivers-2016-11-08-v4.9-rc4
+(more specifically branch topic/renesas-soc-id-v2).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
