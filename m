@@ -1,285 +1,119 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "crope@iki.fi" <crope@iki.fi>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [RFC 1/5] media: i2c: max2175: Add MAX2175 support
-Date: Thu, 10 Nov 2016 10:46:56 +0200
-Message-ID: <5646490.suYeSea0Qa@avalon>
-In-Reply-To: <SG2PR06MB1038BC62A3011C8EAB20B61FC3D40@SG2PR06MB1038.apcprd06.prod.outlook.com>
-References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com> <2034831.3otZHvJ6bZ@avalon> <SG2PR06MB1038BC62A3011C8EAB20B61FC3D40@SG2PR06MB1038.apcprd06.prod.outlook.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:35849 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753309AbcKISA3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 9 Nov 2016 13:00:29 -0500
+Received: by mail-lf0-f49.google.com with SMTP id t196so171037117lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Nov 2016 10:00:28 -0800 (PST)
+Subject: Re: [PATCH/RFC net-next] ravb: Add dma_unmap_single in ravb_ring_free
+To: Simon Horman <horms+renesas@verge.net.au>
+References: <1478532451-7296-1-git-send-email-horms+renesas@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7e499a0f-3c98-420e-de8a-b29bd54a989d@cogentembedded.com>
+Date: Wed, 9 Nov 2016 21:00:25 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1478532451-7296-1-git-send-email-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ramesh,
+Hello.
 
-On Friday 21 Oct 2016 14:49:30 Ramesh Shanmugasundaram wrote:
-> > On Wednesday 12 Oct 2016 15:10:25 Ramesh Shanmugasundaram wrote:
-> >> This patch adds driver support for MAX2175 chip. This is Maxim
-> >> Integrated's RF to Bits tuner front end chip designed for
-> >> software-defined radio solutions. This driver exposes the tuner as a
-> >> sub-device instance with standard and custom controls to configure the
-> >> device.
-> >>
-> >> Signed-off-by: Ramesh Shanmugasundaram
-> >> <ramesh.shanmugasundaram@bp.renesas.com> ---
-> >> 
-> >>  .../devicetree/bindings/media/i2c/max2175.txt      |   60 +
-> >>  drivers/media/i2c/Kconfig                          |    4 +
-> >>  drivers/media/i2c/Makefile                         |    2 +
-> >>  drivers/media/i2c/max2175/Kconfig                  |    8 +
-> >>  drivers/media/i2c/max2175/Makefile                 |    4 +
-> >>  drivers/media/i2c/max2175/max2175.c                | 1624 +++++++++++++
-> >>  drivers/media/i2c/max2175/max2175.h                |  124 ++
-> >>  7 files changed, 1826 insertions(+)
-> >>  create mode 100644
-> >> Documentation/devicetree/bindings/media/i2c/max2175.txt
-> >>  create mode 100644 drivers/media/i2c/max2175/Kconfig  create mode
-> >> 100644 drivers/media/i2c/max2175/Makefile
-> >>  create mode 100644 drivers/media/i2c/max2175/max2175.c
-> >>  create mode 100644 drivers/media/i2c/max2175/max2175.h
-> >> 
-> >> diff --git a/Documentation/devicetree/bindings/media/i2c/max2175.txt
-> >> b/Documentation/devicetree/bindings/media/i2c/max2175.txt new file
-> >> mode 100644
-> >> index 0000000..2250d5f
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/media/i2c/max2175.txt
-> >> @@ -0,0 +1,60 @@
+On 11/07/2016 06:27 PM, Simon Horman wrote:
 
-[snip]
+> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+>
+> The kernel panic occurs with "swiotlb buffer is full" message
+> after repeating suspend and resume, because dma_map_single of
+> ravb_ring_format and ravb_start_xmit is not released.
 
-> >> +Optional properties:
-> >> +--------------------
-> >> +- maxim,slave	   : empty property indicates this is a slave of
-> >> another
-> >> +		     master tuner. This is used to define two tuners in
-> >> +		     diversity mode (1 master, 1 slave). By default each
-> >> +		     tuner is an individual master.
-> > 
-> > Would it be useful to make that property a phandle to the master tuner, to
-> > give drivers a way to access the master ? I haven't checked whether there
-> > could be use cases for that.
-> 
-> As of now, I cannot find any use case for it from the datasheet. In future,
-> we could add if such need arise.
+    The same issue must occur after several ifconfig up/down I think...
+this is quite embarrassing actually, and I think this bug was inherited from 
+sh_eth. Perhaps it was made more visible with adding PM support. :-/
 
-My point is that making the maxim,slave property a phandle now would allow 
-handling such future cases without any change to the DT bindings.
+> This patch adds dma_unmap_single in ravb_ring_free, and fixes
+> its problem.
 
-[snip]
+    Well, actually ravb_ring_free() was meant to undo what ravb_ring_init() 
+does...
 
-> > > diff --git a/drivers/media/i2c/max2175/max2175.c
-> > > b/drivers/media/i2c/max2175/max2175.c new file mode 100644 index
-> > > 0000000..71b60c2
-> > > --- /dev/null
-> > > +++ b/drivers/media/i2c/max2175/max2175.c
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> Sergei, this is a patch from the Gen3 3.3.2 BSP.
 
-[snip]
+    I suspect the ravb driver there is greatly different from the upstream one...
 
-> > > +static int max2175_poll_csm_ready(struct max2175_ctx *ctx) {
-> > > +	return max2175_poll_timeout(ctx, 69, 1, 1, 0, 50);
-> > 
-> > Please define macros for register addresses and values, this is just
-> > unreadable.
-> 
-> The Tuner provider is unwilling to disclose all register details. I agree on
-> the readability issue with this restriction but this is somewhat true for
-> some sensitive IPs in the media subsystem.
+> Please consider if it is appropriate for mainline.
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 27cfec3154c8..e44629b75c83 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -185,6 +185,9 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+>  	struct ravb_private *priv = netdev_priv(ndev);
+>  	int ring_size;
+>  	int i;
+> +	struct ravb_ex_rx_desc *rx_desc;
+> +	struct ravb_tx_desc *tx_desc;
+> +	u32 size;
 
-Is it the case that you don't have access to the information, or that you have 
-been forbidden to disclose them by the tuner manufacturer ?
+    DaveM prefers the local declarations in the reverse Xmas tree order; me 
+too. :-)
 
-> > > +}
+[...]
+> @@ -207,6 +210,16 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+>  	priv->tx_align[q] = NULL;
+>
+>  	if (priv->rx_ring[q]) {
+> +		for (i = 0; i < priv->num_rx_ring[q]; i++) {
+> +			rx_desc = &priv->rx_ring[q][i];
+> +			if (rx_desc->dptr != 0) {
 
-[snip]
+    This seems wrong. This driver uses RX descriptors with zero data size to 
+indicate the failed DMA mapping. And anyway, I think you should have used 
+dma_mapping_error() instead of a zero check... and '!= 0' was unnecessary.
 
-> > > +static int max2175_set_lo_freq(struct max2175_ctx *ctx, u64 lo_freq)
-> > > +{
-> > > +	int ret;
-> > > +	u32 lo_mult;
-> > > +	u64 scaled_lo_freq;
-> > > +	const u64 scale_factor = 1000000ULL;
-> > > +	u64 scaled_npf, scaled_integer, scaled_fraction;
-> > > +	u32 frac_desired, int_desired;
-> > > +	u8 loband_bits, vcodiv_bits;
-> > 
-> > Do you really support frequencies above 4GHz ?
-> 
-> Nope.
-> 
-> If not most of the 64-bit
-> 
-> > values could be stored in 32 bits.
-> 
-> The 64bit variables are needed to extract the fractional part (upto 6 digit
-> precision) out of floating point divisions (original user space code).
+> +				dma_unmap_single(ndev->dev.parent,
+> +						 le32_to_cpu(rx_desc->dptr),
+> +						 PKT_BUF_SZ,
+> +						 DMA_FROM_DEVICE);
+> +				rx_desc->dptr = 0;
 
-OK. The code would be more efficient if you made the scaling factor a power of 
-two though. 1048576 could be a good value.
+    Hence I'd prefer:
 
-> >> +
-> >> +	scaled_lo_freq = lo_freq;
-> >> +	/* Scale to larger number for precision */
-> >> +	scaled_lo_freq = scaled_lo_freq * scale_factor * 100;
+				rx_desc->ds_cc = cpu_to_le16(0);
 
-I just noticed that you could write the two lines as
+[...]
+> @@ -215,6 +228,16 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+>  	}
+>
+>  	if (priv->tx_ring[q]) {
+> +		for (i = 0; i < priv->num_tx_ring[q]; i++) {
 
-	scaled_lo_freq = lo_freq * scale_factor * 100;
+    I'm afraid this is wrong. TX ring contains NUM_TX_DESC (2) descriptors per 
+skb, so this loop only cleans the 1st half of the TX ring.
 
-By the way, why do you multiply by 100 here, and...
+> +			tx_desc = &priv->tx_ring[q][i];
+> +			size = le16_to_cpu(tx_desc->ds_tagl) & TX_DS;
+> +			if (tx_desc->dptr != 0) {
+> +				dma_unmap_single(ndev->dev.parent,
+> +						 le32_to_cpu(tx_desc->dptr),
+> +						 size, DMA_TO_DEVICE);
+> +				tx_desc->dptr = 0;
 
-> >> +	mxm_dbg(ctx, "scaled lo_freq %llu lo_freq %llu\n",
-> >> +		scaled_lo_freq, lo_freq);
-> >> +
-> >> +	if (MAX2175_IS_BAND_AM(ctx)) {
-> >> +		if (max2175_get_bit(ctx, 5, 7) == 0)
-> >> +			loband_bits = 0;
-> >> +			vcodiv_bits = 0;
-> >> +			lo_mult = 16;
-> >> +	} else if (max2175_get_bits(ctx, 5, 1, 0) == MAX2175_BAND_FM) {
-> >> +		if (lo_freq <= 74700000) {
-> >> +			loband_bits = 0;
-> >> +			vcodiv_bits = 0;
-> >> +			lo_mult = 16;
-> >> +		} else if ((lo_freq > 74700000) && (lo_freq <= 110000000)) {
-> > 
-> > No need for the inner parentheses.
-> 
-> Agreed.
-> 
-> >> +			loband_bits = 1;
-> >> +			vcodiv_bits = 0;
-> >> +		} else {
-> >> +			loband_bits = 1;
-> >> +			vcodiv_bits = 3;
-> >> +		}
-> >> +		lo_mult = 8;
-> >> +	} else if (max2175_get_bits(ctx, 5, 1, 0) == MAX2175_BAND_VHF) {
-> >> +		if (lo_freq <= 210000000) {
-> >> +			loband_bits = 2;
-> >> +			vcodiv_bits = 2;
-> >> +		} else {
-> >> +			loband_bits = 2;
-> >> +			vcodiv_bits = 1;
-> >> +		}
-> >> +		lo_mult = 4;
-> >> +	} else {
-> >> +		loband_bits = 3;
-> >> +		vcodiv_bits = 2;
-> >> +		lo_mult = 2;
-> >> +	}
-> >> +
-> >> +	if (max2175_get_bits(ctx, 5, 1, 0) == MAX2175_BAND_L)
-> >> +		scaled_npf = (scaled_lo_freq / ctx->xtal_freq / lo_mult) /
-> >> 100;
-> >> +	else
-> >> +		scaled_npf = (scaled_lo_freq / ctx->xtal_freq * lo_mult) /
-> >> 100;
+    Again, I'm not fond of this... are you sure 0 is incorrect DMA address?
 
-... divide by 100 here without using the value in-between nor after ?
+> +			}
+> +		}
 
-> >> +
-> >> +	scaled_integer = scaled_npf / scale_factor * scale_factor;
-> >> +	int_desired = (u32)(scaled_npf / scale_factor);
-> >> +	scaled_fraction = scaled_npf - scaled_integer;
-> >> +	frac_desired = (u32)(scaled_fraction * 1048576 / scale_factor);
-> >> +
-> >> +	/* Check CSM is not busy */
-> >> +	ret = max2175_poll_csm_ready(ctx);
-> >> +	if (ret) {
-> >> +		v4l2_err(ctx->client, "lo_freq: csm busy. freq %llu\n",
-> >> +			 lo_freq);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	mxm_dbg(ctx, "loband %u vcodiv %u lo_mult %u scaled_npf %llu\n",
-> >> +		loband_bits, vcodiv_bits, lo_mult, scaled_npf);
-> >> +	mxm_dbg(ctx, "scaled int %llu frac %llu desired int %u frac %u\n",
-> >> +		scaled_integer, scaled_fraction, int_desired, frac_desired);
-> >> +
-> >> +	/* Write the calculated values to the appropriate registers */
-> >> +	max2175_set_bits(ctx, 5, 3, 2, loband_bits);
-> >> +	max2175_set_bits(ctx, 6, 7, 6, vcodiv_bits);
-> >> +	max2175_set_bits(ctx, 1, 7, 0, (u8)(int_desired & 0xff));
-> >> +	max2175_set_bits(ctx, 2, 3, 0, (u8)((frac_desired >> 16) & 0x1f));
-> >> +	max2175_set_bits(ctx, 3, 7, 0, (u8)((frac_desired >> 8) & 0xff));
-> >> +	max2175_set_bits(ctx, 4, 7, 0, (u8)(frac_desired & 0xff));
-> >> +	/* Flush the above registers to device */
-> >> +	max2175_flush_regstore(ctx, 1, 6);
-> >> +	return ret;
-> >> +}
+    BTW, can't we use ravb_tx_free() instead of this loop?
 
-[snip]
-
-> >> +static int max2175_get_lna_gain(struct max2175_ctx *ctx) {
-> >> +	int gain = 0;
-> >> +	enum max2175_band band = max2175_get_bits(ctx, 5, 1, 0);
-> >> +
-> >> +	switch (band) {
-> >> +	case MAX2175_BAND_AM:
-> >> +		gain = max2175_read_bits(ctx, 51, 3, 1);
-> >> +		break;
-> >> +	case MAX2175_BAND_FM:
-> >> +		gain = max2175_read_bits(ctx, 50, 3, 1);
-> >> +		break;
-> >> +	case MAX2175_BAND_VHF:
-> >> +		gain = max2175_read_bits(ctx, 52, 3, 0);
-> >> +		break;
-> >> +	default:
-> >> +		v4l2_err(ctx->client, "invalid band %d to get rf gain\n",
-> >> band);
-> > 
-> > Can this happen ?
-> 
-> Yes, there is "L-band". It is a paranoia check as I am testing by comparing
-> logs sometimes :-(
-
-OK. By the way, you could get rid of the gain variable by returning directly 
-in the case statements.
-
-> >> +		break;
-> >> +	}
-> >> +	return gain;
-> >> +}
-
-[snip]
-
-> >> +static const struct v4l2_ctrl_config max2175_i2s_mode = {
-> >> +	.ops = &max2175_ctrl_ops,
-> >> +	.id = V4L2_CID_MAX2175_I2S_MODE,
-> >> +	.name = "I2S_MODE value",
-> >> +	.type = V4L2_CTRL_TYPE_INTEGER,
-> > 
-> > Should this be a menu control ?
-> 
-> Hmm... the strings would be named "i2s mode x"? Will that be OK?
-
-How about describing the modes instead ? Are they standardized ?
-
-> >> +	.min = 0,
-> >> +	.max = 4,
-> >> +	.step = 1,
-> >> +	.def = 0,
-> >> +};
-
-[snip]
-
--- 
-Regards,
-
-Laurent Pinchart
-
+MBR, Sergei
