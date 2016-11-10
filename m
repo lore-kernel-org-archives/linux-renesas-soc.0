@@ -1,101 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938936AbcKQRRn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:17:43 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 07/31] ARM: dts: alt: use demuxer for I2C4
-Date: Thu, 17 Nov 2016 15:11:24 +0100
-Message-Id: <490aafde3cb3a7c183481e0fc9b38cba109691bf.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <2376126.1sNxSm4GUB@wasted.cogentembedded.com>
+References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com> <2376126.1sNxSm4GUB@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Nov 2016 13:52:28 +0100
+Message-ID: <CAMuHMdX5Mhra9N6bsDi7RX8arJNpnJ90NuUpbTPg3McYFHWQpg@mail.gmail.com>
+Subject: Re: [PATCH v6] clk: renesas: cpg-mssr: add R8A7743 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-B connector.
+Hi Sergei,
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
+On Tue, Nov 8, 2016 at 10:21 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+> (and RZ/G) code.
+>
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> ---
+> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+> It depends on the common R-Car gen2 (and RZ/G) support just posted.
+>
+> Changes in version 6:
+> - passed the PLL0 divisor to rcar_gen2_cpg_init();
+> - undid  the version 5 changes.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Thanks!
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index a3e74684289b..7270d4224b1a 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -18,6 +18,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c10 = &gpioi2c4;
-+		i2c12 = &i2cexio4;
- 	};
- 
- 	chosen {
-@@ -135,6 +137,29 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
-+
-+	gpioi2c4: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -194,6 +219,11 @@
- 		function = "i2c1";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
-+
- 	vin0_pins: vin0 {
- 		groups = "vin0_data8", "vin0_clk";
- 		function = "vin0";
-@@ -314,6 +344,11 @@
- 	};
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
-+
- &vin0 {
- 	status = "okay";
- 	pinctrl-0 = <&vin0_pins>;
--- 
-2.7.0.rc3.207.g0ac5344
+Will queue with the following trivial changes:
+  - pass cpg_mode to rcar_gen2_cpg_init(),
+  - sort clock names in DT bindings,
+  - reformat tables for easier comparison with other clock drivers.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
