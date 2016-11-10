@@ -1,80 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34169 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757164AbcKDVt7 (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36131 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932604AbcKJMua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 17:49:59 -0400
-Received: by mail-lf0-f51.google.com with SMTP id o141so2015443lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Nov 2016 14:49:58 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 03/11] ARM: shmobile: r8a7745: basic SoC support
-Date: Sat, 05 Nov 2016 00:49:55 +0300
-Message-ID: <1611958.qRQu5pdJd3@wasted.cogentembedded.com>
-In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+        Thu, 10 Nov 2016 07:50:30 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <2398984.AXNDaupAxO@wasted.cogentembedded.com>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com> <2398984.AXNDaupAxO@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Nov 2016 13:50:29 +0100
+Message-ID: <CAMuHMdUGhOhrWYJhFWGQbXNa62zAtoo_rq2dr-w0o_HEnQv60Q@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the RZ/G1E (R8A7745) SoC.
+Hi Sergei,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Nov 8, 2016 at 10:17 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the common R-Car  Gen2 (and RZ/G) Clock Pulse Generator / Module Standby
+> and Software Reset support code, using the CPG/MSSR driver core.
+>
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> ---
+> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+>
+> Changes in version 4:
+> - added a static variable for the PLL0 divisor and a parameter of the same kind
+>   to rcar_gen2_cpg_init(), used that  variable in rcar_gen2_cpg_clk_register().
 
----
-Changes in version 2:
-- added Geert's tag;
-- refreshed the patch.
+Thanks, I've verified correct operation by using your r8a7743 driver on
+r8a7791/koelsch, and comparing /sys/kernel/debug/clk/clk_summary.
 
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- arch/arm/mach-shmobile/Kconfig                     |    4 ++++
- arch/arm/mach-shmobile/setup-rcar-gen2.c           |    1 +
- 3 files changed, 7 insertions(+)
+> Changes in version 3:
+> - removed  the divisor logic from the PLL0 related code;
+> - also mentioned R-Car V2H as not having the PLL0CR register.
+>
+> Changes in version 2:
+> - added support  for non-existing PLL0CR;
+> - removed the function reading the mode pins;
+> - added/used the #define's for PLL0CR.STC;
+> - used CPG_FRQCRC_ZFC_SHIFT to #define CPG_FRQCRC_ZFC_MASK;
+> - removed rcar_gen2_read_modemr();
+> - added Geert's tag.
+>
+>  drivers/clk/renesas/rcar-gen2-cpg.c |  370 ++++++++++++++++++++++++++++++++++++
+>  drivers/clk/renesas/rcar-gen2-cpg.h |   43 ++++
+>  2 files changed, 413 insertions(+)
+>
+> Index: linux/drivers/clk/renesas/rcar-gen2-cpg.c
+> ===================================================================
+> --- /dev/null
+> +++ linux/drivers/clk/renesas/rcar-gen2-cpg.c
 
-Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -15,6 +15,8 @@ SoCs:
-     compatible = "renesas,r8a7740"
-   - RZ/G1M (R8A77430)
-     compatible = "renesas,r8a7743"
-+  - RZ/G1E (R8A77450)
-+    compatible = "renesas,r8a7745"
-   - R-Car M1A (R8A77781)
-     compatible = "renesas,r8a7778"
-   - R-Car H1 (R8A77790)
-Index: renesas/arch/arm/mach-shmobile/Kconfig
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Kconfig
-+++ renesas/arch/arm/mach-shmobile/Kconfig
-@@ -73,6 +73,10 @@ config ARCH_R8A7743
- 	select ARCH_RCAR_GEN2
- 	select ARM_ERRATA_798181 if SMP
- 
-+config ARCH_R8A7745
-+	bool "RZ/G1E (R8A77450)"
-+	select ARCH_RCAR_GEN2
-+
- config ARCH_R8A7778
- 	bool "R-Car M1A (R8A77781)"
- 	select ARCH_RCAR_GEN1
-Index: renesas/arch/arm/mach-shmobile/setup-rcar-gen2.c
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ renesas/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -227,6 +227,7 @@ MACHINE_END
- 
- static const char * const rz_g1_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7743",
-+	"renesas,r8a7745",
- 	NULL,
- };
- 
+> +static u32 cpg_mode __initdata;
+
+cpg_mode is never set.
+
+> +
+> +struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+> +                                              const struct cpg_core_clk *core,
+> +                                              const struct cpg_mssr_info *info,
+> +                                              struct clk **clks,
+> +                                              void __iomem *base)
+> +{
+
+> +       switch (core->type) {
+
+> +       case CLK_TYPE_GEN2_LB:
+> +               div = cpg_mode & BIT(18) ? 36 : 24;
+
+Hence div may be incorrect here (it wasn't for me)...
+
+> +       case CLK_TYPE_GEN2_QSPI:
+> +               div = (cpg_mode & (BIT(3) | BIT(2) | BIT(1))) == BIT(2) ?
+> +                     8 : 10;
+
+... and here (it was for me).
+
+> +int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
+> +                             unsigned int pll0_div)
+
+I'll add a "u32 mode" parameter here, and pass it from
+r8a774[35]_cpg_mssr_init().
+
+> +{
+> +       cpg_pll_config = config;
+> +       cpg_pll0_div = pll0_div;
+
+cpg_mode = mode;
+
+No need to resend, fixing it up myself.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
