@@ -1,49 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49649 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755902AbcKKIU1 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:34289 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933658AbcKJPkA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 03:20:27 -0500
-Date: Fri, 11 Nov 2016 09:20:21 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Thu, 10 Nov 2016 10:40:00 -0500
+Date: Thu, 10 Nov 2016 16:39:44 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
+        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 Subject: Re: [PATCH v4 00/14] ARM: dts: r8a779x: use demuxer for I2C
-Message-ID: <20161111082020.GA7252@verge.net.au>
+Message-ID: <20161110153944.GA1585@katana>
 References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
  <20161109084406.GA22213@verge.net.au>
- <20161109085954.GA1807@katana>
- <20161109143508.GA19184@verge.net.au>
- <CAMuHMdU_eLmb2ET0KvUyQEfeeUK7Vy3mk6+=FSvczBhy8snvNA@mail.gmail.com>
+ <20161110153016.GJ26304@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdU_eLmb2ET0KvUyQEfeeUK7Vy3mk6+=FSvczBhy8snvNA@mail.gmail.com>
+In-Reply-To: <20161110153016.GJ26304@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 09, 2016 at 08:00:01PM +0100, Geert Uytterhoeven wrote:
-> On Wed, Nov 9, 2016 at 3:35 PM, Simon Horman <horms@verge.net.au> wrote:
-> >> Will you get access to these boards in the foreseeable future?
-> >
-> > As mentioned by Geert, there is a porter in Magnus's board farm.
-> > Unforunately I have never had much luck in getting it to boot.
-> 
-> >From the point of view of the kernel, there's not much difference between
-> Koelsch/Lager and Porter. The U-Boot is newer than the one on Lager,
-> though, so no need for the "dtb" keyword in the bootz command.
-> 
-> I use:
-> 
->     setenv ethaddr 2e:01:02:03:04:05
->     tftp 41000000 porter/zImage
->     tftp 40f00000 porter/r8a7791-porter.dtb
->     bootz 41000000 - 40f00000
-> 
-> Perhaps you didn't have the MAC address set?
 
-I think the load addresses I was using may have been the problem.
-In any case I seem to have things working now.
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Niklas, all,
+
+> Yes, this is a bug in the rcar-vin driver which is addressed in the Gen3=
+=20
+> patches. However I'm not sure those patches will make it to v4.10, not=20
+> much review from the V4L2 side yet (Geert and Sergei have had a few=20
+> comments so there will at lest be one more iteration).
+>=20
+> If this is a big blocker I can try and break out the fix from the Gen3=20
+> patch series, but I fear even that series would be quiet large since a=20
+> rework on the whole logic is needed to fix this (maybe a workaround can=
+=20
+> be figure out to fix this until Gen3 patches are accepted). Let me know=
+=20
+> what you think.
+
+Thanks for your investigation and heads up!
+
+I think we should do the following:
+
+* upstream the patches with no issues for v4.10 (Simon started this already)
+* rebase the demux branch on top of the one you mentioned with the vin fixes
+  and retest
+* if all works in renesas-drivers, then just wait until vin patches are
+  upstream and then we upstream the hdmi-demux-patches
+
+And orthogonal to that:
+
+* keep discussing what to do with DFVS (postponed to next week for me
+  because of other duties)
+
+Sounds good?
+
+   Wolfram
+
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYJJTAAAoJEBQN5MwUoCm2WyIP/RlX+zfJRkkqWDgk79kZQ5uq
+hB5uFyIVXree3HQ0NVkJAXH9Q+nvLUXB0OIa8AHiBp7LYXimhImq4iLCFAHx9k6G
+lYGNYhu8Z2Tj3l701WfpLulBriHQl/vWmZzbH7AA+CU+Wo2UfINWlE76Qcs8E0JB
+YwLRFyWGNpzLWgvrkbbp0CocjK+mFtA4vjd/uRmUkHUPKv+Ga21FnlLm8cQRfYlW
+StRnGRRJQCzXoDW4OwBuMbvhbHukqcFB0Y0ITAF/CIUeIcOVPocor0550/TnVFL8
+VwBBwDi5WACMISA92Nf0Pqt/6Xv/XYQ4hqGG4HcI0yWyq8PhVeVNuN9oSkvjP+i7
+3m+tMSR1vl+qBTcjyew7E4/RKvFtxnLaHuIEitrlWs9m/mCjhjUuF3GyywBS3WI5
+CJDdMXMwtm92uClKz/UKLvBjxbBlJZi6kCbST7uLdYL3a8EVLo782LZmcitcTTiT
+cIbH6KZUaAc33uFIFPB4cg8MxVFrs/7Xaj+kcYdFbJ2jiGewovv7woMzVB60F1oF
+aUq4P8z83ghmmlezrY7XO3XN1bsbANFBWNliz58wPC6pguOZJOhkWCqqP0MZ6yOR
+sqc1S4aup5iZY37XU4WX249Ol8+HA17wG3erw46podsLy8Te/ZXpuXpsr3fev0Ig
+splH6VQ7OgyQCWqf+TuC
+=mMGv
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
