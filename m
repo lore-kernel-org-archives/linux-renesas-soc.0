@@ -1,78 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49502 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753565AbcKBN3p (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:29:45 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 22/32] media: rcar-vin: add chsel information to rvin_info
-Date: Wed,  2 Nov 2016 14:23:19 +0100
-Message-Id: <20161102132329.436-23-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161102132329.436-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Thu, 10 Nov 2016 21:12:42 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 14/14] i2c: mux: demux-pinctrl: make drivers with no
+ pinctrl work again
+Message-ID: <20161110201242.GD1585@katana>
+References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+ <20161106202032.5227-15-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="veXX9dWIonWZEC6h"
+Content-Disposition: inline
+In-Reply-To: <20161106202032.5227-15-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each Gen3 SoC have a limited set of predefined routing possibilities for
-which CSI2 device and virtual channel can be routed to which VIN
-instance.  Prepare to store this information in the struct rvin_info.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-vin.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+--veXX9dWIonWZEC6h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 90c28a7..cd7d959 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -35,6 +35,9 @@
- /* Max number on VIN instances that can be in a system */
- #define RCAR_VIN_NUM 8
- 
-+/* Max number of CHSEL values for any Gen3 SoC */
-+#define RCAR_CHSEL_MAX 6
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -111,6 +114,16 @@ struct rvin_graph_entity {
- 
- struct rvin_group;
- 
-+
-+/** struct rvin_group_chsel - Map a CSI2 device and channel for a CHSEL value
-+ * @csi:		VIN internal number for CSI2 device
-+ * @chan:		CSI2 VC number on remote
-+ */
-+struct rvin_group_chsel {
-+	enum rvin_csi_id csi;
-+	int chan;
-+};
-+
- /**
-  * struct rvin_info- Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -123,6 +136,9 @@ struct rvin_info {
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
-+
-+	unsigned int num_chsels;
-+	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
- };
- 
- /**
--- 
-2.10.2
+On Sun, Nov 06, 2016 at 09:20:32PM +0100, Wolfram Sang wrote:
+> Some drivers like i2c-gpio do not have dedicated pinctrl states. They
+> broke when error checking for pinctrl was added. Detect them now, and in
+> their case, simply skip over pinctrl configuration.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-current with Geert's typo fix, thanks!
+
+
+--veXX9dWIonWZEC6h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYJNS6AAoJEBQN5MwUoCm2qHUP/1D4MO6UdqoA5ezd0dA+Vuoi
+4z6FiY+CjkT3OzSdG6yv1lccGQOw5sF86uJV7fbaQTwVbH/qvOdOxkHS8framXiI
+37AFDoF5jEHccLaSeaKgjAvmIk49rsN5LEFb9UyzXmsvNH9QplUBMOtObBBUyp65
+1quL4yEkdclv4H60xr9qIjLnw5ojmS1WxJSd8RV3RFAdwt3WCMHAIoyfkE8Qtl3v
+b3ELLJ7W9cR62dXHjWoQyJIhJsFuJrADYk0YgC3m2gXiNRgezUwB78qM4wkPz42d
+gMJ4YWALTZ1jkkjBW7nBPATV+ohv4hL82nmZx3wBaISVFarbckUBWsMPZ4i49bnk
+ifbK9kK7H7Xjdx6q6gItgGqLLeGgKPrukLYEX3zVDS3NUcfTyt2KM6ZbiW1S0RsF
+qEdb1O3KC90PI4g9TYF+p/Pd2IuLIMuSAeESz8hgtR786g1DQYPE8DH7A3FZgEju
+m0tzkJd9ohzsIiEzYsdjyjnJ3r94U2rK9LHNNVEIZWmY0YqeCxfDf8bvh75TW6GJ
+6EvBrhXiciYC/+K7g/dS+v4Cr1x2HJMdg2o70eK6xAB/MupeFPz3GcoPu92Zw3pp
+UtjLutLrK8DYsJ+iseCgtaRmRQPDbcU4ljs+64r/GhCd2UpFvv3kucHri9qay9t5
+OVVE0k9tkoFaqWhAeq26
+=iA5Y
+-----END PGP SIGNATURE-----
+
+--veXX9dWIonWZEC6h--
