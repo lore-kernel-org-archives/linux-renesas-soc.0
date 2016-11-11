@@ -1,46 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:38776 "EHLO
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:58525 "EHLO
         smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965402AbcKLQLd (ORCPT
+        with ESMTP id S933880AbcKKUb0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 11:11:33 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
+        Fri, 11 Nov 2016 15:31:26 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 0/2] pinctrl: sh-pfc: r8a7796: Add drive strength and bias support
-Date: Sat, 12 Nov 2016 17:10:00 +0100
-Message-Id: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 1/6] pinctrl: sh-pfc: Do not unconditionally support PIN_CONFIG_BIAS_DISABLE
+Date: Fri, 11 Nov 2016 21:30:16 +0100
+Message-Id: <20161111203021.3384-2-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
+References: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-These patches add drive strength and bias support for both GPIO and none
-GPIO pins to r8a7796. Similar to the none GPIO pins for r8a7795 the
-system to derive unique pin numbers are the R-Car M3SiP pin layout.
+Always stating PIN_CONFIG_BIAS_DISABLE is supported gives untrue output
+when examining /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins if
+the operation get_bias() is implemented but the pin is not handled by
+the get_bias() implementation. In that case the output will state that
+"input bias disabled" indicating that this pin has bias control
+support.
 
-Tested on M3-W and the series depends on the series '[PATCHv3 0/6]
-pinctrl: sh-pfc: Fixups for bias handling and preparation for none GPIO
-pins'.
+Make support for PIN_CONFIG_BIAS_DISABLE depend on that the pin either
+supports SH_PFC_PIN_CFG_PULL_UP or SH_PFC_PIN_CFG_PULL_DOWN. This also
+solves the issue where SoC specific implementations print error messages
+if their particular implementation of {set,get}_bias() is called with a
+pin it dose not know about.
 
-Changes since v1
-- Update use of bias information helper function to match changes to the series 
-  which this patch depend on.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pinctrl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Niklas Söderlund (2):
-  pinctrl: sh-pfc: r8a7796: Add drive strength support
-  pinctrl: sh-pfc: r8a7796: Add bias pinconf support
-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 638 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 626 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index c577258..fcacfa7 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -570,7 +570,8 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
+ 
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		return true;
++		return pin->configs &
++			(SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN);
+ 
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+ 		return pin->configs & SH_PFC_PIN_CFG_PULL_UP;
 -- 
 2.10.2
