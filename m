@@ -1,77 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36431 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753561AbcKBPrT (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:58747 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935596AbcKKUeD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 11:47:19 -0400
+        Fri, 11 Nov 2016 15:34:03 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 3/3] pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
+Date: Fri, 11 Nov 2016 21:33:41 +0100
+Message-Id: <20161111203341.3636-4-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
+References: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <5012234.NZmvoVqhq0@wasted.cogentembedded.com>
-References: <13079532.zQoaX56ouR@wasted.cogentembedded.com> <5012234.NZmvoVqhq0@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 16:47:17 +0100
-Message-ID: <CAMuHMdUD_U5YqOnWv3Oo8P_Oxbh=qMP9wAtJmEgt-2eW4y3XqQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A7745 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-On Thu, Oct 27, 2016 at 10:43 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add RZ/G1E (R8A7745) Clock  Pulse Generator / Module Standby and Software
-> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-> (and RZ/G) code.
->
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Group the QSPI0 and QSPI1 pins into similar groups found in other sh-pfc
+drivers. The pins can not be muxed between functions other then QSPI
+but there drive strength can be controlled.
 
-Thanks a lot for your patch!
-
-> --- /dev/null
-> +++ linux/drivers/clk/renesas/r8a7745-cpg-mssr.c
-> @@ -0,0 +1,261 @@
-
-> +static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
-
-> +       /* Core Clock Outputs */
-
-> +       DEF_FIXED("z2",     R8A7745_CLK_Z2,    CLK_PLL0,          1, 1),
-
-If you remove the "div = 3" in rcar-gen2-cpg.c, you can use "... 3, 1" here,
-cfr. zg, zx, and zs below.
-
-> +       DEF_FIXED("zg",     R8A7745_CLK_ZG,    CLK_PLL1,          6, 1),
-> +       DEF_FIXED("zx",     R8A7745_CLK_ZX,    CLK_PLL1,          3, 1),
-> +       DEF_FIXED("zs",     R8A7745_CLK_ZS,    CLK_PLL1,          6, 1),
-
-> +static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
-
-> +       DEF_MOD("fdp1-1",         118,  R8A7745_CLK_ZS),
-
-FDP1-1 does not exist on RZ/G1E.
-
-With these fixed:
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 69 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index bb16ff8..52eb595 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -3719,6 +3719,55 @@ static const unsigned int usb2_mux[] = {
+ 	USB2_PWEN_MARK, USB2_OVC_MARK,
+ };
+ 
++/* - QSPI0 ------------------------------------------------------------------ */
++static const unsigned int qspi0_ctrl_pins[] = {
++	/* QSPI0_SPCLK, QSPI0_SSL */
++	PIN_NUMBER('W', 3), PIN_NUMBER('Y', 3),
++};
++static const unsigned int qspi0_ctrl_mux[] = {
++	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
++};
++static const unsigned int qspi0_data2_pins[] = {
++	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
++	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
++};
++static const unsigned int qspi0_data2_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++};
++static const unsigned int qspi0_data4_pins[] = {
++	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1, QSPI0_IO2, QSPI0_IO3 */
++	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
++	PIN_NUMBER('Y', 6), PIN_A_NUMBER('B', 6),
++};
++static const unsigned int qspi0_data4_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++	QSPI0_IO2_MARK, QSPI0_IO3_MARK,
++};
++/* - QSPI1 ------------------------------------------------------------------ */
++static const unsigned int qspi1_ctrl_pins[] = {
++	/* QSPI1_SPCLK, QSPI1_SSL */
++	PIN_NUMBER('V', 3), PIN_NUMBER('V', 5),
++};
++static const unsigned int qspi1_ctrl_mux[] = {
++	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
++};
++static const unsigned int qspi1_data2_pins[] = {
++	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
++	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
++};
++static const unsigned int qspi1_data2_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++};
++static const unsigned int qspi1_data4_pins[] = {
++	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1, QSPI1_IO2, QSPI1_IO3 */
++	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
++	PIN_A_NUMBER('E', 4), PIN_A_NUMBER('C', 3),
++};
++static const unsigned int qspi1_data4_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(audio_clk_a_a),
+ 	SH_PFC_PIN_GROUP(audio_clk_a_b),
+@@ -4019,6 +4068,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(usb0),
+ 	SH_PFC_PIN_GROUP(usb1),
+ 	SH_PFC_PIN_GROUP(usb2),
++	SH_PFC_PIN_GROUP(qspi0_ctrl),
++	SH_PFC_PIN_GROUP(qspi0_data2),
++	SH_PFC_PIN_GROUP(qspi0_data4),
++	SH_PFC_PIN_GROUP(qspi1_ctrl),
++	SH_PFC_PIN_GROUP(qspi1_data2),
++	SH_PFC_PIN_GROUP(qspi1_data4),
+ };
+ 
+ static const char * const audio_clk_groups[] = {
+@@ -4464,6 +4519,18 @@ static const char * const usb2_groups[] = {
+ 	"usb2",
+ };
+ 
++static const char * const qspi0_groups[] = {
++	"qspi0_ctrl",
++	"qspi0_data2",
++	"qspi0_data4",
++};
++
++static const char * const qspi1_groups[] = {
++	"qspi1_ctrl",
++	"qspi1_data2",
++	"qspi1_data4",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+@@ -4513,6 +4580,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(usb0),
+ 	SH_PFC_FUNCTION(usb1),
+ 	SH_PFC_FUNCTION(usb2),
++	SH_PFC_FUNCTION(qspi0),
++	SH_PFC_FUNCTION(qspi1),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-- 
+2.10.2
