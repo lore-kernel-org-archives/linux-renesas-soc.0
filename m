@@ -1,71 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:33168 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932283AbcK1OSe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49159 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934054AbcKKHUj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Nov 2016 09:18:34 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Josh Cartwright <josh.cartwright@ni.com>,
-        Nathan Sullivan <nathan.sullivan@ni.com>,
-        Zach Brown <zach.brown@ni.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] net: phy: Fix use after free in phy_detach()
-Date: Mon, 28 Nov 2016 15:18:31 +0100
-Message-Id: <1480342711-26407-1-git-send-email-geert+renesas@glider.be>
+        Fri, 11 Nov 2016 02:20:39 -0500
+Date: Fri, 11 Nov 2016 08:20:23 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v8 0/6] UHS-I SDR-104 support for sh_mobile_sdhi
+Message-ID: <20161111072019.GA18845@verge.net.au>
+References: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
+ <20161110114549.GC1436@katana>
+ <CAPDyKFq-tZheBD_dqkKDeKy11r1UZGt2_NRpFYCqw0SsC-hBJw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFq-tZheBD_dqkKDeKy11r1UZGt2_NRpFYCqw0SsC-hBJw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If device_release_driver(&phydev->mdio.dev) is called, it releases all
-resources belonging to the PHY device. Hence the subsequent call to
-phy_led_triggers_unregister() will access already freed memory when
-unregistering the LEDs.
+On Thu, Nov 10, 2016 at 11:21:08PM +0100, Ulf Hansson wrote:
+> On 10 November 2016 at 12:45, Wolfram Sang <wsa@the-dreams.de> wrote:
+> > On Thu, Nov 03, 2016 at 03:15:58PM +0100, Simon Horman wrote:
+> >> Hi,
+> >>
+> >> this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
+> >> sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
+> >> Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
+> >> SDR-50 support to the same driver.
+> >>
+> >> It is based on the next branch of the mmc tree.
+> >>
+> >> To aid review the following git branch is provided:
+> >> * https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-driver-v8
+> >>
+> >> Overview of changes since v7:
+> >> * Correct inverted logic in sh_mobile_sdhi_hw_reset
+> >> * Correct value of SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN
+> >>
+> >> Please see http://elinux.org/Tests:SD-SDHI-SDR104 for indicative tests
+> >> results.
+> >
+> > Successfully tested on a Lager Board with a SanDisk card and a Samsung
+> > card which used to cause issues before.
+> >
+> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> > Ulf, I think this series is ready to go for v4.10. All issues we know of
+> > are related to pinmuxing and will be solved elsewhere. We currently have
+> > hacks for that so it is quite clear the issues are not caused by this
+> > series.
+> >
+> 
+> Thanks, applied for next!
+> 
+> I did have to fix conflict and also to resolve some checkpatch
+> warnings - but no worries this time!
 
-Move the call to phy_led_triggers_unregister() before the possible call
-to device_release_driver() to fix this.
-
-Fixes: 2e0bc452f4721520 ("net: phy: leds: add support for led triggers on phy link state change")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is v2 of "[RFC] net: phy: Fix double free in phy_detach()".
-
-v2:
-  - Dropped RFC,
-  - Reworded, as commit a7dac9f9c1695d74 ("phy: fix error case of
-    phy_led_triggers_(un)register") fixed the double free, and thus the
-    warning I was seeing during "poweroff" on sh73a0/kzm9g,
-  - Verified use after free using CONFIG_DEBUG_DEVRES, log_devres = 1,
-    and additional debug code printing the address of
-    phy->phy_led_triggers. Adding poisoning of freed memory to
-    devres_log() will cause a crash.
----
- drivers/net/phy/phy_device.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index ba86c191a13ea81c..a1d6e13b1b4113a4 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -981,6 +981,8 @@ void phy_detach(struct phy_device *phydev)
- 	phydev->attached_dev = NULL;
- 	phy_suspend(phydev);
- 
-+	phy_led_triggers_unregister(phydev);
-+
- 	/* If the device had no specific driver before (i.e. - it
- 	 * was using the generic driver), we unbind the device
- 	 * from the generic driver so that there's a chance a
-@@ -994,8 +996,6 @@ void phy_detach(struct phy_device *phydev)
- 		}
- 	}
- 
--	phy_led_triggers_unregister(phydev);
--
- 	/*
- 	 * The phydev might go away on the put_device() below, so avoid
- 	 * a use-after-free bug by reading the underlying bus first.
--- 
-1.9.1
+Thanks, sorry for letting those slip through.
