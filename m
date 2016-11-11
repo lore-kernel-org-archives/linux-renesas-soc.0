@@ -1,110 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:63392 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751847AbcKBNJj (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55336 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932614AbcKKBCX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 09:09:39 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "crope@iki.fi" <crope@iki.fi>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC 5/5] doc_rst: media: New SDR formats SC16, SC18 & SC20
-Date: Wed, 2 Nov 2016 09:00:00 +0000
-Message-ID: <SG2PR06MB10389152CEC59BB77A5DA7DDC3A00@SG2PR06MB1038.apcprd06.prod.outlook.com>
-References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1476281429-27603-6-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <2893157.XL3Txm4q5I@avalon>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 10 Nov 2016 20:02:23 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        robin.murphy@arm.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH v6 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+Date: Fri, 11 Nov 2016 03:02:26 +0200
+Message-ID: <4121631.0oUPCTEmnf@avalon>
+In-Reply-To: <20161019233613.10506.60821.sendpatchset@little-apple>
+References: <20161019233533.10506.16810.sendpatchset@little-apple> <20161019233613.10506.60821.sendpatchset@little-apple>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Magnus,
 
-Any further thoughts on the SDR format please (especially the comment below=
-). I would appreciate your feedback.
+Thank you for the patch.
 
-> > On Wednesday 12 Oct 2016 15:10:29 Ramesh Shanmugasundaram wrote:
-> > > This patch adds documentation for the three new SDR formats
-> > >
-> > > V4L2_SDR_FMT_SCU16BE
-> > > V4L2_SDR_FMT_SCU18BE
-> > > V4L2_SDR_FMT_SCU20BE
-[snip]
-> > > +
-> > > +       -  start + 0:
-> > > +
-> > > +       -  I'\ :sub:`0[D13:D6]`
-> > > +
-> > > +       -  I'\ :sub:`0[D5:D0]`
-> > > +
-> > > +    -  .. row 2
-> > > +
-> > > +       -  start + buffer_size/2:
-> > > +
-> > > +       -  Q'\ :sub:`0[D13:D6]`
-> > > +
-> > > +       -  Q'\ :sub:`0[D5:D0]`
-> >
-> > The format looks planar, does it use one V4L2 plane (as does NV12) or
-> > two
-> > V4L2 planes (as does NV12M) ? Same question for the other formats.
->=20
-> Thank you for bringing up this topic. This is one of the key design
-> dilemma.
->=20
-> The I & Q data for these three SDR formats comes from two different DMA
-> channels and hence two separate pointers -> we could say it is v4l2 multi=
--
-> planar. Right now, I am making it look like a single plane by presenting
-> the data in one single buffer ptr.
->=20
-> For e.g. multi-planar SC16 format would look something like this
->=20
-> <------------------------32bits---------------------->
-> <--I(14 bit data) + 2bit status--16bit padded zeros--> : start0 + 0
-> <--I(14 bit data) + 2bit status--16bit padded zeros--> : start0 + 4 ...
-> <--Q(14 bit data) + 2bit status--16bit padded zeros--> : start1 + 0
-> <--Q(14 bit data) + 2bit status--16bit padded zeros--> : start1 + 4
->=20
-> My concerns are
->=20
-> 1) These formats are not a standard as the video "Image Formats". These
-> formats are possible when we use DRIF + MAX2175 combination. If we
-> interface with a different tuner vendor, the above format(s) MAY/MAY NOT
-> be re-usable. We do not know at this point. This is the main open item fo=
-r
-> discussion in the cover letter.
->=20
-> 2) MPLANE support within V4L2 seems specific to video. Please correct me
-> if this is wrong interpretation.
-> 	- struct v4l2_format contains v4l2_sdr_format and
-> v4l2_pix_format_mplane as members of union. Should I create a new
-> v4l2_sdr_format_mplane? If I have to use v4l2_pix_format_mplane most of
-> the video specific members would be unused (it would be similar to using
-> v4l2_pix_format itself instead of v4l2_sdr_format)?
->=20
-> 	- The above decision (accomodate SDR & MPLANE) needs to be
-> propagated across the framework. Is this the preferred approach?
->=20
-> It goes back to point (1). As of today, the change set for this combo
-> (DRIF+MAX2175) introduces new SDR formats only. Should it add further
-> SDR+MPLANE support to the framework as well?
->=20
-> I would appreciate your suggestions on this regard.
->=20
+On Thursday 20 Oct 2016 08:36:13 Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Break out the domain allocation code into a separate function.
+> This is preparation for future code sharing.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Reviewed-by: Joerg Roedel <jroedel@suse.de>
 
-Thanks,
-Ramesh
+This looks good to me,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+(assuming my review of the next patches in the series won't make me conclude 
+that this patch isn't needed :-))
+
+> ---
+> 
+>  Changes since V5:
+>  - None
+> 
+>  Changes since V4:
+>  - None
+> 
+>  Changes since V3:
+>  - None
+> 
+>  Changes since V2:
+>  - Included this new patch as-is from the following series:
+>    [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+> 
+>  drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> --- 0008/drivers/iommu/ipmmu-vmsa.c
+> +++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:56:59.220607110 +0900
+> @@ -507,13 +507,10 @@ static irqreturn_t ipmmu_irq(int irq, vo
+>   * IOMMU Operations
+>   */
+> 
+> -static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+> +static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
+>  {
+>  	struct ipmmu_vmsa_domain *domain;
+> 
+> -	if (type != IOMMU_DOMAIN_UNMANAGED)
+> -		return NULL;
+> -
+>  	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+>  	if (!domain)
+>  		return NULL;
+> @@ -523,6 +520,14 @@ static struct iommu_domain *ipmmu_domain
+>  	return &domain->io_domain;
+>  }
+> 
+> +static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+> +{
+> +	if (type != IOMMU_DOMAIN_UNMANAGED)
+> +		return NULL;
+> +
+> +	return __ipmmu_domain_alloc(type);
+> +}
+> +
+>  static void ipmmu_domain_free(struct iommu_domain *io_domain)
+>  {
+>  	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+
+-- 
+Regards,
+
+Laurent Pinchart
