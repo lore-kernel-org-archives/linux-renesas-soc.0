@@ -1,28 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46118 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752603AbcKMO3Y (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:58562 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936445AbcKKUb3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Nov 2016 09:29:24 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/2] mmc: tmio: minor SDIO updates
-Date: Sun, 13 Nov 2016 15:29:10 +0100
-Message-Id: <20161113142912.4041-1-wsa+renesas@sang-engineering.com>
+        Fri, 11 Nov 2016 15:31:29 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 6/6] pinctrl: sh-pfc: Support named pins with custom configuration
+Date: Fri, 11 Nov 2016 21:30:21 +0100
+Message-Id: <20161111203021.3384-7-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
+References: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Here are two small fixes I found while evaluating SDIO with UHS.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Wolfram Sang (2):
-  mmc: tmio: fix wrong bitmask for SDIO irqs
-  mmc: tmio: remove SDIO from TODO list
+Pins not associated with a GPIO port can still have other configuration
+parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for named
+pins to be declared with a set of configurations. The new macro is an
+modification of SH_PFC_PIN_NAMED to allow for optional configuration to
+be assigned.
 
- drivers/mmc/host/tmio_mmc_pio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only be
+used to define pins not associated with a GPIO port.
 
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index fc82b6d..0be04f8 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -546,6 +546,14 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 		.configs = SH_PFC_PIN_CFG_NO_GPIO,			\
+ 	}
+ 
++/* SH_PFC_PIN_NAMED_CFG - Expand to a sh_pfc_pin entry with the given name */
++#define SH_PFC_PIN_NAMED_CFG(row, col, _name, cfgs)			\
++	{								\
++		.pin = PIN_NUMBER(row, col),				\
++		.name = __stringify(PIN_##_name),			\
++		.configs = SH_PFC_PIN_CFG_NO_GPIO | cfgs,		\
++	}
++
+ /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_FN0,
+  *		     PORT_name_OUT, PORT_name_IN marks
+  */
 -- 
-2.9.3
+2.10.2
