@@ -1,37 +1,100 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran.bingham+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/4] vsp1 partition algorithm improvements
-Date: Fri,  4 Nov 2016 18:19:26 +0000
-Message-Id: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:58733 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935582AbcKKUeD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 11 Nov 2016 15:34:03 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 2/3] pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
+Date: Fri, 11 Nov 2016 21:33:40 +0100
+Message-Id: <20161111203341.3636-3-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
+References: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some updates and initial improvements for the VSP1 partition algorithm that
-remove redundant processing and variables, reducing the processing done in
-interrupt context slightly.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Patch 1 brings in some protection against invalid pipeline configurations that
-are not supported by the partition algorithm on Gen3 hardware.
+Group the AVB pins into similar groups found in other sh-pfc drivers.
+The pins can not be muxed between functions other then AVB but their
+drive strength can be controlled.
 
-Patches 2,3 and 4 clean up the calculation of the partition sizes such that they
-are only calculated once at streamon - and the partition windows are stored in
-the vsp1_pipeline object.
+The group avb_mdc containing ADV_MDC and ADV_MDIO are on other SoCs
+called avb_mdio. In pfc-r8a7795 the avb_mdc group already existed and
+is in use in DT. Therefore add the ADV_MDIO pin to the existing group
+instead of renaming it.
 
-Kieran Bingham (4):
-  v4l: vsp1: Implement partition algorithm restrictions
-  v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
-  v4l: vsp1: Calculate partition sizes at stream start.
-  v4l: vsp1: Remove redundant context variables
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
- drivers/media/platform/vsp1/vsp1_pipe.h  |  10 ++-
- drivers/media/platform/vsp1/vsp1_sru.c   |   7 +-
- drivers/media/platform/vsp1/vsp1_sru.h   |   1 +
- drivers/media/platform/vsp1/vsp1_video.c | 124 +++++++++++++++++++------------
- 4 files changed, 89 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 744292b..bb16ff8 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1647,11 +1647,33 @@ static const unsigned int avb_phy_int_mux[] = {
+ 	AVB_PHY_INT_MARK,
+ };
+ static const unsigned int avb_mdc_pins[] = {
+-	/* AVB_MDC */
+-	RCAR_GP_PIN(2, 9),
++	/* AVB_MDC, AVB_MDIO */
++	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
+ };
+ static const unsigned int avb_mdc_mux[] = {
+-	AVB_MDC_MARK,
++	AVB_MDC_MARK, AVB_MDIO_MARK,
++};
++static const unsigned int avb_mii_pins[] = {
++	/*
++	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
++	 * AVB_TD1, AVB_TD2, AVB_TD3,
++	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
++	 * AVB_RD1, AVB_RD2, AVB_RD3,
++	 * AVB_TXCREFCLK
++	 */
++	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
++	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
++	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
++	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
++	PIN_NUMBER('A', 12),
++
++};
++static const unsigned int avb_mii_mux[] = {
++	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
++	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
++	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
++	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
++	AVB_TXCREFCLK_MARK,
+ };
+ static const unsigned int avb_avtp_pps_pins[] = {
+ 	/* AVB_AVTP_PPS */
+@@ -3719,6 +3741,7 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_magic),
+ 	SH_PFC_PIN_GROUP(avb_phy_int),
+ 	SH_PFC_PIN_GROUP(avb_mdc),
++	SH_PFC_PIN_GROUP(avb_mii),
+ 	SH_PFC_PIN_GROUP(avb_avtp_pps),
+ 	SH_PFC_PIN_GROUP(avb_avtp_match_a),
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+@@ -4023,6 +4046,7 @@ static const char * const avb_groups[] = {
+ 	"avb_magic",
+ 	"avb_phy_int",
+ 	"avb_mdc",
++	"avb_mii",
+ 	"avb_avtp_pps",
+ 	"avb_avtp_match_a",
+ 	"avb_avtp_capture_a",
 -- 
-2.7.4
+2.10.2
