@@ -1,66 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33380 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965210AbcKLNNj (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:40743 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751308AbcKKRsj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:39 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 01/32] media: entity: Add has_route entity operation
-Date: Sat, 12 Nov 2016 14:11:45 +0100
-Message-Id: <20161112131216.22635-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 11 Nov 2016 12:48:39 -0500
+Subject: Re: [PATCH 01/10] drm: bridge/dw_hdmi: add dw hdmi i2c bus adapter
+ support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <laurent.pinchart@ideasonboard.com>,
+        <dri-devel@lists.freedesktop.org>
+References: <1478884066-1090-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1478884066-1090-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+CC: <kuninori.morimoto.gx@renesas.com>, <geert@linux-m68k.org>,
+        <airlied@linux.ie>, <koji.matsuoka.xm@renesas.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <e8c30b91-2ed5-2c53-89d1-de6b46812036@mentor.com>
+Date: Fri, 11 Nov 2016 19:48:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1478884066-1090-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi Ulrich,
 
-The optional operation can be used by entities to report whether two
-pads are internally connected.
+On 11/11/2016 07:07 PM, Ulrich Hecht wrote:
+> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>
+> The change adds support of internal HDMI I2C master controller, this
+> subdevice is used by default, if "ddc-i2c-bus" DT property is omitted.
+>
+> The main purpose of this functionality is to support reading EDID from
+> an HDMI monitor on boards, which don't have an I2C bus connected to
+> DDC pins.
+>
+> The current implementation does not support "I2C Master Interface
+> Extended Read Mode" to read data addressed by non-zero segment
+> pointer, this means that if EDID has more than 1 extension blocks,
+> EDID reading operation won't succeed, in my practice all tested HDMI
+> monitors have at maximum one extension block.
+>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- include/media/media-entity.h | 5 +++++
- 1 file changed, 5 insertions(+)
+many thanks to Philipp for pushing the change, as for today, it is in drm-next:
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index b2203ee..8f9fc85 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -181,6 +181,9 @@ struct media_pad {
-  * @link_validate:	Return whether a link is valid from the entity point of
-  *			view. The media_entity_pipeline_start() function
-  *			validates all links by calling this operation. Optional.
-+ * @has_route:		Return whether a route exists inside the entity between
-+ *			two given pads. Optional. If the operation isn't
-+ *			implemented all pads will be considered as connected.
-  *
-  * .. note::
-  *
-@@ -192,6 +195,8 @@ struct media_entity_operations {
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
- 	int (*link_validate)(struct media_link *link);
-+	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
-+			  unsigned int pad1);
- };
- 
- /**
--- 
-2.10.2
+   https://cgit.freedesktop.org/~airlied/linux/commit/?h=drm-next&id=90233ee5d1
+
+--
+With best wishes,
+Vladimir
