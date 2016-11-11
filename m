@@ -6,10 +6,10 @@ References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesa
  <9ec35a3a-02a7-8067-8f7c-23243de8456a@iki.fi>
  <SG2PR06MB103893781A3AC3FAB8389DB8C3A20@SG2PR06MB1038.apcprd06.prod.outlook.com>
  <1805711.Tm0TqcXx1h@avalon>
-Cc: Antti Palosaari <crope@iki.fi>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "mchehab@kernel.org" <mchehab@kernel.org>,
+        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
         "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         "geert@linux-m68k.org" <geert@linux-m68k.org>,
@@ -17,19 +17,21 @@ Cc: Antti Palosaari <crope@iki.fi>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <8438b944-216e-3237-c312-92a674fd4541@xs4all.nl>
-Date: Fri, 11 Nov 2016 14:53:58 +0100
+From: Antti Palosaari <crope@iki.fi>
+Message-ID: <64f34fa1-b2d3-cabf-41b7-9bad88acc972@iki.fi>
+Date: Fri, 11 Nov 2016 06:54:43 +0200
 MIME-Version: 1.0
 In-Reply-To: <1805711.Tm0TqcXx1h@avalon>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/10/2016 09:08 AM, Laurent Pinchart wrote:
+Hello
+
+On 11/10/2016 10:08 AM, Laurent Pinchart wrote:
 > Antti, Hans, ping ? Please see below.
-> 
+>
 > On Friday 04 Nov 2016 09:23:29 Ramesh Shanmugasundaram wrote:
 >>> On 11/02/2016 10:58 PM, Laurent Pinchart wrote:
 >>>> On Wednesday 02 Nov 2016 09:00:00 Ramesh Shanmugasundaram wrote:
@@ -107,7 +109,7 @@ On 11/10/2016 09:08 AM, Laurent Pinchart wrote:
 >>>
 >>> If I understood correctly this hardware provides I and Q samples via
 >>> different channels and driver now combines those channels as a sequential
->>> IQ sample pairs. 
+>>> IQ sample pairs.
 >>
 >> The driver combines the two buffer ptrs and present as one single buffer.
 >> For a buffer of size 200
@@ -133,12 +135,25 @@ On 11/10/2016 09:08 AM, Laurent Pinchart wrote:
 >> define new SDR_MPLANE? or merge SDR format with pix format & reuse existing
 >> MPLANE with some SDR extensions (if possible)? These seem big design
 >> decisions. Any suggestions please?
->>
+
+struct v4l2_format contains union that has own format definition for 
+video, video mplane and sdr (+many others). Basically on api there is 
+own definitions for each type, so I think possible sdr mplane should be 
+similarly own types and definitions.
+
 >> For my use case, MPLANE support does not seem to add significant benefit
 >> except it may be syntactically correct. I am doing cyclic DMA with a small
 >> set of h/w buffers and copying each stage to one mmapped vmalloc vb2_buffer
 >> at two offsets. If we add MPLANE support, it can be two non-contiguous
->> buffer pointers. 
+>> buffer pointers.
+
+If there is no clear idea about need of mplane then that's also fine for me.
+
+And whole mplane concept is new for me. I have never played with any 
+v4l2 video formats nor mplane video formats.
+
+I would still like to hear what Hans think about adding mplane.
+
 >>
 >>>>>> - The above decision (accomodate SDR & MPLANE) needs to be
 >>>>>> propagated across the framework. Is this the preferred approach?
@@ -148,30 +163,10 @@ On 11/10/2016 09:08 AM, Laurent Pinchart wrote:
 >>>>>> further SDR+MPLANE support to the framework as well?
 >>>>>>
 >>>>>> I would appreciate your suggestions on this regard.
-> 
+>
 
-Some terminology first:
+regards
+Antti
 
-Planar formats separate the data into different memory areas: in this case
-one part is all I and one part is all Q. This as opposed to interleaved
-formats (IQIQIQIQ....).
-
-As long as both planes fit in the same buffer all is fine. Since that is
-the case here there is no need to introduce a new MPLANE API.
-
-The MPLANE API was added for video to handle cases where the two planes
-had to be in two different non-contiguous buffers.
-
-So instead of passing one buffer pointer, you need to pass two or more
-buffer pointers.
-
-In hindsight we should have called it the MBUFFER API.
-
-Oh well...
-
-Anyway, since there is no problem here apparently to keep both planes
-in one buffer there is also no need to introduce a SDR_MPLANE.
-
-Regards,
-
-	Hans
+-- 
+http://palosaari.fi/
