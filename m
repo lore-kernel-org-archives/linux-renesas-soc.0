@@ -1,63 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:52106 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbcKHAgN (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35253 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934392AbcKKRIP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 19:36:13 -0500
-From: Cao Minh Hiep <cm-hiep@jinso.co.jp>
-To: broonie@kernel.org, geert+renesas@glider.be,
-        linux-spi@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
-        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
-Subject: [PATCH v2] spi: rspi: rewrites the name of the function
-Date: Tue,  8 Nov 2016 09:35:46 +0900
-Message-Id: <1478565346-4320-1-git-send-email-cm-hiep@jinso.co.jp>
+        Fri, 11 Nov 2016 12:08:15 -0500
+Received: by mail-wm0-f65.google.com with SMTP id a20so10775725wme.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Nov 2016 09:08:14 -0800 (PST)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org
+Cc: kuninori.morimoto.gx@renesas.com, geert@linux-m68k.org,
+        airlied@linux.ie, koji.matsuoka.xm@renesas.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 08/10] arm64: dts: salvator-x: Add DU pins, HDMI connectors and encoder
+Date: Fri, 11 Nov 2016 18:07:44 +0100
+Message-Id: <1478884066-1090-9-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1478884066-1090-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1478884066-1090-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-This patch rewrites the name of rspi_pio_transfer_in_or_out
-function.
+Based on work by Koji Matsuoka.
 
-Signed-off-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
-
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[geert: Re-add removed extal_clk]
+[geert: Modify existing du node instead of moving it around]
+[geert: Use generic pinctrl properties]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/spi/spi-rspi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 95 ++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index fb12bc5..7d3a825 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -515,7 +515,7 @@ static int rspi_pio_transfer(struct rspi_data *rspi, const u8 *tx, u8 *rx,
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index b1eab68..3c783dd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -178,6 +178,44 @@
+ 			};
+ 		};
+ 	};
++
++	hdmi0-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi0_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_out>;
++			};
++		};
++	};
++
++	hdmi1-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi1_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi1_out>;
++			};
++		};
++	};
++};
++
++&programmable_clk0 {
++	clock-frequency = <148500000>;
++};
++
++&x21_clk {
++	clock-frequency = <33000000>;
++};
++
++&x22_clk {
++	clock-frequency = <33000000>;
++};
++
++&programmable_clk1 {
++	clock-frequency = <108000000>;
+ };
  
--static int rspi_pio_transfer_in_or_our(struct rspi_data *rspi, const u8 *tx, 
-+static int rspi_pio_transfer_in_or_out(struct rspi_data *rspi, const u8 *tx, 
- 				       u8 *rx, unsigned int n)
- {
- 	unsigned int i, len;
-@@ -839,7 +839,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
- 			return ret;
- 	}
+ &du {
+@@ -191,6 +229,58 @@
+ 				remote-endpoint = <&adv7123_in>;
+ 			};
+ 		};
++		port@1 {
++			endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_in>;
++			};
++		};
++		port@2 {
++			endpoint {
++				remote-endpoint = <&rcar_dw_hdmi1_in>;
++			};
++		};
++	};
++};
++
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@0 {
++			reg = <0>;
++			rcar_dw_hdmi0_in: endpoint {
++				remote-endpoint = <&du_out_hdmi0>;
++			};
++		};
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi1 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@0 {
++			reg = <0>;
++			rcar_dw_hdmi1_in: endpoint {
++				remote-endpoint = <&du_out_hdmi1>;
++			};
++		};
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi1_out: endpoint {
++				remote-endpoint = <&hdmi1_con>;
++			};
++		};
+ 	};
+ };
  
--	ret = rspi_pio_transfer_in_or_our(rspi, xfer->tx_buf, NULL, xfer->len);
-+	ret = rspi_pio_transfer_in_or_out(rspi, xfer->tx_buf, NULL, xfer->len);
- 	if (ret < 0)
- 		return ret;
+@@ -269,6 +359,11 @@
+ 		groups = "usb2";
+ 		function = "usb2";
+ 	};
++
++	du_pins: du {
++		groups = "du_rgb888", "du_sync", "du_clk_out_0", "du_disp";
++		function = "du";
++	};
+ };
  
-@@ -857,7 +857,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
- 			return ret;
- 	}
- 
--	return rspi_pio_transfer_in_or_our(rspi, NULL, xfer->rx_buf, xfer->len);
-+	return rspi_pio_transfer_in_or_out(rspi, NULL, xfer->rx_buf, xfer->len);
- }
- 
- static int qspi_transfer_one(struct spi_master *master, struct spi_device *spi,
+ &scif1 {
 -- 
-1.9.1
+2.7.4
