@@ -8,8 +8,8 @@ Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH 3/5] media: Add new SDR formats SC16, SC18 & SC20
-Date: Fri, 11 Nov 2016 15:49:59 +0200
-Message-ID: <1810904.OWEhaB1VI7@avalon>
+Date: Fri, 11 Nov 2016 15:48:53 +0200
+Message-ID: <13090356.639SNvNHiR@avalon>
 In-Reply-To: <502a606c-2d66-4257-af17-7b7f35f2c839@xs4all.nl>
 References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com> <1478706284-59134-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com> <502a606c-2d66-4257-af17-7b7f35f2c839@xs4all.nl>
 MIME-Version: 1.0
@@ -28,9 +28,10 @@ On Friday 11 Nov 2016 14:24:41 Hans Verkuil wrote:
 > 
 > The standard terminology for video formats is "planar". I am leaning towards
 > using that here as well.
+> 
+> Any opinions on this?
 
-Another important question is whether we should introduce an SDR planar API. 
-That's what we would like your opinion on.
+I like that as well, but I'm obviously biased :-)
 
 > > V4L2_SDR_FMT_SCU16BE - 14-bit complex (I & Q) unsigned big-endian sample
 > > inside 16-bit. V4L2 FourCC: SC16
