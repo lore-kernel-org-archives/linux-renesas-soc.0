@@ -1,69 +1,128 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:45756 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752905AbcKNShN (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33424 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965210AbcKLNNl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 13:37:13 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 01/11] ARM: shmobile: Document DT bindings for Product Register
-Date: Mon, 14 Nov 2016 19:37:07 +0100
-Message-Id: <1479148637-5399-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+        Sat, 12 Nov 2016 08:13:41 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 05/32] media: rcar-vin: fix how pads are handled for v4l2 subdeivce operations
+Date: Sat, 12 Nov 2016 14:11:49 +0100
+Message-Id: <20161112131216.22635-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree binding documentation for the Product Register (PRR),
-which provides product and revision information on most Renesas ARM
-SoCs.
+The rcar-vin driver only uses one pad, pad number 0.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
+ All v4l2 operations which did not check that the requested operation
+ was for pad 0 have been updated with a check to enforce this.
+
+ All v4l2 operations that stored (and later restore) the requested pad
+ before substituting it for the subdeivce pad number have been update
+ not store the incoming pad and simply restore it to 0 after the
+ subdevice operation is complete.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v3:
-  - Add Acked-by,
-  - Drop "renesas,cccr", as the CCCR is not a lone register, but part of
-    the HPB/APB block, which will need its own set of bindings,
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-v2:
-  - New.
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index a1e94da0e322c8f4..1be9e8a7e2c43dfc 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -81,3 +81,21 @@ Boards:
-     compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
-   - Wheat
-     compatible = "renesas,wheat", "renesas,r8a7792"
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 7ca2759..610f59e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -550,14 +550,16 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad, ret;
++	int ret;
 +
++	if (timings->pad)
++		return -EINVAL;
+ 
+-	pad = timings->pad;
+ 	timings->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+ 
+-	timings->pad = pad;
++	timings->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -600,14 +602,16 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad, ret;
++	int ret;
 +
-+Most Renesas ARM SoCs have a Product Register that allows to retrieve SoC
-+product and revision information.  If present, a device node for this register
-+should be added.
-+
-+Required properties:
-+  - compatible: Must be "renesas,prr".
-+  - reg: Base address and length of the register block.
-+
-+
-+Examples
-+--------
-+
-+	prr: chipid@ff000044 {
-+		compatible = "renesas,prr";
-+		reg = <0 0xff000044 0 4>;
-+	};
++	if (cap->pad)
++		return -EINVAL;
+ 
+-	pad = cap->pad;
+ 	cap->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+ 
+-	cap->pad = pad;
++	cap->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -616,17 +620,16 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int input, ret;
++	int ret;
+ 
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	input = edid->pad;
+ 	edid->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
+ 
+-	edid->pad = input;
++	edid->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -635,17 +638,16 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int input, ret;
++	int ret;
+ 
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	input = edid->pad;
+ 	edid->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
+ 
+-	edid->pad = input;
++	edid->pad = 0;
+ 
+ 	return ret;
+ }
 -- 
-1.9.1
+2.10.2
