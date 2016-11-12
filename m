@@ -1,62 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:58525 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933880AbcKKUb0 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58107 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965201AbcKLCIF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 15:31:26 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        Fri, 11 Nov 2016 21:08:05 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 1/6] pinctrl: sh-pfc: Do not unconditionally support PIN_CONFIG_BIAS_DISABLE
-Date: Fri, 11 Nov 2016 21:30:16 +0100
-Message-Id: <20161111203021.3384-2-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
-References: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH 3/3] tests: add none adjoined hue areas test for HGT
+Date: Sat, 12 Nov 2016 04:07:18 +0200
+Message-ID: <1942403.EWoM0tXlBh@avalon>
+In-Reply-To: <20161004130915.28812-4-niklas.soderlund@ragnatech.se>
+References: <20161004130915.28812-1-niklas.soderlund@ragnatech.se> <20161004130915.28812-4-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Tuesday 04 Oct 2016 15:09:15 Niklas S=F6derlund wrote:
+> From: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
+> The HGT can be configured in such a way that the 6 user configurable =
+hue
+> areas are not joined next to each other. In such cases a hue value
+> outside of a hue area should be attributed with a weight to both its
+> adjoining hue areas.
+>=20
+> Add a test to verify this works now that gen-image supports generatin=
+g
+> reference frames for none adjoined hue areas.
 
-Always stating PIN_CONFIG_BIAS_DISABLE is supported gives untrue output
-when examining /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins if
-the operation get_bias() is implemented but the pin is not handled by
-the get_bias() implementation. In that case the output will state that
-"input bias disabled" indicating that this pin has bias control
-support.
+s/none/non/
 
-Make support for PIN_CONFIG_BIAS_DISABLE depend on that the pin either
-supports SH_PFC_PIN_CFG_PULL_UP or SH_PFC_PIN_CFG_PULL_DOWN. This also
-solves the issue where SoC specific implementations print error messages
-if their particular implementation of {set,get}_bias() is called with a
-pin it dose not know about.
+I'll fix this when applying.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pinctrl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
 
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index c577258..fcacfa7 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -570,7 +570,8 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
- 
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		return true;
-+		return pin->configs &
-+			(SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN);
- 
- 	case PIN_CONFIG_BIAS_PULL_UP:
- 		return pin->configs & SH_PFC_PIN_CFG_PULL_UP;
--- 
-2.10.2
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  tests/vsp-unit-test-0018.sh | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/tests/vsp-unit-test-0018.sh b/tests/vsp-unit-test-0018.s=
+h
+> index 944f7ac..c0aba4b 100755
+> --- a/tests/vsp-unit-test-0018.sh
+> +++ b/tests/vsp-unit-test-0018.sh
+> @@ -32,6 +32,9 @@ test_main() {
+>  =09test_histogram "0,255,255,255,255,255,255,255,255,255,255,255"
+>  =09test_histogram "0,40,40,80,80,120,120,160,160,200,200,255"
+>  =09test_histogram "220,40,40,80,80,120,120,160,160,200,200,220"
+> +=09test_histogram "0,10,50,60,100,110,150,160,200,210,250,255"
+> +=09test_histogram "10,20,50,60,100,110,150,160,200,210,230,240"
+> +=09test_histogram "240,20,60,80,100,120,140,160,180,200,210,220"
+>  }
+>=20
+>  test_init $0 "$features"
+
+--=20
+Regards,
+
+Laurent Pinchart
