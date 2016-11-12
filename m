@@ -1,58 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:42746 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932923AbcKGTJ7 (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33429 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965865AbcKLNNq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 14:09:59 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: r8a7794: Use SYSC "always-on" PM Domain for sound
-Date: Mon,  7 Nov 2016 20:10:04 +0100
-Message-Id: <1478545804-1330-1-git-send-email-geert+renesas@glider.be>
+        Sat, 12 Nov 2016 08:13:46 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 16/32] media: rcar-vin: change name of video device
+Date: Sat, 12 Nov 2016 14:12:00 +0100
+Message-Id: <20161112131216.22635-17-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up the Audio-DMAC and sound device nodes to the SYSC "always-on" PM
-Domain, for a more consistent device-power-area description in DT.
+The rcar-vin driver needs to be part of a media controller to support
+Gen3. Give each VIN instance a unique name so it can be referenced from
+userspace.
 
-Cfr. commit 0761ff2ad0c581f3 ("ARM: dts: r8a7794: Add SYSC PM Domains").
-
-Fixes: 320d6c5a08a4abd3 ("ARM: dts: r8a7794: add sound support")
-Fixes: 298e4ee3d213a076 ("ARM: dts: r8a7794: add Audio-DMAC support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Due to race condition between audio support and SYSC PM Domains patch
-series.
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 7d9f0601d3ca8def..364b4aa8d1c1aa28 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -319,7 +319,7 @@
- 				  "ch12";
- 		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <13>;
- 	};
-@@ -1485,7 +1485,7 @@
- 			      "mix.0", "mix.1",
- 			      "dvc.0", "dvc.1",
- 			      "clk_a", "clk_b", "clk_c", "clk_i";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 
- 		status = "disabled";
- 
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index f5fbe9f..e99815f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -944,7 +944,8 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->fops = &rvin_fops;
+ 	vdev->v4l2_dev = &vin->v4l2_dev;
+ 	vdev->queue = &vin->queue;
+-	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
++	snprintf(vdev->name, sizeof(vdev->name), "%s.%s", KBUILD_MODNAME,
++		 dev_name(vin->dev));
+ 	vdev->release = video_device_release_empty;
+ 	vdev->ioctl_ops = &rvin_ioctl_ops;
+ 	vdev->lock = &vin->lock;
 -- 
-1.9.1
+2.10.2
