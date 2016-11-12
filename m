@@ -1,111 +1,161 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936243AbcKWUP5 (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33436 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965674AbcKLNNm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:57 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/31] ARM: dts: r8a7745: add SYS-DMAC support
-Date: Wed, 23 Nov 2016 21:14:26 +0100
-Message-Id: <06a80bad04291b6e305ef521550581d62b4656a3.1479931687.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Sat, 12 Nov 2016 08:13:42 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 07/32] media: rcar-vin: add wrapper to get rvin_graph_entity
+Date: Sat, 12 Nov 2016 14:11:51 +0100
+Message-Id: <20161112131216.22635-8-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Update the driver to retrieve the code and mbus_cfg values from a
+rvin_graph_entity retrieved from a wrapper function instead of directly
+accessing the entity for the digital port. This is done to prepare for
+Gen3 support where the subdeivce might change during runtime, so to
+directly accesses a specific rvin_graph_entity is bad.
 
-Describe SYS-DMAC0/1 in the R8A7745 device tree.
-
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 64 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c |  9 +++++++++
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 15 ++++++++++-----
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  6 +++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  1 +
+ 4 files changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index fbf72ddd82b7..437c5ad933d1 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -93,6 +93,70 @@
- 			compatible = "renesas,r8a7745-rst";
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
-+
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a7745",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x20000>;
-+			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		dmac1: dma-controller@e6720000 {
-+			compatible = "renesas,dmac-r8a7745",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6720000 0 0x20000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 098a0b1..89a9280 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -26,6 +26,15 @@
+ #include "rcar-vin.h"
  
- 	/* External root clock */
+ /* -----------------------------------------------------------------------------
++ * Subdevice helpers
++ */
++
++struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
++{
++	return &vin->digital;
++}
++
++/* -----------------------------------------------------------------------------
+  * Async notifier
+  */
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 9ccd5ff..eac5c19 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -131,10 +131,15 @@ static u32 rvin_read(struct rvin_dev *vin, u32 offset)
+ 
+ static int rvin_setup(struct rvin_dev *vin)
+ {
++	struct rvin_graph_entity *rent;
+ 	u32 vnmc, dmr, dmr2, interrupts;
+ 	v4l2_std_id std;
+ 	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	switch (vin->format.field) {
+ 	case V4L2_FIELD_TOP:
+ 		vnmc = VNMC_IM_ODD;
+@@ -174,7 +179,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	/*
+ 	 * Input interface
+ 	 */
+-	switch (vin->digital.code) {
++	switch (rent->code) {
+ 	case MEDIA_BUS_FMT_YUYV8_1X16:
+ 		/* BT.601/BT.1358 16bit YCbCr422 */
+ 		vnmc |= VNMC_INF_YUV16;
+@@ -182,7 +187,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY8_2X8:
+ 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
+-		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
++		vnmc |= rent->mbus_cfg.type == V4L2_MBUS_BT656 ?
+ 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
+ 		input_is_yuv = true;
+ 		break;
+@@ -191,7 +196,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY10_2X10:
+ 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
+-		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
++		vnmc |= rent->mbus_cfg.type == V4L2_MBUS_BT656 ?
+ 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
+ 		input_is_yuv = true;
+ 		break;
+@@ -203,11 +208,11 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+ 
+ 	/* Hsync Signal Polarity Select */
+-	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
++	if (!(rent->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+ 		dmr2 |= VNDMR2_HPS;
+ 
+ 	/* Vsync Signal Polarity Select */
+-	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
++	if (!(rent->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+ 		dmr2 |= VNDMR2_VPS;
+ 
+ 	/*
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index f9218f2..370bb18 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -164,6 +164,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ {
+ 	struct v4l2_subdev *sd;
+ 	struct v4l2_subdev_pad_config *pad_cfg;
++	struct rvin_graph_entity *rent;
+ 	struct v4l2_subdev_format format = {
+ 		.which = which,
+ 	};
+@@ -171,8 +172,11 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	int ret;
+ 
+ 	sd = vin_to_source(vin);
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
+ 
+-	v4l2_fill_mbus_format(&format.format, pix, vin->digital.code);
++	v4l2_fill_mbus_format(&format.format, pix, rent->code);
+ 
+ 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
+ 	if (pad_cfg == NULL)
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 727e215..daec26a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -144,6 +144,7 @@ struct rvin_dev {
+ 	struct v4l2_rect compose;
+ };
+ 
++struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
+ #define vin_to_source(vin)		vin->digital.subdev
+ 
+ /* Debug */
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
