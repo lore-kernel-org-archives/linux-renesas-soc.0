@@ -1,71 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57189 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935654AbcKWUNj (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33528 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965962AbcKLNNw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:13:39 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Match Updates for v4.10
-Date: Wed, 23 Nov 2016 21:13:31 +0100
-Message-Id: <cover.1479928995.git.horms+renesas@verge.net.au>
+        Sat, 12 Nov 2016 08:13:52 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 19/32] media: rcar-vin: add functions to manipulate Gen3 CHSEL value
+Date: Sat, 12 Nov 2016 14:12:03 +0100
+Message-Id: <20161112131216.22635-20-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Gen3 the CSI routing is controlled by the VnCSI_IFMD register. One
+feature of this register is that it's only present in the VIN0 and VIN4
+instances. The register in VIN0 controls the routing for VIN0-3 and the
+register in VIN4 controls routing for VIN4-7.
 
-Please consider these Renesas ARM based SoC match updates for v4.10.
+To be able to control routing from a media device these functions need
+to control runtime PM for the subgroup master (VIN0 and VIN4). The
+subgroup master must be switched on before the register is manipulated,
+once the operation is complete it's safe to switch the master off and
+the new routing will still be in effect.
 
-This pull request is based on the pull request "soc_device_match()
-interface for matching against soc_bus attributes" sent by Geert
-Uytterhoeven which corresponds to the soc-device-match-tag1 tag in his
-renesas-driver's tree. It provides infrastructure used by changes in this
-pull request.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 43 ++++++++++++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h |  3 +++
+ 2 files changed, 46 insertions(+)
 
-This pull request is broken out of an earlier pull request,
-"Second Round of Renesas ARM Based SoC Drivers Updates for v4.10".
-The motivation for breaking up the pull request is to provide
-branches with minimal dependencies.
-
-This pull request is targeted at the next/drivers branch of the arm-soc tree.
-
-It introduces some minor merge conflicts in drivers/soc/renesas/Makefile.
-The resolution is to take both sides.  A sample merge resolution is
-provided in the renesas-next-20161123v2-v4.9-rc1 tag of the renesas tree.
-
-
-The following changes since commit da65a1589dacc7ec44ea0557a14d70a39d991f32:
-
-  base: soc: Provide a dummy implementation of soc_device_match() (2016-11-10 10:10:37 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-match-for-v4.10
-
-for you to fetch changes up to 8d6799a9ba23acd675f3243580ee6f1756fb4381:
-
-  soc: renesas: Identify SoC and register with the SoC bus (2016-11-23 20:22:21 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Match Updates for v4.10
-
-* Identify SoC and register with the SoC bus
-
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      ARM: shmobile: Document DT bindings for Product Register
-      soc: renesas: Identify SoC and register with the SoC bus
-
- Documentation/devicetree/bindings/arm/shmobile.txt |  18 ++
- arch/arm/mach-shmobile/Kconfig                     |   1 +
- arch/arm64/Kconfig.platforms                       |   1 +
- drivers/soc/renesas/Makefile                       |   2 +
- drivers/soc/renesas/renesas-soc.c                  | 257 +++++++++++++++++++++
- 5 files changed, 279 insertions(+)
- create mode 100644 drivers/soc/renesas/renesas-soc.c
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 80958e6..322e4c1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
++#include <linux/pm_runtime.h>
+ 
+ #include <media/videobuf2-dma-contig.h>
+ 
+@@ -1247,3 +1248,45 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
+ 
+ 	return ret;
+ }
++
++/* -----------------------------------------------------------------------------
++ * Gen3 CHSEL manipulation
++ */
++
++int rvin_set_chsel(struct rvin_dev *vin, u8 chsel)
++{
++	u32 ifmd;
++
++	pm_runtime_get_sync(vin->dev);
++
++	/*
++	 * Undocumented feature: Writing to VNCSI_IFMD_REG will go
++	 * through and on read back look correct but won't have
++	 * any effect if VNMC_REG is not first set to 0.
++	 */
++	rvin_write(vin, 0, VNMC_REG);
++
++	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
++		VNCSI_IFMD_CSI_CHSEL(chsel);
++
++	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
++
++	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
++
++	pm_runtime_put(vin->dev);
++
++	return 0;
++}
++
++int rvin_get_chsel(struct rvin_dev *vin)
++{
++	int chsel;
++
++	pm_runtime_get_sync(vin->dev);
++
++	chsel = rvin_read(vin, VNCSI_IFMD_REG) & VNCSI_IFMD_CSI_CHSEL_MASK;
++
++	pm_runtime_put(vin->dev);
++
++	return chsel;
++}
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index b8f5634..a6a49a96 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -184,4 +184,7 @@ void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
+ 		    u32 width, u32 height);
+ void rvin_crop_scale_comp(struct rvin_dev *vin);
+ 
++int rvin_set_chsel(struct rvin_dev *vin, u8 chsel);
++int rvin_get_chsel(struct rvin_dev *vin);
++
+ #endif
+-- 
+2.10.2
