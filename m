@@ -1,129 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35673 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933813AbcKDVqR (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33544 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966005AbcKLNNw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 17:46:17 -0400
-Received: by mail-lf0-f44.google.com with SMTP id b14so73959672lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Nov 2016 14:46:16 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 02/11] soc: renesas: rcar-sysc: add R8A7745 support
-Date: Sat, 05 Nov 2016 00:46:13 +0300
-Message-ID: <1834171.PEVAvqbuLx@wasted.cogentembedded.com>
-In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+        Sat, 12 Nov 2016 08:13:52 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 20/32] media: rcar-vin: expose a sink pad if we are on Gen3
+Date: Sat, 12 Nov 2016 14:12:04 +0100
+Message-Id: <20161112131216.22635-21-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for RZ/G1E (R8A7745) SoC power areas to the R-Car SYSC driver.
+Refactor the probe code path to look for the digital subdevice, if one
+is found use it just like the driver did before (Gen2 mode) but if it's
+not found prepare for a Gen3 mode by registering a pad for the media
+controller API to use.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Changes in version 2:
-- added Geert's tag.
+ drivers/media/platform/rcar-vin/rcar-core.c | 21 ++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  9 +++++++++
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt |    1 
- drivers/soc/renesas/Makefile                                  |    1 
- drivers/soc/renesas/r8a7745-sysc.c                            |   32 ++++++++++
- drivers/soc/renesas/rcar-sysc.c                               |    3 
- drivers/soc/renesas/rcar-sysc.h                               |    1 
- 5 files changed, 38 insertions(+)
-
-Index: renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-+++ renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -8,6 +8,7 @@ and various coprocessors.
- Required properties:
-   - compatible: Must contain exactly one of the following:
-       - "renesas,r8a7743-sysc" (RZ/G1M)
-+      - "renesas,r8a7745-sysc" (RZ/G1E)
-       - "renesas,r8a7779-sysc" (R-Car H1)
-       - "renesas,r8a7790-sysc" (R-Car H2)
-       - "renesas,r8a7791-sysc" (R-Car M2-W)
-Index: renesas/drivers/soc/renesas/Makefile
-===================================================================
---- renesas.orig/drivers/soc/renesas/Makefile
-+++ renesas/drivers/soc/renesas/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_ARCH_R8A7795)	+= rcar-rst.o
- obj-$(CONFIG_ARCH_R8A7796)	+= rcar-rst.o
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 26e438a..6554141 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -308,6 +308,25 @@ static const struct of_device_id rvin_of_id_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
  
- obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
-+obj-$(CONFIG_ARCH_R8A7745)	+= rcar-sysc.o r8a7745-sysc.o
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-Index: renesas/drivers/soc/renesas/r8a7745-sysc.c
-===================================================================
---- /dev/null
-+++ renesas/drivers/soc/renesas/r8a7745-sysc.c
-@@ -0,0 +1,32 @@
-+/*
-+ * Renesas RZ/G1E System Controller
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation; of the License.
-+ */
++static int rvin_graph_init(struct rvin_dev *vin)
++{
++	int ret;
 +
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
++	/* Try to get digital video pipe */
++	ret = rvin_digital_graph_init(vin);
 +
-+#include <dt-bindings/power/r8a7745-sysc.h>
++	/* No digital pipe and we are on Gen3 try to joint CSI2 group */
++	if (ret == -ENODEV && vin->info->chip == RCAR_GEN3) {
 +
-+#include "rcar-sysc.h"
++		vin->pads[RVIN_SINK].flags = MEDIA_PAD_FL_SINK;
++		ret = media_entity_pads_init(&vin->vdev.entity, 1, vin->pads);
++		if (ret)
++			return ret;
++	}
 +
-+static const struct rcar_sysc_area r8a7745_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7745_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca7-scu",	0x100, 0, R8A7745_PD_CA7_SCU,	R8A7745_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca7-cpu0",	0x1c0, 0, R8A7745_PD_CA7_CPU0,	R8A7745_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca7-cpu1",	0x1c0, 1, R8A7745_PD_CA7_CPU1,	R8A7745_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sgx",	 0xc0, 0, R8A7745_PD_SGX,	R8A7745_PD_ALWAYS_ON },
-+};
++	return ret;
++}
 +
-+const struct rcar_sysc_info r8a7745_sysc_info __initconst = {
-+	.areas = r8a7745_areas,
-+	.num_areas = ARRAY_SIZE(r8a7745_areas),
-+};
-Index: renesas/drivers/soc/renesas/rcar-sysc.c
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.c
-+++ renesas/drivers/soc/renesas/rcar-sysc.c
-@@ -278,6 +278,9 @@ static const struct of_device_id rcar_sy
- #ifdef CONFIG_ARCH_R8A7743
- 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
- #endif
-+#ifdef CONFIG_ARCH_R8A7745
-+	{ .compatible = "renesas,r8a7745-sysc", .data = &r8a7745_sysc_info },
-+#endif
- #ifdef CONFIG_ARCH_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-Index: renesas/drivers/soc/renesas/rcar-sysc.h
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.h
-+++ renesas/drivers/soc/renesas/rcar-sysc.h
-@@ -51,6 +51,7 @@ struct rcar_sysc_info {
+ static int rcar_vin_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+@@ -343,7 +362,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = rvin_digital_graph_init(vin);
++	ret = rvin_graph_init(vin);
+ 	if (ret < 0)
+ 		goto error;
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index a6a49a96..8ed43be 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -36,6 +36,11 @@ enum chip_id {
+ 	RCAR_GEN3,
  };
  
- extern const struct rcar_sysc_info r8a7743_sysc_info;
-+extern const struct rcar_sysc_info r8a7745_sysc_info;
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
++enum rvin_pads {
++	RVIN_SINK,
++	RVIN_PAD_MAX,
++};
++
+ /**
+  * STOPPED  - No operation in progress
+  * RUNNING  - Operation in progress have buffers
+@@ -115,6 +120,8 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @pads:		pads for media controller
++ *
+  * @lock:		protects @queue
+  * @queue:		vb2 buffers queue
+  *
+@@ -144,6 +151,8 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity digital;
+ 
++	struct media_pad pads[RVIN_PAD_MAX];
++
+ 	struct mutex lock;
+ 	struct vb2_queue queue;
+ 
+-- 
+2.10.2
