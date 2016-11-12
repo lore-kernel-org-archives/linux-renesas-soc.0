@@ -1,45 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36559 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbcKBJtK (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33620 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965865AbcKLNNy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:49:10 -0400
+        Sat, 12 Nov 2016 08:13:54 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 28/32] media: rcar-vin: propagate format to bridge
+Date: Sat, 12 Nov 2016 14:12:12 +0100
+Message-Id: <20161112131216.22635-29-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <1638480.5pJxF7pUnz@wasted.cogentembedded.com>
-References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <1638480.5pJxF7pUnz@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 10:49:08 +0100
-Message-ID: <CAMuHMdUGHET+b7eoyTeGo8vebxNvFWJsre-cLnk_i4BvgwjK_Q@mail.gmail.com>
-Subject: Re: [PATCH 03/11] ARM: shmobile: r8a7745: basic SoC support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Oct 29, 2016 at 12:16 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add minimal support for the RZ/G1E (R8A7745) SoC.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The CSI2 bridge needs to know the video format, propagate it after the
+video source have had its say on the format.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index e99815f..d363531 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -193,6 +193,21 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	if (ret < 0 && ret != -ENOIOCTLCMD)
+ 		goto done;
+ 
++	/* If we are part of a CSI2 group update bridge */
++	if (vin_have_bridge(vin)) {
++		struct v4l2_subdev *bridge = vin_to_bridge(vin);
++
++		if (!bridge) {
++			ret = -EINVAL;
++			goto done;
++		}
++
++		format.pad = 0;
++		ret = v4l2_subdev_call(bridge, pad, set_fmt, pad_cfg, &format);
++		if (ret < 0 && ret != -ENOIOCTLCMD)
++			goto done;
++	}
++
+ 	v4l2_fill_pix_format(pix, &format.format);
+ 
+ 	pix->field = field;
+-- 
+2.10.2
