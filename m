@@ -1,114 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760444AbcKDJoj (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33424 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965873AbcKLNNr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/29] ARM: dts: koelsch: enable UHS for SDHI 0, 1 & 3
-Date: Fri,  4 Nov 2016 10:44:02 +0100
-Message-Id: <d3cec922fe2030235588aa6fe53d6470b4e7496f.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        Sat, 12 Nov 2016 08:13:47 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 17/32] media: rcar-vin: clarify error message from the digital notifier
+Date: Sat, 12 Nov 2016 14:12:01 +0100
+Message-Id: <20161112131216.22635-18-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,1,2}.
+Some of the parser functions previously only used by the digital
+subdevice OF/V4L2 async code will be shared with the CSI2 group
+notifiers. Clarify which notifier register error message and mark which
+functions are generic helpers.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index f8a7d090fd01..f17bfa000f73 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -360,16 +360,37 @@
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-+		power-source = <3300>;
-+	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index def240b1..26e438a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -35,7 +35,7 @@ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
+ }
+ 
+ /* -----------------------------------------------------------------------------
+- * Async notifier
++ * Async notifier helpers
+  */
+ 
+ #define notifier_to_vin(n) container_of(n, struct rvin_dev, notifier)
+@@ -77,6 +77,10 @@ static unsigned int rvin_pad_idx(struct v4l2_subdev *sd, int direction)
+ 	return 0;
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * Digital async notifier
++ */
 +
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
- 	};
+ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ {
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
+@@ -242,7 +246,7 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
  
- 	sdhi1_pins: sd1 {
- 		groups = "sdhi1_data4", "sdhi1_ctrl";
- 		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
- 	};
- 
- 	sdhi2_pins: sd2 {
- 		groups = "sdhi2_data4", "sdhi2_ctrl";
- 		function = "sdhi2";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "sdhi2_data4", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <1800>;
- 	};
- 
- 	qspi_pins: qspi {
-@@ -454,33 +475,39 @@
- 
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi1 {
- 	pinctrl-0 = <&sdhi1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi1>;
- 	vqmmc-supply = <&vccq_sdhi1>;
- 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi2 {
- 	pinctrl-0 = <&sdhi2_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi2>;
- 	vqmmc-supply = <&vccq_sdhi2>;
- 	cd-gpios = <&gpio6 22 GPIO_ACTIVE_LOW>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
+ 	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
+ 	if (ret < 0) {
+-		vin_err(vin, "Notifier registration failed\n");
++		vin_err(vin, "Digital notifier registration failed\n");
+ 		return ret;
+ 	}
  
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
