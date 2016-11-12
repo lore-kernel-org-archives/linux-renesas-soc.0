@@ -1,50 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:32859 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753656AbcKNJ4I (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:60038 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966113AbcKLQGQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 04:56:08 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161112160429.12524-4-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se> <20161112160429.12524-4-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Nov 2016 10:56:06 +0100
-Message-ID: <CAMuHMdXiSMcOZGrMHY5CG5B06rqrMoZvJc=fOTdhPH4HYF4O5g@mail.gmail.com>
-Subject: Re: [PATCHv3 3/6] pinctrl: sh-pfc: r8a7795: Simplify get bias logic
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Sat, 12 Nov 2016 11:06:16 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 3/6] pinctrl: sh-pfc: r8a7795: Simplify get bias logic
+Date: Sat, 12 Nov 2016 17:04:26 +0100
+Message-Id: <20161112160429.12524-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Nov 12, 2016 at 5:04 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The last else statement is missing braces and there indentation level
-> can be reduced.
->
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+The last else statement is missing braces and there indentation level
+can be reduced.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 2e8cc2a..6c58563 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -5367,13 +5367,12 @@ static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
+ 	reg = pullups[pin].reg;
+ 	bit = BIT(pullups[pin].bit);
+ 
+-	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
+-		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
+-			return PIN_CONFIG_BIAS_PULL_UP;
+-		else
+-			return PIN_CONFIG_BIAS_PULL_DOWN;
+-	} else
++	if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
+ 		return PIN_CONFIG_BIAS_DISABLE;
++	else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
++		return PIN_CONFIG_BIAS_PULL_UP;
++	else
++		return PIN_CONFIG_BIAS_PULL_DOWN;
+ }
+ 
+ static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+-- 
+2.10.2
