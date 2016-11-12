@@ -1,107 +1,164 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 10/14] ARM: dts: gose: use demuxer for I2C4
-Date: Sun,  6 Nov 2016 21:20:28 +0100
-Message-Id: <20161106202032.5227-11-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33623 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966087AbcKLNNy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 12 Nov 2016 08:13:54 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 27/32] media: rcar-vin: start/stop the CSI2 bridge stream
+Date: Sat, 12 Nov 2016 14:12:11 +0100
+Message-Id: <20161112131216.22635-28-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
+On Gen3 the CSI2 bridge stream needs to be start/stop in conjunction
+with the video source. Create helpers to deal with both the Gen2 single
+subdevice case and the Gen3 CSI2 group case.
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
+In the Gen3 case there might be other simultaneous users of the bridge
+and source devices so examine each entity stream_count before acting on
+any particular device.
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, corrected board name in subject, and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 84 +++++++++++++++++++++++++++---
+ 1 file changed, 77 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index df07dc252537fe..d22b9f969eaba8 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -49,7 +49,9 @@
- 		serial0 = &scif0;
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c2;
-+		i2c10 = &gpioi2c4;
- 		i2c11 = &i2chdmi;
-+		i2c12 = &i2cexio4;
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 322e4c1..872f138 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1089,15 +1089,87 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ }
  
- 	chosen {
-@@ -289,6 +291,17 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio7 14 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio7 13 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
++static int __rvin_start_streaming(struct rvin_dev *vin)
++{
++	struct v4l2_subdev *source, *bridge = NULL;
++	struct media_pipeline *pipe;
++	int ret;
 +
- 	/*
- 	 * A fallback to GPIO is provided for I2C2.
- 	 */
-@@ -371,6 +384,18 @@
- 			pagesize = <16>;
- 		};
- 	};
++	source = vin_to_source(vin);
++	if (!source)
++		return -EINVAL;
 +
-+	/*
-+	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-12 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -411,6 +436,11 @@
- 		function = "i2c2";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
++	if (vin_have_bridge(vin)) {
++		bridge = vin_to_bridge(vin);
 +
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		function = "du";
-@@ -600,6 +630,11 @@
- 	clock-frequency = <100000>;
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
++		if (!bridge)
++			return -EINVAL;
 +
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
++		mutex_lock(&vin->group->lock);
++
++		pipe = bridge->entity.pipe ? bridge->entity.pipe :
++			&vin->vdev.pipe;
++		ret = media_entity_pipeline_start(&vin->vdev.entity, pipe);
++		if (ret) {
++			mutex_unlock(&vin->group->lock);
++			return ret;
++		}
++
++		/* Only need to start stream if it's not running */
++		if (bridge->entity.stream_count <= 1)
++			v4l2_subdev_call(bridge, video, s_stream, 1);
++		if (source->entity.stream_count <= 1)
++			v4l2_subdev_call(source, video, s_stream, 1);
++
++		mutex_unlock(&vin->group->lock);
++	} else {
++		v4l2_subdev_call(source, video, s_stream, 1);
++	}
++
++	return 0;
++}
++
++static int __rvin_stop_streaming(struct rvin_dev *vin)
++{
++	struct v4l2_subdev *source, *bridge = NULL;
++
++	source = vin_to_source(vin);
++	if (!source)
++		return -EINVAL;
++
++	if (vin_have_bridge(vin)) {
++		bridge = vin_to_bridge(vin);
++
++		if (!bridge)
++			return -EINVAL;
++
++		mutex_lock(&vin->group->lock);
++
++		media_entity_pipeline_stop(&vin->vdev.entity);
++
++		/* Only need to stop stream if there are no other users */
++		if (bridge->entity.stream_count <= 0)
++			v4l2_subdev_call(bridge, video, s_stream, 0);
++		if (source->entity.stream_count <= 0)
++			v4l2_subdev_call(source, video, s_stream, 0);
++
++		mutex_unlock(&vin->group->lock);
++	} else {
++		v4l2_subdev_call(source, video, s_stream, 0);
++	}
++
++	return 0;
++}
++
+ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
+-	struct v4l2_subdev *sd;
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	sd = vin_to_source(vin);
+-	v4l2_subdev_call(sd, video, s_stream, 1);
++	ret = __rvin_start_streaming(vin);
++	if (ret)
++		return ret;
+ 
+ 	spin_lock_irqsave(&vin->qlock, flags);
+ 
+@@ -1122,7 +1194,7 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	/* Return all buffers if something went wrong */
+ 	if (ret) {
+ 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
+-		v4l2_subdev_call(sd, video, s_stream, 0);
++		__rvin_stop_streaming(vin);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+@@ -1133,7 +1205,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ static void rvin_stop_streaming(struct vb2_queue *vq)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
+-	struct v4l2_subdev *sd;
+ 	unsigned long flags;
+ 	int retries = 0;
+ 
+@@ -1172,8 +1243,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ 
+-	sd = vin_to_source(vin);
+-	v4l2_subdev_call(sd, video, s_stream, 0);
++	__rvin_stop_streaming(vin);
+ 
+ 	/* disable interrupts */
+ 	rvin_disable_interrupts(vin);
 -- 
-2.9.3
-
+2.10.2
