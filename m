@@ -1,42 +1,140 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941119AbcKQRRf (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33626 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966102AbcKLNNy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:17:35 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/31] ARM: dts: lager: Enable UHS-I SDR-104
-Date: Thu, 17 Nov 2016 15:11:25 +0100
-Message-Id: <8a2aefb3285e8b22db645ccb48c2e7bd141a50f8.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
+        Sat, 12 Nov 2016 08:13:54 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 25/32] media: rcar-vin: enable CSI2 group subdevices in lookup helpers
+Date: Sat, 12 Nov 2016 14:12:09 +0100
+Message-Id: <20161112131216.22635-26-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the sd-uhs-sdr104 property to SDHI0.
+Make the subdevice helpers look not only at the local digital subdevice
+but also for the CSI2 group subdevices which can be present on Gen3.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Which CSI2 group subdevices are found depends on the CSI2 subgroup
+routing which is stored in the CHSEL register of the subgroup master
+(VIN0 for VIN0-3 and VIN4 for VIN4-7). The lookup functions look at this
+value and returns the correct information or NULL if there is no
+attached subdevices for the current routing for this device.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 70 ++++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  2 +-
+ 2 files changed, 70 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 9b9748548702..bd512c86e852 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -608,6 +608,7 @@
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 0092ab4..0b3882a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -330,9 +330,77 @@ static void rvin_group_delete(struct rvin_dev *vin)
+  * Subdevice helpers
+  */
+ 
++static int rvin_group_vin_to_csi(struct rvin_dev *vin)
++{
++	int i, vin_num, vin_master, chsel, csi;
++
++	/* Only valid on Gen3 */
++	if (vin->info->chip != RCAR_GEN3)
++		return -1;
++
++	/*
++	 * Only try to translate to a CSI2 number if there is a enabled
++	 * link from the VIN sink pad. However if there are no links at
++	 * all we are at probe time so ignore the need for enabled links
++	 * to be able to make a better guess of initial format
++	 */
++	if (vin->pads[RVIN_SINK].entity->num_links &&
++	    !media_entity_remote_pad(&vin->pads[RVIN_SINK]))
++		return -1;
++
++	/* Find which VIN we are */
++	vin_num = -1;
++	for (i = 0; i < RCAR_VIN_NUM; i++)
++		if (vin == vin->group->vin[i])
++			vin_num = i;
++
++	if (vin_num == -1)
++		return -1;
++
++	vin_master = vin_num < 4 ? 0 : 4;
++	if (!vin->group->vin[vin_master])
++		return -1;
++
++	chsel = rvin_get_chsel(vin->group->vin[vin_master]);
++
++	csi = vin->info->chsels[vin_num][chsel].csi;
++	if (csi >= RVIN_CSI_MAX)
++		return -1;
++
++	if (!vin->group->source[csi].subdev || !vin->group->bridge[csi].subdev)
++		return -1;
++
++	return csi;
++}
++
+ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
+ {
+-	return &vin->digital;
++	int csi;
++
++	/* If there is a digital subdev use it */
++	if (vin->digital.subdev)
++		return &vin->digital;
++
++	csi = rvin_group_vin_to_csi(vin);
++	if (csi < 0)
++		return NULL;
++
++	return &vin->group->source[csi];
++}
++
++struct v4l2_subdev *vin_to_source(struct rvin_dev *vin)
++{
++	int csi;
++
++	/* If there is a digital subdev use it */
++	if (vin->digital.subdev)
++		return vin->digital.subdev;
++
++	csi = rvin_group_vin_to_csi(vin);
++	if (csi < 0)
++		return NULL;
++
++	return vin->group->source[csi].subdev;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index cd7d959..2f1e087 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -207,7 +207,7 @@ struct rvin_dev {
  };
  
+ struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
+-#define vin_to_source(vin)		vin->digital.subdev
++struct v4l2_subdev *vin_to_source(struct rvin_dev *vin);
+ 
+ /* Debug */
+ #define vin_dbg(d, fmt, arg...)		dev_dbg(d->dev, fmt, ##arg)
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
