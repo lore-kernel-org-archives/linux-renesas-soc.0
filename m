@@ -1,45 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:36286 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751572AbcKPKFy (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33641 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966113AbcKLNNz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 05:05:54 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] cpufreq: dt: Add support for r8a7743 and r8a7745
-Date: Wed, 16 Nov 2016 11:05:51 +0100
-Message-Id: <1479290751-9705-1-git-send-email-geert+renesas@glider.be>
+        Sat, 12 Nov 2016 08:13:55 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 31/32] media: rcar-vin: enable support for r8a7795
+Date: Sat, 12 Nov 2016 14:12:15 +0100
+Message-Id: <20161112131216.22635-32-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the compatible strings for supporting the generic cpufreq driver on
-the Renesas RZ/G1M (r8a7743) and RZ/G1E (r8a7745) SoCs.
+Add the SoC specific information for Renesas r8a7795.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Support for RZ/G1M and RZ/G1E is expected to land in v4.10.
+ drivers/media/platform/rcar-vin/Kconfig     |  2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c | 71 +++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+), 1 deletion(-)
 
- drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index fcc5bcfe57efe1c3..0c73c7dbd5878919 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -55,6 +55,8 @@
- 	{ .compatible = "renesas,r7s72100", },
- 	{ .compatible = "renesas,r8a73a4", },
- 	{ .compatible = "renesas,r8a7740", },
-+	{ .compatible = "renesas,r8a7743", },
-+	{ .compatible = "renesas,r8a7745", },
- 	{ .compatible = "renesas,r8a7778", },
- 	{ .compatible = "renesas,r8a7779", },
- 	{ .compatible = "renesas,r8a7790", },
+diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+index 111d2a1..e0e981c 100644
+--- a/drivers/media/platform/rcar-vin/Kconfig
++++ b/drivers/media/platform/rcar-vin/Kconfig
+@@ -5,7 +5,7 @@ config VIDEO_RCAR_VIN
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	---help---
+ 	  Support for Renesas R-Car Video Input (VIN) driver.
+-	  Supports R-Car Gen2 SoCs.
++	  Supports R-Car Gen2 and Gen3 SoCs.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called rcar-vin.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 1efbb0a..1a86c72 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1134,6 +1134,73 @@ static const struct rvin_info rcar_info_m1 = {
+ 	.max_height = 2048,
+ };
+ 
++static const struct rvin_info rcar_info_r8a7795 = {
++	.chip = RCAR_GEN3,
++	.max_width = 4096,
++	.max_height = 4096,
++
++	.num_chsels = 6,
++	.chsels = {
++		{
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++		}, {
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 2 },
++			{ .csi = RVIN_CSI20, .chan = 2 },
++			{ .csi = RVIN_CSI21, .chan = 2 },
++		}, {
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++			{ .csi = RVIN_CSI40, .chan = 3 },
++			{ .csi = RVIN_CSI20, .chan = 3 },
++			{ .csi = RVIN_CSI21, .chan = 3 },
++		}, {
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++		}, {
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++		}, {
++			{ .csi = RVIN_CSI21, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 0 },
++			{ .csi = RVIN_CSI20, .chan = 0 },
++			{ .csi = RVIN_CSI41, .chan = 2 },
++			{ .csi = RVIN_CSI20, .chan = 2 },
++			{ .csi = RVIN_CSI21, .chan = 2 },
++		}, {
++			{ .csi = RVIN_CSI41, .chan = 1 },
++			{ .csi = RVIN_CSI20, .chan = 1 },
++			{ .csi = RVIN_CSI21, .chan = 1 },
++			{ .csi = RVIN_CSI41, .chan = 3 },
++			{ .csi = RVIN_CSI20, .chan = 3 },
++			{ .csi = RVIN_CSI21, .chan = 3 },
++		},
++	},
++};
++
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.chip = RCAR_GEN2,
+ 	.max_width = 2048,
+@@ -1142,6 +1209,10 @@ static const struct rvin_info rcar_info_gen2 = {
+ 
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
++		.compatible = "renesas,vin-r8a7795",
++		.data = &rcar_info_r8a7795,
++	},
++	{
+ 		.compatible = "renesas,vin-r8a7794",
+ 		.data = &rcar_info_gen2,
+ 	},
 -- 
-1.9.1
+2.10.2
