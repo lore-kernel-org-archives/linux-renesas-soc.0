@@ -1,48 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48922 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751076AbcKBJYB (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33429 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965548AbcKLNNl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:24:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Sat, 12 Nov 2016 08:13:41 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: shmobile: defconfig: Enable CONFIG_CGROUPS
-Date: Wed,  2 Nov 2016 10:23:54 +0100
-Message-Id: <a604a37d46b80899d5a09d937fdd670e93af690d.1478078446.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478078446.git.horms+renesas@verge.net.au>
-References: <cover.1478078446.git.horms+renesas@verge.net.au>
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 06/32] media: rcar-vin: fix standard in input enumeration
+Date: Sat, 12 Nov 2016 14:11:50 +0100
+Message-Id: <20161112131216.22635-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Enable support for CONFIG_CGROUPS in shmobile_defconfig.
+If the subdevice supports dv_timings_cap the driver should not fill in
+the standard. Also don't use the standard from probe time ask the
+subdevice each time, this is done in preparation for Gen3 support where
+the source subdevice might change during runtime.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index baa07a46a88b..1b0f8ae36fb3 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -2,6 +2,7 @@ CONFIG_SYSVIPC=y
- CONFIG_NO_HZ=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
-+CONFIG_CGROUPS=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- CONFIG_SYSCTL_SYSCALL=y
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 610f59e..f9218f2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -483,10 +483,16 @@ static int rvin_enum_input(struct file *file, void *priv,
+ 		return ret;
+ 
+ 	i->type = V4L2_INPUT_TYPE_CAMERA;
+-	i->std = vin->vdev.tvnorms;
+ 
+-	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
++	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap)) {
+ 		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
++		i->std = 0;
++	} else {
++		i->capabilities = V4L2_IN_CAP_STD;
++		ret = v4l2_subdev_call(sd, video, g_tvnorms, &i->std);
++		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
++			return ret;
++	}
+ 
+ 	strlcpy(i->name, "Camera", sizeof(i->name));
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
