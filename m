@@ -1,52 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35210 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbcKNLZA (ORCPT
+Received: from sauhun.de ([89.238.76.85]:46116 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751810AbcKMO3Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 06:25:00 -0500
-Date: Mon, 14 Nov 2016 12:24:53 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] mmc: tmio: fix wrong bitmask for SDIO irqs
-Message-ID: <20161114112452.GA13611@verge.net.au>
+        Sun, 13 Nov 2016 09:29:24 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/2] mmc: tmio: fix wrong bitmask for SDIO irqs
+Date: Sun, 13 Nov 2016 15:29:11 +0100
+Message-Id: <20161113142912.4041-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161113142912.4041-1-wsa+renesas@sang-engineering.com>
 References: <20161113142912.4041-1-wsa+renesas@sang-engineering.com>
- <20161113142912.4041-2-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20161113142912.4041-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Nov 13, 2016 at 03:29:11PM +0100, Wolfram Sang wrote:
-> Commit 7729c7a232a953 ("mmc: tmio: Provide separate interrupt handlers")
-> refactored the sdio irq handler and wrongly used the mask for SD irqs,
-> not for SDIO irqs. This doesn't really matter in practice because both
-> values keep the only interrupt we are interested in. But still, this is
-> wrong and wants to be fixed.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Commit 7729c7a232a953 ("mmc: tmio: Provide separate interrupt handlers")
+refactored the sdio irq handler and wrongly used the mask for SD irqs,
+not for SDIO irqs. This doesn't really matter in practice because both
+values keep the only interrupt we are interested in. But still, this is
+wrong and wants to be fixed.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/mmc/host/tmio_mmc_pio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-> index dbc3cb14f3321b..2b04e6e87192c7 100644
-> --- a/drivers/mmc/host/tmio_mmc_pio.c
-> +++ b/drivers/mmc/host/tmio_mmc_pio.c
-> @@ -741,7 +741,7 @@ static void tmio_mmc_sdio_irq(int irq, void *devid)
->  		return;
->  
->  	status = sd_ctrl_read16(host, CTL_SDIO_STATUS);
-> -	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdcard_irq_mask;
-> +	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdio_irq_mask;
->  
->  	sdio_status = status & ~TMIO_SDIO_MASK_ALL;
->  	if (pdata->flags & TMIO_MMC_SDIO_STATUS_QUIRK)
-> -- 
-> 2.9.3
-> 
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index dbc3cb14f3321b..2b04e6e87192c7 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -741,7 +741,7 @@ static void tmio_mmc_sdio_irq(int irq, void *devid)
+ 		return;
+ 
+ 	status = sd_ctrl_read16(host, CTL_SDIO_STATUS);
+-	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdcard_irq_mask;
++	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdio_irq_mask;
+ 
+ 	sdio_status = status & ~TMIO_SDIO_MASK_ALL;
+ 	if (pdata->flags & TMIO_MMC_SDIO_STATUS_QUIRK)
+-- 
+2.9.3
