@@ -1,67 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:59031 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758689AbcKCQQr (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:49918 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753671AbcKNShM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 12:16:47 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 0/4] pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable drive-strength
-Date: Thu,  3 Nov 2016 17:15:26 +0100
-Message-Id: <20161103161530.11763-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 14 Nov 2016 13:37:12 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 04/11] ARM: dts: r8a7779: Add device node for PRR
+Date: Mon, 14 Nov 2016 19:37:10 +0100
+Message-Id: <1479148637-5399-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert and Laurent,
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-This series adds support to control the drive strength for none GPIO
-pins. All pins which can have its drive strength controlled is now supported. I 
-have also added the new pins to the correct groups, or added groups to mimic 
-other sh-pfc drivers. One notable exception is the group avb_mdc which on other 
-SoC are called avb_mdio, see commit 3/4 for explanation.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Add to posted series,
 
-The series is based on top of v4.9-rc3 and tested on Salvator-X. My test
-is a bit crude and is setting a few of the AVB pins to a higher
-drive-strength value then the others and observing that the AVB fails to
-work after the pfc settings are applied (NFS root failing to mount after
-kernel is fetched over TFTP). I also tested setting the drive strength for 
-individual pins and for whole groups.
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Changes since v1
-
-- Add comment about that it's the R-Car H3SiP pin matrix which is used to 
-  generate a unique id number for each pin. Even if the pin matrix are 
-  different on other packages all the driver care about is that it's a unique 
-  number.
-
-- Add FSCLKST pin after discussion with Geert
-
-- Moved avb_mii group relative to other avb pin groups for a more logical 
-  order, thanks Sergei for pointing this out
-
-- Add Acked-by and Reviewed-by tags
-
-- Fixed spelling error
-
-Niklas Söderlund (4):
-  pinctrl: sh-pfc: Support named pins with custom configuration
-  pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable
-    drive-strength
-  pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
-  pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 263 ++++++++++++++++++++++++++++++++---
- drivers/pinctrl/sh-pfc/sh_pfc.h      |   8 ++
- 2 files changed, 252 insertions(+), 19 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 3005308a1807ca43..9d3bb74bd3f684d5 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -590,6 +590,11 @@
+ 		};
+ 	};
+ 
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0xff000044 4>;
++	};
++
+ 	sysc: system-controller@ffd85000 {
+ 		compatible = "renesas,r8a7779-sysc";
+ 		reg = <0xffd85000 0x0200>;
 -- 
-2.10.2
+1.9.1
