@@ -1,40 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46121 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752173AbcKMO3Y (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:50452 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933166AbcKNShR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Nov 2016 09:29:24 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] mmc: tmio: remove SDIO from TODO list
-Date: Sun, 13 Nov 2016 15:29:12 +0100
-Message-Id: <20161113142912.4041-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161113142912.4041-1-wsa+renesas@sang-engineering.com>
-References: <20161113142912.4041-1-wsa+renesas@sang-engineering.com>
+        Mon, 14 Nov 2016 13:37:17 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 06/11] ARM: dts: r8a7791: Add device node for PRR
+Date: Mon, 14 Nov 2016 19:37:12 +0100
+Message-Id: <1479148637-5399-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We surely have SDIO support by now :)
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 1 -
- 1 file changed, 1 deletion(-)
+v3:
+  - Add to posted series,
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 2b04e6e87192c7..87fea67a743674 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -22,7 +22,6 @@
-  * TODO:
-  *   Investigate using a workqueue for PIO transfers
-  *   Eliminate FIXMEs
-- *   SDIO support
-  *   Better Power management
-  *   Handle MMC errors better
-  *   double buffer support
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 091d7fb6ee7d53cc..4c50de2faef12301 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1485,6 +1485,11 @@
+ 		};
+ 	};
+ 
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7791-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-2.9.3
+1.9.1
