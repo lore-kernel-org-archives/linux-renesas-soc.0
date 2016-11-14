@@ -1,47 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759924AbcKDJo7 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36827 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753133AbcKNQjI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/29] ARM: dts: rskrza1: add sdhi1 DT support
-Date: Fri,  4 Nov 2016 10:44:17 +0100
-Message-Id: <bba1b7ea9a1cfb1478df2c1cbd8ed6736a5f4f98.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        Mon, 14 Nov 2016 11:39:08 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: [PATCH 0/4] Renesas R-Car DU fixes
+Date: Mon, 14 Nov 2016 18:39:08 +0200
+Message-Id: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+Hello,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+This series contains four fixes for the R-Car DU driver, all backported or
+inspired by the R-Car Gen3 BSP.
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index e5dea5bb4032..dd4418195ca6 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -56,6 +56,11 @@
- 	};
- };
- 
-+&sdhi1 {
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
- &scif2 {
- 	status = "okay";
- };
+Please see individual patches for details.
+
+Koji Matsuoka (3):
+  drm: rcar-du: Fix display timing controller parameter
+  drm: rcar-du: Fix H/V sync signal polarity configuration
+  drm: rcar-du: Fix LVDS start sequence on Gen3
+
+Laurent Pinchart (1):
+  drm: rcar-du: Fix dot clock routing configuration
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    |  6 +++---
+ drivers/gpu/drm/rcar-du/rcar_du_group.c   | 22 +++++++++++++---------
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 15 ++++++++-------
+ 3 files changed, 24 insertions(+), 19 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
