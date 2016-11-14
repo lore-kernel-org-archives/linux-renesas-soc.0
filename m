@@ -1,41 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936101AbcKWUPh (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:45756 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752905AbcKNShN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:37 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/31] ARM: dts: koelsch: Enable UHS-I SDR-104
-Date: Wed, 23 Nov 2016 21:14:16 +0100
-Message-Id: <0726729a4c6882086fe0db150a4dd0493f15dea3.1479931686.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Mon, 14 Nov 2016 13:37:13 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 01/11] ARM: shmobile: Document DT bindings for Product Register
+Date: Mon, 14 Nov 2016 19:37:07 +0100
+Message-Id: <1479148637-5399-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And the sd-uhs-sdr104 property to SDHI0.
+Add device tree binding documentation for the Product Register (PRR),
+which provides product and revision information on most Renesas ARM
+SoCs.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 1 +
- 1 file changed, 1 insertion(+)
+v3:
+  - Add Acked-by,
+  - Drop "renesas,cccr", as the CCCR is not a lone register, but part of
+    the HPB/APB block, which will need its own set of bindings,
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index d5c80e6bff22..5405d337d744 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -529,6 +529,7 @@
- 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
+v2:
+  - New.
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index a1e94da0e322c8f4..1be9e8a7e2c43dfc 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -81,3 +81,21 @@ Boards:
+     compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
+   - Wheat
+     compatible = "renesas,wheat", "renesas,r8a7792"
++
++
++Most Renesas ARM SoCs have a Product Register that allows to retrieve SoC
++product and revision information.  If present, a device node for this register
++should be added.
++
++Required properties:
++  - compatible: Must be "renesas,prr".
++  - reg: Base address and length of the register block.
++
++
++Examples
++--------
++
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
