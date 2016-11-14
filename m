@@ -1,137 +1,137 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh@kernel.org>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f53.google.com ([209.85.214.53]:35317 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933969AbcKNUEl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 14 Nov 2016 15:04:41 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161114195200.s62ga2bnutsrocyf@rob-hp-laptop>
+References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1478706284-59134-6-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <2857106.83gIJRJqtY@avalon> <20161114195200.s62ga2bnutsrocyf@rob-hp-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Nov 2016 21:04:39 +0100
+Message-ID: <CAMuHMdW5t4irT+2kHDo8TyLcW_eE7yyDa_SYG9Y-Wj99zRN5mQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] media: platform: rcar_drif: Add DRIF support
+To: Rob Herring <robh@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Antti Palosaari <crope@iki.fi>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 5/5] media: platform: rcar_drif: Add DRIF support
-Date: Tue, 15 Nov 2016 15:09:27 +0000
-Message-ID: <KL1PR06MB103142E3832678425896473BC3BF0@KL1PR06MB1031.apcprd06.prod.outlook.com>
-References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1478706284-59134-6-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <2857106.83gIJRJqtY@avalon> <20161114195200.s62ga2bnutsrocyf@rob-hp-laptop>
- <CAMuHMdW5t4irT+2kHDo8TyLcW_eE7yyDa_SYG9Y-Wj99zRN5mQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdW5t4irT+2kHDo8TyLcW_eE7yyDa_SYG9Y-Wj99zRN5mQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgUm9iLCBHZWVydCwgTGF1cmVudCwNCg0KVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3IGNvbW1l
-bnRzLg0KDQo+IE9uIE1vbiwgTm92IDE0LCAyMDE2IGF0IDg6NTIgUE0sIFJvYiBIZXJyaW5nIDxy
-b2JoQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+IE9uIFRodSwgTm92IDEwLCAyMDE2IGF0IDExOjIy
-OjIwQU0gKzAyMDAsIExhdXJlbnQgUGluY2hhcnQgd3JvdGU6DQo+ID4+IE9uIFdlZG5lc2RheSAw
-OSBOb3YgMjAxNiAxNTo0NDo0NCBSYW1lc2ggU2hhbm11Z2FzdW5kYXJhbSB3cm90ZToNCj4gPj4g
-PiAtLS0gL2Rldi9udWxsDQo+ID4+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL21lZGlhL3JlbmVzYXMsZHJpZi50eHQNCj4gPj4gPiBAQCAtMCwwICsxLDEzNiBAQA0K
-PiANCj4gPj4gPiArRXhhbXBsZQ0KPiA+PiA+ICstLS0tLS0tLQ0KPiA+PiA+ICsNCj4gPj4gPiAr
-U29DIGNvbW1vbiBkdHNpIGZpbGUNCj4gPj4gPiArDQo+ID4+ID4gKyAgICAgICAgICAgZHJpZjAw
-OiByaWZAZTZmNDAwMDAgew0KPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9
-ICJyZW5lc2FzLHI4YTc3OTUtZHJpZiIsDQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgInJlbmVzYXMscmNhci1nZW4zLWRyaWYiOw0KPiA+PiA+ICsgICAgICAgICAgICAg
-ICAgICAgcmVnID0gPDAgMHhlNmY0MDAwMCAwIDB4NjQ+Ow0KPiA+PiA+ICsgICAgICAgICAgICAg
-ICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDEyIElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KPiA+
-PiA+ICsgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjcGcgQ1BHX01PRCA1MTU+Ow0KPiA+
-PiA+ICsgICAgICAgICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAiZmNrIjsNCj4gPj4gPiArICAg
-ICAgICAgICAgICAgICAgIGRtYXMgPSA8JmRtYWMxIDB4MjA+LCA8JmRtYWMyIDB4MjA+Ow0KPiA+
-PiA+ICsgICAgICAgICAgICAgICAgICAgZG1hLW5hbWVzID0gInJ4IiwgInJ4IjsNCj4gPg0KPiA+
-IHJ4LCByeD8gVGhhdCBkb2Vzbid0IG1ha2Ugc2Vuc2UuIFdoaWxlIHdlIGRvbid0IGV4cGxpY2l0
-bHkgZGlzYWxsb3cNCj4gPiB0aGlzLCBJJ20gdGhpbmtpbmcgd2Ugc2hvdWxkLiBJIHdvbmRlciBp
-ZiB0aGVyZSdzIGFueSBjYXNlIHRoaXMgaXMNCj4gPiB2YWxpZC4gSWYgbm90LCB0aGVuIGEgZHRj
-IGNoZWNrIGZvciB0aGlzIGNvdWxkIGJlIGFkZGVkLg0KPiANCj4gVGhlIGRldmljZSBjYW4gYmUg
-dXNlZCB3aXRoIGVpdGhlciBkbWFjMSBvciBkbWFjMi4NCj4gV2hpY2ggb25lIGlzIHVzZWQgaXMg
-ZGVjaWRlZCBhdCBydW4gdGltZSwgYmFzZWQgb24gdGhlIGF2YWlsYWJpbGl0eSBvZiBETUENCj4g
-Y2hhbm5lbHMgcGVyIERNQUMsIHdoaWNoIGlzIGEgbGltaXRlZCByZXNvdXJjZS4NCj4gDQoNClll
-cC4gDQoNCj4gPj4gPiArICAgICAgICAgICAgICAgICAgIHBvd2VyLWRvbWFpbnMgPSA8JnN5c2Mg
-UjhBNzc5NV9QRF9BTFdBWVNfT04+Ow0KPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgc3RhdHVz
-ID0gImRpc2FibGVkIjsNCj4gPj4gPiArICAgICAgICAgICB9Ow0KPiA+PiA+ICsNCj4gPj4gPiAr
-ICAgICAgICAgICBkcmlmMDE6IHJpZkBlNmY1MDAwMCB7DQo+ID4+ID4gKyAgICAgICAgICAgICAg
-ICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMscjhhNzc5NS1kcmlmIiwNCj4gPj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAicmVuZXNhcyxyY2FyLWdlbjMtZHJpZiI7DQo+ID4+
-ID4gKyAgICAgICAgICAgICAgICAgICByZWcgPSA8MCAweGU2ZjUwMDAwIDAgMHg2ND47DQo+ID4+
-ID4gKyAgICAgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMTMgSVJRX1RZUEVf
-TEVWRUxfSElHSD47DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JmNwZyBD
-UEdfTU9EIDUxND47DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICBjbG9jay1uYW1lcyA9ICJm
-Y2siOw0KPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgZG1hcyA9IDwmZG1hYzEgMHgyMj4sIDwm
-ZG1hYzIgMHgyMj47DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICBkbWEtbmFtZXMgPSAicngi
-LCAicngiOw0KPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgcG93ZXItZG9tYWlucyA9IDwmc3lz
-YyBSOEE3Nzk1X1BEX0FMV0FZU19PTj47DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICBzdGF0
-dXMgPSAiZGlzYWJsZWQiOw0KPiA+PiA+ICsgICAgICAgICAgIH07DQo+ID4+ID4gKw0KPiA+PiA+
-ICsgICAgICAgICAgIGRyaWYwOiByaWZAMCB7DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICBj
-b21wYXRpYmxlID0gInJlbmVzYXMscjhhNzc5NS1kcmlmIiwNCj4gPj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAicmVuZXNhcyxyY2FyLWdlbjMtZHJpZiI7DQo+ID4+ID4gKyAg
-ICAgICAgICAgICAgICAgICBzdWItY2hhbm5lbHMgPSA8JmRyaWYwMD4sIDwmZHJpZjAxPjsNCj4g
-Pj4gPiArICAgICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4+ID4gKyAg
-ICAgICAgICAgfTsNCj4gPj4NCj4gPj4gSSdtIGFmcmFpZCB0aGlzIHJlYWxseSBodXJ0cyBteSBl
-eWVzLCBlc3BlY2lhbGx5IHVzaW5nIHRoZSBzYW1lDQo+ID4+IGNvbXBhdGlibGUgc3RyaW5nIGZv
-ciBib3RoIHRoZSBjaGFubmVsIGFuZCBzdWItY2hhbm5lbCBub2Rlcy4NCj4gPj4NCj4gPj4gV2Ug
-bmVlZCB0byBkZWNpZGUgaG93IHRvIG1vZGVsIHRoZSBoYXJkd2FyZSBpbiBEVC4gR2l2ZW4gdGhh
-dCB0aGUgdHdvDQo+ID4+IGNoYW5uZWxzIGFyZSBtb3N0bHkgaW5kZXBlbmRlbnQgaGF2aW5nIHNl
-cGFyYXRlIERUIG5vZGVzIG1ha2VzIHNlbnNlDQo+ID4+IHRvIG1lLiBIb3dldmVyLCBhcyB0aGV5
-IHNoYXJlIHRoZSBjbG9jayBhbmQgc3luYyBzaWduYWxzLCBzb21laG93DQo+ID4+IGdyb3VwaW5n
-IHRoZW0gbWFrZXMgc2Vuc2UuIEkgc2VlIHRocmVlIHdheXMgdG8gZG8gc28sIGFuZCB0aGVyZSBt
-aWdodA0KPiBiZSBtb3JlLg0KPiA+Pg0KPiA+PiAxLiBBZGRpbmcgYW4gZXh0cmEgRFQgbm9kZSBm
-b3IgdGhlIGNoYW5uZWxzIGdyb3VwLCB3aXRoIHBoYW5kbGVzIHRvDQo+ID4+IHRoZSB0d28gY2hh
-bm5lbHMuIFRoaXMgaXMgd2hhdCB5b3UncmUgcHJvcG9zaW5nIGhlcmUuDQo+ID4+DQo+ID4+IDIu
-IEFkZGluZyBhbiBleHRyYSBEVCBub2RlIGZvciB0aGUgY2hhbm5lbHMgZ3JvdXAsIGFzIGEgcGFy
-ZW50IG9mIHRoZQ0KPiA+PiB0d28gY2hhbm5lbHMuDQo+ID4+DQo+ID4+IDMuIEFkZGluZyBwaGFu
-ZGxlcyB0byB0aGUgY2hhbm5lbHMsIHBvaW50aW5nIHRvIGVhY2ggb3RoZXIsIG9yDQo+ID4+IHBv
-c3NpYmx5IGEgcGhhbmRsZSBmcm9tIGNoYW5uZWwgMCBwb2ludGluZyB0byBjaGFubmVsIDEuDQo+
-ID4+DQo+ID4+IE5laXRoZXIgb2YgdGhlc2Ugb3B0aW9ucyBzZWVtIHBlcmZlY3QgdG8gbWUuIEkg
-ZG9uJ3QgbGlrZSBvcHRpb24gMSBhcw0KPiA+PiB0aGUgZ3JvdXAgRFQgbm9kZSByZWFsbHkgZG9l
-c24ndCBkZXNjcmliZSBhIGhhcmR3YXJlIGJsb2NrLiBJZiB3ZQ0KPiA+PiB3YW50IHRvIHVzZSBh
-IERUIG5vZGUgdG8gY29udmV5IGdyb3VwIGluZm9ybWF0aW9uLCBvcHRpb24gMiBzZWVtcw0KPiA+
-PiBiZXR0ZXIgdG8gbWUuIEhvd2V2ZXIsIGl0IHNvbWVob3cgYWJ1c2VzIHRoZSBEVCBwYXJlbnQt
-Y2hpbGQgbW9kZWwNCj4gPj4gdGhhdCBpcyBzdXBwb3NlZCB0byBkZXNjcmliZSByZWxhdGlvbnNo
-aXBzIGZyb20gYSBjb250cm9sIGJ1cyBwb2ludA0KPiA+PiBvZiB2aWV3LiBPcHRpb24gMyBoYXMg
-dGhlIGRyYXdiYWNrIG9mIG5vdCBzY2FsaW5nIHByb3Blcmx5LCBhdCBsZWFzdA0KPiA+PiB3aXRo
-IHBoYW5kbGVzIGluIGJvdGggY2hhbm5lbHMgcG9pbnRpbmcgdG8gdGhlIG90aGVyIG9uZS4NCj4g
-Pj4NCj4gPj4gUm9iLCBHZWVydCwgdGVsbCBtZSB5b3UgaGF2ZSBhIGZvdXJ0aCBpZGVhIEkgaGF2
-ZW4ndCB0aG91Z2h0IG9mIHRoYXQNCj4gPj4gd291bGQgc29sdmUgYWxsIHRob3NlIHByb2JsZW1z
-IDotKQ0KPiA+DQo+ID4gV2hhdCdzIHRoZSBwdXJwb3NlL25lZWQgZm9yIGdyb3VwaW5nIHRoZW0/
-DQo+ID4NCj4gPiBJJ20gZmluZSB3aXRoIE9wdGlvbiAyLCB0aG91Z2ggSSB3YW50IHRvIG1ha2Ug
-c3VyZSBpdCBpcyByZWFsbHkgbmVlZGVkLg0KPiANCj4gRWFjaCBoYWxmIG9mIGEgRFJJRiBwYWly
-IGlzIGJhc2ljYWxseSBhbiBTUEkgc2xhdmUgY29udHJvbGxlciB3aXRob3V0IFRYDQo+IGNhcGFi
-aWxpdHksIHNoYXJpbmcgY2xvY2sgYW5kIGNoaXAtc2VsZWN0IGJldHdlZW4gdGhlIHR3byBoYWx2
-ZXMuDQo+IEhlbmNlIHlvdSBjYW4gdXNlIGVpdGhlciBvbmUgaGFsZiB0byByZWNlaXZlIDEgYml0
-IHBlciBjbG9jayBwdWxzZSwgb3INCj4gYm90aCBoYWx2ZXMgdG8gcmVjZWl2ZSAyIGJpdHMgcGVy
-IGNsb2NrIHB1bHNlLg0KPiBZb3UgY2Fubm90IHVzZSBib3RoIGhhbHZlcyBmb3IgaW5kZXBlbmRl
-bnQgb3BlcmF0aW9uIGR1ZSB0byB0aGUgc2lnbmFsDQo+IHNoYXJpbmcuDQoNCklzIHRoZSBiZWxv
-dyBtb2RlbCBsb29rcyBPSz8gSSBhc3N1bWUgdGhpcyBpcyBPcHRpb24gMi4gQW55IHByZWZlcmVu
-Y2VzIG9uIHRoZSAicGFyZW50IiBjb21wYXRpYmxlIHN0cmluZyBwbGVhc2U/DQoNCi0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KZHJpZjA6
-IHJpZkAwIHsNCiAgICAgICAgY29tcGF0aWJsZSA9ICJyZW5lc2FzLHJjYXItZ2VuMy1kcmlmIiwg
-InNpbXBsZS1idXMiOyANCiAgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8Mj47DQogICAgICAgICNz
-aXplLWNlbGxzID0gPDI+Ow0KICAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOw0KDQogICAgICAg
-IGRyaWYwMDogcmlmQGU2ZjQwMDAwIHsNCiAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInJl
-bmVzYXMscjhhNzc5NS1kcmlmIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInJlbmVz
-YXMscmNhci1nZW4zLWRyaWYiOw0KICAgICAgICAgICAgICAgIHJlZyA9IDwwIDB4ZTZmNDAwMDAg
-MCAweDY0PjsNCiAgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMTIgSVJRX1RZ
-UEVfTEVWRUxfSElHSD47DQogICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjcGcgQ1BHX01PRCA1
-MTU+Ow0KICAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gImZjayI7DQogICAgICAgICAgICAg
-ICAgZG1hcyA9IDwmZG1hYzEgMHgyMD4sIDwmZG1hYzIgMHgyMD47DQogICAgICAgICAgICAgICAg
-ZG1hLW5hbWVzID0gInJ4IiwgInJ4IjsNCiAgICAgICAgICAgICAgICBwb3dlci1kb21haW5zID0g
-PCZzeXNjIFI4QTc3OTVfUERfQUxXQVlTX09OPjsNCiAgICAgICAgICAgICAgICBzdGF0dXMgPSAi
-ZGlzYWJsZWQiOw0KICAgICAgICB9OyAgDQoNCiAgICAgICAgZHJpZjAxOiByaWZAZTZmNTAwMDAg
-ew0KICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyOGE3Nzk1LWRyaWYiLA0K
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicmVuZXNhcyxyY2FyLWdlbjMtZHJpZiI7DQog
-ICAgICAgICAgICAgICAgcmVnID0gPDAgMHhlNmY1MDAwMCAwIDB4NjQ+Ow0KICAgICAgICAgICAg
-ICAgIGludGVycnVwdHMgPSA8R0lDX1NQSSAxMyBJUlFfVFlQRV9MRVZFTF9ISUdIPjsNCiAgICAg
-ICAgICAgICAgICBjbG9ja3MgPSA8JmNwZyBDUEdfTU9EIDUxND47DQogICAgICAgICAgICAgICAg
-Y2xvY2stbmFtZXMgPSAiZmNrIjsNCiAgICAgICAgICAgICAgICBkbWFzID0gPCZkbWFjMSAweDIy
-PiwgPCZkbWFjMiAweDIyPjsNCiAgICAgICAgICAgICAgICBkbWEtbmFtZXMgPSAicngiLCAicngi
-Ow0KICAgICAgICAgICAgICAgIHBvd2VyLWRvbWFpbnMgPSA8JnN5c2MgUjhBNzc5NV9QRF9BTFdB
-WVNfT04+Ow0KICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxlZCI7DQogICAgICAgIH07
-ICANCn07DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0NCg0KVGhhbmtzIGluIGFkdmFuY2UsDQpSYW1lc2gNCg==
+Hi Rob,
+
+On Mon, Nov 14, 2016 at 8:52 PM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Nov 10, 2016 at 11:22:20AM +0200, Laurent Pinchart wrote:
+>> On Wednesday 09 Nov 2016 15:44:44 Ramesh Shanmugasundaram wrote:
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
+>> > @@ -0,0 +1,136 @@
+
+>> > +Example
+>> > +--------
+>> > +
+>> > +SoC common dtsi file
+>> > +
+>> > +           drif00: rif@e6f40000 {
+>> > +                   compatible = "renesas,r8a7795-drif",
+>> > +                                "renesas,rcar-gen3-drif";
+>> > +                   reg = <0 0xe6f40000 0 0x64>;
+>> > +                   interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+>> > +                   clocks = <&cpg CPG_MOD 515>;
+>> > +                   clock-names = "fck";
+>> > +                   dmas = <&dmac1 0x20>, <&dmac2 0x20>;
+>> > +                   dma-names = "rx", "rx";
+>
+> rx, rx? That doesn't make sense. While we don't explicitly disallow
+> this, I'm thinking we should. I wonder if there's any case this is
+> valid. If not, then a dtc check for this could be added.
+
+The device can be used with either dmac1 or dmac2.
+Which one is used is decided at run time, based on the availability of
+DMA channels per DMAC, which is a limited resource.
+
+>> > +                   power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+>> > +                   status = "disabled";
+>> > +           };
+>> > +
+>> > +           drif01: rif@e6f50000 {
+>> > +                   compatible = "renesas,r8a7795-drif",
+>> > +                                "renesas,rcar-gen3-drif";
+>> > +                   reg = <0 0xe6f50000 0 0x64>;
+>> > +                   interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+>> > +                   clocks = <&cpg CPG_MOD 514>;
+>> > +                   clock-names = "fck";
+>> > +                   dmas = <&dmac1 0x22>, <&dmac2 0x22>;
+>> > +                   dma-names = "rx", "rx";
+>> > +                   power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+>> > +                   status = "disabled";
+>> > +           };
+>> > +
+>> > +           drif0: rif@0 {
+>> > +                   compatible = "renesas,r8a7795-drif",
+>> > +                                "renesas,rcar-gen3-drif";
+>> > +                   sub-channels = <&drif00>, <&drif01>;
+>> > +                   status = "disabled";
+>> > +           };
+>>
+>> I'm afraid this really hurts my eyes, especially using the same compatible
+>> string for both the channel and sub-channel nodes.
+>>
+>> We need to decide how to model the hardware in DT. Given that the two channels
+>> are mostly independent having separate DT nodes makes sense to me. However, as
+>> they share the clock and sync signals, somehow grouping them makes sense. I
+>> see three ways to do so, and there might be more.
+>>
+>> 1. Adding an extra DT node for the channels group, with phandles to the two
+>> channels. This is what you're proposing here.
+>>
+>> 2. Adding an extra DT node for the channels group, as a parent of the two
+>> channels.
+>>
+>> 3. Adding phandles to the channels, pointing to each other, or possibly a
+>> phandle from channel 0 pointing to channel 1.
+>>
+>> Neither of these options seem perfect to me. I don't like option 1 as the
+>> group DT node really doesn't describe a hardware block. If we want to use a DT
+>> node to convey group information, option 2 seems better to me. However, it
+>> somehow abuses the DT parent-child model that is supposed to describe
+>> relationships from a control bus point of view. Option 3 has the drawback of
+>> not scaling properly, at least with phandles in both channels pointing to the
+>> other one.
+>>
+>> Rob, Geert, tell me you have a fourth idea I haven't thought of that would
+>> solve all those problems :-)
+>
+> What's the purpose/need for grouping them?
+>
+> I'm fine with Option 2, though I want to make sure it is really needed.
+
+Each half of a DRIF pair is basically an SPI slave controller without TX
+capability, sharing clock and chip-select between the two halves.
+Hence you can use either one half to receive 1 bit per clock pulse,
+or both halves to receive 2 bits per clock pulse.
+You cannot use both halves for independent operation due to the signal
+sharing.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
