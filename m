@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35868 "EHLO
+Received: from mail-it0-f68.google.com ([209.85.214.68]:32787 "EHLO
         mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751701AbcKONFf (ORCPT
+        with ESMTP id S936175AbcKNIaA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 08:05:35 -0500
+        Mon, 14 Nov 2016 03:30:00 -0500
 MIME-Version: 1.0
 In-Reply-To: <20161112122911.19079-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20161112122911.19079-1-niklas.soderlund+renesas@ragnatech.se>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Nov 2016 14:05:33 +0100
-Message-ID: <CAMuHMdWTzdV_-FLo3=pb+bkKPVu-di8XfkLsMbbCRkunYjBZrA@mail.gmail.com>
+Date: Mon, 14 Nov 2016 09:29:59 +0100
+Message-ID: <CAMuHMdWs0DvLLkbg1MrrqK_ho_dQdVwXYsrcO=hgMF761jOePg@mail.gmail.com>
 Subject: Re: [PATCHv4] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 driver
 To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
@@ -26,15 +26,23 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Sat, Nov 12, 2016 at 1:29 PM, Niklas S=C3=B6derlund
 <niklas.soderlund+renesas@ragnatech.se> wrote:
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> +Example:
+> +
+> +/* SoC properties */
+> +
+> +        csi20: csi2@fea80000 {
+> +                compatible =3D "renesas,r8a7795-csi2";
 
-> +The device node should contain two 'port' child nodes according to the
-> +bindings defined in Documentation/devicetree/bindings/media/
-> +video-interfaces.txt. Port 0 should connect the node that is the video
-> +source for to the CSI-2. Port 1 should connect all the R-Car VIN
+7795
 
-Trailing space at the end of previous line.
+> +                reg =3D <0 0xfea80000 0 0x10000>;
+> +                interrupts =3D <0 184 IRQ_TYPE_LEVEL_HIGH>;
+> +                clocks =3D <&cpg CPG_MOD 714>;
+> +                power-domains =3D <&sysc R8A7796_PD_ALWAYS_ON>;
+
+7796
+
+You'd better match the SoC part numbers ;-)
 
 Gr{oetje,eeting}s,
 
