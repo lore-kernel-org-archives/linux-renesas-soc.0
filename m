@@ -1,63 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33620 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965865AbcKLNNy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36833 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753133AbcKNQjL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:54 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 28/32] media: rcar-vin: propagate format to bridge
-Date: Sat, 12 Nov 2016 14:12:12 +0100
-Message-Id: <20161112131216.22635-29-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 14 Nov 2016 11:39:11 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: [PATCH 4/4] drm: rcar-du: Fix LVDS start sequence on Gen3
+Date: Mon, 14 Nov 2016 18:39:12 +0200
+Message-Id: <1479141552-8509-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CSI2 bridge needs to know the video format, propagate it after the
-video source have had its say on the format.
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+According to the latest revision of the datasheet, the LVDS I/O pins
+must be enabled before starting the PLL. Fix it.
+
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index e99815f..d363531 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -193,6 +193,21 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
- 		goto done;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+index b74105a80a6e..e3a4985f6f3f 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+@@ -104,7 +104,14 @@ static void rcar_du_lvdsenc_start_gen3(struct rcar_du_lvdsenc *lvds,
  
-+	/* If we are part of a CSI2 group update bridge */
-+	if (vin_have_bridge(vin)) {
-+		struct v4l2_subdev *bridge = vin_to_bridge(vin);
-+
-+		if (!bridge) {
-+			ret = -EINVAL;
-+			goto done;
-+		}
-+
-+		format.pad = 0;
-+		ret = v4l2_subdev_call(bridge, pad, set_fmt, pad_cfg, &format);
-+		if (ret < 0 && ret != -ENOIOCTLCMD)
-+			goto done;
-+	}
-+
- 	v4l2_fill_pix_format(pix, &format.format);
+ 	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
  
- 	pix->field = field;
+-	/* Turn the PLL on, set it to LVDS normal mode, wait for the startup
++	/* Turn all the channels on. */
++	rcar_lvds_write(lvds, LVDCR1,
++			LVDCR1_CHSTBY_GEN3(3) | LVDCR1_CHSTBY_GEN3(2) |
++			LVDCR1_CHSTBY_GEN3(1) | LVDCR1_CHSTBY_GEN3(0) |
++			LVDCR1_CLKSTBY_GEN3);
++
++	/*
++	 * Turn the PLL on, set it to LVDS normal mode, wait for the startup
+ 	 * delay and turn the output on.
+ 	 */
+ 	lvdcr0 = LVDCR0_PLLON;
+@@ -117,12 +124,6 @@ static void rcar_du_lvdsenc_start_gen3(struct rcar_du_lvdsenc *lvds,
+ 
+ 	lvdcr0 |= LVDCR0_LVRES;
+ 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+-
+-	/* Turn all the channels on. */
+-	rcar_lvds_write(lvds, LVDCR1,
+-			LVDCR1_CHSTBY_GEN3(3) | LVDCR1_CHSTBY_GEN3(2) |
+-			LVDCR1_CHSTBY_GEN3(1) | LVDCR1_CHSTBY_GEN3(0) |
+-			LVDCR1_CLKSTBY_GEN3);
+ }
+ 
+ static int rcar_du_lvdsenc_start(struct rcar_du_lvdsenc *lvds,
 -- 
-2.10.2
+Regards,
+
+Laurent Pinchart
