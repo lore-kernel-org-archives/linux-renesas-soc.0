@@ -1,53 +1,51 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 1/3] arm64: dts: r8a7796: Add CAN external clock support
-Date: Thu, 24 Nov 2016 16:13:39 +0000
-Message-Id: <1480004021-4037-2-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1480004021-4037-1-git-send-email-chris.paterson2@renesas.com>
-References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
- <1480004021-4037-1-git-send-email-chris.paterson2@renesas.com>
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 05/11] ARM: dts: r8a7790: Add device node for PRR
+Date: Mon, 14 Nov 2016 19:37:11 +0100
+Message-Id: <1479148637-5399-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds external CAN clock node for r8a7796. This clock can be used as
-fCAN clock of CAN and CAN FD controller.
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
-
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+v3:
+  - Add to posted series,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index c34c684..61d165b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -69,6 +69,13 @@
- 		clock-frequency = <0>;
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index a946474be9cf1e6b..f554ef3c8096726a 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1471,6 +1471,11 @@
+ 		};
  	};
  
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
 +	};
 +
- 	/* External SCIF clock - to be overridden by boards that provide it */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7790-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
 1.9.1
 
