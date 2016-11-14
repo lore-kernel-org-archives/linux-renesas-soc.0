@@ -1,59 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941543AbcKQRSG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:18:06 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/31] ARM: dts: r8a7794: Use SYSC "always-on" PM Domain for sound
-Date: Thu, 17 Nov 2016 15:11:20 +0100
-Message-Id: <d5ac75dfb3858a443bc69e0ff06ec360755b7421.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 10/11] arm64: dts: r8a7795: Add device node for PRR
+Date: Mon, 14 Nov 2016 19:37:16 +0100
+Message-Id: <1479148637-5399-11-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Hook up the Audio-DMAC and sound device nodes to the SYSC "always-on" PM
-Domain, for a more consistent device-power-area description in DT.
-
-Cfr. commit 0761ff2ad0c581f3 ("ARM: dts: r8a7794: Add SYSC PM Domains").
-
-Fixes: 320d6c5a08a4abd3 ("ARM: dts: r8a7794: add sound support")
-Fixes: 298e4ee3d213a076 ("ARM: dts: r8a7794: add Audio-DMAC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v3:
+  - No changes,
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 7d9f0601d3ca..364b4aa8d1c1 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -319,7 +319,7 @@
- 				  "ch12";
- 		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <13>;
- 	};
-@@ -1485,7 +1485,7 @@
- 			      "mix.0", "mix.1",
- 			      "dvc.0", "dvc.1",
- 			      "clk_a", "clk_b", "clk_c", "clk_i";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
+v2:
+  - New.
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 681f54422375f4f7..a39a702b904da73c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -321,6 +321,11 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
- 		status = "disabled";
- 
++		prr: chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7795-sysc";
+ 			reg = <0 0xe6180000 0 0x0400>;
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
+
