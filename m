@@ -1,60 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:60038 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966113AbcKLQGQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 11:06:16 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 3/6] pinctrl: sh-pfc: r8a7795: Simplify get bias logic
-Date: Sat, 12 Nov 2016 17:04:26 +0100
-Message-Id: <20161112160429.12524-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 11/11] arm64: dts: r8a7796: Add device node for PRR
+Date: Mon, 14 Nov 2016 19:37:17 +0100
+Message-Id: <1479148637-5399-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The last else statement is missing braces and there indentation level
-can be reduced.
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+v3:
+  - Add to posted series,
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 2e8cc2a..6c58563 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -5367,13 +5367,12 @@ static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
- 	reg = pullups[pin].reg;
- 	bit = BIT(pullups[pin].bit);
+v2:
+  - New.
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 9599f5691099054b..41a050d2f1925552 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -243,6 +243,11 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
--	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
--		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
--			return PIN_CONFIG_BIAS_PULL_UP;
--		else
--			return PIN_CONFIG_BIAS_PULL_DOWN;
--	} else
-+	if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
- 		return PIN_CONFIG_BIAS_DISABLE;
-+	else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
-+		return PIN_CONFIG_BIAS_PULL_UP;
-+	else
-+		return PIN_CONFIG_BIAS_PULL_DOWN;
- }
- 
- static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
++		prr: chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7796-sysc";
+ 			reg = <0 0xe6180000 0 0x0400>;
 -- 
-2.10.2
+1.9.1
+
