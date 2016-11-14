@@ -1,90 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33624 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966096AbcKLNNy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36834 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754061AbcKNQjK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:54 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 26/32] media: rcar-vin: add helpers for bridge
-Date: Sat, 12 Nov 2016 14:12:10 +0100
-Message-Id: <20161112131216.22635-27-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 14 Nov 2016 11:39:10 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: [PATCH 2/4] drm: rcar-du: Fix display timing controller parameter
+Date: Mon, 14 Nov 2016 18:39:10 +0200
+Message-Id: <1479141552-8509-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 there might be a CSI2 bridge between the video source and the
-VIN. Add helpers to check for this and to fetch the bridge subdevice.
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+There is a bug in the setting of the DES (Display Enable Signal)
+register. This current setting occurs 1 dot left shift. The DES
+register should be set minus one value about the specifying value
+with H/W specification. This patch corrects it.
+
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 19 +++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
- 2 files changed, 21 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 0b3882a..1efbb0a 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -373,6 +373,11 @@ static int rvin_group_vin_to_csi(struct rvin_dev *vin)
- 	return csi;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 7316fc7fa0bd..aca26eed93b1 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -172,7 +172,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 					mode->crtc_vsync_start - 1);
+ 	rcar_du_crtc_write(rcrtc, VCR,  mode->crtc_vtotal - 1);
+ 
+-	rcar_du_crtc_write(rcrtc, DESR,  mode->htotal - mode->hsync_start);
++	rcar_du_crtc_write(rcrtc, DESR,  mode->htotal - mode->hsync_start - 1);
+ 	rcar_du_crtc_write(rcrtc, DEWR,  mode->hdisplay);
  }
  
-+bool vin_have_bridge(struct rvin_dev *vin)
-+{
-+	return vin->digital.subdev == NULL;
-+}
-+
- struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
- {
- 	int csi;
-@@ -403,6 +408,20 @@ struct v4l2_subdev *vin_to_source(struct rvin_dev *vin)
- 	return vin->group->source[csi].subdev;
- }
- 
-+struct v4l2_subdev *vin_to_bridge(struct rvin_dev *vin)
-+{
-+	int csi;
-+
-+	if (vin->digital.subdev)
-+		return NULL;
-+
-+	csi = rvin_group_vin_to_csi(vin);
-+	if (csi < 0)
-+		return NULL;
-+
-+	return vin->group->bridge[csi].subdev;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier helpers
-  */
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 2f1e087..acaed2b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -206,8 +206,10 @@ struct rvin_dev {
- 	struct v4l2_rect compose;
- };
- 
-+bool vin_have_bridge(struct rvin_dev *vin);
- struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
- struct v4l2_subdev *vin_to_source(struct rvin_dev *vin);
-+struct v4l2_subdev *vin_to_bridge(struct rvin_dev *vin);
- 
- /* Debug */
- #define vin_dbg(d, fmt, arg...)		dev_dbg(d->dev, fmt, ##arg)
 -- 
-2.10.2
+Regards,
+
+Laurent Pinchart
