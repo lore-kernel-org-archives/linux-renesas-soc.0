@@ -1,16 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39016 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:39156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938636AbcKNURc (ORCPT
+        id S938636AbcKNURt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 15:17:32 -0500
+        Mon, 14 Nov 2016 15:17:49 -0500
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Geert Uytterhoeven <geert@glider.be>,
         linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] VSP Partition algorithm improvements
-Date: Mon, 14 Nov 2016 20:17:24 +0000
-Message-Id: <1479154644-28475-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Subject: [GIT PULL FOR renesas-drivers] VSP Writeback prototype
+Date: Mon, 14 Nov 2016 20:17:38 +0000
+Message-Id: <1479154658-28558-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -24,25 +24,25 @@ The following changes since commit 8bc55e5947b58dee3c8b126d7c303991ae0db130:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/pa-improvements/v1
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/writeback/v2
 
-for you to fetch changes up to 97ec8cd22aae933399b84b1a84eedcc48ad35eb8:
+for you to fetch changes up to 7ce3d143d5c287e5786b3471c32112363bcbdca2:
 
-  v4l: vsp1: Remove redundant context variables (2016-11-14 18:49:57 +0000)
+  v4l: vsp1: Provide a writeback video device (2016-11-03 10:34:29 +0000)
 
-This tag contains some improvements to the performance of the partition
-algorithm by moving the calculations to the stream on calls, instead of
-calculating each partition in every frame during interrupt context.
+This implementation of a writeback video node allows frames to be
+captured from the display pipeline using standard V4L2 calls.
 
 ----------------------------------------------------------------
-Kieran Bingham (4):
-      v4l: vsp1: Implement partition algorithm restrictions
-      v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
-      v4l: vsp1: Calculate partition sizes at stream start.
-      v4l: vsp1: Remove redundant context variables
+Kieran Bingham (2):
+      Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
+      v4l: vsp1: Provide a writeback video device
 
- drivers/media/platform/vsp1/vsp1_pipe.h  |  10 ++-
- drivers/media/platform/vsp1/vsp1_sru.c   |   7 +-
- drivers/media/platform/vsp1/vsp1_sru.h   |   1 +
- drivers/media/platform/vsp1/vsp1_video.c | 124 +++++++++++++++++++------------
- 4 files changed, 89 insertions(+), 53 deletions(-)
+ drivers/media/platform/vsp1/vsp1.h       |   1 +
+ drivers/media/platform/vsp1/vsp1_drm.c   |  19 ++++
+ drivers/media/platform/vsp1/vsp1_drv.c   |   5 +-
+ drivers/media/platform/vsp1/vsp1_rwpf.h  |   1 +
+ drivers/media/platform/vsp1/vsp1_video.c | 161 ++++++++++++++++++++++++++++---
+ drivers/media/platform/vsp1/vsp1_video.h |   5 +
+ drivers/media/platform/vsp1/vsp1_wpf.c   |  19 +++-
+ 7 files changed, 193 insertions(+), 18 deletions(-)
