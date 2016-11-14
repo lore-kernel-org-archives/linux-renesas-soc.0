@@ -1,137 +1,245 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f53.google.com ([209.85.214.53]:35317 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933969AbcKNUEl (ORCPT
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:34364 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932462AbcKNTwD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 15:04:41 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161114195200.s62ga2bnutsrocyf@rob-hp-laptop>
+        Mon, 14 Nov 2016 14:52:03 -0500
+Date: Mon, 14 Nov 2016 13:52:00 -0600
+From: Rob Herring <robh@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        mark.rutland@arm.com, mchehab@kernel.org, hverkuil@xs4all.nl,
+        sakari.ailus@linux.intel.com, crope@iki.fi,
+        chris.paterson2@renesas.com, geert+renesas@glider.be,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/5] media: platform: rcar_drif: Add DRIF support
+Message-ID: <20161114195200.s62ga2bnutsrocyf@rob-hp-laptop>
 References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <1478706284-59134-6-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <2857106.83gIJRJqtY@avalon> <20161114195200.s62ga2bnutsrocyf@rob-hp-laptop>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Nov 2016 21:04:39 +0100
-Message-ID: <CAMuHMdW5t4irT+2kHDo8TyLcW_eE7yyDa_SYG9Y-Wj99zRN5mQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] media: platform: rcar_drif: Add DRIF support
-To: Rob Herring <robh@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+ <2857106.83gIJRJqtY@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2857106.83gIJRJqtY@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+On Thu, Nov 10, 2016 at 11:22:20AM +0200, Laurent Pinchart wrote:
+> Hi Ramesh,
+> 
+> Thank you for the patch.
+> 
+> On Wednesday 09 Nov 2016 15:44:44 Ramesh Shanmugasundaram wrote:
+> > This patch adds Digital Radio Interface (DRIF) support to R-Car Gen3 SoCs.
+> > The driver exposes each instance of DRIF as a V4L2 SDR device. A DRIF
+> > device represents a channel and each channel can have one or two
+> > sub-channels respectively depending on the target board.
+> > 
+> > DRIF supports only Rx functionality. It receives samples from a RF
+> > frontend tuner chip it is interfaced with. The combination of DRIF and the
+> > tuner device, which is registered as a sub-device, determines the receive
+> > sample rate and format.
+> > 
+> > In order to be compliant as a V4L2 SDR device, DRIF needs to bind with
+> > the tuner device, which can be provided by a third party vendor. DRIF acts
+> > as a slave device and the tuner device acts as a master transmitting the
+> > samples. The driver allows asynchronous binding of a tuner device that
+> > is registered as a v4l2 sub-device. The driver can learn about the tuner
+> > it is interfaced with based on port endpoint properties of the device in
+> > device tree. The V4L2 SDR device inherits the controls exposed by the
+> > tuner device.
+> > 
+> > The device can also be configured to use either one or both of the data
+> > pins at runtime based on the master (tuner) configuration.
+> > 
+> > Signed-off-by: Ramesh Shanmugasundaram
+> > <ramesh.shanmugasundaram@bp.renesas.com> ---
+> >  .../devicetree/bindings/media/renesas,drif.txt     |  136 ++
+> >  drivers/media/platform/Kconfig                     |   25 +
+> >  drivers/media/platform/Makefile                    |    1 +
+> >  drivers/media/platform/rcar_drif.c                 | 1574
+> > ++++++++++++++++++++ 4 files changed, 1736 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+> > create mode 100644 drivers/media/platform/rcar_drif.c
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > b/Documentation/devicetree/bindings/media/renesas,drif.txt new file mode
+> > 100644
+> > index 0000000..d65368a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > @@ -0,0 +1,136 @@
+> > +Renesas R-Car Gen3 Digital Radio Interface controller (DRIF)
+> > +------------------------------------------------------------
+> > +
+> > +R-Car Gen3 DRIF is a serial slave device. It interfaces with a master
+> > +device as shown below
+> > +
+> > ++---------------------+                +---------------------+
+> > +|                     |-----SCK------->|CLK                  |
+> > +|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
+> > +|                     |-----SD0------->|D0                   |
+> > +|                     |-----SD1------->|D1                   |
+> > ++---------------------+                +---------------------+
+> > +
+> > +Each DRIF channel (drifn) consists of two sub-channels (drifn0 & drifn1).
+> > +The sub-channels are like two individual channels in itself that share the
+> > +common CLK & SYNC. Each sub-channel has it's own dedicated resources like
+> > +irq, dma channels, address space & clock.
+> > +
+> > +The device tree model represents the channel and each of it's sub-channel
+> > +as a separate node. The parent channel ties the sub-channels together with
+> > +their phandles.
+> > +
+> > +Required properties of a sub-channel:
+> > +-------------------------------------
+> > +- compatible: "renesas,r8a7795-drif" if DRIF controller is a part of
+> > R8A7795 SoC.
+> > +	      "renesas,rcar-gen3-drif" for a generic R-Car Gen3 compatible
+> > device.
+> > +	      When compatible with the generic version, nodes must list the
+> > +	      SoC-specific version corresponding to the platform first
+> > +	      followed by the generic version.
+> > +- reg: offset and length of that sub-channel.
+> > +- interrupts: associated with that sub-channel.
+> > +- clocks: phandle and clock specifier of that sub-channel.
+> > +- clock-names: clock input name string: "fck".
+> > +- dmas: phandles to the DMA channel of that sub-channel.
+> > +- dma-names: names of the DMA channel: "rx".
+> > +
+> > +Optional properties of a sub-channel:
+> > +-------------------------------------
+> > +- power-domains: phandle to the respective power domain.
+> > +
+> > +Required properties of a channel:
+> > +---------------------------------
+> > +- pinctrl-0: pin control group to be used for this channel.
+> > +- pinctrl-names: must be "default".
+> > +- sub-channels : phandles to the two sub-channels.
+> > +
+> > +Optional properties of a channel:
+> > +---------------------------------
+> > +- port: child port node of a channel that defines the local and remote
+> > +        endpoints. The remote endpoint is assumed to be a tuner subdevice
+> > +	endpoint.
+> > +- renesas,syncmd       : sync mode
+> > +			 0 (Frame start sync pulse mode. 1-bit width pulse
+> > +			    indicates start of a frame)
+> > +			 1 (L/R sync or I2S mode) (default)
+> > +- renesas,lsb-first    : empty property indicates lsb bit is received
+> > first.
+> > +			 When not defined msb bit is received first (default)
+> 
+> Shouldn't those two properties be instead queried from the tuner at runtime 
+> through the V4L2 subdev API ?
+> 
+> > +- renesas,syncac-pol-high  : empty property indicates sync signal polarity.
+> > +			 When defined, active high or high->low sync signal.
+> > +			 When not defined, active low or low->high sync signal
+> > +			 (default)
+> 
+> This could be queried too, except that an inverter could be present on the 
+> board, so it has to be specified in DT. I would however try to standardize it 
+> the same way that hsync-active and vsync-active are standardized in 
+> Documentation/devicetree/bindings/media/video-interfaces.txt.
+> 
+> > +- renesas,dtdl         : delay between sync signal and start of reception.
+> 
+> Are this and the next property meant to account for PCB traces delays ?
+> 
+> > +			 Must contain one of the following values:
+> > +			 0   (no bit delay)
+> > +			 50  (0.5-clock-cycle delay)
+> > +			 100 (1-clock-cycle delay) (default)
+> > +			 150 (1.5-clock-cycle delay)
+> > +			 200 (2-clock-cycle delay)
+> 
+> How about specifying the property in half clock cycle units, from 0 to 4 ?
+> 
+> > +- renesas,syncdl       : delay between end of reception and sync signal
+> > edge.
+> > +			 Must contain one of the following values:
+> > +			 0   (no bit delay) (default)
+> > +			 50  (0.5-clock-cycle delay)
+> > +			 100 (1-clock-cycle delay)
+> > +			 150 (1.5-clock-cycle delay)
+> > +			 200 (2-clock-cycle delay)
+> > +			 300 (3-clock-cycle delay)
+> > +
+> > +Example
+> > +--------
+> > +
+> > +SoC common dtsi file
+> > +
+> > +		drif00: rif@e6f40000 {
+> > +			compatible = "renesas,r8a7795-drif",
+> > +				     "renesas,rcar-gen3-drif";
+> > +			reg = <0 0xe6f40000 0 0x64>;
+> > +			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks = <&cpg CPG_MOD 515>;
+> > +			clock-names = "fck";
+> > +			dmas = <&dmac1 0x20>, <&dmac2 0x20>;
+> > +			dma-names = "rx", "rx";
 
-On Mon, Nov 14, 2016 at 8:52 PM, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Nov 10, 2016 at 11:22:20AM +0200, Laurent Pinchart wrote:
->> On Wednesday 09 Nov 2016 15:44:44 Ramesh Shanmugasundaram wrote:
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
->> > @@ -0,0 +1,136 @@
+rx, rx? That doesn't make sense. While we don't explicitly disallow 
+this, I'm thinking we should. I wonder if there's any case this is 
+valid. If not, then a dtc check for this could be added.
 
->> > +Example
->> > +--------
->> > +
->> > +SoC common dtsi file
->> > +
->> > +           drif00: rif@e6f40000 {
->> > +                   compatible = "renesas,r8a7795-drif",
->> > +                                "renesas,rcar-gen3-drif";
->> > +                   reg = <0 0xe6f40000 0 0x64>;
->> > +                   interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
->> > +                   clocks = <&cpg CPG_MOD 515>;
->> > +                   clock-names = "fck";
->> > +                   dmas = <&dmac1 0x20>, <&dmac2 0x20>;
->> > +                   dma-names = "rx", "rx";
->
-> rx, rx? That doesn't make sense. While we don't explicitly disallow
-> this, I'm thinking we should. I wonder if there's any case this is
-> valid. If not, then a dtc check for this could be added.
+> > +			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> > +			status = "disabled";
+> > +		};
+> > +
+> > +		drif01: rif@e6f50000 {
+> > +			compatible = "renesas,r8a7795-drif",
+> > +				     "renesas,rcar-gen3-drif";
+> > +			reg = <0 0xe6f50000 0 0x64>;
+> > +			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks = <&cpg CPG_MOD 514>;
+> > +			clock-names = "fck";
+> > +			dmas = <&dmac1 0x22>, <&dmac2 0x22>;
+> > +			dma-names = "rx", "rx";
+> > +			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> > +			status = "disabled";
+> > +		};
+> > +
+> > +		drif0: rif@0 {
+> > +			compatible = "renesas,r8a7795-drif",
+> > +				     "renesas,rcar-gen3-drif";
+> > +			sub-channels = <&drif00>, <&drif01>;
+> > +			status = "disabled";
+> > +		};
+> 
+> I'm afraid this really hurts my eyes, especially using the same compatible 
+> string for both the channel and sub-channel nodes.
+> 
+> We need to decide how to model the hardware in DT. Given that the two channels 
+> are mostly independent having separate DT nodes makes sense to me. However, as 
+> they share the clock and sync signals, somehow grouping them makes sense. I 
+> see three ways to do so, and there might be more.
+> 
+> 1. Adding an extra DT node for the channels group, with phandles to the two 
+> channels. This is what you're proposing here.
+> 
+> 2. Adding an extra DT node for the channels group, as a parent of the two 
+> channels.
+> 
+> 3. Adding phandles to the channels, pointing to each other, or possibly a 
+> phandle from channel 0 pointing to channel 1.
+> 
+> Neither of these options seem perfect to me. I don't like option 1 as the 
+> group DT node really doesn't describe a hardware block. If we want to use a DT 
+> node to convey group information, option 2 seems better to me. However, it 
+> somehow abuses the DT parent-child model that is supposed to describe 
+> relationships from a control bus point of view. Option 3 has the drawback of 
+> not scaling properly, at least with phandles in both channels pointing to the 
+> other one.
+> 
+> Rob, Geert, tell me you have a fourth idea I haven't thought of that would 
+> solve all those problems :-)
 
-The device can be used with either dmac1 or dmac2.
-Which one is used is decided at run time, based on the availability of
-DMA channels per DMAC, which is a limited resource.
+What's the purpose/need for grouping them?
 
->> > +                   power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
->> > +                   status = "disabled";
->> > +           };
->> > +
->> > +           drif01: rif@e6f50000 {
->> > +                   compatible = "renesas,r8a7795-drif",
->> > +                                "renesas,rcar-gen3-drif";
->> > +                   reg = <0 0xe6f50000 0 0x64>;
->> > +                   interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
->> > +                   clocks = <&cpg CPG_MOD 514>;
->> > +                   clock-names = "fck";
->> > +                   dmas = <&dmac1 0x22>, <&dmac2 0x22>;
->> > +                   dma-names = "rx", "rx";
->> > +                   power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
->> > +                   status = "disabled";
->> > +           };
->> > +
->> > +           drif0: rif@0 {
->> > +                   compatible = "renesas,r8a7795-drif",
->> > +                                "renesas,rcar-gen3-drif";
->> > +                   sub-channels = <&drif00>, <&drif01>;
->> > +                   status = "disabled";
->> > +           };
->>
->> I'm afraid this really hurts my eyes, especially using the same compatible
->> string for both the channel and sub-channel nodes.
->>
->> We need to decide how to model the hardware in DT. Given that the two channels
->> are mostly independent having separate DT nodes makes sense to me. However, as
->> they share the clock and sync signals, somehow grouping them makes sense. I
->> see three ways to do so, and there might be more.
->>
->> 1. Adding an extra DT node for the channels group, with phandles to the two
->> channels. This is what you're proposing here.
->>
->> 2. Adding an extra DT node for the channels group, as a parent of the two
->> channels.
->>
->> 3. Adding phandles to the channels, pointing to each other, or possibly a
->> phandle from channel 0 pointing to channel 1.
->>
->> Neither of these options seem perfect to me. I don't like option 1 as the
->> group DT node really doesn't describe a hardware block. If we want to use a DT
->> node to convey group information, option 2 seems better to me. However, it
->> somehow abuses the DT parent-child model that is supposed to describe
->> relationships from a control bus point of view. Option 3 has the drawback of
->> not scaling properly, at least with phandles in both channels pointing to the
->> other one.
->>
->> Rob, Geert, tell me you have a fourth idea I haven't thought of that would
->> solve all those problems :-)
->
-> What's the purpose/need for grouping them?
->
-> I'm fine with Option 2, though I want to make sure it is really needed.
+I'm fine with Option 2, though I want to make sure it is really needed.
 
-Each half of a DRIF pair is basically an SPI slave controller without TX
-capability, sharing clock and chip-select between the two halves.
-Hence you can use either one half to receive 1 bit per clock pulse,
-or both halves to receive 2 bits per clock pulse.
-You cannot use both halves for independent operation due to the signal
-sharing.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
