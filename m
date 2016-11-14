@@ -1,52 +1,114 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33405 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965364AbcKLNNk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:40 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 03/32] media: rcar-vin: reset bytesperline and sizeimage when resetting format
-Date: Sat, 12 Nov 2016 14:11:47 +0100
-Message-Id: <20161112131216.22635-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: kieran.bingham@ideasonboard.com
+Subject: [PATCH 2/2] arm64: dts: r8a7796: salvator-x: Add GPIO keys support
+Date: Mon, 14 Nov 2016 15:07:17 +0200
+Message-Id: <1479128837-30985-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-These two fields where forgotten when refactoring the format reset code
-path. If they are not also reset at the same time as width and hight the
-format read using G_FMT will not match reality.
+The Salvator-X board as a 4 lines DIP switch and 3 push buttons
+connected to SoC GPIOs, meant to be used as general-purpose test keys.
+Add a corresponding node in DT, mapping (semi-randomly) the DIP switch
+to keys 1-4 and the push buttons to keys A-C.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 63 ++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 2bbe6d4..69bc4cf 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -151,6 +151,9 @@ static int rvin_reset_format(struct rvin_dev *vin)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index f35e96ca7d60..8e511fab880c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -11,6 +11,7 @@
+ /dts-v1/;
+ #include "r8a7796.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
  
- 	rvin_reset_crop_compose(vin);
+ / {
+ 	model = "Renesas Salvator-X board based on r8a7796";
+@@ -31,6 +32,63 @@
+ 		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
  
-+	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
-+	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
++	keys {
++		compatible = "gpio-keys";
 +
- 	return 0;
- }
++		pinctrl-0 = <&keys_pins>;
++		pinctrl-names = "default";
++
++		key-1 {
++			gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_1>;
++			label = "SW4-1";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++		key-2 {
++			gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_2>;
++			label = "SW4-2";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++		key-3 {
++			gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_3>;
++			label = "SW4-3";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++		key-4 {
++			gpios = <&gpio5 23 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_4>;
++			label = "SW4-4";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++		key-a {
++			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_A>;
++			label = "TSW0";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++		key-b {
++			gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_B>;
++			label = "TSW1";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++		key-c {
++			gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_C>;
++			label = "TSW2";
++			wakeup-source;
++			debounce-interval = <20>;
++		};
++	};
++
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -116,6 +174,11 @@
+ 		function = "i2c2";
+ 	};
  
++	keys_pins: keys {
++		pins = "GP_5_17", "GP_5_20", "GP_5_22";
++		bias-pull-up;
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
 -- 
-2.10.2
+Regards,
+
+Laurent Pinchart
