@@ -1,97 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941348AbcKQRSI (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:45750 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755095AbcKNShS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:18:08 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/31] ARM: dts: sk-rzg1e: initial device tree
-Date: Thu, 17 Nov 2016 15:11:40 +0100
-Message-Id: <9e7b824b5a384ad6d3adb0ca56bee4ee2fbfefba.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
+        Mon, 14 Nov 2016 13:37:18 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 03/11] ARM: dts: r8a73a4: Add device node for PRR
+Date: Mon, 14 Nov 2016 19:37:09 +0100
+Message-Id: <1479148637-5399-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
+References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Add the initial  device tree for the R8A7745 SoC based SK-RZG1E board.
-The board has 1  debug  serial  port (SCIF2); include support for it,
-so that the serial console can  work.
-
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/Makefile             |  1 +
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts | 39 ++++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+v3:
+  - Drop CCCR, as it is not a lone register, but part of the HPB/APB
+    block,
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index f83ea57c97f9..6f8cd1436ee8 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -678,6 +678,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7743-sk-rzg1m.dtb \
-+	r8a7745-sk-rzg1e.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-diff --git a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-new file mode 100644
-index 000000000000..667ec4b259d5
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -0,0 +1,39 @@
-+/*
-+ * Device Tree Source for the SK-RZG1E board
-+ *
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7745.dtsi"
-+
-+/ {
-+	model = "SK-RZG1E";
-+	compatible = "renesas,sk-rzg1e", "renesas,r8a7745";
-+
-+	aliases {
-+		serial0 = &scif2;
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r8a73a4.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index ca8672778fe067e1..53183ffe04c11c11 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -751,6 +751,11 @@
+ 		};
+ 	};
+ 
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
 +	};
 +
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,sysc-r8a73a4", "renesas,sysc-rmobile";
+ 		reg = <0 0xe6180000 0 0x8000>, <0 0xe6188000 0 0x8000>;
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
