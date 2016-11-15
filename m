@@ -1,85 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58099 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935102AbcKLCGV (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:41132 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752731AbcKOOqo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 21:06:21 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 2/3] tests: add hue area wraparound test for HGT
-Date: Sat, 12 Nov 2016 04:06:26 +0200
-Message-ID: <13106990.jD6746NgdK@avalon>
-In-Reply-To: <20161004130915.28812-3-niklas.soderlund@ragnatech.se>
-References: <20161004130915.28812-1-niklas.soderlund@ragnatech.se> <20161004130915.28812-3-niklas.soderlund@ragnatech.se>
+        Tue, 15 Nov 2016 09:46:44 -0500
+Date: Tue, 15 Nov 2016 15:40:00 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Subject: Testing SDIO with UHS speeds
+Message-ID: <20161115143959.GA10334@katana>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
 
-Thank you for the patch.
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tuesday 04 Oct 2016 15:09:14 Niklas S=F6derlund wrote:
-> From: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
->=20
-> One configuration for HGT histograms are where hue area 0 is wrapped
+Hi,
 
-s/is/
+I put the test procedure how I tested SDIO with UHS speeds to the elinux
+wiki. You can find it here:
 
-> around the hue input value space (0-255), for example area 0 can cove=
-r
-> hue values above 220 but bellow 40. Hue area 0 is the only area which=
+http://elinux.org/Tests:SDIO-with-UHS
+
+While the task description only mandated H3 and a AC-180M SDIO card, I
+also did some extra tests on M3-W and an EMMY-W1 SDIO card (which has
+the same SD8887 chipset from Marvell) to have better comparison.
+
+Quite some remarks coming from this setup:
+
+A) A seperate branch is needed, merging SDHI-DMA support into ren-drivers
+and adding 5 more little patches. 2 are aleady on their way upstream and
+one will be taken care of by mwifiex maintainers. One remaining is a
+workaround for a race condition when enabling SDIO irqs. This surely
+needs further investigation. And one has to do with TDSEL settings
+again. I plan to write up my TDSEL findings and experiences next Monday.
+
+B) Operating at 100MHz for SDR50, it is no surprise that line lengths and
+other line characteristics are heavily influencing the result:
+
+  1) my M3-W seems to be more stable than my H3 (ES 1.0)
+
+  While testing transfer speeds, H3 gave me occasional "timeout waiting
+  for SD bus idle". M3-W did not, with the same pinctrl settings.
+
+  2) on H3, CN14 seems to be more stable than CN13
+
+  ?? Line length issues?
+
+  3) the EMMY-W1 module seems to be more stable than the AC-180M
+
+  AC-180M already has problems loading the firmware. The supplied antenna
+  gives way worse signals than EMMY-W1. AC-180M does not really fit into
+  CN14 due to its size and needs to be held in position manually.
+  AC-180M couldn't be tuned with SDR104 unlike EMMY-W1.
+
+  But I really hope that at least the antenna issue is only local for
+  me and there will be better results with the other cards in Japan.
+
+C) UHS is faster than non-UHS, 802.11ac than 802.11n, but just a little
+
+For the more stable EMMY card, SDR50 gives more throughput than standard
+hi-speed, but more could be expected. Same goes for switching from
+802.11n to 802.11ac.
 
 
-s/bellow/below/
+Further notes:
 
-> supports this mode where the areas lower limit uses a higher value th=
-en
+Tests have mainly been done with SDIO irqs. Occasional tests with
+polling did not make a difference in performance. The only notable
+difference was experiencing the race condition mentioned above and
+worked around in the git repo.
 
-s/areas/area's/
-s/then/than/
+All tests have been done with 4 bit bus width. When aiming for UHS
+speeds, 1 bit bus width didn't seem feasible.
 
-> it's higher limit hence the area wraparound the max hue value.
+Hotplugging worked fine. Whenever a stable pinmux setting was found
+(TDSEL!), un- and replugging the SDIO card worked flawlessly.
 
-s/it's/its/
-s/wraparound/wraps around/
+Thanks,
 
-I'll fix this while applying.
+   Wolfram
 
-> Add a test to verify this works now that gen-image supports generatin=
-g
-> reference frames with wrapped around hue areas.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  tests/vsp-unit-test-0018.sh | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/tests/vsp-unit-test-0018.sh b/tests/vsp-unit-test-0018.s=
-h
-> index 2b49b54..944f7ac 100755
-> --- a/tests/vsp-unit-test-0018.sh
-> +++ b/tests/vsp-unit-test-0018.sh
-> @@ -31,6 +31,7 @@ test_histogram() {
->  test_main() {
->  =09test_histogram "0,255,255,255,255,255,255,255,255,255,255,255"
->  =09test_histogram "0,40,40,80,80,120,120,160,160,200,200,255"
-> +=09test_histogram "220,40,40,80,80,120,120,160,160,200,200,220"
->  }
->=20
->  test_init $0 "$features"
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
---=20
-Regards,
+iQIcBAEBAgAGBQJYKx4/AAoJEBQN5MwUoCm2dCIP/Rph8Fq81OXGZmC30/eAj47b
+zvW857KQTAjeCqC+qcFHZET2rsdkpFtBXD/B8CngWQIkNFvHn+lZ9ERCImv4uv10
+lrk9yVsVI1EzDLZryZVYtG3Ss0pexbef6X5F3Di+18fIQvta9seJIX2At1CjdDlB
+qAUJdGoKcQFXUXURGHYbMyOJQurCWJ1RVZiI9bRn8mRZiZATpQzZJM5frzVLdaRE
+7m3z38ZuZL3QZwlzQcMB5jvzk56AupHKAlz0wkP+1kmNs76g3C0Q3UdSzpkimXrF
+5UCyNRS5nHrZtNgJTaTBirMavMVwneNwwk4MDbIjhz8Lu3yIn2cmaK3rH5lVk6hC
+eY2dIhVJkmh7WwRt8znIC+X8RqrJgUjrG2dsBKET6wmQdShM3WyjVIcD+UuQlhai
+gwSdjUTqEptlfak01MwS9UIpr1qLE24NOUWe08a9VWIA4azQkfw3NXzS3DstTchQ
+GeedmJvgYXhJ3xkZlYVPnRCMjDRQdiwQNQHMwxWp60qvMsZFg5krNfhIWhQ0a2hn
+CO78/9u4qOvk3P/O+9P4UEAp8Ii0rPua+8xy4LSRjV/cpphmIcpT1WtlbOSI3rDo
+97uDvXPTzTDmKtYF8LJ660BugnZZMFuClUsWGvaz01+B1hLU4dGwbmQgMbsaTaeM
+lwHk6dQ13sgrA/PXsrzi
+=h4No
+-----END PGP SIGNATURE-----
 
-Laurent Pinchart
+--vkogqOf2sHV7VnPd--
