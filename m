@@ -1,46 +1,111 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34357 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753042AbcKOO2X (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 09:28:23 -0500
-Received: by mail-it0-f66.google.com with SMTP id o1so265151ito.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Nov 2016 06:28:23 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <4011173.GR855PE2mA@avalon>
-References: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1579044.36Kjjoy1H1@avalon> <CAMuHMdW8CNrP0peCHxaqA4Yj7DEmbH9L0Qai+TMpfgbyVMn3Nw@mail.gmail.com>
- <4011173.GR855PE2mA@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Nov 2016 15:28:21 +0100
-Message-ID: <CAMuHMdUtwCQAqd3XpxLst8f1U1zV1UE34MOWts4B1LGOr20mgA@mail.gmail.com>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Kieran Bingham <kieran.bingham@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH 0/2] Salvator-X: Add GPIO keys support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Linus Walleij <linux.walleij@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Date: Tue, 15 Nov 2016 16:28:56 +0200
+Message-ID: <1605069.rWfQvu2DRJ@avalon>
+In-Reply-To: <4011173.GR855PE2mA@avalon>
+References: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdW8CNrP0peCHxaqA4Yj7DEmbH9L0Qai+TMpfgbyVMn3Nw@mail.gmail.com> <4011173.GR855PE2mA@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 15, 2016 at 3:26 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->> > disabling the I/O interrupt (or just ignoring it).
->>
->> IIRC, the R-Car GPIO block will send interrupts in output mode only.
->
+On Tuesday 15 Nov 2016 16:26:11 Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> (CC'ing Linus)
+
+With Linus' e-mail address fixed. I'll blame my e-mail client that uses 
+incorrect addresses from old e-mails as the top auto-completion options :-/
+
+> On Tuesday 15 Nov 2016 08:58:18 Geert Uytterhoeven wrote:
+> > On Tue, Nov 15, 2016 at 12:59 AM, Laurent Pinchart wrote:
+> >> On Monday 14 Nov 2016 20:47:03 Geert Uytterhoeven wrote:
+> >>> On Mon, Nov 14, 2016 at 5:44 PM, Laurent Pinchart wrote:
+> >>>> On Monday 14 Nov 2016 14:47:00 Geert Uytterhoeven wrote:
+> >>>>> On Mon, Nov 14, 2016 at 2:41 PM, Laurent Pinchart wrote:
+> >>>>>> On Monday 14 Nov 2016 14:35:26 Geert Uytterhoeven wrote:
+> >>>>>>> The main reason I haven't sent out a similar series yet is because
+> >>>>>>> the GPIOs used for the 3 push buttons are shared with the 3 user
+> >>>>>>> LEDs. For each of them, you have to choose at DT time if you want
+> >>>>>>> to use them as buttons or as LEDs.
+> >>>>>>> 
+> >>>>>>> On ULCB, the same issue is present. For those, we settled on 1 key
+> >>>>>>> and 2 LEDs...
+> >>>>>>> 
+> >>>>>>> Looking forward to more comments...
+> >>>>>> 
+> >>>>>> In theory the GPIOs could be shared by the gpio-keys and LED drivers
+> >>>>>> in open-drain mode. I'm not sure the GPIO subsystem supports that
+> >>>>>> though.
+> >>>>> 
+> >>>>> Been there, done that, cfr. "[RFD] Sharing GPIOs for input (buttons)
+> >>>>> and output (LEDs)". The result wasn't pretty...
+> >>>> 
+> >>>> Wasn't it ? Linus basically told you to use open-drain GPIOs and fix
+> >>>> the GPIO driver in case it can't read the value of GPIOs configured as
+> >>>> output in open-drain mode. If didn't shoot the idea down.
+> >>> 
+> >>> If I'm not mistaken, the R-Car GPIO block does not support open-drain
+> >>> GPIO.
+> >> 
+> >> Not as such, but we can switch between input and output low, which is
+> >> basically open-drain.
+> >> 
+> >>> Even if it would support it, you cannot read the GPIO while actively
+> >>> pulling it down.
+> >> 
+> >> When actively driving it low you know the value is 0. Only when driving
+> >> it open do you need to read the value back, and that's easily implemented
+> >> as the hardware will be configured in input mode then.
+> >> 
+> >>> Hence you have to time-multiplex the GPIO to use both LEDs and buttons,
+> >>> through switching between pulling down and not pulling down (or between
+> >>> output and input, which is what I did).
+> >> 
+> >> No, if you want to use both, you should configure the I/O in open-drain,
+> >> in which case you have two options:
+> >> 
+> >> - Turn the LED on by driving the I/O "high", meaning leaving it
+> >> floating. The pull-up resistor will turn the MOSFET on, the LED will be
+> >> lit. When the corresponding button is pressed the I/O will be connected
+> >> to GND, turning the LED off, and signalling the input.
+> >> 
+> >> - Turn the LED off by driving the I/O low. Pressing the button won't
+> >> have any effect. We need in this case to ignore the input value, which
+> >> could be done by
+> > 
+> > Right. I tried to have both ;-)
+> 
+> I'm sorry Dave, I'm afraid you can't do that :-)
+> 
+> >> disabling the I/O interrupt (or just ignoring it).
+> > 
+> > IIRC, the R-Car GPIO block will send interrupts in output mode only.
+> 
 > Do you mean input mode only ?
+> 
+> >>> Apart from that, there's also the discrepancy between hardware
+> >>> description (the GPIO is connected to both buttons and LEDs, hence it
+> >>> should be described that way in DT)
+> >> 
+> >> Correct, this is where a framework change is needed if we want to allow
+> >> both the GPIO keyboard and LED drivers to request the GPIO.
+> 
+> Linus, would this be acceptable to you ?
+> 
+> >>> and user policy (the user wants to use e.g. the first GPIO as a button,
+> >>> and the second GPIO as an LED).
+> >> 
+> >> That's easy to do, the user will just need to turn the first LED on,
+> >> allowing full button operation on the I/O.
+> > 
+> > Thanks, didn't think of that.
 
-Yes, sorry (still suffering a bit from my cold).
+-- 
+Regards,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
