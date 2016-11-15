@@ -1,84 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760720AbcKDJou (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36268 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932164AbcKOLn5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/29] ARM: dts: r8a7792: add MSIOF support
-Date: Fri,  4 Nov 2016 10:44:11 +0100
-Message-Id: <b0663cd4211a26eb7fcaed98a26b3d117dc34926.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        Tue, 15 Nov 2016 06:43:57 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se> <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Nov 2016 12:43:55 +0100
+Message-ID: <CAMuHMdVmjd1v+HxX+n7BRCm83BSBd2mUm8qHVNsK-UheRLFVoQ@mail.gmail.com>
+Subject: Re: [PATCHv2 2/2] pinctrl: sh-pfc: r8a7796: Add bias pinconf support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Sat, Nov 12, 2016 at 5:10 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Implements pull-up and pull-down. On this SoC there is no simple mapping
+> of GP pins to bias register bits, so we need a table.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 355 +++++++++++++++++++++++++++++=
+++----
+>  1 file changed, 316 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pf=
+c/pfc-r8a7796.c
+> index f06559c..676a4a6 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-Define the generic R8A7792 parts of the MSIOF0/1 device nodes.
+> -       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, SH_PFC_PIN_C=
+FG_DRIVE_STRENGTH),
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
+> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, CFG_FLAGS),
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> +       { PIN_A_NUMBER('D', 38), PU3,  2 },     /* FSCLKST# */
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 839cd70c4c75..a75e0cd312c5 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -26,6 +26,8 @@
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
- 		spi0 = &qspi;
-+		spi1 = &msiof0;
-+		spi2 = &msiof1;
- 		vin0 = &vin0;
- 		vin1 = &vin1;
- 		vin2 = &vin2;
-@@ -572,6 +574,34 @@
- 			status = "disabled";
- 		};
- 
-+		msiof0: spi@e6e20000 {
-+			compatible = "renesas,msiof-r8a7792";
-+			reg = <0 0xe6e20000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp0_clks R8A7792_CLK_MSIOF0>;
-+			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+			       <&dmac1 0x51>, <&dmac1 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6e10000 {
-+			compatible = "renesas,msiof-r8a7792";
-+			reg = <0 0xe6e10000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7792_CLK_MSIOF1>;
-+			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+			       <&dmac1 0x55>, <&dmac1 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7792";
- 			reg = <0 0xfeb00000 0 0x40000>;
--- 
-2.7.0.rc3.207.g0ac5344
+"FSCLKST" (without "#")
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
