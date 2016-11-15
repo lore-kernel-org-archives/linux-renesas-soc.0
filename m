@@ -1,47 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40710 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752338AbcKRKhk (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34173 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935299AbcKOJFd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 05:37:40 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ARM: dts: r8a7743: Add device node for PRR
-Date: Fri, 18 Nov 2016 11:37:42 +0100
-Message-Id: <1479465463-19572-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
-References: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
+        Tue, 15 Nov 2016 04:05:33 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161111204003.4022-1-niklas.soderlund@ragnatech.se>
+References: <20161111204003.4022-1-niklas.soderlund@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Nov 2016 10:05:32 +0100
+Message-ID: <CAMuHMdVXawxFBCf-2E0yb+rXm=zP7ZCQTMvt-PM6ixhfkDVmrg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add DU support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+On Fri, Nov 11, 2016 at 9:40 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+>
+> Only the DU parallel RGB output signals are included, HDMI and TCON pins
+> will be added in separate groups. Based on a similar patch from Laurent
+> Pinchart for the r8a7795 PFC driver.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7743.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index ca0cda28a3eb5241..0956125597fdf835 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -102,6 +102,11 @@
- 			#power-domain-cells = <0>;
- 		};
- 
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
-+
- 		rst: reset-controller@e6160000 {
- 			compatible = "renesas,r8a7743-rst";
- 			reg = <0 0xe6160000 0 0x100>;
--- 
-1.9.1
+Will queue...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
