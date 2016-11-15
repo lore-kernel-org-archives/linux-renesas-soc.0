@@ -1,40 +1,82 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 1/3] dt: arm: shmobile: update H3ULCB board Documentation
-Date: Thu,  3 Nov 2016 21:04:44 +0300
-Message-Id: <1478196284-982-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1478282032-17571-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1478282032-17571-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+ <1478282032-17571-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Nov 2016 15:27:29 +0100
+Message-ID: <CAMuHMdUUXkJxbNxKJ0Od3N40+N4TNRoMFBjVCjvCO9x_xR1=tA@mail.gmail.com>
+Subject: Re: [PATCHv2 2/2] v4l: vsp1: Provide a writeback video device
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	DRI Development <dri-devel@lists.freedesktop.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This updates H3ULCB Device tree bindings Documentation with
-official board name
+On Fri, Nov 4, 2016 at 6:53 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> --- a/drivers/media/platform/vsp1/vsp1_video.c
+> +++ b/drivers/media/platform/vsp1/vsp1_video.c
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +static void vsp1_video_wb_process_buffer(struct vsp1_video *video)
+> +{
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 94f2c5f..a1e94da 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -51,7 +51,7 @@ Boards:
-     compatible = "renesas,genmai", "renesas,r7s72100"
-   - Gose (RTP0RC7793SEB00010S)
-     compatible = "renesas,gose", "renesas,r8a7793"
--  - H3ULCB (RTP0RC7795SKB00010S)
-+  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
--- 
-1.9.1
+> +       if (buf) {
+> +               video->rwpf->mem = buf->mem;
+> +
+> +               /*
+> +                * Store this buffer as pending. It will commence at the next
+> +                * frame start interrupt
+> +                */
+> +               video->pending = buf;
+> +               list_del(&buf->queue);
+> +       } else {
+> +               /* Disable writeback with no buffer */
+> +               video->rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
 
+drivers/media/platform/vsp1/vsp1_video.c:946:30: warning: missing
+braces around initializer [-Wmissing-braces]
+   video->rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+
+> +static void vsp1_video_wb_stop_streaming(struct vb2_queue *vq)
+> +{
+> +       struct vsp1_video *video = vb2_get_drv_priv(vq);
+> +       struct vsp1_rwpf *rwpf = video->rwpf;
+> +       struct vsp1_pipeline *pipe = rwpf->pipe;
+> +       struct vsp1_vb2_buffer *buffer;
+> +       unsigned long flags;
+> +
+> +       /*
+> +        * Disable the completion interrupts, and clear the WPF memory to
+> +        * prevent writing out frames
+> +        */
+> +       spin_lock_irqsave(&video->irqlock, flags);
+> +       video->frame_end = NULL;
+> +       rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+
+drivers/media/platform/vsp1/vsp1_video.c:1008:22: warning: missing
+braces around initializer [-Wmissing-braces]
+  rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+
+Either drop the "0":
+
+        mem = (struct vsp1_rwpf_memory) { };
+
+or add an additional pair of braces:
+
+        mem = (struct vsp1_rwpf_memory) { { 0 } };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
