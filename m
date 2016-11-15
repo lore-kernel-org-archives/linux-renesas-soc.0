@@ -1,117 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33452 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965741AbcKLNNn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52874 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752535AbcKOR4I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:43 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 09/32] media: rcar-vin: move pad number discovery to async complete handler
-Date: Sat, 12 Nov 2016 14:11:53 +0100
-Message-Id: <20161112131216.22635-10-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 15 Nov 2016 12:56:08 -0500
+Date: Tue, 15 Nov 2016 18:56:03 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Shinobu Uehara <shinobu.uehara.xc@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: r8a7794: Correct hsusb parent clock
+Message-ID: <20161115175602.GF3979@verge.net.au>
+References: <1478545627-32280-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1478545627-32280-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rvin_v4l2_probe() handler will with Gen3 support need to handle more
-then one subdevice. To prepare for this move the digital subdev pad
-number discover to the digital specific async notification complete
-function.
+On Mon, Nov 07, 2016 at 08:07:07PM +0100, Geert Uytterhoeven wrote:
+> The parent clock of the HSUSB clock is the HP clock, not the MP clock.
+> 
+> Fixes: c7bab9f929e51761 ("ARM: shmobile: r8a7794: Add USB clocks to device tree")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 18 +-----------------
- 2 files changed, 24 insertions(+), 17 deletions(-)
+Thanks, I have queued this up.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 89a9280..2c40b6a 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -68,6 +68,8 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
- static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
-+	struct v4l2_subdev *sd = vin->digital.subdev;
-+	unsigned int pad_idx;
- 	int ret;
- 
- 	/* Verify subdevices mbus format */
-@@ -80,6 +82,27 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- 	vin_dbg(vin, "Found media bus format for %s: %d\n",
- 		vin->digital.subdev->name, vin->digital.code);
- 
-+	/* Figure out source and sink pad ids */
-+	vin->digital.source_pad_idx = 0;
-+	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
-+		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
-+			break;
-+	if (pad_idx >= sd->entity.num_pads)
-+		return -EINVAL;
-+
-+	vin->digital.source_pad_idx = pad_idx;
-+
-+	vin->digital.sink_pad_idx = 0;
-+	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
-+		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
-+			vin->digital.sink_pad_idx = pad_idx;
-+			break;
-+		}
-+
-+	vin_dbg(vin, "Found media pads for %s source: %d sink %d\n",
-+		vin->digital.subdev->name, vin->digital.source_pad_idx,
-+		vin->digital.sink_pad_idx);
-+
- 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
- 	if (ret < 0) {
- 		vin_err(vin, "Failed to register subdev nodes\n");
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index f8ff7c4..51324c6 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -905,7 +905,7 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- {
- 	struct video_device *vdev = &vin->vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--	int pad_idx, ret;
-+	int ret;
- 
- 	v4l2_set_subdev_hostdata(sd, vin);
- 
-@@ -951,22 +951,6 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
- 
--	vin->digital.source_pad_idx = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
--			break;
--	if (pad_idx >= sd->entity.num_pads)
--		return -EINVAL;
--
--	vin->digital.source_pad_idx = pad_idx;
--
--	vin->digital.sink_pad_idx = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
--			vin->digital.sink_pad_idx = pad_idx;
--			break;
--		}
--
- 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
- 	rvin_reset_format(vin);
- 
--- 
-2.10.2
+I also checked that the correct parent is used on the r8a7790, 1 and 3.
+HSUSB is not present on the r8a7792.
+
+> ---
+>  arch/arm/boot/dts/r8a7794.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+> index 01816ac775a8d177..7d9f0601d3ca8def 100644
+> --- a/arch/arm/boot/dts/r8a7794.dtsi
+> +++ b/arch/arm/boot/dts/r8a7794.dtsi
+> @@ -1262,7 +1262,7 @@
+>  		mstp7_clks: mstp7_clks@e615014c {
+>  			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+>  			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+> -			clocks = <&mp_clk>, <&mp_clk>,
+> +			clocks = <&mp_clk>, <&hp_clk>,
+>  				 <&zs_clk>, <&p_clk>, <&p_clk>, <&zs_clk>,
+>  				 <&zs_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+>  				 <&zx_clk>;
+> -- 
+> 1.9.1
+> 
