@@ -1,55 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932196AbcKDJpM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:45:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/9] ARM: shmobile: Sort Kconfig selections
-Date: Fri,  4 Nov 2016 10:44:35 +0100
-Message-Id: <9255f6fd453e1ba7ffa58427a04c52f68b96862f.1478251657.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
-References: <cover.1478251657.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1605069.rWfQvu2DRJ@avalon>
+References: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdW8CNrP0peCHxaqA4Yj7DEmbH9L0Qai+TMpfgbyVMn3Nw@mail.gmail.com>
+ <4011173.GR855PE2mA@avalon> <1605069.rWfQvu2DRJ@avalon>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Nov 2016 21:36:04 +0100
+Message-ID: <CACRpkda9e=wypg_FSVgFwNtEAH1Soef8m6Brrgq+S_Yfr08++w@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Salvator-X: Add GPIO keys support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Nov 15, 2016 at 3:28 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 
-Sort alphabetically all symbols selected by ARCH_RENESAS
+>> >>> Apart from that, there's also the discrepancy between hardware
+>> >>> description (the GPIO is connected to both buttons and LEDs, hence it
+>> >>> should be described that way in DT)
+>> >>
+>> >> Correct, this is where a framework change is needed if we want to allow
+>> >> both the GPIO keyboard and LED drivers to request the GPIO.
+>>
+>> Linus, would this be acceptable to you ?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes, if:
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 09817bae4558..84fd4e959147 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -32,15 +32,15 @@ config ARCH_RMOBILE
- menuconfig ARCH_RENESAS
- 	bool "Renesas ARM SoCs"
- 	depends on ARCH_MULTI_V7 && MMU
-+	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	select ARCH_SHMOBILE
- 	select ARCH_SHMOBILE_MULTI
-+	select ARM_GIC
-+	select GPIOLIB
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
--	select ARM_GIC
--	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	select NO_IOPORT_MAP
- 	select PINCTRL
--	select GPIOLIB
- 	select ZONE_DMA if ARM_LPAE
- 
- if ARCH_RENESAS
--- 
-2.7.0.rc3.207.g0ac5344
+- It is solved in a generic way so that there is a call like
+gpiod_get_nonexclusive()
+  or similar to get a second handle on a GPIOd someone else is already using.
+
+- It is cross-coordinated with the regulator people who have exactly the same
+  problem for fixed GPIO regulators and which is why that code looks like hell.
+
+Apart from that, we generally need a way to access LEDs as resources with
+foo-leds = <&led_foo>; in the device tree just like we can get GPIOs and I
+hope someone is working on that for this thing... triggers is such a hack.
+
+Yours,
+Linus Walleij
