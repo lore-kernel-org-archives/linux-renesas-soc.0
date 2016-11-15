@@ -1,75 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:46776 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753107AbcKGPeh (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:32909 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbcKOMyB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 10:34:37 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.10 (take one)
-Date: Mon,  7 Nov 2016 16:34:28 +0100
-Message-Id: <1478532868-5508-1-git-send-email-geert+renesas@glider.be>
+        Tue, 15 Nov 2016 07:54:01 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161115121810.GD27089@bigcity.dyn.berto.se>
+References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se>
+ <20161112161002.13070-2-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdUmw14iv7P+anCF6X9XBD7wFSKuDjCk-N_vqCUqOZYHmQ@mail.gmail.com> <20161115121810.GD27089@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Nov 2016 13:54:00 +0100
+Message-ID: <CAMuHMdW0a+aYEE0Q5wASUjSca9z75R0iocz18pmq_xbDCqh6mw@mail.gmail.com>
+Subject: Re: [PATCHv2 1/2] pinctrl: sh-pfc: r8a7796: Add drive strength support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Hi Niklas,
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+On Tue, Nov 15, 2016 at 1:18 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+>> > +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, SH_PF=
+C_PIN_CFG_DRIVE_STRENGTH),
+>>
+>> DU_DOTCLKIN3 is pin AR8.
+>
+> DU_DOTCLKIN2 is pin AR8, right?
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+Yes. Silly typo on my part, and copied and pasted to bring more confusion :=
+-(
 
-are available in the git repository at:
+>> > +               { PIN_A_NUMBER('R', 8),  24, 2 },       /* DU_DOTCLKIN=
+3 */
+>>
+>> Probably this is a bug in the datasheet, as M3-W does not have DU_DOTCLK=
+IN3?
+>
+> No bug in the datasheet only me who is confused by the naming of the
+> external leads and pins described above. Will fix this up and resend
+> after your feedback, sorry for the confusion and thanks for spotting it.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag1
-
-for you to fetch changes up to dbdcc4f996df280eb2758095b4774ea62da8a2a7:
-
-  clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.10 (take one)
-
-  - SYS-DMAC, (H)SCIF, I2C, DRIF, and graphics related clocks for R-Car
-    M3-W,
-  - Minor fixes and cleanups.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      clk: renesas: cpg-mssr: Always use readl()/writel()
-      clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
-      clk: renesas: cpg-mssr: Fix inverted debug check
-      clk: renesas: cpg-mssr: Remove bogus commas from error messages
-
-Laurent Pinchart (3):
-      clk: renesas: r8a7796: Add FCP clocks
-      clk: renesas: r8a7796: Add VSP clocks
-      clk: renesas: r8a7796: Add DU and LVDS clocks
-
-Ramesh Shanmugasundaram (1):
-      clk: renesas: r8a7796: Add DRIF clock
-
-Ulrich Hecht (4):
-      clk: renesas: r8a7796: Add SYS-DMAC clocks
-      clk: renesas: r8a7796: Add SCIF clocks
-      clk: renesas: r8a7796: Add HSCIF clocks
-      clk: renesas: r8a7796: Add I2C clocks
-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 45 ++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c    | 14 +++++------
- drivers/clk/renesas/renesas-cpg-mssr.c | 17 ++++++-------
- 3 files changed, 60 insertions(+), 16 deletions(-)
+The bit is labeled for H3 only in the PUEN register, but not in the
+PUD register.
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
