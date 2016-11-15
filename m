@@ -1,145 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938835AbcKQRmd (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37638 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755180AbcKOA1Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:42:33 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/18] arm64: dts: r8a7796: add I2C support
-Date: Thu, 17 Nov 2016 15:04:40 +0100
-Message-Id: <56e38aae6a72a32579df533f0213e001a4343451.1479388193.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479388193.git.horms+renesas@verge.net.au>
-References: <cover.1479388193.git.horms+renesas@verge.net.au>
+        Mon, 14 Nov 2016 19:27:25 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH] ARM: shmobile: dts: Switch to panel-lvds bindings for Mitsubishi panels
+Date: Tue, 15 Nov 2016 02:27:29 +0200
+Message-Id: <1479169649-11315-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
+Use the correct DT bindings.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 94 ++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi | 3 ++-
+ arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index f9cb7796ad49..2e940ff61378 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -17,6 +17,16 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+Hello,
+
+This patch is an example of how the panel-lvds bindings should be used for
+display panels. It isn't meant to be merged upstream at the moment as the
+bindings haven't been accepted yet but can already be used as both an example
+and a test base for LVDS mode selection.
+
+diff --git a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
+index 65cb50f0c29f..238d14bb0ebe 100644
+--- a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
++++ b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
+@@ -10,10 +10,11 @@
  
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
-@@ -239,6 +249,90 @@
- 			#power-domain-cells = <1>;
- 		};
+ / {
+ 	panel {
+-		compatible = "mitsubishi,aa104xd12", "panel-dpi";
++		compatible = "mitsubishi,aa104xd12", "panel-lvds";
  
-+		i2c0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe6500000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@e6508000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe6510000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@e66d0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66d0000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66d8000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 927>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e66e0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66e0000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 919>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@e66e8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66e8000 0 0x40>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
+ 		width-mm = <210>;
+ 		height-mm = <158>;
++		data-mapping = "jeida-18";
+ 
+ 		panel-timing {
+ 			/* 1024x768 @65Hz */
+diff --git a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
+index a07ebf8f6938..04aafd479775 100644
+--- a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
++++ b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
+@@ -10,10 +10,11 @@
+ 
+ / {
+ 	panel {
+-		compatible = "mitsubishi,aa121td01", "panel-dpi";
++		compatible = "mitsubishi,aa121td01", "panel-lvds";
+ 
+ 		width-mm = <261>;
+ 		height-mm = <163>;
++		data-mapping = "jeida-18";
+ 
+ 		panel-timing {
+ 			/* 1280x800 @60Hz */
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
