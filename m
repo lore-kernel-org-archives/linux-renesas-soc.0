@@ -1,67 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38378 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938597AbcKOBq7 (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34247 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941325AbcKOJ4o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 20:46:59 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] R-Car DU M3-W support
-Date: Tue, 15 Nov 2016 03:47:07 +0200
-Message-ID: <14645714.0LuXQt2l6b@avalon>
+        Tue, 15 Nov 2016 04:56:44 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1477921588-2326-1-git-send-email-geert+renesas@glider.be>
+References: <1477921588-2326-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Nov 2016 10:56:43 +0100
+Message-ID: <CAMuHMdXbBYbHzQXD-6dC2kQFVVGLWdGn0UWM0ahC7MSUPbwqwg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add EtherAVB pins, groups and functions
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Mon, Oct 31, 2016 at 2:46 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds AVB_LINK, AVB_MAGIC, AVB_PHY_INT, AVB_MDC, AVB_AVTP_PPS,
+> AVB_AVTP_MATCH, AVB_AVTP_CAPTURE pins, groups and functions to R8A7796
+> SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 87 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> index c7b8811fbab554bb..16773e580a902edc 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> @@ -2564,6 +2638,18 @@ enum {
+>         "hscif4_data_b",
+>  };
+>
+> +static const char * const avb_groups[] = {
+> +       "avb_link",
+> +       "avb_magic",
+> +       "avb_phy_int",
+> +       "avb_mdc",
+> +       "avb_avtp_pps",
+> +       "avb_avtp_match_a",
+> +       "avb_avtp_capture_a",
+> +       "avb_avtp_match_b",
+> +       "avb_avtp_capture_b",
+> +};
+> +
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+Queueing up, with above chunk moved in front of drif0_groups[].
 
-are available in the git repository at:
+>  static const char * const i2c1_groups[] = {
+>         "i2c1_a",
+>         "i2c1_b",
 
-  git://linuxtv.org/pinchartl/media.git drm/r8a7796/next
+Gr{oetje,eeting}s,
 
-for you to fetch changes up to 3bd092b7a3dc1b2f82ac11c34114be4f996f7cbd:
+                        Geert
 
-  Merge branch 'drm/r8a7796/fcp' into drm/r8a7796/next (2016-11-15 03:35:09 
-+0200)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I have split the patches in topic branches named drm/r8a7796/clk, 
-drm/r8a7796/dt, drm/r8a7796/du and drm/r8a7796/fcp and have merged them all in 
-drm/r8a7796/next. Please feel free to merge those topic branches instead if 
-that's easier for you.
-
-----------------------------------------------------------------
-Laurent Pinchart (13):
-      dt-bindings: media: renesas-fcp: Remove SoC-specific compatible strings
-      arm64: dts: renesas: r8a7795: Remove FCP SoC-specific compatible strings
-      arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
-      arm64: dts: renesas: r8a7796: Add VSP instances
-      arm64: dts: renesas: r8a7796: Add DU device to DT
-      arm64: dts: renesas: r8a7796-salvator-x: Enable DU
-      drm: rcar-du: Add R8A7796 device support
-      clk: renesas: r8a7796: Add FCP clocks
-      clk: renesas: r8a7796: Add VSP clocks
-      clk: renesas: r8a7796: Add DU and LVDS clocks
-      Merge branch 'drm/r8a7796/dt' into drm/r8a7796/next
-      Merge branch 'drm/r8a7796/du' into drm/r8a7796/next
-      Merge branch 'drm/r8a7796/fcp' into drm/r8a7796/next
-
- .../devicetree/bindings/display/renesas,du.txt     |   4 +-
- .../devicetree/bindings/media/renesas,fcp.txt      |   8 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  24 ++--
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  48 +++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 131 ++++++++++++++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  17 +++
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  25 ++++
- 7 files changed, 237 insertions(+), 20 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
