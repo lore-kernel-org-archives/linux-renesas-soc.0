@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36268 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932164AbcKOLn5 (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33495 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754104AbcKOLBt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 06:43:57 -0500
+        Tue, 15 Nov 2016 06:01:49 -0500
 MIME-Version: 1.0
 In-Reply-To: <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
 References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se> <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Nov 2016 12:43:55 +0100
-Message-ID: <CAMuHMdVmjd1v+HxX+n7BRCm83BSBd2mUm8qHVNsK-UheRLFVoQ@mail.gmail.com>
+Date: Tue, 15 Nov 2016 12:01:48 +0100
+Message-ID: <CAMuHMdUExh7_M8RwNbDRd_WicjZ2+eF9C6OGnEjRSdRD6ZS-9Q@mail.gmail.com>
 Subject: Re: [PATCHv2 2/2] pinctrl: sh-pfc: r8a7796: Add bias pinconf support
 To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
@@ -41,14 +41,22 @@ c/pfc-r8a7796.c
 > --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-> -       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, SH_PFC_PIN_C=
-FG_DRIVE_STRENGTH),
+>  enum {
+>         PINMUX_RESERVED =3D 0,
 
-> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, CFG_FLAGS),
+> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, CFG_FLAG=
+S),
 
-> +       { PIN_A_NUMBER('D', 38), PU3,  2 },     /* FSCLKST# */
+DU_DOTCLKIN2 is AR8.
 
-"FSCLKST" (without "#")
+> +static const struct sh_pfc_bias_info bias_info[] =3D {
+
+> +       { PIN_A_NUMBER('R', 7),  PU3,  0 },     /* DU_DOTCLKIN2 */
+
+PIN_A_NUMBER('R', 8)
+
+If you fix the above:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
