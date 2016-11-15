@@ -1,51 +1,34 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 08/11] ARM: dts: r8a7793: Add device node for PRR
-Date: Mon, 14 Nov 2016 19:37:14 +0100
-Message-Id: <1479148637-5399-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:52837 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752513AbcKORzd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 Nov 2016 12:55:33 -0500
+Date: Tue, 15 Nov 2016 18:55:28 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 06/11] ARM: dts: r8a7745: add [H]SCIF{A|B} support
+Message-ID: <20161115175527.GD3979@verge.net.au>
+References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
+ <2366203.iKt2DUneo7@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2366203.iKt2DUneo7@wasted.cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+On Sat, Oct 29, 2016 at 01:19:40AM +0300, Sergei Shtylyov wrote:
+> Describe [H]SCIF{|A|B} ports in the R8A7745 device tree.
+> 
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Add to posted series,
-
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7793.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 629d3d60d1cd7168..a377dda177241da0 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1306,6 +1306,11 @@
- 		};
- 	};
- 
-+	prr: chipid@ff000044 {
-+		compatible = "renesas,prr";
-+		reg = <0 0xff000044 0 4>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,r8a7793-sysc";
- 		reg = <0 0xe6180000 0 0x0200>;
--- 
-1.9.1
-
+I have queued this up after updating the indentation to use
+tabs where possible.
