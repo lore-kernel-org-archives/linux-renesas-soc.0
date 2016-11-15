@@ -1,63 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936099AbcKQRSc (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33952 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934210AbcKOJmz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:18:32 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/31] ARM: dts: r8a7743: add IRQC support
-Date: Thu, 17 Nov 2016 15:11:32 +0100
-Message-Id: <108b6793b20ecadacc98e06ef8f1f6a793faa6c2.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
+        Tue, 15 Nov 2016 04:42:55 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Nov 2016 10:42:53 +0100
+Message-ID: <CAMuHMdU1jmUnwAY1pRXdEUuTW1gxf3AGvFm7LMg6Xhxc_NUZWw@mail.gmail.com>
+Subject: Re: [PATCHv3 0/6] pinctrl: sh-pfc: Fixups for bias handling and
+ preparation for none GPIO pins
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Sat, Nov 12, 2016 at 5:04 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> This series fixes two issues I encounter for bias handling in the PFC
+> while preparing my drive strength patch set.
+>
+> I also attached a new patch 6/6 that adds the macro
+> SH_PFC_PIN_NAMED_CFG() and was previously part of the series 'pinctrl:
+> sh-pfc: r8a7795: Support none GPIO pins with configurable
+> drive-strength'.
+>
+> The reason I moved this patch to this series are both 6/6 and the new
+> bias helper function introduced in 2/6 are dependencies for other PFC
+> patch series I wish to send out. So to simplify the dependencies between
+> series this looked like the best option, if not please let me know.
 
-Describe the IRQC interrupt controller in the R8A7743 device tree.
+Thanks, queuing up.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 87563a5379b5..216cb1f37f87 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -62,6 +62,25 @@
- 						 IRQ_TYPE_LEVEL_HIGH)>;
- 		};
- 
-+		irqc: interrupt-controller@e61c0000 {
-+			compatible = "renesas,irqc-r8a7743", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+		};
-+
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
