@@ -1,101 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52825 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936101AbcKWUPe (ORCPT
+        with ESMTP id S1752513AbcKORz2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:34 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 07/31] ARM: dts: alt: use demuxer for I2C4
-Date: Wed, 23 Nov 2016 21:14:14 +0100
-Message-Id: <e60a19f03cdb5a16fdad72d0776a1ede10fd2a57.1479931686.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Tue, 15 Nov 2016 12:55:28 -0500
+Date: Tue, 15 Nov 2016 18:55:23 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/11] Add R8A7745/SK-RZG1E board support
+Message-ID: <20161115175522.GC3979@verge.net.au>
+References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-B connector.
+On Sat, Nov 05, 2016 at 12:42:33AM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+>    Here's the set of 11 patches against Simon Horman's 'renesas.git' repo's
+> 'renesas-devel-201611104-v4.9-rc3' tag plus the R8A7743/SK-RZG1M patch series
+> posted earlier. I'm adding the device tree support for the R8A7745-based
+> SK-RZG1E board. The SoC is close to R8A7794 and the board seems identical to the
+> R8A7794/SILK board. The device tree patches depend on the R8A7745 CPG/MSSR
+> driver series in order to compile and work.
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index a3e74684289b..7270d4224b1a 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -18,6 +18,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c10 = &gpioi2c4;
-+		i2c12 = &i2cexio4;
- 	};
- 
- 	chosen {
-@@ -135,6 +137,29 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
-+
-+	gpioi2c4: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -194,6 +219,11 @@
- 		function = "i2c1";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
-+
- 	vin0_pins: vin0 {
- 		groups = "vin0_data8", "vin0_clk";
- 		function = "vin0";
-@@ -314,6 +344,11 @@
- 	};
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
-+
- &vin0 {
- 	status = "okay";
- 	pinctrl-0 = <&vin0_pins>;
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks, I have queued this up.
