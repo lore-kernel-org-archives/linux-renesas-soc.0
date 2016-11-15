@@ -1,51 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:38964 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751150AbcK3MY6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52777 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbcKORx7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2016 07:24:58 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] PM / Domains: Do not print PM domain add error message if EPROBE_DEFER
-Date: Wed, 30 Nov 2016 13:24:56 +0100
-Message-Id: <1480508696-19294-1-git-send-email-geert+renesas@glider.be>
+        Tue, 15 Nov 2016 12:53:59 -0500
+Date: Tue, 15 Nov 2016 18:53:54 +0100
+From: Simon Horman <horms@verge.net.au>
+To: David Miller <davem@davemloft.net>
+Cc: geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
+        arnd@arndb.de, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
+Message-ID: <20161115175354.GA3979@verge.net.au>
+References: <1477934018-13968-1-git-send-email-geert+renesas@glider.be>
+ <20161031.132431.648834397805808388.davem@davemloft.net>
+ <20161101093216.GE28143@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161101093216.GE28143@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-EPROBE_DEFER is not an error, hence printing an error message like
+On Tue, Nov 01, 2016 at 10:32:17AM +0100, Simon Horman wrote:
+> On Mon, Oct 31, 2016 at 01:24:31PM -0400, David Miller wrote:
+> > From: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Date: Mon, 31 Oct 2016 18:13:38 +0100
+> > 
+> > > The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
+> > > ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
+> > > revisions of R-Car H3, and on R-Car M3-W.
+> > > 
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > Tested on:
+> > >   - r8a7795/salvator-x with R-Car H3 ES1.0 (limited to 100Mbps),
+> > >   - r8a7795/salvator-x with R-Car H3 ES1.1 (1Gbps),
+> > >   - r8a7796/salvator-x with R-Car M3-W ES1.0 (1Gbps).
+> > > 
+> > > This is marked as an RFC because it depends on:
+> > >   A) the soc_device_match() infrastructure,
+> > >   B) Renesas SoC core ESx.y handling.
+> > > Hence I think the best merge strategy is to let this patch go in through
+> > > Simon's Renesas tree.
+> > > 
+> > > David: If you agree, can you please provide your ack? Thanks!
+> > 
+> > Sure, no problem:
+> > 
+> > Acked-by: David S. Miller <davem@davemloft.net>
+> 
+> Thanks Dave.
+> 
+> Geert, please repost or otherwise ping me once the dependencies are in
+> place and I should queue this up.
 
-    renesas_irqc e61c0000.interrupt-controller: failed to add to PM domain always-on: -517
-
-may confuse the user.
-
-Suppress the error message in case of EPROBE_DEFER to fix this.
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/base/power/domain.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 64164aac6ae3990a..f22137b52dcb641b 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2032,8 +2032,9 @@ int genpd_dev_pm_attach(struct device *dev)
- 	mutex_unlock(&gpd_list_lock);
- 
- 	if (ret < 0) {
--		dev_err(dev, "failed to add to PM domain %s: %d",
--			pd->name, ret);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to add to PM domain %s: %d",
-+				pd->name, ret);
- 		goto out;
- 	}
- 
--- 
-1.9.1
+For the record, I have queued this up for v4.10.
