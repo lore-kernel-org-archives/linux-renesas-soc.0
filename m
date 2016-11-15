@@ -1,87 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:56082 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935544AbcKPJrW (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33203 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941393AbcKOJcv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 04:47:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.10 (take three)
-Date: Wed, 16 Nov 2016 10:47:22 +0100
-Message-Id: <1479289642-13421-1-git-send-email-geert+renesas@glider.be>
+        Tue, 15 Nov 2016 04:32:51 -0500
 MIME-Version: 1.0
+In-Reply-To: <20161112160429.12524-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se> <20161112160429.12524-3-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Nov 2016 10:32:49 +0100
+Message-ID: <CAMuHMdWepScfNoyzRGZdsUSE3eajJ9F72rScc8OGziKeM=ffYg@mail.gmail.com>
+Subject: Re: [PATCHv3 2/6] pinctrl: sh-pfc: Add helper to handle bias lookup table
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+On Sat, Nov 12, 2016 at 5:04 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> On some SoC there are no simple mapping of pins to bias register bits
+> and a lookup table is needed. This logic is already implemented in some
+> SoC specific drivers that could benefit from a generic implementation.
+>
+> Add helpers to deal with the lookup which later can be used by the SoC
+> specific drivers. The logic used to lookup are different from the one it
+> aims to replace, this is intentional. This new method reduces the memory
+> consumption at the cost of increased CPU usage and fix a bug where a
+> WARN() would incorrectly be triggered if the register offset is 0.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-The following changes since commit 1936be95e013802291201c1ed193e04fd1ed3d13:
-
-  Merge branch 'rzg-clock-defs' into clk-renesas-for-v4.10 (2016-11-07 15:15:33 +0100)
-
-are available in the git repository at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag3
-
-for you to fetch changes up to 9127d54bb89471592b3c8af6c6273c21db6de6a6:
-
-  clk: renesas: cpg-mssr: Add R8A7745 support (2016-11-10 15:29:30 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.10 (take three)
-
-  - CSI2 and VIN clocks for R-Car M3-W,
-  - Clock drivers for new RZ/G1M and RZ/G1E SoCs,
-  - Minor bug fix for R-Car H3.
-
-This pull request depends on the pull request for
-tags/clk-renesas-for-v4.10-tag2 ("clk: renesas: Updates for v4.10 (take
-two)"), which I sent last week.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Niklas Söderlund (2):
-      clk: renesas: r8a7796: Add CSI2 clocks
-      clk: renesas: r8a7796: Add VIN clocks
-
-Sergei Shtylyov (3):
-      clk: renesas: cpg-mssr: Add common R-Car Gen2 support
-      clk: renesas: cpg-mssr: Add R8A7743 support
-      clk: renesas: cpg-mssr: Add R8A7745 support
-
-Takeshi Kihara (1):
-      clk: renesas: r8a7795: Fix HDMI parent clock
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   5 +-
- drivers/clk/renesas/Kconfig                        |   2 +
- drivers/clk/renesas/Makefile                       |   2 +
- drivers/clk/renesas/r8a7743-cpg-mssr.c             | 270 +++++++++++++++
- drivers/clk/renesas/r8a7745-cpg-mssr.c             | 259 ++++++++++++++
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |   2 +-
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  12 +
- drivers/clk/renesas/rcar-gen2-cpg.c                | 371 +++++++++++++++++++++
- drivers/clk/renesas/rcar-gen2-cpg.h                |  43 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  12 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   2 +
- 11 files changed, 978 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7743-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7745-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.c
- create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.h
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
