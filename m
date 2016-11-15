@@ -1,100 +1,262 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:60032 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966249AbcKLQGP (ORCPT
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:51559 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752174AbcKONcD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 11:06:15 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 2/6] pinctrl: sh-pfc: Add helper to handle bias lookup table
-Date: Sat, 12 Nov 2016 17:04:25 +0100
-Message-Id: <20161112160429.12524-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 15 Nov 2016 08:32:03 -0500
+Subject: Re: [PATCH v5] phy: rcar-gen3-usb2: add sysfs for usb role swap
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+References: <1478658625-10333-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+CC: <gregkh@linuxfoundation.org>, <balbi@kernel.org>,
+        <Peter.Chen@nxp.com>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <582B0E45.4090803@ti.com>
+Date: Tue, 15 Nov 2016 19:01:49 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1478658625-10333-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On some SoC there are no simple mapping of pins to bias register bits
-and a lookup table is needed. This logic is already implemented in some
-SoC specific drivers that could benefit from a generic implementation.
 
-Add helpers to deal with the lookup which later can be used by the SoC
-specific drivers. The logic used to lookup are different from the one it
-aims to replace, this is intentional. This new method reduces the memory
-consumption at the cost of increased CPU usage and fix a bug where a
-WARN() would incorrectly be triggered if the register offset is 0.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/pinctrl/sh-pfc/core.c   | 15 +++++++++++++++
- drivers/pinctrl/sh-pfc/core.h   |  4 ++++
- drivers/pinctrl/sh-pfc/sh_pfc.h |  6 ++++++
- 3 files changed, 25 insertions(+)
+On Wednesday 09 November 2016 08:00 AM, Yoshihiro Shimoda wrote:
+> This patch adds sysfs "role" for usb role swap. This parameter can be
+> read and write. If you use this file as the following, you can swap
+> the usb role.
+> 
+> For example:
+>  1) Connect a usb cable using 2 Salvator-x boards
+>  2) On A-Device (ID pin is low), you input the following command:
+>    # echo peripheral > /sys/devices/platform/soc/ee080200.usb-phy/role
+>  3) On B-Device (ID pin is high), you input the following command:
+>    # echo host > /sys/devices/platform/soc/ee080200.usb-phy/role
+> 
+> Then, the A-device acts as a peripheral and the B-device acts as a host.
+> Please note that A-Device must input the following command if you
+> want the board to act as a host again. (even if you disconnect the usb
+> cable, since id state may be the same, the A-Device keeps to act as
+> peripheral.)
+>  # echo host > /sys/devices/platform/soc/ee080200.usb-phy/role
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Peter Chen <peter.chen@nxp.com>
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index f3a8897..cf80ce1 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -389,6 +389,21 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
- 	return 0;
- }
- 
-+const struct sh_pfc_bias_info *
-+sh_pfc_pin_to_bias_info(const struct sh_pfc_bias_info *info,
-+			unsigned int num, unsigned int pin)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < num; i++)
-+		if (info[i].pin == pin)
-+			return &info[i];
-+
-+	WARN_ONCE(1, "Pin %u is not in bias info list\n", pin);
-+
-+	return NULL;
-+}
-+
- static int sh_pfc_init_ranges(struct sh_pfc *pfc)
- {
- 	struct sh_pfc_pin_range *range;
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 0bbdea58..6d598dd 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -33,4 +33,8 @@ void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width,
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
- int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
- 
-+const struct sh_pfc_bias_info *
-+sh_pfc_pin_to_bias_info(const struct sh_pfc_bias_info *info,
-+			unsigned int num, unsigned int pin);
-+
- #endif /* __SH_PFC_CORE_H__ */
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 2345421..9556c17 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -189,6 +189,12 @@ struct sh_pfc_window {
- 	unsigned long size;
- };
- 
-+struct sh_pfc_bias_info {
-+	u16 pin;
-+	u16 reg : 11;
-+	u16 bit : 5;
-+};
-+
- struct sh_pfc_pin_range;
- 
- struct sh_pfc {
--- 
-2.10.2
+merged to phy -next.
+
+Thanks
+Kishon
+> ---
+>  This patch is based on the latest linux-phy.git / next branch.
+>  (commit id = 7809cd2ce6abd4f431e4b14e6b1276a7cc842ac4)
+> 
+>  Since this patch is related to usb, I added email addresses of Greg, Felipe,
+>  Peter and USB ML as CC. (This patch doesn't use USB OTG FSM though.)
+> 
+>  Changes from v4:
+>   - Use if-else about the is_b_device check in role_store().
+>   - Add "Reviewed-by: Peter Chen <peter.chen@nxp.com>"
+> 
+>  Changes from v3:
+>   - Clean up redundant conditions in role_store().
+> 
+>  Changes from v2:
+>   - Modify the sysfs file name to "role", and the argument is "host" or
+>     "peripheral". Peter suggested this. Thank you!
+> 
+>  Changes from v1:
+>   - rebase the latest next branch.
+> 
+>  .../ABI/testing/sysfs-platform-phy-rcar-gen3-usb2  |  15 +++
+>  drivers/phy/phy-rcar-gen3-usb2.c                   | 118 ++++++++++++++++++++-
+>  2 files changed, 132 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-phy-rcar-gen3-usb2
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-platform-phy-rcar-gen3-usb2 b/Documentation/ABI/testing/sysfs-platform-phy-rcar-gen3-usb2
+> new file mode 100644
+> index 0000000..6212697
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-platform-phy-rcar-gen3-usb2
+> @@ -0,0 +1,15 @@
+> +What:		/sys/devices/platform/<phy-name>/role
+> +Date:		October 2016
+> +KernelVersion:	4.10
+> +Contact:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> +Description:
+> +		This file can be read and write.
+> +		The file can show/change the phy mode for role swap of usb.
+> +
+> +		Write the following strings to change the mode:
+> +		 "host" - switching mode from peripheral to host.
+> +		 "peripheral" - switching mode from host to peripheral.
+> +
+> +		Read the file, then it shows the following strings:
+> +		 "host" - The mode is host now.
+> +		 "peripheral" - The mode is peripheral now.
+> diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+> index 3d97ead..c63da1b 100644
+> --- a/drivers/phy/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/phy-rcar-gen3-usb2.c
+> @@ -70,6 +70,7 @@
+>  #define USB2_LINECTRL1_DP_RPD		BIT(18)
+>  #define USB2_LINECTRL1_DMRPD_EN		BIT(17)
+>  #define USB2_LINECTRL1_DM_RPD		BIT(16)
+> +#define USB2_LINECTRL1_OPMODE_NODRV	BIT(6)
+>  
+>  /* ADPCTRL */
+>  #define USB2_ADPCTRL_OTGSESSVLD		BIT(20)
+> @@ -161,6 +162,43 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+>  	schedule_work(&ch->work);
+>  }
+>  
+> +static void rcar_gen3_init_for_b_host(struct rcar_gen3_chan *ch)
+> +{
+> +	void __iomem *usb2_base = ch->base;
+> +	u32 val;
+> +
+> +	val = readl(usb2_base + USB2_LINECTRL1);
+> +	writel(val | USB2_LINECTRL1_OPMODE_NODRV, usb2_base + USB2_LINECTRL1);
+> +
+> +	rcar_gen3_set_linectrl(ch, 1, 1);
+> +	rcar_gen3_set_host_mode(ch, 1);
+> +	rcar_gen3_enable_vbus_ctrl(ch, 0);
+> +
+> +	val = readl(usb2_base + USB2_LINECTRL1);
+> +	writel(val & ~USB2_LINECTRL1_OPMODE_NODRV, usb2_base + USB2_LINECTRL1);
+> +}
+> +
+> +static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
+> +{
+> +	rcar_gen3_set_linectrl(ch, 0, 1);
+> +	rcar_gen3_set_host_mode(ch, 0);
+> +	rcar_gen3_enable_vbus_ctrl(ch, 1);
+> +}
+> +
+> +static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+> +{
+> +	void __iomem *usb2_base = ch->base;
+> +	u32 val;
+> +
+> +	val = readl(usb2_base + USB2_OBINTEN);
+> +	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +
+> +	rcar_gen3_enable_vbus_ctrl(ch, 0);
+> +	rcar_gen3_init_for_host(ch);
+> +
+> +	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +}
+> +
+>  static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+>  {
+>  	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
+> @@ -174,6 +212,65 @@ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
+>  		rcar_gen3_init_for_peri(ch);
+>  }
+>  
+> +static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
+> +{
+> +	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
+> +}
+> +
+> +static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+> +			  const char *buf, size_t count)
+> +{
+> +	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
+> +	bool is_b_device, is_host, new_mode_is_host;
+> +
+> +	if (!ch->has_otg || !ch->phy->init_count)
+> +		return -EIO;
+> +
+> +	/*
+> +	 * is_b_device: true is B-Device. false is A-Device.
+> +	 * If {new_mode_}is_host: true is Host mode. false is Peripheral mode.
+> +	 */
+> +	is_b_device = rcar_gen3_check_id(ch);
+> +	is_host = rcar_gen3_is_host(ch);
+> +	if (!strncmp(buf, "host", strlen("host")))
+> +		new_mode_is_host = true;
+> +	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
+> +		new_mode_is_host = false;
+> +	else
+> +		return -EINVAL;
+> +
+> +	/* If current and new mode is the same, this returns the error */
+> +	if (is_host == new_mode_is_host)
+> +		return -EINVAL;
+> +
+> +	if (new_mode_is_host) {		/* And is_host must be false */
+> +		if (!is_b_device)	/* A-Peripheral */
+> +			rcar_gen3_init_from_a_peri_to_a_host(ch);
+> +		else			/* B-Peripheral */
+> +			rcar_gen3_init_for_b_host(ch);
+> +	} else {			/* And is_host must be true */
+> +		if (!is_b_device)	/* A-Host */
+> +			rcar_gen3_init_for_a_peri(ch);
+> +		else			/* B-Host */
+> +			rcar_gen3_init_for_peri(ch);
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t role_show(struct device *dev, struct device_attribute *attr,
+> +			 char *buf)
+> +{
+> +	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
+> +
+> +	if (!ch->has_otg || !ch->phy->init_count)
+> +		return -EIO;
+> +
+> +	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
+> +							    "peripheral");
+> +}
+> +static DEVICE_ATTR_RW(role);
+> +
+>  static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+>  {
+>  	void __iomem *usb2_base = ch->base;
+> @@ -351,21 +448,40 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>  		channel->vbus = NULL;
+>  	}
+>  
+> +	platform_set_drvdata(pdev, channel);
+>  	phy_set_drvdata(channel->phy, channel);
+>  
+>  	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> -	if (IS_ERR(provider))
+> +	if (IS_ERR(provider)) {
+>  		dev_err(dev, "Failed to register PHY provider\n");
+> +	} else if (channel->has_otg) {
+> +		int ret;
+> +
+> +		ret = device_create_file(dev, &dev_attr_role);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+>  
+>  	return PTR_ERR_OR_ZERO(provider);
+>  }
+>  
+> +static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+> +{
+> +	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
+> +
+> +	if (channel->has_otg)
+> +		device_remove_file(&pdev->dev, &dev_attr_role);
+> +
+> +	return 0;
+> +};
+> +
+>  static struct platform_driver rcar_gen3_phy_usb2_driver = {
+>  	.driver = {
+>  		.name		= "phy_rcar_gen3_usb2",
+>  		.of_match_table	= rcar_gen3_phy_usb2_match_table,
+>  	},
+>  	.probe	= rcar_gen3_phy_usb2_probe,
+> +	.remove = rcar_gen3_phy_usb2_remove,
+>  };
+>  module_platform_driver(rcar_gen3_phy_usb2_driver);
+>  
+> 
