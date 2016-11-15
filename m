@@ -1,63 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965155AbcKQRnE (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:37156 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932906AbcKOCf3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:43:04 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/18] arm64: dts: m3ulcb: enable GPIO keys
-Date: Thu, 17 Nov 2016 15:04:49 +0100
-Message-Id: <d95f930de2dd5c570bbddc64d190321d4688f055.1479388193.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479388193.git.horms+renesas@verge.net.au>
-References: <cover.1479388193.git.horms+renesas@verge.net.au>
+        Mon, 14 Nov 2016 21:35:29 -0500
+Date: Mon, 14 Nov 2016 18:35:27 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take one)
+Message-ID: <20161115023527.GT5177@codeaurora.org>
+References: <1478532868-5508-1-git-send-email-geert+renesas@glider.be>
+ <20161110233556.GN16026@codeaurora.org>
+ <CAMuHMdU96gQGO7wDAThyFHRwjR0o-4sChrrmTBRNh1F1SAR=yQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU96gQGO7wDAThyFHRwjR0o-4sChrrmTBRNh1F1SAR=yQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+On 11/14, Geert Uytterhoeven wrote:
+> Hi Stephen,
+> 
+> On Fri, Nov 11, 2016 at 12:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 11/07, Geert Uytterhoeven wrote:
+> >> clk: renesas: Updates for v4.10 (take one)
+> >>
+> >>   - SYS-DMAC, (H)SCIF, I2C, DRIF, and graphics related clocks for R-Car
+> >>     M3-W,
+> >>   - Minor fixes and cleanups.
+> >>
+> >> Thanks for pulling!
+> >> ----------------------------------------------------------------
+> >> Geert Uytterhoeven (4):
+> >>       clk: renesas: cpg-mssr: Always use readl()/writel()
+> >>       clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
+> >>       clk: renesas: cpg-mssr: Fix inverted debug check
+> >
+> > Hm.. I already applied this one to clk-next. If you're going to
+> > apply patches can you please indicate if they've been picked up
+> > and/or not send them To: Mike and I, please?
+> 
+> Sorry, I'll be more clear in the future.
+> 
+> I believe this is not a blocker for pulling, is it?
 
-This supports GPIO keys on M3ULCB board
+No I guess not. Pulled into clk-next.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index 49162bd488f8..2f8f183ea0cd 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -12,6 +12,7 @@
- /dts-v1/;
- #include "r8a7796.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "Renesas M3ULCB board based on r8a7796";
-@@ -41,6 +42,18 @@
- 			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
- 		};
- 	};
-+
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		key-1 {
-+			linux,code = <KEY_1>;
-+			label = "SW3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
- 
- &extal_clk {
 -- 
-2.7.0.rc3.207.g0ac5344
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
