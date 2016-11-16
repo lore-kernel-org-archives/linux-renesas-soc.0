@@ -1,38 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f53.google.com ([74.125.83.53]:33865 "EHLO
-        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752195AbcKPKJK (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:36286 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbcKPKFy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 05:09:10 -0500
-Received: by mail-pg0-f53.google.com with SMTP id x23so74962564pgx.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Nov 2016 02:09:10 -0800 (PST)
-Date: Wed, 16 Nov 2016 15:39:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Simon Horman <horms@verge.net.au>,
+        Wed, 16 Nov 2016 05:05:54 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: dt: Add support for r8a7743 and r8a7745
-Message-ID: <20161116100906.GA20987@vireshk-i7>
-References: <1479290751-9705-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1479290751-9705-1-git-send-email-geert+renesas@glider.be>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] cpufreq: dt: Add support for r8a7743 and r8a7745
+Date: Wed, 16 Nov 2016 11:05:51 +0100
+Message-Id: <1479290751-9705-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 16-11-16, 11:05, Geert Uytterhoeven wrote:
-> Add the compatible strings for supporting the generic cpufreq driver on
-> the Renesas RZ/G1M (r8a7743) and RZ/G1E (r8a7745) SoCs.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Support for RZ/G1M and RZ/G1E is expected to land in v4.10.
+Add the compatible strings for supporting the generic cpufreq driver on
+the Renesas RZ/G1M (r8a7743) and RZ/G1E (r8a7745) SoCs.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Support for RZ/G1M and RZ/G1E is expected to land in v4.10.
 
+ drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index fcc5bcfe57efe1c3..0c73c7dbd5878919 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -55,6 +55,8 @@
+ 	{ .compatible = "renesas,r7s72100", },
+ 	{ .compatible = "renesas,r8a73a4", },
+ 	{ .compatible = "renesas,r8a7740", },
++	{ .compatible = "renesas,r8a7743", },
++	{ .compatible = "renesas,r8a7745", },
+ 	{ .compatible = "renesas,r8a7778", },
+ 	{ .compatible = "renesas,r8a7779", },
+ 	{ .compatible = "renesas,r8a7790", },
 -- 
-viresh
+1.9.1
