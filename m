@@ -1,59 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
-        chanwoo@kernel.org
-Subject: [PATCH 00/12] extcon: Replace the deprecated extcon API
-Date: Wed, 30 Nov 2016 14:57:28 +0900
-Message-id: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:35451 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751522AbcKPOR0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 16 Nov 2016 09:17:26 -0500
+Date: Wed, 16 Nov 2016 15:17:14 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: Re: [PATCH v4 07/14] ARM: dts: koelsch: use demuxer for I2C4
+Message-ID: <20161116141713.GA25812@verge.net.au>
+References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+ <20161106202032.5227-8-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXzqakz6RYXFMOe5ps0SPsxDWHbOV024ts_E_qufVOutQ@mail.gmail.com>
+ <20161115174450.GA21715@verge.net.au>
+ <CAMuHMdVVqhZgTjaFiGgviCRD0X0DkQPZjpnta2FOhFmV7M+CvQ@mail.gmail.com>
+ <20161116134736.GA20704@verge.net.au>
+ <CAMuHMdXsUA+OywpfuNwunuCSupczKSuWnAgs3Zdq7zMxrD6OWQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXsUA+OywpfuNwunuCSupczKSuWnAgs3Zdq7zMxrD6OWQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patches just replace the deprecated extcon API without any change
-of extcon operation and use the resource-managed function for
-extcon_register_notifier().
+On Wed, Nov 16, 2016 at 03:14:11PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Nov 16, 2016 at 2:47 PM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Nov 16, 2016 at 11:35:22AM +0100, Geert Uytterhoeven wrote:
+> >> On Tue, Nov 15, 2016 at 6:44 PM, Simon Horman <horms@verge.net.au> wrote:
+> >> >> i2c4 shares pins with vin0. Hence enabling the former breaks the latter:
+> >> >>
+> >> >>     sh-pfc e6060000.pfc: pin GP_4_13 already requested by
+> >> >> e6520000.i2c; cannot claim for e6ef0000.video
+> >> >>     sh-pfc e6060000.pfc: pin-141 (e6ef0000.video) status -22
+> >> >>     sh-pfc e6060000.pfc: could not request pin 141 (GP_4_13) from
+> >> >> group vin0_data24  on device sh-pfc
+> >> >>     rcar-vin e6ef0000.video: Error applying setting, reverse things back
+> >> >>     rcar-vin: probe of e6ef0000.video failed with error -22
+> >> >>
+> >> >> There may be similar issues on other boards. Haven't checked yet.
+> >> >
+> >> > Thanks, I will drop this patch for now.
+> >> >
+> >> > I checked the boot logs of other boards with similar patches and didn't see
+> >> > anything there.
+> >>
+> >> Do you have CONFIG_VIDEO_ADV7604=y?
+> >
+> > No, mainly because its not in shmobile_defconfig.
+> >
+> > I tried again with that option enabled and still didn't see
+> > anything of interest in kernel log.
+> >
+> >> I expect the issue to be present on gose, too. So far I didn't see it
+> >> there, yet.
+> >> But the vin DTS of gose is different from koelsch, causing vin0 not to be
+> >> initialized?
+> >
+> > It seems so.
+> 
+> I managed to reproduce the issue on gose, by adding r8a7793 support to
+> my koelsch .config.
+> Apparently I was missing CONFIG_I2C_DEMUX_PINCTRL=y.
 
-The new extcon API instead of deprecated API.
-- extcon_set_cable_state_() -> extcon_set_state_sync();
-- extcon_get_cable_state_() -> extcon_get_state();
+Ok, thanks. Curious that I didn't see it.
 
-The each patch has not any dependency among patches. So, each maintainer
-could pick up each patch without any problem.
+It looks like we should drop:
 
-Chanwoo Choi (12):
-  phy: rcar-gen3-usb2: Replace the deprecated extcon API
-  phy: sun4i-usb: Replace the deprecated extcon API
-  power_supply: axp288_charger: Replace the extcon API
-  power_supply: qcom_smbb: Replace the deprecated extcon API
-  usb: chipdata: Replace the extcon API
-  usb: dwc3: omap: Replace the extcon API
-  usb: sunxi: Uses the resource-managed extcon API when registering extcon notifier
-  usb: phy: msm: Replace the extcon API
-  usb: phy: omap-otg: Replace the extcon API
-  usb: phy: qcom-8x16-usb: Replace the extcon API
-  usb: phy: tahvo: Replace the deprecated extcon API
-  usb: renesas_usbhs: Replace the deprecated extcon API
-
- drivers/phy/phy-rcar-gen3-usb2.c      |  8 +++---
- drivers/phy/phy-sun4i-usb.c           |  4 +--
- drivers/power/supply/axp288_charger.c | 51 +++++++++--------------------------
- drivers/power/supply/qcom_smbb.c      |  2 +-
- drivers/usb/chipidea/core.c           | 30 +++++----------------
- drivers/usb/dwc3/dwc3-omap.c          | 20 +++++---------
- drivers/usb/musb/sunxi.c              | 12 +++------
- drivers/usb/phy/phy-msm-usb.c         | 33 ++++++++---------------
- drivers/usb/phy/phy-omap-otg.c        | 24 +++++------------
- drivers/usb/phy/phy-qcom-8x16-usb.c   | 13 +++------
- drivers/usb/phy/phy-tahvo.c           | 10 +++----
- drivers/usb/renesas_usbhs/common.c    |  2 +-
- 12 files changed, 63 insertions(+), 146 deletions(-)
-
--- 
-1.9.1
+ARM: dts: gose: use demuxer for I2C4
