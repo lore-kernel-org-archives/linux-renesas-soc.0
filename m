@@ -1,49 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936450AbcKQRRb (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:56910 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751955AbcKPIMO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:17:31 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/31] ARM: dts: r8a7791: Add device node for PRR
-Date: Thu, 17 Nov 2016 15:11:45 +0100
-Message-Id: <a402c8bc4758d62312cbe632893aa58bf1976d88.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
+        Wed, 16 Nov 2016 03:12:14 -0500
+Date: Wed, 16 Nov 2016 09:12:12 +0100
+From: Wolfram Sang <wsa-dev@sang-engineering.com>
+To: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: EMail problems :(
+Message-ID: <20161116081212.GD1797@katana>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+--aM3YZ0Iwxop3KEKx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Hi all,
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 091d7fb6ee7d..4c50de2faef1 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1485,6 +1485,11 @@
- 		};
- 	};
- 
-+	prr: chipid@ff000044 {
-+		compatible = "renesas,prr";
-+		reg = <0 0xff000044 0 4>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,r8a7791-sysc";
- 		reg = <0 0xe6180000 0 0x0200>;
--- 
-2.7.0.rc3.207.g0ac5344
+my main mail service (the-dreams.de) seems to be defunct currently.
+Until this is resolved, I can be reached via this email address.
+
+Sorry for the inconvenience,
+
+   Wolfram
+
+
+--aM3YZ0Iwxop3KEKx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYLBTcAAoJEBQN5MwUoCm2RA4P/iu8InFnV1v2lWHpDp8S8Xr1
+OqMj270PBUOigV0Ia/wvSCYViNU2AI/H58I1EWk65l3w4gbW7g9p7CRP1uZruNOW
+LdLV7CR4SnOIIuvPullB2JjIcy4Zg1lZviP1GJZ0CQyzs5NHc1AqNh2JwmX4Ognd
+4qpOg0rw/M0vYfIlrctMuy+WQq2m4y3wx44B5AHJY8GVX1J9+7fua9Fg9iQyVjpb
+fRXOwjZ1nNFhc9StlWWQUjgPZ9ZEwUFgbDF6KRn16sGrEr/uQ1PBSdAj4cE7p2UD
+hqPNbb7PH6soZjBLQk356QzR8ke1/4Zz08uoTuUmbwvHDdCSl9j7rciaYZ1W9daJ
+R/R92Hau6YLIxRYL/aCemZbm4CFhMAbf9cCCl5TZ9NBx7/9rZNohCVF2FTX0zo1B
+V0QKovCjZg5CldtY/Bqv3AY7Q3OwtIHGj+taWjdFxFfNYFkRAVKnD1Nn3KEpyX2m
+Bd6Btfrn/3SGwIsuY4dwd7MDbgXo4d1Zh94EBPrw7qDVytu6wSx37TOSWEhAZM3p
+w/iyykh7/yOwhgquNIx0lFHYlBeKnj3VrcenH5FYTNsgJgMvOfph0EYSyOajVvpr
+H4aDaWjUhMmeEcxElCNs8tLerwCW67R7D/6iweCdvYJ6u4gYYoO1CJZvTXGDcygD
+9t0hNiD4ui/vMmH6ubMS
+=IY0k
+-----END PGP SIGNATURE-----
+
+--aM3YZ0Iwxop3KEKx--
