@@ -1,35 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52815 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752513AbcKORzB (ORCPT
+Received: from mail-qt0-f175.google.com ([209.85.216.175]:35856 "EHLO
+        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752270AbcKPTvY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 12:55:01 -0500
-Date: Tue, 15 Nov 2016 18:54:56 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 3/7] ARM: dts: r8a7743: add [H]SCIF{A|B} support
-Message-ID: <20161115175456.GB3979@verge.net.au>
-References: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
- <29562553.JmvzVUkhx3@wasted.cogentembedded.com>
+        Wed, 16 Nov 2016 14:51:24 -0500
+Received: by mail-qt0-f175.google.com with SMTP id w33so114755836qtc.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Nov 2016 11:51:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29562553.JmvzVUkhx3@wasted.cogentembedded.com>
+In-Reply-To: <1479289677-13490-1-git-send-email-geert+renesas@glider.be>
+References: <1479289677-13490-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 Nov 2016 20:51:22 +0100
+Message-ID: <CACRpkda-ouCaeGyUBKrCR_Joa7ANUKqM0o1xWKiRaefE3cE92Q@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.10 (take two)
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 10:55:39PM +0300, Sergei Shtylyov wrote:
-> Describe [H]SCIF{|A|B} ports in the R8A7743 device tree.
-> 
-> Based on the original (and large) patch by Dmitry Shifrin
-> <dmitry.shifrin@cogentembedded.com>.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Nov 16, 2016 at 10:47 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-I have queued this up after updating the indentation to use
-tabs where possible.
+>         Hi Linus,
+>
+> The following changes since commit 0f866a9679215838328e1c0ed1892224672bb396:
+>
+>   pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3 (2016-11-07 10:39:11 +0100)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.10-tag2
+
+Pulled into the pin control tree, thanks a lot!
+
+Yours,
+Linus Walleij
