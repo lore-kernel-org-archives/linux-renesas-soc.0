@@ -1,46 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753528AbcKUMGA (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:58194 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751225AbcKQXJw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 07:06:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/18] arm64: dts: m3ulcb: add M3ULCB board DT bindings
-Date: Mon, 21 Nov 2016 13:05:35 +0100
-Message-Id: <76b5bba9855e4cd572e3cb44cd7c95b2043f7aee.1479726397.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
-References: <cover.1479726397.git.horms+renesas@verge.net.au>
+        Thu, 17 Nov 2016 18:09:52 -0500
+Date: Thu, 17 Nov 2016 15:09:50 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take three)
+Message-ID: <20161117230950.GS25626@codeaurora.org>
+References: <1479289642-13421-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1479289642-13421-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+On 11/16, Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
+> 
+> The following changes since commit 1936be95e013802291201c1ed193e04fd1ed3d13:
+> 
+>   Merge branch 'rzg-clock-defs' into clk-renesas-for-v4.10 (2016-11-07 15:15:33 +0100)
+> 
+> are available in the git repository at:
+> 
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag3
+> 
+> for you to fetch changes up to 9127d54bb89471592b3c8af6c6273c21db6de6a6:
+> 
+>   clk: renesas: cpg-mssr: Add R8A7745 support (2016-11-10 15:29:30 +0100)
 
-Add M3ULCB Device tree bindings Documentation, listing it as a supported
-board.
+Thanks. Pulled into clk-next.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 1c2499ca1bee..29bf24ca0b7b 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -61,6 +61,8 @@ Boards:
-     compatible = "renesas,kzm9g", "renesas,sh73a0"
-   - Lager (RTP0RC7790SEB00010S)
-     compatible = "renesas,lager", "renesas,r8a7790"
-+  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
-+    compatible = "renesas,m3ulcb", "renesas,r8a7796";
-   - Marzen
-     compatible = "renesas,marzen", "renesas,r8a7779"
-   - Porter (M2-LCDP)
 -- 
-2.7.0.rc3.207.g0ac5344
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
