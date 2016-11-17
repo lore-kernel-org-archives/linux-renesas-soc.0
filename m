@@ -1,211 +1,100 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v6 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-Date: Fri, 11 Nov 2016 03:27:38 +0200
-Message-ID: <4483634.D6YpsPD8PO@avalon>
-In-Reply-To: <792320ab-13ae-741e-7202-1e7983e0b7a4@arm.com>
-References: <20161019233533.10506.16810.sendpatchset@little-apple> <20161019233633.10506.3943.sendpatchset@little-apple> <792320ab-13ae-741e-7202-1e7983e0b7a4@arm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965121AbcKQRnD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 Nov 2016 12:43:03 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/18] arm64: dts: m3ulcb: enable SDHI2
+Date: Thu, 17 Nov 2016 15:04:53 +0100
+Message-Id: <c65d4b6484c79eefcbb10c9bf1db7f8c81537f5a.1479388193.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479388193.git.horms+renesas@verge.net.au>
+References: <cover.1479388193.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-On Friday 21 Oct 2016 18:32:54 Robin Murphy wrote:
-> On 20/10/16 00:36, Magnus Damm wrote:
-> > From: Magnus Damm <damm+renesas@opensource.se>
-> > 
-> > Not all architectures have an iommu member in their archdata, so
-> > use #ifdefs support build wit COMPILE_TEST on any architecture.
-> 
-> As an alternative to this we could now use iommu_fwspec in place of the
-> custom ipmmu_vmsa_archdata - that's deliberately
-> architecture-independent. I converted the Mediatek drivers[1] as an
-> example to stand separately from the big SMMU rework, as those are the
-> ones I'm most familiar with, but it looks like the IPMMU is a similarly
-> perfect fit.
-> 
-> Of course, that could always come afterwards as a cleanup - I wouldn't
-> consider it a blocker at this point - but it does look like it might
-> simplify some of the code being moved around in this series if it were
-> to be done beforehand.
+This supports SDHI2 for M3ULCB onboard eMMC
 
-I like the suggestion, it looks much cleaner. It would also allow implementing 
-.of_xlate() in a cleaner fashion. I don't think it needs to block this series, 
-but if Magnus ends up sending a v7 to address all the other small comments, it 
-would be worth a shot.
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 43 ++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-> [1]:http://www.mail-archive.com/iommu@lists.linux-foundation.org/msg14577.ht
-> ml
-> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> > Reviewed-by: Joerg Roedel <jroedel@suse.de>
-> > ---
-> > 
-> >  Changes since V5:
-> >  - None
-> >  
-> >  Changes since V4:
-> >  - None
-> >  
-> >  Changes since V3:
-> >  - New patch
-> >  
-> >  drivers/iommu/ipmmu-vmsa.c |   37 +++++++++++++++++++++++++++----------
-> >  1 file changed, 27 insertions(+), 10 deletions(-)
-> > 
-> > --- 0012/drivers/iommu/ipmmu-vmsa.c
-> > +++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:59:21.690607110 +0900
-> > @@ -70,6 +70,25 @@ static struct ipmmu_vmsa_domain *to_vmsa
-> > 
-> >  	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
-> >  
-> >  }
-> > 
-> > +#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-> > +static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
-> > +{
-> > +	return dev->archdata.iommu;
-> > +}
-> > +static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata
-> > *p) +{
-> > +	dev->archdata.iommu = p;
-> > +}
-> > +#else
-> > +static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
-> > +{
-> > +	return NULL;
-> > +}
-> > +static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata
-> > *p) +{
-> > +}
-> > +#endif
-> > +
-> > 
-> >  #define TLB_LOOP_TIMEOUT		100	/* 100us */
-> >  
-> >  /*
-> >  ------------------------------------------------------------------------
-> >  -----> 
-> > @@ -539,7 +558,7 @@ static void ipmmu_domain_free(struct iom
-> > 
-> >  static int ipmmu_attach_device(struct iommu_domain *io_domain,
-> >  
-> >  			       struct device *dev)
-> >  
-> >  {
-> > 
-> > -	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-> > +	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
-> > 
-> >  	struct ipmmu_vmsa_device *mmu = archdata->mmu;
-> >  	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
-> >  	unsigned long flags;
-> > 
-> > @@ -581,7 +600,7 @@ static int ipmmu_attach_device(struct io
-> > 
-> >  static void ipmmu_detach_device(struct iommu_domain *io_domain,
-> >  
-> >  				struct device *dev)
-> >  
-> >  {
-> > 
-> > -	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-> > +	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
-> > 
-> >  	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
-> >  	unsigned int i;
-> > 
-> > @@ -701,7 +720,7 @@ static int ipmmu_init_platform_device(st
-> > 
-> >  	archdata->mmu = mmu;
-> >  	archdata->utlbs = utlbs;
-> >  	archdata->num_utlbs = num_utlbs;
-> > 
-> > -	dev->archdata.iommu = archdata;
-> > +	set_archdata(dev, archdata);
-> > 
-> >  	return 0;
-> >  
-> >  error:
-> > @@ -713,12 +732,11 @@ error:
-> >  static int ipmmu_add_device(struct device *dev)
-> >  {
-> > 
-> > -	struct ipmmu_vmsa_archdata *archdata;
-> > 
-> >  	struct ipmmu_vmsa_device *mmu = NULL;
-> >  	struct iommu_group *group;
-> >  	int ret;
-> > 
-> > -	if (dev->archdata.iommu) {
-> > +	if (to_archdata(dev)) {
-> > 
-> >  		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
-> >  		
-> >  			 dev_name(dev));
-> >  		
-> >  		return -EINVAL;
-> > 
-> > @@ -754,8 +772,7 @@ static int ipmmu_add_device(struct devic
-> > 
-> >  	 * - Make the mapping size configurable ? We currently use a 2GB 
-mapping
-> >  	 *   at a 1GB offset to ensure that NULL VAs will fault.
-> >  	 */
-> > 
-> > -	archdata = dev->archdata.iommu;
-> > -	mmu = archdata->mmu;
-> > +	mmu = to_archdata(dev)->mmu;
-> > 
-> >  	if (!mmu->mapping) {
-> >  	
-> >  		struct dma_iommu_mapping *mapping;
-> > 
-> > @@ -783,7 +800,7 @@ error:
-> >  	if (mmu)
-> >  	
-> >  		arm_iommu_release_mapping(mmu->mapping);
-> > 
-> > -	dev->archdata.iommu = NULL;
-> > +	set_archdata(dev, NULL);
-> > 
-> >  	if (!IS_ERR_OR_NULL(group))
-> >  	
-> >  		iommu_group_remove_device(dev);
-> > 
-> > @@ -793,7 +810,7 @@ error:
-> >  static void ipmmu_remove_device(struct device *dev)
-> >  {
-> > 
-> > -	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-> > +	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
-> > 
-> >  	arm_iommu_detach_device(dev);
-> >  	iommu_group_remove_device(dev);
-> > 
-> > @@ -801,7 +818,7 @@ static void ipmmu_remove_device(struct d
-> > 
-> >  	kfree(archdata->utlbs);
-> >  	kfree(archdata);
-> > 
-> > -	dev->archdata.iommu = NULL;
-> > +	set_archdata(dev, NULL);
-> > 
-> >  }
-> >  
-> >  static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index d209e5480ff6..c3f064ac2cb4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -55,6 +55,24 @@
+ 		};
+ 	};
+ 
++	reg_1p8v: regulator0 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -113,6 +131,18 @@
+ 		function = "sdhi0";
+ 		power-source = <1800>;
+ 	};
++
++	sdhi2_pins: sd2 {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <3300>;
++	};
++
++	sdhi2_pins_uhs: sd2_uhs {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <1800>;
++	};
+ };
+ 
+ &sdhi0 {
+@@ -128,6 +158,19 @@
+ 	status = "okay";
+ };
+ 
++&sdhi2 {
++	/* used for on-board 8bit eMMC */
++	pinctrl-0 = <&sdhi2_pins>;
++	pinctrl-1 = <&sdhi2_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_1p8v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
+ &scif2 {
+ 	pinctrl-0 = <&scif2_pins>;
+ 	pinctrl-names = "default";
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
