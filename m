@@ -1,62 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48890 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751064AbcKBJXy (ORCPT
+        with ESMTP id S938936AbcKQRRi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 05:23:54 -0400
+        Thu, 17 Nov 2016 12:17:38 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: defconfig: Enable DRM DU and V4L2 FCP + VSP modules
-Date: Wed,  2 Nov 2016 10:23:45 +0100
-Message-Id: <833c97254724a620d1d9fb9a580681fb52536fbf.1478078567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478078567.git.horms+renesas@verge.net.au>
-References: <cover.1478078567.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/31] ARM: dts: alt: Enable UHS-I SDR-104
+Date: Thu, 17 Nov 2016 15:11:27 +0100
+Message-Id: <4f77aa7f3e79380d71429f00becb0815038b999e.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+And the sd-uhs-sdr104 property to SDHI0.
 
-Extend the ARM64 defconfig to enable the DU DRM device as module
-together with required dependencies of V4L2 FCP and VSP modules.
-
-This enables VGA output on the r8a7795 Salvator-X board.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/configs/defconfig | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index dab2cb0c1f1c..6eaf937ef5a4 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -292,8 +292,22 @@ CONFIG_REGULATOR_PWM=y
- CONFIG_REGULATOR_QCOM_SMD_RPM=y
- CONFIG_REGULATOR_QCOM_SPMI=y
- CONFIG_REGULATOR_S2MPS11=y
-+CONFIG_MEDIA_SUPPORT=m
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_ANALOG_TV_SUPPORT=y
-+CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y
-+CONFIG_MEDIA_CONTROLLER=y
-+CONFIG_VIDEO_V4L2_SUBDEV_API=y
-+# CONFIG_DVB_NET is not set
-+CONFIG_V4L_MEM2MEM_DRIVERS=y
-+CONFIG_VIDEO_RENESAS_FCP=m
-+CONFIG_VIDEO_RENESAS_VSP1=m
- CONFIG_DRM=m
- CONFIG_DRM_NOUVEAU=m
-+CONFIG_DRM_RCAR_DU=m
-+CONFIG_DRM_RCAR_HDMI=y
-+CONFIG_DRM_RCAR_LVDS=y
-+CONFIG_DRM_RCAR_VSP=y
- CONFIG_DRM_TEGRA=m
- CONFIG_DRM_PANEL_SIMPLE=m
- CONFIG_DRM_I2C_ADV7511=m
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 7270d4224b1a..569e3f0e97a5 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -307,6 +307,7 @@
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
+ 
 -- 
 2.7.0.rc3.207.g0ac5344
