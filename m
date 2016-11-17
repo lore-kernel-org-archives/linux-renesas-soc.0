@@ -1,101 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55227 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752380AbcKSDsP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938826AbcKQRSe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:48:15 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 1/9] drm: bridge: Add LVDS encoder DT bindings
-Date: Sat, 19 Nov 2016 05:48:14 +0200
-Message-Id: <1479527302-7674-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 17 Nov 2016 12:18:34 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 17/31] ARM: dts: sk-rzg1m: add Ether support
+Date: Thu, 17 Nov 2016 15:11:34 +0100
+Message-Id: <bc5e4967e9e98c48495780e25b0555dea8cbd21d.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DT bindings support parallel to LVDS encoders that don't require any
-configuration, similarly to the dumb VGA DAC DT bindings.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Define the SK-RZG1M board dependent part of the Ether device node.
+Enable DHCP and NFS root  for the kernel booting.
+
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../bindings/display/bridge/lvds-transmitter.txt   | 64 ++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-new file mode 100644
-index 000000000000..fd39ad34c383
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-@@ -0,0 +1,64 @@
-+Parallel to LVDS Encoder
-+------------------------
+diff --git a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+index ed26961c9434..3a22538208f2 100644
+--- a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
++++ b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -20,7 +20,7 @@
+ 	};
+ 
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+@@ -42,3 +42,16 @@
+ &scif0 {
+ 	status = "okay";
+ };
 +
-+This binding supports the parallel to LVDS encoders that don't require any
-+configuration.
++&ether {
++	phy-handle = <&phy1>;
++	renesas,ether-link-active-low;
++	status = "okay";
 +
-+LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
-+incompatible data link layers have been used over time to transmit image data
-+to LVDS panels. This binding targets devices compatible with the following
-+specifications only.
-+
-+[JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
-+1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
-+[LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
-+Semiconductor
-+[VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
-+Electronics Standards Association (VESA)
-+
-+Those devices have been marketed under the FPD-Link and FlatLink brand names
-+among others.
-+
-+
-+Required properties:
-+
-+- compatible: Must be "lvds-encoder"
-+
-+Required nodes:
-+
-+This device has two video ports. Their connections are modeled using the OF
-+graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-+
-+- Video port 0 for parallel input
-+- Video port 1 for LVDS output
-+
-+
-+Example
-+-------
-+
-+lvds-encoder {
-+	compatible = "lvds-encoder";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			lvds_enc_in: endpoint {
-+				remote-endpoint = <&display_out_rgb>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			lvds_enc_out: endpoint {
-+				remote-endpoint = <&lvds_panel_in>;
-+			};
-+		};
++	phy1: ethernet-phy@1 {
++		reg = <1>;
++		interrupt-parent = <&irqc>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		micrel,led-mode = <1>;
 +	};
 +};
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
