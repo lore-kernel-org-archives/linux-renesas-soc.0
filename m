@@ -1,66 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941524AbcKQRRw (ORCPT
+        with ESMTP id S936450AbcKQRRb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:17:52 -0500
+        Thu, 17 Nov 2016 12:17:31 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/31] ARM: dts: r8a7745: add IRQC support
-Date: Thu, 17 Nov 2016 15:11:39 +0100
-Message-Id: <fad196898e08cdf6d00a2f3a084093f851b7e432.1479391750.git.horms+renesas@verge.net.au>
+Subject: [PATCH 28/31] ARM: dts: r8a7791: Add device node for PRR
+Date: Thu, 17 Nov 2016 15:11:45 +0100
+Message-Id: <a402c8bc4758d62312cbe632893aa58bf1976d88.1479391750.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
 References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Describe the IRQC interrupt controller in the R8A7745 device tree.
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 6fe48157f906..0b2e2f37150f 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -62,6 +62,25 @@
- 						 IRQ_TYPE_LEVEL_HIGH)>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 091d7fb6ee7d..4c50de2faef1 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1485,6 +1485,11 @@
  		};
+ 	};
  
-+		irqc: interrupt-controller@e61c0000 {
-+			compatible = "renesas,irqc-r8a7745", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+		};
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
 +
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7791-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
 2.7.0.rc3.207.g0ac5344
