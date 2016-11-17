@@ -1,108 +1,128 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 07/14] ARM: dts: koelsch: use demuxer for I2C4
-Date: Sun,  6 Nov 2016 21:20:25 +0100
-Message-Id: <20161106202032.5227-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753896AbcKQRml (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 Nov 2016 12:42:41 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/4] soc: renesas: rcar-sysc: add R8A7745 support
+Date: Thu, 17 Nov 2016 15:04:35 +0100
+Message-Id: <c1006fc763279138e963b5a182170b8633a3746e.1479389981.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479389981.git.horms+renesas@verge.net.au>
+References: <cover.1479389981.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
+Add support for RZ/G1E (R8A7745) SoC power areas to the R-Car SYSC driver.
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+ drivers/soc/renesas/Makefile                       |  1 +
+ drivers/soc/renesas/r8a7745-sysc.c                 | 32 ++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+ drivers/soc/renesas/rcar-sysc.h                    |  1 +
+ 5 files changed, 38 insertions(+)
+ create mode 100644 drivers/soc/renesas/r8a7745-sysc.c
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 8d653920957a4b..442d1512a8fa9c 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -52,8 +52,10 @@
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c1;
- 		i2c10 = &gpioi2c2;
-+		i2c11 = &gpioi2c4;
- 		i2c12 = &i2cexio1;
- 		i2c13 = &i2chdmi;
-+		i2c14 = &i2cexio4;
- 	};
- 
- 	chosen {
-@@ -325,6 +327,17 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-11 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio7 14 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio7 13 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index c16ec1866ac4..d91715bc8d52 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -8,6 +8,7 @@ and various coprocessors.
+ Required properties:
+   - compatible: Must contain exactly one of the following:
+       - "renesas,r8a7743-sysc" (RZ/G1M)
++      - "renesas,r8a7745-sysc" (RZ/G1E)
+       - "renesas,r8a7779-sysc" (R-Car H1)
+       - "renesas,r8a7790-sysc" (R-Car H2)
+       - "renesas,r8a7791-sysc" (R-Car M2-W)
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 9e0bb329594c..e2249f01b2de 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -1,4 +1,5 @@
+ obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
++obj-$(CONFIG_ARCH_R8A7745)	+= rcar-sysc.o r8a7745-sysc.o
+ obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+diff --git a/drivers/soc/renesas/r8a7745-sysc.c b/drivers/soc/renesas/r8a7745-sysc.c
+new file mode 100644
+index 000000000000..d17887c08aa1
+--- /dev/null
++++ b/drivers/soc/renesas/r8a7745-sysc.c
+@@ -0,0 +1,32 @@
++/*
++ * Renesas RZ/G1E System Controller
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation; of the License.
++ */
 +
- 	/*
- 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
- 	 * A fallback to GPIO is provided.
-@@ -431,6 +444,18 @@
- 			pagesize = <16>;
- 		};
- 	};
++#include <linux/bug.h>
++#include <linux/kernel.h>
 +
-+	/*
-+	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -476,6 +501,11 @@
- 		function = "i2c2";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
++#include <dt-bindings/power/r8a7745-sysc.h>
 +
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		function = "du";
-@@ -732,6 +762,11 @@
- 	clock-frequency = <100000>;
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a7745_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A7745_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
++	{ "ca7-scu",	0x100, 0, R8A7745_PD_CA7_SCU,	R8A7745_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca7-cpu0",	0x1c0, 0, R8A7745_PD_CA7_CPU0,	R8A7745_PD_CA7_SCU,
++	  PD_CPU_NOCR },
++	{ "ca7-cpu1",	0x1c0, 1, R8A7745_PD_CA7_CPU1,	R8A7745_PD_CA7_SCU,
++	  PD_CPU_NOCR },
++	{ "sgx",	 0xc0, 0, R8A7745_PD_SGX,	R8A7745_PD_ALWAYS_ON },
 +};
 +
- &i2c6 {
- 	status = "okay";
- 	clock-frequency = <100000>;
++const struct rcar_sysc_info r8a7745_sysc_info __initconst = {
++	.areas = r8a7745_areas,
++	.num_areas = ARRAY_SIZE(r8a7745_areas),
++};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 71acd45b13f0..225c35c79d9a 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -278,6 +278,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
+ #ifdef CONFIG_ARCH_R8A7743
+ 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
+ #endif
++#ifdef CONFIG_ARCH_R8A7745
++	{ .compatible = "renesas,r8a7745-sysc", .data = &r8a7745_sysc_info },
++#endif
+ #ifdef CONFIG_ARCH_R8A7779
+ 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
+ #endif
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index 8ab9ca8a825a..f6e842e2976e 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -51,6 +51,7 @@ struct rcar_sysc_info {
+ };
+ 
+ extern const struct rcar_sysc_info r8a7743_sysc_info;
++extern const struct rcar_sysc_info r8a7745_sysc_info;
+ extern const struct rcar_sysc_info r8a7779_sysc_info;
+ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
 -- 
-2.9.3
-
+2.7.0.rc3.207.g0ac5344
