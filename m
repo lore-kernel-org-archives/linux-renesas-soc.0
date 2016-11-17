@@ -1,59 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35742 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751296AbcKGM10 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941632AbcKQRSD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 07:27:26 -0500
-Received: by mail-wm0-f65.google.com with SMTP id a20so5389366wme.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Nov 2016 04:27:25 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXZR3Af5mtrjuGzVwAxDHtOGsv3UizFt3GeEHmM_obtwg@mail.gmail.com>
-References: <20160914164716.31512-1-ulrich.hecht+renesas@gmail.com>
- <20160914164716.31512-3-ulrich.hecht+renesas@gmail.com> <CAMuHMdXZR3Af5mtrjuGzVwAxDHtOGsv3UizFt3GeEHmM_obtwg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Nov 2016 13:27:24 +0100
-Message-ID: <CAMuHMdUfrzM77ZHG9ae-J_iNKkumCKrkqDFks1dw6RFTTxdeRA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thu, 17 Nov 2016 12:18:03 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 06/31] ARM: dts: koelsch: use demuxer for I2C1
+Date: Thu, 17 Nov 2016 15:11:23 +0100
+Message-Id: <b32287069f272876349ac4cbde9e9ba4087220ea.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+Make it possible to fallback to GPIO for I2C1 on the EXIO-C connector.
 
-On Thu, Sep 15, 2016 at 8:55 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Sep 14, 2016 at 6:47 PM, Ulrich Hecht
-> <ulrich.hecht+renesas@gmail.com> wrote:
->> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
->> ---
->>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 255 +++++++++++++++++++++++++++++++++++
->>  1 file changed, 255 insertions(+)
->>
->> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
->> index 42db745..607adf7 100644
->> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
->> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
->> @@ -1490,6 +1490,191 @@ static const struct sh_pfc_pin pinmux_pins[] = {
->
->> +/* - HSCIF2 ----------------------------------------------------------------- */
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
 
-> You forgot to add group C for HSCIF2, which does not exist on H3.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased and fixed aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Any plans for an update, fixing that?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index c457b43deb7d..d5c80e6bff22 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -50,6 +50,8 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scif1;
++		i2c9 = &gpioi2c1;
++		i2c12 = &i2cexio1;
+ 	};
+ 
+ 	chosen {
+@@ -298,6 +300,29 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio7 16 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio7 15 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio1: i2c-12 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-exio1";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -333,6 +358,11 @@
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
++
+ 	i2c2_pins: i2c2 {
+ 		groups = "i2c2";
+ 		function = "i2c2";
+@@ -581,6 +611,11 @@
+ 	};
+ };
+ 
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "i2c-exio1";
++};
++
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.0.rc3.207.g0ac5344
