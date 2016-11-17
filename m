@@ -1,116 +1,101 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 0/9] R-Car DU: Use drm bridge API
-Date: Sat, 19 Nov 2016 05:48:13 +0200
-Message-Id: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938936AbcKQRRn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 Nov 2016 12:17:43 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 07/31] ARM: dts: alt: use demuxer for I2C4
+Date: Thu, 17 Nov 2016 15:11:24 +0100
+Message-Id: <490aafde3cb3a7c183481e0fc9b38cba109691bf.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Make it possible to fallback to GPIO for I2C4 on the EXIO-B connector.
 
-This patch series replaces the custom external encoders support implementation
-in the R-Car DU driver with code based on the DRM bridge API.
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
 
-While the overall diffstat isn't impressive, the rcar-du-drm driver gets
-notably thinner in the process:
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased and fixed aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7794-alt.dts | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-	9 files changed, 57 insertions(+), 374 deletions(-)
-
-This is offset by a reusable driver for LVDS encoders along with the
-corresponding DT bindings (+ 204 lines).
-
-Patches 1/9 and 2/9 add DT bindings for LVDS encoders with a corresponding
-driver. It supports "dumb" LVDS encoders only, similarly to the dumb-vga-dac
-driver. One notable difference, though, is that LVDS encoders can't be purely
-passive, and thus require at least one power supply (and usually multiple of
-them) and have a few control GPIOs (most notably to control reset, power down,
-clock polarity and/or LVDS slew rate). However, on many systems those encoders
-are integrated in such a way that the control pins are pulled up or down
-appropriately and the power supplies are either always on or shared with other
-display components that make them operate as if they were always on. For that
-reason a common drivers for those systems is useful, with simple DT bindings
-that don't try to cover any device-specific control pin or power supply.
-
-To ensure backward compatibility most LVDS encoders should *not* use the
-common simple "lvds-encoder" compatible string, but should instead define a
-device-specific compatible string that can then be added to the lvds-encoder
-driver (patch 4/9). This way, when the need to control pins or supplies will
-arise, a new driver can be developed matching on the device-specific
-compatible string, which will then be removed from the simple driver. Existing
-systems will migrate transparently without requiring a change to their device
-tree.
-
-A similar reasoning applies to VGA DACs, leading to the addition of the
-"adi,adv7123" compatible string to the dumb-vga-dac driver's OF match table in
-patch 3/9.
-
-Patch 5/9 adds a new type field to the drm_bridge structure to inform bridge
-users of the bridge type. This is useful for display driver to create a DRM
-encoder of the appropriate type without having to resort to heuristics.
-Patches 6/9 and 7/9 update all bridge drivers to initialize the new field to
-the appropriate value.
-
-Patches 8/9 and 9/9 finally migrate the rcar-du-drm driver to the DRM bridge
-API, removing the custom VGA DAC implementation in patch 8/9 and the table of
-bridge compatible strings used to find the encoder type in patch 9/9.
-
-Compared to v1,
-
-- The patches have been rebased on top of the "[PATCH v2 00/13] R-Car DU: Add
-  support for LVDS mode selection" series.
-- The LVDS encoder DT bindings have been split from the LVDS encoder driver
-  into a separate patch.
-- The wording of the DRM bridge documentation new property has been updated.
-
-Laurent Pinchart (9):
-  drm: bridge: Add LVDS encoder DT bindings
-  drm: bridge: Add LVDS encoder driver
-  drm: bridge: vga-dac: Add adi,adv7123 compatible string
-  drm: bridge: lvds-encoder: Add thine,thc63lvdm83d compatible string
-  drm: Add encoder_type field to the drm_bridge structure
-  drm: bridge: Set bridges' encoder type
-  drm: Set on-chip bridges' encoder type
-  drm: rcar-du: Replace manual bridge implementation with DRM bridge
-  drm: rcar-du: Initialize encoder's type based on the bridge's type
-
- .../bindings/display/bridge/lvds-transmitter.txt   |  64 +++++++
- drivers/gpu/drm/bridge/Kconfig                     |   8 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |   1 +
- drivers/gpu/drm/bridge/analogix-anx78xx.c          |   1 +
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |   1 +
- drivers/gpu/drm/bridge/dumb-vga-dac.c              |   2 +
- drivers/gpu/drm/bridge/dw-hdmi.c                   |   2 +
- drivers/gpu/drm/bridge/lvds-encoder.c              | 204 +++++++++++++++++++++
- drivers/gpu/drm/bridge/nxp-ptn3460.c               |   2 +
- drivers/gpu/drm/bridge/parade-ps8622.c             |   2 +
- drivers/gpu/drm/bridge/sii902x.c                   |   2 +
- drivers/gpu/drm/bridge/tc358767.c                  |   2 +
- drivers/gpu/drm/exynos/exynos_drm_mic.c            |   2 +
- drivers/gpu/drm/mediatek/mtk_hdmi.c                |   2 +
- drivers/gpu/drm/rcar-du/Kconfig                    |   6 -
- drivers/gpu/drm/rcar-du/Makefile                   |   5 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 103 ++++++-----
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |   3 -
- drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c          | 137 --------------
- drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h          |  35 ----
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  37 +---
- drivers/gpu/drm/rcar-du/rcar_du_vgacon.c           |  82 ---------
- drivers/gpu/drm/rcar-du/rcar_du_vgacon.h           |  23 ---
- drivers/gpu/drm/sti/sti_dvo.c                      |   2 +
- include/drm/drm_bridge.h                           |   8 +
- 26 files changed, 363 insertions(+), 374 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
- create mode 100644 drivers/gpu/drm/bridge/lvds-encoder.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
-
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index a3e74684289b..7270d4224b1a 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -18,6 +18,8 @@
+ 
+ 	aliases {
+ 		serial0 = &scif2;
++		i2c10 = &gpioi2c4;
++		i2c12 = &i2cexio4;
+ 	};
+ 
+ 	chosen {
+@@ -135,6 +137,29 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
++
++	gpioi2c4: i2c-10 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio4: i2c-14 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c4>, <&gpioi2c4>;
++		i2c-bus-name = "i2c-exio4";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -194,6 +219,11 @@
+ 		function = "i2c1";
+ 	};
+ 
++	i2c4_pins: i2c4 {
++		groups = "i2c4";
++		function = "i2c4";
++	};
++
+ 	vin0_pins: vin0 {
+ 		groups = "vin0_data8", "vin0_clk";
+ 		function = "vin0";
+@@ -314,6 +344,11 @@
+ 	};
+ };
+ 
++&i2c4 {
++	pinctrl-0 = <&i2c4_pins>;
++	pinctrl-names = "i2c-exio4";
++};
++
+ &vin0 {
+ 	status = "okay";
+ 	pinctrl-0 = <&vin0_pins>;
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.7.0.rc3.207.g0ac5344
