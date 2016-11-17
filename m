@@ -1,82 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41363 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751154AbcKDJoN (ORCPT
+        with ESMTP id S964853AbcKQRmt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:13 -0400
+        Thu, 17 Nov 2016 12:42:49 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.10
-Date: Fri,  4 Nov 2016 10:44:04 +0100
-Message-Id: <cover.1478251192.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/18] arm64: dts: m3ulcb: enable WDT
+Date: Thu, 17 Nov 2016 15:04:51 +0100
+Message-Id: <1ed2e02aa36d468d158a059469fcf07cd3be0b7f.1479388193.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479388193.git.horms+renesas@verge.net.au>
+References: <cover.1479388193.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Please consider these Renesas ARM64 based SoC DT updates for v4.10.
+This supports watchdog timer for M3ULCB board
 
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.10
-
-for you to fetch changes up to 935085209343a0c507e3d9a3e01883b25c8f743e:
-
-  arm64: renesas: r8a7796: add SYS-DMAC controller nodes (2016-11-04 10:18:07 +0100)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC DT Updates for v4.10
-
-Enablement:
-* Enable On-board eMMC
-* Enable SDHI 0 & 3 with UHS
-* Add SYS-DMAC controller nodes to r8a7796 SoC
-* Populate EXTALR on r8a7796/salvator-x board; used by watchdog
-* Add DU LVDS output endpoint on r8a7795/salvator-x board
-* Add bias setting for USB1 pins on r8a7795/salvator-x board
-
-Clean-Up:
-* Remove FCP SoC-specific compatible strings
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      arm64: dts: r8a7796: salvator-x: Populate EXTALR
-
-Laurent Pinchart (3):
-      arm64: dts: r8a7795: salvator-x: Add DU LVDS output endpoint
-      dt-bindings: media: renesas-fcp: Remove SoC-specific compatible strings
-      arm64: dts: r8a7795: Remove FCP SoC-specific compatible strings
-
-Simon Horman (3):
-      arm64: dts: r8a7796: add SDHI nodes
-      arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
-      arm64: dts: r8a7796: salvator-x: enable UHS for SDHI 0 & 3
-
-Ulrich Hecht (1):
-      arm64: renesas: r8a7796: add SYS-DMAC controller nodes
-
-Wolfram Sang (3):
-      arm64: dts: r8a7795: salvator-x: enable UHS for SDHI 0 & 3
-      arm64: dts: r8a7795: salvator: enable on-board eMMC
-      arm64: dts: r8a7796: salvator: enable on board eMMC
-
-Yoshihiro Shimoda (1):
-      arm64: dts: r8a7795: salvator-x: add bias setting for usb1_pins
-
- .../devicetree/bindings/media/renesas,fcp.txt      |   8 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  85 +++++++++++-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  24 ++--
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 148 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 139 +++++++++++++++++++
- 5 files changed, 381 insertions(+), 23 deletions(-)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index 5567c46f3753..593d0b4ab31a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -90,3 +90,8 @@
+ 	clock-frequency = <14745600>;
+ 	status = "okay";
+ };
++
++&wdt0 {
++	timeout-sec = <60>;
++	status = "okay";
++};
+-- 
+2.7.0.rc3.207.g0ac5344
