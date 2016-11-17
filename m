@@ -1,65 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55160 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752446AbcKSD2N (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:28:13 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCH v2 10/13] ARM: shmobile: dts: Switch to panel-lvds bindings for Mitsubishi panels
-Date: Sat, 19 Nov 2016 05:28:10 +0200
-Message-Id: <1479526093-7014-11-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH] of: base: add support to get machine model name
+Date: Thu, 17 Nov 2016 14:50:13 +0100
+Message-ID: <3670336.mMHByOpDl4@wuerfel>
+In-Reply-To: <1479383450-19183-1-git-send-email-sudeep.holla@arm.com>
+References: <1479383450-19183-1-git-send-email-sudeep.holla@arm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
-Use the correct DT bindings.
+On Thursday, November 17, 2016 11:50:50 AM CET Sudeep Holla wrote:
+> Currently platforms/drivers needing to get the machine model name are
+> replicating the same snippet of code. In some case, the OF reference
+> counting is either missing or incorrect.
+> 
+> This patch adds support to read the machine model name either using
+> the "model" or the "compatible" property in the device tree root node.
+> 
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi | 3 ++-
- arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+I like the idea. One small comment:
 
-diff --git a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-index 65cb50f0c29f..238d14bb0ebe 100644
---- a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa104xd12", "panel-dpi";
-+		compatible = "mitsubishi,aa104xd12", "panel-lvds";
- 
- 		width-mm = <210>;
- 		height-mm = <158>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1024x768 @65Hz */
-diff --git a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-index a07ebf8f6938..04aafd479775 100644
---- a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa121td01", "panel-dpi";
-+		compatible = "mitsubishi,aa121td01", "panel-lvds";
- 
- 		width-mm = <261>;
- 		height-mm = <163>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1280x800 @60Hz */
--- 
-Regards,
+> +int of_machine_get_model_name(const char **model)
+> +{
+> +	int error;
+> +	struct device_node *root;
+> +
+> +	root = of_find_node_by_path("/");
+> +	if (!root)
+> +		return -EINVAL;
 
-Laurent Pinchart
+The global of_root variable points ot this already, and is defined
+in the same file, so I think we can just skip the lookup.
+
+	Arnd
