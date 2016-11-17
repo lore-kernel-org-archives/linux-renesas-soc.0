@@ -1,40 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36827 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbcKNQjI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51071 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933271AbcKQRM2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 11:39:08 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: [PATCH 0/4] Renesas R-Car DU fixes
-Date: Mon, 14 Nov 2016 18:39:08 +0200
-Message-Id: <1479141552-8509-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 17 Nov 2016 12:12:28 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] ARM: shmobile: document SK-RZG1E board
+Date: Thu, 17 Nov 2016 14:34:46 +0100
+Message-Id: <4af239175d00c1866cc6b41f3eabcf93c45dcc40.1479387356.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479387356.git.horms+renesas@verge.net.au>
+References: <cover.1479387356.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This series contains four fixes for the R-Car DU driver, all backported or
-inspired by the R-Car Gen3 BSP.
+Document the SK-RZG1E device tree bindings, listing it as a supported board.
 
-Please see individual patches for details.
+This allows to use checkpatch.pl to validate .dts files referring to the
+SK-RZG1E board.
 
-Koji Matsuoka (3):
-  drm: rcar-du: Fix display timing controller parameter
-  drm: rcar-du: Fix H/V sync signal polarity configuration
-  drm: rcar-du: Fix LVDS start sequence on Gen3
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Laurent Pinchart (1):
-  drm: rcar-du: Fix dot clock routing configuration
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    |  6 +++---
- drivers/gpu/drm/rcar-du/rcar_du_group.c   | 22 +++++++++++++---------
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 15 ++++++++-------
- 3 files changed, 24 insertions(+), 19 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 0af01f9a01f4..3c7acf22957a 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -77,6 +77,8 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7796";
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
++  - SK-RZG1E (YR8A77450S000BE)
++    compatible = "renesas,sk-rzg1e", "renesas,r8a7745"
+   - SK-RZG1M (YR8A77430S000BE)
+     compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
+   - Wheat
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
