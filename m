@@ -1,72 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35421 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424299AbcKANfx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941246AbcKQRRk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Nov 2016 09:35:53 -0400
-Received: by mail-lf0-f44.google.com with SMTP id f134so121277123lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 01 Nov 2016 06:35:52 -0700 (PDT)
-Subject: Re: [PATCH v4 20/23] ARM: shmobile: rcar-gen2: Stop passing mode pins
- state to clock driver
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
- <1477055857-17936-21-git-send-email-geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <722d91fe-574a-8613-34ff-d44be19157be@cogentembedded.com>
-Date: Tue, 1 Nov 2016 16:35:49 +0300
-MIME-Version: 1.0
-In-Reply-To: <1477055857-17936-21-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Nov 2016 12:17:40 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/31] ARM: dts: koelsch: Enable UHS-I SDR-104
+Date: Thu, 17 Nov 2016 15:11:26 +0100
+Message-Id: <c67bd5310b99f32045064c4eb57009833852d318.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10/21/2016 04:17 PM, Geert Uytterhoeven wrote:
+And the sd-uhs-sdr104 property to SDHI0.
 
-> Now the R-Car Gen2 CPG clock driver obtains the state of the mode pins
-> from the R-Car RST driver, there's no longer a need to pass this state
-> explicitly. Hence we can just call of_clk_init() instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-> ---
-> v4:
->   - Add Acked-by,
->   - Rebase on top of "ARM: shmobile: rcar-gen2: Obtain extal frequency
->     from DT",
->   - Remove the call to rcar_gen2_read_mode_pins(),
->
-> v3:
->   - Drop "select MFD_SYSCON", as the clock driver no longer uses syscon,
->
-> v2:
->   - Kill compiler warning if CONFIG_ARM_ARCH_TIMER is not enabled.
-> ---
->  arch/arm/mach-shmobile/setup-rcar-gen2.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> index afb9fdcd3d9084e2..b527258e0a62e806 100644
-> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-[...]
-> @@ -130,7 +129,7 @@ void __init rcar_gen2_timer_init(void)
->  	iounmap(base);
->  #endif /* CONFIG_ARM_ARCH_TIMER */
->
-> -	rcar_gen2_clocks_init(mode);
-> +	of_clk_init(NULL);
->  	clocksource_probe();
->  }
->
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-   This hunk no longer applies to devel.
-
-MBR, Sergei
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index d5c80e6bff22..5405d337d744 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -529,6 +529,7 @@
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
