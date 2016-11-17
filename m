@@ -1,39 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933420AbcKQRRc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 Nov 2016 12:17:32 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 8/9] arm64: dts: m3ulcb: enable WDT
-Date: Thu,  3 Nov 2016 21:08:12 +0300
-Message-Id: <1478196492-1480-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1478196375-1131-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 27/31] ARM: dts: r8a7790: Add device node for PRR
+Date: Thu, 17 Nov 2016 15:11:44 +0100
+Message-Id: <24d6b726733ad9ee06dcacf3f3bcac3707bb4632.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports watchdog timer for M3ULCB board
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Add a device node for the Product Register, which provides SoC product
+and revision information.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 5 +++++
+ arch/arm/boot/dts/r8a7790.dtsi | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index 6936288..bc3d8d5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -146,3 +146,8 @@
- 	clock-frequency = <14745600>;
- 	status = "okay";
- };
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index a946474be9cf..f554ef3c8096 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1471,6 +1471,11 @@
+ 		};
+ 	};
+ 
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
 +
-+&wdt0 {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7790-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-1.9.1
-
+2.7.0.rc3.207.g0ac5344
