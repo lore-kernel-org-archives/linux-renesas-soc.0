@@ -1,75 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34247 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941325AbcKOJ4o (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941524AbcKQRRw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 04:56:44 -0500
-MIME-Version: 1.0
-In-Reply-To: <1477921588-2326-1-git-send-email-geert+renesas@glider.be>
-References: <1477921588-2326-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Nov 2016 10:56:43 +0100
-Message-ID: <CAMuHMdXbBYbHzQXD-6dC2kQFVVGLWdGn0UWM0ahC7MSUPbwqwg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add EtherAVB pins, groups and functions
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+        Thu, 17 Nov 2016 12:17:52 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/31] ARM: dts: r8a7745: add IRQC support
+Date: Thu, 17 Nov 2016 15:11:39 +0100
+Message-Id: <fad196898e08cdf6d00a2f3a084093f851b7e432.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 2:46 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds AVB_LINK, AVB_MAGIC, AVB_PHY_INT, AVB_MDC, AVB_AVTP_PPS,
-> AVB_AVTP_MATCH, AVB_AVTP_CAPTURE pins, groups and functions to R8A7796
-> SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 87 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
->
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-> index c7b8811fbab554bb..16773e580a902edc 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> @@ -2564,6 +2638,18 @@ enum {
->         "hscif4_data_b",
->  };
->
-> +static const char * const avb_groups[] = {
-> +       "avb_link",
-> +       "avb_magic",
-> +       "avb_phy_int",
-> +       "avb_mdc",
-> +       "avb_avtp_pps",
-> +       "avb_avtp_match_a",
-> +       "avb_avtp_capture_a",
-> +       "avb_avtp_match_b",
-> +       "avb_avtp_capture_b",
-> +};
-> +
+Describe the IRQC interrupt controller in the R8A7745 device tree.
 
-Queueing up, with above chunk moved in front of drif0_groups[].
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
->  static const char * const i2c1_groups[] = {
->         "i2c1_a",
->         "i2c1_b",
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 6fe48157f906..0b2e2f37150f 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -62,6 +62,25 @@
+ 						 IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		irqc: interrupt-controller@e61c0000 {
++			compatible = "renesas,irqc-r8a7745", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++		};
++
+ 		timer {
+ 			compatible = "arm,armv7-timer";
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+-- 
+2.7.0.rc3.207.g0ac5344
