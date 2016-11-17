@@ -1,114 +1,82 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933420AbcKQRR3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 Nov 2016 12:17:29 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: kieran.bingham@ideasonboard.com
-Subject: [PATCH 2/2] arm64: dts: r8a7796: salvator-x: Add GPIO keys support
-Date: Mon, 14 Nov 2016 15:07:17 +0200
-Message-Id: <1479128837-30985-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 04/31] ARM: dts: lager: rename and reindex i2cexio
+Date: Thu, 17 Nov 2016 15:11:21 +0100
+Message-Id: <54b916633026386fc64c6cb7afdc445b9e4b3278.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Salvator-X board as a 4 lines DIP switch and 3 push buttons
-connected to SoC GPIOs, meant to be used as general-purpose test keys.
-Add a corresponding node in DT, mapping (semi-randomly) the DIP switch
-to keys 1-4 and the push buttons to keys A-C.
+The rename from i2cexio to i2cexio0 is in preparation for adding
+i2cexio1 which will use the demuxer for IIC1/I2C1.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The reindexing from i2c8 to i2c10 is to allow space for grouping of
+additional GPIO buses to be added by follow-up patches to support demuxing
+of other i2c buses.
+
+Also note that fallback to GPIO is not provided by the hardware for IIC0/I2C0.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed alias and removed typo in commit message]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 63 ++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ arch/arm/boot/dts/r8a7790-lager.dts | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index f35e96ca7d60..8e511fab880c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -11,6 +11,7 @@
- /dts-v1/;
- #include "r8a7796.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "Renesas Salvator-X board based on r8a7796";
-@@ -31,6 +32,63 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 434268262d88..5645444cd21a 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -50,7 +50,7 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
+-		i2c8 = "i2cexio";
++		i2c10 = &i2cexio0;
  	};
  
-+	keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&keys_pins>;
-+		pinctrl-names = "default";
-+
-+		key-1 {
-+			gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_1>;
-+			label = "SW4-1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-2 {
-+			gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_2>;
-+			label = "SW4-2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-3 {
-+			gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_3>;
-+			label = "SW4-3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-4 {
-+			gpios = <&gpio5 23 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_4>;
-+			label = "SW4-4";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-a {
-+			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_A>;
-+			label = "TSW0";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-b {
-+			gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_B>;
-+			label = "TSW1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-c {
-+			gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_C>;
-+			label = "TSW2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -116,6 +174,11 @@
- 		function = "i2c2";
+ 	chosen {
+@@ -273,11 +273,13 @@
+ 	 * bus with IIC3 on pins 110 (SCL) + 112 (SDA), select I2C0 at runtime, and
+ 	 * instantiate the slave device at runtime according to the documentation.
+ 	 * You can then communicate with the slave via IIC3.
++	 *
++	 * IIC0/I2C0 does not appear to support fallback to GPIO.
+ 	 */
+-	i2cexio: i2c-8 {
++	i2cexio0: i2c-10 {
+ 		compatible = "i2c-demux-pinctrl";
+ 		i2c-parent = <&iic0>, <&i2c0>;
+-		i2c-bus-name = "i2c-exio";
++		i2c-bus-name = "i2c-exio0";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  	};
+@@ -596,12 +598,12 @@
  
-+	keys_pins: keys {
-+		pins = "GP_5_17", "GP_5_20", "GP_5_22";
-+		bias-pull-up;
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
+ &i2c0	{
+ 	pinctrl-0 = <&i2c0_pins>;
+-	pinctrl-names = "i2c-exio";
++	pinctrl-names = "i2c-exio0";
+ };
+ 
+ &iic0	{
+ 	pinctrl-0 = <&iic0_pins>;
+-	pinctrl-names = "i2c-exio";
++	pinctrl-names = "i2c-exio0";
+ };
+ 
+ &iic1	{
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
