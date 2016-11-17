@@ -1,42 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52795 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753000AbcKORyj (ORCPT
+        with ESMTP id S941612AbcKQRSC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 12:54:39 -0500
-Date: Tue, 15 Nov 2016 18:54:33 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 0/7] Add R8A7743/SK-RZG1M board support
-Message-ID: <20161115175433.GB4065@verge.net.au>
-References: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
+        Thu, 17 Nov 2016 12:18:02 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 30/31] ARM: dts: r8a7793: Add device node for PRR
+Date: Thu, 17 Nov 2016 15:11:47 +0100
+Message-Id: <9fdfa50b00e65f0d39cb266c5955cf29ef89bb80.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 10:52:25PM +0300, Sergei Shtylyov wrote:
-> Hello.
-> 
->    Here's the set of 7 patches against Simon Horman's 'renesas.git' repo's
-> 'renesas-devel-20161031-v4.9-rc3' tag. I'm adding the device tree support for
-> the R8A7743-based SK-RZG1M board. The SoC is close to R8A7791 and the board
-> seems identical to the R8A7791/Porter board. The device tree patches depend on
-> the R8A7743 CPG/MSSR driver series in order to compile and work. Already merged
-> patches from this series won't be re-posted.
-> 
-> [1/7] ARM: dts: r8a7743: initial SoC device tree
-> [2/7] ARM: dts: r8a7743: add SYS-DMAC support
-> [3/7] ARM: dts: r8a7743: add [H]SCIF{A|B} support
-> [4/7] ARM: dts: r8a7743: add Ether support
-> [5/7] ARM: dts: r8a7743: add IRQC support
-> [6/7] ARM: dts: sk-rzg1m: initial device tree
-> [7/7] ARM: dts: sk-rzg1m: add Ether support
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks, I have queued this up.
+Add a device node for the Product Register, which provides SoC product
+and revision information.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 629d3d60d1cd..a377dda17724 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1306,6 +1306,11 @@
+ 		};
+ 	};
+ 
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7793-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
+-- 
+2.7.0.rc3.207.g0ac5344
