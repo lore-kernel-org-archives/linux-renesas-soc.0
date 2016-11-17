@@ -1,59 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941571AbcKQRSA (ORCPT
+        with ESMTP id S941555AbcKQRSQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:18:00 -0500
+        Thu, 17 Nov 2016 12:18:16 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/31] ARM: dts: r8a7743: add Ether support
-Date: Thu, 17 Nov 2016 15:11:31 +0100
-Message-Id: <9fb52ea98a8d4bfa73a89a15de736eb1a84a5d7e.1479391750.git.horms+renesas@verge.net.au>
+Subject: [PATCH 31/31] ARM: dts: r8a7794: Add device node for PRR
+Date: Thu, 17 Nov 2016 15:11:48 +0100
+Message-Id: <cb74f5808db5105baaf127c51660bbb1a10313c4.1479391750.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
 References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Define the generic R8A7743 part of the Ether device node.
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 874bcf2b4da6..87563a5379b5 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -418,6 +418,18 @@
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 364b4aa8d1c1..63dc7f29d216 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1377,6 +1377,11 @@
  		};
-+
-+		ether: ethernet@ee700000 {
-+			compatible = "renesas,ether-r8a7743";
-+			reg = <0 0xee700000 0 0x400>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 813>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			phy-mode = "rmii";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
  	};
  
- 	/* External root clock */
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7794-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
 2.7.0.rc3.207.g0ac5344
