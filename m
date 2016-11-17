@@ -1,63 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941748AbcKQRmk (ORCPT
+        with ESMTP id S941543AbcKQRRz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:42:40 -0500
+        Thu, 17 Nov 2016 12:17:55 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/18] arm64: dts: h3ulcb: rename SDHI0 pins
-Date: Thu, 17 Nov 2016 15:04:55 +0100
-Message-Id: <53e9136e3ba5e535c1604b6684b057bc0d38f4b6.1479388193.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479388193.git.horms+renesas@verge.net.au>
-References: <cover.1479388193.git.horms+renesas@verge.net.au>
+Subject: [PATCH 26/31] ARM: dts: r8a7779: Add device node for PRR
+Date: Thu, 17 Nov 2016 15:11:43 +0100
+Message-Id: <41462d49565f4fb0a18820a75916c5ec9745ed28.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This changes SDHI0 pin names for H3ULCB board
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 8d0ac076d8e2..6ffb0517421a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -163,13 +163,13 @@
- 		function = "avb";
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 3005308a1807..9d3bb74bd3f6 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -590,6 +590,11 @@
+ 		};
  	};
  
--	sdhi0_pins_3v3: sd0_3v3 {
-+	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
- 		power-source = <3300>;
- 	};
- 
--	sdhi0_pins_1v8: sd0_1v8 {
-+	sdhi0_pins_uhs: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
- 		power-source = <1800>;
-@@ -291,8 +291,8 @@
- };
- 
- &sdhi0 {
--	pinctrl-0 = <&sdhi0_pins_3v3>;
--	pinctrl-1 = <&sdhi0_pins_1v8>;
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
- 	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0xff000044 4>;
++	};
++
+ 	sysc: system-controller@ffd85000 {
+ 		compatible = "renesas,r8a7779-sysc";
+ 		reg = <0xffd85000 0x0200>;
 -- 
 2.7.0.rc3.207.g0ac5344
