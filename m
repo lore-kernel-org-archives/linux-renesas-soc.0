@@ -1,54 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36685 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752820AbcKSBu1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941549AbcKQRm4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 20:50:27 -0500
-Received: by mail-pg0-f67.google.com with SMTP id x23so22098570pgx.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Nov 2016 17:50:27 -0800 (PST)
-Date: Fri, 18 Nov 2016 17:41:50 -0800
-From: Olof Johansson <olof@lixom.net>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Thu, 17 Nov 2016 12:42:56 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
         Kevin Hilman <khilman@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates
- for v4.10
-Message-ID: <20161119014150.GC2543@localhost>
-References: <cover.1479388193.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1479388193.git.horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.10
+Date: Thu, 17 Nov 2016 15:04:55 +0100
+Message-Id: <cover.1479388193.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 17, 2016 at 03:04:55PM +0100, Simon Horman wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
-> 
-> Please consider these second round of Renesas ARM64 based SoC DT updates
-> for v4.10.
-> 
-> This pull request is based on a merge of:
-> 
-> * The previous round of such requests, tagged as renesas-arm64-dt-for-v4.10,
->   which I have already sent a pull-request for.
-> * The "Second Round of Renesas ARM Based SoC Drivers Updates for v4.10",
->   tagged as renesas-drivers2-for-v4.10, which I have also sent a pull
->   request for. This is included to provide dependencies for adding device
->   nodes for PRR.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Please avoid entangling these pull requests, since now I can't merge DT since
-I'm rejecting your drivers pull request.
+Please consider these second round of Renesas ARM64 based SoC DT updates
+for v4.10.
 
-I also don't understand why you need a driver branch as base. The PRR
-nodes are literally just a compatible field and a reg entry. It should
-depend on nothing.
+This pull request is based on a merge of:
 
-So, I'm a little confused here. Please disentangle this and send a separate
-pull request, I'll be happy to merge that.
+* The previous round of such requests, tagged as renesas-arm64-dt-for-v4.10,
+  which I have already sent a pull-request for.
+* The "Second Round of Renesas ARM Based SoC Drivers Updates for v4.10",
+  tagged as renesas-drivers2-for-v4.10, which I have also sent a pull
+  request for. This is included to provide dependencies for adding device
+  nodes for PRR.
 
 
--Olof
+The following changes since commit a59f630b3386cc30c28154f3d5707ee74d4bfe63:
+
+  Merge branch 'heads/drivers-for-v4.10' into HEAD (2016-11-15 14:13:37 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.10
+
+for you to fetch changes up to 1e7b5e4ee3f1b2c9cb607801a3f0adfa05a0818a:
+
+  arm64: dts: r8a7796: Add device node for PRR (2016-11-15 14:15:58 +0100)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM64 Based SoC DT Updates for v4.10
+
+Enhancements:
+* Add device nodes for PRR
+* Add m3ulcb board
+* Enable I2C on r8a7796/salvator-x board
+* Enable SDHI0 on h3ulcb board
+
+Clean-up:
+* Rename SDHI0 pins of h3ulcb board
+
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      arm64: dts: r8a7795: Add device node for PRR
+      arm64: dts: r8a7796: Add device node for PRR
+
+Ulrich Hecht (3):
+      arm64: dts: r8a7796: add I2C support
+      arm64: dts: r8a7796: Enable I2C DMA
+      arm64: dts: r8a7796: salvator-x: enable I2C
+
+Vladimir Barinov (13):
+      arm64: dts: h3ulcb: update documentation with official board name
+      arm64: dts: h3ulcb: update header
+      arm64: dts: m3ulcb: add M3ULCB board DT bindings
+      arm64: dts: m3ulcb: initial device tree
+      arm64: dts: m3ulcb: enable SCIF clk and pins
+      arm64: dts: m3ulcb: enable GPIO leds
+      arm64: dts: m3ulcb: enable GPIO keys
+      arm64: dts: m3ulcb: enable EXTALR clk
+      arm64: dts: m3ulcb: enable WDT
+      arm64: dts: m3ulcb: enable SDHI0
+      arm64: dts: m3ulcb: enable SDHI2
+      arm64: dts: h3ulcb: enable SDHI2
+      arm64: dts: h3ulcb: rename SDHI0 pins
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |   4 +-
+ arch/arm64/boot/dts/renesas/Makefile               |   2 +-
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  53 +++++-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   5 +
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     | 189 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  12 ++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 116 +++++++++++++
+ 7 files changed, 374 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
