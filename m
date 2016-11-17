@@ -1,54 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56233 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422780AbcKAJcX (ORCPT
+        with ESMTP id S941119AbcKQRRf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 Nov 2016 05:32:23 -0400
-Date: Tue, 1 Nov 2016 10:32:17 +0100
-From: Simon Horman <horms@verge.net.au>
-To: David Miller <davem@davemloft.net>
-Cc: geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
-        arnd@arndb.de, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFC] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
-Message-ID: <20161101093216.GE28143@verge.net.au>
-References: <1477934018-13968-1-git-send-email-geert+renesas@glider.be>
- <20161031.132431.648834397805808388.davem@davemloft.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20161031.132431.648834397805808388.davem@davemloft.net>
+        Thu, 17 Nov 2016 12:17:35 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/31] ARM: dts: lager: Enable UHS-I SDR-104
+Date: Thu, 17 Nov 2016 15:11:25 +0100
+Message-Id: <8a2aefb3285e8b22db645ccb48c2e7bd141a50f8.1479391750.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 01:24:31PM -0400, David Miller wrote:
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
-> Date: Mon, 31 Oct 2016 18:13:38 +0100
-> 
-> > The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
-> > ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
-> > revisions of R-Car H3, and on R-Car M3-W.
-> > 
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Tested on:
-> >   - r8a7795/salvator-x with R-Car H3 ES1.0 (limited to 100Mbps),
-> >   - r8a7795/salvator-x with R-Car H3 ES1.1 (1Gbps),
-> >   - r8a7796/salvator-x with R-Car M3-W ES1.0 (1Gbps).
-> > 
-> > This is marked as an RFC because it depends on:
-> >   A) the soc_device_match() infrastructure,
-> >   B) Renesas SoC core ESx.y handling.
-> > Hence I think the best merge strategy is to let this patch go in through
-> > Simon's Renesas tree.
-> > 
-> > David: If you agree, can you please provide your ack? Thanks!
-> 
-> Sure, no problem:
-> 
-> Acked-by: David S. Miller <davem@davemloft.net>
+Add the sd-uhs-sdr104 property to SDHI0.
 
-Thanks Dave.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Geert, please repost or otherwise ping me once the dependencies are in
-place and I should queue this up.
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 9b9748548702..bd512c86e852 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -608,6 +608,7 @@
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
