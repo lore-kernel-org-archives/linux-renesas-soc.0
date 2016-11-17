@@ -1,54 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938748AbcKQRmw (ORCPT
+        with ESMTP id S965279AbcKQRnH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:42:52 -0500
+        Thu, 17 Nov 2016 12:43:07 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/18] arm64: dts: m3ulcb: enable GPIO leds
-Date: Thu, 17 Nov 2016 15:04:48 +0100
-Message-Id: <bcfc26aea14921a6ae11a50c23dfc96fbc12b72b.1479388193.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479388193.git.horms+renesas@verge.net.au>
-References: <cover.1479388193.git.horms+renesas@verge.net.au>
+Subject: [PATCH] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
+Date: Thu, 17 Nov 2016 15:05:09 +0100
+Message-Id: <735ea633e42060546cabe8430efbc00d4be1790a.1479390880.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479390880.git.horms+renesas@verge.net.au>
+References: <cover.1479390880.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This supports GPIO leds on M3ULCB board
+The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
+ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
+revisions of R-Car H3, and on R-Car M3-W.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/ethernet/renesas/ravb_main.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index 96cda59c2698..49162bd488f8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -30,6 +30,17 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led5 {
-+			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-+		};
-+		led6 {
-+			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
- };
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 630536bc72f9..83c45edba6ef 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -31,6 +31,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/sys_soc.h>
  
- &extal_clk {
+ #include <asm/div64.h>
+ 
+@@ -977,6 +978,11 @@ static void ravb_adjust_link(struct net_device *ndev)
+ 		phy_print_status(phydev);
+ }
+ 
++static const struct soc_device_attribute r8a7795es10[] = {
++	{ .soc_id = "r8a7795", .revision = "ES1.0", },
++	{ /* sentinel */ }
++};
++
+ /* PHY init function */
+ static int ravb_phy_init(struct net_device *ndev)
+ {
+@@ -1011,10 +1017,10 @@ static int ravb_phy_init(struct net_device *ndev)
+ 		return -ENOENT;
+ 	}
+ 
+-	/* This driver only support 10/100Mbit speeds on Gen3
++	/* This driver only support 10/100Mbit speeds on R-Car H3 ES1.0
+ 	 * at this time.
+ 	 */
+-	if (priv->chip_id == RCAR_GEN3) {
++	if (soc_device_match(r8a7795es10)) {
+ 		int err;
+ 
+ 		err = phy_set_max_speed(phydev, SPEED_100);
 -- 
 2.7.0.rc3.207.g0ac5344
