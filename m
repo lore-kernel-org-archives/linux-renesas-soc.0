@@ -1,87 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:33828 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbcKEWbf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Nov 2016 18:31:35 -0400
-Received: by mail-lf0-f41.google.com with SMTP id o141so16282266lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 05 Nov 2016 15:31:34 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v3 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-Date: Sun, 06 Nov 2016 01:31:31 +0300
-Message-ID: <6619847.B5XdH7v7xE@wasted.cogentembedded.com>
-In-Reply-To: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
-References: <3539878.XFtRJDB9iq@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Kieran Bingham <kieran@bingham.xyz>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] [media] v4l: rcar_fdp1: mark PM functions as __maybe_unused
+Date: Fri, 18 Nov 2016 17:16:04 +0100
+Message-Id: <20161118161621.798004-1-arnd@arndb.de>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by  the device tree sources to reference the R8A7745 CPG
-clocks  by index. The data comes from the  table 7.2c in the revision 0.50
-of the RZ/G Series User's Manual.
+The new driver produces a warning when CONFIG_PM is disabled:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+platform/rcar_fdp1.c:2408:12: error: 'fdp1_pm_runtime_resume' defined but not used [-Werror=unused-function]
+platform/rcar_fdp1.c:2399:12: error: 'fdp1_pm_runtime_suspend' defined but not used [-Werror=unused-function]
 
+This marks the two functions as __maybe_unused.
+
+Fixes: 4710b752e029 ("[media] v4l: Add Renesas R-Car FDP1 Driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Changes in version 2:
-- added Geert's tag.
+ drivers/media/platform/rcar_fdp1.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7745 CPG Core Clocks */
-+#define R8A7745_CLK_Z2		0
-+#define R8A7745_CLK_ZG		1
-+#define R8A7745_CLK_ZTR		2
-+#define R8A7745_CLK_ZTRD2	3
-+#define R8A7745_CLK_ZT		4
-+#define R8A7745_CLK_ZX		5
-+#define R8A7745_CLK_ZS		6
-+#define R8A7745_CLK_HP		7
-+#define R8A7745_CLK_B		9
-+#define R8A7745_CLK_LB		10
-+#define R8A7745_CLK_P		11
-+#define R8A7745_CLK_CL		12
-+#define R8A7745_CLK_CP		13
-+#define R8A7745_CLK_M2		14
-+#define R8A7745_CLK_ZB3		16
-+#define R8A7745_CLK_ZB3D2	17
-+#define R8A7745_CLK_DDR		18
-+#define R8A7745_CLK_SDH		19
-+#define R8A7745_CLK_SD0		20
-+#define R8A7745_CLK_SD2		21
-+#define R8A7745_CLK_SD3		22
-+#define R8A7745_CLK_MMC0	23
-+#define R8A7745_CLK_MP		24
-+#define R8A7745_CLK_QSPI	25
-+#define R8A7745_CLK_ACP		26
-+#define R8A7745_CLK_RCAN	27
-+#define R8A7745_CLK_R		28
-+#define R8A7745_CLK_OSC		29
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index dd1a6ea17f22..674cc1309b43 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -2396,7 +2396,7 @@ static int fdp1_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int fdp1_pm_runtime_suspend(struct device *dev)
++static int __maybe_unused fdp1_pm_runtime_suspend(struct device *dev)
+ {
+ 	struct fdp1_dev *fdp1 = dev_get_drvdata(dev);
+ 
+@@ -2405,7 +2405,7 @@ static int fdp1_pm_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int fdp1_pm_runtime_resume(struct device *dev)
++static int __maybe_unused fdp1_pm_runtime_resume(struct device *dev)
+ {
+ 	struct fdp1_dev *fdp1 = dev_get_drvdata(dev);
+ 
+-- 
+2.9.0
