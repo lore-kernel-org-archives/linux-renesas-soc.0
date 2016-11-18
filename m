@@ -1,128 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753896AbcKQRml (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35089 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbcKRHyq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:42:41 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/4] soc: renesas: rcar-sysc: add R8A7745 support
-Date: Thu, 17 Nov 2016 15:04:35 +0100
-Message-Id: <c1006fc763279138e963b5a182170b8633a3746e.1479389981.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479389981.git.horms+renesas@verge.net.au>
-References: <cover.1479389981.git.horms+renesas@verge.net.au>
+        Fri, 18 Nov 2016 02:54:46 -0500
+Received: by mail-pg0-f65.google.com with SMTP id p66so19973812pga.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Nov 2016 23:54:46 -0800 (PST)
+Date: Thu, 17 Nov 2016 17:40:14 -0800
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.10
+Message-ID: <20161118014014.GG8578@localhost>
+References: <cover.1478251192.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1478251192.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Nov 04, 2016 at 10:44:04AM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM64 based SoC DT updates for v4.10.
+> 
+> 
+> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> 
+>   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.10
+> 
+> for you to fetch changes up to 935085209343a0c507e3d9a3e01883b25c8f743e:
+> 
+>   arm64: renesas: r8a7796: add SYS-DMAC controller nodes (2016-11-04 10:18:07 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM64 Based SoC DT Updates for v4.10
+> 
+> Enablement:
+> * Enable On-board eMMC
+> * Enable SDHI 0 & 3 with UHS
+> * Add SYS-DMAC controller nodes to r8a7796 SoC
+> * Populate EXTALR on r8a7796/salvator-x board; used by watchdog
+> * Add DU LVDS output endpoint on r8a7795/salvator-x board
+> * Add bias setting for USB1 pins on r8a7795/salvator-x board
+> 
+> Clean-Up:
+> * Remove FCP SoC-specific compatible strings
 
-Add support for RZ/G1E (R8A7745) SoC power areas to the R-Car SYSC driver.
+Thanks, merged.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- .../bindings/power/renesas,rcar-sysc.txt           |  1 +
- drivers/soc/renesas/Makefile                       |  1 +
- drivers/soc/renesas/r8a7745-sysc.c                 | 32 ++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c                    |  3 ++
- drivers/soc/renesas/rcar-sysc.h                    |  1 +
- 5 files changed, 38 insertions(+)
- create mode 100644 drivers/soc/renesas/r8a7745-sysc.c
-
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-index c16ec1866ac4..d91715bc8d52 100644
---- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -8,6 +8,7 @@ and various coprocessors.
- Required properties:
-   - compatible: Must contain exactly one of the following:
-       - "renesas,r8a7743-sysc" (RZ/G1M)
-+      - "renesas,r8a7745-sysc" (RZ/G1E)
-       - "renesas,r8a7779-sysc" (R-Car H1)
-       - "renesas,r8a7790-sysc" (R-Car H2)
-       - "renesas,r8a7791-sysc" (R-Car M2-W)
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 9e0bb329594c..e2249f01b2de 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -1,4 +1,5 @@
- obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
-+obj-$(CONFIG_ARCH_R8A7745)	+= rcar-sysc.o r8a7745-sysc.o
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-diff --git a/drivers/soc/renesas/r8a7745-sysc.c b/drivers/soc/renesas/r8a7745-sysc.c
-new file mode 100644
-index 000000000000..d17887c08aa1
---- /dev/null
-+++ b/drivers/soc/renesas/r8a7745-sysc.c
-@@ -0,0 +1,32 @@
-+/*
-+ * Renesas RZ/G1E System Controller
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation; of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7745-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7745_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7745_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca7-scu",	0x100, 0, R8A7745_PD_CA7_SCU,	R8A7745_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca7-cpu0",	0x1c0, 0, R8A7745_PD_CA7_CPU0,	R8A7745_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca7-cpu1",	0x1c0, 1, R8A7745_PD_CA7_CPU1,	R8A7745_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sgx",	 0xc0, 0, R8A7745_PD_SGX,	R8A7745_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7745_sysc_info __initconst = {
-+	.areas = r8a7745_areas,
-+	.num_areas = ARRAY_SIZE(r8a7745_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 71acd45b13f0..225c35c79d9a 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -278,6 +278,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
- #ifdef CONFIG_ARCH_R8A7743
- 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
- #endif
-+#ifdef CONFIG_ARCH_R8A7745
-+	{ .compatible = "renesas,r8a7745-sysc", .data = &r8a7745_sysc_info },
-+#endif
- #ifdef CONFIG_ARCH_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 8ab9ca8a825a..f6e842e2976e 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -51,6 +51,7 @@ struct rcar_sysc_info {
- };
- 
- extern const struct rcar_sysc_info r8a7743_sysc_info;
-+extern const struct rcar_sysc_info r8a7745_sysc_info;
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
--- 
-2.7.0.rc3.207.g0ac5344
+-Olof
