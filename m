@@ -1,54 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754238AbcKUMGH (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40710 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752338AbcKRKhk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 07:06:07 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/18] arm64: dts: m3ulcb: enable GPIO leds
-Date: Mon, 21 Nov 2016 13:05:38 +0100
-Message-Id: <811a0d07e68ed3bb576e2f193f2c9831bb25c04e.1479726397.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
-References: <cover.1479726397.git.horms+renesas@verge.net.au>
+        Fri, 18 Nov 2016 05:37:40 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: dts: r8a7743: Add device node for PRR
+Date: Fri, 18 Nov 2016 11:37:42 +0100
+Message-Id: <1479465463-19572-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
+References: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-This supports GPIO leds on M3ULCB board
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index 96cda59c2698..49162bd488f8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -30,6 +30,17 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led5 {
-+			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-+		};
-+		led6 {
-+			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
- };
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index ca0cda28a3eb5241..0956125597fdf835 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -102,6 +102,11 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
- &extal_clk {
++		prr: chipid@ff000044 {
++			compatible = "renesas,prr";
++			reg = <0 0xff000044 0 4>;
++		};
++
+ 		rst: reset-controller@e6160000 {
+ 			compatible = "renesas,r8a7743-rst";
+ 			reg = <0 0xe6160000 0 0x100>;
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
