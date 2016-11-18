@@ -1,103 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60488 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756444AbcK2JEz (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:35442 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752847AbcKRKhl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 04:04:55 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 05/13] drm: bridge: Add LVDS encoder DT bindings
-Date: Tue, 29 Nov 2016 11:04:35 +0200
-Message-Id: <1480410283-28698-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 18 Nov 2016 05:37:41 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] ARM: dts: r8a7745: Add device node for PRR
+Date: Fri, 18 Nov 2016 11:37:43 +0100
+Message-Id: <1479465463-19572-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
+References: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DT bindings support parallel to LVDS encoders that don't require any
-configuration, similarly to the dumb VGA DAC DT bindings.
+Add a device node for the Product Register, which provides SoC product
+and revision information.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/display/bridge/lvds-transmitter.txt   | 64 ++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+ arch/arm/boot/dts/r8a7745.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-new file mode 100644
-index 000000000000..fd39ad34c383
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-@@ -0,0 +1,64 @@
-+Parallel to LVDS Encoder
-+------------------------
-+
-+This binding supports the parallel to LVDS encoders that don't require any
-+configuration.
-+
-+LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
-+incompatible data link layers have been used over time to transmit image data
-+to LVDS panels. This binding targets devices compatible with the following
-+specifications only.
-+
-+[JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
-+1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
-+[LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
-+Semiconductor
-+[VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
-+Electronics Standards Association (VESA)
-+
-+Those devices have been marketed under the FPD-Link and FlatLink brand names
-+among others.
-+
-+
-+Required properties:
-+
-+- compatible: Must be "lvds-encoder"
-+
-+Required nodes:
-+
-+This device has two video ports. Their connections are modeled using the OF
-+graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-+
-+- Video port 0 for parallel input
-+- Video port 1 for LVDS output
-+
-+
-+Example
-+-------
-+
-+lvds-encoder {
-+	compatible = "lvds-encoder";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			lvds_enc_in: endpoint {
-+				remote-endpoint = <&display_out_rgb>;
-+			};
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 0a5d7872ce289d9b..2f60c3cb91177e0f 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -102,6 +102,11 @@
+ 			#power-domain-cells = <0>;
+ 		};
+ 
++		prr: chipid@ff000044 {
++			compatible = "renesas,prr";
++			reg = <0 0xff000044 0 4>;
 +		};
 +
-+		port@1 {
-+			reg = <1>;
-+
-+			lvds_enc_out: endpoint {
-+				remote-endpoint = <&lvds_panel_in>;
-+			};
-+		};
-+	};
-+};
+ 		rst: reset-controller@e6160000 {
+ 			compatible = "renesas,r8a7745-rst";
+ 			reg = <0 0xe6160000 0 0x100>;
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
