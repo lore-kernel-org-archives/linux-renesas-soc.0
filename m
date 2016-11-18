@@ -1,34 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51992 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935393AbcKWOST (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:33576 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751816AbcKRKYV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 09:18:19 -0500
-Date: Wed, 23 Nov 2016 15:18:13 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Fri, 18 Nov 2016 05:24:21 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] ARM: dts: r8a7743/r8a7745: Move RST nodes before
- SYSC nodes
-Message-ID: <20161123141812.GB9057@verge.net.au>
-References: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] ARM: dts: r8a7743/r8a7745: Move RST nodes before SYSC nodes
+Date: Fri, 18 Nov 2016 11:24:21 +0100
+Message-Id: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 18, 2016 at 11:24:21AM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series moves the RST nodes in the recently added RZ/G DTS
-> files before the SYSC nodes, to preserve both alphabetical (label) and
-> numerical ordering (unit address).
-> 
-> Thanks for applying!
+	Hi Simon, Magnus,
 
-Thanks, I have queued these up for v4.11.
+This patch series moves the RST nodes in the recently added RZ/G DTS
+files before the SYSC nodes, to preserve both alphabetical (label) and
+numerical ordering (unit address).
+
+Thanks for applying!
+
+Geert Uytterhoeven (2):
+  ARM: dts: r8a7743: Move RST node before SYSC node
+  ARM: dts: r8a7745: Move RST node before SYSC node
+
+ arch/arm/boot/dts/r8a7743.dtsi | 10 +++++-----
+ arch/arm/boot/dts/r8a7745.dtsi | 10 +++++-----
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
