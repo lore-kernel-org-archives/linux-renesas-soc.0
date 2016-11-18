@@ -1,43 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58862 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751613AbcKRJzn (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34604 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751613AbcKRJzC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 04:55:43 -0500
-Date: Fri, 18 Nov 2016 10:55:37 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Stephen Boyd <sboyd@codeaurora.org>
+        Fri, 18 Nov 2016 04:55:02 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161117230701.GR25626@codeaurora.org>
+References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be> <20161117230701.GR25626@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 18 Nov 2016 10:55:00 +0100
+Message-ID: <CAMuHMdU9TRVWyCFf=auH2qZdW0hDYJW-E2ukruNY8dkn9yarxA@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
-Message-ID: <20161118095537.GA22664@verge.net.au>
-References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
- <20161117230701.GR25626@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20161117230701.GR25626@codeaurora.org>
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 17, 2016 at 03:07:01PM -0800, Stephen Boyd wrote:
+Hi Stephen, Simon,
+
+On Fri, Nov 18, 2016 at 12:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 > On 11/07, Geert Uytterhoeven wrote:
-> > 	Hi Mike, Stephen,
-> > 
-> > The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
-> > 
-> >   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
-> > 
-> > for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
-> 
+>> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
+>>
+>>   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
+>>
+>> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
+>
 > Ok. Pulled into clk-next. I'm a little wary here as I haven't
 > seen any indication from arm-soc maintainers (not Simon) that
 > they'll take this cross tree merge. I guess we'll see how it
 > goes.
 
-Thanks. It looks like it has been accepted by the ARM SoC maintainers.
+Thanks for pulling!
+
+Simon: while it's too late in the v4.10 cycle to queue additional cleanups in
+the platform code on top of this, can you please still pull
+
+        git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+rcar-rst
+
+to resolve the (trivial) merge conflicts between the conversion to the RST
+driver in that branch, and the addition of PRR and RZ/G support in your tree?
+This will prevent arm-soc and/or Linus from having to deal with these
+conflicts.
+
+For reference, I've pushed the conflict resolution to branch
+
+        renesas-devel-20161117v2-v4.9-rc5+rcar-rst
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
