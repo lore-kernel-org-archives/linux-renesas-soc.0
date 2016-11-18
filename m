@@ -1,59 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759924AbcKDJo5 (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35141 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751527AbcKRHy7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/29] ARM: dts: gose: use generic pinctrl properties in SDHI nodes
-Date: Fri,  4 Nov 2016 10:44:14 +0100
-Message-Id: <af897250ea54c6f21bd50c350c68e8340556b93b.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        Fri, 18 Nov 2016 02:54:59 -0500
+Received: by mail-pg0-f65.google.com with SMTP id p66so19974295pga.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Nov 2016 23:54:58 -0800 (PST)
+Date: Thu, 17 Nov 2016 17:41:51 -0800
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.10
+Message-ID: <20161118014151.GI8578@localhost>
+References: <cover.1478251657.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1478251657.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+On Fri, Nov 04, 2016 at 10:44:42AM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC updates for v4.10.
+> 
+> 
+> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> 
+>   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.10
+> 
+> for you to fetch changes up to 9652623f8f019edc93a7a934a10b7d0b90421d5a:
+> 
+>   ARM: shmobile: r8a7779/marzen: Add board part number to DT bindings (2016-11-04 10:25:45 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Updates for v4.10
+> 
+> Enhancements:
+> * Basic support for r8a7743 SoC; only SoC code so far
+> * Select errata 798181 for SoCs with CA15 cores
+> 
+> Clean-up:
+> * Consolidate R8A7743 and R8A779[234] machine definitions
+> 
+> Documentation:
+> * Add Marzen, Gose and Alt board part numbers to DT bindings
+> * Document SK-RZG1M board
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7793-gose.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Thanks, merged.
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 90af18600124..dc311eba4444 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -346,18 +346,18 @@
- 	};
- 
- 	sdhi0_pins: sd0 {
--		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
--		renesas,function = "sdhi0";
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
- 	};
- 
- 	sdhi1_pins: sd1 {
--		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
--		renesas,function = "sdhi1";
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
- 	};
- 
- 	sdhi2_pins: sd2 {
--		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
--		renesas,function = "sdhi2";
-+		groups = "sdhi2_data4", "sdhi2_ctrl";
-+		function = "sdhi2";
- 	};
- 
- 	qspi_pins: qspi {
--- 
-2.7.0.rc3.207.g0ac5344
+
+-Olof
