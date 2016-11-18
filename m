@@ -1,114 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:18175 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755681AbcKVNt2 (ORCPT
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35777 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932294AbcKRO3n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Nov 2016 08:49:28 -0500
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        ramesh.shanmugasundaram@bp.renesas.com,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7796: Add CAN support
-Date: Tue, 22 Nov 2016 13:49:02 +0000
-Message-Id: <1479822543-4804-2-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
-References: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
+        Fri, 18 Nov 2016 09:29:43 -0500
+Received: by mail-wm0-f43.google.com with SMTP id a197so41822868wmd.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Nov 2016 06:29:42 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20161113142912.4041-3-wsa+renesas@sang-engineering.com>
+References: <20161113142912.4041-1-wsa+renesas@sang-engineering.com> <20161113142912.4041-3-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 18 Nov 2016 15:29:40 +0100
+Message-ID: <CAPDyKFoCKHZ39oFanQeYRzob6RhWDfw45PpfsasGuQVBo6bC+w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: tmio: remove SDIO from TODO list
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds CAN[0-1] pinmux support to r8a7796 SoC.
+On 13 November 2016 at 15:29, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> We surely have SDIO support by now :)
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 52 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+Thanks, applied for next!
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 14b3512..f1f0026 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1649,6 +1649,38 @@ enum {
- 	AVB_AVTP_CAPTURE_B_MARK,
- };
- 
-+/* - CAN ------------------------------------------------------------------ */
-+static const unsigned int can0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),	RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int can0_data_a_mux[] = {
-+	CAN0_TX_A_MARK,		CAN0_RX_A_MARK,
-+};
-+static const unsigned int can0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),	RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int can0_data_b_mux[] = {
-+	CAN0_TX_B_MARK,		CAN0_RX_B_MARK,
-+};
-+static const unsigned int can1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),	RCAR_GP_PIN(1, 26),
-+};
-+static const unsigned int can1_data_mux[] = {
-+	CAN1_TX_MARK,		CAN1_RX_MARK,
-+};
-+
-+/* - CAN Clock -------------------------------------------------------------- */
-+static const unsigned int can_clk_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(1, 25),
-+};
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
-+
- /* - DRIF0 --------------------------------------------------------------- */
- static const unsigned int drif0_ctrl_a_pins[] = {
- 	/* CLK, SYNC */
-@@ -2612,6 +2644,10 @@ enum {
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(can0_data_a),
-+	SH_PFC_PIN_GROUP(can0_data_b),
-+	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(can_clk),
- 	SH_PFC_PIN_GROUP(drif0_ctrl_a),
- 	SH_PFC_PIN_GROUP(drif0_data0_a),
- 	SH_PFC_PIN_GROUP(drif0_data1_a),
-@@ -2751,6 +2787,19 @@ enum {
- 	"avb_avtp_capture_b",
- };
- 
-+static const char * const can0_groups[] = {
-+	"can0_data_a",
-+	"can0_data_b",
-+};
-+
-+static const char * const can1_groups[] = {
-+	"can1_data",
-+};
-+
-+static const char * const can_clk_groups[] = {
-+	"can_clk",
-+};
-+
- static const char * const drif0_groups[] = {
- 	"drif0_ctrl_a",
- 	"drif0_data0_a",
-@@ -2950,6 +2999,9 @@ enum {
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(can0),
-+	SH_PFC_FUNCTION(can1),
-+	SH_PFC_FUNCTION(can_clk),
- 	SH_PFC_FUNCTION(drif0),
- 	SH_PFC_FUNCTION(drif1),
- 	SH_PFC_FUNCTION(drif2),
--- 
-1.9.1
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/tmio_mmc_pio.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+> index 2b04e6e87192c7..87fea67a743674 100644
+> --- a/drivers/mmc/host/tmio_mmc_pio.c
+> +++ b/drivers/mmc/host/tmio_mmc_pio.c
+> @@ -22,7 +22,6 @@
+>   * TODO:
+>   *   Investigate using a workqueue for PIO transfers
+>   *   Eliminate FIXMEs
+> - *   SDIO support
+>   *   Better Power management
+>   *   Handle MMC errors better
+>   *   double buffer support
+> --
+> 2.9.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
