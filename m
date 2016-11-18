@@ -1,65 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:37563 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934111AbcKXQMR (ORCPT
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:35635 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932127AbcKRO3l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 11:12:17 -0500
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 2/2] can: rcar_canfd: Add r8a7796 support
-Date: Thu, 24 Nov 2016 16:11:57 +0000
-Message-Id: <1480003917-3953-3-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
-References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
- <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
+        Fri, 18 Nov 2016 09:29:41 -0500
+Received: by mail-wm0-f48.google.com with SMTP id a197so41816805wmd.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Nov 2016 06:29:41 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20161113142912.4041-2-wsa+renesas@sang-engineering.com>
+References: <20161113142912.4041-1-wsa+renesas@sang-engineering.com> <20161113142912.4041-2-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 18 Nov 2016 15:29:34 +0100
+Message-ID: <CAPDyKFr7wxsG6bF0aS6DQnVRP+8m4qXiU+kz6+wQ9yMEHiumMA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: tmio: fix wrong bitmask for SDIO irqs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+On 13 November 2016 at 15:29, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Commit 7729c7a232a953 ("mmc: tmio: Provide separate interrupt handlers")
+> refactored the sdio irq handler and wrongly used the mask for SD irqs,
+> not for SDIO irqs. This doesn't really matter in practice because both
+> values keep the only interrupt we are interested in. But still, this is
+> wrong and wants to be fixed.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-index 22a6f10..788f273 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-@@ -5,6 +5,7 @@ Required properties:
- - compatible: Must contain one or more of the following:
-   - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
-   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
-+  - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3) compatible controller.
- 
-   When compatible with the generic version, nodes must list the
-   SoC-specific version corresponding to the platform first, followed by the
-@@ -23,11 +24,12 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
- child node supports the "status" property only, which is used to
- enable/disable the respective channel.
- 
--Required properties for "renesas,r8a7795-canfd" compatible:
--In R8A7795 SoC, canfd clock is a div6 clock and can be used by both CAN
--and CAN FD controller at the same time. It needs to be scaled to maximum
--frequency if any of these controllers use it. This is done using the
--below properties.
-+Required properties for "renesas,r8a7795-canfd" and "renesas,r8a7796-canfd"
-+compatible:
-+In R8A7795 and R8A7796 SoCs, canfd clock is a div6 clock and can be used by both
-+CAN and CAN FD controller at the same time. It needs to be scaled to maximum
-+frequency if any of these controllers use it. This is done using the below
-+properties:
- 
- - assigned-clocks: phandle of canfd clock.
- - assigned-clock-rates: maximum frequency of this clock.
--- 
-1.9.1
+Thanks, applied for next!
+
+Kind regards
+Uffe
+
+> ---
+>  drivers/mmc/host/tmio_mmc_pio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+> index dbc3cb14f3321b..2b04e6e87192c7 100644
+> --- a/drivers/mmc/host/tmio_mmc_pio.c
+> +++ b/drivers/mmc/host/tmio_mmc_pio.c
+> @@ -741,7 +741,7 @@ static void tmio_mmc_sdio_irq(int irq, void *devid)
+>                 return;
+>
+>         status = sd_ctrl_read16(host, CTL_SDIO_STATUS);
+> -       ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdcard_irq_mask;
+> +       ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdio_irq_mask;
+>
+>         sdio_status = status & ~TMIO_SDIO_MASK_ALL;
+>         if (pdata->flags & TMIO_MMC_SDIO_STATUS_QUIRK)
+> --
+> 2.9.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
