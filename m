@@ -1,92 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34004 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751095AbcKRKou (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35332 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751959AbcKRKMm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 05:44:50 -0500
+        Fri, 18 Nov 2016 05:12:42 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW4eSdXqheeDUjT98i+EHd4Nr1Dp0y0nEqThEZ+pwe6DA@mail.gmail.com>
+In-Reply-To: <20161118095938.GC22664@verge.net.au>
 References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
  <20161117230701.GR25626@codeaurora.org> <CAMuHMdU9TRVWyCFf=auH2qZdW0hDYJW-E2ukruNY8dkn9yarxA@mail.gmail.com>
- <20161118095938.GC22664@verge.net.au> <CAMuHMdW4eSdXqheeDUjT98i+EHd4Nr1Dp0y0nEqThEZ+pwe6DA@mail.gmail.com>
+ <20161118095938.GC22664@verge.net.au>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 18 Nov 2016 11:44:48 +0100
-Message-ID: <CAMuHMdXJU6buEFuAKp_zrEdeY1jzcEkWRVgODmwystbPjHzPoQ@mail.gmail.com>
+Date: Fri, 18 Nov 2016 11:12:40 +0100
+Message-ID: <CAMuHMdW4eSdXqheeDUjT98i+EHd4Nr1Dp0y0nEqThEZ+pwe6DA@mail.gmail.com>
 Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
 To: Simon Horman <horms@verge.net.au>
 Cc: Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 18, 2016 at 11:12 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Nov 18, 2016 at 10:59 AM, Simon Horman <horms@verge.net.au> wrote:
->> On Fri, Nov 18, 2016 at 10:55:00AM +0100, Geert Uytterhoeven wrote:
->>> On Fri, Nov 18, 2016 at 12:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->>> > On 11/07, Geert Uytterhoeven wrote:
->>> >> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
->>> >>
->>> >>   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
->>> >>
->>> >> are available in the git repository at:
->>> >>
->>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
->>> >>
->>> >> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
->>> >
->>> > Ok. Pulled into clk-next. I'm a little wary here as I haven't
->>> > seen any indication from arm-soc maintainers (not Simon) that
->>> > they'll take this cross tree merge. I guess we'll see how it
->>> > goes.
->>>
->>> Thanks for pulling!
->>>
->>> Simon: while it's too late in the v4.10 cycle to queue additional cleanups in
->>> the platform code on top of this, can you please still pull
->>>
->>>         git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
->>> rcar-rst
->>>
->>> to resolve the (trivial) merge conflicts between the conversion to the RST
->>> driver in that branch, and the addition of PRR and RZ/G support in your tree?
->>> This will prevent arm-soc and/or Linus from having to deal with these
->>> conflicts.
->>>
->>> For reference, I've pushed the conflict resolution to branch
+Hi Simon,
+
+On Fri, Nov 18, 2016 at 10:59 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Nov 18, 2016 at 10:55:00AM +0100, Geert Uytterhoeven wrote:
+>> On Fri, Nov 18, 2016 at 12:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 11/07, Geert Uytterhoeven wrote:
+>> >> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
+>> >>
+>> >>   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
+>> >>
+>> >> are available in the git repository at:
+>> >>
+>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
+>> >>
+>> >> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
+>> >
+>> > Ok. Pulled into clk-next. I'm a little wary here as I haven't
+>> > seen any indication from arm-soc maintainers (not Simon) that
+>> > they'll take this cross tree merge. I guess we'll see how it
+>> > goes.
 >>
->> Pull where? I've already sent pull-requests to the ARM SoC maintainers
+>> Thanks for pulling!
+>>
+>> Simon: while it's too late in the v4.10 cycle to queue additional cleanups in
+>> the platform code on top of this, can you please still pull
+>>
+>>         git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+>> rcar-rst
+>>
+>> to resolve the (trivial) merge conflicts between the conversion to the RST
+>> driver in that branch, and the addition of PRR and RZ/G support in your tree?
+>> This will prevent arm-soc and/or Linus from having to deal with these
+>> conflicts.
+>>
+>> For reference, I've pushed the conflict resolution to branch
 >
-> What do you mean with "where"?
->
->> so I fear this may be too late.
->
-> I know you've already sent pull requests.
-> Without a conflict resolution, the arm-soc maintainers and/or Linus will
-> face the conflicts, depending on merge order.
+> Pull where? I've already sent pull-requests to the ARM SoC maintainers
 
-Upon second thought, any merge conflicts will show up only when Linus
-will merge clk and/or arm-soc branches.
+What do you mean with "where"?
 
-As the arm-soc maintainers send multiple pull requests, it's difficult
-to predict
-which merge conflicts will happen when, and providing conflict resolutions
-to arm-soc won't help much.
+> so I fear this may be too late.
 
-After some private discussion with Simon, we think the best solution is to
-notify Linus in advance. All but one merge conflicts are of the "add both
-sides" type.
-
-I'll do so next week, before the merge window opens.
-
-Thanks!
+I know you've already sent pull requests.
+Without a conflict resolution, the arm-soc maintainers and/or Linus will
+face the conflicts, depending on merge order.
 
 Gr{oetje,eeting}s,
 
