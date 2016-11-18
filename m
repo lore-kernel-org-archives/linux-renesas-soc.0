@@ -1,93 +1,58 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 10/11] ARM: dts: sk-rzg1e: initial device tree
-Date: Sat, 05 Nov 2016 01:04:32 +0300
-Message-ID: <1660435.fA6pHp5lJP@wasted.cogentembedded.com>
-In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:33574 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752140AbcKRKYV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 Nov 2016 05:24:21 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] ARM: dts: r8a7745: Move RST node before SYSC node
+Date: Fri, 18 Nov 2016 11:24:23 +0100
+Message-Id: <1479464663-19054-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
+References: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial  device tree for the R8A7745 SoC based SK-RZG1E board.
-The board has 1  debug  serial  port (SCIF2); include support for it,
-so that the serial console can  work.
+To preserve both alphabetical (label) and numerical ordering (unit
+address).
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 2:
-- added Geert's tag.
+ arch/arm/boot/dts/r8a7745.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- arch/arm/boot/dts/Makefile             |    1 
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |   39 +++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/Makefile
-===================================================================
---- renesas.orig/arch/arm/boot/dts/Makefile
-+++ renesas/arch/arm/boot/dts/Makefile
-@@ -678,6 +678,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7743-sk-rzg1m.dtb \
-+	r8a7745-sk-rzg1e.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-Index: renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -0,0 +1,39 @@
-+/*
-+ * Device Tree Source for the SK-RZG1E board
-+ *
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 0b2e2f37150fdc68..0a5d7872ce289d9b 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -102,17 +102,17 @@
+ 			#power-domain-cells = <0>;
+ 		};
+ 
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a7745-rst";
++			reg = <0 0xe6160000 0 0x100>;
++		};
 +
-+/dts-v1/;
-+#include "r8a7745.dtsi"
-+
-+/ {
-+	model = "SK-RZG1E";
-+	compatible = "renesas,sk-rzg1e", "renesas,r8a7745";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
-
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7745-sysc";
+ 			reg = <0 0xe6180000 0 0x200>;
+ 			#power-domain-cells = <1>;
+ 		};
+ 
+-		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a7745-rst";
+-			reg = <0 0xe6160000 0 0x100>;
+-		};
+-
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7745",
+ 				     "renesas,rcar-dmac";
+-- 
+1.9.1
