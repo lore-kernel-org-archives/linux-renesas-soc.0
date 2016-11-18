@@ -1,41 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45337 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757119AbcKXOcg (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:36344 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752315AbcKRKYW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 09:32:36 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH dmaengine/next] dmaengine: rcar-dmac: Document R-Car M3-W bindings
-Date: Thu, 24 Nov 2016 15:23:06 +0100
-Message-Id: <1479997386-22903-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 18 Nov 2016 05:24:22 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: dts: r8a7743: Move RST node before SYSC node
+Date: Fri, 18 Nov 2016 11:24:22 +0100
+Message-Id: <1479464663-19054-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
+References: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To preserve both alphabetical (label) and numerical ordering (unit
+address).
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index 5f2ce669789a..3316a9c2e638 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -24,6 +24,7 @@ Required Properties:
- 		- "renesas,dmac-r8a7793" (R-Car M2-N)
- 		- "renesas,dmac-r8a7794" (R-Car E2)
- 		- "renesas,dmac-r8a7795" (R-Car H3)
-+		- "renesas,dmac-r8a7796" (R-Car M3-W)
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 216cb1f37f87de9a..ca0cda28a3eb5241 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -102,17 +102,17 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
- - reg: base address and length of the registers block for the DMAC
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a7743-rst";
++			reg = <0 0xe6160000 0 0x100>;
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7743-sysc";
+ 			reg = <0 0xe6180000 0 0x200>;
+ 			#power-domain-cells = <1>;
+ 		};
  
+-		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a7743-rst";
+-			reg = <0 0xe6160000 0 0x100>;
+-		};
+-
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7743",
+ 				     "renesas,rcar-dmac";
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
