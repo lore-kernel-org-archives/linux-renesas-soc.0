@@ -1,48 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:28545 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751847AbcKIPyK (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55160 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752694AbcKSD2K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 10:54:10 -0500
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 1/5] media: v4l2-ctrls: Reserve controls for MAX217X
-Date: Wed,  9 Nov 2016 15:44:40 +0000
-Message-Id: <1478706284-59134-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+        Fri, 18 Nov 2016 22:28:10 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH v2 05/13] drm: panels: Constify device node argument to of_drm_find_panel()
+Date: Sat, 19 Nov 2016 05:28:05 +0200
+Message-Id: <1479526093-7014-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reserve controls for MAX217X RF to Bits tuner (family) chips. These hybrid
-radio receiver chips are highly programmable and hence reserving 32
-controls.
+The argument is never modified by the function, make it const.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- include/uapi/linux/v4l2-controls.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/drm_panel.c | 2 +-
+ include/drm/drm_panel.h     | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index b6a357a..b7404c9 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -180,6 +180,11 @@ enum v4l2_colorfx {
-  * We reserve 16 controls for this driver. */
- #define V4L2_CID_USER_TC358743_BASE		(V4L2_CID_USER_BASE + 0x1080)
+diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+index 3dfe3c886502..308d442a531b 100644
+--- a/drivers/gpu/drm/drm_panel.c
++++ b/drivers/gpu/drm/drm_panel.c
+@@ -137,7 +137,7 @@ EXPORT_SYMBOL(drm_panel_detach);
+  * Return: A pointer to the panel registered for the specified device tree
+  * node or NULL if no panel matching the device tree node can be found.
+  */
+-struct drm_panel *of_drm_find_panel(struct device_node *np)
++struct drm_panel *of_drm_find_panel(const struct device_node *np)
+ {
+ 	struct drm_panel *panel;
  
-+/* The base for the max217x driver controls.
-+ * We reserve 32 controls for this driver
-+ */
-+#define V4L2_CID_USER_MAX217X_BASE		(V4L2_CID_USER_BASE + 0x1090)
-+
- /* MPEG-class control IDs */
- /* The MPEG controls are applicable to all codec controls
-  * and the 'MPEG' part of the define is historical */
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+index 220d1e2b3db1..4b76cf2d5a7b 100644
+--- a/include/drm/drm_panel.h
++++ b/include/drm/drm_panel.h
+@@ -193,9 +193,9 @@ int drm_panel_attach(struct drm_panel *panel, struct drm_connector *connector);
+ int drm_panel_detach(struct drm_panel *panel);
+ 
+ #ifdef CONFIG_OF
+-struct drm_panel *of_drm_find_panel(struct device_node *np);
++struct drm_panel *of_drm_find_panel(const struct device_node *np);
+ #else
+-static inline struct drm_panel *of_drm_find_panel(struct device_node *np)
++static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
+ {
+ 	return NULL;
+ }
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
