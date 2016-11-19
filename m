@@ -1,48 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36725 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753343AbcKUQsT (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55152 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752301AbcKSD2G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 11:48:19 -0500
-Date: Mon, 21 Nov 2016 10:48:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Fri, 18 Nov 2016 22:28:06 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 01/13] devicetree/bindings: display: Document common
- panel properties
-Message-ID: <20161121164815.bxca4rfvifloizdh@rob-hp-laptop>
+Subject: [PATCH v2 01/13] devicetree/bindings: display: Document common panel properties
+Date: Sat, 19 Nov 2016 05:28:01 +0200
+Message-Id: <1479526093-7014-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1479526093-7014-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1479526093-7014-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Nov 19, 2016 at 05:28:01AM +0200, Laurent Pinchart wrote:
-> Document properties common to several display panels in a central
-> location that can be referenced by the panel device tree bindings.
-> 
+Document properties common to several display panels in a central
+location that can be referenced by the panel device tree bindings.
 
-Looks good. Just one comment...
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ .../bindings/display/panel/panel-common.txt        | 91 ++++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.txt
 
-[...]
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.txt b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+new file mode 100644
+index 000000000000..ec52c472c845
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+@@ -0,0 +1,91 @@
++Common Properties for Display Panel
++===================================
++
++This document defines device tree properties common to several classes of
++display panels. It doesn't constitue a device tree binding specification by
++itself but is meant to be referenced by device tree bindings.
++
++When referenced from panel device tree bindings the properties defined in this
++document are defined as follows. The panel device tree bindings are
++responsible for defining whether each property is required or optional.
++
++
++Descriptive Properties
++----------------------
++
++- width-mm,
++- height-mm: The width-mm and height-mm specify the width and height of the
++  physical area where images are displayed. These properties are expressed in
++  millimeters and rounded to the closest unit.
++
++- label: The label property specifies a symbolic name for the panel as a
++  string suitable for use by humans. It typically contains a name inscribed on
++  the system (e.g. as an affixed label) or specified in the system's
++  documentation (e.g. in the user's manual).
++
++  If no such name exists, and unless the property is mandatory according to
++  device tree bindings, it shall rather be omitted than constructed of
++  non-descriptive information. For instance an LCD panel in a system that
++  contains a single panel shall not be labelled "LCD" if that name is not
++  inscribed on the system or used in a descriptive fashion in system
++  documentation.
++
++
++Display Timings
++---------------
++
++- panel-timing: Most display panels are restricted to a single resolution and
++  require specific display timings. The panel-timing subnode expresses those
++  timings as specified in the timing subnode section of the display timing
++  bindings defined in
++  Documentation/devicetree/bindings/display/display-timing.txt.
++
++
++Connectivity
++------------
++
++- ports: Panels receive video data through one or multiple connections. While
++  the nature of those connections is specific to the panel type, the
++  connectivity is expressed in a standard fashion using ports as specified in
++  the device graph bindings defined in
++  Documentation/devicetree/bindings/graph.txt.
++
++- ddc-i2c-bus: Some panels expose EDID information through an I2C-compatible
++  bus such as DDC2 or E-DDC. For such panels the ddc-i2c-bus contains a
++  phandle to the system I2C controller connected to that bus.
++
++
++Control I/Os
++------------
++
++Many display panels can be controlled through pins driven by GPIOs. The nature
++and timing of those control signals are device-specific and left for panel
++device tree bindings to specify. The following GPIO specifiers can however be
++used for panels that implement compatible control signals.
++
++- enable-gpios: Specifier for a GPIO connected to the panel enable control
++  signal. The enable signal is active high and enables operation of the panel.
++  This property can also be used for panels implementing an active low power
++  down signal, which is a negated version of the enable signal. Active low
++  enable signals (or active high power down signals) can be supported by
++  inverting the GPIO specifier polarity flag.
++
++  Note that the enable signal control panel operation only and must not be
++  confused with a backlight enable signal.
++
++- reset-gpios: Specifier for a GPIO coonnected to the panel reset control
++  signal. The reset signal is active low and resets the panel internal logic
++  while active. Active high reset signals can be supported by inverting the
++  GPIO specifier polarity flag.
++
++
++Backlight
++---------
++
++Most display panels include a backlight. Some of them also include a backlight
++controller exposed through a control bus such as I2C or DSI. Others expose
++backlight control through GPIO, PWM or other signals connected to an external
++backlight controller.
++
++- backlight: For panels whose backlight is controlled by an external backlight
++  controller, this property contains a phandle that references the controller.
+-- 
+Regards,
 
-> +Connectivity
-> +------------
-> +
-> +- ports: Panels receive video data through one or multiple connections. While
-> +  the nature of those connections is specific to the panel type, the
-> +  connectivity is expressed in a standard fashion using ports as specified in
-> +  the device graph bindings defined in
-> +  Documentation/devicetree/bindings/graph.txt.
-
-We allow panels to either use graph binding or be a child of the display 
-controller. Using the graph is preferred, but in the simple cases just a 
-child node is sufficient. This should be described here or somewhere in 
-this doc.
-
-Rob
+Laurent Pinchart
