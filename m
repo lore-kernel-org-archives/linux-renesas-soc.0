@@ -1,67 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:60976 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753260AbcKQShn (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55231 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752778AbcKSDsS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 13:37:43 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] ARM: shmobile: gose: Add da9063 PMIC device node for system restart
-Date: Thu, 17 Nov 2016 19:37:46 +0100
-Message-Id: <1479407866-7375-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 Nov 2016 22:48:18 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 4/9] drm: bridge: lvds-encoder: Add thine,thc63lvdm83d compatible string
+Date: Sat, 19 Nov 2016 05:48:17 +0200
+Message-Id: <1479527302-7674-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable i2c6, and add a device node for the da9063 PMIC, with subnodes
-for rtc and wdt.  Regulator support is not yet included.
+The THC63LVDM83D is a transparent LVDS encoder. Unlike dumb LVDS
+encoders it can be controlled through a few pins (power down, LVDS
+swing, clock edge selection) and requires power supplies. However, on
+several boards where the device is used neither the control pins nor the
+power supply are controllable.
 
-This allows the system to be restarted when the watchdog timer times
-out, or when a system restart is requested.
+To avoid developing a separate device-specific driver add a
+"thine,thc63lvdm83d" compatible entry to the lvds-encoder driver. This
+will allow supporting many THC63LVDM83D-based boards easily, while
+allowing future development of an thc63lvdm83d driver when needed
+without breaking backward compatibility.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-Tested using 'reboot -f' and 'cat > /dev/watchdog' (and wait).
+ drivers/gpu/drm/bridge/lvds-encoder.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-v2:
-  - Now also confirmed by schematics.
----
- arch/arm/boot/dts/r8a7793-gose.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 6329d9d2e8a3e3f4..9b6902834b5d3f6c 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -576,6 +576,27 @@
- 	};
- };
+diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c b/drivers/gpu/drm/bridge/lvds-encoder.c
+index 33e8025c8a6d..f3026ad82fe1 100644
+--- a/drivers/gpu/drm/bridge/lvds-encoder.c
++++ b/drivers/gpu/drm/bridge/lvds-encoder.c
+@@ -184,6 +184,7 @@ static int lvds_encoder_remove(struct platform_device *pdev)
  
-+&i2c6 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	pmic@58 {
-+		compatible = "dlg,da9063";
-+		reg = <0x58>;
-+		interrupt-parent = <&irqc0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+
-+		rtc {
-+			compatible = "dlg,da9063-rtc";
-+		};
-+
-+		wdt {
-+			compatible = "dlg,da9063-watchdog";
-+		};
-+	};
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
+ static const struct of_device_id lvds_encoder_match[] = {
+ 	{ .compatible = "lvds-encoder" },
++	{ .compatible = "thine,thc63lvdm83d" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, lvds_encoder_match);
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
