@@ -1,52 +1,81 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Kieran Bingham <kieran@bingham.xyz>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] [media] v4l: rcar_fdp1: mark PM functions as __maybe_unused
-Date: Fri, 18 Nov 2016 17:16:04 +0100
-Message-Id: <20161118161621.798004-1-arnd@arndb.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55159 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752774AbcKSD2N (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 Nov 2016 22:28:13 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH v2 11/13] drm: rcar-du: Switch to encoder .atomic_mode_set() helper function
+Date: Sat, 19 Nov 2016 05:28:11 +0200
+Message-Id: <1479526093-7014-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The new driver produces a warning when CONFIG_PM is disabled:
+The native encoder mode set helper function for atomic drivers is
+.atomic_mode_set(). Replace the legacy .mode_set() implementation.
 
-platform/rcar_fdp1.c:2408:12: error: 'fdp1_pm_runtime_resume' defined but not used [-Werror=unused-function]
-platform/rcar_fdp1.c:2399:12: error: 'fdp1_pm_runtime_suspend' defined but not used [-Werror=unused-function]
-
-This marks the two functions as __maybe_unused.
-
-Fixes: 4710b752e029 ("[media] v4l: Add Renesas R-Car FDP1 Driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/rcar_fdp1.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 8 ++++----
+ drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
-index dd1a6ea17f22..674cc1309b43 100644
---- a/drivers/media/platform/rcar_fdp1.c
-+++ b/drivers/media/platform/rcar_fdp1.c
-@@ -2396,7 +2396,7 @@ static int fdp1_remove(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index ab8645c57e2d..3974d9495f37 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -83,16 +83,16 @@ static int rcar_du_encoder_atomic_check(struct drm_encoder *encoder,
  }
  
--static int fdp1_pm_runtime_suspend(struct device *dev)
-+static int __maybe_unused fdp1_pm_runtime_suspend(struct device *dev)
+ static void rcar_du_encoder_mode_set(struct drm_encoder *encoder,
+-				     struct drm_display_mode *mode,
+-				     struct drm_display_mode *adjusted_mode)
++				     struct drm_crtc_state *crtc_state,
++				     struct drm_connector_state *conn_state)
  {
- 	struct fdp1_dev *fdp1 = dev_get_drvdata(dev);
+ 	struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
  
-@@ -2405,7 +2405,7 @@ static int fdp1_pm_runtime_suspend(struct device *dev)
- 	return 0;
+-	rcar_du_crtc_route_output(encoder->crtc, renc->output);
++	rcar_du_crtc_route_output(crtc_state->crtc, renc->output);
  }
  
--static int fdp1_pm_runtime_resume(struct device *dev)
-+static int __maybe_unused fdp1_pm_runtime_resume(struct device *dev)
- {
- 	struct fdp1_dev *fdp1 = dev_get_drvdata(dev);
+ static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+-	.mode_set = rcar_du_encoder_mode_set,
++	.atomic_mode_set = rcar_du_encoder_mode_set,
+ 	.disable = rcar_du_encoder_disable,
+ 	.enable = rcar_du_encoder_enable,
+ 	.atomic_check = rcar_du_encoder_atomic_check,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+index f9515f53cc5b..a1a2c5e7822c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+@@ -67,16 +67,16 @@ static int rcar_du_hdmienc_atomic_check(struct drm_encoder *encoder,
  
+ 
+ static void rcar_du_hdmienc_mode_set(struct drm_encoder *encoder,
+-				     struct drm_display_mode *mode,
+-				     struct drm_display_mode *adjusted_mode)
++				     struct drm_crtc_state *crtc_state,
++				     struct drm_connector_state *conn_state)
+ {
+ 	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+ 
+-	rcar_du_crtc_route_output(encoder->crtc, hdmienc->renc->output);
++	rcar_du_crtc_route_output(crtc_state->crtc, hdmienc->renc->output);
+ }
+ 
+ static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+-	.mode_set = rcar_du_hdmienc_mode_set,
++	.atomic_mode_set = rcar_du_hdmienc_mode_set,
+ 	.disable = rcar_du_hdmienc_disable,
+ 	.enable = rcar_du_hdmienc_enable,
+ 	.atomic_check = rcar_du_hdmienc_atomic_check,
 -- 
-2.9.0
+Regards,
+
+Laurent Pinchart
