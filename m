@@ -1,164 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936216AbcKWUPw (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55229 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752852AbcKSDsS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:52 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/31] ARM: dts: r8a7745: initial SoC device tree
-Date: Wed, 23 Nov 2016 21:14:25 +0100
-Message-Id: <c95360247bdd67d39b55f7e743153efa64e4efe3.1479931687.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Fri, 18 Nov 2016 22:48:18 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 5/9] drm: Add encoder_type field to the drm_bridge structure
+Date: Sat, 19 Nov 2016 05:48:18 +0200
+Message-Id: <1479527302-7674-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The drm_bridge object models on- or off-chip hardware encoders and
+provide an abstract control API to display drivers. In order to help
+display drivers creating the right kind of drm_encoder object, expose
+the type of the hardware encoder associated with each bridge.
 
-The  initial R8A7745 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-CPG, and the required clock descriptions.
-
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 120 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7745.dtsi
+Changes since v1:
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-new file mode 100644
-index 000000000000..fbf72ddd82b7
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -0,0 +1,120 @@
-+/*
-+ * Device Tree Source for the r8a7745 SoC
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a7745-cpg-mssr.h>
-+#include <dt-bindings/power/r8a7745-sysc.h>
-+
-+/ {
-+	compatible = "renesas,r8a7745";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clock-frequency = <1000000000>;
-+			clocks = <&cpg CPG_CORE R8A7745_CLK_Z2>;
-+			power-domains = <&sysc R8A7745_PD_CA7_CPU0>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
-+		L2_CA7: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A7745_PD_CA7_SCU>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>,
-+			      <0 0xf1002000 0 0x1000>,
-+			      <0 0xf1004000 0 0x2000>,
-+			      <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
-+						 IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv7-timer";
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a7745-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7745-sysc";
-+			reg = <0 0xe6180000 0 0x200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a7745-rst";
-+			reg = <0 0xe6160000 0 0x100>;
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+};
+- Clarify documentation
+---
+ include/drm/drm_bridge.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 530a1d6e8cde..f28bd176d1a5 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -194,6 +194,14 @@ struct drm_bridge {
+ #endif
+ 	struct list_head list;
+ 
++	/**
++	 * @encoder_type:
++	 *
++	 * Type of the hardware encoder modeled by the bridge as one of the
++	 * DRM_MODE_ENCODER_* types. For the last bridge in the chain this will
++	 * usually be identical to the bridge's &drm_encoder encoder_type.
++	 */
++	int encoder_type;
+ 	const struct drm_bridge_funcs *funcs;
+ 	void *driver_private;
+ };
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
