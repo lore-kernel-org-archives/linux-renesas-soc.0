@@ -1,75 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH v2 2/3] arm64: dts: r8a7796: Add CAN support
-Date: Thu, 24 Nov 2016 16:13:40 +0000
-Message-Id: <1480004021-4037-3-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1480004021-4037-1-git-send-email-chris.paterson2@renesas.com>
-References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
- <1480004021-4037-1-git-send-email-chris.paterson2@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55160 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752446AbcKSD2N (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 Nov 2016 22:28:13 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH v2 10/13] ARM: shmobile: dts: Switch to panel-lvds bindings for Mitsubishi panels
+Date: Sat, 19 Nov 2016 05:28:10 +0200
+Message-Id: <1479526093-7014-11-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds CAN controller nodes for r8a7796.
+The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
+Use the correct DT bindings.
 
-Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
-
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi | 3 ++-
+ arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 61d165b..47fa29c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -362,6 +362,36 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
+index 65cb50f0c29f..238d14bb0ebe 100644
+--- a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
++++ b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
+@@ -10,10 +10,11 @@
  
-+		can0: can@e6c30000 {
-+			compatible = "renesas,can-r8a7796",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c30000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>,
-+			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		can1: can@e6c38000 {
-+			compatible = "renesas,can-r8a7796",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c38000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>,
-+			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
+ / {
+ 	panel {
+-		compatible = "mitsubishi,aa104xd12", "panel-dpi";
++		compatible = "mitsubishi,aa104xd12", "panel-lvds";
+ 
+ 		width-mm = <210>;
+ 		height-mm = <158>;
++		data-mapping = "jeida-18";
+ 
+ 		panel-timing {
+ 			/* 1024x768 @65Hz */
+diff --git a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
+index a07ebf8f6938..04aafd479775 100644
+--- a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
++++ b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
+@@ -10,10 +10,11 @@
+ 
+ / {
+ 	panel {
+-		compatible = "mitsubishi,aa121td01", "panel-dpi";
++		compatible = "mitsubishi,aa121td01", "panel-lvds";
+ 
+ 		width-mm = <261>;
+ 		height-mm = <163>;
++		data-mapping = "jeida-18";
+ 
+ 		panel-timing {
+ 			/* 1280x800 @60Hz */
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
