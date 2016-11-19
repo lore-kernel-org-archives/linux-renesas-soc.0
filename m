@@ -1,63 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754066AbcKUMGN (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55227 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752380AbcKSDsP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 07:06:13 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/18] arm64: dts: h3ulcb: rename SDHI0 pins
-Date: Mon, 21 Nov 2016 13:05:45 +0100
-Message-Id: <93373c309a703b57690216db4106a4a534929c15.1479726397.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
-References: <cover.1479726397.git.horms+renesas@verge.net.au>
+        Fri, 18 Nov 2016 22:48:15 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v2 1/9] drm: bridge: Add LVDS encoder DT bindings
+Date: Sat, 19 Nov 2016 05:48:14 +0200
+Message-Id: <1479527302-7674-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+The DT bindings support parallel to LVDS encoders that don't require any
+configuration, similarly to the dumb VGA DAC DT bindings.
 
-This changes SDHI0 pin names for H3ULCB board
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../bindings/display/bridge/lvds-transmitter.txt   | 64 ++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 8d0ac076d8e2..6ffb0517421a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -163,13 +163,13 @@
- 		function = "avb";
- 	};
- 
--	sdhi0_pins_3v3: sd0_3v3 {
-+	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
- 		power-source = <3300>;
- 	};
- 
--	sdhi0_pins_1v8: sd0_1v8 {
-+	sdhi0_pins_uhs: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
- 		power-source = <1800>;
-@@ -291,8 +291,8 @@
- };
- 
- &sdhi0 {
--	pinctrl-0 = <&sdhi0_pins_3v3>;
--	pinctrl-1 = <&sdhi0_pins_1v8>;
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
- 	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
+diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+new file mode 100644
+index 000000000000..fd39ad34c383
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+@@ -0,0 +1,64 @@
++Parallel to LVDS Encoder
++------------------------
++
++This binding supports the parallel to LVDS encoders that don't require any
++configuration.
++
++LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
++incompatible data link layers have been used over time to transmit image data
++to LVDS panels. This binding targets devices compatible with the following
++specifications only.
++
++[JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
++1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
++[LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
++Semiconductor
++[VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
++Electronics Standards Association (VESA)
++
++Those devices have been marketed under the FPD-Link and FlatLink brand names
++among others.
++
++
++Required properties:
++
++- compatible: Must be "lvds-encoder"
++
++Required nodes:
++
++This device has two video ports. Their connections are modeled using the OF
++graph bindings specified in Documentation/devicetree/bindings/graph.txt.
++
++- Video port 0 for parallel input
++- Video port 1 for LVDS output
++
++
++Example
++-------
++
++lvds-encoder {
++	compatible = "lvds-encoder";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++
++			lvds_enc_in: endpoint {
++				remote-endpoint = <&display_out_rgb>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++
++			lvds_enc_out: endpoint {
++				remote-endpoint = <&lvds_panel_in>;
++			};
++		};
++	};
++};
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
