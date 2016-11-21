@@ -1,55 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51071 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935096AbcKQRMa (ORCPT
+        with ESMTP id S1754244AbcKUMGJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:12:30 -0500
+        Mon, 21 Nov 2016 07:06:09 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC Updates for v4.10
-Date: Thu, 17 Nov 2016 14:34:25 +0100
-Message-Id: <cover.1479387356.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/18] arm64: dts: m3ulcb: enable WDT
+Date: Mon, 21 Nov 2016 13:05:41 +0100
+Message-Id: <31e12cb663b0392c9dda1c6edf0c4b22bf15232d.1479726397.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
+References: <cover.1479726397.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Please consider these second round of Renesas ARM based SoC updates for v4.10.
+This supports watchdog timer for M3ULCB board
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-soc-for-v4.10,
-which I have already sent a pull-request for.
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-
-The following changes since commit 9652623f8f019edc93a7a934a10b7d0b90421d5a:
-
-  ARM: shmobile: r8a7779/marzen: Add board part number to DT bindings (2016-11-04 10:25:45 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc2-for-v4.10
-
-for you to fetch changes up to 4af239175d00c1866cc6b41f3eabcf93c45dcc40:
-
-  ARM: shmobile: document SK-RZG1E board (2016-11-15 10:59:35 +0100)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC Updates for v4.10
-
-* Basic support for r8a7745 SoC
-
-----------------------------------------------------------------
-Sergei Shtylyov (2):
-      ARM: shmobile: r8a7745: basic SoC support
-      ARM: shmobile: document SK-RZG1E board
-
- Documentation/devicetree/bindings/arm/shmobile.txt | 4 ++++
- arch/arm/mach-shmobile/Kconfig                     | 4 ++++
- arch/arm/mach-shmobile/setup-rcar-gen2.c           | 1 +
- 3 files changed, 9 insertions(+)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index 5567c46f3753..593d0b4ab31a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -90,3 +90,8 @@
+ 	clock-frequency = <14745600>;
+ 	status = "okay";
+ };
++
++&wdt0 {
++	timeout-sec = <60>;
++	status = "okay";
++};
+-- 
+2.7.0.rc3.207.g0ac5344
