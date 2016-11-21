@@ -1,97 +1,57 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran.bingham+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] v4l: vsp1: Prevent commencing pipelines before they are setup
-Date: Fri, 11 Nov 2016 10:31:58 +0000
-Message-Id: <1478860318-14792-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:46768 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753671AbcKURPX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 Nov 2016 12:15:23 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7796: Add MSIOF controller clocks
+Date: Mon, 21 Nov 2016 18:15:21 +0100
+Message-Id: <1479748521-12788-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With multiple inputs through the BRU it is feasible for the streams to
-race each other at stream-on. In the case of the video pipelines, this
-can present two serious issues.
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
- 1) A null-dereference if the pipe->dl is committed at the same time as
-    the vsp1_video_setup_pipeline() is processing
+This patch adds MSIOF{0,1,2,3} clocks for R8A7796 SoC.
 
- 2) A hardware hang, where a display list is committed without having
-    called vsp1_video_setup_pipeline() first.
-
-To prevent these scenarios from occurring, we ensure that only the thread
-that calls the vsp1_video_setup_pipeline() is capable of committing and
-commencing the display list.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+To be queued in clk-renesas-for-v4.11.
 
-I considered a few options to fix this issue. If anyone disagrees with my
-reasoning, and believes one of the below approaches should be used, let me
-know and I'll rework the patch.
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- A) Moving the vsp1_video_pipeline_run() call into the upper if block.
-  - This changes the locking, and brings in unneccessary nested locking
-
- B) Adapting vsp1_pipeline_ready() such that it checks for a configured
-    pipeline event as well.
-
-  - This was tempting - but this particular issue is local to this
-    function only. Changing vsp1_pipeline_ready() to watch for a flag
-    set by vsp1_video_setup_pipeline() would require adding unneccessary
-    changes to the vsp1_drm objects to cater for this.
-
-To test this race, I have used the vsp-unit-test-0007.sh from Laurent's
-VSP-Tests [0] in iteration. Without this patch, failures can be seen be
-seen anywhere up to the 150 iterations mark.
-
-With this patch in place, tests have successfully iterated over 1500
-loops.
-
-The function affected by this change appears to have been around since
-v4.6-rc2-105-g351bbf99f245 and thus may want inclusion in stable trees
-from that point forward. The issue may have been prevalent before that
-but the solution would need reworking for earlier version.
-
-[0] http://git.ideasonboard.com/renesas/vsp-tests.git
-
- drivers/media/platform/vsp1/vsp1_video.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 94b428596c4f..cc44b27f3e47 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -813,6 +813,7 @@ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	struct vsp1_video *video = vb2_get_drv_priv(vq);
- 	struct vsp1_pipeline *pipe = video->rwpf->pipe;
- 	unsigned long flags;
-+	bool configured = false;
- 	int ret;
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 7d298c57a3e060b6..f908b779155de106 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -103,6 +103,7 @@ enum clk_ids {
+ 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
  
- 	mutex_lock(&pipe->lock);
-@@ -822,13 +823,20 @@ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
- 			mutex_unlock(&pipe->lock);
- 			return ret;
- 		}
-+
-+		/*
-+		 * Multiple streams will execute this function in parallel.
-+		 * Only the thread which configures the pipeline is allowed to
-+		 * execute the vsp1_video_pipeline_run() call below
-+		 */
-+		configured = true;
- 	}
++	DEF_DIV6P1("mso",       R8A7796_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+ 	DEF_DIV6P1("csi0",      R8A7796_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
  
- 	pipe->stream_count++;
- 	mutex_unlock(&pipe->lock);
- 
- 	spin_lock_irqsave(&pipe->irqlock, flags);
--	if (vsp1_pipeline_ready(pipe))
-+	if (vsp1_pipeline_ready(pipe) && configured)
- 		vsp1_video_pipeline_run(pipe);
- 	spin_unlock_irqrestore(&pipe->irqlock, flags);
- 
+ 	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
+@@ -117,6 +118,10 @@ enum clk_ids {
+ 	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("scif1",		 206,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("scif0",		 207,	R8A7796_CLK_S3D4),
++	DEF_MOD("msiof3",		 208,	R8A7796_CLK_MSO),
++	DEF_MOD("msiof2",		 209,	R8A7796_CLK_MSO),
++	DEF_MOD("msiof1",		 210,	R8A7796_CLK_MSO),
++	DEF_MOD("msiof0",		 211,	R8A7796_CLK_MSO),
+ 	DEF_MOD("sys-dmac2",		 217,	R8A7796_CLK_S0D3),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A7796_CLK_S0D3),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A7796_CLK_S0D3),
 -- 
-2.7.4
+1.9.1
