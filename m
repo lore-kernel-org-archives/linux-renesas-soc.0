@@ -1,88 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from newton.telenet-ops.be ([195.130.132.45]:59132 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755741AbcKVSJZ (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41264 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753739AbcKUTUy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Nov 2016 13:09:25 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 3tNYPY0xFqzMrFPG
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Nov 2016 19:08:49 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Josh Cartwright <josh.cartwright@ni.com>,
-        Nathan Sullivan <nathan.sullivan@ni.com>,
-        Zach Brown <zach.brown@ni.com>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC -next] net: phy: Fix double free in phy_detach()
-Date: Tue, 22 Nov 2016 19:07:30 +0100
-Message-Id: <1479838050-28957-1-git-send-email-geert+renesas@glider.be>
+        Mon, 21 Nov 2016 14:20:54 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <1479749095-13548-1-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1c8u8w-00080T-Qa@debutante>
+Date: Mon, 21 Nov 2016 19:20:42 +0000
+Subject: Applied "spi: sh-msiof: Add support for R-Car M3-W" to the spi tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-During "poweroff" on sh73a0/kzm9g:
+The patch
 
-    WARNING: CPU: 0 PID: 1271 at drivers/base/devres.c:889 phy_detach+0x44/0x60
-    Modules linked in:
-    CPU: 0 PID: 1271 Comm: halt Not tainted 4.9.0-rc6-kzm9g-05637-gb090128865050239 #823
-    Hardware name: Generic SH73A0 (Flattened Device Tree)
-    [<c010e7e0>] (unwind_backtrace) from [<c010aeb8>] (show_stack+0x10/0x14)
-    [<c010aeb8>] (show_stack) from [<c02f2b68>] (dump_stack+0xa4/0xdc)
-    [<c02f2b68>] (dump_stack) from [<c0121204>] (__warn+0xcc/0xfc)
-    [<c0121204>] (__warn) from [<c01212d8>] (warn_slowpath_null+0x1c/0x24)
-    [<c01212d8>] (warn_slowpath_null) from [<c03aac40>] (phy_detach+0x44/0x60)
-    [<c03aac40>] (phy_detach) from [<c03ae924>] (smsc911x_stop+0xf4/0x10c)
-    [<c03ae924>] (smsc911x_stop) from [<c0464c4c>] (__dev_close_many+0x94/0xb8)
-    [<c0464c4c>] (__dev_close_many) from [<c0464d64>] (__dev_close+0x20/0x34)
-    [<c0464d64>] (__dev_close) from [<c046d8ac>] (__dev_change_flags+0x8c/0x130)
-    [<c046d8ac>] (__dev_change_flags) from [<c046d968>] (dev_change_flags+0x18/0x48)
-    [<c046d968>] (dev_change_flags) from [<c04d1aac>] (devinet_ioctl+0x33c/0x708)
-    [<c04d1aac>] (devinet_ioctl) from [<c0450694>] (sock_ioctl+0x29c/0x2f8)
-    [<c0450694>] (sock_ioctl) from [<c02079a0>] (vfs_ioctl+0x20/0x34)
-    [<c02079a0>] (vfs_ioctl) from [<c0208398>] (do_vfs_ioctl+0x870/0x9c4)
-    [<c0208398>] (do_vfs_ioctl) from [<c0208520>] (SyS_ioctl+0x34/0x5c)
-    [<c0208520>] (SyS_ioctl) from [<c0106dc0>] (ret_fast_syscall+0x0/0x1c)
-    ---[ end trace 4555b9be7369b463 ]---
+   spi: sh-msiof: Add support for R-Car M3-W
 
-If device_release_driver(&phydev->mdio.dev) was called, it has already
-released all resources belonging to the PHY device. Hence the subsequent
-call to phy_led_triggers_unregister() may cause a double free, leading
-to the warning.
+has been applied to the spi tree at
 
-Move the call to phy_led_triggers_unregister() before the possible call
-to device_release_driver() to fix this.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-Fixes: 2e0bc452f4721520 ("net: phy: leds: add support for led triggers on phy link state change")
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From eb51cffa743de5c78cfbf44f576b0f1eccc784f4 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 21 Nov 2016 18:24:55 +0100
+Subject: [PATCH] spi: sh-msiof: Add support for R-Car M3-W
+
+MSIOF in R-Car M3-W (r8a7796) is handled fine by the existing driver.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Is this the right fix?
----
- drivers/net/phy/phy_device.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
+ drivers/spi/spi-sh-msiof.c                         | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 9e8f048891bd192f..b32457660db66de4 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -981,6 +981,8 @@ void phy_detach(struct phy_device *phydev)
- 	phydev->attached_dev = NULL;
- 	phy_suspend(phydev);
- 
-+	phy_led_triggers_unregister(phydev);
-+
- 	/* If the device had no specific driver before (i.e. - it
- 	 * was using the generic driver), we unbind the device
- 	 * from the generic driver so that there's a chance a
-@@ -994,8 +996,6 @@ void phy_detach(struct phy_device *phydev)
- 		}
- 	}
- 
--	phy_led_triggers_unregister(phydev);
--
- 	/*
- 	 * The phydev might go away on the put_device() below, so avoid
- 	 * a use-after-free bug by reading the underlying bus first.
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index aa005c1d10d9..da6614c63796 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 			 "renesas,msiof-r8a7792" (R-Car V2H)
+ 			 "renesas,msiof-r8a7793" (R-Car M2-N)
+ 			 "renesas,msiof-r8a7794" (R-Car E2)
++			 "renesas,msiof-r8a7796" (R-Car M3-W)
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
+ - reg                  : A list of offsets and lengths of the register sets for
+ 			 the device.
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 1de3a772eb7d..0012ad02e569 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -980,6 +980,7 @@ static const struct of_device_id sh_msiof_match[] = {
+ 	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
++	{ .compatible = "renesas,msiof-r8a7796",   .data = &r8a779x_data },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, sh_msiof_match);
 -- 
-1.9.1
+2.10.2
