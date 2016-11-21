@@ -1,70 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37638 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755180AbcKOA1Z (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753528AbcKUMF7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 19:27:25 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] ARM: shmobile: dts: Switch to panel-lvds bindings for Mitsubishi panels
-Date: Tue, 15 Nov 2016 02:27:29 +0200
-Message-Id: <1479169649-11315-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 21 Nov 2016 07:05:59 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/18] arm64: dts: h3ulcb: update documentation with official board name
+Date: Mon, 21 Nov 2016 13:05:33 +0100
+Message-Id: <d65e3e4a7b31328522642882fd8bb9bde11e77d8.1479726397.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
+References: <cover.1479726397.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
-Use the correct DT bindings.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This updates H3ULCB Device tree bindings Documentation with
+official board name
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi | 3 ++-
- arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hello,
-
-This patch is an example of how the panel-lvds bindings should be used for
-display panels. It isn't meant to be merged upstream at the moment as the
-bindings haven't been accepted yet but can already be used as both an example
-and a test base for LVDS mode selection.
-
-diff --git a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-index 65cb50f0c29f..238d14bb0ebe 100644
---- a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa104xd12", "panel-dpi";
-+		compatible = "mitsubishi,aa104xd12", "panel-lvds";
- 
- 		width-mm = <210>;
- 		height-mm = <158>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1024x768 @65Hz */
-diff --git a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-index a07ebf8f6938..04aafd479775 100644
---- a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa121td01", "panel-dpi";
-+		compatible = "mitsubishi,aa121td01", "panel-lvds";
- 
- 		width-mm = <261>;
- 		height-mm = <163>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1280x800 @60Hz */
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 2f0b7169f132..1c2499ca1bee 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -49,7 +49,7 @@ Boards:
+     compatible = "renesas,genmai", "renesas,r7s72100"
+   - Gose
+     compatible = "renesas,gose", "renesas,r8a7793"
+-  - H3ULCB (RTP0RC7795SKB00010S)
++  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
+     compatible = "renesas,h3ulcb", "renesas,r8a7795";
+   - Henninger
+     compatible = "renesas,henninger", "renesas,r8a7791"
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
