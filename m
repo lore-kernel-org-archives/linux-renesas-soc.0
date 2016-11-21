@@ -1,144 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55229 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752905AbcKSDsV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754230AbcKUMGF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:48:21 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 9/9] drm: rcar-du: Initialize encoder's type based on the bridge's type
-Date: Sat, 19 Nov 2016 05:48:22 +0200
-Message-Id: <1479527302-7674-10-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479527302-7674-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 21 Nov 2016 07:06:05 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/18] arm64: dts: m3ulcb: enable EXTALR clk
+Date: Mon, 21 Nov 2016 13:05:40 +0100
+Message-Id: <7be98b473d407583d29baad10df50639fd63b213.1479726397.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
+References: <cover.1479726397.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the type of the DRM encoder that models the hardware encoders
-(bridges) chain based on the type of the last bridge in the chain
-instead of hardcoding encoder compatible strings in the display driver.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This enables EXTALR clock that can be used for the watchdog.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 17 ++------------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  1 -
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 37 ++-----------------------------
- 3 files changed, 4 insertions(+), 51 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index 2db93a670429..90f0fcca6c05 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -149,7 +149,6 @@ static const struct drm_encoder_funcs encoder_funcs = {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index 2f8f183ea0cd..5567c46f3753 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -60,6 +60,10 @@
+ 	clock-frequency = <16666666>;
  };
  
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
--			 enum rcar_du_encoder_type type,
- 			 enum rcar_du_output output,
- 			 struct device_node *enc_node,
- 			 struct device_node *con_node)
-@@ -187,23 +186,11 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			ret = -EPROBE_DEFER;
- 			goto done;
- 		}
--	}
- 
--	switch (type) {
--	case RCAR_DU_ENCODER_VGA:
--		encoder_type = DRM_MODE_ENCODER_DAC;
--		break;
--	case RCAR_DU_ENCODER_LVDS:
--		encoder_type = DRM_MODE_ENCODER_LVDS;
--		break;
--	case RCAR_DU_ENCODER_HDMI:
--		encoder_type = DRM_MODE_ENCODER_TMDS;
--		break;
--	case RCAR_DU_ENCODER_NONE:
--	default:
-+		encoder_type = bridge->encoder_type;
-+	} else {
- 		/* No external encoder, use the internal encoder type. */
- 		encoder_type = rcdu->info->routes[output].encoder_type;
--		break;
- 	}
- 
- 	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-index 3a6e38fe56cd..5120450a0d36 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-@@ -50,7 +50,6 @@ struct rcar_du_connector {
- 	container_of(c, struct rcar_du_connector, connector)
- 
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
--			 enum rcar_du_encoder_type type,
- 			 enum rcar_du_output output,
- 			 struct device_node *enc_node,
- 			 struct device_node *con_node);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 184ed7a155f6..57437e3372a6 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -357,16 +357,6 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 				     enum rcar_du_output output,
- 				     struct of_endpoint *ep)
- {
--	static const struct {
--		const char *compatible;
--		enum rcar_du_encoder_type type;
--	} encoders[] = {
--		{ "adi,adv7123", RCAR_DU_ENCODER_VGA },
--		{ "adi,adv7511w", RCAR_DU_ENCODER_HDMI },
--		{ "thine,thc63lvdm83d", RCAR_DU_ENCODER_LVDS },
--	};
--
--	enum rcar_du_encoder_type enc_type = RCAR_DU_ENCODER_NONE;
- 	struct device_node *connector = NULL;
- 	struct device_node *encoder = NULL;
- 	struct device_node *ep_node = NULL;
-@@ -413,30 +403,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 
- 	of_node_put(entity_ep_node);
- 
--	if (encoder) {
--		/*
--		 * If an encoder has been found, get its type based on its
--		 * compatible string.
--		 */
--		unsigned int i;
--
--		for (i = 0; i < ARRAY_SIZE(encoders); ++i) {
--			if (of_device_is_compatible(encoder,
--						    encoders[i].compatible)) {
--				enc_type = encoders[i].type;
--				break;
--			}
--		}
--
--		if (i == ARRAY_SIZE(encoders)) {
--			dev_warn(rcdu->dev,
--				 "unknown encoder type for %s, skipping\n",
--				 encoder->full_name);
--			of_node_put(encoder);
--			of_node_put(connector);
--			return -EINVAL;
--		}
--	} else {
-+	if (!encoder) {
- 		/*
- 		 * If no encoder has been found the entity must be the
- 		 * connector.
-@@ -444,7 +411,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		connector = entity;
- 	}
- 
--	ret = rcar_du_encoder_init(rcdu, enc_type, output, encoder, connector);
-+	ret = rcar_du_encoder_init(rcdu, output, encoder, connector);
- 	if (ret && ret != -EPROBE_DEFER)
- 		dev_warn(rcdu->dev,
- 			 "failed to initialize encoder %s on output %u (%d), skipping\n",
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
