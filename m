@@ -1,44 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49949 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752013AbcKGMBZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 07:01:25 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC] PCI: rcar: Restrict pci_fixup_irqs to the same PCI domain
-Date: Mon,  7 Nov 2016 13:00:48 +0100
-Message-Id: <1478520048-25430-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 21 Nov 2016 10:49:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 03/13] devicetree/bindings: display: Add bindings for
+ two Mitsubishi panels
+Message-ID: <20161121164951.brssvqc4n5ydkm45@rob-hp-laptop>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1479526093-7014-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1479526093-7014-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+On Sat, Nov 19, 2016 at 05:28:03AM +0200, Laurent Pinchart wrote:
+> The AA104XD12 and AA121TD01 are LVDS display panels. Their bindings are
+> modelled on the the LVS panel bindings.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
+s/LVS/LVDS/
 
-Phil, this is from the 3.3.2 BSP.
-Is it appropriate for mainline?
----
- drivers/pci/host/pcie-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  .../display/panel/mitsubishi,aa104xd12.txt         | 47 ++++++++++++++++++++++
+>  .../display/panel/mitsubishi,aa121td01.txt         | 47 ++++++++++++++++++++++
+>  2 files changed, 94 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.txt
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.txt
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 62700d1896f4..06e7a75094c7 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -472,7 +472,7 @@ static int rcar_pcie_enable(struct rcar_pcie *pcie)
- 		return -ENODEV;
- 	}
- 
--	pci_fixup_irqs(pci_common_swizzle, of_irq_parse_and_map_pci);
-+	pci_fixup_irqs_local(bus, pci_common_swizzle, of_irq_parse_and_map_pci);
- 
- 	pci_bus_size_bridges(bus);
- 	pci_bus_assign_resources(bus);
--- 
-2.7.0.rc3.207.g0ac5344
+With that,
+
+Acked-by: Rob Herring <robh@kernel.org>
