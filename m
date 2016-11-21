@@ -1,39 +1,106 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/11] Add R8A7745/SK-RZG1E board support
-Date: Sat, 05 Nov 2016 00:42:33 +0300
-Message-ID: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753599AbcKUMGD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 Nov 2016 07:06:03 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/18] arm64: dts: m3ulcb: initial device tree
+Date: Mon, 21 Nov 2016 13:05:36 +0100
+Message-Id: <d9b1c753878310c90e8be178f6a8e119fd0aa25d.1479726397.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
+References: <cover.1479726397.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-   Here's the set of 11 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-201611104-v4.9-rc3' tag plus the R8A7743/SK-RZG1M patch series
-posted earlier. I'm adding the device tree support for the R8A7745-based
-SK-RZG1E board. The SoC is close to R8A7794 and the board seems identical to the
-R8A7794/SILK board. The device tree patches depend on the R8A7745 CPG/MSSR
-driver series in order to compile and work.
+Add the initial device tree for the R8A7796 SoC based M3ULCB low cost
+board (R-Car Starter Kit Pro)
 
-[01/11] ARM: shmobile: r8a7745: add power domain index macros
-[02/11] soc: renesas: rcar-sysc: add R8A7745 support
-[03/11] ARM: shmobile: r8a7745: basic SoC support
-[04/11] ARM: dts: r8a7745: initial SoC device tree
-[05/11] ARM: dts: r8a7745: add SYS-DMAC support
-[06/11] ARM: dts: r8a7745: add [H]SCIF{|A|B} support
-[07/11] ARM: dts: r8a7745: add Ether support
-[08/11] ARM: dts: r8a7745: add IRQC support
-[09/11] ARM: shmobile: document SK-RZG1E board
-[10/11] ARM: dts: sk-rzg1e: initial device tree
-[11/11] ARM: dts: sk-rzg1e: add Ether support
+This commit supports the following peripherals:
+- SCIF (console)
 
-WBR, Sergei
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/Makefile           |  2 +-
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 51 ++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
 
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index eb72830ec9eb..1618e0a3c81d 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,5 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+-dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb
++dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ 
+ always		:= $(dtb-y)
+ clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+new file mode 100644
+index 000000000000..1ae0708bb495
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -0,0 +1,51 @@
++/*
++ * Device Tree Source for the M3ULCB (R-Car Starter Kit Pro) board
++ *
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7796.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	model = "Renesas M3ULCB board based on r8a7796";
++	compatible = "renesas,m3ulcb", "renesas,r8a7796";
++
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&pfc {
++	scif2_pins: scif2 {
++		groups = "scif2_data_a";
++		function = "scif2";
++	};
++};
++
++&scif2 {
++	pinctrl-0 = <&scif2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
+-- 
+2.7.0.rc3.207.g0ac5344
