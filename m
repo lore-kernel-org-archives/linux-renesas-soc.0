@@ -1,54 +1,54 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 1 Nov 2016 10:28:16 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-Message-ID: <20161101092814.GD28143@verge.net.au>
-References: <20161021154737.3803065-1-arnd@arndb.de>
- <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
- <3808786.t4RxxDciQu@wuerfel>
- <CAMuHMdWq9_xHZgMtho87yRnR+RBVA22Ss+8dPRb4OQ+Vrni69A@mail.gmail.com>
- <CAMuHMdXRjgETtjBHHu2mHt9iEfe_rL5fpD-pgPH9MWniOFubQQ@mail.gmail.com>
- <20161031095214.GA2335@verge.net.au>
- <CAMuHMdV6==enPXf_A=SO-PdSihKZdaRUvZA6ZM5+Dy6KJxhrJw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV6==enPXf_A=SO-PdSihKZdaRUvZA6ZM5+Dy6KJxhrJw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754238AbcKUMGH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 Nov 2016 07:06:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/18] arm64: dts: m3ulcb: enable GPIO leds
+Date: Mon, 21 Nov 2016 13:05:38 +0100
+Message-Id: <811a0d07e68ed3bb576e2f193f2c9831bb25c04e.1479726397.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
+References: <cover.1479726397.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 11:02:36AM +0100, Geert Uytterhoeven wrote:
-> On Mon, Oct 31, 2016 at 10:52 AM, Simon Horman <horms@verge.net.au> wrote:
-> > From: Simon Horman <horms+renesas@verge.net.au>
-> > Subject: [PATCH] ARM: shmobile: only call rcar_gen2_clocks_init() if present
-> >
-> > The RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the R-Car Gen2 clock
-> > driver. This is a harbinger of a transition for R-Car Gen2 SoCs. As the
-> > process to get all the required pieces in place is somewhat complex it
-> > seems useful to try to disentangle dependencies where possible.
-> >
-> > The approach here is to temporarily disable calling rcar_gen2_clocks_init()
-> > if no R-Car Gen2 SoC are configured and thus the symbol will not be
-> 
-> SoCs
-> 
-> > present.
-> >
-> > Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Thanks, I will queue this up.
+This supports GPIO leds on M3ULCB board
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index 96cda59c2698..49162bd488f8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -30,6 +30,17 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led5 {
++			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
++		};
++		led6 {
++			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
++		};
++	};
+ };
+ 
+ &extal_clk {
+-- 
+2.7.0.rc3.207.g0ac5344
