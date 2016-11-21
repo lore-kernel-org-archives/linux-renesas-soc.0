@@ -1,43 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:51579 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935913AbcKWLoE (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33413 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752476AbcKUKQC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 06:44:04 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, arm@kernel.org
-Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Drivers Updates for v4.10
-Date: Wed, 23 Nov 2016 12:43:17 +0100
-Message-ID: <4069888.eCuRFVJTuP@wuerfel>
+        Mon, 21 Nov 2016 05:16:02 -0500
+Received: by mail-it0-f68.google.com with SMTP id c20so14460409itb.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Nov 2016 02:16:02 -0800 (PST)
+MIME-Version: 1.0
 In-Reply-To: <20161119013551.GB2543@localhost>
 References: <cover.1479389981.git.horms+renesas@verge.net.au> <20161119013551.GB2543@localhost>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 21 Nov 2016 11:16:01 +0100
+Message-ID: <CAMuHMdVVD2w-Hr8o5CzZYzJ74cDybwwTGmUGJzco_WgtbqKv2Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Drivers Updates
+ for v4.10
+To: Olof Johansson <olof@lixom.net>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        "arm@kernel.org" <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Friday, November 18, 2016 5:35:51 PM CET Olof Johansson wrote:
-> 
+Hi Olof,
+
+On Sat, Nov 19, 2016 at 2:35 AM, Olof Johansson <olof@lixom.net> wrote:
+> On Thu, Nov 17, 2016 at 03:04:35PM +0100, Simon Horman wrote:
+>> Please consider these second round of Renesas ARM based SoC drivers updates for v4.10.
+>>
+>> This pull request is based on a merge of:
+>>
+>> * The previous round of such requests, tagged as renesas-drivers-for-v4.10,
+>>   which you have already pulled.
+>> * The soc-device-match-tag1 tag of Geert Uytterhoeven's renesas-driver's tree.
+>>   This is included to provide core soc_device_match() infrastructure which
+>>   is a dependency of identifying SoC and registering with SoC bus.
+>>
+>>
+>> The following changes since commit 437c4eeb0bd4c1d68817be997716f52b8c22a9c3:
+>>
+>>   Merge tag 'soc-device-match-tag1' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into HEAD (2016-11-15 14:12:57 +0100)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-drivers2-for-v4.10
+>>
+>> for you to fetch changes up to 63ee9e2ba47dbdb42156c9b940515cfd49e78c91:
+>>
+>>   soc: renesas: Identify SoC and register with the SoC bus (2016-11-17 14:37:20 +0100)
+>>
+>> ----------------------------------------------------------------
+>> Second Round of Renesas ARM Based SoC Drivers Updates for v4.10
+>>
+>> * Identify SoC and register with the SoC bus
+>> * Add support for the r8a7745 SoC to rcar-sysc
+>>
+>> ----------------------------------------------------------------
+>> Geert Uytterhoeven (2):
+>>       ARM: shmobile: Document DT bindings for Product Register
+>>       soc: renesas: Identify SoC and register with the SoC bus
+>>
+>> Sergei Shtylyov (2):
+>>       ARM: shmobile: r8a7745: add power domain index macros
+>>       soc: renesas: rcar-sysc: add R8A7745 support
+>>
+>
 > So, this pull request contains 8 patches, not 4. Seems like your pull
 > request doesn't show any of the code from Geert's branch, didn't mention
 > it in the tag and only in the email text above. Furthermore, Geert's
 > branch modifies driver core code, so it's extra important to make sure
 > it's clear that it's an unusual pull request.
-> 
+
+Please accept our apologies for failing to make this clearer.
+
 > Given that this modifies driver core, please either merge that code
 > through Greg first, or get an ack from him. If you merge through him,
 > make sure it's on a standalone topic branch that we can share.
 
-As discussed on IRC, I think it makes sense to track that branch
-separately in arm-soc, as its own top-level next/* branch.
+I provided my soc-device-match branch (tag soc-device-match-tag1) as an
+immutable base, to be included by all interested parties that need the
+soc_device_match() infrastructure (Freescale/NXP, Samsung, Renesas).
+Its core parts have been acked by Greg, and the fixes by Arnd and/or Greg
+(the last fix only received an informal ack, that's why I hadn't added the
+ack).
+This branch has already been pulled by Ulf, and is present in mmc/next, as
+a dependency for a Freescale/NXP driver update.
 
-The branch was first merged into the mmc tree after we got consensus
-on the approach.
+I hope my explanation helps. If anything is still unclear, please ask.
+Thanks for reconsidering!
 
-	Arnd
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
