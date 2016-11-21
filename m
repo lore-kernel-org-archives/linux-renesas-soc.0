@@ -1,81 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34258 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933831AbcKKRIQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753528AbcKUMGA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 12:08:16 -0500
-Received: by mail-wm0-f67.google.com with SMTP id g23so10796545wme.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Nov 2016 09:08:16 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org
-Cc: kuninori.morimoto.gx@renesas.com, geert@linux-m68k.org,
-        airlied@linux.ie, koji.matsuoka.xm@renesas.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 09/10] arm64: dts: r8a7795: add HDMI support to DU
-Date: Fri, 11 Nov 2016 18:07:45 +0100
-Message-Id: <1478884066-1090-10-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1478884066-1090-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1478884066-1090-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 21 Nov 2016 07:06:00 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/18] arm64: dts: m3ulcb: add M3ULCB board DT bindings
+Date: Mon, 21 Nov 2016 13:05:35 +0100
+Message-Id: <76b5bba9855e4cd572e3cb44cd7c95b2043f7aee.1479726397.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
+References: <cover.1479726397.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 34 ++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 811c32e..d9e5706 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -147,6 +147,30 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	programmable_clk0: clock_out0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	x21_clk: x21-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	x22_clk: x22-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	programmable_clk1: clock_out1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -1514,8 +1538,14 @@
- 				 <&cpg CPG_MOD 723>,
- 				 <&cpg CPG_MOD 722>,
- 				 <&cpg CPG_MOD 721>,
--				 <&cpg CPG_MOD 727>;
--			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+				 <&cpg CPG_MOD 727>,
-+				 <&programmable_clk0>,
-+				 <&x21_clk>,
-+				 <&x22_clk>,
-+				 <&programmable_clk1>;
-+			clock-names = "du.0", "du.1", "du.2", "du.3",
-+				      "lvds.0", "dclkin.0", "dclkin.1",
-+				      "dclkin.2", "dclkin.3";
- 			status = "disabled";
- 
- 			vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
+Add M3ULCB Device tree bindings Documentation, listing it as a supported
+board.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 1c2499ca1bee..29bf24ca0b7b 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -61,6 +61,8 @@ Boards:
+     compatible = "renesas,kzm9g", "renesas,sh73a0"
+   - Lager (RTP0RC7790SEB00010S)
+     compatible = "renesas,lager", "renesas,r8a7790"
++  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
++    compatible = "renesas,m3ulcb", "renesas,r8a7796";
+   - Marzen
+     compatible = "renesas,marzen", "renesas,r8a7779"
+   - Porter (M2-LCDP)
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
