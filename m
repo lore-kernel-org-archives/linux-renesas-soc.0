@@ -1,48 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938636AbcKNURt (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37174 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752389AbcKUJSp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 15:17:49 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] VSP Writeback prototype
-Date: Mon, 14 Nov 2016 20:17:38 +0000
-Message-Id: <1479154658-28558-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        Mon, 21 Nov 2016 04:18:45 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Simon Horman <simon@horms.net>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 07/13] arm64: dts: r8a7795: Add PWM support
+Date: Mon, 21 Nov 2016 11:18:59 +0200
+Message-ID: <7240025.pvPQj9XMyK@avalon>
+In-Reply-To: <CAMuHMdXLQyBX3i73Swr-3W8s-a_5J7rObimDh1DA1tfYSTMNYw@mail.gmail.com>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1479526093-7014-8-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXLQyBX3i73Swr-3W8s-a_5J7rObimDh1DA1tfYSTMNYw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Hi Simon,
 
-Hi Geert,
+On Monday 21 Nov 2016 09:27:38 Geert Uytterhoeven wrote:
+> On Sat, Nov 19, 2016 at 4:28 AM, Laurent Pinchart wrote:
+> > Add the 7 PWM channels to the r8a7795 device tree, in the disabled
+> > state.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The following changes since commit 8bc55e5947b58dee3c8b126d7c303991ae0db130:
+This patch is independent from the rest of the series, could you please pick 
+it up ?
 
-  tty: serial_core: Fix serial console crash on port shutdown (2016-10-25 13:53:49 +0200)
+-- 
+Regards,
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/writeback/v2
-
-for you to fetch changes up to 7ce3d143d5c287e5786b3471c32112363bcbdca2:
-
-  v4l: vsp1: Provide a writeback video device (2016-11-03 10:34:29 +0000)
-
-This implementation of a writeback video node allows frames to be
-captured from the display pipeline using standard V4L2 calls.
-
-----------------------------------------------------------------
-Kieran Bingham (2):
-      Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
-      v4l: vsp1: Provide a writeback video device
-
- drivers/media/platform/vsp1/vsp1.h       |   1 +
- drivers/media/platform/vsp1/vsp1_drm.c   |  19 ++++
- drivers/media/platform/vsp1/vsp1_drv.c   |   5 +-
- drivers/media/platform/vsp1/vsp1_rwpf.h  |   1 +
- drivers/media/platform/vsp1/vsp1_video.c | 161 ++++++++++++++++++++++++++++---
- drivers/media/platform/vsp1/vsp1_video.h |   5 +
- drivers/media/platform/vsp1/vsp1_wpf.c   |  19 +++-
- 7 files changed, 193 insertions(+), 18 deletions(-)
+Laurent Pinchart
