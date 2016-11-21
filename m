@@ -1,144 +1,75 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran.bingham+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 1/4] v4l: vsp1: Implement partition algorithm restrictions
-Date: Fri,  4 Nov 2016 18:19:27 +0000
-Message-Id: <1478283570-19688-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37326 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753119AbcKUJ7d (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 Nov 2016 04:59:33 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v2 09/13] arm64: dts: r8a7795: salvator-x: Add panel backlight support
+Date: Mon, 21 Nov 2016 11:59:47 +0200
+Message-ID: <2227128.532ZZ8dc1T@avalon>
+In-Reply-To: <CAMuHMdWcyJsBEbCFoQe7LcUn+1EeCH_F+6yUSR8hsgy_PQOJrg@mail.gmail.com>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1686355.2zT21Pz9pV@avalon> <CAMuHMdWcyJsBEbCFoQe7LcUn+1EeCH_F+6yUSR8hsgy_PQOJrg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The partition algorithm introduced to support scaling, and rotation on
-Gen3 hardware has some restrictions on pipeline configuration.
+Hi Geert,
 
-The UDS must not be connected after the SRU in a pipeline, and whilst an
-SRU can be connected before the UDS, it can only do so in identity mode.
+On Monday 21 Nov 2016 10:23:46 Geert Uytterhoeven wrote:
+> On Mon, Nov 21, 2016 at 10:19 AM, Laurent Pinchart wrote:
+> > On Monday 21 Nov 2016 09:36:22 Geert Uytterhoeven wrote:
+> >> On Sat, Nov 19, 2016 at 4:28 AM, Laurent Pinchart wrote:
+> >>> The panel backlight is controlled through a GPIO and a PWM channel.
+> >>> 
+> >>> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> >>> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> >>> @@ -178,6 +178,16 @@
+> >>>                         };
+> >>>                 };
+> >>>         };
+> >>> +
+> >>> +       backlight: backlight {
+> >>> +               compatible = "pwm-backlight";
+> >>> +               pwms = <&pwm1 0 50000>;
+> >>> +
+> >>> +               brightness-levels = <256 128 64 16 8 4 0>;
+> >> 
+> >> Would it make sense to define more and/or linear levels?
+> > 
+> > Possibly, this is pretty arbitrary. Linear levels might not be the best
+> > option given that the human eye doesn't have a linear response to light
+> > power, but we
+>
+> It not only depends on the human eye, but also on the backlight hardware
+> (is the conversion from voltage (L_VBRT) to light linear?).
 
-On Gen3 hardware, the use of an SRU will always engage the partition
-algorithm, therefore we must always ensure the restrictions are met on
-Gen3 hardware utilising an SRU in the pipeline.
+So we need to specify transfer functions in DT ;-)
 
-A pipeline with an SRU connected after the UDS will disable any scaling
-features of the SRU.
+> > could certainly have more levels. In that case I'd prefer modifying the
+> > pwm- backlight DT bindings though, and specifying the PWM resolution
+> > instead of discrete levels.
+> > 
+> > Note that the LVDS panel backlight PWM control signal is multiplexed with
+> > the external memory A21 signal on the Salvator-X board, with SW5
+> > selecting which how to route the signal. When using backlight control we
+> > can't access the whole NOR flash anymore, so I'm not sure this patch
+> > should be merged.
+>
+> That NOR flash is also optional, right?
+> My Ex Memory Connector is not populated.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_sru.c   |  7 +++++--
- drivers/media/platform/vsp1/vsp1_sru.h   |  1 +
- drivers/media/platform/vsp1/vsp1_video.c | 29 ++++++++++++++++++++++++++++-
- 3 files changed, 34 insertions(+), 3 deletions(-)
+That's correct. The Salvator-X DT file in mainline is just an example anyway, 
+and we should pick the most useful peripherals for that purpose.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
-index b4e568a3b4ed..42a3ed6d9461 100644
---- a/drivers/media/platform/vsp1/vsp1_sru.c
-+++ b/drivers/media/platform/vsp1/vsp1_sru.c
-@@ -152,7 +152,8 @@ static int sru_enum_frame_size(struct v4l2_subdev *subdev,
- 		fse->min_width = format->width;
- 		fse->min_height = format->height;
- 		if (format->width <= SRU_MAX_SIZE / 2 &&
--		    format->height <= SRU_MAX_SIZE / 2) {
-+		    format->height <= SRU_MAX_SIZE / 2 &&
-+		    sru->force_identity_mode == false) {
- 			fse->max_width = format->width * 2;
- 			fse->max_height = format->height * 2;
- 		} else {
-@@ -203,7 +204,8 @@ static void sru_try_format(struct vsp1_sru *sru,
- 
- 		if (fmt->width <= SRU_MAX_SIZE / 2 &&
- 		    fmt->height <= SRU_MAX_SIZE / 2 &&
--		    output_area > input_area * 9 / 4) {
-+		    output_area > input_area * 9 / 4 &&
-+		    sru->force_identity_mode == false) {
- 			fmt->width = format->width * 2;
- 			fmt->height = format->height * 2;
- 		} else {
-@@ -355,6 +357,7 @@ struct vsp1_sru *vsp1_sru_create(struct vsp1_device *vsp1)
- 	v4l2_ctrl_new_custom(&sru->ctrls, &sru_intensity_control, NULL);
- 
- 	sru->intensity = 1;
-+	sru->force_identity_mode = false;
- 
- 	sru->entity.subdev.ctrl_handler = &sru->ctrls;
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.h b/drivers/media/platform/vsp1/vsp1_sru.h
-index 85e241457af2..f8652c04268e 100644
---- a/drivers/media/platform/vsp1/vsp1_sru.h
-+++ b/drivers/media/platform/vsp1/vsp1_sru.h
-@@ -30,6 +30,7 @@ struct vsp1_sru {
- 	struct v4l2_ctrl_handler ctrls;
- 
- 	unsigned int intensity;
-+	bool force_identity_mode;
- };
- 
- static inline struct vsp1_sru *to_sru(struct v4l2_subdev *subdev)
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index f19d879ce5ee..d1d3413c6fdf 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -35,6 +35,7 @@
- #include "vsp1_hgt.h"
- #include "vsp1_pipe.h"
- #include "vsp1_rwpf.h"
-+#include "vsp1_sru.h"
- #include "vsp1_uds.h"
- #include "vsp1_video.h"
- 
-@@ -458,10 +459,12 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
- 					    struct vsp1_rwpf *input,
- 					    struct vsp1_rwpf *output)
- {
-+	struct vsp1_device *vsp1 = output->entity.vsp1;
- 	struct media_entity_enum ent_enum;
- 	struct vsp1_entity *entity;
- 	struct media_pad *pad;
- 	bool bru_found = false;
-+	bool sru_found = false;
- 	int ret;
- 
- 	ret = media_entity_enum_init(&ent_enum, &input->entity.vsp1->media_dev);
-@@ -512,13 +515,37 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
- 			goto out;
- 		}
- 
--		/* UDS can't be chained. */
-+		if (entity->type == VSP1_ENTITY_SRU) {
-+			struct vsp1_sru *sru = to_sru(&entity->subdev);
-+
-+			/*
-+			 * Gen3 partition algorithm restricts SRU double-scaled
-+			 * resolution if it is connected after a UDS entity
-+			 */
-+			if (vsp1->info->gen == 3 && pipe->uds)
-+				sru->force_identity_mode = true;
-+
-+			sru_found = true;
-+		}
-+
- 		if (entity->type == VSP1_ENTITY_UDS) {
-+			/* UDS can't be chained. */
- 			if (pipe->uds) {
- 				ret = -EPIPE;
- 				goto out;
- 			}
- 
-+			/*
-+			 * On Gen3 hardware using the partition algorithm, the
-+			 * UDS must not be connected after the SRU. Using the
-+			 * SRU on Gen3 will always engage the partition
-+			 * algorithm
-+			 */
-+			if (vsp1->info->gen == 3 && sru_found) {
-+				ret = -EPIPE;
-+				goto out;
-+			}
-+
- 			pipe->uds = entity;
- 			pipe->uds_input = bru_found ? pipe->bru
- 					: &input->entity;
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
