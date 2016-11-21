@@ -1,102 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41756 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753528AbcKUMF6 (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33625 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752469AbcKUJIM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 07:05:58 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/18] arm64: dts: r8a7796: Enable I2C DMA
-Date: Mon, 21 Nov 2016 13:05:31 +0100
-Message-Id: <c758f4e333ee7473056484f7ea2294cb1e58c9d5.1479726397.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479726397.git.horms+renesas@verge.net.au>
-References: <cover.1479726397.git.horms+renesas@verge.net.au>
+        Mon, 21 Nov 2016 04:08:12 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAOesGMjwcWMgdwkih8Q1_yX0npDeRbqqXRPCN5-4SnZYf8KfcA@mail.gmail.com>
+References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
+ <20161117230701.GR25626@codeaurora.org> <CAMuHMdU9TRVWyCFf=auH2qZdW0hDYJW-E2ukruNY8dkn9yarxA@mail.gmail.com>
+ <20161118095938.GC22664@verge.net.au> <CAMuHMdW4eSdXqheeDUjT98i+EHd4Nr1Dp0y0nEqThEZ+pwe6DA@mail.gmail.com>
+ <CAMuHMdXJU6buEFuAKp_zrEdeY1jzcEkWRVgODmwystbPjHzPoQ@mail.gmail.com> <CAOesGMjwcWMgdwkih8Q1_yX0npDeRbqqXRPCN5-4SnZYf8KfcA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 21 Nov 2016 10:08:10 +0100
+Message-ID: <CAMuHMdVqnS=h7c53tb-XQ=NN2GC1MXAPToU3qw8azn15YBPqgg@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
+To: Olof Johansson <olof@lixom.net>
+Cc: Simon Horman <horms@verge.net.au>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Hi Olof,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+On Fri, Nov 18, 2016 at 6:49 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Fri, Nov 18, 2016 at 2:44 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Fri, Nov 18, 2016 at 11:12 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Fri, Nov 18, 2016 at 10:59 AM, Simon Horman <horms@verge.net.au> wrote:
+>>>> On Fri, Nov 18, 2016 at 10:55:00AM +0100, Geert Uytterhoeven wrote:
+>>>>> On Fri, Nov 18, 2016 at 12:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>>>> > On 11/07, Geert Uytterhoeven wrote:
+>>>>> >> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
+>>>>> >>
+>>>>> >>   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
+>>>>> >>
+>>>>> >> are available in the git repository at:
+>>>>> >>
+>>>>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
+>>>>> >>
+>>>>> >> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
+>>>>> >
+>>>>> > Ok. Pulled into clk-next. I'm a little wary here as I haven't
+>>>>> > seen any indication from arm-soc maintainers (not Simon) that
+>>>>> > they'll take this cross tree merge. I guess we'll see how it
+>>>>> > goes.
+>>>>>
+>>>>> Thanks for pulling!
+>>>>>
+>>>>> Simon: while it's too late in the v4.10 cycle to queue additional cleanups in
+>>>>> the platform code on top of this, can you please still pull
+>>>>>
+>>>>>         git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+>>>>> rcar-rst
+>>>>>
+>>>>> to resolve the (trivial) merge conflicts between the conversion to the RST
+>>>>> driver in that branch, and the addition of PRR and RZ/G support in your tree?
+>>>>> This will prevent arm-soc and/or Linus from having to deal with these
+>>>>> conflicts.
+>>>>>
+>>>>> For reference, I've pushed the conflict resolution to branch
+>>>>
+>>>> Pull where? I've already sent pull-requests to the ARM SoC maintainers
+>>>
+>>> What do you mean with "where"?
+>>>
+>>>> so I fear this may be too late.
+>>>
+>>> I know you've already sent pull requests.
+>>> Without a conflict resolution, the arm-soc maintainers and/or Linus will
+>>> face the conflicts, depending on merge order.
+>>
+>> Upon second thought, any merge conflicts will show up only when Linus
+>> will merge clk and/or arm-soc branches.
+>>
+>> As the arm-soc maintainers send multiple pull requests, it's difficult
+>> to predict
+>> which merge conflicts will happen when, and providing conflict resolutions
+>> to arm-soc won't help much.
+>>
+>> After some private discussion with Simon, we think the best solution is to
+>> notify Linus in advance. All but one merge conflicts are of the "add both
+>> sides" type.
+>>
+>> I'll do so next week, before the merge window opens.
+>
+> A few trivial merge conflicts are not a big deal, and you probably
+> don't need to notify in advance (we always check for them when we
+> prepare our pull requests).
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 2e940ff61378..9599f5691099 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -257,6 +257,9 @@
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 931>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
-+			       <&dmac2 0x91>, <&dmac2 0x90>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -269,6 +272,9 @@
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 930>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
-+			       <&dmac2 0x93>, <&dmac2 0x92>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -281,6 +287,9 @@
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 929>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
-+			       <&dmac2 0x95>, <&dmac2 0x94>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -293,6 +302,8 @@
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 928>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -305,6 +316,8 @@
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 927>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -317,6 +330,8 @@
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 919>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -329,6 +344,8 @@
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 918>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
--- 
-2.7.0.rc3.207.g0ac5344
+OK, thanks.
+
+> However, conflicts like these are an indication that your development
+> or patch management flow isn't working quite right. You shouldn't step
+> on your own toes like this. Try to avoid it in the future by
+> coordinating better.
+
+This one was special, as it was about moving functionality from platform
+code to DT, complicated by a bad design decision when introducing DT and
+CCF on mach-shmobile a few years ago. Hence, the presence of the "bad"
+way was complicating doing it the "good" way when adding support for new SoCs.
+
+To avoid breaking existing setups, all steps had to be done in lockstep.
+Hence we went for the single branch.
+Untangling that by subsystem/maintainer would have taken 4 kernel releases.
+
+Thanks for your understanding!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
