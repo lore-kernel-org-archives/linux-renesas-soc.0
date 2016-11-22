@@ -1,49 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35295 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933106AbcKWIPh (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:53937 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755681AbcKVNt0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 03:15:37 -0500
-MIME-Version: 1.0
-In-Reply-To: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
-References: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Nov 2016 09:15:07 +0100
-Message-ID: <CAMuHMdWprTuqfyo1niqdR01KkH2xo2AAp46eZOsqTLmvSWETQQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a7796: Add CAN/CAN FD support
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+        Tue, 22 Nov 2016 08:49:26 -0500
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        ramesh.shanmugasundaram@bp.renesas.com,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a7796: Add CAN/CAN FD support
+Date: Tue, 22 Nov 2016 13:49:01 +0000
+Message-Id: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
+This patch series adds pinctrl support for CAN and CAN FD to the r8a7796.
 
-On Tue, Nov 22, 2016 at 2:49 PM, Chris Paterson
-<chris.paterson2@renesas.com> wrote:
-> This patch series adds pinctrl support for CAN and CAN FD to the r8a7796.
->
-> Based on renesas-drivers-2016-11-15-v4.9-rc5.
->
-> Chris Paterson (2):
->   pinctrl: sh-pfc: r8a7796: Add CAN support
->   pinctrl: sh-pfc: r8a7796: Add CAN FD support
+Based on renesas-drivers-2016-11-15-v4.9-rc5.
 
-Thank you, will queue in sh-pfc-for-v4.11 once the authorship has been
-clarified.
+Chris Paterson (2):
+  pinctrl: sh-pfc: r8a7796: Add CAN support
+  pinctrl: sh-pfc: r8a7796: Add CAN FD support
 
-Gr{oetje,eeting}s,
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 89 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.9.1
