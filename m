@@ -1,41 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34197 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932484AbcKWIDJ (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:53941 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756003AbcKVNqk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 03:03:09 -0500
-MIME-Version: 1.0
-In-Reply-To: <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
-References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com> <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Nov 2016 09:03:08 +0100
-Message-ID: <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+        Tue, 22 Nov 2016 08:46:40 -0500
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: geert+renesas@glider.be, mturquette@baylibre.com,
+        sboyd@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        ramesh.shanmugasundaram@bp.renesas.com,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+Date: Tue, 22 Nov 2016 13:46:00 +0000
+Message-Id: <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
-<chris.paterson2@renesas.com> wrote:
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 7d298c5..99b19ce 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -181,6 +181,8 @@ enum clk_ids {
+ 	DEF_MOD("gpio2",		 910,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio1",		 911,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio0",		 912,	R8A7796_CLK_S3D4),
++	DEF_MOD("can-if1",		 915,	R8A7796_CLK_S3D4),
++	DEF_MOD("can-if0",		 916,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c5",			 919,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c4",			 927,	R8A7796_CLK_S0D6),
+-- 
+1.9.1
