@@ -1,50 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35089 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933072AbcKWIGQ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:24338 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755997AbcKVNqg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 03:06:16 -0500
-MIME-Version: 1.0
-In-Reply-To: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
-References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Nov 2016 09:06:15 +0100
-Message-ID: <CAMuHMdWU4qqkEYjAHYkr4FQJJkU-F25ESDLjTSfP0OsPw5WaXA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] clk: renesas: r8a7796: Add CAN/CAN FD support
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+        Tue, 22 Nov 2016 08:46:36 -0500
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: geert+renesas@glider.be, mturquette@baylibre.com,
+        sboyd@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        ramesh.shanmugasundaram@bp.renesas.com,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 0/3] clk: renesas: r8a7796: Add CAN/CAN FD support
+Date: Tue, 22 Nov 2016 13:45:59 +0000
+Message-Id: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
+This patch series adds clk support for CAN and CAN FD to the r8a7796.
 
-On Tue, Nov 22, 2016 at 2:45 PM, Chris Paterson
-<chris.paterson2@renesas.com> wrote:
-> This patch series adds clk support for CAN and CAN FD to the r8a7796.
->
-> Based on renesas-drivers-2016-11-15-v4.9-rc5.
->
-> Chris Paterson (3):
->   clk: renesas: r8a7796: Add CAN peripheral clock
->   clk: renesas: r8a7796: Add CANFD clock
->   clk: renesas: r8a7796: Add CAN FD peripheral clock
+Based on renesas-drivers-2016-11-15-v4.9-rc5.
 
-Thank you, will queue in clk-renesas-for-v4.11 once the authorship has been
-resolved.
+Chris Paterson (3):
+  clk: renesas: r8a7796: Add CAN peripheral clock
+  clk: renesas: r8a7796: Add CANFD clock
+  clk: renesas: r8a7796: Add CAN FD peripheral clock
 
-Gr{oetje,eeting}s,
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.9.1
