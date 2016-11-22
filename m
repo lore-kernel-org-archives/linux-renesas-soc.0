@@ -1,38 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35714 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758380AbcKCSEE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 14:04:04 -0400
-Received: by mail-lf0-f44.google.com with SMTP id b14so45931747lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Nov 2016 11:04:03 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 0/3] arm64: renesas: enable H3ULCB board peripherals
-Date: Thu,  3 Nov 2016 21:04:02 +0300
-Message-Id: <1478196242-939-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran@bingham.xyz>
+Cc: mchehab@osg.samsung.com, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [media] v4l: vsp1: Fix format-info documentation
+Date: Tue, 22 Nov 2016 17:50:23 +0200
+Message-ID: <38960007.89akIK3ZEG@avalon>
+In-Reply-To: <1465495022-8177-1-git-send-email-kieran@bingham.xyz>
+References: <1465495022-8177-1-git-send-email-kieran@bingham.xyz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Kieran,
 
-This adds the folowing:
-- Update DT bindings documentation
-- add R8A7795 SoC based H3ULCB board peripherals
+Thank you for the patch.
 
-Vladimir Barinov (3):
-[1/3] dt: arm: shmobile: update H3ULCB board Documentation
-[2/3] arm64: dts: h3ulcb: update header
-[3/3] arm64: dts: h3ulcb: enable SDHI2
+On Thursday 09 Jun 2016 18:57:02 Kieran Bingham wrote:
+> Minor tweaks to document the swap register and make the documentation
+> match the struct ordering
+> 
+> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
 
----
-This patchset is against the 'kernel/git/horms/renesas.git' repo.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     | 48 +++++++++++++++++++++++++
- 2 files changed, 47 insertions(+), 2 deletions(-)
+and applied to my tree.
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_pipe.h | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
+> b/drivers/media/platform/vsp1/vsp1_pipe.h index 7b56113511dd..6ee3db1fab55
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+> @@ -25,11 +25,12 @@ struct vsp1_rwpf;
+> 
+>  /*
+>   * struct vsp1_format_info - VSP1 video format description
+> - * @mbus: media bus format code
+>   * @fourcc: V4L2 pixel format FCC identifier
+> + * @mbus: media bus format code
+> + * @hwfmt: VSP1 hardware format
+> + * @swap: swap register control
+>   * @planes: number of planes
+>   * @bpp: bits per pixel
+> - * @hwfmt: VSP1 hardware format
+>   * @swap_yc: the Y and C components are swapped (Y comes before C)
+>   * @swap_uv: the U and V components are swapped (V comes before U)
+>   * @hsub: horizontal subsampling factor
+
+-- 
+Regards,
+
+Laurent Pinchart
