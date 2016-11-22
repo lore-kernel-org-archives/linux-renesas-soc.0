@@ -1,85 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46877 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751873AbcKFUUy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41236 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755131AbcKVNQw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Nov 2016 15:20:54 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 00/14] ARM: dts: r8a779x: use demuxer for I2C
-Date: Sun,  6 Nov 2016 21:20:18 +0100
-Message-Id: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
+        Tue, 22 Nov 2016 08:16:52 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v2 06/13] drm: panels: Add LVDS panel driver
+Date: Tue, 22 Nov 2016 15:17:09 +0200
+Message-ID: <3357569.dBCZ3D9MU7@avalon>
+In-Reply-To: <20161122111457.GC22735@ulmo.ba.sec>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1479526093-7014-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161122111457.GC22735@ulmo.ba.sec>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-So, here is the newest series for using the I2C demuxer on Gen2 boards.
-Initially done by Simon. The intention of this series is to extend use of the
-demuxer for I2C on the lager, koelsch, porter, koelsch, alt and silk boards to
-cover all I2C IP blocks that are either already used or exposed via an EXIO
-connector.
+Hi Thierry,
 
-I tested this on a Lager board where I could successfully switch between I2C,
-IIC, and GPIO on I2C2.
+On Tuesday 22 Nov 2016 12:14:57 Thierry Reding wrote:
+> On Sat, Nov 19, 2016 at 05:28:06AM +0200, Laurent Pinchart wrote:
+> > This driver supports LVDS panels that don't require device-specific
+> > handling of power supplies or control signals. It implements automatic
+> > backlight handling if the panel is attached to a backlight controller.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  drivers/gpu/drm/panel/Kconfig      |  10 ++
+> >  drivers/gpu/drm/panel/Makefile     |   1 +
+> >  drivers/gpu/drm/panel/panel-lvds.c | 284 ++++++++++++++++++++++++++++++++
+> >  3 files changed, 295 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
+> 
+> The bulk of this is a duplicate of panel-simple.c
 
-Simon, can you test with your script on the other boards? If all works, I'll
-pick up the i2c patch for 4.9, so the DTS changes should be fine for 4.10.
+Implementing the panel API should obviously be expected to produce some 
+quantity of similar code.
 
-The branch is here:
+> and it adds all the things on top that I've been repeatedly rejecting in the
+> past.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/ip-switch-rework
-
-Regards,
-
-   Wolfram
-
-
-Changes between v4 and v3
-* rebased to latest renesas-drivers (double checked that the moved i2c clients
-  were complete because they changed meanwhile)
-* fixed the aliases to be proper phandles
-* fixed some typos in comments and commit messages
-* added a patch to ensure i2c-gpio works again
-
-Changes between v2 and v3
-* Group extra GPIO buses
-* Add GPIO fallback for IIC1/I2C1 on Lager
-* Add patches for koelsch, porter, alt and silk
-
-Changes between v1 and v2
-* Provide GPIO fallback for I2C2,
-  this does not seem appropriate for other I2C blocks on the lager board
-
-
-
-Simon Horman (13):
-  ARM: dts: lager: rename and reindex i2cexio
-  ARM: dts: lager: use demuxer for IIC1/I2C1
-  ARM: dts: lager: use demuxer for IIC2/I2C2
-  ARM: dts: lager: use demuxer for IIC3/I2C3
-  ARM: dts: koelsch: use demuxer for I2C1
-  ARM: dts: koelsch: use demuxer for I2C2
-  ARM: dts: koelsch: use demuxer for I2C4
-  ARM: dts: porter: use demuxer for I2C2
-  ARM: dts: gose: use demuxer for I2C2
-  ARM: dts: gose: use demuxer for I2C4
-  ARM: dts: alt: use demuxer for I2C1
-  ARM: dts: alt: use demuxer for I2C4
-  ARM: dts: silk: use demuxer for I2C1
-
-Wolfram Sang (1):
-  i2c: mux: demux-pinctrl: make drivers with no pinctrl work again
-
- arch/arm/boot/dts/r8a7790-lager.dts   | 329 ++++++++++++++++++++++------------
- arch/arm/boot/dts/r8a7791-koelsch.dts | 263 ++++++++++++++++++---------
- arch/arm/boot/dts/r8a7791-porter.dts  | 129 +++++++------
- arch/arm/boot/dts/r8a7793-gose.dts    | 203 +++++++++++++--------
- arch/arm/boot/dts/r8a7794-alt.dts     |  86 +++++++--
- arch/arm/boot/dts/r8a7794-silk.dts    | 129 +++++++------
- drivers/i2c/muxes/i2c-demux-pinctrl.c |  22 ++-
- 7 files changed, 765 insertions(+), 396 deletions(-)
+It's a good thing I haven't tried to add them to panel-simple.c then :-)
 
 -- 
-2.9.3
+Regards,
+
+Laurent Pinchart
