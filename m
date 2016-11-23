@@ -1,183 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51954 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760512AbcKDJop (ORCPT
+        with ESMTP id S936601AbcKWOQ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/29] ARM: dts: wheat: add DU support
-Date: Fri,  4 Nov 2016 10:44:09 +0100
-Message-Id: <f6eea82a87db2753e2f7c0454f078fb630eb72cd.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        Wed, 23 Nov 2016 09:16:58 -0500
+Date: Wed, 23 Nov 2016 15:16:50 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Olof Johansson <olof@lixom.net>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for
+ v4.10
+Message-ID: <20161123141648.GA9057@verge.net.au>
+References: <cover.1479391750.git.horms+renesas@verge.net.au>
+ <20161119014929.GE2543@localhost>
+ <20161121105315.GA19845@verge.net.au>
+ <20161123095717.GA16339@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161123095717.GA16339@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Nov 23, 2016 at 10:57:18AM +0100, Simon Horman wrote:
+> On Mon, Nov 21, 2016 at 11:53:18AM +0100, Simon Horman wrote:
+> > On Fri, Nov 18, 2016 at 05:49:29PM -0800, Olof Johansson wrote:
+> > > On Thu, Nov 17, 2016 at 03:11:45PM +0100, Simon Horman wrote:
+> > > > Hi Olof, Hi Kevin, Hi Arnd,
+> > > > 
+> > > > Please consider these second round of Renesas ARM based SoC DT updates for v4.10.
+> > > > 
+> > > > This pull request is based on a merge of:
+> > > > 
+> > > > * The previous round of such requests, tagged as renesas-dt-for-v4.10,
+> > > >   which I have already sent a pull-request for.
+> > > > * The rzg-clock-defs tag of Geert Uytterhoeven's renesas-driver's tree.
+> > > >   This is to provide dependencies for adding the r8a7743 and r8a7745 SoCs.
+> > > > * The "Second Round of Renesas ARM Based SoC Drivers Updates for v4.10",
+> > > >   tagged as renesas-drivers2-for-v4.10, which I have also sent a pull
+> > > >   request for. This is included to provide dependencies for adding device
+> > > >   nodes for PRR, and adding the r8a7743 and r8a7745 SoCs.
+> > > 
+> > > Again, nack. And again, I don't understand why you create dependencies that
+> > > aren't needed. Please fix.
+> > 
+> > Hi Olof,
+> > 
+> > I agree that calling out PRR above was incorrect. Please disregard that.
+> > 
+> > However, there are dependencies for adding r8a7743 and r8a7745 SoCs
+> > in the form of header files:
+> > 
+> > * The rzg-clock-defs tag provides dt-bindings/clock/r8a774[35]-cpg-mssr.h
+> > * The renesas-drivers2-for-v4.10 tag provides
+> >   dt-bindings/power/r8a774[35]-sysc.h
+> > 
+> > The drivers branches are usually pretty light-weight. But this time it is a
+> > bit heavy and you rightly raised some questions about it. After some
+> > discussion with Geert we'd like to suggest that for future releases
+> > we provide a "driver-defs" branch which both driver code and DT can
+> > depend on. Thus avoiding pulling (non essential) driver changes into the DT
+> > branch.
+> > 
+> > Unfortunately its a bit late to do that for v4.10 as the r8a7743 sysc
+> > driver and its defines were already accepted accepted together
+> > (renesas-drivers-for-v4.10 tag). So for this release we would be grateful
+> > if you could re-consider the renesas-drivers2-for-v4.10 tag given the
+> > feedback which Geert has provided. And in turn re-consider this pull
+> > request.
+> 
+> Hi again,
+> 
+> while the above remains my preferred option I would like to put another one
+> on the table in case it would help in any way for v4.10.
+> 
+> I could split this pull-request up as follows:
+> 1. The patches that add the r8a774[35] SoCs:
+>    - r8a7743 depends on renesas-drivers-for-v4.10 and rzg-clock-defs
+>    - r8a7745 depends on renesas-drivers2-for-v4.10 and rzg-clock-defs
+> 2. The patches rest of the patches
+>    - I believe these have no special dependencies
 
-Define  the  Wheat board dependent  part of the DU device node.
-Add the device nodes for the Analog Devices ADV7513 HDMI transmitters
-connected to DU0/1.  Add the necessary subnodes to interconnect DU with
-HDMI transmitters/connectors.
+After some discussion on IRC with Arnd I think it makes sense to simplify
+the dependencies pulled in to this pull request to the extent of
+only pulling in patches which provide headers for macros used in DT.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792-wheat.dts | 126 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index 6dbb94114a93..c24f26fdab1f 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -86,6 +86,34 @@
- 		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	hdmi-out0 {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con0: endpoint {
-+				remote-endpoint = <&adv7513_0_out>;
-+			};
-+		};
-+	};
-+
-+	hdmi-out1 {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con1: endpoint {
-+				remote-endpoint = <&adv7513_1_out>;
-+			};
-+		};
-+	};
-+
-+	osc2_clk: osc2 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
-+	};
- };
- 
- &extal_clk {
-@@ -128,6 +156,16 @@
- 		groups = "qspi_ctrl", "qspi_data4";
- 		function = "qspi";
- 	};
-+
-+	du0_pins: du0 {
-+		groups = "du0_rgb888", "du0_sync", "du0_disp";
-+		function = "du0";
-+	};
-+
-+	du1_pins: du1 {
-+		groups = "du1_rgb666", "du1_sync", "du1_disp";
-+		function = "du1";
-+	};
- };
- 
- &scif0 {
-@@ -197,3 +235,91 @@
- 		};
- 	};
- };
-+
-+&i2c4 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	hdmi@3d {
-+		compatible = "adi,adv7513";
-+		reg = <0x3d>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7513_0_in: endpoint {
-+					remote-endpoint = <&du_out_rgb0>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7513_0_out: endpoint {
-+					remote-endpoint = <&hdmi_con0>;
-+				};
-+			};
-+		};
-+	};
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7513";
-+		reg = <0x39>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7513_1_in: endpoint {
-+					remote-endpoint = <&du_out_rgb1>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7513_1_out: endpoint {
-+					remote-endpoint = <&hdmi_con1>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&du {
-+	pinctrl-0 = <&du0_pins &du1_pins>;
-+	pinctrl-names = "default";
-+
-+	clocks = <&mstp7_clks R8A7792_CLK_DU0>, <&mstp7_clks R8A7792_CLK_DU1>,
-+		 <&osc2_clk>;
-+	clock-names = "du.0", "du.1", "dclkin.0";
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7513_0_in>;
-+			};
-+		};
-+		port@1 {
-+			endpoint {
-+				remote-endpoint = <&adv7513_1_in>;
-+			};
-+		};
-+	};
-+};
--- 
-2.7.0.rc3.207.g0ac5344
+I am working on making this so.
