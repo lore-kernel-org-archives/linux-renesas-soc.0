@@ -1,111 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935813AbcKWUPp (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35448 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932865AbcKWIUB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:45 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/31] ARM: dts: r8a7743: add SYS-DMAC support
-Date: Wed, 23 Nov 2016 21:14:19 +0100
-Message-Id: <6ed5ed500a5c67eed7b76e5353f7bca3b3daae92.1479931687.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Wed, 23 Nov 2016 03:20:01 -0500
+Received: by mail-io0-f194.google.com with SMTP id h133so826310ioe.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Nov 2016 00:20:00 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAOesGMimsQphE4TzrJ7EPpp90VQG23vGP3jVrJK3qQrZgNEd3g@mail.gmail.com>
+References: <cover.1479387356.git.horms+renesas@verge.net.au>
+ <20161119012836.GA2543@localhost> <CAMuHMdXAuDcbr84phfPRpqZYRzAZf2j4vsv+i_Frz0G8ksd_Vg@mail.gmail.com>
+ <CAOesGMjk=KWifGT7sugpWVjNJSKhmgxg8gN9Cgi=emGrg66z0w@mail.gmail.com>
+ <CAMuHMdUhpeiOj6Mjhgt=9R3yuV-HwOAy5AAsDSTDjagRRDtYCw@mail.gmail.com>
+ <CAOesGMj47EZ1Zjc41VV2D-cM5XUsK28PDF-jSHKUkkind32ZRA@mail.gmail.com>
+ <CAMuHMdUtu9N28rOb+813DumtbyAZJB3G+euD0mwwXD_jCiXrRg@mail.gmail.com> <CAOesGMimsQphE4TzrJ7EPpp90VQG23vGP3jVrJK3qQrZgNEd3g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 09:19:59 +0100
+Message-ID: <CAMuHMdVs=SCTEmdckD6FNF89Xi2deRQwnukV9azpcBWUnp5HSQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Updates for v4.10
+To: Olof Johansson <olof@lixom.net>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        "arm@kernel.org" <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Olof,
 
-Describe SYS-DMAC0/1 in the R8A7743 device tree.
+On Wed, Nov 23, 2016 at 12:30 AM, Olof Johansson <olof@lixom.net> wrote:
+> On Tue, Nov 22, 2016 at 1:56 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Mon, Nov 21, 2016 at 5:35 PM, Olof Johansson <olof@lixom.net> wrote:
+>>> On Mon, Nov 21, 2016 at 8:27 AM, Geert Uytterhoeven
+>>> <geert@linux-m68k.org> wrote:
+>>>> On Mon, Nov 21, 2016 at 5:19 PM, Olof Johansson <olof@lixom.net> wrote:
+>>>>> On Mon, Nov 21, 2016 at 1:31 AM, Geert Uytterhoeven
+>>>>> <geert@linux-m68k.org> wrote:
+>>>>>> On Sat, Nov 19, 2016 at 2:28 AM, Olof Johansson <olof@lixom.net> wrote:
+>>>>>>> Is there a reason you're adding a config option per SoC?
+>>>>>>>
+>>>>>>> I think you'd be better off not adding these config options, and just adding
+>>>>>>> support for the SoCs through compatibles (and adding the drivers to defconfigs,
+>>>>>>> etc).
+>>>>>>
+>>>>>> Yes there is a reason: kernel size.
+>>>>>> The main offenders are the pinctrl tables, which add ca. 20-50 KiB per
+>>>>>> supported SoC.
+>>>>>
+>>>>> So don't turn on that pinctrl driver unless you have that SoC?
+>>>>
+>>>> The enablement of the pinctrl driver (and the clock driver, FWIW) is controlled
+>>>> by the SoC Kconfig symbol. If you want support for the SoC, you want the
+>>>> pinctrl driver, too.
+>>>
+>>> Oh, that's trivial to fix! Do as almost all other SoCs do, and don't
+>>> use silent options.
+>>
+>> What does that gain us? The ability to enable support for an SoC, without
+>> enabling the accompanying pinctrl driver, leading to a non-booting system?
+>
+> It doesn't enable anything new, it just makes it less awkward for you
+> to add new SoCs in the future without creating dependencies on new
+> Kconfig symbols in the arch directory.
+>
+>> As soon as you have any pinctrl properties in the DT, you need the pinctrl
+>> driver. Unless you disable CONFIG_PINCTRL (it's selected, and not
+>> user-controlled), and rely on fragile reset state/boot loader.
+>>
+>> Pinctrl (and clock and irqchip) on-SoC drivers are special: if you fail to
+>> include them, the system won't boot.
+>
+> This isn't about booting without a pinctrl driver. It's about avoiding
+> adding new config symbols when they're not needed.
+>
+> I started out comparing your way of using config options with, for
+> example, Exynos that has a bunch of different SoCs enabled. Having
+> dependencies described clearly has some value, since it can be hard to
+> know if you can turn off a driver and still have a bootable system
+> with some of the other platforms.
+>
+> That being said, I think you should look at changing how you use your
+> config options to make it less messy to add new ones:
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+[...]
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 64 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+Thanks, I'll have a look to see if we can improve things...
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index db9cb41be79b..4807b08a3541 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -93,6 +93,70 @@
- 			compatible = "renesas,r8a7743-rst";
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
-+
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x20000>;
-+			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		dmac1: dma-controller@e6720000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6720000 0 0x20000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
- 	};
- 
- 	/* External root clock */
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
