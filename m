@@ -1,56 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51650 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941742AbcKQRme (ORCPT
+        with ESMTP id S935813AbcKWUPp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:42:34 -0500
+        Wed, 23 Nov 2016 15:15:45 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC EtherAVB Updates for v4.10
-Date: Thu, 17 Nov 2016 15:05:08 +0100
-Message-Id: <cover.1479390880.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/31] ARM: dts: r8a7743: add SYS-DMAC support
+Date: Wed, 23 Nov 2016 21:14:19 +0100
+Message-Id: <6ed5ed500a5c67eed7b76e5353f7bca3b3daae92.1479931687.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
+References: <cover.1479931686.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Please consider these Renesas ARM based SoC EtherAVB updates for v4.10.
+Describe SYS-DMAC0/1 in the R8A7743 device tree.
 
-This pull request is based on the "Second Round of Renesas ARM64 Based SoC
-DT Updates for v4.10", tagged as arm64-dt-for-v4.10, which I have also sent
-a pull-request for.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-The reason for this base is to provide dependencies. For the same reason
-an ack has been provided by David Miller to facilitate a merge of the patch
-via the Renesas tree.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 64 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-
-The following changes since commit 6f8a4c84d95031806594f5992a79fefd251c2f51:
-
-  arm64: dts: r8a7796: Add device node for PRR (2016-11-17 14:48:28 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-ravb-for-v4.10
-
-for you to fetch changes up to 735ea633e42060546cabe8430efbc00d4be1790a:
-
-  ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W (2016-11-17 14:53:44 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC EtherAVB Updates for v4.10
-
-* Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
-
- drivers/net/ethernet/renesas/ravb_main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index db9cb41be79b..4807b08a3541 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -93,6 +93,70 @@
+ 			compatible = "renesas,r8a7743-rst";
+ 			reg = <0 0xe6160000 0 0x100>;
+ 		};
++
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x20000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 219>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
++
++		dmac1: dma-controller@e6720000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6720000 0 0x20000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
+ 	};
+ 
+ 	/* External root clock */
+-- 
+2.7.0.rc3.207.g0ac5344
