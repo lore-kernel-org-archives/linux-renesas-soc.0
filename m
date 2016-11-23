@@ -1,100 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:45909 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934812AbcKWMPB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935958AbcKWUP3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 07:15:01 -0500
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Wed, 23 Nov 2016 15:15:29 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 3/3] arm64: dts: r8a7796: Add CAN FD support
-Date: Wed, 23 Nov 2016 12:14:48 +0000
-Message-Id: <1479903288-2009-1-git-send-email-chris.paterson2@renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 05/31] ARM: dts: lager: use demuxer for IIC1/I2C1
+Date: Wed, 23 Nov 2016 21:14:12 +0100
+Message-Id: <b2f15ca697a11c8df64ac6c8086ababc5c9e6060.1479931686.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
+References: <cover.1479931686.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds CAN FD controller node for r8a7796.
+Make it possible to select which I2C1 IP core you want to run on the
+EXIO-A connector.
 
-Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
+This is based on reference work for the I2C0 core of the lager board
+by Wolfram Sang.
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased and fixed aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- .../devicetree/bindings/net/can/rcar_canfd.txt     | 12 ++++++-----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 24 ++++++++++++++++++++++
- 2 files changed, 31 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-index 22a6f10..788f273 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-@@ -5,6 +5,7 @@ Required properties:
- - compatible: Must contain one or more of the following:
-   - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
-   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
-+  - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3) compatible controller.
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 5645444cd21a..9b9748548702 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -50,7 +50,9 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
++		i2c8 = &gpioi2c1;
+ 		i2c10 = &i2cexio0;
++		i2c11 = &i2cexio1;
+ 	};
  
-   When compatible with the generic version, nodes must list the
-   SoC-specific version corresponding to the platform first, followed by the
-@@ -23,11 +24,12 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
- child node supports the "status" property only, which is used to
- enable/disable the respective channel.
+ 	chosen {
+@@ -265,6 +267,17 @@
+ 		clock-frequency = <148500000>;
+ 	};
  
--Required properties for "renesas,r8a7795-canfd" compatible:
--In R8A7795 SoC, canfd clock is a div6 clock and can be used by both CAN
--and CAN FD controller at the same time. It needs to be scaled to maximum
--frequency if any of these controllers use it. This is done using the
--below properties.
-+Required properties for "renesas,r8a7795-canfd" and "renesas,r8a7796-canfd"
-+compatible:
-+In R8A7795 and R8A7796 SoCs, canfd clock is a div6 clock and can be used by both
-+CAN and CAN FD controller at the same time. It needs to be scaled to maximum
-+frequency if any of these controllers use it. This is done using the below
-+properties:
- 
- - assigned-clocks: phandle of canfd clock.
- - assigned-clock-rates: maximum frequency of this clock.
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 95857fc..c069d77 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -392,6 +392,30 @@
- 			status = "disabled";
- 		};
- 
-+		canfd: can@e66c0000 {
-+			compatible = "renesas,r8a7796-canfd",
-+				     "renesas,rcar-gen3-canfd";
-+			reg = <0 0xe66c0000 0 0x8000>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 914>,
-+			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
++	gpioi2c1: i2c-8 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio1 16 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
 +
-+			channel0 {
-+				status = "disabled";
-+			};
+ 	/*
+ 	 * IIC0/I2C0 is routed to EXIO connector A, pins 114 (SCL) + 116 (SDA) only.
+ 	 * We use the I2C demuxer, so the desired IP core can be selected at runtime
+@@ -283,6 +296,19 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
 +
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
++	/*
++	 * IIC1/I2C1 is routed to EXIO connector A, pins 78 (SCL) + 80 (SDA).
++	 * This is similar to the arangement described for i2cexio0 (above)
++	 * with a fallback to GPIO also provided.
++	 */
++	i2cexio1: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic1>, <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-exio1";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -405,6 +431,11 @@
+ 		function = "iic0";
+ 	};
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
 +
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
+ 	iic1_pins: iic1 {
+ 		groups = "iic1";
+ 		function = "iic1";
+@@ -606,10 +637,14 @@
+ 	pinctrl-names = "i2c-exio0";
+ };
+ 
++&i2c1	{
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "i2c-exio1";
++};
++
+ &iic1	{
+-	status = "okay";
+ 	pinctrl-0 = <&iic1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-exio1";
+ };
+ 
+ &iic2	{
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
