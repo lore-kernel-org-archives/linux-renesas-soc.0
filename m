@@ -1,116 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935958AbcKWUP3 (ORCPT
+        with ESMTP id S935046AbcKWUPz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:29 -0500
+        Wed, 23 Nov 2016 15:15:55 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 05/31] ARM: dts: lager: use demuxer for IIC1/I2C1
-Date: Wed, 23 Nov 2016 21:14:12 +0100
-Message-Id: <b2f15ca697a11c8df64ac6c8086ababc5c9e6060.1479931686.git.horms+renesas@verge.net.au>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/31] ARM: dts: r8a7745: add Ether support
+Date: Wed, 23 Nov 2016 21:14:28 +0100
+Message-Id: <bed98a59b62d3e121da2d8372425fd4e424b0aa6.1479931687.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
 References: <cover.1479931686.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to select which I2C1 IP core you want to run on the
-EXIO-A connector.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This is based on reference work for the I2C0 core of the lager board
-by Wolfram Sang.
+Define the generic R8A7745 part of the Ether device node.
 
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 5645444cd21a..9b9748548702 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -50,7 +50,9 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scifa1;
-+		i2c8 = &gpioi2c1;
- 		i2c10 = &i2cexio0;
-+		i2c11 = &i2cexio1;
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 99ccdd0d3014..6fe48157f906 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -418,6 +418,18 @@
+ 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		ether: ethernet@ee700000 {
++			compatible = "renesas,ether-r8a7745";
++			reg = <0 0xee700000 0 0x400>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 813>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			phy-mode = "rmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
  	};
  
- 	chosen {
-@@ -265,6 +267,17 @@
- 		clock-frequency = <148500000>;
- 	};
- 
-+	gpioi2c1: i2c-8 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio1 16 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	/*
- 	 * IIC0/I2C0 is routed to EXIO connector A, pins 114 (SCL) + 116 (SDA) only.
- 	 * We use the I2C demuxer, so the desired IP core can be selected at runtime
-@@ -283,6 +296,19 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+	/*
-+	 * IIC1/I2C1 is routed to EXIO connector A, pins 78 (SCL) + 80 (SDA).
-+	 * This is similar to the arangement described for i2cexio0 (above)
-+	 * with a fallback to GPIO also provided.
-+	 */
-+	i2cexio1: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic1>, <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-exio1";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -405,6 +431,11 @@
- 		function = "iic0";
- 	};
- 
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1";
-+		function = "i2c1";
-+	};
-+
- 	iic1_pins: iic1 {
- 		groups = "iic1";
- 		function = "iic1";
-@@ -606,10 +637,14 @@
- 	pinctrl-names = "i2c-exio0";
- };
- 
-+&i2c1	{
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "i2c-exio1";
-+};
-+
- &iic1	{
--	status = "okay";
- 	pinctrl-0 = <&iic1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-exio1";
- };
- 
- &iic2	{
+ 	/* External root clock */
 -- 
 2.7.0.rc3.207.g0ac5344
