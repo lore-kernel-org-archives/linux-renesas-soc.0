@@ -1,82 +1,82 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
-        chanwoo@kernel.org
-Subject: [PATCH 09/12] usb: phy: omap-otg: Replace the extcon API
-Date: Wed, 30 Nov 2016 14:57:37 +0900
-Message-id: <1480485460-2663-10-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936013AbcKWUPY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 23 Nov 2016 15:15:24 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 04/31] ARM: dts: lager: rename and reindex i2cexio
+Date: Wed, 23 Nov 2016 21:14:11 +0100
+Message-Id: <1e26fcf31c5c70557689184185913881e4557bc0.1479931686.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
+References: <cover.1479931686.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch uses the resource-managed extcon API for extcon_register_notifier()
-and replaces the deprecated extcon API as following:
-- extcon_get_cable_state_() -> extcon_get_state()
+The rename from i2cexio to i2cexio0 is in preparation for adding
+i2cexio1 which will use the demuxer for IIC1/I2C1.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+The reindexing from i2c8 to i2c10 is to allow space for grouping of
+additional GPIO buses to be added by follow-up patches to support demuxing
+of other i2c buses.
+
+Also note that fallback to GPIO is not provided by the hardware for IIC0/I2C0.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed alias and removed typo in commit message]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/usb/phy/phy-omap-otg.c | 24 ++++++------------------
- 1 file changed, 6 insertions(+), 18 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
-index 6523af4f8f93..800d1d90753d 100644
---- a/drivers/usb/phy/phy-omap-otg.c
-+++ b/drivers/usb/phy/phy-omap-otg.c
-@@ -118,19 +118,19 @@ static int omap_otg_probe(struct platform_device *pdev)
- 	otg_dev->id_nb.notifier_call = omap_otg_id_notifier;
- 	otg_dev->vbus_nb.notifier_call = omap_otg_vbus_notifier;
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 434268262d88..5645444cd21a 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -50,7 +50,7 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
+-		i2c8 = "i2cexio";
++		i2c10 = &i2cexio0;
+ 	};
  
--	ret = extcon_register_notifier(extcon, EXTCON_USB_HOST, &otg_dev->id_nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, extcon,
-+					EXTCON_USB_HOST, &otg_dev->id_nb);
- 	if (ret)
- 		return ret;
+ 	chosen {
+@@ -273,11 +273,13 @@
+ 	 * bus with IIC3 on pins 110 (SCL) + 112 (SDA), select I2C0 at runtime, and
+ 	 * instantiate the slave device at runtime according to the documentation.
+ 	 * You can then communicate with the slave via IIC3.
++	 *
++	 * IIC0/I2C0 does not appear to support fallback to GPIO.
+ 	 */
+-	i2cexio: i2c-8 {
++	i2cexio0: i2c-10 {
+ 		compatible = "i2c-demux-pinctrl";
+ 		i2c-parent = <&iic0>, <&i2c0>;
+-		i2c-bus-name = "i2c-exio";
++		i2c-bus-name = "i2c-exio0";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+@@ -596,12 +598,12 @@
  
--	ret = extcon_register_notifier(extcon, EXTCON_USB, &otg_dev->vbus_nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, extcon,
-+					EXTCON_USB, &otg_dev->vbus_nb);
- 	if (ret) {
--		extcon_unregister_notifier(extcon, EXTCON_USB_HOST,
--					&otg_dev->id_nb);
- 		return ret;
- 	}
+ &i2c0	{
+ 	pinctrl-0 = <&i2c0_pins>;
+-	pinctrl-names = "i2c-exio";
++	pinctrl-names = "i2c-exio0";
+ };
  
--	otg_dev->id = extcon_get_cable_state_(extcon, EXTCON_USB_HOST);
--	otg_dev->vbus = extcon_get_cable_state_(extcon, EXTCON_USB);
-+	otg_dev->id = extcon_get_state(extcon, EXTCON_USB_HOST);
-+	otg_dev->vbus = extcon_get_state(extcon, EXTCON_USB);
- 	omap_otg_set_mode(otg_dev);
+ &iic0	{
+ 	pinctrl-0 = <&iic0_pins>;
+-	pinctrl-names = "i2c-exio";
++	pinctrl-names = "i2c-exio0";
+ };
  
- 	rev = readl(otg_dev->base);
-@@ -145,20 +145,8 @@ static int omap_otg_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int omap_otg_remove(struct platform_device *pdev)
--{
--	struct otg_device *otg_dev = platform_get_drvdata(pdev);
--	struct extcon_dev *edev = otg_dev->extcon;
--
--	extcon_unregister_notifier(edev, EXTCON_USB_HOST, &otg_dev->id_nb);
--	extcon_unregister_notifier(edev, EXTCON_USB, &otg_dev->vbus_nb);
--
--	return 0;
--}
--
- static struct platform_driver omap_otg_driver = {
- 	.probe		= omap_otg_probe,
--	.remove		= omap_otg_remove,
- 	.driver		= {
- 		.name	= "omap_otg",
- 	},
+ &iic1	{
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
