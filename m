@@ -1,56 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34053 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933128AbcKWJ0M (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:5361 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933773AbcKWIj4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 04:26:12 -0500
-MIME-Version: 1.0
-In-Reply-To: <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
- <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
- <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com> <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Nov 2016 10:26:10 +0100
-Message-ID: <CAMuHMdU7BuiNGsw9WmBz_5TpPBGB=0HnV+t3hQ+gsdy85-H8hQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 23 Nov 2016 03:39:56 -0500
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+Date: Wed, 23 Nov 2016 08:39:51 +0000
+Message-ID: <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
+ <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
+ <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com>
+In-Reply-To: <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Wed, Nov 23, 2016 at 9:39 AM, Chris Paterson
-<Chris.Paterson2@renesas.com> wrote:
->> On Wed, Nov 23, 2016 at 9:03 AM, Geert Uytterhoeven <geert@linux-
->> m68k.org> wrote:
->> > On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
->> > <chris.paterson2@renesas.com> wrote:
->> >> Signed-off-by: Ramesh Shanmugasundaram
->> >> <ramesh.shanmugasundaram@bp.renesas.com>
->> >> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
->>
->> BTW, as all patches in this series were Signed-off-by Ramesh first, does that
->> mean he's the author, and you should have added his From: line, too?
->
-> Technically I authored these patches, but they are direct ports from Ramesh's r8a7795 patches [1][2][3].
-
-OK, I'll replace his SoB by "based on patches for r8a7795 by Ramesh...".
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4NCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tDQo+
+IFttYWlsdG86Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0gT24gQmVoYWxmIE9mIEdlZXJ0
+IFV5dHRlcmhvZXZlbg0KPiBTZW50OiAyMyBOb3ZlbWJlciAyMDE2IDA4OjA2DQo+IFRvOiBDaHJp
+cyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiBDYzogR2VlcnQgVXl0
+dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IE1pY2hhZWwgVHVycXVldHRlDQo+
+IDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0ZXBoZW4gQm95ZCA8c2JveWRAY29kZWF1cm9y
+YS5vcmc+Ow0KPiBMaW51eC1SZW5lc2FzIDxsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5v
+cmc+OyBsaW51eC1jbGsgPGxpbnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3JnPjsgUmFtZXNoIFNo
+YW5tdWdhc3VuZGFyYW0NCj4gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29t
+Pg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvM10gY2xrOiByZW5lc2FzOiByOGE3Nzk2OiBBZGQg
+Q0FOIHBlcmlwaGVyYWwgY2xvY2sNCj4gDQo+IEhpIENocmlzLA0KPiANCj4gT24gV2VkLCBOb3Yg
+MjMsIDIwMTYgYXQgOTowMyBBTSwgR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC0NCj4g
+bTY4ay5vcmc+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgTm92IDIyLCAyMDE2IGF0IDI6NDYgUE0sIENo
+cmlzIFBhdGVyc29uDQo+ID4gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4gd3JvdGU6DQo+
+ID4+IFNpZ25lZC1vZmYtYnk6IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtDQo+ID4+IDxyYW1lc2gu
+c2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNvbT4NCj4gPj4gU2lnbmVkLW9mZi1ieTogQ2hy
+aXMgUGF0ZXJzb24gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4NCj4gDQo+IEJUVywgYXMg
+YWxsIHBhdGNoZXMgaW4gdGhpcyBzZXJpZXMgd2VyZSBTaWduZWQtb2ZmLWJ5IFJhbWVzaCBmaXJz
+dCwgZG9lcyB0aGF0DQo+IG1lYW4gaGUncyB0aGUgYXV0aG9yLCBhbmQgeW91IHNob3VsZCBoYXZl
+IGFkZGVkIGhpcyBGcm9tOiBsaW5lLCB0b28/DQoNClRlY2huaWNhbGx5IEkgYXV0aG9yZWQgdGhl
+c2UgcGF0Y2hlcywgYnV0IHRoZXkgYXJlIGRpcmVjdCBwb3J0cyBmcm9tIFJhbWVzaCdzIHI4YTc3
+OTUgcGF0Y2hlcyBbMV1bMl1bM10uDQoNClsxXSAxMWM2ZmI3IGNsazogc2htb2JpbGU6IHI4YTc3
+OTU6IEFkZCBDQU4gcGVyaXBoZXJhbCBjbG9jaw0KWzJdIDdlMDBkNjMxIGNsazogc2htb2JpbGU6
+IHI4YTc3OTU6IEFkZCBDQU5GRCBjbG9jaw0KWzNdIGEwODBjOGMgY2xrOiBzaG1vYmlsZTogcjhh
+Nzc5NTogQWRkIENBTiBGRCBwZXJpcGhlcmFsIGNsb2NrDQoNCkFwb2xvZ2llcyBmb3Igbm90IG1h
+a2luZyB0aGlzIGNsZWFyIGluIHRoZSBjb3ZlciBsZXR0ZXIuDQoNCktpbmQgcmVnYXJkcywgQ2hy
+aXMNCg0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAg
+ICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90
+cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC0NCj4gbTY4ay5vcmcNCj4gDQo+
+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwg
+bXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJ
+IGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
