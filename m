@@ -1,59 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935813AbcKWUP0 (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34053 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933128AbcKWJ0M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:26 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/31] ARM: dts: r8a7794: Use SYSC "always-on" PM Domain for sound
-Date: Wed, 23 Nov 2016 21:14:10 +0100
-Message-Id: <24b2d930a50662c11918fd0c22931f1448488da4.1479931686.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Wed, 23 Nov 2016 04:26:12 -0500
+MIME-Version: 1.0
+In-Reply-To: <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
+ <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
+ <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com> <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 10:26:10 +0100
+Message-ID: <CAMuHMdU7BuiNGsw9WmBz_5TpPBGB=0HnV+t3hQ+gsdy85-H8hQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Chris,
 
-Hook up the Audio-DMAC and sound device nodes to the SYSC "always-on" PM
-Domain, for a more consistent device-power-area description in DT.
+On Wed, Nov 23, 2016 at 9:39 AM, Chris Paterson
+<Chris.Paterson2@renesas.com> wrote:
+>> On Wed, Nov 23, 2016 at 9:03 AM, Geert Uytterhoeven <geert@linux-
+>> m68k.org> wrote:
+>> > On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
+>> > <chris.paterson2@renesas.com> wrote:
+>> >> Signed-off-by: Ramesh Shanmugasundaram
+>> >> <ramesh.shanmugasundaram@bp.renesas.com>
+>> >> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+>>
+>> BTW, as all patches in this series were Signed-off-by Ramesh first, does that
+>> mean he's the author, and you should have added his From: line, too?
+>
+> Technically I authored these patches, but they are direct ports from Ramesh's r8a7795 patches [1][2][3].
 
-Cfr. commit 0761ff2ad0c581f3 ("ARM: dts: r8a7794: Add SYSC PM Domains").
+OK, I'll replace his SoB by "based on patches for r8a7795 by Ramesh...".
 
-Fixes: 320d6c5a08a4abd3 ("ARM: dts: r8a7794: add sound support")
-Fixes: 298e4ee3d213a076 ("ARM: dts: r8a7794: add Audio-DMAC support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 7d9f0601d3ca..364b4aa8d1c1 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -319,7 +319,7 @@
- 				  "ch12";
- 		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <13>;
- 	};
-@@ -1485,7 +1485,7 @@
- 			      "mix.0", "mix.1",
- 			      "dvc.0", "dvc.1",
- 			      "clk_a", "clk_b", "clk_c", "clk_i";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 
- 		status = "disabled";
- 
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
