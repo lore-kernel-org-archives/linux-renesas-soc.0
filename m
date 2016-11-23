@@ -1,97 +1,106 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936243AbcKWUPx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:53 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/31] ARM: dts: sk-rzg1e: initial device tree
-Date: Wed, 23 Nov 2016 21:14:30 +0100
-Message-Id: <e9189e66dbdcd9705697c8b283b5b142b87da9aa.1479931687.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: horms@verge.net.au, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] ARM: dts: gose: add composite video input
+Date: Wed, 23 Nov 2016 10:56:02 +0200
+Message-ID: <7242337.y1x3Jtg9DJ@avalon>
+In-Reply-To: <2343930.U8AiEBNJBl@avalon>
+References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1476802943-5189-4-git-send-email-ulrich.hecht+renesas@gmail.com> <2343930.U8AiEBNJBl@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hello device tree maintainers,
 
-Add the initial  device tree for the R8A7745 SoC based SK-RZG1E board.
-The board has 1  debug  serial  port (SCIF2); include support for it,
-so that the serial console can  work.
+On Tuesday 18 Oct 2016 18:50:39 Laurent Pinchart wrote:
+> On Tuesday 18 Oct 2016 17:02:23 Ulrich Hecht wrote:
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > ---
+> > 
+> >  arch/arm/boot/dts/r8a7793-gose.dts | 36 +++++++++++++++++++++++++++++++
+> >  1 file changed, 36 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/r8a7793-gose.dts
+> > b/arch/arm/boot/dts/r8a7793-gose.dts index a47ea4b..2606021 100644
+> > --- a/arch/arm/boot/dts/r8a7793-gose.dts
+> > +++ b/arch/arm/boot/dts/r8a7793-gose.dts
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+[snip]
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/Makefile             |  1 +
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts | 39 ++++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+> > +	composite-in@20 {
+> > +		compatible = "adi,adv7180";
+> > +		reg = <0x20>;
+> > +		remote = <&vin1>;
+> > +
+> > +		port {
+> > +			adv7180: endpoint {
+> > +				bus-width = <8>;
+> > +				remote-endpoint = <&vin1ep>;
+> > +			};
+> > +		};
+> 
+> As explained before, you need to update the ADV7180 DT bindings first to
+> document ports. I've discussed this with Hans last week, and we agreed that
+> DT should model physical ports. Unfortunately the ADV7180 comes in four
+> different packages with different feature sets that affect ports.
+> 
+> ADV7180  K CP32 Z               32-Lead Lead Frame Chip Scale Package
+> ADV7180  B CP32 Z               32-Lead Lead Frame Chip Scale Package
+> ADV7180 WB CP32 Z               32-Lead Lead Frame Chip Scale Package
+> 
+> ADV7180  B CP   Z               40-Lead Lead Frame Chip Scale Package
+> ADV7180 WB CP   Z               40-Lead Lead Frame Chip Scale Package
+> 
+> ADV7180  K ST48 Z               48-Lead Low Profile Quad Flat Package
+> ADV7180  B ST48 Z               48-Lead Low Profile Quad Flat Package
+> ADV7180 WB ST48 Z               48-Lead Low Profile Quad Flat Package
+> 
+> ADV7180  B ST   Z               64-Lead Low Profile Quad Flat Package
+> ADV7180 WB ST   Z               64-Lead Low Profile Quad Flat Package
+> 
+> W tells whether the part is qualified for automotive applications. It has no
+> impact from a software point of view. K and B indicate the temperature
+> range, and also have no software impact. The Z suffix indicates that the
+> part is RoHS compliant (they all are) and also has no impact.
+> 
+> Unfortunately the W and K/B qualifiers come before the package qualifier.
+> I'm not sure whether we could simply drop W, K/B and W and specify the
+> following compatible strings
+> 
+> - adv7180cp32
+> - adv7180cp
+> - adv7180st48
+> - adv7180st
+> 
+> or if we need more compatible strings that would match the full chip name.
+> Feedback on that from the device tree maintainers would be appreciated.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index f83ea57c97f9..6f8cd1436ee8 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -678,6 +678,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7743-sk-rzg1m.dtb \
-+	r8a7745-sk-rzg1e.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-diff --git a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-new file mode 100644
-index 000000000000..667ec4b259d5
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -0,0 +1,39 @@
-+/*
-+ * Device Tree Source for the SK-RZG1E board
-+ *
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7745.dtsi"
-+
-+/ {
-+	model = "SK-RZG1E";
-+	compatible = "renesas,sk-rzg1e", "renesas,r8a7745";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
+Your input would be appreciated on this.
+
+> Regardless of what compatible strings end up being used, the bindings should
+> document 3 or 6 input ports depending on the model, and one output port.
+> You can number the input ports from 0 to 2 or 0 to 5 depending on the model
+> and the output port 3 or 6. Another option would be to number the output
+> port 0 and the input ports 1 to 3 or 1 to 6 depending on the model. That
+> would give a fixed number for the output port across all models, but might
+> be a bit consuming as most bindings number input ports before output ports.
+> 
+> For the Gose board you should then add one composite connector to the device
+> tree ("composite-video-connector") and connect it to port 0 of the
+> ADV7180WBCP32.
+> 
+> > +	};
+> > +
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
+
