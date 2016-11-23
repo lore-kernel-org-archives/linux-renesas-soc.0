@@ -1,16 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:60003 "EHLO
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:46959 "EHLO
         metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S938658AbcKWOcG (ORCPT
+        by vger.kernel.org with ESMTP id S936078AbcKWNSk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 09:32:06 -0500
+        Wed, 23 Nov 2016 08:18:40 -0500
 Subject: Re: [PATCH 0/3] arm64: dts: r8a7796: Add CAN/CAN FD support
-To: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms@verge.net.au>
 References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
- <f358442c-8373-328c-1270-709498c133f5@pengutronix.de>
- <20161123142938.GF9057@verge.net.au>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -18,73 +16,59 @@ Cc: Chris Paterson <chris.paterson2@renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <5a04de78-1181-8198-0bd5-edd435a83289@pengutronix.de>
-Date: Wed, 23 Nov 2016 15:31:43 +0100
+Message-ID: <f358442c-8373-328c-1270-709498c133f5@pengutronix.de>
+Date: Wed, 23 Nov 2016 14:18:13 +0100
 MIME-Version: 1.0
-In-Reply-To: <20161123142938.GF9057@verge.net.au>
+In-Reply-To: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="EbF0lrbds0EoArl4hxKMsACVFMBk3V6On"
+ boundary="5AWre6HoBj99473JvGJdx2ubEOfsJo6mf"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---EbF0lrbds0EoArl4hxKMsACVFMBk3V6On
-Content-Type: multipart/mixed; boundary="UC0bpUBoLGnuhRmglfEnqrS9ks89F1S7X";
+--5AWre6HoBj99473JvGJdx2ubEOfsJo6mf
+Content-Type: multipart/mixed; boundary="1XSjpWkA0jnegLIwJasNRRk5U0uI8rTVu";
  protected-headers="v1"
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Simon Horman <horms@verge.net.au>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
- Wolfgang Grandegger <wg@grandegger.com>, Magnus Damm
- <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+To: Chris Paterson <chris.paterson2@renesas.com>,
+ Simon Horman <horms@verge.net.au>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
  linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org
-Message-ID: <5a04de78-1181-8198-0bd5-edd435a83289@pengutronix.de>
+Message-ID: <f358442c-8373-328c-1270-709498c133f5@pengutronix.de>
 Subject: Re: [PATCH 0/3] arm64: dts: r8a7796: Add CAN/CAN FD support
 References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
- <f358442c-8373-328c-1270-709498c133f5@pengutronix.de>
- <20161123142938.GF9057@verge.net.au>
-In-Reply-To: <20161123142938.GF9057@verge.net.au>
+In-Reply-To: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
 
---UC0bpUBoLGnuhRmglfEnqrS9ks89F1S7X
+--1XSjpWkA0jnegLIwJasNRRk5U0uI8rTVu
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On 11/23/2016 03:29 PM, Simon Horman wrote:
-> On Wed, Nov 23, 2016 at 02:18:13PM +0100, Marc Kleine-Budde wrote:
->> On 11/23/2016 01:14 PM, Chris Paterson wrote:
->>> This patch series adds CAN and CAN FD support to the r8a7796.
->>>
->>> Based on renesas-devel-20161122-v4.9-rc6.
->>>
->>> Chris Paterson (3):
->>>   arm64: dts: r8a7796: Add CAN external clock support
->>>   arm64: dts: r8a7796: Add CAN support
->>>   arm64: dts: r8a7796: Add CAN FD support
->>>
->>>  .../devicetree/bindings/net/can/rcar_can.txt       | 12 +++--
->>>  .../devicetree/bindings/net/can/rcar_canfd.txt     | 12 +++--
->>>  arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 61 ++++++++++++=
-++++++++++
->>>  3 files changed, 75 insertions(+), 10 deletions(-)
->>
->> For all three:
->>
->> Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
->>
->> Who takes this series?
+On 11/23/2016 01:14 PM, Chris Paterson wrote:
+> This patch series adds CAN and CAN FD support to the r8a7796.
 >=20
-> I would like to see these patches split up so that the
-> .../devicetree/bindings/ portions can go through you whole
-> the arch/arm64/boot/dts/renesas/ portions go thorugh my renesas tree.
+> Based on renesas-devel-20161122-v4.9-rc6.
+>=20
+> Chris Paterson (3):
+>   arm64: dts: r8a7796: Add CAN external clock support
+>   arm64: dts: r8a7796: Add CAN support
+>   arm64: dts: r8a7796: Add CAN FD support
+>=20
+>  .../devicetree/bindings/net/can/rcar_can.txt       | 12 +++--
+>  .../devicetree/bindings/net/can/rcar_canfd.txt     | 12 +++--
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 61 ++++++++++++++=
+++++++++
+>  3 files changed, 75 insertions(+), 10 deletions(-)
 
-Ok
+For all three:
 
-> Regarding the arch/arm64/boot/dts/renesas/ portion, I would like
-> some consideration given to what effect enabling memory above 4Gb
-> (64bit addressing) would have.
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+
+Who takes this series?
 
 Marc
 
@@ -95,23 +79,23 @@ Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
 Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
---UC0bpUBoLGnuhRmglfEnqrS9ks89F1S7X--
+--1XSjpWkA0jnegLIwJasNRRk5U0uI8rTVu--
 
---EbF0lrbds0EoArl4hxKMsACVFMBk3V6On
+--5AWre6HoBj99473JvGJdx2ubEOfsJo6mf
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEES2FAuYbJvAGobdVQPTuqJaypJWoFAlg1qE8ACgkQPTuqJayp
-JWq3cwf/fI9p5wSj0o4SRxQQmjVSyMHVnxAEBiQ3EJFaBgpa5A+JbOfZQ9Yo71C+
-eDVru2/SuJBkOyjaywMUyp6lOgL684qTponx76mtVIr6nNwiRPYGNDi7vs+Xda7a
-KsYIyHGuX60Swf0ksSYndZbo2k0KaRRBa+Yf+s1lYn4QI3/vycaL8544jbfGuIvE
-RLqbHsqbcOywT7gfQV2ygmRQYia7hBvhIv069UryhxlhtuqEugFUD6a62tflQh90
-+Xb1giL6TMaNGO87bN0Uyf/EgJTFTdyD5VLqfsgvRIYUid798JLWUIrcR9bU5enc
-S6Dej2ejfIvfJjsjH8hrXub7O/vu+w==
-=04rC
+iQEzBAEBCgAdFiEES2FAuYbJvAGobdVQPTuqJaypJWoFAlg1lxUACgkQPTuqJayp
+JWqV3Qf/UIxAPEdr16NQVBQGedsA0TU1be8nZp8v7mDblV4piUieSxAT00/NpRoC
+4UHb5qDYiB28/ezkYdD2FFqclFedEEVUmDuPv5wbFHEPM2DofVCbYRRmyxSDcntE
+vlZWV7Kxgn0peYjDk3Dlg+11EZXpxyL8jdkQTwRupBnk2kVFe7akgG2A/KHUBaH/
+gA3RnytWj9uh69QtbPmXlTBOFqrp02Qo64IO8xVayxw8d3PIQqPrNZ7Q8nsJrYd5
+Kg/ADMTOb76+YlLrVUmOU6BoeqF8dfnRW+vYpzy7NsngMKBI6QNtVEE2clMXak9+
+9BaVtqofZr7o8S7U3Og6barqANluPg==
+=a8NU
 -----END PGP SIGNATURE-----
 
---EbF0lrbds0EoArl4hxKMsACVFMBk3V6On--
+--5AWre6HoBj99473JvGJdx2ubEOfsJo6mf--
