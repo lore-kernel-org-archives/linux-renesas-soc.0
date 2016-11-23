@@ -1,101 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57158 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936101AbcKWUPa (ORCPT
+        with ESMTP id S935645AbcKWUN3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:30 -0500
+        Wed, 23 Nov 2016 15:13:29 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 06/31] ARM: dts: koelsch: use demuxer for I2C1
-Date: Wed, 23 Nov 2016 21:14:13 +0100
-Message-Id: <6723438b3b98ba8434655fa13fc6d5153f70ee98.1479931686.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] ARM: shmobile: r8a7745: add power domain index macros
+Date: Wed, 23 Nov 2016 21:13:20 +0100
+Message-Id: <97ca8402997cd2aa6faaa9cd1e59ec3556d8948c.1479929914.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479929914.git.horms+renesas@verge.net.au>
+References: <cover.1479929914.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to fallback to GPIO for I2C1 on the EXIO-C connector.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
+Add macros usable by the device tree sources to reference R8A7745 SYSC power
+domains by index.
 
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ include/dt-bindings/power/r8a7745-sysc.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a7745-sysc.h
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index c457b43deb7d..d5c80e6bff22 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -50,6 +50,8 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scif1;
-+		i2c9 = &gpioi2c1;
-+		i2c12 = &i2cexio1;
- 	};
- 
- 	chosen {
-@@ -298,6 +300,29 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
+diff --git a/include/dt-bindings/power/r8a7745-sysc.h b/include/dt-bindings/power/r8a7745-sysc.h
+new file mode 100644
+index 000000000000..1844c1171c04
+--- /dev/null
++++ b/include/dt-bindings/power/r8a7745-sysc.h
+@@ -0,0 +1,25 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7745_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7745_SYSC_H__
 +
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio7 16 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio7 15 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
 +
-+	/*
-+	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio1: i2c-12 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-exio1";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -333,6 +358,11 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1";
-+		function = "i2c1";
-+	};
++#define R8A7745_PD_CA7_CPU0		 5
++#define R8A7745_PD_CA7_CPU1		 6
++#define R8A7745_PD_SGX			20
++#define R8A7745_PD_CA7_SCU		21
 +
- 	i2c2_pins: i2c2 {
- 		groups = "i2c2";
- 		function = "i2c2";
-@@ -581,6 +611,11 @@
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "i2c-exio1";
-+};
++/* Always-on power area */
++#define R8A7745_PD_ALWAYS_ON		32
 +
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
- 	pinctrl-names = "default";
++#endif /* __DT_BINDINGS_POWER_R8A7745_SYSC_H__ */
 -- 
 2.7.0.rc3.207.g0ac5344
