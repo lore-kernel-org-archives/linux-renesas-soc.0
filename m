@@ -1,49 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:25482 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755498AbcK3UCi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52192 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936399AbcKWO1e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2016 15:02:38 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: David Miller <davem@davemloft.net>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] sh_eth: add missing checks for status bits
-Date: Wed, 30 Nov 2016 15:01:48 -0500
-Message-Id: <20161130200148.9011-1-chris.brandt@renesas.com>
+        Wed, 23 Nov 2016 09:27:34 -0500
+Date: Wed, 23 Nov 2016 15:19:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] ARM: dts: r8a7743/r8a7745: Add device nodes for PRR
+Message-ID: <20161123141943.GC9057@verge.net.au>
+References: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1479465463-19572-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When streaming a lot of data and the RZ can't keep up, some status bits
-will get set that are not being checked or cleared which cause the
-following messages and the Ethernet driver to stop working. This
-patch fixes that issue.
+On Fri, Nov 18, 2016 at 11:37:41AM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series adds the device nodes for the Product Register to the
+> recently added RZ/G DTS files, which allow to provide SoC product
+> and revision information.
+> 
+> This depends on "[PATCH 0/2] ARM: dts: r8a7743/r8a7745: Move RST nodes
+> before SYSC nodes".
 
-irq 21: nobody cared (try booting with the "irqpoll" option)
-handlers:
-[<c036b71c>] sh_eth_interrupt
-Disabling IRQ #21
-
-Fixes: db893473d313a4ad ("sh_eth: Add support for r7s72100")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/net/ethernet/renesas/sh_eth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 05b0dc5..079f10e 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -523,7 +523,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
- 			  EESR_RFE | EESR_RDE | EESR_RFRMER | EESR_TFE |
--			  EESR_TDE | EESR_ECI,
-+			  EESR_TDE | EESR_ECI | EESR_TUC | EESR_ROC,
- 	.fdr_value	= 0x0000070f,
- 
- 	.no_psr		= 1,
--- 
-2.10.1
+Thanks, I have queued these up for v4.11.
