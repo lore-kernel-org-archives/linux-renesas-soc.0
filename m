@@ -1,41 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936172AbcKWUPg (ORCPT
+        with ESMTP id S935908AbcKWUPW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:36 -0500
+        Wed, 23 Nov 2016 15:15:22 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/31] ARM: dts: alt: Enable UHS-I SDR-104
-Date: Wed, 23 Nov 2016 21:14:17 +0100
-Message-Id: <f9f2fc0b8d659158cafa95df4ca1d38b1c081d94.1479931686.git.horms+renesas@verge.net.au>
+Subject: [PATCH 01/31] ARM: dts: alt: Fix PFC names for DU
+Date: Wed, 23 Nov 2016 21:14:08 +0100
+Message-Id: <5591aa4249436615b12ed980a457840f886656f9.1479931686.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
 References: <cover.1479931686.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And the sd-uhs-sdr104 property to SDHI0.
+From: Jacopo Mondi <jacopo@jmondi.org>
 
+Update the PFC pin groups and function names of DU interface for
+r8a7794 ALT board.
+
+The currently specified pin groups and function names prevented PFC and
+DU interfaces from being correctly configured:
+
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+sh-pfc e6060000.pin-controller: function 'du' not supported
+sh-pfc e6060000.pin-controller: invalid function du in map table
+rcar-du: probe of feb00000.display failed with error -22
+
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 7270d4224b1a..569e3f0e97a5 100644
+index 325d3f972c57..a3e74684289b 100644
 --- a/arch/arm/boot/dts/r8a7794-alt.dts
 +++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -307,6 +307,7 @@
- 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
+@@ -165,8 +165,8 @@
+ 	pinctrl-names = "default";
  
+ 	du_pins: du {
+-		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_dotclkout0";
+-		function = "du";
++		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
++		function = "du1";
+ 	};
+ 
+ 	scif2_pins: scif2 {
 -- 
 2.7.0.rc3.207.g0ac5344
