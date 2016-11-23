@@ -1,50 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35605 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbcK2Jqp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 04:46:45 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161123144054.11919.22936.sendpatchset@little-apple>
-References: <20161123144054.11919.22936.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Nov 2016 10:46:43 +0100
-Message-ID: <CAMuHMdWKG2mOs7Rtsdk1-aprm8Mxe8tQaTn=6sYXg+Xyx6qYeA@mail.gmail.com>
-Subject: Re: [PATCH v3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
+Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
+        geert+renesas@glider.be, joro@8bytes.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
+        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 23 Nov 2016 23:40:54 +0900
+Message-Id: <20161123144054.11919.22936.sendpatchset@little-apple>
+Subject: [PATCH v3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 23, 2016 at 3:40 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Update the IPMMU DT binding documentation to include the r8a7796 compat
-> string for R-Car M3-W.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Update the IPMMU DT binding documentation to include the r8a7796 compat
+string for R-Car M3-W.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+---
 
-                        Geert
+ This particular patch seems ready to merge IMO. How to proceed?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ Changes since V2:
+ - Added Acked-by from Rob Herring and Simon Horman - thanks!
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ Changes since V1:
+ - Added Acked-by from Laurent - thanks!
+
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2016-06-06 11:27:37.560607110 +0900
+@@ -16,6 +16,7 @@ Required Properties:
+     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
+     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
++    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
+     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
+ 
+   - reg: Base address and size of the IPMMU registers.
