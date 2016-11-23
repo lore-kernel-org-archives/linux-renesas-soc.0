@@ -1,43 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52195 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757276AbcKXUP0 (ORCPT
+        with ESMTP id S936195AbcKWUQM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 15:15:26 -0500
+        Wed, 23 Nov 2016 15:16:12 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH renesas-next 2/3] ARM: dts: r8a7778: Use SoC-specific compat string for mmcif
-Date: Thu, 24 Nov 2016 21:15:13 +0100
-Message-Id: <1480018514-31718-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1480018514-31718-1-git-send-email-horms+renesas@verge.net.au>
-References: <1480018514-31718-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 28/31] ARM: dts: r8a7791: Add device node for PRR
+Date: Wed, 23 Nov 2016 21:14:35 +0100
+Message-Id: <366cd112025838fbbb1be73b7efd7f70bed33b65.1479931687.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
+References: <cover.1479931686.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the SoC-specific compat string for mmcif in DT for the r8a7778 SoC.
-This is in keeping with the use of compat strings for mmcif for other
-Renesas ARM based SoCs.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Add a device node for the Product Register, which provides SoC product
+and revision information.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7778.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index f3ffe1d31544..1e59eda8e66e 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -369,7 +369,7 @@
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 091d7fb6ee7d..4c50de2faef1 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1485,6 +1485,11 @@
+ 		};
  	};
  
- 	mmcif: mmc@ffe4e000 {
--		compatible = "renesas,sh-mmcif";
-+		compatible = "renesas,mmcif-r8a7778", "renesas,sh-mmcif";
- 		reg = <0xffe4e000 0x100>;
- 		interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_MMC>;
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7791-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
 2.7.0.rc3.207.g0ac5344
