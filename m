@@ -1,61 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:5361 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933789AbcKWIj7 (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33927 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932933AbcKWIPh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 03:39:59 -0500
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wed, 23 Nov 2016 03:15:37 -0500
+MIME-Version: 1.0
+In-Reply-To: <1479822543-4804-2-git-send-email-chris.paterson2@renesas.com>
+References: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com> <1479822543-4804-2-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 09:14:05 +0100
+Message-ID: <CAMuHMdX-KL9z7Bz=OSo-oD=VWqOGN-As-yfNcBCdPggHjNwNLg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7796: Add CAN support
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [PATCH 1/2] pinctrl: sh-pfc: r8a7796: Add CAN support
-Date: Wed, 23 Nov 2016 08:39:54 +0000
-Message-ID: <HK2PR0601MB1329EC30B19E12920564F4EDB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-References: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
- <1479822543-4804-2-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdX-KL9z7Bz=OSo-oD=VWqOGN-As-yfNcBCdPggHjNwNLg@mail.gmail.com>
-In-Reply-To: <CAMuHMdX-KL9z7Bz=OSo-oD=VWqOGN-As-yfNcBCdPggHjNwNLg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4NCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tDQo+
-IFttYWlsdG86Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0gT24gQmVoYWxmIE9mIEdlZXJ0
-IFV5dHRlcmhvZXZlbg0KPiBTZW50OiAyMyBOb3ZlbWJlciAyMDE2IDA4OjE0DQo+IFRvOiBDaHJp
-cyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiBDYzogTGF1cmVudCBQ
-aW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPjsgR2VlcnQNCj4gVXl0
-dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IExpbnVzIFdhbGxlaWoNCj4gPGxp
-bnVzLndhbGxlaWpAbGluYXJvLm9yZz47IExpbnV4LVJlbmVzYXMgPGxpbnV4LXJlbmVzYXMtDQo+
-IHNvY0B2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgUmFtZXNo
-DQo+IFNoYW5tdWdhc3VuZGFyYW0gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMu
-Y29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gcGluY3RybDogc2gtcGZjOiByOGE3Nzk2
-OiBBZGQgQ0FOIHN1cHBvcnQNCj4gDQo+IEhpIENocmlzLA0KPiANCj4gT24gVHVlLCBOb3YgMjIs
-IDIwMTYgYXQgMjo0OSBQTSwgQ2hyaXMgUGF0ZXJzb24NCj4gPGNocmlzLnBhdGVyc29uMkByZW5l
-c2FzLmNvbT4gd3JvdGU6DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFy
-YW0NCj4gPiA8cmFtZXNoLnNoYW5tdWdhc3VuZGFyYW1AYnAucmVuZXNhcy5jb20+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogQ2hyaXMgUGF0ZXJzb24gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4N
-Cj4gDQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xp
-ZGVyLmJlPg0KPiANCj4gQlRXLCBhcyBhbGwgcGF0Y2hlcyBpbiB0aGlzIHNlcmllcyB3ZXJlIFNp
-Z25lZC1vZmYtYnkgUmFtZXNoIGZpcnN0LCBkb2VzIHRoYXQNCj4gbWVhbiBoZSdzIHRoZSBhdXRo
-b3IsIGFuZCB5b3Ugc2hvdWxkIGhhdmUgYWRkZWQgaGlzIEZyb206IGxpbmUsIHRvbz8NCg0KVGVj
-aG5pY2FsbHkgSSBhdXRob3JlZCB0aGVzZSBwYXRjaGVzLCBidXQgdGhleSBhcmUgZGlyZWN0IHBv
-cnRzIGZyb20gUmFtZXNoJ3MgcjhhNzc5NSBwYXRjaGVzIFsxXVsyXS4NCg0KWzFdIGE0ZDk3OTEg
-cGluY3RybDogc2gtcGZjOiByOGE3Nzk1OiBBZGQgQ0FOIHN1cHBvcnQNClsyXSA0NDEyYmI1IHBp
-bmN0cmw6IHNoLXBmYzogcjhhNzc5NTogQWRkIENBTiBGRCBzdXBwb3J0DQoNCkFwb2xvZ2llcyBm
-b3Igbm90IG1ha2luZyB0aGlzIGNsZWFyIGluIHRoZSBjb3ZlciBsZXR0ZXIuDQoNCktpbmQgcmVn
-YXJkcywgQ2hyaXMNCg0KPiANCj4gVGhhbmtzIQ0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+
-IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0
-dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBs
-aW51eC0NCj4gbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0
-ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20g
-dGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhp
-bmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVz
-IFRvcnZhbGRzDQo=
+Hi Chris,
+
+On Tue, Nov 22, 2016 at 2:49 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+BTW, as all patches in this series were Signed-off-by Ramesh first, does
+that mean he's the author, and you should have added his From: line, too?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
