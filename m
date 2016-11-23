@@ -1,46 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:53978 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752849AbcKRPBD (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36675 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934384AbcKWJ0m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 10:01:03 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] ARM: shmobile: defconfig: Enable CONFIG_VIDEO_ADV7604
-Date: Fri, 18 Nov 2016 16:00:44 +0100
-Message-Id: <20161118150045.26492-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161118150045.26492-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161118150045.26492-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 23 Nov 2016 04:26:42 -0500
 MIME-Version: 1.0
+In-Reply-To: <HK2PR0601MB1329EC30B19E12920564F4EDB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
+ <1479822543-4804-2-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdX-KL9z7Bz=OSo-oD=VWqOGN-As-yfNcBCdPggHjNwNLg@mail.gmail.com> <HK2PR0601MB1329EC30B19E12920564F4EDB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 10:26:41 +0100
+Message-ID: <CAMuHMdV94PbAzm_5ida00E0B6BvYmd0vqwGt4J0F7RF-cykH=Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7796: Add CAN support
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The adv7612 is used on Gen2 boards (Lager, Koelsch and Gose) for HDMI
-input. Enable support for this chip in shmobile_defconfig.
+Hi Chris,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Nov 23, 2016 at 9:39 AM, Chris Paterson
+<Chris.Paterson2@renesas.com> wrote:
+>> From: geert.uytterhoeven@gmail.com
+>> On Tue, Nov 22, 2016 at 2:49 PM, Chris Paterson
+>> <chris.paterson2@renesas.com> wrote:
+>> > Signed-off-by: Ramesh Shanmugasundaram
+>> > <ramesh.shanmugasundaram@bp.renesas.com>
+>> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> BTW, as all patches in this series were Signed-off-by Ramesh first, does that
+>> mean he's the author, and you should have added his From: line, too?
+>
+> Technically I authored these patches, but they are direct ports from Ramesh's r8a7795 patches [1][2].
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index baa07a4..9c311c9 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -144,6 +144,7 @@ CONFIG_VIDEO_RENESAS_JPU=y
- CONFIG_VIDEO_RENESAS_VSP1=y
- # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
- CONFIG_VIDEO_ADV7180=y
-+CONFIG_VIDEO_ADV7604=y
- CONFIG_VIDEO_ML86V7667=y
- CONFIG_DRM=y
- CONFIG_DRM_I2C_ADV7511=y
--- 
-2.10.2
+OK, I'll replace his SoB by "based on patches for r8a7795 by Ramesh...".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
