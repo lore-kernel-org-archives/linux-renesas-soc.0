@@ -1,51 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61389 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934812AbcKWMOg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935813AbcKWUQC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 07:14:36 -0500
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 1/3] arm64: dts: r8a7796: Add CAN external clock support
-Date: Wed, 23 Nov 2016 12:14:24 +0000
-Message-Id: <1479903264-1909-1-git-send-email-chris.paterson2@renesas.com>
+        Wed, 23 Nov 2016 15:16:02 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 24/31] ARM: dts: sk-rzg1e: add Ether support
+Date: Wed, 23 Nov 2016 21:14:31 +0100
+Message-Id: <6b334366e63678c777367002eb87c297a10d2751.1479931687.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
+References: <cover.1479931686.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds external CAN clock node for r8a7796. This clock can be used as
-fCAN clock of CAN and CAN FD controller.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
+Define the SK-RZG1E board dependent part of the Ether device node.
+Enable DHCP and NFS root  for the kernel booting.
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7745-sk-rzg1e.dts | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 41a050d..91d716e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -69,6 +69,13 @@
- 		clock-frequency = <0>;
+diff --git a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+index 667ec4b259d5..97840b340197 100644
+--- a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
++++ b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+@@ -20,7 +20,7 @@
  	};
  
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+@@ -37,3 +37,16 @@
+ &scif2 {
+ 	status = "okay";
+ };
 +
- 	/* External SCIF clock - to be overridden by boards that provide it */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
++&ether {
++	phy-handle = <&phy1>;
++	renesas,ether-link-active-low;
++	status = "okay";
++
++	phy1: ethernet-phy@1 {
++		reg = <1>;
++		interrupt-parent = <&irqc>;
++		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
++		micrel,led-mode = <1>;
++	};
++};
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
