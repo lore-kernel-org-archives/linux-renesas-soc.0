@@ -1,59 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935046AbcKWUPz (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33617 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933065AbcKWIPh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:55 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/31] ARM: dts: r8a7745: add Ether support
-Date: Wed, 23 Nov 2016 21:14:28 +0100
-Message-Id: <bed98a59b62d3e121da2d8372425fd4e424b0aa6.1479931687.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Wed, 23 Nov 2016 03:15:37 -0500
+MIME-Version: 1.0
+In-Reply-To: <1479822543-4804-3-git-send-email-chris.paterson2@renesas.com>
+References: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com> <1479822543-4804-3-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 09:14:10 +0100
+Message-ID: <CAMuHMdU3h-NtUhQ5vS5knn4r05sCBtJZR-h7f0_rqxcjfuVLcg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7796: Add CAN FD support
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Tue, Nov 22, 2016 at 2:49 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Define the generic R8A7745 part of the Ether device node.
-
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 99ccdd0d3014..6fe48157f906 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -418,6 +418,18 @@
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		ether: ethernet@ee700000 {
-+			compatible = "renesas,ether-r8a7745";
-+			reg = <0 0xee700000 0 0x400>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 813>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			phy-mode = "rmii";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	/* External root clock */
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
