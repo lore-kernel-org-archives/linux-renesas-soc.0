@@ -1,49 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941543AbcKQRRz (ORCPT
+Received: from mail-wj0-f195.google.com ([209.85.210.195]:34795 "EHLO
+        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941111AbcKXN0U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:17:55 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 24 Nov 2016 08:26:20 -0500
+MIME-Version: 1.0
+In-Reply-To: <1479993552-10518-1-git-send-email-horms+renesas@verge.net.au>
+References: <1479993552-10518-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Nov 2016 14:26:12 +0100
+Message-ID: <CAMuHMdXwPJ3=jBz3-J7j-gGYtM_Oi7ZDdkq6M0s39aAByzpEhQ@mail.gmail.com>
+Subject: Re: [PATCH linux-pwm/for-next] pwm: renesas-tpu: remove support for sh7372
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/31] ARM: dts: r8a7779: Add device node for PRR
-Date: Thu, 17 Nov 2016 15:11:43 +0100
-Message-Id: <41462d49565f4fb0a18820a75916c5ec9745ed28.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Nov 24, 2016 at 2:19 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Remove support for the SH7372 (SH-Mobile AP4) from the renesas-tpu driver.
+>
+> Commit edf4100906044225 ("ARM: shmobile: sh7372 dtsi: Remove Legacy file")
+> removes this SoC from the kernel in v4.1.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7779.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 3005308a1807..9d3bb74bd3f6 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -590,6 +590,11 @@
- 		};
- 	};
- 
-+	prr: chipid@ff000044 {
-+		compatible = "renesas,prr";
-+		reg = <0xff000044 4>;
-+	};
-+
- 	sysc: system-controller@ffd85000 {
- 		compatible = "renesas,r8a7779-sysc";
- 		reg = <0xffd85000 0x0200>;
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
