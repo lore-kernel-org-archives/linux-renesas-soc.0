@@ -1,261 +1,65 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-i2c@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 06/14] ARM: dts: koelsch: use demuxer for I2C2
-Date: Sun,  6 Nov 2016 21:20:24 +0100
-Message-Id: <20161106202032.5227-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-References: <20161106202032.5227-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:37068 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934111AbcKXQMJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 24 Nov 2016 11:12:09 -0500
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH v2 1/2] can: rcar_can: Add r8a7796 support
+Date: Thu, 24 Nov 2016 16:11:56 +0000
+Message-Id: <1480003917-3953-2-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
+References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
+ <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
-
-Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
-
-Based on work for the r8a7790/lager by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased and fixed aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 195 +++++++++++++++++++---------------
- 1 file changed, 109 insertions(+), 86 deletions(-)
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 5405d337d74486..8d653920957a4b 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -51,7 +51,9 @@
- 		serial0 = &scif0;
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c1;
-+		i2c10 = &gpioi2c2;
- 		i2c12 = &i2cexio1;
-+		i2c13 = &i2chdmi;
- 	};
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 8d40ab2..06bb7cc 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 	      "renesas,can-r8a7793" if CAN controller is a part of R8A7793 SoC.
+ 	      "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
+ 	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
++	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
+ 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
+ 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device.
+ 	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
+@@ -24,11 +25,12 @@ Required properties:
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
  
- 	chosen {
-@@ -312,6 +314,17 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
+-Required properties for "renesas,can-r8a7795" compatible:
+-In R8A7795 SoC, "clkp2" can be CANFD clock. This is a div6 clock and can be
+-used by both CAN and CAN FD controller at the same time. It needs to be scaled
+-to maximum frequency if any of these controllers use it. This is done using
+-the below properties.
++Required properties for "renesas,can-r8a7795" and "renesas,can-r8a7796"
++compatible:
++In R8A7795 and R8A7796 SoCs, "clkp2" can be CANFD clock. This is a div6 clock
++and can be used by both CAN and CAN FD controller at the same time. It needs to
++be scaled to maximum frequency if any of these controllers use it. This is done
++using the below properties:
  
-+	gpioi2c2: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio2 7 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio2 6 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	/*
- 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
- 	 * A fallback to GPIO is provided.
-@@ -323,6 +336,101 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C2.
-+	 */
-+	i2chdmi: i2c-13 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c2>, <&gpioi2c2>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin1>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin1ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio3>;
-+			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		hdmi-in@4c {
-+			compatible = "adi,adv7612";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+			default-input = <0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7612_in: endpoint {
-+						remote-endpoint = <&hdmi_con_in>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					adv7612_out: endpoint {
-+						remote-endpoint = <&vin0ep2>;
-+					};
-+				};
-+			};
-+		};
-+
-+		eeprom@50 {
-+			compatible = "renesas,24c02";
-+			reg = <0x50>;
-+			pagesize = <16>;
-+		};
-+	};
- };
- 
- &du {
-@@ -619,94 +727,9 @@
- 
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <100000>;
--
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin1>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin1ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio3>;
--		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con_out>;
--				};
--			};
--		};
--	};
--
--	hdmi-in@4c {
--		compatible = "adi,adv7612";
--		reg = <0x4c>;
--		interrupt-parent = <&gpio4>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
--		default-input = <0>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7612_in: endpoint {
--					remote-endpoint = <&hdmi_con_in>;
--				};
--			};
--
--			port@2 {
--				reg = <2>;
--				adv7612_out: endpoint {
--					remote-endpoint = <&vin0ep2>;
--				};
--			};
--		};
--	};
--
--	eeprom@50 {
--		compatible = "renesas,24c02";
--		reg = <0x50>;
--		pagesize = <16>;
--	};
- };
- 
- &i2c6 {
+ - assigned-clocks: phandle of clkp2(CANFD) clock.
+ - assigned-clock-rates: maximum frequency of this clock.
 -- 
-2.9.3
-
+1.9.1
