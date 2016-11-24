@@ -1,55 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:43428 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbcKURY7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52202 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965155AbcKXUP3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 12:24:59 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: sh-msiof: Add support for R-Car M3-W
-Date: Mon, 21 Nov 2016 18:24:55 +0100
-Message-Id: <1479749095-13548-1-git-send-email-geert+renesas@glider.be>
+        Thu, 24 Nov 2016 15:15:29 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH renesas-next 0/3] ARM: dts: shmobile: Use SoC-specific compat string for mmcif
+Date: Thu, 24 Nov 2016 21:15:11 +0100
+Message-Id: <1480018514-31718-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-MSIOF in R-Car M3-W (r8a7796) is handled fine by the existing driver.
+Hi,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested with MSIOF2(B) on EXIO connector D of r8a7796/salvator-x, using
-spidev, gpio-74x164, and a logic analyzer.
+this short series makes add of SoC-specific compat strings to the DT of
+the r8a73a4, r8a7778 and sh73a0 SoCs. This is in keeping with the
+rest of the Renesas ARM based SoCs with mmcif enabled in mainline.
 
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- drivers/spi/spi-sh-msiof.c                         | 1 +
- 2 files changed, 2 insertions(+)
+Based on renesas-devel-20161123v2-v4.9-rc6
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index aa005c1d10d95756..da6614c6379604bb 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -10,6 +10,7 @@ Required properties:
- 			 "renesas,msiof-r8a7792" (R-Car V2H)
- 			 "renesas,msiof-r8a7793" (R-Car M2-N)
- 			 "renesas,msiof-r8a7794" (R-Car E2)
-+			 "renesas,msiof-r8a7796" (R-Car M3-W)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- - reg                  : A list of offsets and lengths of the register sets for
- 			 the device.
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 1de3a772eb7d23a8..0012ad02e5696d35 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -980,6 +980,7 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- 	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
- 	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
- 	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
-+	{ .compatible = "renesas,msiof-r8a7796",   .data = &r8a779x_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sh_msiof_match);
+Documentation of these compat strings for the mmcif driver has been posted
+separately as:
+  "[PATCH] mmc: sh_mmcif: Document r8a73a4, r8a7779 and sh73a0 DT bindings".
+
+Simon Horman (3):
+  ARM: dts: r8a73a4: Use SoC-specific compat string for mmcif
+  ARM: dts: r8a7778: Use SoC-specific compat string for mmcif
+  ARM: dts: sh73a0: Use SoC-specific compat string for mmcif
+
+ arch/arm/boot/dts/r8a73a4.dtsi | 4 ++--
+ arch/arm/boot/dts/r8a7778.dtsi | 2 +-
+ arch/arm/boot/dts/sh73a0.dtsi  | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
