@@ -1,63 +1,94 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 01/11] ARM: shmobile: r8a7745: add power domain index macros
-Date: Sat, 05 Nov 2016 00:44:43 +0300
-Message-ID: <4393493.ljHmPRC2t9@wasted.cogentembedded.com>
-In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+Subject: Re: [PATCH v2 0/2] can: Add r8a7796 support to CAN/CAN FD
+To: Chris Paterson <chris.paterson2@renesas.com>
+References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
+ <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <1207930c-e9ad-27eb-f5a6-d889771fd840@pengutronix.de>
+Date: Fri, 25 Nov 2016 08:19:07 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="QxBqHiksG8pIPKJlKpD3AVNwOgmPSv9bh"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference R8A7745 SYSC power
-domains by index.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--QxBqHiksG8pIPKJlKpD3AVNwOgmPSv9bh
+Content-Type: multipart/mixed; boundary="ITqXwFTsfhkdXiHXNwrbkeqfkxBJKer66";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>, Rob Herring
+ <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Simon Horman <horms@verge.net.au>,
+ Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Message-ID: <1207930c-e9ad-27eb-f5a6-d889771fd840@pengutronix.de>
+Subject: Re: [PATCH v2 0/2] can: Add r8a7796 support to CAN/CAN FD
+References: <1479903243-1860-1-git-send-email-chris.paterson2@renesas.com>
+ <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1480003917-3953-1-git-send-email-chris.paterson2@renesas.com>
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+--ITqXwFTsfhkdXiHXNwrbkeqfkxBJKer66
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 11/24/2016 05:11 PM, Chris Paterson wrote:
+> This series adds support for r8a7796 to rcar_can and rcar_canfd.
+>=20
+> Original series: [PATCH 0/3] arm64: dts: r8a7796: Add CAN/CAN FD suppor=
+t.
+>=20
+> Changes since v1:
+> - Split bindings documentation changes from device tree changes.
+> - Rebased on renesas-devel-20161123v2-v4.9-rc6.
+>=20
+>=20
+> Chris Paterson (2):
+>   can: rcar_can: Add r8a7796 support
+>   can: rcar_canfd: Add r8a7796 support
 
----
-Changes in version 2:
-- added Geert's tag.
+Both added to can-next.
 
- include/dt-bindings/power/r8a7745-sysc.h |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Thanks,
+Marc
 
-Index: renesas/include/dt-bindings/power/r8a7745-sysc.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/power/r8a7745-sysc.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7745_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7745_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7745_PD_CA7_CPU0		 5
-+#define R8A7745_PD_CA7_CPU1		 6
-+#define R8A7745_PD_SGX			20
-+#define R8A7745_PD_CA7_SCU		21
-+
-+/* Always-on power area */
-+#define R8A7745_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7745_SYSC_H__ */
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
+
+--ITqXwFTsfhkdXiHXNwrbkeqfkxBJKer66--
+
+--QxBqHiksG8pIPKJlKpD3AVNwOgmPSv9bh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEES2FAuYbJvAGobdVQPTuqJaypJWoFAlg35e0ACgkQPTuqJayp
+JWpoqggAh7NurPpr5AyJuBGperq4j/0gMKUU3wXN2oaSLaRQOP2+vWwp7pjo48SS
+upuiicgFGNe9d7favlzbWPGjlmXgWGWyX9X6exQ2mTD0jd8fvP/axdzfCKdN6/e7
+cG40wB+P7BNIklMtkJSA7FhtpxSPI+Zuny4AVpT8qyJhWrEkaMh/Rp7tjy4c0aFu
+kKEW9Gi9uKn2G7fotiRI6zMTImtAxuHtxySJ/nQ6ZMf/g/7geGRW1iycTnBouwFe
+/+/hf/ESJCUVwo+NydsJ/m3smz6Oh372H+NIi981hfXD06MihqXPVlqcMp5snccH
+NzL/KSUd/V6c3oYdOxmtHFJCo018DA==
+=KYai
+-----END PGP SIGNATURE-----
+
+--QxBqHiksG8pIPKJlKpD3AVNwOgmPSv9bh--
