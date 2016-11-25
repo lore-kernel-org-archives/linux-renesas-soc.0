@@ -1,51 +1,30 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 10/11] arm64: dts: r8a7795: Add device node for PRR
-Date: Mon, 14 Nov 2016 19:37:16 +0100
-Message-Id: <1479148637-5399-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-References: <1479148637-5399-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:27512 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751932AbcKYGP6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 25 Nov 2016 01:15:58 -0500
+Date: Fri, 25 Nov 2016 11:55:31 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: Re: [PATCH dmaengine/next] dmaengine: rcar-dmac: Document R-Car M3-W
+ bindings
+Message-ID: <20161125062531.GC6408@localhost>
+References: <1479997386-22903-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1479997386-22903-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+On Thu, Nov 24, 2016 at 03:23:06PM +0100, Simon Horman wrote:
+> From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - No changes,
+Applied, thanks
 
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 681f54422375f4f7..a39a702b904da73c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -321,6 +321,11 @@
- 			#power-domain-cells = <0>;
- 		};
- 
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7795-sysc";
- 			reg = <0 0xe6180000 0 0x0400>;
 -- 
-1.9.1
-
+~Vinod
