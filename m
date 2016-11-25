@@ -1,62 +1,115 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935908AbcKWUPW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:22 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/31] ARM: dts: alt: Fix PFC names for DU
-Date: Wed, 23 Nov 2016 21:14:08 +0100
-Message-Id: <5591aa4249436615b12ed980a457840f886656f9.1479931686.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH 2/5] scripts: Provide bin2png.sh helper
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kbingham@kernel.org>
+References: <1480082356-23380-1-git-send-email-kbingham@kernel.org>
+ <1480082356-23380-3-git-send-email-kbingham@kernel.org>
+ <1645923.quBPokV3fc@avalon>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <65634562-de02-81ad-9622-015c9155f982@ideasonboard.com>
+Date: Fri, 25 Nov 2016 18:04:08 +0000
+MIME-Version: 1.0
+In-Reply-To: <1645923.quBPokV3fc@avalon>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo@jmondi.org>
+Hi Laurent,
 
-Update the PFC pin groups and function names of DU interface for
-r8a7794 ALT board.
+Thanks for the review :D
 
-The currently specified pin groups and function names prevented PFC and
-DU interfaces from being correctly configured:
+On 25/11/16 17:55, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Friday 25 Nov 2016 13:59:13 Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran@bingham.xyz>
+>>
+>> Identify the size and format from the test output filename, and pass
+>> to raw2rgbpnm for conversion to a PNM file.
+>>
+>> From there we can convert easily to a PNG output file.
+>>
+>> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+>> ---
+>>  scripts/Makefile   |  2 +-
+>>  scripts/bin2png.sh | 34 ++++++++++++++++++++++++++++++++++
+>>  2 files changed, 35 insertions(+), 1 deletion(-)
+>>  create mode 100755 scripts/bin2png.sh
+>>
+>> diff --git a/scripts/Makefile b/scripts/Makefile
+>> index 8c452f4c54ce..6586b2989aed 100644
+>> --- a/scripts/Makefile
+>> +++ b/scripts/Makefile
+>> @@ -1,4 +1,4 @@
+>> -SCRIPTS=logger.sh vsp-lib.sh
+>> +SCRIPTS=$(wildcard *.sh)
+>>
+>>  all:
+>>
+>> diff --git a/scripts/bin2png.sh b/scripts/bin2png.sh
+>> new file mode 100755
+>> index 000000000000..527c5546514d
+>> --- /dev/null
+>> +++ b/scripts/bin2png.sh
+>> @@ -0,0 +1,34 @@
+>> +#!/bin/sh
+>> +
+>> +FILE="$1"
+>> +
+>> +fmt=$(echo $FILE | sed -e
+>> 's/.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin/\1/')
+>> +size=$(echo $FILE |
+>> sed -e 's/.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin/\2/')
+>> +
+>> +case $fmt in
+>> +	yuv410m|yvu410m|yuv411m|yuv420m|yvu420m|yuv422m|yvu422m|yuv444m|
+> yvu444m)
+>> +		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
+>> +		fmt=`echo $fmt | tr 'M' 'P'`
+>> +		;;
+>> +	nv12m|nv21m|nv16m|nv61m)
+>> +		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
+>> +		fmt=`echo $fmt | tr -d 'M'`
+>> +		;;
+>> +	argb555|xrgb555)
+>> +		fmt=RGB555X
+>> +		;;
+>> +	argb32|xrgb32)
+>> +		fmt=RGB32
+>> +		;;
+>> +	abgr32|xbgr32)
+>> +		fmt=BGR32
+>> +		;;
+>> +	*)
+>> +		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
+>> +		;;
+>> +esac
+>> +
+>> +# Only run pnmtopng if the conversion to PNM succeeds
+>> +raw2rgbpnm -s $size -f $fmt $FILE $FILE.pnm && \
+> 
+> How about stripping the .bin suffix to avoid calling the output file *.bin.png 
+> ?
 
-sh-pfc e6060000.pin-controller: function 'du' not supported
-sh-pfc e6060000.pin-controller: invalid function du in map table
-sh-pfc e6060000.pin-controller: function 'du' not supported
-sh-pfc e6060000.pin-controller: invalid function du in map table
-sh-pfc e6060000.pin-controller: function 'du' not supported
-sh-pfc e6060000.pin-controller: invalid function du in map table
-sh-pfc e6060000.pin-controller: function 'du' not supported
-sh-pfc e6060000.pin-controller: invalid function du in map table
-rcar-du: probe of feb00000.display failed with error -22
+Yeah, we can probably manage this :D
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>> +	pnmtopng $FILE.pnm > $FILE.png
+> 
+> We already have a dependency on ImageMagick (although on the target side, not 
+> the host side). Shoould we use convert instead of pnmtopng ?
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 325d3f972c57..a3e74684289b 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -165,8 +165,8 @@
- 	pinctrl-names = "default";
- 
- 	du_pins: du {
--		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_dotclkout0";
--		function = "du";
-+		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
-+		function = "du1";
- 	};
- 
- 	scif2_pins: scif2 {
--- 
-2.7.0.rc3.207.g0ac5344
+Ahh - excellent plan. Actually I'd been using this script on the host
+only, using convert makes it easy to run this on the target as well.
+
+That means in fact that I can convert 'bin' files from tmpfs storage and
+output small png's without hammering the network on NFS usage.
+
+Sounds like a win to me !
+
+> 
+>> +rm $FILE.pnm
+> 
