@@ -1,37 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:53971 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753725AbcKRPBE (ORCPT
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:38541 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753257AbcKYNa5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 10:01:04 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] ARM: shmobile: defconfig: Enable HDMI input
-Date: Fri, 18 Nov 2016 16:00:43 +0100
-Message-Id: <20161118150045.26492-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 25 Nov 2016 08:30:57 -0500
+Received: by mail-wm0-f53.google.com with SMTP id f82so92080937wmf.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Nov 2016 05:30:57 -0800 (PST)
 MIME-Version: 1.0
+In-Reply-To: <1479984534-25468-1-git-send-email-horms+renesas@verge.net.au>
+References: <1479984534-25468-1-git-send-email-horms+renesas@verge.net.au>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 25 Nov 2016 14:30:55 +0100
+Message-ID: <CAPDyKFqQeLb=ngbZZusZ2ea+5XzSgkhD1bAqt4LEipbrhfZwGQ@mail.gmail.com>
+Subject: Re: [PATCH mmc/next] mmc: sh_mobile_sdhi: remove support for sh7372
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On 24 November 2016 at 11:48, Simon Horman <horms+renesas@verge.net.au> wrote:
+> Remove documentation of support for the SH7372 (SH-Mobile AP4) from the MMC
+> driver. The driver itself appears to have no SH7372 specific code.
+>
+> Commit edf4100906044225 ("ARM: shmobile: sh7372 dtsi: Remove Legacy file")
+> removes this SoC from the kernel in v4.1.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Now that the DT updates for HDMI in are in renesas-drivers I think it's 
-a good time to enable the configuration needed to use HDMI input with 
-shmobile_defconifg.
+Thanks, applied for next!
 
-Niklas Söderlund (2):
-  ARM: shmobile: defconfig: Enable CONFIG_VIDEO_ADV7604
-  ARM: shmobile: defconfig: Enable CMA for DMA
+Kind regards
+Uffe
 
- arch/arm/configs/shmobile_defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
-
--- 
-2.10.2
+> ---
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index 13df9c2399c3..1db9e74bb9c1 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -11,7 +11,6 @@ optional bindings can be used.
+>
+>  Required properties:
+>  - compatible:  "renesas,sdhi-shmobile" - a generic sh-mobile SDHI unit
+> -               "renesas,sdhi-sh7372" - SDHI IP on SH7372 SoC
+>                 "renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+>                 "renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+>                 "renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+> --
+> 2.7.0.rc3.207.g0ac5344
+>
