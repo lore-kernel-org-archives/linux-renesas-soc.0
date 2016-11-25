@@ -1,79 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Johan Hovold <johan@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Vince Bridgers <vbridger@opensource.altera.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Li Yang <leoli@freescale.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Felix Fietkau <nbd@openwrt.org>,
-        John Crispin <blogic@openwrt.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars Persson <lars.persson@axis.com>,
-        Mugunthan V N <mugunthanvnm@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH net 08/16] net: ethernet: fs_enet: fix fixed-link phydev leaks
-Date: Mon, 28 Nov 2016 19:25:01 +0100
-Message-Id: <1480357509-28074-9-git-send-email-johan@kernel.org>
-In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
-References: <1480357509-28074-1-git-send-email-johan@kernel.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wj0-f196.google.com ([209.85.210.196]:34460 "EHLO
+        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753226AbcKYJAI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 25 Nov 2016 04:00:08 -0500
+Received: by mail-wj0-f196.google.com with SMTP id xy5so4869638wjc.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Nov 2016 00:59:22 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1480018514-31718-4-git-send-email-horms+renesas@verge.net.au>
+References: <1480018514-31718-1-git-send-email-horms+renesas@verge.net.au> <1480018514-31718-4-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 Nov 2016 09:59:20 +0100
+Message-ID: <CAMuHMdVskas5gW2p2djGshgK9uYgj_PdoJxgtk8KDnfmeEBFpA@mail.gmail.com>
+Subject: Re: [PATCH renesas-next 3/3] ARM: dts: sh73a0: Use SoC-specific
+ compat string for mmcif
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make sure to deregister and free any fixed-link PHY registered using
-of_phy_register_fixed_link() on probe errors and on driver unbind.
+On Thu, Nov 24, 2016 at 9:15 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use the SoC-specific compat string for mmcif in DT for the sh73a0 SoC.
+> This is in keeping with the use of compat strings for mmcif for other
+> Renesas ARM based SoCs.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Fixes: bb74d9a4a87b ("fs_enet: use the new fixed PHY helpers")
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-index dc120c148d97..4b86260584a0 100644
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-@@ -980,7 +980,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
- 		err = clk_prepare_enable(clk);
- 		if (err) {
- 			ret = err;
--			goto out_free_fpi;
-+			goto out_deregister_fixed_link;
- 		}
- 		fpi->clk_per = clk;
- 	}
-@@ -1061,6 +1061,9 @@ static int fs_enet_probe(struct platform_device *ofdev)
- 	of_node_put(fpi->phy_node);
- 	if (fpi->clk_per)
- 		clk_disable_unprepare(fpi->clk_per);
-+out_deregister_fixed_link:
-+	if (of_phy_is_fixed_link(ofdev->dev.of_node))
-+		of_phy_deregister_fixed_link(ofdev->dev.of_node);
- out_free_fpi:
- 	kfree(fpi);
- 	return ret;
-@@ -1079,6 +1082,8 @@ static int fs_enet_remove(struct platform_device *ofdev)
- 	of_node_put(fep->fpi->phy_node);
- 	if (fep->fpi->clk_per)
- 		clk_disable_unprepare(fep->fpi->clk_per);
-+	if (of_phy_is_fixed_link(ofdev->dev.of_node))
-+		of_phy_deregister_fixed_link(ofdev->dev.of_node);
- 	free_netdev(ndev);
- 	return 0;
- }
--- 
-2.7.3
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
