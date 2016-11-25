@@ -1,56 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:33509 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753347AbcKYLex (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36433 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbcKYHxx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Nov 2016 06:34:53 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 25 Nov 2016 02:53:53 -0500
+Received: by mail-wm0-f67.google.com with SMTP id m203so6975897wma.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Nov 2016 23:53:53 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <HK2PR06MB05481690E2ECEFC707F38811D8890@HK2PR06MB0548.apcprd06.prod.outlook.com>
+References: <1479830313-24241-1-git-send-email-geert+renesas@glider.be> <HK2PR06MB05481690E2ECEFC707F38811D8890@HK2PR06MB0548.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 Nov 2016 08:53:51 +0100
+Message-ID: <CAMuHMdXpR++d4gM8DH7pwie+-Ksn_PizRE_QwGtavHmL=9G_2g@mail.gmail.com>
+Subject: Re: renesas-drivers-2016-11-22-v4.9-rc6
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: RE: renesas-drivers-2016-11-22-v4.9-rc6
-Date: Fri, 25 Nov 2016 11:34:49 +0000
-Message-ID: <HK2PR06MB05483B0291C06875A7264ADCD8890@HK2PR06MB0548.apcprd06.prod.outlook.com>
-References: <1479830313-24241-1-git-send-email-geert+renesas@glider.be>
- <HK2PR06MB05481690E2ECEFC707F38811D8890@HK2PR06MB0548.apcprd06.prod.outlook.com>
- <CAMuHMdXpR++d4gM8DH7pwie+-Ksn_PizRE_QwGtavHmL=9G_2g@mail.gmail.com>
-In-Reply-To: <CAMuHMdXpR++d4gM8DH7pwie+-Ksn_PizRE_QwGtavHmL=9G_2g@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IGdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20gW21h
-aWx0bzpnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tXSBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0
-dGVyaG9ldmVuDQo+IFNlbnQ6IEZyaWRheSwgTm92ZW1iZXIgMjUsIDIwMTYgNDo1NCBQTQ0KPiAN
-Cj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBGcmksIE5vdiAyNSwgMjAxNiBhdCA3OjU1IEFN
-LCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
-IHdyb3RlOg0KPiA+PiBBcyB3ZSdyZSBnZXR0aW5nIGNsb3NlIHRvIHRoZSBvcGVuaW5nIG9mIHRo
-ZSBtZXJnZSB3aW5kb3cgZm9yIHY0LjEwLCBJDQo+ID4+IGhhdmUgYWxzbyBwdXNoZWQgcmVuZXNh
-cy1kcml2ZXJzLW5leHQtMjAxNi0xMS0yMi12NC45LXJjNiB0bw0KPiA+PiBodHRwczovL2dpdC5r
-ZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9nZWVydC9yZW5lc2FzLWRyaXZlcnMuZ2l0
-DQo+ID4NCj4gPiBJIGRvbid0IGtub3cgd2h5LCBidXQgSSBjb3VsZCBub3QgZmV0Y2ggdGhpcyB0
-YWcgb24gbXkgbG9jYWwgcmVwby4NCj4gPiBNb3JpbW90by1zYW4gaXMgYWxzbyB0aGUgc2FtZS4g
-RG8geW91IGtub3cgd2h5Pw0KPiANCj4gVGhlIGZvbGxvd2luZyB3b3JrcyBmaW5lIGZvciBtZToN
-Cj4gDQo+ICAgICBnaXQgZmV0Y2ggZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
-ZXJuZWwvZ2l0L2dlZXJ0L3JlbmVzYXMtZHJpdmVycy5naXQNCj4gcmVuZXNhcy1kcml2ZXJzLW5l
-eHQtMjAxNi0xMS0yMi12NC45LXJjNg0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXBseS4gVGhlIGNv
-bW1hbmQgd29ya3MgZmlsZSBmb3IgbWUgdG9vIQ0KDQo+IFdoYXQgYXJlIHlvdSB1c2luZz8gSXQg
-ZG9lc24ndCB3b3JrIHdpdGggdGhlIGh0dHBzIFVSTCBhYm92ZSwgYXMgdGhhdCBvbmUNCj4gaXMg
-bWVhbnQgZm9yIHlvdXIgd2ViIGJyb3V3ZXIuDQoNCkkgZGlkIGp1c3QgImdpdCBmZXRjaCIgb24g
-bXkgbG9jYWwgcmVuZXNhcy1kcml2ZXJzLmdpdCByZXBvLg0KVGhlIGxvY2FsIHJlcG8gaGFzIG90
-aGVyIHRhZ3MgKGUuZy4gcmVuZXNhcy1kcml2ZXJzLTIwMTYtMTEtMjItdjQuOS1yYzYpLg0KQW5k
-IHJlbmVzYXMtZHJpdmVycy1uZXh0LTIwMTYtMTEtMjItdjQuOS1yYzYgZGlkbid0IGV4aXN0Lg0K
-QnV0LCBJIHRyaWVkICJnaXQgZmV0Y2giIG5vdywgYW5kIEkgY291bGQgZ2V0IHRoZSAibmV4dCIg
-dGFnIDspDQpJIGRvbid0IGtub3cgd2h5LCBidXQgdGhhbmsgeW91IGZvciB5b3VyIHN1cHBvcnQh
-DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gR3J7b2V0amUsZWV0aW5n
-fXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2Vl
-cnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBn
-ZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRo
-IHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEkn
-bSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0
-aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGlu
-dXMgVG9ydmFsZHMNCg==
+Hi Shimoda-san,
+
+On Fri, Nov 25, 2016 at 7:55 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> As we're getting close to the opening of the merge window for v4.10, I
+>> have also pushed renesas-drivers-next-2016-11-22-v4.9-rc6 to
+>> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+>
+> I don't know why, but I could not fetch this tag on my local repo.
+> Morimoto-san is also the same. Do you know why?
+
+The following works fine for me:
+
+    git fetch git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+renesas-drivers-next-2016-11-22-v4.9-rc6
+
+What are you using? It doesn't work with the https URL above, as that one
+is meant for your web brouwer.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
