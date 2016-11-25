@@ -1,164 +1,33 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936172AbcKWUPi (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:38 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/31] ARM: dts: r8a7743: initial SoC device tree
-Date: Wed, 23 Nov 2016 21:14:18 +0100
-Message-Id: <34e8d993a68ae459ad98c27afc07647e439deacc.1479931686.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479931686.git.horms+renesas@verge.net.au>
-References: <cover.1479931686.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH] v4l: vsp1: Prevent commencing pipelines before they are setup
+Date: Fri, 25 Nov 2016 02:26:01 +0200
+Message-ID: <1835906.9KsnRA2js0@avalon>
+In-Reply-To: <ac4eeacc-4211-830b-8b70-2cc88d03f01c@ideasonboard.com>
+References: <1478860318-14792-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <ac4eeacc-4211-830b-8b70-2cc88d03f01c@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Kieran,
 
-The  initial R8A7743 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-CPG, and the required clock descriptions.
+On Wednesday 23 Nov 2016 12:28:15 Kieran Bingham wrote:
+> Just FYI,
+> 
+> Whilst this patch is functional on its own, it is likely to be
+> superseded before it gets a chance to be integrated as I am currently
+> reworking vsp1_video_start_streaming(), in particular the use of
+> vsp1_video_setup_pipeline().
+> 
+> The re-work will of course also consider and tackle the issue repaired here.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+OK, I'll ignore this patch then.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 120 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743.dtsi
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-new file mode 100644
-index 000000000000..db9cb41be79b
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -0,0 +1,120 @@
-+/*
-+ * Device Tree Source for the r8a7743 SoC
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a7743-cpg-mssr.h>
-+#include <dt-bindings/power/r8a7743-sysc.h>
-+
-+/ {
-+	compatible = "renesas,r8a7743";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
-+			power-domains = <&sysc R8A7743_PD_CA15_CPU0>;
-+			next-level-cache = <&L2_CA15>;
-+		};
-+
-+		L2_CA15: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A7743_PD_CA15_SCU>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>,
-+			      <0 0xf1002000 0 0x1000>,
-+			      <0 0xf1004000 0 0x2000>,
-+			      <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
-+						 IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv7-timer";
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a7743-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7743-sysc";
-+			reg = <0 0xe6180000 0 0x200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a7743-rst";
-+			reg = <0 0xe6160000 0 0x100>;
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+};
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
