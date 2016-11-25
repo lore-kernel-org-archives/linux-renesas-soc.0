@@ -1,94 +1,173 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:33480 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755930AbcKBV5P (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 17:57:15 -0400
-Received: by mail-lf0-f42.google.com with SMTP id c13so23901919lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Nov 2016 14:57:14 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au
-Subject: [PATCH v5 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-Date: Thu, 03 Nov 2016 00:57:11 +0300
-Message-ID: <2213928.GM4AGq02MQ@wasted.cogentembedded.com>
-In-Reply-To: <1737840.BeMyoUTlpl@wasted.cogentembedded.com>
-References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH 4/5] tests: Test suspend/resume on idle pipelines
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kbingham@kernel.org>
+References: <1480082356-23380-1-git-send-email-kbingham@kernel.org>
+ <1480082356-23380-5-git-send-email-kbingham@kernel.org>
+ <3575572.HLfbuMh0c7@avalon>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <1eb1ab09-0844-e261-bc4a-a2bfa020f9aa@ideasonboard.com>
+Date: Fri, 25 Nov 2016 18:14:53 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <3575572.HLfbuMh0c7@avalon>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by  the device tree sources to reference the R8A7743 CPG
-clocks  by index. The data comes from the  table 7.2b in the revision 0.50
-of the RZ/G Series User's Manual.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
----
-Changes in version 4:
-- added Geert's tag.
+On 25/11/16 17:13, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Friday 25 Nov 2016 13:59:15 Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>>
+>> Provide a test to verify the hardware is functional both before and
+>> after entering a suspend / resume cycle. Make use of the
+>> /sys/power/pm_test functionality provided by CONFIG_PM_DEBUG to perform
+>> the testing
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>  tests/vsp-unit-test-0019.sh | 77 ++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 77 insertions(+)
+>>  create mode 100755 tests/vsp-unit-test-0019.sh
+>>
+>> diff --git a/tests/vsp-unit-test-0019.sh b/tests/vsp-unit-test-0019.sh
+>> new file mode 100755
+>> index 000000000000..e7b94996c1aa
+>> --- /dev/null
+>> +++ b/tests/vsp-unit-test-0019.sh
+>> @@ -0,0 +1,77 @@
+>> +#!/bin/sh
+>> +
+>> +#
+>> +# Test power-management suspend/resume whilst pipelines are idle
+>> +#
+>> +# Utilise the basic RPF->WPF packing test case as a measure that the
+>> hardware
+>> +# is operable while we perform test suspend and resume, and verify that it
+>> is
+>> +# still operable after resume.
+>> +#
+>> +# Format iteration loops are maintained, even with only one format so that
+>> this
+>> +# test can be easily extended to try further formats if needed in the
+>> future.
+>> +#
+> 
+> I don't think testing multiple formats is needed, but I would like the 
+> test_wpf_packing() function to be called twice, to verify that stop -> start 
+> works fine after resume. You could specify two formats to achieve that (with a 
+> comment explaining why at least two formats should be specified).
+> 
 
-Changes in version 3:
-- renumbered the #define's in order to match the R8A7791 CPG clocks;
-- added the reference to the manual in the patch description.
+That sounds like a good plan.
 
-Changes in version 2:
-- reduced the macro value indentation.
+>> +source vsp-lib.sh
+>> +
+>> +features="rpf.0 wpf.0"
+>> +formats="RGB24"
+>> +
+>> +# These can be extracted from /sys/power/pm_test
+>> +suspend_modes="freezer devices platform processors core"
+>> +
+>> +test_wpf_packing() {
+>> +	test_start "Verify WPF packing in $format before/after suspend:$mode"
+>> +
+>> +	pipe_configure rpf-wpf 0 0
+>> +	format_configure rpf-wpf 0 0 ARGB32 1024x768 $format
+>> +
+>> +	vsp_runner rpf.0 &
+>> +	vsp_runner wpf.0
+>> +
+>> +	local result=$(compare_frames)
+>> +
+>> +	test_complete $result
+>> +}
+>> +
+>> +test_hw_pipe() {
+>> +	local format
+>> +
+>> +	for format in $formats ; do
+>> +		test_wpf_packing $format
+>> +	done
+>> +}
+>> +
+>> +test_suspend_resume() {
+>> +	local test_results=0
+> 
+> This variable is unused.
 
- include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Bah, I missed some. I thought I'd cleaned these out before posting. :D
 
-Index: linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
-@@ -0,0 +1,43 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7743 CPG Core Clocks */
-+#define R8A7743_CLK_Z		0
-+#define R8A7743_CLK_ZG		1
-+#define R8A7743_CLK_ZTR		2
-+#define R8A7743_CLK_ZTRD2	3
-+#define R8A7743_CLK_ZT		4
-+#define R8A7743_CLK_ZX		5
-+#define R8A7743_CLK_ZS		6
-+#define R8A7743_CLK_HP		7
-+#define R8A7743_CLK_B		9
-+#define R8A7743_CLK_LB		10
-+#define R8A7743_CLK_P		11
-+#define R8A7743_CLK_CL		12
-+#define R8A7743_CLK_M2		13
-+#define R8A7743_CLK_ZB3		15
-+#define R8A7743_CLK_ZB3D2	16
-+#define R8A7743_CLK_DDR		17
-+#define R8A7743_CLK_SDH		18
-+#define R8A7743_CLK_SD0		19
-+#define R8A7743_CLK_SD2		20
-+#define R8A7743_CLK_SD3		21
-+#define R8A7743_CLK_MMC0	22
-+#define R8A7743_CLK_MP		23
-+#define R8A7743_CLK_QSPI	26
-+#define R8A7743_CLK_CP		27
-+#define R8A7743_CLK_RCAN	28
-+#define R8A7743_CLK_R		29
-+#define R8A7743_CLK_OSC		30
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
+>> +
+>> +	# Test the hardware each side of suspend resume
+>> +	test_hw_pipe
+>> +
+>> +	# Set the test mode
+>> +	echo $mode > /sys/power/pm_test
+>> +
+>> +	# Comence suspend
+>> +	# The pm_test framework will automatically resume after 5 seconds
+>> +	echo mem > /sys/power/state
+>> +
+>> +	# Verify the hardware is still operational
+>> +	test_hw_pipe
+> 
+> Given that the goal is to test proper operation after resume, it would be 
+> better to call test_start and test_complete in this function, based on whether 
+> all the tests passed or not.
+
+Yes, I did go down this route - but stalled. Mainly in getting sensible
+return values from the $(compare_frames) which can be tracked through
+the functions.
+
+I think it looked like I'd have to string match against, pass, skip,
+fail etc ... without a nice easy return value I can add to an integer.
+
+This can be re-examined.
+
+>> +}
+>> +
+>> +test_main() {
+>> +	local mode;
+> 
+> No need for the trailing ;.
+
+I think my hands are preprogrammed in 'c' coding style. Tough to get out
+of sometimes :D
+
+>> +
+>> +	# Check for pm-suspend test option
+>> +	if [ ! -e /sys/power/pm_test ] ; then
+>> +		echo "$0: Suspend Resume testing requires CONFIG_PM_DEBUG"
+>> +		test_complete skip
+>> +		return
+>> +	fi;
+> 
+> Ditto.
+
+Ack.
+
+> 
+>> +
+>> +	for mode in $suspend_modes ; do
+>> +		test_suspend_resume $mode
+>> +	done;
+> 
+> Ditto.
+> 
+
+Ack.
+
+
+>> +}
+>> +
+>> +test_init $0 "$features"
+>> +test_run
+> 
