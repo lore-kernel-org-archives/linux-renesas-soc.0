@@ -1,60 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33596 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbcKYH4U (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:39068 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755287AbcK1VKJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Nov 2016 02:56:20 -0500
-Date: Fri, 25 Nov 2016 08:56:14 +0100
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH mmc/next] mmc: sh_mmcif: Document r8a73a4, r8a7778 and sh73a0
- DT bindings
-Message-ID: <20161125075614.GB14431@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Mon, 28 Nov 2016 16:10:09 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-pm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Subject: [PATCH v3 4/4] arm64: dts: r8a7796: Add R-Car Gen3 thermal support
+Date: Mon, 28 Nov 2016 22:09:24 +0100
+Message-Id: <20161128210924.2921-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
+References: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Simply document new compatibility strings as the driver is already
-activated using a fallback compatibility string.
-
-These compat strings are in keeping with those for all other
-Renesas ARM based SoCs with sh_mmcif enabled in mainline.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Reposted with r8a7778 instead of r8a7779 in subject
+Changes since last version:
 
-I have also posted patches to use these new compat strings
-to bring the DT files of the SoCs in question in-line with those
-for other Renesas ARM based SoCs with sh_mmcif enabled in mainline.
----
- Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 3 +++
- 1 file changed, 3 insertions(+)
+* DTSI updates refactored to meet the above changes
 
-diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-index ff611fa66871..e4ba92aa035e 100644
---- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-+++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-@@ -8,11 +8,14 @@ Required properties:
- 
- - compatible: should be "renesas,mmcif-<soctype>", "renesas,sh-mmcif" as a
-   fallback. Examples with <soctype> are:
-+	- "renesas,mmcif-r8a73a4" for the MMCIF found in r8a73a4 SoCs
- 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
-+	- "renesas,mmcif-r8a7778" for the MMCIF found in r8a7778 SoCs
- 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
- 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
- 	- "renesas,mmcif-r8a7793" for the MMCIF found in r8a7793 SoCs
- 	- "renesas,mmcif-r8a7794" for the MMCIF found in r8a7794 SoCs
-+	- "renesas,mmcif-sh73a0" for the MMCIF found in sh73a0 SoCs
- 
- - clocks: reference to the functional clock
- 
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 9217da98352565..5261f0f77ce2e9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -251,5 +251,63 @@
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a7796-thermal";
++			reg = <0 0xe6198000 0 0x68>,
++			      <0 0xe61a0000 0 0x5c>,
++			      <0 0xe61a8000 0 0x5c>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
++
++		thermal-zones {
++			sensor_thermal1: sensor-thermal1 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 0>;
++
++				trips {
++					sensor1_crit: sensor1-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal2: sensor-thermal2 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 1>;
++
++				trips {
++					sensor2_crit: sensor2-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal3: sensor-thermal3 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 2>;
++
++				trips {
++					sensor3_crit: sensor3-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++		};
+ 	};
+ };
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
