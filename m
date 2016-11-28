@@ -1,9 +1,5 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34817 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751453AbcK1S13 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Nov 2016 13:27:29 -0500
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Johan Hovold <johan@kernel.org>
 To: "David S. Miller" <davem@davemloft.net>
 Cc: Vince Bridgers <vbridger@opensource.altera.com>,
@@ -30,52 +26,44 @@ Cc: Vince Bridgers <vbridger@opensource.altera.com>,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH net 03/16] net: ethernet: altera: fix fixed-link phydev leaks
-Date: Mon, 28 Nov 2016 19:24:56 +0100
-Message-Id: <1480357509-28074-4-git-send-email-johan@kernel.org>
+Subject: [PATCH net 12/16] net: ethernet: mediatek: fix fixed-link phydev leaks
+Date: Mon, 28 Nov 2016 19:25:05 +0100
+Message-Id: <1480357509-28074-13-git-send-email-johan@kernel.org>
 In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
 References: <1480357509-28074-1-git-send-email-johan@kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Make sure to deregister and free any fixed-link PHY registered using
-of_phy_register_fixed_link() on probe errors and on driver unbind.
+of_phy_register_fixed_link() on initialisation errors and on uninit.
 
-Fixes: 7cdbc6f74f8e ("altera tse: add support for fixed-links.")
+Fixes: 0c72c50f6f93 ("net-next: mediatek: add fixed-phy support")
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/net/ethernet/altera/altera_tse_main.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
-index bda31f308cc2..6532829b70d2 100644
---- a/drivers/net/ethernet/altera/altera_tse_main.c
-+++ b/drivers/net/ethernet/altera/altera_tse_main.c
-@@ -819,6 +819,8 @@ static int init_phy(struct net_device *dev)
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 4a62ffd7729d..86a89cbd3ec9 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -318,6 +318,8 @@ static int mtk_phy_connect(struct net_device *dev)
+ 	return 0;
  
- 	if (!phydev) {
- 		netdev_err(dev, "Could not find the PHY\n");
-+		if (fixed_link)
-+			of_phy_deregister_fixed_link(priv->device->of_node);
- 		return -ENODEV;
- 	}
+ err_phy:
++	if (of_phy_is_fixed_link(mac->of_node))
++		of_phy_deregister_fixed_link(mac->of_node);
+ 	of_node_put(np);
+ 	dev_err(eth->dev, "%s: invalid phy\n", __func__);
+ 	return -EINVAL;
+@@ -1923,6 +1925,8 @@ static void mtk_uninit(struct net_device *dev)
+ 	struct mtk_eth *eth = mac->hw;
  
-@@ -1545,10 +1547,15 @@ static int altera_tse_probe(struct platform_device *pdev)
- static int altera_tse_remove(struct platform_device *pdev)
- {
- 	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct altera_tse_private *priv = netdev_priv(ndev);
- 
--	if (ndev->phydev)
-+	if (ndev->phydev) {
- 		phy_disconnect(ndev->phydev);
- 
-+		if (of_phy_is_fixed_link(priv->device->of_node))
-+			of_phy_deregister_fixed_link(priv->device->of_node);
-+	}
-+
- 	platform_set_drvdata(pdev, NULL);
- 	altera_tse_mdio_destroy(ndev);
- 	unregister_netdev(ndev);
+ 	phy_disconnect(dev->phydev);
++	if (of_phy_is_fixed_link(mac->of_node))
++		of_phy_deregister_fixed_link(mac->of_node);
+ 	mtk_irq_disable(eth, MTK_QDMA_INT_MASK, ~0);
+ 	mtk_irq_disable(eth, MTK_PDMA_INT_MASK, ~0);
+ }
 -- 
 2.7.3
