@@ -1,155 +1,81 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
-        chanwoo@kernel.org
-Subject: [PATCH 03/12] power_supply: axp288_charger: Replace the extcon API
-Date: Wed, 30 Nov 2016 14:57:31 +0900
-Message-id: <1480485460-2663-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34817 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751453AbcK1S13 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 28 Nov 2016 13:27:29 -0500
+From: Johan Hovold <johan@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Vince Bridgers <vbridger@opensource.altera.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Li Yang <leoli@freescale.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Felix Fietkau <nbd@openwrt.org>,
+        John Crispin <blogic@openwrt.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars Persson <lars.persson@axis.com>,
+        Mugunthan V N <mugunthanvnm@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH net 03/16] net: ethernet: altera: fix fixed-link phydev leaks
+Date: Mon, 28 Nov 2016 19:24:56 +0100
+Message-Id: <1480357509-28074-4-git-send-email-johan@kernel.org>
+In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
+References: <1480357509-28074-1-git-send-email-johan@kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch uses the resource-managed extcon API for extcon_register_notifier()
-and replaces the deprecated extcon API as following:
-- extcon_get_cable_state_() -> extcon_get_state()
+Make sure to deregister and free any fixed-link PHY registered using
+of_phy_register_fixed_link() on probe errors and on driver unbind.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Fixes: 7cdbc6f74f8e ("altera tse: add support for fixed-links.")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/power/supply/axp288_charger.c | 51 +++++++++--------------------------
- 1 file changed, 13 insertions(+), 38 deletions(-)
+ drivers/net/ethernet/altera/altera_tse_main.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
-index 75b8e0c7402b..1115052e9a69 100644
---- a/drivers/power/supply/axp288_charger.c
-+++ b/drivers/power/supply/axp288_charger.c
-@@ -581,15 +581,15 @@ static void axp288_charger_extcon_evt_worker(struct work_struct *work)
- 	bool old_connected = info->cable.connected;
+diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
+index bda31f308cc2..6532829b70d2 100644
+--- a/drivers/net/ethernet/altera/altera_tse_main.c
++++ b/drivers/net/ethernet/altera/altera_tse_main.c
+@@ -819,6 +819,8 @@ static int init_phy(struct net_device *dev)
  
- 	/* Determine cable/charger type */
--	if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_SDP) > 0) {
-+	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
- 		dev_dbg(&info->pdev->dev, "USB SDP charger  is connected");
- 		info->cable.connected = true;
- 		info->cable.chg_type = POWER_SUPPLY_TYPE_USB;
--	} else if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_CDP) > 0) {
-+	} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
- 		dev_dbg(&info->pdev->dev, "USB CDP charger is connected");
- 		info->cable.connected = true;
- 		info->cable.chg_type = POWER_SUPPLY_TYPE_USB_CDP;
--	} else if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_DCP) > 0) {
-+	} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
- 		dev_dbg(&info->pdev->dev, "USB DCP charger is connected");
- 		info->cable.connected = true;
- 		info->cable.chg_type = POWER_SUPPLY_TYPE_USB_DCP;
-@@ -686,7 +686,7 @@ static int axp288_charger_handle_otg_evt(struct notifier_block *nb,
- 	struct axp288_chrg_info *info =
- 	    container_of(nb, struct axp288_chrg_info, otg.id_nb);
- 	struct extcon_dev *edev = info->otg.cable;
--	int usb_host = extcon_get_cable_state_(edev, EXTCON_USB_HOST);
-+	int usb_host = extcon_get_state(edev, EXTCON_USB_HOST);
- 
- 	dev_dbg(&info->pdev->dev, "external connector USB-Host is %s\n",
- 				usb_host ? "attached" : "detached");
-@@ -841,33 +841,27 @@ static int axp288_charger_probe(struct platform_device *pdev)
- 	/* Register for extcon notification */
- 	INIT_WORK(&info->cable.work, axp288_charger_extcon_evt_worker);
- 	info->cable.nb.notifier_call = axp288_charger_handle_cable_evt;
--	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
--					&info->cable.nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
-+					EXTCON_CHG_USB_SDP, &info->cable.nb);
- 	if (ret) {
- 		dev_err(&info->pdev->dev,
- 			"failed to register extcon notifier for SDP %d\n", ret);
- 		return ret;
+ 	if (!phydev) {
+ 		netdev_err(dev, "Could not find the PHY\n");
++		if (fixed_link)
++			of_phy_deregister_fixed_link(priv->device->of_node);
+ 		return -ENODEV;
  	}
  
--	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
--					&info->cable.nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
-+					EXTCON_CHG_USB_CDP, &info->cable.nb);
- 	if (ret) {
- 		dev_err(&info->pdev->dev,
- 			"failed to register extcon notifier for CDP %d\n", ret);
--		extcon_unregister_notifier(info->cable.edev,
--				EXTCON_CHG_USB_SDP, &info->cable.nb);
- 		return ret;
- 	}
- 
--	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
--					&info->cable.nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
-+					EXTCON_CHG_USB_DCP, &info->cable.nb);
- 	if (ret) {
- 		dev_err(&info->pdev->dev,
- 			"failed to register extcon notifier for DCP %d\n", ret);
--		extcon_unregister_notifier(info->cable.edev,
--				EXTCON_CHG_USB_SDP, &info->cable.nb);
--		extcon_unregister_notifier(info->cable.edev,
--				EXTCON_CHG_USB_CDP, &info->cable.nb);
- 		return ret;
- 	}
- 
-@@ -887,13 +881,13 @@ static int axp288_charger_probe(struct platform_device *pdev)
- 	/* Register for OTG notification */
- 	INIT_WORK(&info->otg.work, axp288_charger_otg_evt_worker);
- 	info->otg.id_nb.notifier_call = axp288_charger_handle_otg_evt;
--	ret = extcon_register_notifier(info->otg.cable, EXTCON_USB_HOST,
--				       &info->otg.id_nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, info->otg.cable,
-+					EXTCON_USB_HOST, &info->otg.id_nb);
- 	if (ret)
- 		dev_warn(&pdev->dev, "failed to register otg notifier\n");
- 
- 	if (info->otg.cable)
--		info->otg.id_short = extcon_get_cable_state_(
-+		info->otg.id_short = extcon_get_state(
- 					info->otg.cable, EXTCON_USB_HOST);
- 
- 	/* Register charger interrupts */
-@@ -921,17 +915,8 @@ static int axp288_charger_probe(struct platform_device *pdev)
- 	return 0;
- 
- intr_reg_failed:
--	if (info->otg.cable)
--		extcon_unregister_notifier(info->otg.cable, EXTCON_USB_HOST,
--					&info->otg.id_nb);
- 	power_supply_unregister(info->psy_usb);
- psy_reg_failed:
--	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
--					&info->cable.nb);
--	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
--					&info->cable.nb);
--	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
--					&info->cable.nb);
- 	return ret;
- }
- 
-@@ -939,16 +924,6 @@ static int axp288_charger_remove(struct platform_device *pdev)
+@@ -1545,10 +1547,15 @@ static int altera_tse_probe(struct platform_device *pdev)
+ static int altera_tse_remove(struct platform_device *pdev)
  {
- 	struct axp288_chrg_info *info =  dev_get_drvdata(&pdev->dev);
+ 	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct altera_tse_private *priv = netdev_priv(ndev);
  
--	if (info->otg.cable)
--		extcon_unregister_notifier(info->otg.cable, EXTCON_USB_HOST,
--					&info->otg.id_nb);
--
--	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
--					&info->cable.nb);
--	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
--					&info->cable.nb);
--	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
--					&info->cable.nb);
- 	power_supply_unregister(info->psy_usb);
+-	if (ndev->phydev)
++	if (ndev->phydev) {
+ 		phy_disconnect(ndev->phydev);
  
- 	return 0;
++		if (of_phy_is_fixed_link(priv->device->of_node))
++			of_phy_deregister_fixed_link(priv->device->of_node);
++	}
++
+ 	platform_set_drvdata(pdev, NULL);
+ 	altera_tse_mdio_destroy(ndev);
+ 	unregister_netdev(ndev);
 -- 
-1.9.1
+2.7.3
