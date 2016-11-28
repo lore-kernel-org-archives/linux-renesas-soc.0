@@ -26,44 +26,74 @@ Cc: Vince Bridgers <vbridger@opensource.altera.com>,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH net 12/16] net: ethernet: mediatek: fix fixed-link phydev leaks
-Date: Mon, 28 Nov 2016 19:25:05 +0100
-Message-Id: <1480357509-28074-13-git-send-email-johan@kernel.org>
+Subject: [PATCH net 15/16] net: ethernet: ti: davinci_emac: fix fixed-link phydev and of-node leaks
+Date: Mon, 28 Nov 2016 19:25:08 +0100
+Message-Id: <1480357509-28074-16-git-send-email-johan@kernel.org>
 In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
 References: <1480357509-28074-1-git-send-email-johan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Make sure to deregister and free any fixed-link PHY registered using
-of_phy_register_fixed_link() on initialisation errors and on uninit.
+of_phy_register_fixed_link() on probe errors and on driver unbind.
 
-Fixes: 0c72c50f6f93 ("net-next: mediatek: add fixed-phy support")
+Also remember to put the of-node reference on probe errors.
+
+Fixes: 1bb6aa56bb38 ("net: davinci_emac: Add support for fixed-link
+PHY")
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/ti/davinci_emac.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 4a62ffd7729d..86a89cbd3ec9 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -318,6 +318,8 @@ static int mtk_phy_connect(struct net_device *dev)
- 	return 0;
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index 84fbe5714f8b..481c7bf0395b 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1767,6 +1767,7 @@ static int davinci_emac_try_get_mac(struct platform_device *pdev,
+  */
+ static int davinci_emac_probe(struct platform_device *pdev)
+ {
++	struct device_node *np = pdev->dev.of_node;
+ 	int rc = 0;
+ 	struct resource *res, *res_ctrl;
+ 	struct net_device *ndev;
+@@ -1805,7 +1806,7 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 	if (!pdata) {
+ 		dev_err(&pdev->dev, "no platform data\n");
+ 		rc = -ENODEV;
+-		goto no_pdata;
++		goto err_free_netdev;
+ 	}
  
- err_phy:
-+	if (of_phy_is_fixed_link(mac->of_node))
-+		of_phy_deregister_fixed_link(mac->of_node);
- 	of_node_put(np);
- 	dev_err(eth->dev, "%s: invalid phy\n", __func__);
- 	return -EINVAL;
-@@ -1923,6 +1925,8 @@ static void mtk_uninit(struct net_device *dev)
- 	struct mtk_eth *eth = mac->hw;
- 
- 	phy_disconnect(dev->phydev);
-+	if (of_phy_is_fixed_link(mac->of_node))
-+		of_phy_deregister_fixed_link(mac->of_node);
- 	mtk_irq_disable(eth, MTK_QDMA_INT_MASK, ~0);
- 	mtk_irq_disable(eth, MTK_PDMA_INT_MASK, ~0);
+ 	/* MAC addr and PHY mask , RMII enable info from platform_data */
+@@ -1941,6 +1942,10 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 		cpdma_chan_destroy(priv->rxchan);
+ 	cpdma_ctlr_destroy(priv->dma);
+ no_pdata:
++	if (of_phy_is_fixed_link(np))
++		of_phy_deregister_fixed_link(np);
++	of_node_put(priv->phy_node);
++err_free_netdev:
+ 	free_netdev(ndev);
+ 	return rc;
  }
+@@ -1956,6 +1961,7 @@ static int davinci_emac_remove(struct platform_device *pdev)
+ {
+ 	struct net_device *ndev = platform_get_drvdata(pdev);
+ 	struct emac_priv *priv = netdev_priv(ndev);
++	struct device_node *np = pdev->dev.of_node;
+ 
+ 	dev_notice(&ndev->dev, "DaVinci EMAC: davinci_emac_remove()\n");
+ 
+@@ -1968,6 +1974,8 @@ static int davinci_emac_remove(struct platform_device *pdev)
+ 	unregister_netdev(ndev);
+ 	of_node_put(priv->phy_node);
+ 	pm_runtime_disable(&pdev->dev);
++	if (of_phy_is_fixed_link(np))
++		of_phy_deregister_fixed_link(np);
+ 	free_netdev(ndev);
+ 
+ 	return 0;
 -- 
 2.7.3
