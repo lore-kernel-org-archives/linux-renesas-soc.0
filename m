@@ -1,27 +1,80 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: kieran.bingham@ideasonboard.com
-Subject: [PATCH 0/2] Salvator-X: Add GPIO keys support
-Date: Mon, 14 Nov 2016 15:07:15 +0200
-Message-Id: <1479128837-30985-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Johan Hovold <johan@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Vince Bridgers <vbridger@opensource.altera.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Li Yang <leoli@freescale.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Felix Fietkau <nbd@openwrt.org>,
+        John Crispin <blogic@openwrt.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars Persson <lars.persson@axis.com>,
+        Mugunthan V N <mugunthanvnm@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH net 16/16] net: dsa: slave: fix fixed-link phydev leaks
+Date: Mon, 28 Nov 2016 19:25:09 +0100
+Message-Id: <1480357509-28074-17-git-send-email-johan@kernel.org>
+In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
+References: <1480357509-28074-1-git-send-email-johan@kernel.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Make sure to deregister and free any fixed-link PHY registered using
+of_phy_register_fixed_link() on slave-setup errors and on slave destroy.
 
-This simple series adds GPIO keys support to both the H3- and M3-W-based
-Salvator-X boards. Please see individual patches for details.
+Fixes: 0d8bcdd383b8 ("net: dsa: allow for more complex PHY setups")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ net/dsa/slave.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Laurent Pinchart (2):
-  arm64: dts: r8a7795: salvator-x: Add GPIO keys support
-  arm64: dts: r8a7796: salvator-x: Add GPIO keys support
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 63 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 63 ++++++++++++++++++++++
- 2 files changed, 126 insertions(+)
-
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index 2a5c20a13fe4..30e2e21d7619 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -1177,6 +1177,8 @@ static int dsa_slave_phy_setup(struct dsa_slave_priv *p,
+ 		ret = dsa_slave_phy_connect(p, slave_dev, p->port);
+ 		if (ret) {
+ 			netdev_err(slave_dev, "failed to connect to port %d: %d\n", p->port, ret);
++			if (phy_is_fixed)
++				of_phy_deregister_fixed_link(port_dn);
+ 			return ret;
+ 		}
+ 	}
+@@ -1292,10 +1294,18 @@ int dsa_slave_create(struct dsa_switch *ds, struct device *parent,
+ void dsa_slave_destroy(struct net_device *slave_dev)
+ {
+ 	struct dsa_slave_priv *p = netdev_priv(slave_dev);
++	struct dsa_switch *ds = p->parent;
++	struct device_node *port_dn;
++
++	port_dn = ds->ports[p->port].dn;
+ 
+ 	netif_carrier_off(slave_dev);
+-	if (p->phy)
++	if (p->phy) {
+ 		phy_disconnect(p->phy);
++
++		if (of_phy_is_fixed_link(port_dn))
++			of_phy_deregister_fixed_link(port_dn);
++	}
+ 	unregister_netdev(slave_dev);
+ 	free_netdev(slave_dev);
+ }
 -- 
-Regards,
+2.7.3
 
-Laurent Pinchart
