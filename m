@@ -1,73 +1,85 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
-        chanwoo@kernel.org
-Subject: [PATCH 07/12] usb: sunxi: Uses the resource-managed extcon API when
- registering extcon notifier
-Date: Wed, 30 Nov 2016 14:57:35 +0900
-Message-id: <1480485460-2663-8-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Johan Hovold <johan@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Vince Bridgers <vbridger@opensource.altera.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Li Yang <leoli@freescale.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Felix Fietkau <nbd@openwrt.org>,
+        John Crispin <blogic@openwrt.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars Persson <lars.persson@axis.com>,
+        Mugunthan V N <mugunthanvnm@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH net 09/16] net: ethernet: gianfar: fix fixed-link phydev leaks
+Date: Mon, 28 Nov 2016 19:25:02 +0100
+Message-Id: <1480357509-28074-10-git-send-email-johan@kernel.org>
+In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
+References: <1480357509-28074-1-git-send-email-johan@kernel.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch just uses the resource-managed extcon API when registering
-the extcon notifier.
+Make sure to deregister and free any fixed-link PHY registered using
+of_phy_register_fixed_link() on probe errors and on driver unbind.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Fixes: be40364544bd ("gianfar: use the new fixed PHY helpers")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/usb/musb/sunxi.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/freescale/gianfar.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/usb/musb/sunxi.c b/drivers/usb/musb/sunxi.c
-index 1408245be18e..4b531551e49d 100644
---- a/drivers/usb/musb/sunxi.c
-+++ b/drivers/usb/musb/sunxi.c
-@@ -261,14 +261,14 @@ static int sunxi_musb_init(struct musb *musb)
- 	writeb(SUNXI_MUSB_VEND0_PIO_MODE, musb->mregs + SUNXI_MUSB_VEND0);
- 
- 	/* Register notifier before calling phy_init() */
--	ret = extcon_register_notifier(glue->extcon, EXTCON_USB_HOST,
--				       &glue->host_nb);
-+	ret = devm_extcon_register_notifier(glue->dev, glue->extcon,
-+					EXTCON_USB_HOST, &glue->host_nb);
- 	if (ret)
- 		goto error_reset_assert;
- 
- 	ret = phy_init(glue->phy);
- 	if (ret)
--		goto error_unregister_notifier;
-+		goto error_reset_assert;
- 
- 	musb->isr = sunxi_musb_interrupt;
- 
-@@ -277,9 +277,6 @@ static int sunxi_musb_init(struct musb *musb)
- 
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index 4b4f5bc0e279..9061c2f82b9c 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -1312,6 +1312,7 @@ static void gfar_init_addr_hash_table(struct gfar_private *priv)
+  */
+ static int gfar_probe(struct platform_device *ofdev)
+ {
++	struct device_node *np = ofdev->dev.of_node;
+ 	struct net_device *dev = NULL;
+ 	struct gfar_private *priv = NULL;
+ 	int err = 0, i;
+@@ -1462,6 +1463,8 @@ static int gfar_probe(struct platform_device *ofdev)
  	return 0;
  
--error_unregister_notifier:
--	extcon_unregister_notifier(glue->extcon, EXTCON_USB_HOST,
--				   &glue->host_nb);
- error_reset_assert:
- 	if (test_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags))
- 		reset_control_assert(glue->rst);
-@@ -303,9 +300,6 @@ static int sunxi_musb_exit(struct musb *musb)
+ register_fail:
++	if (of_phy_is_fixed_link(np))
++		of_phy_deregister_fixed_link(np);
+ 	unmap_group_regs(priv);
+ 	gfar_free_rx_queues(priv);
+ 	gfar_free_tx_queues(priv);
+@@ -1474,11 +1477,16 @@ static int gfar_probe(struct platform_device *ofdev)
+ static int gfar_remove(struct platform_device *ofdev)
+ {
+ 	struct gfar_private *priv = platform_get_drvdata(ofdev);
++	struct device_node *np = ofdev->dev.of_node;
  
- 	phy_exit(glue->phy);
+ 	of_node_put(priv->phy_node);
+ 	of_node_put(priv->tbi_node);
  
--	extcon_unregister_notifier(glue->extcon, EXTCON_USB_HOST,
--				   &glue->host_nb);
--
- 	if (test_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags))
- 		reset_control_assert(glue->rst);
- 
+ 	unregister_netdev(priv->ndev);
++
++	if (of_phy_is_fixed_link(np))
++		of_phy_deregister_fixed_link(np);
++
+ 	unmap_group_regs(priv);
+ 	gfar_free_rx_queues(priv);
+ 	gfar_free_tx_queues(priv);
 -- 
-1.9.1
+2.7.3
+
