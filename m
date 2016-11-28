@@ -1,104 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:33621 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965873AbcKLNNy (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36326 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752427AbcK1S1d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Nov 2016 08:13:54 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 29/32] media: rcar-vin: attach to CSI2 group when the video device is opened
-Date: Sat, 12 Nov 2016 14:12:13 +0100
-Message-Id: <20161112131216.22635-30-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161112131216.22635-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 28 Nov 2016 13:27:33 -0500
+From: Johan Hovold <johan@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Vince Bridgers <vbridger@opensource.altera.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Li Yang <leoli@freescale.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Felix Fietkau <nbd@openwrt.org>,
+        John Crispin <blogic@openwrt.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars Persson <lars.persson@axis.com>,
+        Mugunthan V N <mugunthanvnm@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH net 10/16] net: ethernet: ucc_geth: fix fixed-link phydev leaks
+Date: Mon, 28 Nov 2016 19:25:03 +0100
+Message-Id: <1480357509-28074-11-git-send-email-johan@kernel.org>
+In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
+References: <1480357509-28074-1-git-send-email-johan@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Attempt to attach to the subdevices pointed out by the routing from the
-CSI2 group when the video device is opened. This is the last piece
-missing to enable CSI2 groups on Gen3.
+Make sure to deregister and free any fixed-link PHY registered using
+of_phy_register_fixed_link() on probe errors and on driver unbind.
 
-If the current CSI2 routing for the group points ta a set of subdevices
-which are not present (not all routings are available on all boards) the
-open fall will fail with a -EBUSY error. The VIN instance will be
-unavailable with this error until the group routing is changed to one
-which provides it with a available set of subdevices.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Fixes: 87009814cdbb ("ucc_geth: use the new fixed PHY helpers")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/ucc_geth.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index d363531..1801c6e 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -846,6 +846,7 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
- static int rvin_open(struct file *file)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
-+	struct v4l2_subdev *source, *bridge;
- 	int ret;
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index 186ef8f16c80..f76d33279454 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -3868,9 +3868,8 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 	dev = alloc_etherdev(sizeof(*ugeth));
  
- 	mutex_lock(&vin->lock);
-@@ -857,12 +858,28 @@ static int rvin_open(struct file *file)
- 		goto err_out;
- 
- 	/* If there is no subdevice there is not much we can do */
--	if (!vin_to_source(vin)) {
-+	source = vin_to_source(vin);
-+	if (!source) {
- 		ret = -EBUSY;
- 		goto err_open;
+ 	if (dev == NULL) {
+-		of_node_put(ug_info->tbi_node);
+-		of_node_put(ug_info->phy_node);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto err_deregister_fixed_link;
  	}
  
- 	if (v4l2_fh_is_singular_file(file)) {
-+		if (vin_have_bridge(vin)) {
-+
-+			/* If there are no bridge not much we can do */
-+			bridge = vin_to_bridge(vin);
-+			if (!bridge) {
-+				ret = -EBUSY;
-+				goto err_open;
-+			}
-+
-+			v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
-+
-+			vin_dbg(vin, "Group source: %s bridge: %s\n",
-+				source->name,
-+				bridge->name);
-+		}
- 		pm_runtime_get_sync(vin->dev);
- 		ret = rvin_attach_subdevices(vin);
- 		if (ret) {
-@@ -876,6 +893,8 @@ static int rvin_open(struct file *file)
+ 	ugeth = netdev_priv(dev);
+@@ -3907,10 +3906,7 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 		if (netif_msg_probe(ugeth))
+ 			pr_err("%s: Cannot register net device, aborting\n",
+ 			       dev->name);
+-		free_netdev(dev);
+-		of_node_put(ug_info->tbi_node);
+-		of_node_put(ug_info->phy_node);
+-		return err;
++		goto err_free_netdev;
+ 	}
+ 
+ 	mac_addr = of_get_mac_address(np);
+@@ -3923,16 +3919,29 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 	ugeth->node = np;
+ 
  	return 0;
- err_power:
- 	pm_runtime_put(vin->dev);
-+	if (vin_have_bridge(vin))
-+		v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
- err_open:
- 	v4l2_fh_release(file);
- err_out:
-@@ -904,6 +923,8 @@ static int rvin_release(struct file *file)
- 	if (fh_singular) {
- 		rvin_detach_subdevices(vin);
- 		pm_runtime_put(vin->dev);
-+		if (vin_have_bridge(vin))
-+			v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
- 	}
++
++err_free_netdev:
++	free_netdev(dev);
++err_deregister_fixed_link:
++	if (of_phy_is_fixed_link(np))
++		of_phy_deregister_fixed_link(np);
++	of_node_put(ug_info->tbi_node);
++	of_node_put(ug_info->phy_node);
++
++	return err;
+ }
  
- 	mutex_unlock(&vin->lock);
+ static int ucc_geth_remove(struct platform_device* ofdev)
+ {
+ 	struct net_device *dev = platform_get_drvdata(ofdev);
+ 	struct ucc_geth_private *ugeth = netdev_priv(dev);
++	struct device_node *np = ofdev->dev.of_node;
+ 
+ 	unregister_netdev(dev);
+ 	free_netdev(dev);
+ 	ucc_geth_memclean(ugeth);
++	if (of_phy_is_fixed_link(np))
++		of_phy_deregister_fixed_link(np);
+ 	of_node_put(ugeth->ug_info->tbi_node);
+ 	of_node_put(ugeth->ug_info->phy_node);
+ 
 -- 
-2.10.2
+2.7.3
