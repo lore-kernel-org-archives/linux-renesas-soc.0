@@ -1,60 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:58538 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934975AbcKKUb0 (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33726 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751432AbcK1S13 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Nov 2016 15:31:26 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 3/6] pinctrl: sh-pfc: r8a7795: Simplify get bias logic
-Date: Fri, 11 Nov 2016 21:30:18 +0100
-Message-Id: <20161111203021.3384-4-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
-References: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 28 Nov 2016 13:27:29 -0500
+From: Johan Hovold <johan@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Vince Bridgers <vbridger@opensource.altera.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>,
+        Li Yang <leoli@freescale.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Felix Fietkau <nbd@openwrt.org>,
+        John Crispin <blogic@openwrt.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars Persson <lars.persson@axis.com>,
+        Mugunthan V N <mugunthanvnm@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH net 02/16] of_mdio: add helper to deregister fixed-link PHYs
+Date: Mon, 28 Nov 2016 19:24:55 +0100
+Message-Id: <1480357509-28074-3-git-send-email-johan@kernel.org>
+In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
+References: <1480357509-28074-1-git-send-email-johan@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Add helper to deregister fixed-link PHYs registered using
+of_phy_register_fixed_link().
 
-The last else statement is missing braces and there indentation level
-can be reduced.
+Convert the two drivers that care to deregister their fixed-link PHYs to
+use the new helper, but note that most drivers currently fail to do so.
 
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/ti/cpsw.c | 16 ++--------------
+ drivers/of/of_mdio.c           | 15 +++++++++++++++
+ include/linux/of_mdio.h        |  4 ++++
+ net/dsa/dsa.c                  | 12 ++----------
+ 4 files changed, 23 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 2e8cc2a..6c58563 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -5367,13 +5367,12 @@ static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
- 	reg = pullups[pin].reg;
- 	bit = BIT(pullups[pin].bit);
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 58947aae31c7..9f0646512624 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -2459,20 +2459,8 @@ static void cpsw_remove_dt(struct platform_device *pdev)
+ 		if (strcmp(slave_node->name, "slave"))
+ 			continue;
  
--	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
--		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
--			return PIN_CONFIG_BIAS_PULL_UP;
--		else
--			return PIN_CONFIG_BIAS_PULL_DOWN;
--	} else
-+	if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
- 		return PIN_CONFIG_BIAS_DISABLE;
-+	else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
-+		return PIN_CONFIG_BIAS_PULL_UP;
-+	else
-+		return PIN_CONFIG_BIAS_PULL_DOWN;
+-		if (of_phy_is_fixed_link(slave_node)) {
+-			struct phy_device *phydev;
+-
+-			phydev = of_phy_find_device(slave_node);
+-			if (phydev) {
+-				fixed_phy_unregister(phydev);
+-				/* Put references taken by
+-				 * of_phy_find_device() and
+-				 * of_phy_register_fixed_link().
+-				 */
+-				phy_device_free(phydev);
+-				phy_device_free(phydev);
+-			}
+-		}
++		if (of_phy_is_fixed_link(slave_node))
++			of_phy_deregister_fixed_link(slave_node);
+ 
+ 		of_node_put(slave_data->phy_node);
+ 
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index 5a3145a02547..262281bd68fa 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -490,3 +490,18 @@ int of_phy_register_fixed_link(struct device_node *np)
+ 	return -ENODEV;
+ }
+ EXPORT_SYMBOL(of_phy_register_fixed_link);
++
++void of_phy_deregister_fixed_link(struct device_node *np)
++{
++	struct phy_device *phydev;
++
++	phydev = of_phy_find_device(np);
++	if (!phydev)
++		return;
++
++	fixed_phy_unregister(phydev);
++
++	put_device(&phydev->mdio.dev);	/* of_phy_find_device() */
++	phy_device_free(phydev);	/* fixed_phy_register() */
++}
++EXPORT_SYMBOL(of_phy_deregister_fixed_link);
+diff --git a/include/linux/of_mdio.h b/include/linux/of_mdio.h
+index 2ab233661ae5..a58cca8bcb29 100644
+--- a/include/linux/of_mdio.h
++++ b/include/linux/of_mdio.h
+@@ -29,6 +29,7 @@ struct phy_device *of_phy_attach(struct net_device *dev,
+ extern struct mii_bus *of_mdio_find_bus(struct device_node *mdio_np);
+ extern int of_mdio_parse_addr(struct device *dev, const struct device_node *np);
+ extern int of_phy_register_fixed_link(struct device_node *np);
++extern void of_phy_deregister_fixed_link(struct device_node *np);
+ extern bool of_phy_is_fixed_link(struct device_node *np);
+ 
+ #else /* CONFIG_OF */
+@@ -83,6 +84,9 @@ static inline int of_phy_register_fixed_link(struct device_node *np)
+ {
+ 	return -ENOSYS;
+ }
++static inline void of_phy_deregister_fixed_link(struct device_node *np)
++{
++}
+ static inline bool of_phy_is_fixed_link(struct device_node *np)
+ {
+ 	return false;
+diff --git a/net/dsa/dsa.c b/net/dsa/dsa.c
+index cb0091b99592..7899919cd9f0 100644
+--- a/net/dsa/dsa.c
++++ b/net/dsa/dsa.c
+@@ -506,16 +506,8 @@ dsa_switch_setup(struct dsa_switch_tree *dst, int index,
+ 
+ void dsa_cpu_dsa_destroy(struct device_node *port_dn)
+ {
+-	struct phy_device *phydev;
+-
+-	if (of_phy_is_fixed_link(port_dn)) {
+-		phydev = of_phy_find_device(port_dn);
+-		if (phydev) {
+-			fixed_phy_unregister(phydev);
+-			put_device(&phydev->mdio.dev);
+-			phy_device_free(phydev);
+-		}
+-	}
++	if (of_phy_is_fixed_link(port_dn))
++		of_phy_deregister_fixed_link(port_dn);
  }
  
- static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ static void dsa_switch_destroy(struct dsa_switch *ds)
 -- 
-2.10.2
+2.7.3
