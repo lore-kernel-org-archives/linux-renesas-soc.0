@@ -1,80 +1,105 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
-        chanwoo@kernel.org
-Subject: [PATCH 10/12] usb: phy: qcom-8x16-usb: Replace the extcon API
-Date: Wed, 30 Nov 2016 14:57:38 +0900
-Message-id: <1480485460-2663-11-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:39020 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755186AbcK1VKI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 28 Nov 2016 16:10:08 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-pm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Subject: [PATCH v3 3/4] arm64: dts: r8a7795: Add R-Car Gen3 thermal support
+Date: Mon, 28 Nov 2016 22:09:23 +0100
+Message-Id: <20161128210924.2921-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
+References: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch uses the resource-managed extcon API for extcon_register_notifier()
-and replaces the deprecated extcon API as following:
-- extcon_get_cable_state_() -> extcon_get_state()
-
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/usb/phy/phy-qcom-8x16-usb.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Changes since last version:
 
-diff --git a/drivers/usb/phy/phy-qcom-8x16-usb.c b/drivers/usb/phy/phy-qcom-8x16-usb.c
-index d8593adb3621..fdf686398772 100644
---- a/drivers/usb/phy/phy-qcom-8x16-usb.c
-+++ b/drivers/usb/phy/phy-qcom-8x16-usb.c
-@@ -187,7 +187,7 @@ static int phy_8x16_init(struct usb_phy *phy)
- 	val = ULPI_PWR_OTG_COMP_DISABLE;
- 	usb_phy_io_write(phy, val, ULPI_SET(ULPI_PWR_CLK_MNG_REG));
- 
--	state = extcon_get_cable_state_(qphy->vbus_edev, EXTCON_USB);
-+	state = extcon_get_state(qphy->vbus_edev, EXTCON_USB);
- 	if (state)
- 		phy_8x16_vbus_on(qphy);
- 	else
-@@ -316,23 +316,20 @@ static int phy_8x16_probe(struct platform_device *pdev)
- 		goto off_clks;
- 
- 	qphy->vbus_notify.notifier_call = phy_8x16_vbus_notify;
--	ret = extcon_register_notifier(qphy->vbus_edev, EXTCON_USB,
--				       &qphy->vbus_notify);
-+	ret = devm_extcon_register_notifier(&pdev->dev, qphy->vbus_edev,
-+					EXTCON_USB, &qphy->vbus_notify);
- 	if (ret < 0)
- 		goto off_power;
- 
- 	ret = usb_add_phy_dev(&qphy->phy);
- 	if (ret)
--		goto off_extcon;
-+		goto off_power;
- 
- 	qphy->reboot_notify.notifier_call = phy_8x16_reboot_notify;
- 	register_reboot_notifier(&qphy->reboot_notify);
- 
- 	return 0;
- 
--off_extcon:
--	extcon_unregister_notifier(qphy->vbus_edev, EXTCON_USB,
--				   &qphy->vbus_notify);
- off_power:
- 	regulator_bulk_disable(ARRAY_SIZE(qphy->regulator), qphy->regulator);
- off_clks:
-@@ -347,8 +344,6 @@ static int phy_8x16_remove(struct platform_device *pdev)
- 	struct phy_8x16 *qphy = platform_get_drvdata(pdev);
- 
- 	unregister_reboot_notifier(&qphy->reboot_notify);
--	extcon_unregister_notifier(qphy->vbus_edev, EXTCON_USB,
--				   &qphy->vbus_notify);
- 
- 	/*
- 	 * Ensure that D+/D- lines are routed to uB connector, so
+* DTSI updates refactored to meet the above changes
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 8c15040f2540d6..0699e04fbdf264 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1541,5 +1541,63 @@
+ 				};
+ 			};
+ 		};
++
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a7795-thermal";
++			reg = <0 0xe6198000 0 0x68>,
++			      <0 0xe61a0000 0 0x5c>,
++			      <0 0xe61a8000 0 0x5c>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
++
++		thermal-zones {
++			sensor_thermal1: sensor-thermal1 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 0>;
++
++				trips {
++					sensor1_crit: sensor1-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal2: sensor-thermal2 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 1>;
++
++				trips {
++					sensor2_crit: sensor2-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal3: sensor-thermal3 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 2>;
++
++				trips {
++					sensor3_crit: sensor3-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++		};
+ 	};
+ };
 -- 
-1.9.1
+2.10.2
