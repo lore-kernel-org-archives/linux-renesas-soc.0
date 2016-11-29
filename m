@@ -1,161 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55159 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752345AbcKSD2I (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35823 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751522AbcK2JpP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:28:08 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 02/13] devicetree/bindings: display: Add bindings for LVDS panels
-Date: Sat, 19 Nov 2016 05:28:02 +0200
-Message-Id: <1479526093-7014-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 29 Nov 2016 04:45:15 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161117152631.26426-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161117152631.26426-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Nov 2016 10:45:13 +0100
+Message-ID: <CAMuHMdVk6S6yUJOmuNV_euUFPVqA9SiUMo6udk9q49wY7hbgyA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Support none GPIO pins bias setting
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A.
-Multiple incompatible data link layers have been used over time to
-transmit image data to LVDS panels. This binding supports display panels
-compatible with the JEIDA-59-1999, Open-LDI and VESA SWPG
-specifications.
+On Thu, Nov 17, 2016 at 4:26 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> There are pins on the r8a7795 which are not part of a GPIO bank nor
+> can be muxed between different functions. They do however allow for the
+> bias to be configured. Add those pins to the list of pins and
+> to the bias configuration array.
+>
+> The pins can now be referred to in DT by function names and their bias
+> setting set.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- .../bindings/display/panel/panel-lvds.txt          | 120 +++++++++++++++++++++
- 1 file changed, 120 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
-new file mode 100644
-index 000000000000..b938269f841e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
-@@ -0,0 +1,120 @@
-+LVDS Display Panel
-+==================
-+
-+LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
-+incompatible data link layers have been used over time to transmit image data
-+to LVDS panels. This bindings supports display panels compatible with the
-+following specifications.
-+
-+[JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
-+1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
-+[LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
-+Semiconductor
-+[VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
-+Electronics Standards Association (VESA)
-+
-+Device compatible with those specifications have been marketed under the
-+FPD-Link and FlatLink brands.
-+
-+
-+Required properties:
-+
-+- compatible: Shall contain "panel-lvds" in addition to a mandatory
-+  panel-specific compatible string defined in individual panel bindings. The
-+  "panel-lvds" value shall never be used on its own.
-+- width-mm: See panel-common.txt.
-+- height-mm: See panel-common.txt.
-+- data-mapping: The color signals mapping order, "jeida-18", "jeida-24"
-+  or "vesa-24".
-+
-+Optional properties:
-+
-+- label: See panel-common.txt.
-+- gpios: See panel-common.txt.
-+- backlight: See panel-common.txt.
-+- data-mirror: If set, reverse the bit order described in the data mappings
-+  below on all data lanes, transmitting bits for slots 6 to 0 instead of
-+  0 to 6.
-+
-+Required nodes:
-+
-+- panel-timing: See panel-common.txt.
-+- ports: See panel-common.txt. These bindings require a single port subnode
-+  corresponding to the panel LVDS input.
-+
-+
-+LVDS data mappings are defined as follows.
-+
-+- "jeida-18" - 18-bit data mapping compatible with the [JEIDA], [LDI] and
-+  [VESA] specifications. Data are transferred as follows on 3 LVDS lanes.
-+
-+Slot	    0       1       2       3       4       5       6
-+	________________                         _________________
-+Clock	                \_______________________/
-+	  ______  ______  ______  ______  ______  ______  ______
-+DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
-+DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
-+DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
-+
-+- "jeida-24" - 24-bit data mapping compatible with the [DSIM] and [LDI]
-+  specifications. Data are transferred as follows on 4 LVDS lanes.
-+
-+Slot	    0       1       2       3       4       5       6
-+	________________                         _________________
-+Clock	                \_______________________/
-+	  ______  ______  ______  ______  ______  ______  ______
-+DATA0	><__G2__><__R7__><__R6__><__R5__><__R4__><__R3__><__R2__><
-+DATA1	><__B3__><__B2__><__G7__><__G6__><__G5__><__G4__><__G3__><
-+DATA2	><_CTL2_><_CTL1_><_CTL0_><__B7__><__B6__><__B5__><__B4__><
-+DATA3	><_CTL3_><__B1__><__B0__><__G1__><__G0__><__R1__><__R0__><
-+
-+- "vesa-24" - 24-bit data mapping compatible with the [VESA] specification.
-+  Data are transferred as follows on 4 LVDS lanes.
-+
-+Slot	    0       1       2       3       4       5       6
-+	________________                         _________________
-+Clock	                \_______________________/
-+	  ______  ______  ______  ______  ______  ______  ______
-+DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
-+DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
-+DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
-+DATA3	><_CTL3_><__B7__><__B6__><__G7__><__G6__><__R7__><__R6__><
-+
-+Control signals are mapped as follows.
-+
-+CTL0: HSync
-+CTL1: VSync
-+CTL2: Data Enable
-+CTL3: 0
-+
-+
-+Example
-+-------
-+
-+panel {
-+	compatible = "mitsubishi,aa121td01", "panel-lvds";
-+
-+	width-mm = <261>;
-+	height-mm = <163>;
-+
-+	data-mapping = "jeida-24";
-+
-+	panel-timing {
-+		/* 1280x800 @60Hz */
-+		clock-frequency = <71000000>;
-+		hactive = <1280>;
-+		vactive = <800>;
-+		hsync-len = <70>;
-+		hfront-porch = <20>;
-+		hback-porch = <70>;
-+		vsync-len = <5>;
-+		vfront-porch = <3>;
-+		vback-porch = <15>;
-+	};
-+
-+	port {
-+		panel_in: endpoint {
-+			remote-endpoint = <&lvds_encoder>;
-+		};
-+	};
-+};
--- 
-Regards,
+Will queue in sh-pfc-for-v4.11.
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
