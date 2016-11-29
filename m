@@ -1,110 +1,158 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36165 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751382AbcK3FQo (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:44166 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754530AbcK2SzR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2016 00:16:44 -0500
-Date: Tue, 29 Nov 2016 21:16:38 -0800
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Wolfram Sang <wsa-dev@sang-engineering.com>
+        Tue, 29 Nov 2016 13:55:17 -0500
+Date: Tue, 29 Nov 2016 19:55:13 +0100
+From: Wolfram Sang <wsa-dev@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Hien Dang <hien.dang.eb@renesas.com>,
         Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
 Subject: Re: [PATCH v3 2/4] thermal: rcar_gen3_thermal: Add R-Car Gen3
  thermal driver
-Message-ID: <20161130051637.GA27252@localhost.localdomain>
+Message-ID: <20161129185513.GB3378@katana>
 References: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
  <20161128210924.2921-3-wsa+renesas@sang-engineering.com>
- <20161129020652.GA3701@localhost.localdomain>
- <20161129083241.GA1458@katana>
+ <CAMuHMdW=Ap6ENtN0_Q=MHkhGLy0WuJUPtdb7n34yNAw1rXR4Fw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="UHN/qo2QbUvPLonB"
 Content-Disposition: inline
-In-Reply-To: <20161129083241.GA1458@katana>
+In-Reply-To: <CAMuHMdW=Ap6ENtN0_Q=MHkhGLy0WuJUPtdb7n34yNAw1rXR4Fw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hey,
 
-On Tue, Nov 29, 2016 at 09:32:42AM +0100, Wolfram Sang wrote:
-> Hi Eduardo,
-> 
-> > No commit message ? :-( generally speaking here, it is a good practice
-> > to describe what you are doing, what you have considered, and what you
-> > have tested, just for the sake of code history/documentation.
-> 
-> OK, can do.
+--UHN/qo2QbUvPLonB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-cool!
+Hi Geert,
 
-> 
-> > > +	spin_lock_irqsave(&tsc->lock, flags);
-> > 
-> > Why do you need a full blown spin lock irqsave? Can this locking be
-> > solved by a simple mutex?
-> 
-> Currently, it can be a mutex, yes. This is a "left-over" from the
-> version which had interrupt support. I am not fully done with
-> refactoring the irqs, but I thought it is likely we need this lock then
-> again, so I chose to leave it. I can use a mutex for now if you prefer.
+thanks for the prompt review!
 
-yes, yield the processor when possible, please. So, if your locking
-don't really need to disable IRQs, then avoid doing it. If a mutex is
-enough, use it.
+> > +/* Structure for thermal temperature calculation */
+> > +struct equation_coefs {
+> > +       long a1;
+> > +       long b1;
+> > +       long a2;
+> > +       long b2;
+>=20
+> Why long? Long has a different size for 32-bit and 64-bit platforms.
+> I know this is a driver for arm64, but if you need 64-bits, you want to m=
+ake
+> this clear using s64, or long long.
 
-> 
-> > 
-> > > +static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
-> > > +{
-> > > +	unsigned long flags;
-> > > +
-> > > +	spin_lock_irqsave(&tsc->lock, flags);
-> > > +
-> > > +	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
-> > > +	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  0x0);
-> > > +
-> > > +	udelay(1000);
-> > 
-> > Why do you disable irqs, then busyloop for 1ms?
-> 
-> Uh yes, this is ugly. I don't think we need to lock during init, but
-> I'll double check later.
-> 
+I'll check if int will do.
 
-OK. You could probably leave the (mutex) lock, if you think you need it.
-But also consider using usleep_range(1000) instead. Have a look at:
-Documentation/timers/timers-howto.txt
+> > +static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_ts=
+c *tsc,
+> > +                                    u32 reg, u32 data)
+> > +{
+> > +       iowrite32(data, tsc->base + reg);
+> > +}
+>=20
+> ... so using the "convenience" wrappers is more (typing) work than using
+> io{read,write}32() directly?
 
-for a better explanation.
+TBH I don't favor such macros, but since they are in quite some Renesas
+drivers, I kept them in the first take for consistency reasons.
+
+> > +       tj_2 =3D (CODETSD((ptat[1] - ptat[2]) * 137)
+> > +               / (ptat[0] - ptat[2])) - CODETSD(41);
+>=20
+> Isn't "* 1000" easier to read then CODETSD()?
+
+Probably. I'd think there can be done even more to make this code a tad
+more readable. For the first take, I'd like to keep these formulas,
+though. They come from the BSP and are the only documentation about how
+to calculate the temperature which we currently have. Changing them
+will obsolete all the testing done so far.
 
 
-> > > +	/* default values if FUSEs are missing */
-> > > +	int ptat[3] = { 2351, 1509, 435 };
-> > > +	int thcode[TSC_MAX_NUM][3] = {
-> > > +		{ 3248, 2800, 2221 },
-> > > +		{ 3245, 2795, 2216 },
-> > > +		{ 3250, 2805, 2237 },
-> > > +	};
-> > 
-> > are these fuses valid for both? 7796 and 7797? or would you need a
-> > different array for each version?
-> 
-> According to the information I have today, it is the same array. And all
-> later versions are promised to have fuse registers. This is already
-> documented, but such HW is not available to me currently.
-> 
+> > +       /* calculate coefficients for linear equation */
+> > +       a1_num =3D CODETSD(thcode[1] - thcode[2]);
+> > +       a1_den =3D tj_2 - TJ_3;
+> > +       a1 =3D (10000 * a1_num) / a1_den;
+> > +       b1 =3D (10000 * thcode[2]) - ((a1 * TJ_3) / 1000);
+>=20
+> Rounding needed for / 1000?
 
-Ok. If you have the confirmation for that, then it is fine. I just asked
-because cases I saw (different manufacturer of course) would have different values
-to be programmed, depending on the chip version.
+Ditto.
 
-Anyways, just checking.
+> > +static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+> > +{
+> > +       struct rcar_gen3_thermal_priv *priv;
+> > +       struct device *dev =3D &pdev->dev;
+> > +       struct resource *res;
+> > +       struct thermal_zone_device *zone;
+> > +       int ret, i;
+>=20
+> unsigned int i;
 
-> Thanks for the quick review, very much appreciated!
-> 
->    Wolfram
-> 
+I'll likely produce more bugs if 'i' is not an int ;)
+
+>=20
+> > +       const struct rcar_gen3_thermal_data *match_data =3D of_device_g=
+et_match_data(dev);
+> > +
+> > +       /* default values if FUSEs are missing */
+> > +       int ptat[3] =3D { 2351, 1509, 435 };
+>=20
+> unsigned?
+>=20
+> > +       int thcode[TSC_MAX_NUM][3] =3D {
+>=20
+> unsigned?
+
+Had that before, didn't work. Since the calculation involves
+substraction with other ints, I prefer to have them all the same type as
+the fix.
+
+> > +               tsc =3D devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
+> > +               if (!tsc)
+> > +                       return -ENOMEM;
+>=20
+> Missing pm_runtime_put() etc.?
+>=20
+> ret =3D -ENOMEM;
+> goto error_unregister;
+
+Yes!
+
+Regards,
+
+   Wolfram
+
+
+--UHN/qo2QbUvPLonB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYPc8RAAoJEBQN5MwUoCm2B+IQALLQ8iKaP4/EgZz6eD3qINHb
+jrVHQn18o+vGqYrzugFkJCv8uTrjKCs3IV+qUuJl/kiocmGejg0WmXLW0ieVxQyY
+1SXDc+EyrBQnXuacywHHkWKlgsTi6sSxFzTjMSSnEPDK6WahF23qLdXuYHghkkpa
+t5vbZTy4T9UxEOR03Ld8e7AOwutA3Ltu2ZmrvFCopWDsCWPN6C9DI0XtJSiqlVwu
+SxLSlMvn7GPTgHyoncQsKIAniyyb9pkECiomd2aibhTzjxrnyZmui2a2iSUhqgyv
+yY1WxJo1tCh4KXDFFTWRIAfEMFaHTnMinLXPYk1koaDD/eeIQeP6ZZnqn7rc74uo
+ttccUzyWsFojnBinDm1jhg+tVr62DREmHB1nh4D4XZkInXLKJPWbZxXf+dxY4fkO
+fDxNDjs6N/smoZnpZIBZQRkFGeNE6Ev0ijGYntm3APoEHKPtrZvX2o0qHnvuP0Sb
+YnfrPobuhW1bXZqm/GsD0Df297i7CangpWamVl4XiJX4DclzgU2yJSktIwYv6h6A
+v8nlIKCz1GyGkhtaIZdsSI7iXwSoqHi6SjMtcUdP+CX+O5qe7PIe5i9e2m9BO2cq
+VTsxSEMwAlZ9o0FzoQagQN82QJXZbpVWFBezfewxN+MZSACJfCRvbZrr7RBPs5ma
+LA2iMXPMeqgNphB+blk4
+=iaXa
+-----END PGP SIGNATURE-----
+
+--UHN/qo2QbUvPLonB--
