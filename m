@@ -1,153 +1,157 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57251 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935768AbcKWUPU (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60491 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756484AbcK2JFJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 15:15:20 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL v2] Second Round of Renesas ARM Based SoC DT Updates for v4.10
-Date: Wed, 23 Nov 2016 21:14:33 +0100
-Message-Id: <cover.1479931686.git.horms+renesas@verge.net.au>
+        Tue, 29 Nov 2016 04:05:09 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH v3 10/13] drm: bridge: Set bridges' encoder type
+Date: Tue, 29 Nov 2016 11:04:40 +0200
+Message-Id: <1480410283-28698-11-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Initialize the new drm_bridge::encoder_type field to the right value for
+all external bridge drivers.
 
-Please consider these second round of Renesas ARM based SoC DT updates for
-v4.10.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 1 +
+ drivers/gpu/drm/bridge/analogix-anx78xx.c          | 1 +
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1 +
+ drivers/gpu/drm/bridge/dumb-vga-dac.c              | 1 +
+ drivers/gpu/drm/bridge/dw-hdmi.c                   | 2 ++
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               | 2 ++
+ drivers/gpu/drm/bridge/parade-ps8622.c             | 2 ++
+ drivers/gpu/drm/bridge/sii902x.c                   | 2 ++
+ drivers/gpu/drm/bridge/tc358767.c                  | 2 ++
+ 9 files changed, 14 insertions(+)
 
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 8ed3906dd411..66bbd2073529 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -1030,6 +1030,7 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+ 
+ 	adv7511->bridge.funcs = &adv7511_bridge_funcs;
+ 	adv7511->bridge.of_node = dev->of_node;
++	adv7511->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
+ 
+ 	ret = drm_bridge_add(&adv7511->bridge);
+ 	if (ret) {
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+index a2a82366a771..62be93f7ffaa 100644
+--- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
++++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+@@ -1437,6 +1437,7 @@ static int anx78xx_i2c_probe(struct i2c_client *client,
+ 	}
+ 
+ 	anx78xx->bridge.funcs = &anx78xx_bridge_funcs;
++	anx78xx->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
+ 
+ 	err = drm_bridge_add(&anx78xx->bridge);
+ 	if (err < 0) {
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 1835f1fdad19..f0f9c5024e3e 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1229,6 +1229,7 @@ static int analogix_dp_create_bridge(struct drm_device *drm_dev,
+ 
+ 	bridge->driver_private = dp;
+ 	bridge->funcs = &analogix_dp_bridge_funcs;
++	bridge->encoder_type = DRM_MODE_ENCODER_TMDS;
+ 
+ 	ret = drm_bridge_attach(dp->encoder, bridge, NULL);
+ 	if (ret) {
+diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+index b33e3f829e4f..036c54c849e6 100644
+--- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
++++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+@@ -182,6 +182,7 @@ static int dumb_vga_probe(struct platform_device *pdev)
+ 
+ 	vga->bridge.funcs = &dumb_vga_bridge_funcs;
+ 	vga->bridge.of_node = pdev->dev.of_node;
++	vga->bridge.encoder_type = DRM_MODE_ENCODER_DAC;
+ 
+ 	ret = drm_bridge_add(&vga->bridge);
+ 	if (ret && !IS_ERR(vga->ddc))
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 432e0e3fff72..0ac28aa76017 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1841,6 +1841,8 @@ static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
+ 	hdmi->bridge = bridge;
+ 	bridge->driver_private = hdmi;
+ 	bridge->funcs = &dw_hdmi_bridge_funcs;
++	bridge->encoder_type = DRM_MODE_ENCODER_TMDS;
++
+ 	ret = drm_bridge_attach(encoder, bridge, NULL);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to initialize bridge with drm\n");
+diff --git a/drivers/gpu/drm/bridge/nxp-ptn3460.c b/drivers/gpu/drm/bridge/nxp-ptn3460.c
+index f1a99938e924..8be117cc024f 100644
+--- a/drivers/gpu/drm/bridge/nxp-ptn3460.c
++++ b/drivers/gpu/drm/bridge/nxp-ptn3460.c
+@@ -349,6 +349,8 @@ static int ptn3460_probe(struct i2c_client *client,
+ 
+ 	ptn_bridge->bridge.funcs = &ptn3460_bridge_funcs;
+ 	ptn_bridge->bridge.of_node = dev->of_node;
++	ptn_bridge->bridge.encoder_type = DRM_MODE_ENCODER_LVDS;
++
+ 	ret = drm_bridge_add(&ptn_bridge->bridge);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to add bridge\n");
+diff --git a/drivers/gpu/drm/bridge/parade-ps8622.c b/drivers/gpu/drm/bridge/parade-ps8622.c
+index 6f7c2f9860d2..37ac7211139a 100644
+--- a/drivers/gpu/drm/bridge/parade-ps8622.c
++++ b/drivers/gpu/drm/bridge/parade-ps8622.c
+@@ -615,6 +615,8 @@ static int ps8622_probe(struct i2c_client *client,
+ 
+ 	ps8622->bridge.funcs = &ps8622_bridge_funcs;
+ 	ps8622->bridge.of_node = dev->of_node;
++	ps8622->bridge.encoder_type = DRM_MODE_ENCODER_LVDS;
++
+ 	ret = drm_bridge_add(&ps8622->bridge);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to add bridge\n");
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index 9126d0306ab5..ad4663dea333 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -418,6 +418,8 @@ static int sii902x_probe(struct i2c_client *client,
+ 
+ 	sii902x->bridge.funcs = &sii902x_bridge_funcs;
+ 	sii902x->bridge.of_node = dev->of_node;
++	sii902x->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
++
+ 	ret = drm_bridge_add(&sii902x->bridge);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to add drm_bridge\n");
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 44d476ea6d2e..934333cb647b 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -1353,6 +1353,8 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 
+ 	tc->bridge.funcs = &tc_bridge_funcs;
+ 	tc->bridge.of_node = dev->of_node;
++	tc->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
++
+ 	ret = drm_bridge_add(&tc->bridge);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to add drm_bridge: %d\n", ret);
+-- 
+Regards,
 
-This pull request is based on an octopus merge of:
-* "Renesas RZ/G1M and RZ/G1E CPG Core Clock Definitions" sent by
-  Geert Uytterhoeven which corresponds to the rzg-clock-defs-tag1
-  in his renesas-drivers tree. These are already present in the clock
-  tree.
-* Commit 538321bd9718 ("ARM: shmobile: r8a7743: add power domain index macros")
-  which is the first commit (of two) of "Renesas ARM Based SoC Drivers
-  Updates for v4.10", tagged as renesas-drivers-for-v4.10, which you have
-  already pulled.
-* Commit 97ca8402997c ("ARM: shmobile: r8a7745: add power domain index macros")
-  which is the first commit (of two) of "Renesas ARM Based SoC r8a7745 SYSC
-  Driver Updates for v4.10", tagged as renesas-r8a7745-sysc-for-v4.10,
-  which I have also sent a pull request for.
-
-The reason for each of the above is to provide header files with macros
-used in the DT files for the newly added r8a7743 and r8a7745 SoCs.
-
-I understand that it is not usual practice to include merges individual commits
-as the basis for a pull-request. In this case it has been done to provide
-a minimal set of dependencies. And in particular pull in only header files
-and no driver code.
-
-In this scheme the two commits in question will also end up merged into the
-next/drivers branch of the arm-soc tree. Each of the two commits in
-question is based on v4.9-rc1. It was concluded in discussion with Arnd
-on IRC that this is the best (least bad?) option available in this case.
-
-
-This pull request is targeted at the next/dt branch of the arm-soc tree.
-
-It introduces some minor merge conflicts in:
-  Documentation/devicetree/bindings/arm/shmobile.txt
-The resolution is to take both sides. A sample merge resolution is
-provided in the renesas-next-20161123v2-v4.9-rc1 tag of the renesas tree.
-
-
-This pull request is an update of a previous pull request containing
-the same patches. The motivation for reposting is to provide a pull-request
-based on minimal dependencies.
-
-
-The following changes since commit 028289536c6e46fbaa949124a934e7445ccbcf64:
-
-  Merge tag 'rzg-clock-defs-tag1'; commit '538321bd9718'; commit '97ca8402997c' into dt-for-v4.10 (2016-11-23 20:51:44 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.10
-
-for you to fetch changes up to 2357adb625f15e7f2b05a1464076c79876563636:
-
-  ARM: dts: r8a7794: Add device node for PRR (2016-11-23 20:52:36 +0100)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC DT Updates for v4.10
-
-Enhancements:
-* Add device nodes for PRR
-* Add r8a7745 SoC and sk-rzg1e board
-* Add r8a7743 SoC and sk-rzg1m board
-* Enable SDR-104 and I2C demuxer on alt, koelsch and lager boards
-
-Corrections:
-* Use SYSC "always-on" PM Domain for sound on r8a7794 SoC
-* Correct hsusb parent clock on r8a7794 SoC
-* Correct PFC names for DU on alt board
-
-----------------------------------------------------------------
-Geert Uytterhoeven (9):
-      ARM: dts: r8a7794: Correct hsusb parent clock
-      ARM: dts: r8a7794: Use SYSC "always-on" PM Domain for sound
-      ARM: dts: r8a73a4: Add device node for PRR
-      ARM: dts: r8a7779: Add device node for PRR
-      ARM: dts: r8a7790: Add device node for PRR
-      ARM: dts: r8a7791: Add device node for PRR
-      ARM: dts: r8a7792: Add device node for PRR
-      ARM: dts: r8a7793: Add device node for PRR
-      ARM: dts: r8a7794: Add device node for PRR
-
-Jacopo Mondi (1):
-      ARM: dts: alt: Fix PFC names for DU
-
-Sergei Shtylyov (14):
-      ARM: dts: r8a7743: initial SoC device tree
-      ARM: dts: r8a7743: add SYS-DMAC support
-      ARM: dts: r8a7743: add [H]SCIF{A|B} support
-      ARM: dts: r8a7743: add Ether support
-      ARM: dts: r8a7743: add IRQC support
-      ARM: dts: sk-rzg1m: initial device tree
-      ARM: dts: sk-rzg1m: add Ether support
-      ARM: dts: r8a7745: initial SoC device tree
-      ARM: dts: r8a7745: add SYS-DMAC support
-      ARM: dts: r8a7745: add [H]SCIF{|A|B} support
-      ARM: dts: r8a7745: add Ether support
-      ARM: dts: r8a7745: add IRQC support
-      ARM: dts: sk-rzg1e: initial device tree
-      ARM: dts: sk-rzg1e: add Ether support
-
-Simon Horman (7):
-      ARM: dts: lager: rename and reindex i2cexio
-      ARM: dts: lager: use demuxer for IIC1/I2C1
-      ARM: dts: koelsch: use demuxer for I2C1
-      ARM: dts: alt: use demuxer for I2C4
-      ARM: dts: lager: Enable UHS-I SDR-104
-      ARM: dts: koelsch: Enable UHS-I SDR-104
-      ARM: dts: alt: Enable UHS-I SDR-104
-
- arch/arm/boot/dts/Makefile             |   2 +
- arch/arm/boot/dts/r8a73a4.dtsi         |   5 +
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |  57 ++++
- arch/arm/boot/dts/r8a7743.dtsi         | 476 +++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |  52 ++++
- arch/arm/boot/dts/r8a7745.dtsi         | 476 +++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7779.dtsi         |   5 +
- arch/arm/boot/dts/r8a7790-lager.dts    |  52 +++-
- arch/arm/boot/dts/r8a7790.dtsi         |   5 +
- arch/arm/boot/dts/r8a7791-koelsch.dts  |  36 +++
- arch/arm/boot/dts/r8a7791.dtsi         |   5 +
- arch/arm/boot/dts/r8a7792.dtsi         |   5 +
- arch/arm/boot/dts/r8a7793.dtsi         |   5 +
- arch/arm/boot/dts/r8a7794-alt.dts      |  40 ++-
- arch/arm/boot/dts/r8a7794.dtsi         |  11 +-
- 15 files changed, 1220 insertions(+), 12 deletions(-)
- create mode 100644 arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
- create mode 100644 arch/arm/boot/dts/r8a7743.dtsi
- create mode 100644 arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
- create mode 100644 arch/arm/boot/dts/r8a7745.dtsi
+Laurent Pinchart
