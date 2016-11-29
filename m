@@ -1,25 +1,26 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 29 Nov 2016 20:35:40 -0500 (EST)
-Message-Id: <20161129.203540.1821619500745777807.davem@davemloft.net>
-To: geert+renesas@glider.be
-Cc: f.fainelli@gmail.com, josh.cartwright@ni.com,
-        nathan.sullivan@ni.com, zach.brown@ni.com,
-        woojung.huh@microchip.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 28 Nov 2016 18:05:57 -0600
+From: Zach Brown <zach.brown@ni.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+CC: Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Josh Cartwright <josh.cartwright@ni.com>,
+        Nathan Sullivan <nathan.sullivan@ni.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2] net: phy: Fix use after free in phy_detach()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1480342711-26407-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <20161129000556.GA11698@zach-desktop>
 References: <1480342711-26407-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1480342711-26407-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Mon, 28 Nov 2016 15:18:31 +0100
-
+On Mon, Nov 28, 2016 at 03:18:31PM +0100, Geert Uytterhoeven wrote:
 > If device_release_driver(&phydev->mdio.dev) is called, it releases all
 > resources belonging to the PHY device. Hence the subsequent call to
 > phy_led_triggers_unregister() will access already freed memory when
@@ -42,5 +43,37 @@ Date: Mon, 28 Nov 2016 15:18:31 +0100
 >     and additional debug code printing the address of
 >     phy->phy_led_triggers. Adding poisoning of freed memory to
 >     devres_log() will cause a crash.
+> ---
+>  drivers/net/phy/phy_device.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index ba86c191a13ea81c..a1d6e13b1b4113a4 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -981,6 +981,8 @@ void phy_detach(struct phy_device *phydev)
+>  	phydev->attached_dev = NULL;
+>  	phy_suspend(phydev);
+>  
+> +	phy_led_triggers_unregister(phydev);
+> +
+>  	/* If the device had no specific driver before (i.e. - it
+>  	 * was using the generic driver), we unbind the device
+>  	 * from the generic driver so that there's a chance a
+> @@ -994,8 +996,6 @@ void phy_detach(struct phy_device *phydev)
+>  		}
+>  	}
+>  
+> -	phy_led_triggers_unregister(phydev);
+> -
+>  	/*
+>  	 * The phydev might go away on the put_device() below, so avoid
+>  	 * a use-after-free bug by reading the underlying bus first.
+> -- 
+> 1.9.1
+> 
 
-Applied, thanks.
+I was able to recreate the issue and confirmed this patch fixes it.
+Tested-by: Zach Brown <zach.brown@ni.com>
+
+--Zach
