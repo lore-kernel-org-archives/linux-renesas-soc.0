@@ -1,14 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:44166 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754530AbcK2SzR (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34738 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754522AbcK2InU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 13:55:17 -0500
-Date: Tue, 29 Nov 2016 19:55:13 +0100
-From: Wolfram Sang <wsa-dev@sang-engineering.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        Tue, 29 Nov 2016 03:43:20 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161128210924.2921-3-wsa+renesas@sang-engineering.com>
+References: <20161128210924.2921-1-wsa+renesas@sang-engineering.com> <20161128210924.2921-3-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Nov 2016 09:43:17 +0100
+Message-ID: <CAMuHMdW=Ap6ENtN0_Q=MHkhGLy0WuJUPtdb7n34yNAw1rXR4Fw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -16,143 +20,130 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Hien Dang <hien.dang.eb@renesas.com>,
         Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Subject: Re: [PATCH v3 2/4] thermal: rcar_gen3_thermal: Add R-Car Gen3
- thermal driver
-Message-ID: <20161129185513.GB3378@katana>
-References: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
- <20161128210924.2921-3-wsa+renesas@sang-engineering.com>
- <CAMuHMdW=Ap6ENtN0_Q=MHkhGLy0WuJUPtdb7n34yNAw1rXR4Fw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UHN/qo2QbUvPLonB"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW=Ap6ENtN0_Q=MHkhGLy0WuJUPtdb7n34yNAw1rXR4Fw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---UHN/qo2QbUvPLonB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 28, 2016 at 10:09 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> --- /dev/null
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
 
-Hi Geert,
+> +/* Structure for thermal temperature calculation */
+> +struct equation_coefs {
+> +       long a1;
+> +       long b1;
+> +       long a2;
+> +       long b2;
 
-thanks for the prompt review!
+Why long? Long has a different size for 32-bit and 64-bit platforms.
+I know this is a driver for arm64, but if you need 64-bits, you want to make
+this clear using s64, or long long.
 
-> > +/* Structure for thermal temperature calculation */
-> > +struct equation_coefs {
-> > +       long a1;
-> > +       long b1;
-> > +       long a2;
-> > +       long b2;
->=20
-> Why long? Long has a different size for 32-bit and 64-bit platforms.
-> I know this is a driver for arm64, but if you need 64-bits, you want to m=
-ake
-> this clear using s64, or long long.
+> +static inline u32 rcar_gen3_thermal_read(struct rcar_gen3_thermal_tsc *tsc, u32 reg)
 
-I'll check if int will do.
+What a long function name...
 
-> > +static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_ts=
-c *tsc,
-> > +                                    u32 reg, u32 data)
-> > +{
-> > +       iowrite32(data, tsc->base + reg);
-> > +}
->=20
-> ... so using the "convenience" wrappers is more (typing) work than using
-> io{read,write}32() directly?
+> +{
+> +       return ioread32(tsc->base + reg);
+> +}
+> +
+> +static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
+> +                                    u32 reg, u32 data)
+> +{
+> +       iowrite32(data, tsc->base + reg);
+> +}
 
-TBH I don't favor such macros, but since they are in quite some Renesas
-drivers, I kept them in the first take for consistency reasons.
+... so using the "convenience" wrappers is more (typing) work than using
+io{read,write}32() directly?
 
-> > +       tj_2 =3D (CODETSD((ptat[1] - ptat[2]) * 137)
-> > +               / (ptat[0] - ptat[2])) - CODETSD(41);
->=20
-> Isn't "* 1000" easier to read then CODETSD()?
+> +static void _linear_coefficient_calculation(struct rcar_gen3_thermal_tsc *tsc,
+> +                                           int *ptat, int *thcode)
+> +{
+> +       int tj_2;
+> +       long a1, b1;
+> +       long a2, b2;
+> +       long a1_num, a1_den;
+> +       long a2_num, a2_den;
 
-Probably. I'd think there can be done even more to make this code a tad
-more readable. For the first take, I'd like to keep these formulas,
-though. They come from the BSP and are the only documentation about how
-to calculate the temperature which we currently have. Changing them
-will obsolete all the testing done so far.
+s64?
 
+> +       tj_2 = (CODETSD((ptat[1] - ptat[2]) * 137)
+> +               / (ptat[0] - ptat[2])) - CODETSD(41);
 
-> > +       /* calculate coefficients for linear equation */
-> > +       a1_num =3D CODETSD(thcode[1] - thcode[2]);
-> > +       a1_den =3D tj_2 - TJ_3;
-> > +       a1 =3D (10000 * a1_num) / a1_den;
-> > +       b1 =3D (10000 * thcode[2]) - ((a1 * TJ_3) / 1000);
->=20
-> Rounding needed for / 1000?
+Isn't "* 1000" easier to read then CODETSD()?
 
-Ditto.
+> +       /* calculate coefficients for linear equation */
+> +       a1_num = CODETSD(thcode[1] - thcode[2]);
+> +       a1_den = tj_2 - TJ_3;
+> +       a1 = (10000 * a1_num) / a1_den;
+> +       b1 = (10000 * thcode[2]) - ((a1 * TJ_3) / 1000);
 
-> > +static int rcar_gen3_thermal_probe(struct platform_device *pdev)
-> > +{
-> > +       struct rcar_gen3_thermal_priv *priv;
-> > +       struct device *dev =3D &pdev->dev;
-> > +       struct resource *res;
-> > +       struct thermal_zone_device *zone;
-> > +       int ret, i;
->=20
-> unsigned int i;
+Rounding needed for / 1000?
 
-I'll likely produce more bugs if 'i' is not an int ;)
+> +       a2_num = CODETSD(thcode[1] - thcode[0]);
+> +       a2_den = tj_2 - TJ_1;
+> +       a2 = (10000 * a2_num) / a2_den;
+> +       b2 = (10000 * thcode[0]) - ((a2 * TJ_1) / 1000);
 
->=20
-> > +       const struct rcar_gen3_thermal_data *match_data =3D of_device_g=
-et_match_data(dev);
-> > +
-> > +       /* default values if FUSEs are missing */
-> > +       int ptat[3] =3D { 2351, 1509, 435 };
->=20
-> unsigned?
->=20
-> > +       int thcode[TSC_MAX_NUM][3] =3D {
->=20
-> unsigned?
+Idem.
 
-Had that before, didn't work. Since the calculation involves
-substraction with other ints, I prefer to have them all the same type as
-the fix.
+> +static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+> +{
+> +       struct rcar_gen3_thermal_priv *priv;
+> +       struct device *dev = &pdev->dev;
+> +       struct resource *res;
+> +       struct thermal_zone_device *zone;
+> +       int ret, i;
 
-> > +               tsc =3D devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
-> > +               if (!tsc)
-> > +                       return -ENOMEM;
->=20
-> Missing pm_runtime_put() etc.?
->=20
-> ret =3D -ENOMEM;
-> goto error_unregister;
+unsigned int i;
 
-Yes!
+> +       const struct rcar_gen3_thermal_data *match_data = of_device_get_match_data(dev);
+> +
+> +       /* default values if FUSEs are missing */
+> +       int ptat[3] = { 2351, 1509, 435 };
 
-Regards,
+unsigned?
 
-   Wolfram
+> +       int thcode[TSC_MAX_NUM][3] = {
 
+unsigned?
 
---UHN/qo2QbUvPLonB
-Content-Type: application/pgp-signature; name="signature.asc"
+> +               { 3248, 2800, 2221 },
+> +               { 3245, 2795, 2216 },
+> +               { 3250, 2805, 2237 },
+> +       };
+> +
+> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       platform_set_drvdata(pdev, priv);
+> +
+> +       pm_runtime_enable(dev);
+> +       pm_runtime_get_sync(dev);
+> +
+> +       for (i = 0; i < TSC_MAX_NUM; i++) {
+> +               struct rcar_gen3_thermal_tsc *tsc;
+> +
+> +               tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
+> +               if (!tsc)
+> +                       return -ENOMEM;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Missing pm_runtime_put() etc.?
 
-iQIcBAEBAgAGBQJYPc8RAAoJEBQN5MwUoCm2B+IQALLQ8iKaP4/EgZz6eD3qINHb
-jrVHQn18o+vGqYrzugFkJCv8uTrjKCs3IV+qUuJl/kiocmGejg0WmXLW0ieVxQyY
-1SXDc+EyrBQnXuacywHHkWKlgsTi6sSxFzTjMSSnEPDK6WahF23qLdXuYHghkkpa
-t5vbZTy4T9UxEOR03Ld8e7AOwutA3Ltu2ZmrvFCopWDsCWPN6C9DI0XtJSiqlVwu
-SxLSlMvn7GPTgHyoncQsKIAniyyb9pkECiomd2aibhTzjxrnyZmui2a2iSUhqgyv
-yY1WxJo1tCh4KXDFFTWRIAfEMFaHTnMinLXPYk1koaDD/eeIQeP6ZZnqn7rc74uo
-ttccUzyWsFojnBinDm1jhg+tVr62DREmHB1nh4D4XZkInXLKJPWbZxXf+dxY4fkO
-fDxNDjs6N/smoZnpZIBZQRkFGeNE6Ev0ijGYntm3APoEHKPtrZvX2o0qHnvuP0Sb
-YnfrPobuhW1bXZqm/GsD0Df297i7CangpWamVl4XiJX4DclzgU2yJSktIwYv6h6A
-v8nlIKCz1GyGkhtaIZdsSI7iXwSoqHi6SjMtcUdP+CX+O5qe7PIe5i9e2m9BO2cq
-VTsxSEMwAlZ9o0FzoQagQN82QJXZbpVWFBezfewxN+MZSACJfCRvbZrr7RBPs5ma
-LA2iMXPMeqgNphB+blk4
-=iaXa
------END PGP SIGNATURE-----
+ret = -ENOMEM;
+goto error_unregister;
 
---UHN/qo2QbUvPLonB--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
