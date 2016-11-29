@@ -1,140 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55160 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752505AbcKSD2I (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:32928 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933265AbcK2NbV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:28:08 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 03/13] devicetree/bindings: display: Add bindings for two Mitsubishi panels
-Date: Sat, 19 Nov 2016 05:28:03 +0200
-Message-Id: <1479526093-7014-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 29 Nov 2016 08:31:21 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cBiVD-0007Fb-81
+        for linux-renesas-soc@vger.kernel.org; Tue, 29 Nov 2016 14:31:19 +0100
+Received: from geert by ramsan with local (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cBiVF-0000Xf-UZ
+        for linux-renesas-soc@vger.kernel.org; Tue, 29 Nov 2016 14:31:21 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2016-11-29-v4.9-rc7
+Date: Tue, 29 Nov 2016 14:31:21 +0100
+Message-Id: <1480426281-2049-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The AA104XD12 and AA121TD01 are LVDS display panels. Their bindings are
-modelled on the the LVS panel bindings.
+I have pushed renesas-drivers-2016-11-29-v4.9-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- .../display/panel/mitsubishi,aa104xd12.txt         | 47 ++++++++++++++++++++++
- .../display/panel/mitsubishi,aa121td01.txt         | 47 ++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.txt
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging branches with driver code
+submitted or planned for submission to maintainers into the development
+branch of Simon Horman's renesas.git tree.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.txt b/Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.txt
-new file mode 100644
-index 000000000000..ced0121aed7d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.txt
-@@ -0,0 +1,47 @@
-+Mitsubishi AA204XD12 LVDS Display Panel
-+=======================================
-+
-+The AA104XD12 is a 10.4" XGA TFT-LCD display panel.
-+
-+These DT bindings follow the LVDS panel bindings defined in panel-lvds.txt
-+with the following device-specific properties.
-+
-+
-+Required properties:
-+
-+- compatible: Shall contain "mitsubishi,aa121td01" and "panel-lvds", in that
-+  order.
-+- vcc-supply: Reference to the regulator powering the panel VCC pins.
-+
-+
-+Example
-+-------
-+
-+panel {
-+	compatible = "mitsubishi,aa104xd12", "panel-lvds";
-+	vcc-supply = <&vcc_3v3>;
-+
-+	width-mm = <210>;
-+	height-mm = <158>;
-+
-+	data-mapping = "jeida-24";
-+
-+	panel-timing {
-+		/* 1024x768 @65Hz */
-+		clock-frequency = <65000000>;
-+		hactive = <1024>;
-+		vactive = <768>;
-+		hsync-len = <136>;
-+		hfront-porch = <20>;
-+		hback-porch = <160>;
-+		vfront-porch = <3>;
-+		vback-porch = <29>;
-+		vsync-len = <6>;
-+	};
-+
-+	port {
-+		panel_in: endpoint {
-+			remote-endpoint = <&lvds_encoder>;
-+		};
-+	};
-+};
-diff --git a/Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.txt b/Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.txt
-new file mode 100644
-index 000000000000..d6e1097504fe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.txt
-@@ -0,0 +1,47 @@
-+Mitsubishi AA121TD01 LVDS Display Panel
-+=======================================
-+
-+The AA121TD01 is a 12.1" WXGA TFT-LCD display panel.
-+
-+These DT bindings follow the LVDS panel bindings defined in panel-lvds.txt
-+with the following device-specific properties.
-+
-+
-+Required properties:
-+
-+- compatible: Shall contain "mitsubishi,aa121td01" and "panel-lvds", in that
-+  order.
-+- vcc-supply: Reference to the regulator powering the panel VCC pins.
-+
-+
-+Example
-+-------
-+
-+panel {
-+	compatible = "mitsubishi,aa121td01", "panel-lvds";
-+	vcc-supply = <&vcc_3v3>;
-+
-+	width-mm = <261>;
-+	height-mm = <163>;
-+
-+	data-mapping = "jeida-24";
-+
-+	panel-timing {
-+		/* 1280x800 @60Hz */
-+		clock-frequency = <71000000>;
-+		hactive = <1280>;
-+		vactive = <800>;
-+		hsync-len = <70>;
-+		hfront-porch = <20>;
-+		hback-porch = <70>;
-+		vsync-len = <5>;
-+		vfront-porch = <3>;
-+		vback-porch = <15>;
-+	};
-+
-+	port {
-+		panel_in: endpoint {
-+			remote-endpoint = <&lvds_encoder>;
-+		};
-+	};
-+};
--- 
-Regards,
+As we are currently focusing on a stable v4.9, no for-next branches
+of various subsystem trees have been included.
 
-Laurent Pinchart
+Today's version is based on renesas-devel-20161128-v4.9-rc7.
+
+Included branches with driver code:
+  - clk-renesas-for-v4.11
+  - sh-pfc-for-v4.11
+  - topic/rcar-secondary-booting-in-debug-mode-v1-rebased1
+  - topic/r8a7796-ravb-v1-rebased1
+  - topic/r8a7796-dmac-driver-v2-rebased1
+  - topic/r8a7796-dmac-dts-v2-rebased3~3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-driver-v8
+  - topic/vin-gen2-driver-v1-rebased2
+  - topic/rcar-du-lvds-mode-selection-v1
+  - topic/rcar-gen3-usb2-role-swap-v5
+  - topic/dma-map-resource-v1
+  - git://linuxtv.org/pinchartl/media.git#vsp1/histogram
+  - https://git.ragnatech.se/linux#for-renesas-drivers
+  - topic/ipmmu-multi-arch-v6
+  - topic/r8a7795-ipmmu-v2-rebased4
+  - topic/r8a7796-ipmmu-v1-rebased4
+  - topic/r8a7795-ipmmu-integration-v1
+  - topic/vin-gen2-dts-v1-rebased5
+  - topic/vsp1-pa-improvements-v1-rebased1
+  - topic/vsp1-writeback-v2-rebased2
+  - git://linuxtv.org/pinchartl/media.git#drm/r8a7796/next
+  - git://linuxtv.org/pinchartl/media.git#drm/next/lvds
+  - topic/iommu-devel-du-rebased1
+  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-driver-v1
+  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-dts-v1
+  - topic/r8a7795-es2-v1-rebased5
+  - topic/r8a7796-64b-mem+ravb-prototype-v1-rebased4~1
+
+As we're getting close to the opening of the merge window for v4.10, I
+have also pushed renesas-drivers-next-2016-11-29-v4.9-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+
+This tree does include the following for-next branches of various
+subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.infradead.org/battery-2.6.git#master
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+
+Included fixes:
+  - net: phy: Fix use after free in phy_detach()
+
+Included branches with driver code:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/thermal-on-4.10-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
