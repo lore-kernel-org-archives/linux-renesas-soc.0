@@ -1,87 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41481 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755983AbcKDJos (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35269 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751873AbcK2Wmk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 05:44:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/29] ARM: dts: r8a7792: add MSIOF clocks
-Date: Fri,  4 Nov 2016 10:44:10 +0100
-Message-Id: <5cef452bf895cc38af3a4e20f85c20c1a4d41001.1478252309.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1478252308.git.horms+renesas@verge.net.au>
-References: <cover.1478252308.git.horms+renesas@verge.net.au>
+        Tue, 29 Nov 2016 17:42:40 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 09/13] drm: Add encoder_type field to the drm_bridge structure
+Date: Wed, 30 Nov 2016 00:42:53 +0200
+Message-ID: <49351545.SWL4FziBGV@avalon>
+In-Reply-To: <20161129202527.euaztnizctfmtgen@phenom.ffwll.local>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <2516383.b9AMKiZRXv@avalon> <20161129202527.euaztnizctfmtgen@phenom.ffwll.local>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Daniel,
 
-Describe the MSIOF0/1 clocks and their parent, MP clock in the R8A7792
-device  tree.
+On Tuesday 29 Nov 2016 21:25:27 Daniel Vetter wrote:
+> On Tue, Nov 29, 2016 at 07:49:22PM +0200, Laurent Pinchart wrote:
+> > On Tuesday 29 Nov 2016 11:27:20 Daniel Vetter wrote:
+> >> On Tue, Nov 29, 2016 at 11:58:44AM +0200, Laurent Pinchart wrote:
+> >>> On Tuesday 29 Nov 2016 10:56:53 Daniel Vetter wrote:
+> >>>> On Tue, Nov 29, 2016 at 11:04:39AM +0200, Laurent Pinchart wrote:
+> >>>>> The drm_bridge object models on- or off-chip hardware encoders and
+> >>>>> provide an abstract control API to display drivers. In order to help
+> >>>>> display drivers creating the right kind of drm_encoder object,
+> >>>>> expose the type of the hardware encoder associated with each bridge.
+> >>>>> 
+> >>>>> Signed-off-by: Laurent Pinchart
+> >>>>> <laurent.pinchart+renesas@ideasonboard.com>
+> >>>> 
+> >>>> DRM_MODE_ENCODER_BRIDGE. Problem solved, because in reality no one
+> >>>> cares one iota about the encoder type.
+> >>> 
+> >>> It's exposed to userspace though, are you 100% sure we won't break
+> >>> anything ?
+> >> 
+> >> We've added DP, DSI, DPMST and DPI encoder types thus far, no one
+> >> screamed.
+> > 
+> > In that case why don't we go one step further and remove the encoder type
+> > completely ? We can't remove the field from the API, but we can hardcode
+> > it to a single value.
+> > 
+> > There are however drivers that rely on the encoder type (radeon, nouveau,
+> > sti, amdgpu, msm and rcar-du, but I'll fix the last one) so we'd need to
+> > address that first. If we don't want to remove the encoder_type field
+> > from in-kernel structures and let drivers use it, then I don't think
+> > DRM_MODE_ENCODER_BRIDGE would be a good option, we should report the real
+> > type instead.
+> 
+> If you strongly believe that I will not stop you. This was just a
+> suggestion to get all your stuff landed with minimal amounts of effort and
+> across-the-subsystem cleanup needed. I'd do it that ;-)
+> 
+> And if you don't like DRM_MODE_ENCODER_BRIDGE you could also pick
+> DRM_MODE_ENCODER_NONE, which is what most seem to do today. In the end it
+> doesn't matter no matter which option you pick. The only difference is in
+> the amount of effort you need to spend to get it merged ...
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
+I've tried hardcoding the encoder type to DRM_MODE_ENCODER_NONE and basic 
+tests still pass (I haven't tried more complex userspace stacks such as X or 
+Weston though). I'll thus drop the addition of encoder_type to the bridge for 
+now. As a result we should start deprecating the drm_encoder::encoder_type 
+field (unless a compelling reason is found of course, in which case I'd have 
+to revive drm_bridge::encoder_type).
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 713141d38b3e..839cd70c4c75 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -763,6 +763,13 @@
- 			clock-div = <48>;
- 			clock-mult = <1>;
- 		};
-+		mp_clk: mp {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&pll1_div2_clk>;
-+			#clock-cells = <0>;
-+			clock-div = <15>;
-+			clock-mult = <1>;
-+		};
- 		m2_clk: m2 {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-@@ -793,6 +800,15 @@
- 		};
- 
- 		/* Gate clocks */
-+		mstp0_clks: mstp0_clks@e6150130 {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150130 0 4>, <0 0xe6150030 0 4>;
-+			clocks = <&mp_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7792_CLK_MSIOF0>;
-+			clock-output-names = "msiof0";
-+		};
- 		mstp1_clks: mstp1_clks@e6150134 {
- 			compatible = "renesas,r8a7792-mstp-clocks",
- 				     "renesas,cpg-mstp-clocks";
-@@ -811,12 +827,13 @@
- 			compatible = "renesas,r8a7792-mstp-clocks",
- 				     "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
--			clocks = <&zs_clk>, <&zs_clk>;
-+			clocks = <&mp_clk>, <&zs_clk>, <&zs_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
-+				R8A7792_CLK_MSIOF1
- 				R8A7792_CLK_SYS_DMAC1 R8A7792_CLK_SYS_DMAC0
- 			>;
--			clock-output-names = "sys-dmac1", "sys-dmac0";
-+			clock-output-names = "msiof1", "sys-dmac1", "sys-dmac0";
- 		};
- 		mstp3_clks: mstp3_clks@e615013c {
- 			compatible = "renesas,r8a7792-mstp-clocks",
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
