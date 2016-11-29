@@ -1,127 +1,547 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran.bingham+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60491 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753367AbcK2JFM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 29 Nov 2016 04:05:12 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 4/4] v4l: vsp1: Remove redundant context variables
-Date: Fri,  4 Nov 2016 18:19:30 +0000
-Message-Id: <1478283570-19688-5-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        Archit Taneja <architt@codeaurora.org>
+Subject: [PATCH v3 12/13] drm: rcar-du: Replace manual bridge implementation with DRM bridge
+Date: Tue, 29 Nov 2016 11:04:42 +0200
+Message-Id: <1480410283-28698-13-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vsp1_pipe object context variables for div_size and
-current_partition allowed state to be maintained through processing the
-partitions during processing.
+The rcar-du driver contains a manual implementation of HDMI and VGA
+bridges. Use DRM bridges to replace it.
 
-Now that the partition tables are calculated during stream on, there is
-no requirement to store these variables in the pipe object.
-
-Utilise local variables for the processing as required.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_pipe.h  |  4 ----
- drivers/media/platform/vsp1/vsp1_video.c | 19 +++++++++----------
- 2 files changed, 9 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/rcar-du/Kconfig           |   6 --
+ drivers/gpu/drm/rcar-du/Makefile          |   5 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 104 +++++++++++++----------
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h |   2 -
+ drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c | 134 ------------------------------
+ drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h |  35 --------
+ drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  82 ------------------
+ drivers/gpu/drm/rcar-du/rcar_du_vgacon.h  |  23 -----
+ 8 files changed, 60 insertions(+), 331 deletions(-)
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index 3af96c4ea244..9e108ddcceb6 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -82,10 +82,8 @@ enum vsp1_pipeline_state {
-  * @uds_input: entity at the input of the UDS, if the UDS is present
-  * @entities: list of entities in the pipeline
-  * @dl: display list associated with the pipeline
-- * @div_size: The maximum allowed partition size for the pipeline
-  * @partitions: The number of partitions used to process one frame
-  * @partition: The current partition for configuration to process
-- * @current_partition: The partition number currently being configured
-  * @part_table: The pre-calculated partitions used by the pipeline
-  */
- struct vsp1_pipeline {
-@@ -117,10 +115,8 @@ struct vsp1_pipeline {
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index 2bab449add76..06121eeba9e5 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -11,12 +11,6 @@ config DRM_RCAR_DU
+ 	  Choose this option if you have an R-Car chipset.
+ 	  If M is selected the module will be called rcar-du-drm.
  
- 	struct vsp1_dl_list *dl;
+-config DRM_RCAR_HDMI
+-	bool "R-Car DU HDMI Encoder Support"
+-	depends on DRM_RCAR_DU
+-	help
+-	  Enable support for external HDMI encoders.
+-
+ config DRM_RCAR_LVDS
+ 	bool "R-Car DU LVDS Encoder Support"
+ 	depends on DRM_RCAR_DU
+diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
+index d3b44651061a..a492e6858691 100644
+--- a/drivers/gpu/drm/rcar-du/Makefile
++++ b/drivers/gpu/drm/rcar-du/Makefile
+@@ -4,10 +4,7 @@ rcar-du-drm-y := rcar_du_crtc.o \
+ 		 rcar_du_group.o \
+ 		 rcar_du_kms.o \
+ 		 rcar_du_lvdscon.o \
+-		 rcar_du_plane.o \
+-		 rcar_du_vgacon.o
+-
+-rcar-du-drm-$(CONFIG_DRM_RCAR_HDMI)	+= rcar_du_hdmienc.o
++		 rcar_du_plane.o
  
--	unsigned int div_size;
- 	unsigned int partitions;
- 	struct v4l2_rect partition;
--	unsigned int current_partition;
- 	struct v4l2_rect part_table[VSP1_PIPE_MAX_PARTITIONS];
+ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_lvdsenc.o
+ 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index 21262057ef08..d412dc622bfa 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -20,11 +20,9 @@
+ 
+ #include "rcar_du_drv.h"
+ #include "rcar_du_encoder.h"
+-#include "rcar_du_hdmienc.h"
+ #include "rcar_du_kms.h"
+ #include "rcar_du_lvdscon.h"
+ #include "rcar_du_lvdsenc.h"
+-#include "rcar_du_vgacon.h"
+ 
+ /* -----------------------------------------------------------------------------
+  * Encoder
+@@ -63,29 +61,35 @@ static int rcar_du_encoder_atomic_check(struct drm_encoder *encoder,
+ 	struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
+ 	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
+ 	const struct drm_display_mode *mode = &crtc_state->mode;
+-	const struct drm_display_mode *panel_mode;
+ 	struct drm_connector *connector = conn_state->connector;
+ 	struct drm_device *dev = encoder->dev;
+ 
+-	/* DAC encoders have currently no restriction on the mode. */
+-	if (encoder->encoder_type == DRM_MODE_ENCODER_DAC)
+-		return 0;
++	/*
++	 * Only panel-related encoder types require validation here, everything
++	 * else is handled by the bridge drivers.
++	 */
++	if (encoder->encoder_type == DRM_MODE_ENCODER_LVDS) {
++		const struct drm_display_mode *panel_mode;
+ 
+-	if (list_empty(&connector->modes)) {
+-		dev_dbg(dev->dev, "encoder: empty modes list\n");
+-		return -EINVAL;
+-	}
++		if (list_empty(&connector->modes)) {
++			dev_dbg(dev->dev, "encoder: empty modes list\n");
++			return -EINVAL;
++		}
+ 
+-	panel_mode = list_first_entry(&connector->modes,
+-				      struct drm_display_mode, head);
++		panel_mode = list_first_entry(&connector->modes,
++					      struct drm_display_mode, head);
+ 
+-	/* We're not allowed to modify the resolution. */
+-	if (mode->hdisplay != panel_mode->hdisplay ||
+-	    mode->vdisplay != panel_mode->vdisplay)
+-		return -EINVAL;
++		/* We're not allowed to modify the resolution. */
++		if (mode->hdisplay != panel_mode->hdisplay ||
++		    mode->vdisplay != panel_mode->vdisplay)
++			return -EINVAL;
+ 
+-	/* The flat panel mode is fixed, just copy it to the adjusted mode. */
+-	drm_mode_copy(adjusted_mode, panel_mode);
++		/*
++		 * The flat panel mode is fixed, just copy it to the adjusted
++		 * mode.
++		 */
++		drm_mode_copy(adjusted_mode, panel_mode);
++	}
+ 
+ 	if (renc->lvds)
+ 		rcar_du_lvdsenc_atomic_check(renc->lvds, adjusted_mode);
+@@ -159,6 +163,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ {
+ 	struct rcar_du_encoder *renc;
+ 	struct drm_encoder *encoder;
++	struct drm_bridge *bridge = NULL;
+ 	unsigned int encoder_type;
+ 	int ret;
+ 
+@@ -182,6 +187,15 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 		break;
+ 	}
+ 
++	if (enc_node) {
++		/* Locate the DRM bridge from the encoder DT node. */
++		bridge = of_drm_find_bridge(enc_node);
++		if (!bridge) {
++			ret = -EPROBE_DEFER;
++			goto done;
++		}
++	}
++
+ 	switch (type) {
+ 	case RCAR_DU_ENCODER_VGA:
+ 		encoder_type = DRM_MODE_ENCODER_DAC;
+@@ -199,35 +213,35 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 		break;
+ 	}
+ 
+-	if (type == RCAR_DU_ENCODER_HDMI) {
+-		ret = rcar_du_hdmienc_init(rcdu, renc, enc_node);
+-		if (ret < 0)
+-			goto done;
+-	} else {
+-		ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
+-				       encoder_type, NULL);
+-		if (ret < 0)
+-			goto done;
+-
+-		drm_encoder_helper_add(encoder, &encoder_helper_funcs);
+-	}
+-
+-	switch (encoder_type) {
+-	case DRM_MODE_ENCODER_LVDS:
+-		ret = rcar_du_lvds_connector_init(rcdu, renc, con_node);
+-		break;
+-
+-	case DRM_MODE_ENCODER_DAC:
+-		ret = rcar_du_vga_connector_init(rcdu, renc);
+-		break;
++	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
++			       encoder_type, NULL);
++	if (ret < 0)
++		goto done;
+ 
+-	case DRM_MODE_ENCODER_TMDS:
+-		/* connector managed by the bridge driver */
+-		break;
++	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
+ 
+-	default:
+-		ret = -EINVAL;
+-		break;
++	if (bridge) {
++		/*
++		 * Attach the bridge to the encoder. The bridge will create the
++		 * connector.
++		 */
++		ret = drm_bridge_attach(encoder, bridge, NULL);
++		if (ret) {
++			drm_encoder_cleanup(encoder);
++			return ret;
++		}
++	} else {
++		/* There's no bridge, create the connector manually. */
++		switch (output) {
++		case RCAR_DU_OUTPUT_LVDS0:
++		case RCAR_DU_OUTPUT_LVDS1:
++			ret = rcar_du_lvds_connector_init(rcdu, renc, con_node);
++			break;
++
++		default:
++			ret = -EINVAL;
++			break;
++		}
+ 	}
+ 
+ done:
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+index b79b2f075a74..c1cfbe0d54ce 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+@@ -19,7 +19,6 @@
+ 
+ struct drm_panel;
+ struct rcar_du_device;
+-struct rcar_du_hdmienc;
+ struct rcar_du_lvdsenc;
+ 
+ enum rcar_du_encoder_type {
+@@ -34,7 +33,6 @@ struct rcar_du_encoder {
+ 	struct drm_encoder base;
+ 	enum rcar_du_output output;
+ 	struct rcar_du_connector *connector;
+-	struct rcar_du_hdmienc *hdmi;
+ 	struct rcar_du_lvdsenc *lvds;
  };
  
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index c4a8c30df108..9efaab2cc982 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -268,7 +268,6 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 
- 	/* Gen2 hardware doesn't require image partitioning. */
- 	if (vsp1->info->gen == 2) {
--		pipe->div_size = div_size;
- 		pipe->partitions = 1;
- 		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
- 		return;
-@@ -284,7 +283,6 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 		}
- 	}
- 
--	pipe->div_size = div_size;
- 	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
- 
- 	for (i = 0; i < pipe->partitions; i++)
-@@ -356,11 +354,12 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
- }
- 
- static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
--					      struct vsp1_dl_list *dl)
-+					      struct vsp1_dl_list *dl,
-+					      unsigned int partition_number)
- {
- 	struct vsp1_entity *entity;
- 
--	pipe->partition = pipe->part_table[pipe->current_partition];
-+	pipe->partition = pipe->part_table[partition_number];
- 
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
- 		if (entity->ops->configure)
-@@ -373,6 +372,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- {
- 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
- 	struct vsp1_entity *entity;
-+	unsigned int current_partition = 0;
- 
- 	if (!pipe->dl)
- 		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-@@ -389,13 +389,12 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 	}
- 
- 	/* Run the first partition */
--	pipe->current_partition = 0;
--	vsp1_video_pipeline_run_partition(pipe, pipe->dl);
-+	vsp1_video_pipeline_run_partition(pipe, pipe->dl, current_partition);
- 
- 	/* Process consecutive partitions as necessary */
--	for (pipe->current_partition = 1;
--	     pipe->current_partition < pipe->partitions;
--	     pipe->current_partition++) {
-+	for (current_partition = 1;
-+	     current_partition < pipe->partitions;
-+	     current_partition++) {
- 		struct vsp1_dl_list *dl;
- 
- 		/*
-@@ -415,7 +414,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 			break;
- 		}
- 
--		vsp1_video_pipeline_run_partition(pipe, dl);
-+		vsp1_video_pipeline_run_partition(pipe, dl, current_partition);
- 		vsp1_dl_list_add_chain(pipe->dl, dl);
- 	}
- 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+deleted file mode 100644
+index 933a2547798e..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
++++ /dev/null
+@@ -1,134 +0,0 @@
+-/*
+- * R-Car Display Unit HDMI Encoder
+- *
+- * Copyright (C) 2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include <linux/slab.h>
+-
+-#include <drm/drmP.h>
+-#include <drm/drm_crtc.h>
+-#include <drm/drm_crtc_helper.h>
+-
+-#include "rcar_du_drv.h"
+-#include "rcar_du_encoder.h"
+-#include "rcar_du_hdmienc.h"
+-#include "rcar_du_lvdsenc.h"
+-
+-struct rcar_du_hdmienc {
+-	struct rcar_du_encoder *renc;
+-	bool enabled;
+-};
+-
+-#define to_rcar_hdmienc(e)	(to_rcar_encoder(e)->hdmi)
+-
+-static void rcar_du_hdmienc_disable(struct drm_encoder *encoder)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	if (hdmienc->renc->lvds)
+-		rcar_du_lvdsenc_enable(hdmienc->renc->lvds, encoder->crtc,
+-				       false);
+-
+-	hdmienc->enabled = false;
+-}
+-
+-static void rcar_du_hdmienc_enable(struct drm_encoder *encoder)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	if (hdmienc->renc->lvds)
+-		rcar_du_lvdsenc_enable(hdmienc->renc->lvds, encoder->crtc,
+-				       true);
+-
+-	hdmienc->enabled = true;
+-}
+-
+-static int rcar_du_hdmienc_atomic_check(struct drm_encoder *encoder,
+-					struct drm_crtc_state *crtc_state,
+-					struct drm_connector_state *conn_state)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
+-
+-	if (hdmienc->renc->lvds)
+-		rcar_du_lvdsenc_atomic_check(hdmienc->renc->lvds,
+-					     adjusted_mode);
+-
+-	return 0;
+-}
+-
+-
+-static void rcar_du_hdmienc_mode_set(struct drm_encoder *encoder,
+-				     struct drm_crtc_state *crtc_state,
+-				     struct drm_connector_state *conn_state)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	rcar_du_crtc_route_output(crtc_state->crtc, hdmienc->renc->output);
+-}
+-
+-static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+-	.atomic_mode_set = rcar_du_hdmienc_mode_set,
+-	.disable = rcar_du_hdmienc_disable,
+-	.enable = rcar_du_hdmienc_enable,
+-	.atomic_check = rcar_du_hdmienc_atomic_check,
+-};
+-
+-static void rcar_du_hdmienc_cleanup(struct drm_encoder *encoder)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	if (hdmienc->enabled)
+-		rcar_du_hdmienc_disable(encoder);
+-
+-	drm_encoder_cleanup(encoder);
+-}
+-
+-static const struct drm_encoder_funcs encoder_funcs = {
+-	.destroy = rcar_du_hdmienc_cleanup,
+-};
+-
+-int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
+-			 struct rcar_du_encoder *renc, struct device_node *np)
+-{
+-	struct drm_encoder *encoder = rcar_encoder_to_drm_encoder(renc);
+-	struct drm_bridge *bridge;
+-	struct rcar_du_hdmienc *hdmienc;
+-	int ret;
+-
+-	hdmienc = devm_kzalloc(rcdu->dev, sizeof(*hdmienc), GFP_KERNEL);
+-	if (hdmienc == NULL)
+-		return -ENOMEM;
+-
+-	/* Locate the DRM bridge from the HDMI encoder DT node. */
+-	bridge = of_drm_find_bridge(np);
+-	if (!bridge)
+-		return -EPROBE_DEFER;
+-
+-	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
+-			       DRM_MODE_ENCODER_TMDS, NULL);
+-	if (ret < 0)
+-		return ret;
+-
+-	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
+-
+-	renc->hdmi = hdmienc;
+-	hdmienc->renc = renc;
+-
+-	/* Link the bridge to the encoder. */
+-	ret = drm_bridge_attach(encoder, bridge, NULL);
+-	if (ret) {
+-		drm_encoder_cleanup(encoder);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
+deleted file mode 100644
+index 2ff0128ac8e1..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * R-Car Display Unit HDMI Encoder
+- *
+- * Copyright (C) 2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#ifndef __RCAR_DU_HDMIENC_H__
+-#define __RCAR_DU_HDMIENC_H__
+-
+-#include <linux/module.h>
+-
+-struct device_node;
+-struct rcar_du_device;
+-struct rcar_du_encoder;
+-
+-#if IS_ENABLED(CONFIG_DRM_RCAR_HDMI)
+-int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
+-			 struct rcar_du_encoder *renc, struct device_node *np);
+-#else
+-static inline int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
+-				       struct rcar_du_encoder *renc,
+-				       struct device_node *np)
+-{
+-	return -ENOSYS;
+-}
+-#endif
+-
+-#endif /* __RCAR_DU_HDMIENC_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+deleted file mode 100644
+index 8d6125c1c0f9..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
++++ /dev/null
+@@ -1,82 +0,0 @@
+-/*
+- * rcar_du_vgacon.c  --  R-Car Display Unit VGA Connector
+- *
+- * Copyright (C) 2013-2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include <drm/drmP.h>
+-#include <drm/drm_atomic_helper.h>
+-#include <drm/drm_crtc.h>
+-#include <drm/drm_crtc_helper.h>
+-
+-#include "rcar_du_drv.h"
+-#include "rcar_du_encoder.h"
+-#include "rcar_du_kms.h"
+-#include "rcar_du_vgacon.h"
+-
+-static int rcar_du_vga_connector_get_modes(struct drm_connector *connector)
+-{
+-	return 0;
+-}
+-
+-static const struct drm_connector_helper_funcs connector_helper_funcs = {
+-	.get_modes = rcar_du_vga_connector_get_modes,
+-};
+-
+-static enum drm_connector_status
+-rcar_du_vga_connector_detect(struct drm_connector *connector, bool force)
+-{
+-	return connector_status_connected;
+-}
+-
+-static const struct drm_connector_funcs connector_funcs = {
+-	.dpms = drm_atomic_helper_connector_dpms,
+-	.reset = drm_atomic_helper_connector_reset,
+-	.detect = rcar_du_vga_connector_detect,
+-	.fill_modes = drm_helper_probe_single_connector_modes,
+-	.destroy = drm_connector_cleanup,
+-	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+-	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+-};
+-
+-int rcar_du_vga_connector_init(struct rcar_du_device *rcdu,
+-			       struct rcar_du_encoder *renc)
+-{
+-	struct drm_encoder *encoder = rcar_encoder_to_drm_encoder(renc);
+-	struct rcar_du_connector *rcon;
+-	struct drm_connector *connector;
+-	int ret;
+-
+-	rcon = devm_kzalloc(rcdu->dev, sizeof(*rcon), GFP_KERNEL);
+-	if (rcon == NULL)
+-		return -ENOMEM;
+-
+-	connector = &rcon->connector;
+-	connector->display_info.width_mm = 0;
+-	connector->display_info.height_mm = 0;
+-	connector->interlace_allowed = true;
+-
+-	ret = drm_connector_init(rcdu->ddev, connector, &connector_funcs,
+-				 DRM_MODE_CONNECTOR_VGA);
+-	if (ret < 0)
+-		return ret;
+-
+-	drm_connector_helper_add(connector, &connector_helper_funcs);
+-
+-	connector->dpms = DRM_MODE_DPMS_OFF;
+-	drm_object_property_set_value(&connector->base,
+-		rcdu->ddev->mode_config.dpms_property, DRM_MODE_DPMS_OFF);
+-
+-	ret = drm_mode_connector_attach_encoder(connector, encoder);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.h b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
+deleted file mode 100644
+index 112f50316e01..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/*
+- * rcar_du_vgacon.h  --  R-Car Display Unit VGA Connector
+- *
+- * Copyright (C) 2013-2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#ifndef __RCAR_DU_VGACON_H__
+-#define __RCAR_DU_VGACON_H__
+-
+-struct rcar_du_device;
+-struct rcar_du_encoder;
+-
+-int rcar_du_vga_connector_init(struct rcar_du_device *rcdu,
+-			       struct rcar_du_encoder *renc);
+-
+-#endif /* __RCAR_DU_VGACON_H__ */
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
