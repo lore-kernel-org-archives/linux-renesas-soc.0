@@ -1,128 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55152 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34699 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752301AbcKSD2G (ORCPT
+        with ESMTP id S1756495AbcK2U4y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:28:06 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 01/13] devicetree/bindings: display: Document common panel properties
-Date: Sat, 19 Nov 2016 05:28:01 +0200
-Message-Id: <1479526093-7014-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 29 Nov 2016 15:56:54 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 06/13] drm: bridge: Add LVDS encoder driver
+Date: Tue, 29 Nov 2016 22:57:07 +0200
+Message-ID: <4516476.dJ1bJMDj4s@avalon>
+In-Reply-To: <20161129095409.36di7nm3wnxns4qp@phenom.ffwll.local>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1480410283-28698-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161129095409.36di7nm3wnxns4qp@phenom.ffwll.local>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document properties common to several display panels in a central
-location that can be referenced by the panel device tree bindings.
+Hi Daniel,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- .../bindings/display/panel/panel-common.txt        | 91 ++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.txt
+On Tuesday 29 Nov 2016 10:54:09 Daniel Vetter wrote:
+> On Tue, Nov 29, 2016 at 11:04:36AM +0200, Laurent Pinchart wrote:
+> > The LVDS encoder driver is a DRM bridge driver that supports the
+> > parallel to LVDS encoders that don't require any configuration. The
+> > driver thus doesn't interact with the device, but creates an LVDS
+> > connector for the panel and exposes its size and timing based on
+> > information retrieved from DT.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Since it's 100% dummy, why put LVDS into the name? This little thing here
+> could be our generic "wrap drm_panel and attach it to a chain" helper. So
+> what about calling this _The_ drm_panel_bridge, and also linking it into
+> docs to feature it a bit more prominently.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.txt b/Documentation/devicetree/bindings/display/panel/panel-common.txt
-new file mode 100644
-index 000000000000..ec52c472c845
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
-@@ -0,0 +1,91 @@
-+Common Properties for Display Panel
-+===================================
-+
-+This document defines device tree properties common to several classes of
-+display panels. It doesn't constitue a device tree binding specification by
-+itself but is meant to be referenced by device tree bindings.
-+
-+When referenced from panel device tree bindings the properties defined in this
-+document are defined as follows. The panel device tree bindings are
-+responsible for defining whether each property is required or optional.
-+
-+
-+Descriptive Properties
-+----------------------
-+
-+- width-mm,
-+- height-mm: The width-mm and height-mm specify the width and height of the
-+  physical area where images are displayed. These properties are expressed in
-+  millimeters and rounded to the closest unit.
-+
-+- label: The label property specifies a symbolic name for the panel as a
-+  string suitable for use by humans. It typically contains a name inscribed on
-+  the system (e.g. as an affixed label) or specified in the system's
-+  documentation (e.g. in the user's manual).
-+
-+  If no such name exists, and unless the property is mandatory according to
-+  device tree bindings, it shall rather be omitted than constructed of
-+  non-descriptive information. For instance an LCD panel in a system that
-+  contains a single panel shall not be labelled "LCD" if that name is not
-+  inscribed on the system or used in a descriptive fashion in system
-+  documentation.
-+
-+
-+Display Timings
-+---------------
-+
-+- panel-timing: Most display panels are restricted to a single resolution and
-+  require specific display timings. The panel-timing subnode expresses those
-+  timings as specified in the timing subnode section of the display timing
-+  bindings defined in
-+  Documentation/devicetree/bindings/display/display-timing.txt.
-+
-+
-+Connectivity
-+------------
-+
-+- ports: Panels receive video data through one or multiple connections. While
-+  the nature of those connections is specific to the panel type, the
-+  connectivity is expressed in a standard fashion using ports as specified in
-+  the device graph bindings defined in
-+  Documentation/devicetree/bindings/graph.txt.
-+
-+- ddc-i2c-bus: Some panels expose EDID information through an I2C-compatible
-+  bus such as DDC2 or E-DDC. For such panels the ddc-i2c-bus contains a
-+  phandle to the system I2C controller connected to that bus.
-+
-+
-+Control I/Os
-+------------
-+
-+Many display panels can be controlled through pins driven by GPIOs. The nature
-+and timing of those control signals are device-specific and left for panel
-+device tree bindings to specify. The following GPIO specifiers can however be
-+used for panels that implement compatible control signals.
-+
-+- enable-gpios: Specifier for a GPIO connected to the panel enable control
-+  signal. The enable signal is active high and enables operation of the panel.
-+  This property can also be used for panels implementing an active low power
-+  down signal, which is a negated version of the enable signal. Active low
-+  enable signals (or active high power down signals) can be supported by
-+  inverting the GPIO specifier polarity flag.
-+
-+  Note that the enable signal control panel operation only and must not be
-+  confused with a backlight enable signal.
-+
-+- reset-gpios: Specifier for a GPIO coonnected to the panel reset control
-+  signal. The reset signal is active low and resets the panel internal logic
-+  while active. Active high reset signals can be supported by inverting the
-+  GPIO specifier polarity flag.
-+
-+
-+Backlight
-+---------
-+
-+Most display panels include a backlight. Some of them also include a backlight
-+controller exposed through a control bus such as I2C or DSI. Others expose
-+backlight control through GPIO, PWM or other signals connected to an external
-+backlight controller.
-+
-+- backlight: For panels whose backlight is controlled by an external backlight
-+  controller, this property contains a phandle that references the controller.
+I'm not opposed to that, except that this driver should not be considered as 
+just a helper to link a panel. It should only be used to support a real 
+hardware bridge that requires no control.
+
+> I came up with this because I spotted some refactoring belows for building
+> this helper, until I realized that this driver _is_ the helper I think we
+> want ;-) Only thing missing is an exported function to instantiate a
+> bridge with just a drm_panel as the parameter. And putting it into the
+> drm_kms_helper.ko module.
+
+What would that be used for ? The bridge should be instantiated by this bridge 
+driver, bound to a bridge device instantiated from DT (or the platform 
+firmware of your choice).
+
+> > +static enum drm_connector_status
+> > +lvds_connector_detect(struct drm_connector *connector, bool force)
+> > +{
+> > +	return connector_status_connected;
+> > +}
+> 
+> We have piles of this exact dummy callback all over, maybe make it the
+> default and rip them all out?
+
+Done, "[PATCH] drm: Make the connector .detect() callback optional".
+
 -- 
 Regards,
 
