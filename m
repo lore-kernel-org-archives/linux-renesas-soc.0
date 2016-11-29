@@ -1,76 +1,95 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55159 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752774AbcKSD2M (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 22:28:12 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCH v2 09/13] arm64: dts: r8a7795: salvator-x: Add panel backlight support
-Date: Sat, 19 Nov 2016 05:28:09 +0200
-Message-Id: <1479526093-7014-10-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 01/13] devicetree/bindings: display: Document common panel properties
+Date: Tue, 29 Nov 2016 20:23:41 +0200
+Message-ID: <2064799.n5laApbQHL@avalon>
+In-Reply-To: <CAL_JsqL0+4--nE1UDHWzqS-s18A+q2i76S8=woCb5huV3jUMew@mail.gmail.com>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <2454182.olmziLZUmD@avalon> <CAL_JsqL0+4--nE1UDHWzqS-s18A+q2i76S8=woCb5huV3jUMew@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The panel backlight is controlled through a GPIO and a PWM channel.
+Hi Rob,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+On Tuesday 29 Nov 2016 09:14:09 Rob Herring wrote:
+> On Tue, Nov 29, 2016 at 2:27 AM, Laurent Pinchart wrote:
+> > On Tuesday 22 Nov 2016 11:36:55 Laurent Pinchart wrote:
+> >> On Monday 21 Nov 2016 10:48:15 Rob Herring wrote:
+> >>> On Sat, Nov 19, 2016 at 05:28:01AM +0200, Laurent Pinchart wrote:
+> >>>> Document properties common to several display panels in a central
+> >>>> location that can be referenced by the panel device tree bindings.
+> >>> 
+> >>> Looks good. Just one comment...
+> >>> 
+> >>> [...]
+> >>> 
+> >>>> +Connectivity
+> >>>> +------------
+> >>>> +
+> >>>> +- ports: Panels receive video data through one or multiple
+> >>>> connections. While
+> >>>> +  the nature of those connections is specific to the panel type, the
+> >>>> +  connectivity is expressed in a standard fashion using ports as
+> >>>> specified in
+> >>>> +  the device graph bindings defined in
+> >>>> +  Documentation/devicetree/bindings/graph.txt.
+> >>> 
+> >>> We allow panels to either use graph binding or be a child of the
+> >>> display controller.
+> >> 
+> >> I knew that some display controllers use a phandle to the panel (see the
+> >> fsl,panel and nvidia,panel properties), but I didn't know we had panels
+> >> as children of display controller nodes. I don't think we should allow
+> >> that for anything but DSI panels, as the DT hierarchy is based on control
+> >> buses. Are you sure we have other panels instantiated through that
+> >> mechanism ?
+>
+> Some panels have no control bus, so were do we place them?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 2c30813d0f86..a905318a347c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -178,6 +178,16 @@
- 			};
- 		};
- 	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm1 0 50000>;
-+
-+		brightness-levels = <256 128 64 16 8 4 0>;
-+		default-brightness-level = <6>;
-+
-+		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
-+	};
- };
- 
- &du {
-@@ -238,6 +248,11 @@
- 		function = "du";
- 	};
- 
-+	pwm1_pins: pwm {
-+		groups = "pwm1_a";
-+		function = "pwm1";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -275,6 +290,13 @@
- 	};
- };
- 
-+&pwm1 {
-+	pinctrl-0 = <&pwm1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &scif1 {
- 	pinctrl-0 = <&scif1_pins>;
- 	pinctrl-names = "default";
+I'd say under the root node, like all similar control-less devices.
+
+> I would say the hierarchy is based on buses with a preference for the
+> control bus when there are multiple buses. I'm not a fan of just sticking
+> things are the top level.
+
+OK, so much for my comment a few lines up :-)
+
+The problem with placing non-DSI panels as children of the display controller 
+and not using OF graph is that the panel bindings become dependent of the 
+display controller being used. A display controller using OF graph would 
+require the panel to do the same, while a display controller expecting a panel 
+child node (with a specific name) would require DT properties for the panel 
+node.
+
+I'm also not sure the complexity of OF graph is really that prohibitive if you 
+compare it to panels as child nodes. To get the panel driver to bind to the 
+panel DT node the display controller driver would need to create a platform 
+device for the panel and register it. That's not very difficult, but parsing a 
+single port and endpoint isn't either (and we could even provide a helper 
+function for that, a version of of_drm_find_panel() that would take as an 
+argument the display controller device node instead of the panel device node).
+
+> > Ping ?
+> > 
+> > Please note that this file documents properties common to multiple panel
+> > DT bindings, but in no way makes it mandatory to use the OF graph bindings
+> > for panels. The decision is left to individual bindings.
+> 
+> It is mandatory in the sense that we don't want more cases of "fsl,panel".
+
+That I agree with :-)
+
 -- 
 Regards,
 
 Laurent Pinchart
+
