@@ -1,104 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Johan Hovold <johan@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Vince Bridgers <vbridger@opensource.altera.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Li Yang <leoli@freescale.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Felix Fietkau <nbd@openwrt.org>,
-        John Crispin <blogic@openwrt.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars Persson <lars.persson@axis.com>,
-        Mugunthan V N <mugunthanvnm@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH net 13/16] net: ethernet: renesas: ravb: fix fixed-link phydev leaks
-Date: Mon, 28 Nov 2016 19:25:06 +0100
-Message-Id: <1480357509-28074-14-git-send-email-johan@kernel.org>
-In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
-References: <1480357509-28074-1-git-send-email-johan@kernel.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:39526 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754592AbcK2Nua (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 29 Nov 2016 08:50:30 -0500
+Date: Tue, 29 Nov 2016 14:50:17 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Babu Moger <babu.moger@oracle.com>, Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] Ajust lockdep static allocations for sparc
+Message-ID: <20161129135017.GL3092@twins.programming.kicks-ass.net>
+References: <1475004808-91920-1-git-send-email-babu.moger@oracle.com>
+ <CAMuHMdU13YdzoM4zTaiUvhzbgSVGeJgn6k7nyo2RayURiezK2w@mail.gmail.com>
+ <20161129114103.GE3092@twins.programming.kicks-ass.net>
+ <CAMuHMdWZ=1F-aL7K5YvPx58C8Cqy19fHqUGhVqVewTvXc5Z5-w@mail.gmail.com>
+ <20161129122907.GH3092@twins.programming.kicks-ass.net>
+ <CAMuHMdXu6vbRQrZHGG7wDojxsQpqHApwHxcFRwmwMVZYqdcfcw@mail.gmail.com>
+ <20161129133141.GK3092@twins.programming.kicks-ass.net>
+ <CAMuHMdW0VDJP39i510UEKy-a_aXwxWV=S2UZnNWnov4=XozWZQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW0VDJP39i510UEKy-a_aXwxWV=S2UZnNWnov4=XozWZQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make sure to deregister and free any fixed-link PHY registered using
-of_phy_register_fixed_link() on initialisation errors and on device
-close after having disconnected the PHY.
+On Tue, Nov 29, 2016 at 02:39:20PM +0100, Geert Uytterhoeven wrote:
 
-Fixes: b4bc88a868ed ("ravb: Add fixed-link support")
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/net/ethernet/renesas/ravb_main.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+> > Not understanding, why would a user ever need it? The platform knows if
+> > its has funny boot image size limits, no?
+> 
+> The boot loader does not come with the kernel, so the platform cannot
+> know for sure.
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 630536bc72f9..f1f3be2cfe21 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1008,7 +1008,8 @@ static int ravb_phy_init(struct net_device *ndev)
- 	of_node_put(pn);
- 	if (!phydev) {
- 		netdev_err(ndev, "failed to connect PHY\n");
--		return -ENOENT;
-+		err = -ENOENT;
-+		goto err_deregister_fixed_link;
- 	}
- 
- 	/* This driver only support 10/100Mbit speeds on Gen3
-@@ -1020,8 +1021,7 @@ static int ravb_phy_init(struct net_device *ndev)
- 		err = phy_set_max_speed(phydev, SPEED_100);
- 		if (err) {
- 			netdev_err(ndev, "failed to limit PHY to 100Mbit/s\n");
--			phy_disconnect(phydev);
--			return err;
-+			goto err_phy_disconnect;
- 		}
- 
- 		netdev_info(ndev, "limited PHY to 100Mbit/s\n");
-@@ -1033,6 +1033,14 @@ static int ravb_phy_init(struct net_device *ndev)
- 	phy_attached_info(phydev);
- 
- 	return 0;
-+
-+err_phy_disconnect:
-+	phy_disconnect(phydev);
-+err_deregister_fixed_link:
-+	if (of_phy_is_fixed_link(np))
-+		of_phy_deregister_fixed_link(np);
-+
-+	return err;
- }
- 
- /* PHY control start function */
-@@ -1634,6 +1642,7 @@ static void ravb_set_rx_mode(struct net_device *ndev)
- /* Device close function for Ethernet AVB */
- static int ravb_close(struct net_device *ndev)
- {
-+	struct device_node *np = ndev->dev.parent->of_node;
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	struct ravb_tstamp_skb *ts_skb, *ts_skb2;
- 
-@@ -1663,6 +1672,8 @@ static int ravb_close(struct net_device *ndev)
- 	if (ndev->phydev) {
- 		phy_stop(ndev->phydev);
- 		phy_disconnect(ndev->phydev);
-+		if (of_phy_is_fixed_link(np))
-+			of_phy_deregister_fixed_link(np);
- 	}
- 
- 	if (priv->chip_id != RCAR_GEN2) {
--- 
-2.7.3
-
+Why would anybody use a bootloader that imposes weird restrictions on
+their platform? That is, isn't that simply a broken bootloader?
