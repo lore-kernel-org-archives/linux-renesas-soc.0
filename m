@@ -1,61 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f196.google.com ([209.85.210.196]:32879 "EHLO
-        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934194AbcKXJiu (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60491 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753367AbcK2JFG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 04:38:50 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161120174836.1787-1-pbrobinson@gmail.com>
-References: <20161120174836.1787-1-pbrobinson@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Nov 2016 10:38:48 +0100
-Message-ID: <CAMuHMdWKcfOb6v0GQrcAadhPeM1d8M_EmNicZqpO0+2VfeoBog@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: em: depnd on ARCH_SHMOBILE
-To: Peter Robinson <pbrobinson@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Tue, 29 Nov 2016 04:05:06 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>
+Subject: [PATCH v3 08/13] drm: bridge: lvds-encoder: Add thine,thc63lvdm83d compatible string
+Date: Tue, 29 Nov 2016 11:04:38 +0200
+Message-Id: <1480410283-28698-9-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CC linux-renesas-soc
+The THC63LVDM83D is a transparent LVDS encoder. Unlike dumb LVDS
+encoders it can be controlled through a few pins (power down, LVDS
+swing, clock edge selection) and requires power supplies. However, on
+several boards where the device is used neither the control pins nor the
+power supply are controllable.
 
-On Sun, Nov 20, 2016 at 6:48 PM, Peter Robinson <pbrobinson@gmail.com> wrote:
-> The GPIO_EM is part of the Renesas SoCs so depend on the arch.
->
-> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
-> ---
->  drivers/gpio/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> v1->v2:
->         - Add COMPILE_TEST
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index d011cb8..a09e237 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -171,7 +171,7 @@ config GPIO_DWAPB
->
->  config GPIO_EM
->         tristate "Emma Mobile GPIO"
-> -       depends on ARM && OF_GPIO
-> +       depends on (ARCH_SHMOBILE || COMPILE_TEST) && OF_GPIO
+To avoid developing a separate device-specific driver add a
+"thine,thc63lvdm83d" compatible entry to the lvds-encoder driver. This
+will allow supporting many THC63LVDM83D-based boards easily, while
+allowing future development of an thc63lvdm83d driver when needed
+without breaking backward compatibility.
 
-For ARM SoCs, ARCH_SHMOBILE is being phased out in favor of ARCH_RENESAS.
-Note that ARCH_SHMOBILE is also set for some SuperH SoCs.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/lvds-encoder.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-However, ARCH_EMEV2 is even more suitable here.
+diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c b/drivers/gpu/drm/bridge/lvds-encoder.c
+index 576770ea8d7e..16c5ac77824a 100644
+--- a/drivers/gpu/drm/bridge/lvds-encoder.c
++++ b/drivers/gpu/drm/bridge/lvds-encoder.c
+@@ -198,6 +198,7 @@ static int lvds_encoder_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id lvds_encoder_match[] = {
+ 	{ .compatible = "lvds-encoder" },
++	{ .compatible = "thine,thc63lvdm83d" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, lvds_encoder_match);
+-- 
+Regards,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
