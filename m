@@ -1,30 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:35822 "EHLO
-        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbcK3Qli (ORCPT
+Received: from mail-wj0-f177.google.com ([209.85.210.177]:35732 "EHLO
+        mail-wj0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964811AbcK3Oe4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Nov 2016 11:41:38 -0500
-Received: by mail-pf0-f180.google.com with SMTP id i88so39853244pfk.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2016 08:41:38 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
+        Wed, 30 Nov 2016 09:34:56 -0500
+Received: by mail-wj0-f177.google.com with SMTP id v7so175481922wjy.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Nov 2016 06:34:51 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1480508696-19294-1-git-send-email-geert+renesas@glider.be>
+References: <1480508696-19294-1-git-send-email-geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 30 Nov 2016 15:34:49 +0100
+Message-ID: <CAPDyKFqUY_2gmR3QTdVMuOAR5BrT9DVzXvdpgburK+QDNPA6bA@mail.gmail.com>
+Subject: Re: [PATCH] PM / Domains: Do not print PM domain add error message if EPROBE_DEFER
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PM / Domains: Do not print PM domain add error message if EPROBE_DEFER
-References: <1480508696-19294-1-git-send-email-geert+renesas@glider.be>
-Date: Wed, 30 Nov 2016 08:41:36 -0800
-In-Reply-To: <1480508696-19294-1-git-send-email-geert+renesas@glider.be>
-        (Geert Uytterhoeven's message of "Wed, 30 Nov 2016 13:24:56 +0100")
-Message-ID: <m2k2bkkji7.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Geert Uytterhoeven <geert+renesas@glider.be> writes:
-
+On 30 November 2016 at 13:24, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 > EPROBE_DEFER is not an error, hence printing an error message like
 >
 >     renesas_irqc e61c0000.interrupt-controller: failed to add to PM domain always-on: -517
@@ -36,8 +36,31 @@ Geert Uytterhoeven <geert+renesas@glider.be> writes:
 > Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yes, I had noticed this too but not got around to fixing it.
+Acked-by; Ulf Hansson <ulf.hansson@linaro.org>
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+Kind regards
+Uffe
 
-Kevin
+> ---
+>  drivers/base/power/domain.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 64164aac6ae3990a..f22137b52dcb641b 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2032,8 +2032,9 @@ int genpd_dev_pm_attach(struct device *dev)
+>         mutex_unlock(&gpd_list_lock);
+>
+>         if (ret < 0) {
+> -               dev_err(dev, "failed to add to PM domain %s: %d",
+> -                       pd->name, ret);
+> +               if (ret != -EPROBE_DEFER)
+> +                       dev_err(dev, "failed to add to PM domain %s: %d",
+> +                               pd->name, ret);
+>                 goto out;
+>         }
+>
+> --
+> 1.9.1
+>
