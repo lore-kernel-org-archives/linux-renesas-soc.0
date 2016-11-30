@@ -1,44 +1,38 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
-        chanwoo@kernel.org
-Subject: [PATCH 04/12] power_supply: qcom_smbb: Replace the deprecated extcon
- API
-Date: Wed, 30 Nov 2016 14:57:32 +0900
-Message-id: <1480485460-2663-5-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:52460 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964808AbcK3KHL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 30 Nov 2016 05:07:11 -0500
+Date: Wed, 30 Nov 2016 11:07:06 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] arm64: dts: r8a7795: salvator-x: Set drive-strength for
+ ravb pins
+Message-ID: <20161130100706.GE2336@verge.net.au>
+References: <20161128114614.11979-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20161128114614.11979-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch replaces the deprecated extcon API as following:
-- extcon_set_cable_state_() -> extcon_set_state_sync()
+Hi Niklas,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/power/supply/qcom_smbb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Nov 28, 2016 at 12:46:14PM +0100, Niklas Söderlund wrote:
+> The EthernetAVB should not depend on the bootloader to setup correct
+> drive-strength values. Values for drive-strength where found by examine
+> the registers after the bootloader have configured the registers and
+> successfully used the EthernetAVB.
 
-diff --git a/drivers/power/supply/qcom_smbb.c b/drivers/power/supply/qcom_smbb.c
-index bb91a1c339bc..7b1991265b03 100644
---- a/drivers/power/supply/qcom_smbb.c
-+++ b/drivers/power/supply/qcom_smbb.c
-@@ -378,7 +378,7 @@ static irqreturn_t smbb_usb_valid_handler(int irq, void *_data)
- 	struct smbb_charger *chg = _data;
- 
- 	smbb_set_line_flag(chg, irq, STATUS_USBIN_VALID);
--	extcon_set_cable_state_(chg->edev, EXTCON_USB,
-+	extcon_set_state_sync(chg->edev, EXTCON_USB,
- 				chg->status & STATUS_USBIN_VALID);
- 	power_supply_changed(chg->usb_psy);
- 
--- 
-1.9.1
+I believe this patch has run-time dependencies on PFC patches and will
+result in a regression without them. Please resubmit or otherwise ping me
+once chose changes are present in an (rc) release or immutable branch.
+
+Thanks!
