@@ -1,8 +1,8 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Felipe Balbi <balbi@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>, gregkh@linuxfoundation.org,
-        kishon@ti.com, sre@kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        sre@kernel.org
 Cc: Peter.Chen@nxp.com, wens@csie.org,
         yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
         b-liu@ti.com, linux-kernel@vger.kernel.org,
@@ -10,54 +10,81 @@ Cc: Peter.Chen@nxp.com, wens@csie.org,
         linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
         chanwoo@kernel.org
-Subject: Re: [PATCH 06/12] usb: dwc3: omap: Replace the extcon API
-In-Reply-To: <1480485460-2663-7-git-send-email-cw00.choi@samsung.com>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com> <1480485460-2663-7-git-send-email-cw00.choi@samsung.com>
-Date: Wed, 30 Nov 2016 12:36:25 +0200
-Message-ID: <877f7lntjq.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Subject: [PATCH 06/12] usb: dwc3: omap: Replace the extcon API
+Date: Wed, 30 Nov 2016 14:57:34 +0900
+Message-id: <1480485460-2663-7-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+This patch uses the resource-managed extcon API for extcon_register_notifier()
+and replaces the deprecated extcon API as following:
+- extcon_get_cable_state_() -> extcon_get_state()
 
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/usb/dwc3/dwc3-omap.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-Hi,
-
-Chanwoo Choi <cw00.choi@samsung.com> writes:
-> This patch uses the resource-managed extcon API for extcon_register_notif=
-ier()
-> and replaces the deprecated extcon API as following:
-> - extcon_get_cable_state_() -> extcon_get_state()
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlg+q6kACgkQzL64meEa
-mQbA7w/3YuSLgP+D33ztsoVHb9RW4Zw6/O766xYdrG4jFLLgWvNwOieBQ7mINv7D
-1Sc3XGku02GkXrS1iLeKwb1sEXQkdhVWW5I4tb5mGiMQyLoorlNCm3N944w+fRAp
-CEgS0aN/FCbHFeJX0z6VBkcAt8DGu9C5PWAr7sVUEzOowXJ07CGGzCA/m/qnhx+c
-wLD2AvzGVhlUSSu+42RGjpGAezh/sSC9GB2cacfvr1SwX7/RqQo3tb5+D8tG7ZMK
-w4xIcbxNf9C+9cdCjaAO2y3hgCNXGdyjd3TaVYigXezkDjCAYt7E90ksl6gL2UZ/
-Qsn7Yf5KBCuaH7nGfdeE4a8hXOAcz+XlqKlwSMNa/A3HOp6TASWvnOKhCXerl0qR
-A2Fpl+uejS9mQ45onCperQ4cex/g2fvWwUnKU+PtDOyChOdCMifZim21k+7lZumN
-f3L8VKVBgmIz2cx9rfio5pNxE66V6rfe5ypXwDXc2Q7WklWqS7UDWQcwJ5XJVa91
-JBmnfwXD/Ov6Vl8iFSGOSe+54OwtR/TB414twEvgLW+wy6G/Bm2JA2m+6Wh3ktJt
-/fbZpNIQm98Ko88A5e9dWhMr9Fd/dOWe951JrNVeuvMg/EZgnbCCPVq8WPpbAvID
-SD+xyabLGXzhrr0qHjj+GgP99nhKD/c1zL7/aoppCToGAHL8Pw==
-=sFCQ
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
+index 29e80cc9b634..2d2e9aa1db08 100644
+--- a/drivers/usb/dwc3/dwc3-omap.c
++++ b/drivers/usb/dwc3/dwc3-omap.c
+@@ -425,20 +425,20 @@ static int dwc3_omap_extcon_register(struct dwc3_omap *omap)
+ 		}
+ 
+ 		omap->vbus_nb.notifier_call = dwc3_omap_vbus_notifier;
+-		ret = extcon_register_notifier(edev, EXTCON_USB,
+-						&omap->vbus_nb);
++		ret = devm_extcon_register_notifier(omap->dev, edev,
++						EXTCON_USB, &omap->vbus_nb);
+ 		if (ret < 0)
+ 			dev_vdbg(omap->dev, "failed to register notifier for USB\n");
+ 
+ 		omap->id_nb.notifier_call = dwc3_omap_id_notifier;
+-		ret = extcon_register_notifier(edev, EXTCON_USB_HOST,
+-						&omap->id_nb);
++		ret = devm_extcon_register_notifier(omap->dev, edev,
++						EXTCON_USB_HOST, &omap->id_nb);
+ 		if (ret < 0)
+ 			dev_vdbg(omap->dev, "failed to register notifier for USB-HOST\n");
+ 
+-		if (extcon_get_cable_state_(edev, EXTCON_USB) == true)
++		if (extcon_get_state(edev, EXTCON_USB) == true)
+ 			dwc3_omap_set_mailbox(omap, OMAP_DWC3_VBUS_VALID);
+-		if (extcon_get_cable_state_(edev, EXTCON_USB_HOST) == true)
++		if (extcon_get_state(edev, EXTCON_USB_HOST) == true)
+ 			dwc3_omap_set_mailbox(omap, OMAP_DWC3_ID_GROUND);
+ 
+ 		omap->edev = edev;
+@@ -527,17 +527,13 @@ static int dwc3_omap_probe(struct platform_device *pdev)
+ 	ret = of_platform_populate(node, NULL, NULL, dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to create dwc3 core\n");
+-		goto err2;
++		goto err1;
+ 	}
+ 
+ 	dwc3_omap_enable_irqs(omap);
+ 
+ 	return 0;
+ 
+-err2:
+-	extcon_unregister_notifier(omap->edev, EXTCON_USB, &omap->vbus_nb);
+-	extcon_unregister_notifier(omap->edev, EXTCON_USB_HOST, &omap->id_nb);
+-
+ err1:
+ 	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
+@@ -549,8 +545,6 @@ static int dwc3_omap_remove(struct platform_device *pdev)
+ {
+ 	struct dwc3_omap	*omap = platform_get_drvdata(pdev);
+ 
+-	extcon_unregister_notifier(omap->edev, EXTCON_USB, &omap->vbus_nb);
+-	extcon_unregister_notifier(omap->edev, EXTCON_USB_HOST, &omap->id_nb);
+ 	dwc3_omap_disable_irqs(omap);
+ 	of_platform_depopulate(omap->dev);
+ 	pm_runtime_put_sync(&pdev->dev);
+-- 
+1.9.1
