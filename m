@@ -1,79 +1,155 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60488 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756477AbcK2JFL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 04:05:11 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>
-Subject: [PATCH v3 11/13] drm: Set on-chip bridges' encoder type
-Date: Tue, 29 Nov 2016 11:04:41 +0200
-Message-Id: <1480410283-28698-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        sre@kernel.org
+Cc: Peter.Chen@nxp.com, wens@csie.org,
+        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
+        b-liu@ti.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
+        chanwoo@kernel.org
+Subject: [PATCH 03/12] power_supply: axp288_charger: Replace the extcon API
+Date: Wed, 30 Nov 2016 14:57:31 +0900
+Message-id: <1480485460-2663-4-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Initialize the new drm_bridge::encoder_type field to the right value for
-all bridges that model on-SoC IP cores.
+This patch uses the resource-managed extcon API for extcon_register_notifier()
+and replaces the deprecated extcon API as following:
+- extcon_get_cable_state_() -> extcon_get_state()
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_mic.c | 2 ++
- drivers/gpu/drm/mediatek/mtk_hdmi.c     | 2 ++
- drivers/gpu/drm/sti/sti_dvo.c           | 2 ++
- 3 files changed, 6 insertions(+)
+ drivers/power/supply/axp288_charger.c | 51 +++++++++--------------------------
+ 1 file changed, 13 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index a0def0be6d65..7175ecda36e8 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -390,6 +390,8 @@ static int exynos_mic_bind(struct device *dev, struct device *master,
- 	mic->bridge.funcs = &mic_bridge_funcs;
- 	mic->bridge.of_node = dev->of_node;
- 	mic->bridge.driver_private = mic;
-+	mic->bridge.encoder_type = DRM_MODE_ENCODER_DSI;
-+
- 	ret = drm_bridge_add(&mic->bridge);
- 	if (ret)
- 		DRM_ERROR("mic: Failed to add MIC to the global bridge list\n");
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index 5ca1b0fbf937..bb5cf594c721 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1712,6 +1712,8 @@ static int mtk_drm_hdmi_probe(struct platform_device *pdev)
+diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
+index 75b8e0c7402b..1115052e9a69 100644
+--- a/drivers/power/supply/axp288_charger.c
++++ b/drivers/power/supply/axp288_charger.c
+@@ -581,15 +581,15 @@ static void axp288_charger_extcon_evt_worker(struct work_struct *work)
+ 	bool old_connected = info->cable.connected;
  
- 	hdmi->bridge.funcs = &mtk_hdmi_bridge_funcs;
- 	hdmi->bridge.of_node = pdev->dev.of_node;
-+	hdmi->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
-+
- 	ret = drm_bridge_add(&hdmi->bridge);
+ 	/* Determine cable/charger type */
+-	if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_SDP) > 0) {
++	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
+ 		dev_dbg(&info->pdev->dev, "USB SDP charger  is connected");
+ 		info->cable.connected = true;
+ 		info->cable.chg_type = POWER_SUPPLY_TYPE_USB;
+-	} else if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_CDP) > 0) {
++	} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
+ 		dev_dbg(&info->pdev->dev, "USB CDP charger is connected");
+ 		info->cable.connected = true;
+ 		info->cable.chg_type = POWER_SUPPLY_TYPE_USB_CDP;
+-	} else if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_DCP) > 0) {
++	} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
+ 		dev_dbg(&info->pdev->dev, "USB DCP charger is connected");
+ 		info->cable.connected = true;
+ 		info->cable.chg_type = POWER_SUPPLY_TYPE_USB_DCP;
+@@ -686,7 +686,7 @@ static int axp288_charger_handle_otg_evt(struct notifier_block *nb,
+ 	struct axp288_chrg_info *info =
+ 	    container_of(nb, struct axp288_chrg_info, otg.id_nb);
+ 	struct extcon_dev *edev = info->otg.cable;
+-	int usb_host = extcon_get_cable_state_(edev, EXTCON_USB_HOST);
++	int usb_host = extcon_get_state(edev, EXTCON_USB_HOST);
+ 
+ 	dev_dbg(&info->pdev->dev, "external connector USB-Host is %s\n",
+ 				usb_host ? "attached" : "detached");
+@@ -841,33 +841,27 @@ static int axp288_charger_probe(struct platform_device *pdev)
+ 	/* Register for extcon notification */
+ 	INIT_WORK(&info->cable.work, axp288_charger_extcon_evt_worker);
+ 	info->cable.nb.notifier_call = axp288_charger_handle_cable_evt;
+-	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
+-					&info->cable.nb);
++	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
++					EXTCON_CHG_USB_SDP, &info->cable.nb);
  	if (ret) {
- 		dev_err(dev, "failed to add bridge, ret = %d\n", ret);
-diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
-index 411dc6ec976e..8912c932078f 100644
---- a/drivers/gpu/drm/sti/sti_dvo.c
-+++ b/drivers/gpu/drm/sti/sti_dvo.c
-@@ -472,6 +472,8 @@ static int sti_dvo_bind(struct device *dev, struct device *master, void *data)
- 	bridge->driver_private = dvo;
- 	bridge->funcs = &sti_dvo_bridge_funcs;
- 	bridge->of_node = dvo->dev.of_node;
-+	bridge->encoder_type = DRM_MODE_ENCODER_LVDS;
-+
- 	err = drm_bridge_add(bridge);
- 	if (err) {
- 		DRM_ERROR("Failed to add bridge\n");
+ 		dev_err(&info->pdev->dev,
+ 			"failed to register extcon notifier for SDP %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
+-					&info->cable.nb);
++	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
++					EXTCON_CHG_USB_CDP, &info->cable.nb);
+ 	if (ret) {
+ 		dev_err(&info->pdev->dev,
+ 			"failed to register extcon notifier for CDP %d\n", ret);
+-		extcon_unregister_notifier(info->cable.edev,
+-				EXTCON_CHG_USB_SDP, &info->cable.nb);
+ 		return ret;
+ 	}
+ 
+-	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
+-					&info->cable.nb);
++	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
++					EXTCON_CHG_USB_DCP, &info->cable.nb);
+ 	if (ret) {
+ 		dev_err(&info->pdev->dev,
+ 			"failed to register extcon notifier for DCP %d\n", ret);
+-		extcon_unregister_notifier(info->cable.edev,
+-				EXTCON_CHG_USB_SDP, &info->cable.nb);
+-		extcon_unregister_notifier(info->cable.edev,
+-				EXTCON_CHG_USB_CDP, &info->cable.nb);
+ 		return ret;
+ 	}
+ 
+@@ -887,13 +881,13 @@ static int axp288_charger_probe(struct platform_device *pdev)
+ 	/* Register for OTG notification */
+ 	INIT_WORK(&info->otg.work, axp288_charger_otg_evt_worker);
+ 	info->otg.id_nb.notifier_call = axp288_charger_handle_otg_evt;
+-	ret = extcon_register_notifier(info->otg.cable, EXTCON_USB_HOST,
+-				       &info->otg.id_nb);
++	ret = devm_extcon_register_notifier(&pdev->dev, info->otg.cable,
++					EXTCON_USB_HOST, &info->otg.id_nb);
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "failed to register otg notifier\n");
+ 
+ 	if (info->otg.cable)
+-		info->otg.id_short = extcon_get_cable_state_(
++		info->otg.id_short = extcon_get_state(
+ 					info->otg.cable, EXTCON_USB_HOST);
+ 
+ 	/* Register charger interrupts */
+@@ -921,17 +915,8 @@ static int axp288_charger_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ intr_reg_failed:
+-	if (info->otg.cable)
+-		extcon_unregister_notifier(info->otg.cable, EXTCON_USB_HOST,
+-					&info->otg.id_nb);
+ 	power_supply_unregister(info->psy_usb);
+ psy_reg_failed:
+-	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
+-					&info->cable.nb);
+-	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
+-					&info->cable.nb);
+-	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
+-					&info->cable.nb);
+ 	return ret;
+ }
+ 
+@@ -939,16 +924,6 @@ static int axp288_charger_remove(struct platform_device *pdev)
+ {
+ 	struct axp288_chrg_info *info =  dev_get_drvdata(&pdev->dev);
+ 
+-	if (info->otg.cable)
+-		extcon_unregister_notifier(info->otg.cable, EXTCON_USB_HOST,
+-					&info->otg.id_nb);
+-
+-	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
+-					&info->cable.nb);
+-	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
+-					&info->cable.nb);
+-	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
+-					&info->cable.nb);
+ 	power_supply_unregister(info->psy_usb);
+ 
+ 	return 0;
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
