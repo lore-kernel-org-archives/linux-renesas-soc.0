@@ -1,42 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45894 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbcKCPey (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.13]:61796 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752078AbcK3PvC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 11:34:54 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] pinctrl: sh-pfc: Fixups for bias handeling
-Date: Thu,  3 Nov 2016 16:34:19 +0100
-Message-Id: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 30 Nov 2016 10:51:02 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Simon Horman <horms+renesas@verge.net.au>, arm@kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Match Updates for v4.10
+Date: Wed, 30 Nov 2016 16:50:20 +0100
+Message-ID: <6791283.iMDbrK21lt@wuerfel>
+In-Reply-To: <cover.1479928995.git.horms+renesas@verge.net.au>
+References: <cover.1479928995.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert and Laurent,
+On Wednesday, November 23, 2016 9:13:31 PM CET Simon Horman wrote:
+> This pull request is based on the pull request "soc_device_match()
+> interface for matching against soc_bus attributes" sent by Geert
+> Uytterhoeven which corresponds to the soc-device-match-tag1 tag in his
+> renesas-driver's tree. It provides infrastructure used by changes in this
+> pull request.
+> 
+> This pull request is broken out of an earlier pull request,
+> "Second Round of Renesas ARM Based SoC Drivers Updates for v4.10".
+> The motivation for breaking up the pull request is to provide
+> branches with minimal dependencies.
+> 
+> This pull request is targeted at the next/drivers branch of the arm-soc tree.
+> 
+> It introduces some minor merge conflicts in drivers/soc/renesas/Makefile.
+> The resolution is to take both sides.  A sample merge resolution is
+> provided in the renesas-next-20161123v2-v4.9-rc1 tag of the renesas tree.
+> 
 
-This series fixes two issues I encounter for bias handling in the PFC 
-while preparing my drive strength patch set.
+Pulled into next/drivers, thanks!
 
-I do believe we should try to get the r8a7795 specific fix in to v4.9, 
-do you agree (if the fix itself is acceptable ofc)?
-
-Niklas Söderlund (2):
-  pinctrl: sh-pfc: Do not unconditionally support
-    PIN_CONFIG_BIAS_DISABLE
-  pinctrl: sh-pfc: r8a7795: Use lookup function for bias data
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 350 ++++++++++++++++++-----------------
- drivers/pinctrl/sh-pfc/pinctrl.c     |   3 +-
- 2 files changed, 182 insertions(+), 171 deletions(-)
-
--- 
-2.10.2
+	Arnd
