@@ -1,164 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 7.mo1.mail-out.ovh.net ([87.98.158.110]:45805 "EHLO
-        7.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753100AbcK2Msj (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60608 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754578AbcK3F5q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 07:48:39 -0500
-Received: from player691.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id D7B211C1A6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Nov 2016 10:12:14 +0100 (CET)
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: geert+renesas@glider.be, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-Date: Tue, 29 Nov 2016 10:11:56 +0100
-Message-Id: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
+        Wed, 30 Nov 2016 00:57:46 -0500
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        sre@kernel.org
+Cc: Peter.Chen@nxp.com, wens@csie.org,
+        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
+        b-liu@ti.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
+        chanwoo@kernel.org
+Subject: [PATCH 01/12] phy: rcar-gen3-usb2: Replace the deprecated extcon API
+Date: Wed, 30 Nov 2016 14:57:29 +0900
+Message-id: <1480485460-2663-2-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+This patch replaces the deprecated extcon API as following:
+- extcon_set_cable_state_() -> extcon_set_state_sync()
 
-The Gyro-ADC supports three different configurations:
-a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
-channel select signal (adi_chsel1 and adi_chsel1_b groups), up to 4 ADCs
-through 2 channel select signals (adi_chsel2 and adi_chsel2_b groups)
-and up to 8 ADCs through 3 channel select signals (adi_chsel3 and
-adi_chsel3_b groups)
-
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
+ drivers/phy/phy-rcar-gen3-usb2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Compiled only, not tested with an actual ADC.
-
-For reference only, these are the changes introduced by Geert's private
-review of first sketch of this patch:
-    * separate ADI chsel in 3 overlapping groups:
-      the user can now select how many pins to assign to channel selection
-      function.
-
----
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 7ca37c3..3898747 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1691,6 +1691,72 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index bd2430d7339c..7f8081f157f4 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -93,11 +93,11 @@ static void rcar_gen3_phy_usb2_work(struct work_struct *work)
+ 						 work);
  
-+/* - ADI -------------------------------------------------------------------- */
-+static const unsigned int adi_pins[] = {
-+	/* ADIDATA, ADICS, CLK*/
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 26),
-+};
-+static const unsigned int adi_mux[] = {
-+	/* ADIDATA, ADICS, CLK*/
-+	ADIDATA_MARK, ADICS_SAMP_MARK, ADICLK_MARK,
-+};
-+static const unsigned int adi_chsel1_pins[] = {
-+	/* CHS 0 */
-+	RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int adi_chsel1_mux[] = {
-+	/* CHS 0 */
-+	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
-+};
-+static const unsigned int adi_chsel2_pins[] = {
-+	/* CHS 0, 1 */
-+	RCAR_GP_PIN(6, 27), RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int adi_chsel2_mux[] = {
-+	/* CHS 0, 1 */
-+	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
-+};
-+static const unsigned int adi_chsel3_pins[] = {
-+	/* CHS 0, 1, 2 */
-+	RCAR_GP_PIN(6, 27), RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int adi_chsel3_mux[] = {
-+	/* CHS 0, 1, 2 */
-+	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
-+};
-+static const unsigned int adi_b_pins[] = {
-+	/* ADIDATA B, ADICS B, CLK B */
-+	RCAR_GP_PIN(5, 25), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
-+};
-+static const unsigned int adi_b_mux[] = {
-+	/* ADIDATA B, ADICS B, CLK B */
-+	ADIDATA_B_MARK, ADICS_SAMP_B_MARK, ADICLK_B_MARK,
-+};
-+static const unsigned int adi_chsel1_b_pins[] = {
-+	/* CHS B 0 */
-+	RCAR_GP_PIN(5, 28),
-+};
-+static const unsigned int adi_chsel1_b_mux[] = {
-+	/* CHS B 0 */
-+	ADICHS0_B_MARK,
-+};
-+static const unsigned int adi_chsel2_b_pins[] = {
-+	/* CHS B 0, 1 */
-+	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29),
-+};
-+static const unsigned int adi_chsel2_b_mux[] = {
-+	/* CHS B 0, 1 */
-+	ADICHS0_B_MARK, ADICHS1_B_MARK,
-+};
-+static const unsigned int adi_chsel3_b_pins[] = {
-+	/* CHS B 0, 1, 2 */
-+	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29), RCAR_GP_PIN(5, 30),
-+};
-+static const unsigned int adi_chsel3_b_mux[] = {
-+	/* CHS B 0, 1, 2 */
-+	ADICHS0_B_MARK, ADICHS1_B_MARK, ADICHS2_B_MARK,
-+};
-+
- /* - Audio Clock ------------------------------------------------------------ */
- static const unsigned int audio_clk_a_pins[] = {
- 	/* CLK */
-@@ -4343,6 +4409,14 @@ static const unsigned int vin2_clk_mux[] = {
- };
+ 	if (ch->extcon_host) {
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, true);
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB, false);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, true);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB, false);
+ 	} else {
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, false);
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, false);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB, true);
+ 	}
+ }
  
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(adi),
-+	SH_PFC_PIN_GROUP(adi_chsel1),
-+	SH_PFC_PIN_GROUP(adi_chsel2),
-+	SH_PFC_PIN_GROUP(adi_chsel3),
-+	SH_PFC_PIN_GROUP(adi_b),
-+	SH_PFC_PIN_GROUP(adi_chsel1_b),
-+	SH_PFC_PIN_GROUP(adi_chsel2_b),
-+	SH_PFC_PIN_GROUP(adi_chsel3_b),
- 	SH_PFC_PIN_GROUP(audio_clk_a),
- 	SH_PFC_PIN_GROUP(audio_clk_b),
- 	SH_PFC_PIN_GROUP(audio_clk_b_b),
-@@ -4687,6 +4761,17 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(vin2_clk),
- };
- 
-+static const char * const adi_groups[] = {
-+	"adi",
-+	"adi_chsel1",
-+	"adi_chsel2",
-+	"adi_chsel3",
-+	"adi_b",
-+	"adi_chsel1_b",
-+	"adi_chsel2_b",
-+	"adi_chsel3_b",
-+};
-+
- static const char * const audio_clk_groups[] = {
- 	"audio_clk_a",
- 	"audio_clk_b",
-@@ -5192,6 +5277,7 @@ static const char * const vin2_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(adi),
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(can0),
 -- 
-2.7.4
+1.9.1
