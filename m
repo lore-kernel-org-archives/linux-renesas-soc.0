@@ -1,68 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36824 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751593AbcKBKMN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 06:12:13 -0400
-MIME-Version: 1.0
-In-Reply-To: <2366203.iKt2DUneo7@wasted.cogentembedded.com>
-References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com> <2366203.iKt2DUneo7@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 11:12:11 +0100
-Message-ID: <CAMuHMdUZULyFwAoteXf+g=RWP=gBs0jDMVGpNUT_A=kPdDwSYQ@mail.gmail.com>
-Subject: Re: [PATCH 06/11] ARM: dts: r8a7745: add [H]SCIF{A|B} support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        sre@kernel.org
+Cc: Peter.Chen@nxp.com, wens@csie.org,
+        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
+        b-liu@ti.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, cw00.choi@samsung.com,
+        chanwoo@kernel.org
+Subject: [PATCH 00/12] extcon: Replace the deprecated extcon API
+Date: Wed, 30 Nov 2016 14:57:28 +0900
+Message-id: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Oct 29, 2016 at 12:19 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe [H]SCIF{|A|B} ports in the R8A7745 device tree.
->
-> Based on the original (and large) patch by Dmitry Shifrin
-> <dmitry.shifrin@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This patches just replace the deprecated extcon API without any change
+of extcon operation and use the resource-managed function for
+extcon_register_notifier().
 
-After you've fixed the family-specific compatible values:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The new extcon API instead of deprecated API.
+- extcon_set_cable_state_() -> extcon_set_state_sync();
+- extcon_get_cable_state_() -> extcon_get_state();
 
-> ---
->  arch/arm/boot/dts/r8a7745.dtsi |  261 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 261 insertions(+)
->
-> Index: renesas/arch/arm/boot/dts/r8a7745.dtsi
-> ===================================================================
-> --- renesas.orig/arch/arm/boot/dts/r8a7745.dtsi
-> +++ renesas/arch/arm/boot/dts/r8a7745.dtsi
-> @@ -157,6 +157,267 @@
->                         #dma-cells = <1>;
->                         dma-channels = <15>;
->                 };
-> +
-> +               scifa0: serial@e6c40000 {
-> +                       compatible = "renesas,scifa-r8a7745",
-> +                                    "renesas,rzg-scifa", "renesas,scifa";
+The each patch has not any dependency among patches. So, each maintainer
+could pick up each patch without any problem.
 
-s/renesas,rzg-/renesas,rcar-gen2-/g
+Chanwoo Choi (12):
+  phy: rcar-gen3-usb2: Replace the deprecated extcon API
+  phy: sun4i-usb: Replace the deprecated extcon API
+  power_supply: axp288_charger: Replace the extcon API
+  power_supply: qcom_smbb: Replace the deprecated extcon API
+  usb: chipdata: Replace the extcon API
+  usb: dwc3: omap: Replace the extcon API
+  usb: sunxi: Uses the resource-managed extcon API when registering extcon notifier
+  usb: phy: msm: Replace the extcon API
+  usb: phy: omap-otg: Replace the extcon API
+  usb: phy: qcom-8x16-usb: Replace the extcon API
+  usb: phy: tahvo: Replace the deprecated extcon API
+  usb: renesas_usbhs: Replace the deprecated extcon API
 
-Gr{oetje,eeting}s,
+ drivers/phy/phy-rcar-gen3-usb2.c      |  8 +++---
+ drivers/phy/phy-sun4i-usb.c           |  4 +--
+ drivers/power/supply/axp288_charger.c | 51 +++++++++--------------------------
+ drivers/power/supply/qcom_smbb.c      |  2 +-
+ drivers/usb/chipidea/core.c           | 30 +++++----------------
+ drivers/usb/dwc3/dwc3-omap.c          | 20 +++++---------
+ drivers/usb/musb/sunxi.c              | 12 +++------
+ drivers/usb/phy/phy-msm-usb.c         | 33 ++++++++---------------
+ drivers/usb/phy/phy-omap-otg.c        | 24 +++++------------
+ drivers/usb/phy/phy-qcom-8x16-usb.c   | 13 +++------
+ drivers/usb/phy/phy-tahvo.c           | 10 +++----
+ drivers/usb/renesas_usbhs/common.c    |  2 +-
+ 12 files changed, 63 insertions(+), 146 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.9.1
