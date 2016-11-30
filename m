@@ -1,112 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:38996 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754903AbcK1VKH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52171 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756346AbcK3Jz3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Nov 2016 16:10:07 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hien Dang <hien.dang.eb@renesas.com>
-Subject: [PATCH v3 1/4] thermal: rcar_gen3_thermal: Document the R-Car Gen3
-Date: Mon, 28 Nov 2016 22:09:21 +0100
-Message-Id: <20161128210924.2921-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
-References: <20161128210924.2921-1-wsa+renesas@sang-engineering.com>
+        Wed, 30 Nov 2016 04:55:29 -0500
+Date: Wed, 30 Nov 2016 10:55:23 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Rich Felker <dalias@libc.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH/RFC linux-mtd] mtd: sh_flctl: Remove sh7372 and device
+ tree support
+Message-ID: <20161130095520.GB2336@verge.net.au>
+References: <1480059181-29355-1-git-send-email-horms+renesas@verge.net.au>
+ <20161129170949.GZ1555@brightrain.aerifal.cx>
+ <CAMuHMdUnaXbG-4GFB0BcTpYjcKHh8xA3Z0Z5CwiHJqCT-QhBJA@mail.gmail.com>
+ <20161129174445.GA1555@brightrain.aerifal.cx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161129174445.GA1555@brightrain.aerifal.cx>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Changes since last version:
+On Tue, Nov 29, 2016 at 12:44:45PM -0500, Rich Felker wrote:
+> On Tue, Nov 29, 2016 at 06:23:38PM +0100, Geert Uytterhoeven wrote:
+> > Hi Rich,
+> > 
+> > On Tue, Nov 29, 2016 at 6:09 PM, Rich Felker <dalias@libc.org> wrote:
+> > > On Fri, Nov 25, 2016 at 08:33:01AM +0100, Simon Horman wrote:
+> > >> Commit edf4100906044225 ("ARM: shmobile: sh7372 dtsi: Remove Legacy file")
+> > >> removed the sh7272 SoC from the kernel in v4.1.
+> > >>
+> > >> This patch removes support for the sh7272 SoC from the sh_flctl driver.
+> > >> As that SoC was the only user of device tree support also remove that
+> > >> from the driver.
+> > >>
+> > >> In essence it reverts commit 7c8f680e96ed ("mtd: sh_flctl: Add device tree
+> > >> support"). This commit may be used as a reference for re-adding device
+> > >> tree support to this driver if a need for it is found in future.
+> > >>
+> > >> This commit has been build-testesd against the ap325rxa_defconfig.
+> > >> I do not have access to the hardware to perform run-time testing
+> > >> on that board which appears to be the only remaining user of this driver.
+> > >> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > >> ---
+> > >>  .../devicetree/bindings/mtd/flctl-nand.txt         | 49 ---------------
+> > >>  drivers/mtd/nand/sh_flctl.c                        | 70 +++-------------------
+> > >>  2 files changed, 8 insertions(+), 111 deletions(-)
+> > >>  delete mode 100644 Documentation/devicetree/bindings/mtd/flctl-nand.txt
+> > >
+> > > While I'm not the maintainer for this (and I'm not clear that the
+> > > linux-sh list even should have been cc'd; it seems to be shmobile arm
+> > > soc stuff rather than sh arch) I think this is a bad change. If the
+> > > driver is completely unused, it should just be removed, but if there
+> > 
+> > Its sole remaining in-kernel user is arch/sh/boards/mach-ap325rxa/setup.c.
+> 
+> If indeed there's a user in arch/sh, it makes even more sense not to
+> remove it. arch/sh/boards/* is intended to be removed with only DT
+> support remaining, once drivers have DT support. :-)
 
-* earlier versions had one node per sensor. This version has one node for all,
-  but we now have one reg entry per sensor. This makes it easier to use the
-  shared resources (FUSE registers, interrupts). There is no driver support
-  for shared resources yet, but it will be added incrementally.
+I think we can trivially bring and end to speculation on the presence of a
+user in arch/sh:
 
-* interrupt property specified. We make clear now that all interrupts routed
-  must be specified in the binding. It is up to the driver if and how it makes
-  use of them. Currently, there is no interrupt support, but it will be added
-  later.
+$ make kernelrelease
+4.9.0-rc7
+$ grep -r sh_flctl arch/sh/
+arch/sh/boards/mach-ap325rxa/setup.c:#include <linux/mtd/sh_flctl.h>
+arch/sh/boards/mach-ap325rxa/setup.c:static struct sh_flctl_platform_data nand_flash_data = {
+arch/sh/boards/mach-ap325rxa/setup.c:   .name           = "sh_flctl",
 
-* due to the well-specified reg entries, no need anymore for aliases.
+> > > are remaining users that are still using legacy platform device
+> > > bindings, they should gradually be transitioned to device tree, and
+> > > having the device tree support still present makes it easier to do
+> > > that.
+> > 
+> > Enjoy converting ap325rxa to DT ;-)
+> 
+> Not sure if that's expected to be worse than the rest of it and if it
+> makes sense to convert or just remove. But I don't think changes that
+> put us farther away from DT-only make sense.
+> 
+> > > Removing the *bindings* is even worse, as these are a permanent
+> > > interface between hardware/firmware and software.
+> > 
+> > While it is a permanent interface, it is only a git revert away...
+> 
+> Indeed, but one that requires coordination between subsystem
+> maintainers to get it back in a working state.
 
-* fixed register range for TSC1.
-
-* reformatted paragraphs and fixed some typos.
-
- .../bindings/thermal/rcar-gen3-thermal.txt         | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-new file mode 100644
-index 00000000000000..07a9713ae6a757
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-@@ -0,0 +1,56 @@
-+* DT bindings for Renesas R-Car Gen3 Thermal Sensor driver
-+
-+On R-Car Gen3 SoCs, the thermal sensor controllers (TSC) control the thermal
-+sensors (THS) which are the analog circuits for measuring temperature (Tj)
-+inside the LSI.
-+
-+Required properties:
-+- compatible		: "renesas,<soctype>-thermal",
-+			  Examples with soctypes are:
-+			    - "renesas,r8a7795-thermal" (R-Car H3)
-+			    - "renesas,r8a7796-thermal" (R-Car M3-W)
-+- reg			: Address ranges of the thermal registers. Each sensor
-+			  needs one address range. Sorting must be done in
-+			  increasing order according to datasheet, i.e.
-+			  TSC1, TSC2, ...
-+- clocks		: Must contain a reference to the functional clock.
-+- #thermal-sensor-cells : must be <1>.
-+
-+Optional properties:
-+
-+- interrupts           : interrupts routed to the TSC (3 for H3 and M3-W)
-+- power-domain		: Must contain a reference to the power domain. This
-+			  property is mandatory if the thermal sensor instance
-+			  is part of a controllable power domain.
-+
-+Example:
-+
-+	tsc: thermal@e6198000 {
-+		compatible = "renesas,r8a7795-thermal";
-+		reg = <0 0xe6198000 0 0x68>,
-+		      <0 0xe61a0000 0 0x5c>,
-+		      <0 0xe61a8000 0 0x5c>;
-+		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 522>;
-+		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+		#thermal-sensor-cells = <1>;
-+		status = "okay";
-+	};
-+
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
--- 
-2.10.2
+For now I think it would be best if this thread served to document that
+sh7372 support should be removed either when another user of the bindings
+is added or when DT support is removed from the driver.
