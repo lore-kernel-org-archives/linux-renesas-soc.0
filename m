@@ -1,47 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940575AbcKQRR2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 12:17:28 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/31] ARM: dts: r8a7794: Correct hsusb parent clock
-Date: Thu, 17 Nov 2016 15:11:19 +0100
-Message-Id: <c343f5d5491b0b9e2466911f2081577f6e5fdb98.1479391750.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1479391750.git.horms+renesas@verge.net.au>
-References: <cover.1479391750.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 29 Nov 2016 20:35:40 -0500 (EST)
+Message-Id: <20161129.203540.1821619500745777807.davem@davemloft.net>
+To: geert+renesas@glider.be
+Cc: f.fainelli@gmail.com, josh.cartwright@ni.com,
+        nathan.sullivan@ni.com, zach.brown@ni.com,
+        woojung.huh@microchip.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: phy: Fix use after free in phy_detach()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1480342711-26407-1-git-send-email-geert+renesas@glider.be>
+References: <1480342711-26407-1-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 28 Nov 2016 15:18:31 +0100
 
-The parent clock of the HSUSB clock is the HP clock, not the MP clock.
+> If device_release_driver(&phydev->mdio.dev) is called, it releases all
+> resources belonging to the PHY device. Hence the subsequent call to
+> phy_led_triggers_unregister() will access already freed memory when
+> unregistering the LEDs.
+> 
+> Move the call to phy_led_triggers_unregister() before the possible call
+> to device_release_driver() to fix this.
+> 
+> Fixes: 2e0bc452f4721520 ("net: phy: leds: add support for led triggers on phy link state change")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This is v2 of "[RFC] net: phy: Fix double free in phy_detach()".
+> 
+> v2:
+>   - Dropped RFC,
+>   - Reworded, as commit a7dac9f9c1695d74 ("phy: fix error case of
+>     phy_led_triggers_(un)register") fixed the double free, and thus the
+>     warning I was seeing during "poweroff" on sh73a0/kzm9g,
+>   - Verified use after free using CONFIG_DEBUG_DEVRES, log_devres = 1,
+>     and additional debug code printing the address of
+>     phy->phy_led_triggers. Adding poisoning of freed memory to
+>     devres_log() will cause a crash.
 
-Fixes: c7bab9f929e51761 ("ARM: shmobile: r8a7794: Add USB clocks to device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 01816ac775a8..7d9f0601d3ca 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1262,7 +1262,7 @@
- 		mstp7_clks: mstp7_clks@e615014c {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
--			clocks = <&mp_clk>, <&mp_clk>,
-+			clocks = <&mp_clk>, <&hp_clk>,
- 				 <&zs_clk>, <&p_clk>, <&p_clk>, <&zs_clk>,
- 				 <&zs_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
- 				 <&zx_clk>;
--- 
-2.7.0.rc3.207.g0ac5344
+Applied, thanks.
