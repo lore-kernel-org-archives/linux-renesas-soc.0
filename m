@@ -1,64 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60488 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756417AbcK2JEq (ORCPT
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:26186 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756551AbcK3P3S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 04:04:46 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>
-Subject: [PATCH v3 02/13] drm: Fix compilation warning caused by static inline forward declaration
-Date: Tue, 29 Nov 2016 11:04:32 +0200
-Message-Id: <1480410283-28698-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 30 Nov 2016 10:29:18 -0500
+From: Vincent ABRIOU <vincent.abriou@st.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Wed, 30 Nov 2016 16:28:52 +0100
+Subject: Re: [PATCH v3 11/13] drm: Set on-chip bridges' encoder type
+Message-ID: <dc9973df-464a-e44b-0483-e6e73511ba65@st.com>
 References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1480410283-28698-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480410283-28698-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The drm_crtc_mask() function used in <drm/drm_encoder.h> is a static
-inline defined in <drm/drm_crtc.h>. If the first header is included in a
-compilation unit without the second one, the following compilation
-warning will be issued.
 
-In file included from <linux>/drivers/gpu/drm/drm_bridge.c:29:0:
-<linux>/include/drm/drm_encoder.h:192:95: warning: ‘drm_crtc_mask’ used but never defined
- static inline uint32_t drm_crtc_mask(const struct drm_crtc *crtc);
 
-Fix this by including the header defining the function instead of using
-a forward declaration.
+On 11/29/2016 10:04 AM, Laurent Pinchart wrote:
+> Initialize the new drm_bridge::encoder_type field to the right value for
+> all bridges that model on-SoC IP cores.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_mic.c | 2 ++
+>  drivers/gpu/drm/mediatek/mtk_hdmi.c     | 2 ++
+>  drivers/gpu/drm/sti/sti_dvo.c           | 2 ++
+>  3 files changed, 6 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> index a0def0be6d65..7175ecda36e8 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> @@ -390,6 +390,8 @@ static int exynos_mic_bind(struct device *dev, struct device *master,
+>  	mic->bridge.funcs = &mic_bridge_funcs;
+>  	mic->bridge.of_node = dev->of_node;
+>  	mic->bridge.driver_private = mic;
+> +	mic->bridge.encoder_type = DRM_MODE_ENCODER_DSI;
+> +
+>  	ret = drm_bridge_add(&mic->bridge);
+>  	if (ret)
+>  		DRM_ERROR("mic: Failed to add MIC to the global bridge list\n");
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> index 5ca1b0fbf937..bb5cf594c721 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> @@ -1712,6 +1712,8 @@ static int mtk_drm_hdmi_probe(struct platform_device *pdev)
+>
+>  	hdmi->bridge.funcs = &mtk_hdmi_bridge_funcs;
+>  	hdmi->bridge.of_node = pdev->dev.of_node;
+> +	hdmi->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
+> +
+>  	ret = drm_bridge_add(&hdmi->bridge);
+>  	if (ret) {
+>  		dev_err(dev, "failed to add bridge, ret = %d\n", ret);
+> diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
+> index 411dc6ec976e..8912c932078f 100644
+> --- a/drivers/gpu/drm/sti/sti_dvo.c
+> +++ b/drivers/gpu/drm/sti/sti_dvo.c
+> @@ -472,6 +472,8 @@ static int sti_dvo_bind(struct device *dev, struct device *master, void *data)
+>  	bridge->driver_private = dvo;
+>  	bridge->funcs = &sti_dvo_bridge_funcs;
+>  	bridge->of_node = dvo->dev.of_node;
+> +	bridge->encoder_type = DRM_MODE_ENCODER_LVDS;
+> +
+>  	err = drm_bridge_add(bridge);
+>  	if (err) {
+>  		DRM_ERROR("Failed to add bridge\n");
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- include/drm/drm_encoder.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+For the sti dvo part:
+Acked-by: Vincent Abriou <vincent.abriou@st.com>
 
-diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
-index cec6ac45c6cc..5f58f65344e0 100644
---- a/include/drm/drm_encoder.h
-+++ b/include/drm/drm_encoder.h
-@@ -25,6 +25,7 @@
- 
- #include <linux/list.h>
- #include <linux/ctype.h>
-+#include <drm/drm_crtc.h>
- #include <drm/drm_mode.h>
- #include <drm/drm_mode_object.h>
- 
-@@ -191,9 +192,6 @@ static inline unsigned int drm_encoder_index(struct drm_encoder *encoder)
- 	return encoder->index;
- }
- 
--/* FIXME: We have an include file mess still, drm_crtc.h needs untangling. */
--static inline uint32_t drm_crtc_mask(const struct drm_crtc *crtc);
--
- /**
-  * drm_encoder_crtc_ok - can a given crtc drive a given encoder?
-  * @encoder: encoder to test
--- 
-Regards,
-
-Laurent Pinchart
+Vincent
+>
