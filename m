@@ -1,48 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33576 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751816AbcKRKYV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 05:24:21 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] ARM: dts: r8a7743/r8a7745: Move RST nodes before SYSC nodes
-Date: Fri, 18 Nov 2016 11:24:21 +0100
-Message-Id: <1479464663-19054-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 30 Nov 2016 14:37:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: r8a7796: Add CAN FD support
+Message-ID: <20161130203738.qi4y6c3nycxa5umu@rob-hp-laptop>
+References: <1479903288-2009-1-git-send-email-chris.paterson2@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1479903288-2009-1-git-send-email-chris.paterson2@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+On Wed, Nov 23, 2016 at 12:14:48PM +0000, Chris Paterson wrote:
+> Adds CAN FD controller node for r8a7796.
+> 
+> Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
+> 
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+>  .../devicetree/bindings/net/can/rcar_canfd.txt     | 12 ++++++-----
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 24 ++++++++++++++++++++++
+>  2 files changed, 31 insertions(+), 5 deletions(-)
 
-This patch series moves the RST nodes in the recently added RZ/G DTS
-files before the SYSC nodes, to preserve both alphabetical (label) and
-numerical ordering (unit address).
-
-Thanks for applying!
-
-Geert Uytterhoeven (2):
-  ARM: dts: r8a7743: Move RST node before SYSC node
-  ARM: dts: r8a7745: Move RST node before SYSC node
-
- arch/arm/boot/dts/r8a7743.dtsi | 10 +++++-----
- arch/arm/boot/dts/r8a7745.dtsi | 10 +++++-----
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
--- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Acked-by: Rob Herring <robh@kernel.org>
