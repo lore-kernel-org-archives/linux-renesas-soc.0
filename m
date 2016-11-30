@@ -1,78 +1,105 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Johan Hovold <johan@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Vince Bridgers <vbridger@opensource.altera.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Li Yang <leoli@freescale.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Felix Fietkau <nbd@openwrt.org>,
-        John Crispin <blogic@openwrt.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars Persson <lars.persson@axis.com>,
-        Mugunthan V N <mugunthanvnm@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH net 07/16] net: ethernet: fec: fix fixed-link phydev leaks
-Date: Mon, 28 Nov 2016 19:25:00 +0100
-Message-Id: <1480357509-28074-8-git-send-email-johan@kernel.org>
-In-Reply-To: <1480357509-28074-1-git-send-email-johan@kernel.org>
-References: <1480357509-28074-1-git-send-email-johan@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:62626 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751148AbcK3PnH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 30 Nov 2016 10:43:07 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Simon Horman <horms+renesas@verge.net.au>, arm@kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC r8a7745 SYSC Driver Updates for v4.10
+Date: Wed, 30 Nov 2016 16:41:44 +0100
+Message-ID: <6771303.aO3HWCNlGW@wuerfel>
+In-Reply-To: <cover.1479929914.git.horms+renesas@verge.net.au>
+References: <cover.1479929914.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make sure to deregister and free any fixed-link PHY registered using
-of_phy_register_fixed_link() on probe errors and on driver unbind.
+On Wednesday, November 23, 2016 9:13:10 PM CET Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC r8a7745 SYSC Driver updates for
+> v4.10.
+> 
+> This pull request is based on v4.9-rc1.
+> 
+> This pull request is broken out of an earlier pull request,
+> "Second Round of Renesas ARM Based SoC Drivers Updates for v4.10".
+> The motivation for breaking up the pull request is to provide
+> branches with minimal dependencies.
+> 
+> This pull request is targeted at the next/drivers branch of the arm-soc tree.
+> 
+> It introduces some minor merge conflicts in:
+>     Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+>     drivers/soc/renesas/Makefile
+>     drivers/soc/renesas/rcar-sysc.c
+>     drivers/soc/renesas/rcar-sysc.h
+> The resolution is to take both sides. A sample merge resolution is
+> provided in the renesas-next-20161123v2-v4.9-rc1 tag of the renesas tree.
+> 
 
-Fixes: 407066f8f371 ("net: fec: Support phys probed from devicetree and
-fixed-link")
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/net/ethernet/freescale/fec_main.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Pulled into next/drivers, thanks!
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 5aa9d4ded214..74dcdf097348 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3475,6 +3475,8 @@ fec_probe(struct platform_device *pdev)
- failed_clk_ipg:
- 	fec_enet_clk_enable(ndev, false);
- failed_clk:
-+	if (of_phy_is_fixed_link(np))
-+		of_phy_deregister_fixed_link(np);
- failed_phy:
- 	of_node_put(phy_node);
- failed_ioremap:
-@@ -3488,6 +3490,7 @@ fec_drv_remove(struct platform_device *pdev)
- {
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
-+	struct device_node *np = pdev->dev.of_node;
- 
- 	cancel_work_sync(&fep->tx_timeout_work);
- 	fec_ptp_stop(pdev);
-@@ -3495,6 +3498,8 @@ fec_drv_remove(struct platform_device *pdev)
- 	fec_enet_mii_remove(fep);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
-+	if (of_phy_is_fixed_link(np))
-+		of_phy_deregister_fixed_link(np);
- 	of_node_put(fep->phy_node);
- 	free_netdev(ndev);
- 
--- 
-2.7.3
+	Arnd
+
+
+diff --cc Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index c16ec18,1375758..d91715b
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@@ -7,7 -7,7 +7,8 @@@ and various coprocessors
+  
+  Required properties:
+    - compatible: Must contain exactly one of the following:
+ +      - "renesas,r8a7743-sysc" (RZ/G1M)
++       - "renesas,r8a7745-sysc" (RZ/G1E)
+        - "renesas,r8a7779-sysc" (R-Car H1)
+        - "renesas,r8a7790-sysc" (R-Car H2)
+        - "renesas,r8a7791-sysc" (R-Car M2-W)
+diff --cc drivers/soc/renesas/Makefile
+index 9e0bb32,a25a628..e2249f0
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@@ -1,4 -1,4 +1,5 @@@
+ +obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
++ obj-$(CONFIG_ARCH_R8A7745)	+= rcar-sysc.o r8a7745-sysc.o
+  obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+  obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+  obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+diff --cc drivers/soc/renesas/rcar-sysc.c
+index 71acd45,a4e1bb0..225c35c
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@@ -275,9 -275,9 +275,12 @@@ finalize
+  }
+  
+  static const struct of_device_id rcar_sysc_matches[] = {
+ +#ifdef CONFIG_ARCH_R8A7743
+ +	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
+ +#endif
++ #ifdef CONFIG_ARCH_R8A7745
++ 	{ .compatible = "renesas,r8a7745-sysc", .data = &r8a7745_sysc_info },
++ #endif
+  #ifdef CONFIG_ARCH_R8A7779
+  	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
+  #endif
+diff --cc drivers/soc/renesas/rcar-sysc.h
+index 8ab9ca8,3048dd3..f6e842e
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@@ -50,7 -50,7 +50,8 @@@ struct rcar_sysc_info 
+  	unsigned int num_areas;
+  };
+  
+ +extern const struct rcar_sysc_info r8a7743_sysc_info;
++ extern const struct rcar_sysc_info r8a7745_sysc_info;
+  extern const struct rcar_sysc_info r8a7779_sysc_info;
+  extern const struct rcar_sysc_info r8a7790_sysc_info;
+  extern const struct rcar_sysc_info r8a7791_sysc_info;
