@@ -1,47 +1,68 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
-        geert+renesas@glider.be, joro@8bytes.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
-        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 23 Nov 2016 23:40:54 +0900
-Message-Id: <20161123144054.11919.22936.sendpatchset@little-apple>
-Subject: [PATCH v3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
+Date: Wed, 30 Nov 2016 09:45:03 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        sre@kernel.org, Peter.Chen@nxp.com, wens@csie.org,
+        yoshihiro.shimoda.uh@renesas.com, b-liu@ti.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        chanwoo@kernel.org
+Subject: Re: [PATCH 07/12] usb: sunxi: Uses the resource-managed extcon API
+ when registering extcon notifier
+Message-ID: <20161130084503.v5klzl6silp6323s@lukather>
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+ <1480485460-2663-8-git-send-email-cw00.choi@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="j6lqhgavrhxtdjiy"
+Content-Disposition: inline
+In-Reply-To: <1480485460-2663-8-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
 
-Update the IPMMU DT binding documentation to include the r8a7796 compat
-string for R-Car M3-W.
+--j6lqhgavrhxtdjiy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
----
+On Wed, Nov 30, 2016 at 02:57:35PM +0900, Chanwoo Choi wrote:
+> This patch just uses the resource-managed extcon API when registering
+> the extcon notifier.
+>=20
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
- This particular patch seems ready to merge IMO. How to proceed?
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
- Changes since V2:
- - Added Acked-by from Rob Herring and Simon Horman - thanks!
+Thanks!
+Maxime
 
- Changes since V1:
- - Added Acked-by from Laurent - thanks!
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
- 1 file changed, 1 insertion(+)
+--j6lqhgavrhxtdjiy
+Content-Type: application/pgp-signature; name="signature.asc"
 
---- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2016-06-06 11:27:37.560607110 +0900
-@@ -16,6 +16,7 @@ Required Properties:
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
-+    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYPpGLAAoJEBx+YmzsjxAgzhwQALAQn0DfF8/InflvzuNveuQA
+vwaRBz/VJQsZPAjD3a0JHzaaJFtTJIezntb4dnOO/U5yGwKXrgmeWdkxLiWh06j1
+J5JswBANHB7z88Lil2zD4Jf4wwbwTu6MG2+F5zWuEUusiJD3c3s9pnFIQjvbVzO7
+LJqA81NYymz46oYq5KD3lER/zcqPHNo99aYPCXb8veGTloAwJHBto1sfOCcfeqLg
+ZT0GK9coPsLHRZrgJaJEWhxpFNugxJ4+WAq5suA/XpNBfBDBVA3gxxzV8Drvx4Qe
+sOW8JAuUqXstmPaanh1ims/qeflgsijCRLxpZDg99uwS08EGJn3Le15kbiyhnqGE
+klVCoh3gHKztP5WHz8Sd9NCwowRglglGbMyOQAjA6B+lA8XM07ZFnR6Wrngbcepo
+J5l1tYuAoaBgBchJubh+paMo/rGK4FTbSflgNoK3YXt3CX4AW0Tg0hbC1cCag+Ru
+cPHtglrAXzvy/hqdRBNxl9gEBLeCo2IAm1jc42v64dtkKZRPxV0to/9hpTZE1j7Q
+4ofswXk4kADR/0WCdG0q9eEPsQoFpmYn7F8/ClMtRoZGiisw6ic5bnBd3QJg+kT2
+9UAcDm0moXC/iqb0Sb4eIXS7p9KfxOHNmkXDzHuzk9xLk0QdYFciXPYUgmk+rHvD
+80obQxOJe+19L5ozmEeM
+=A8h7
+-----END PGP SIGNATURE-----
+
+--j6lqhgavrhxtdjiy--
