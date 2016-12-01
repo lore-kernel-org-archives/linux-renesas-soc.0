@@ -1,75 +1,72 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 04/22] drm: bridge: dw-hdmi: Embed drm_bridge in struct dw_hdmi
-Date: Fri,  2 Dec 2016 01:43:19 +0200
-Message-Id: <1480635817-1258-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:41668 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753936AbcLAOtW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Dec 2016 09:49:22 -0500
+Date: Thu, 1 Dec 2016 15:49:19 +0100
+From: Wolfram Sang <wsa-dev@sang-engineering.com>
+To: Yasushi SHOJI <yashi@atmark-techno.com>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        wsa+renesas@sang-engineering.com, horms@verge.net.au,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: mmc: tmio: why enable/disable SDIO irq on every transaction with
+ IOMOD?
+Message-ID: <20161201144919.GB6361@katana>
+References: <87h96qkdn0.wl@dns1.atmark-techno.com>
+ <CAPDyKFop3a6eHhOZq1E=BdFiHzmpu4uEx0F79nyBVCOu6z6usw@mail.gmail.com>
+ <20161201104622.GA1541@katana>
+ <87y3zzvmth.wl@dns1.atmark-techno.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
+Content-Disposition: inline
+In-Reply-To: <87y3zzvmth.wl@dns1.atmark-techno.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The drm_bridge instance is always needed, there's no point in allocating
-it separately.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+--aM3YZ0Iwxop3KEKx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 5f8044a7d602..2c85b6c07a80 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -116,7 +116,7 @@ struct dw_hdmi_i2c {
- struct dw_hdmi {
- 	struct drm_connector connector;
- 	struct drm_encoder *encoder;
--	struct drm_bridge *bridge;
-+	struct drm_bridge bridge;
- 
- 	struct platform_device *audio;
- 	enum dw_hdmi_devtype dev_type;
-@@ -1806,7 +1806,7 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- 	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
- 		dev_dbg(hdmi->dev, "EVENT=%s\n",
- 			phy_int_pol & HDMI_PHY_HPD ? "plugin" : "plugout");
--		drm_helper_hpd_irq_event(hdmi->bridge->dev);
-+		drm_helper_hpd_irq_event(hdmi->bridge.dev);
- 	}
- 
- 	hdmi_writeb(hdmi, intr_stat, HDMI_IH_PHY_STAT0);
-@@ -1819,16 +1819,9 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
- {
- 	struct drm_encoder *encoder = hdmi->encoder;
--	struct drm_bridge *bridge;
-+	struct drm_bridge *bridge = &hdmi->bridge;
- 	int ret;
- 
--	bridge = devm_kzalloc(drm->dev, sizeof(*bridge), GFP_KERNEL);
--	if (!bridge) {
--		DRM_ERROR("Failed to allocate drm bridge\n");
--		return -ENOMEM;
--	}
--
--	hdmi->bridge = bridge;
- 	bridge->driver_private = hdmi;
- 	bridge->funcs = &dw_hdmi_bridge_funcs;
- 	ret = drm_bridge_attach(encoder, bridge, NULL);
--- 
-Regards,
+Hi,
 
-Laurent Pinchart
+> Is Arnd Hannemann, the author, around these days by any chance?
+
+According to git history, he is sending a patch occasionally, but all
+his SH involvement was from 2010. I don't know him.
+
+> We don't have it yet.  A question we have is that where should we
+> enable / disable the IOMOD?
+
+I think unconditionally in probe. I will send an RFC with some
+explanations in a minute.
+
+Thanks,
+
+   Wolfram
+
+
+--aM3YZ0Iwxop3KEKx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYQDhvAAoJEBQN5MwUoCm2pkcP/jJqargpoBKF05XggPfml9W0
+ZzCo49O356rg+Z1IeVhKu7Pr5nvoka1iezo5VIuVcDTceJ8Z0ySkPI0AmTYA52Kh
+jL92a47OIaZ9bpuGx0vpADloGe7aM0Fh+wYRC6837Q69Ql1h/9IWTndRT5VSOfXG
+td38RRBOJAnMZTRmUmH7pPokyWUzZODZ6IUBr851/Lxx+T3IzDxRT0HuQnnoLLC2
+6F3Do3hXnL3oJ39cIITGsBEktsdTEGu3CQiKBTcr6ExGNfb16r+PazbHA2hzwRHL
+LSxxKdD/x3fq00fBy4EomKPowkFBuHHMuHCqoPtdfXwwXdeyBI+Upe/qKRU06c2X
+hZhRNXswLOQB5e+GBK1A0x6LnjJYmIvWuLuRlxymEYVH16UOvXdBuGef4ZVlt/rk
+Q8WD3J7W1CFXqc15LyrQH/MXMnvgBCzXFo5GuP/j/9XE6lNPOsP7xIHTBscUdTVi
+r6XzBLfLuF66YjVN5IebQnnnBv9DG2aNK+sP3U8RJGJu+Mugv/hMBvpJdeo69QFh
+dBpl/sv0eO4sEjfKaWMcetYOMdUx7qncDDlXVos51vYPtDK11OlzyPh0ZBlhfjt6
+y3HMXg5nzRlvEDF4BpvmFzzNg6OeEkZmHHspg0F2Pn089lKmQg0BrBHlDGj4rFWA
+MkEoACQwBE07ECAScZQv
+=0aIP
+-----END PGP SIGNATURE-----
+
+--aM3YZ0Iwxop3KEKx--
