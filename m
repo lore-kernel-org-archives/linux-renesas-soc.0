@@ -1,49 +1,73 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8BIT
-Message-id: <58412848.5070209@samsung.com>
-Date: Fri, 02 Dec 2016 16:52:40 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Felipe Balbi <balbi@kernel.org>, gregkh@linuxfoundation.org,
-        kishon@ti.com, sre@kernel.org
-Cc: Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
-        b-liu@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, chanwoo@kernel.org
-Subject: Re: [PATCH 06/12] usb: dwc3: omap: Replace the extcon API
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
- <1480485460-2663-7-git-send-email-cw00.choi@samsung.com>
- <CGME20161130103827epcas4p268ee1cbc6b7b2ace7c987dd7baba82d4@epcas4p2.samsung.com>
- <877f7lntjq.fsf@linux.intel.com>
-In-reply-to: <877f7lntjq.fsf@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 03/22] drm: bridge: dw-hdmi: Remove unused function parameter
+Date: Fri,  2 Dec 2016 01:43:18 +0200
+Message-Id: <1480635817-1258-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Felipe,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-On 2016년 11월 30일 19:36, Felipe Balbi wrote:
-> 
-> Hi,
-> 
-> Chanwoo Choi <cw00.choi@samsung.com> writes:
->> This patch uses the resource-managed extcon API for extcon_register_notifier()
->> and replaces the deprecated extcon API as following:
->> - extcon_get_cable_state_() -> extcon_get_state()
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-> 
+The 'prep' parameter passed to hdmi_phy_configure() is useless. It is
+hardcoded as 0, and if set, simply prevents the configure function from
+executing.
 
-Thanks for your review.
+Remove it.
 
-Each patch has no any dependency among patches.
-So, If possible, could you pick the patch6/8/9/10/11/12 on your tree?
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index f86894622070..5f8044a7d602 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -931,7 +931,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+ 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+ }
+ 
+-static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
++static int hdmi_phy_configure(struct dw_hdmi *hdmi,
+ 			      unsigned char res, int cscon)
+ {
+ 	unsigned res_idx;
+@@ -941,9 +941,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
+ 
+-	if (prep)
+-		return -EINVAL;
+-
+ 	switch (res) {
+ 	case 0:	/* color resolution 0 is 8 bit colour depth */
+ 	case 8:
+@@ -1072,7 +1069,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ 		dw_hdmi_phy_enable_powerdown(hdmi, true);
+ 
+ 		/* Enable CSC */
+-		ret = hdmi_phy_configure(hdmi, 0, 8, cscon);
++		ret = hdmi_phy_configure(hdmi, 8, cscon);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
-Best Regards,
-Chanwoo Choi
+Regards,
+
+Laurent Pinchart
