@@ -1,236 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo178.mail-out.ovh.net ([178.32.228.178]:53454 "EHLO
-        mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752483AbcLFQap (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49117 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751388AbcLAQ3Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 11:30:45 -0500
-Received: from player793.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 38596948D
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Dec 2016 17:30:42 +0100 (CET)
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] iio: Add Maxim MAX11100 driver
-Date: Tue,  6 Dec 2016 17:30:23 +0100
-Message-Id: <1481041823-18382-1-git-send-email-jacopo@jmondi.org>
+        Thu, 1 Dec 2016 11:29:24 -0500
+Date: Thu, 1 Dec 2016 17:29:18 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH/RFC v2 i2c/for-next] i2c: rcar: Add per-Generation
+ fallback bindings
+Message-ID: <20161201162917.GB2389@verge.net.au>
+References: <1480606863-4418-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdXr5stBRDtD0AE=1Af3PUiA=e5pP_X1onfbfO5ri=fPrw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXr5stBRDtD0AE=1Af3PUiA=e5pP_X1onfbfO5ri=fPrw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IIO driver for Maxim MAX11100 single-channel ADC.
-Support raw_read mode only.
+On Thu, Dec 01, 2016 at 04:55:13PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Dec 1, 2016 at 4:41 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> > In the case of Renesas R-Car hardware we know that there are generations of
+> > SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+> > relationship between IP blocks might be. For example, I believe that
+> > r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+> > descendant of the former or vice versa.
+> >
+> > We can, however, by examining the documentation and behaviour of the
+> > hardware at run-time observe that the current driver implementation appears
+> > to be compatible with the IP blocks on SoCs within a given generation.
+> >
+> > For the above reasons and convenience when enabling new SoCs a
+> > per-generation fallback compatibility string scheme being adopted for
+> > drivers for Renesas SoCs.
+> >
+> > Also deprecate renesas,i2c-rcar. It seems poorly named as it is only
+> > compatible with R-Car Gen 1. It also appears unused in mainline.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > Include accidently omitted i2c-rcar.c portion of patch
+> > ---
+> >  Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 32 ++++++++++++++--------
+> >  drivers/i2c/busses/i2c-rcar.c                      |  5 +++-
+> >  2 files changed, 24 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+> > index 239632a0d709..8c679b17c4c6 100644
+> > --- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+> > +++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+> > @@ -1,17 +1,25 @@
+> >  I2C for R-Car platforms
+> >
+> >  Required properties:
+> > -- compatible: Must be one of
+> > -       "renesas,i2c-rcar"
+> > -       "renesas,i2c-r8a7778"
+> > -       "renesas,i2c-r8a7779"
+> > -       "renesas,i2c-r8a7790"
+> > -       "renesas,i2c-r8a7791"
+> > -       "renesas,i2c-r8a7792"
+> > -       "renesas,i2c-r8a7793"
+> > -       "renesas,i2c-r8a7794"
+> > -       "renesas,i2c-r8a7795"
+> > -       "renesas,i2c-r8a7796"
+> > +- compatible:
+> > +       "renesas,i2c-r8a7778" if the device is a part of a R8A7778 SoC.
+> > +       "renesas,i2c-r8a7779" if the device is a part of a R8A7797 SoC.
+> > +       "renesas,i2c-r8a7790" if the device is a part of a R8A7790 SoC.
+> > +       "renesas,i2c-r8a7791" if the device is a part of a R8A7791 SoC.
+> > +       "renesas,i2c-r8a7792" if the device is a part of a R8A7792 SoC.
+> > +       "renesas,i2c-r8a7793" if the device is a part of a R8A7793 SoC.
+> > +       "renesas,i2c-r8a7794" if the device is a part of a R8A7794 SoC.
+> > +       "renesas,i2c-r8a7795" if the device is a part of a R8A7795 SoC.
+> > +       "renesas,i2c-r8a7796" if the device is a part of a R8A7796 SoC.
+> > +       "renesas,i2c-rcar-gen1" for a generic R-Car Gen1 compatible device.
+> > +       "renesas,i2c-rcar-gen2" for a generic R-Car Gen2 compatible device.
+> > +       "renesas,i2c-rcar-gen3" for a generic R-Car Gen3 compatible device.
+> 
+> "renesas,rcar-gen1-i2c" etc.
+> 
+> > +       "renesas,i2c-rcar" (deprecated)
+> > +
+> > +       When compatible with the generic version, nodes must list the
+> > +       SoC-specific version corresponding to the platform first followed
+> > +       by the generic version.
+> > +
+> >  - reg: physical base address of the controller and length of memory mapped
+> >    region.
+> >  - interrupts: interrupt specifier.
+> > @@ -33,7 +41,7 @@ Examples :
+> >  i2c0: i2c@e6508000 {
+> >         #address-cells = <1>;
+> >         #size-cells = <0>;
+> > -       compatible = "renesas,i2c-r8a7791";
+> > +       compatible = "renesas,i2c-r8a7791", "renesas,i2c-rcar-gen2";
+> 
+> "renesas,rcar-gen2-i2c"
+> 
+> >         reg = <0 0xe6508000 0 0x40>;
+> >         interrupts = <0 287 IRQ_TYPE_LEVEL_HIGH>;
+> >         clocks = <&mstp9_clks R8A7791_CLK_I2C0>;
+> > diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+> > index 726615e54f2a..622def6b43e2 100644
+> > --- a/drivers/i2c/busses/i2c-rcar.c
+> > +++ b/drivers/i2c/busses/i2c-rcar.c
+> > @@ -793,7 +793,6 @@ static const struct i2c_algorithm rcar_i2c_algo = {
+> >  };
+> >
+> >  static const struct of_device_id rcar_i2c_dt_ids[] = {
+> > -       { .compatible = "renesas,i2c-rcar", .data = (void *)I2C_RCAR_GEN1 },
+> >         { .compatible = "renesas,i2c-r8a7778", .data = (void *)I2C_RCAR_GEN1 },
+> >         { .compatible = "renesas,i2c-r8a7779", .data = (void *)I2C_RCAR_GEN1 },
+> >         { .compatible = "renesas,i2c-r8a7790", .data = (void *)I2C_RCAR_GEN2 },
+> > @@ -803,6 +802,10 @@ static const struct of_device_id rcar_i2c_dt_ids[] = {
+> >         { .compatible = "renesas,i2c-r8a7794", .data = (void *)I2C_RCAR_GEN2 },
+> >         { .compatible = "renesas,i2c-r8a7795", .data = (void *)I2C_RCAR_GEN3 },
+> >         { .compatible = "renesas,i2c-r8a7796", .data = (void *)I2C_RCAR_GEN3 },
+> > +       { .compatible = "renesas,i2c-rcar", .data = (void *)I2C_RCAR_GEN1 },    // Deprecated
+> > +       { .compatible = "renesas,rcar-gen1-i2c", .data = (void *)I2C_RCAR_GEN1 },
+> > +       { .compatible = "renesas,rcar-gen2-i2c", .data = (void *)I2C_RCAR_GEN2 },
+> > +       { .compatible = "renesas,rcar-gen3-i2c", .data = (void *)I2C_RCAR_GEN3 },
+> 
+> The driver does it right ;-)
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- drivers/iio/adc/Kconfig    |   9 +++
- drivers/iio/adc/Makefile   |   1 +
- drivers/iio/adc/max11100.c | 165 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 175 insertions(+)
- create mode 100644 drivers/iio/adc/max11100.c
-
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 99c0514..e2f3340 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -285,6 +285,15 @@ config MAX1027
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called max1027.
- 
-+config MAX11100
-+	tristate "Maxim max11100 ADC driver"
-+	depends on SPI
-+	help
-+	  Say yes here to build support for Maxim 11100 SPI ADC
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called max11100.
-+
- config MAX1363
- 	tristate "Maxim max1363 ADC driver"
- 	depends on I2C
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index 7a40c04..1463044 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -29,6 +29,7 @@ obj-$(CONFIG_LP8788_ADC) += lp8788_adc.o
- obj-$(CONFIG_LPC18XX_ADC) += lpc18xx_adc.o
- obj-$(CONFIG_LTC2485) += ltc2485.o
- obj-$(CONFIG_MAX1027) += max1027.o
-+obj-$(CONFIG_MAX11100) += max11100.o
- obj-$(CONFIG_MAX1363) += max1363.o
- obj-$(CONFIG_MCP320X) += mcp320x.o
- obj-$(CONFIG_MCP3422) += mcp3422.o
-diff --git a/drivers/iio/adc/max11100.c b/drivers/iio/adc/max11100.c
-new file mode 100644
-index 0000000..fbce287
---- /dev/null
-+++ b/drivers/iio/adc/max11100.c
-@@ -0,0 +1,165 @@
-+/*
-+ * iio/adc/max11100.c
-+ * Maxim MAX11100 ADC Driver with IIO interface
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Jacopo Mondi
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/spi/spi.h>
-+#include <linux/delay.h>
-+
-+#include <linux/iio/iio.h>
-+#include <linux/iio/buffer.h>
-+
-+struct max11100_state {
-+	const struct max11100_chip_desc *desc;
-+	struct spi_device *spi;
-+	struct mutex lock;
-+};
-+
-+static struct iio_chan_spec max11100_channels[] = {
-+	{ /* [0] */
-+		.type = IIO_VOLTAGE,
-+		.channel = 0,
-+		.address = 0,
-+		.scan_index = 0,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 16,
-+			.storagebits = 24,
-+			.shift = 8,
-+			.repeat = 1,
-+			.endianness = IIO_BE,
-+		},
-+		.output = 1,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+	},
-+};
-+
-+static const unsigned long max11100_scan_masks[] = {
-+	0xffff,
-+};
-+
-+static struct max11100_chip_desc {
-+	uint32_t num_chan;
-+	const unsigned long *scanmasks;
-+	const struct iio_chan_spec *channels;
-+} max11100_desc = {
-+	.num_chan = 1,
-+	.scanmasks = max11100_scan_masks,
-+	.channels = max11100_channels,
-+};
-+
-+static int max11100_read_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     int *val, int *val2, long mask)
-+{
-+	int ret;
-+	struct max11100_state *state = iio_priv(indio_dev);
-+	uint8_t buffer[3] = { 0, 0, 0 };
-+
-+	mutex_lock(&state->lock);
-+
-+	ret = spi_read(state->spi, (void *) buffer, 3);
-+	if (ret) {
-+		dev_err(&indio_dev->dev, "SPI transfer failed\n");
-+		return ret;
-+	}
-+
-+	dev_dbg(&indio_dev->dev, "ADC output values: "	\
-+		"[0]: 0x%2x [1]: 0x%2x [2]: 0x%2x\n",
-+		buffer[0], buffer[1], buffer[2]);
-+
-+	/* the first 8 bits sent out from ADC must be 0s */
-+	if (buffer[0]) {
-+		dev_err(&indio_dev->dev, "Invalid value: buffer[0] != 0\n");
-+		return -EINVAL;
-+	}
-+
-+	*val = (buffer[1] << 8) | buffer[2];
-+	mutex_unlock(&state->lock);
-+
-+	return 0;
-+}
-+
-+static const struct iio_info max11100_info = {
-+	.driver_module = THIS_MODULE,
-+	.read_raw = max11100_read_raw,
-+};
-+
-+static int max11100_probe(struct spi_device *spi)
-+{
-+	int ret;
-+	struct iio_dev *indio_dev;
-+	struct max11100_state *state;
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*state));
-+	if (!indio_dev) {
-+		pr_err("Can't allocate iio device\n");
-+		return -ENOMEM;
-+	}
-+	dev_dbg(&indio_dev->dev, "probe max11100 IIO SPI\n");
-+
-+	spi_set_drvdata(spi, indio_dev);
-+
-+	state = iio_priv(indio_dev);
-+	state->spi = spi;
-+	state->desc = &max11100_desc;
-+
-+	mutex_init(&state->lock);
-+
-+	indio_dev->dev.parent = &spi->dev;
-+	indio_dev->dev.of_node = spi->dev.of_node;
-+	indio_dev->info = &max11100_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = state->desc->channels;
-+	indio_dev->num_channels = state->desc->num_chan;
-+	indio_dev->available_scan_masks = state->desc->scanmasks;
-+
-+	ret = iio_device_register(indio_dev);
-+	if (ret) {
-+		dev_err(&indio_dev->dev, "Failed to register iio device\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int max11100_remove(struct spi_device *spi)
-+{
-+	struct iio_dev *indio_dev = spi_get_drvdata(spi);
-+
-+	dev_dbg(&indio_dev->dev, "remove max11100 IIO SPI\n");
-+
-+	iio_device_unregister(indio_dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id max11100_ids[] = {
-+	{.compatible = "maxim,max11100"},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, max11100_ids);
-+
-+static struct spi_driver max11100_driver = {
-+	.driver = {
-+		.name	= "max11100",
-+		.owner	= THIS_MODULE,
-+		.of_match_table = of_match_ptr(max11100_ids),
-+	},
-+	.probe		= max11100_probe,
-+	.remove		= max11100_remove,
-+};
-+
-+module_spi_driver(max11100_driver);
-+
-+MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
-+MODULE_DESCRIPTION("Maxim MAX11100 ADC Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+Sorry, I switched things around at some point but it looks
+like I only did half the job.
