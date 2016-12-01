@@ -1,52 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60929 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44154 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932115AbcLHNa2 (ORCPT
+        with ESMTP id S1759383AbcLAJHi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 08:30:28 -0500
-Date: Thu, 8 Dec 2016 14:30:22 +0100
-From: Simon Horman <horms@verge.net.au>
+        Thu, 1 Dec 2016 04:07:38 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] arm64: dts: h3ulcb: Provide sd0_uhs node
-Message-ID: <20161208133022.GD7150@verge.net.au>
-References: <1480583246-6707-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1480583246-6707-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH] arm64: dts: h3ulcb: Provide sd0_uhs node
+Date: Thu,  1 Dec 2016 10:07:26 +0100
+Message-Id: <1480583246-6707-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 01, 2016 at 10:07:26AM +0100, Simon Horman wrote:
-> Provide separaate sd0 and sd0_uhs nodes rather than duplicate sd0 nodes.
-> 
-> Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Fixes: 93373c309a70 ("arm64: dts: h3ulcb: rename SDHI0 pins")
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Provide separaate sd0 and sd0_uhs nodes rather than duplicate sd0 nodes.
 
-I have queued this up as a fix for v4.10.
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: 93373c309a70 ("arm64: dts: h3ulcb: rename SDHI0 pins")
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-> index 6ffb0517421a..dbea2c3d8f0c 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-> @@ -169,7 +169,7 @@
->  		power-source = <3300>;
->  	};
->  
-> -	sdhi0_pins_uhs: sd0 {
-> +	sdhi0_pins_uhs: sd0_uhs {
->  		groups = "sdhi0_data4", "sdhi0_ctrl";
->  		function = "sdhi0";
->  		power-source = <1800>;
-> -- 
-> 2.7.0.rc3.207.g0ac5344
-> 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 6ffb0517421a..dbea2c3d8f0c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -169,7 +169,7 @@
+ 		power-source = <3300>;
+ 	};
+ 
+-	sdhi0_pins_uhs: sd0 {
++	sdhi0_pins_uhs: sd0_uhs {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+ 		power-source = <1800>;
+-- 
+2.7.0.rc3.207.g0ac5344
