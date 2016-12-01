@@ -1,26 +1,26 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo69.mail-out.ovh.net ([178.32.228.69]:38432 "EHLO
-        mo69.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932167AbcLAWYU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 17:24:20 -0500
-Received: from player699.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo69.mail-out.ovh.net (Postfix) with ESMTP id 7BCF09E8F
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Dec 2016 23:14:30 +0100 (CET)
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Jacopo Mondi <jacopo@jmondi.org>
 To: geert+renesas@glider.be, magnus.damm@gmail.com,
         laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
 Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
-Subject: [PATCH v3] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-Date: Thu,  1 Dec 2016 23:14:12 +0100
-Message-Id: <1480630452-10958-1-git-send-email-jacopo@jmondi.org>
+Subject: [PATCH v2] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+Date: Thu,  1 Dec 2016 23:10:21 +0100
+Message-Id: <1480630221-10741-1-git-send-email-jacopo@jmondi.org>
 In-Reply-To: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
 References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+
+The Gyro-ADC supports three different configurations:
+a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
+channel select signal (adi_chsel1 and adi_chsel1_b groups), up to 4 ADCs
+through 2 channel select signals (adi_chsel2 and adi_chsel2_b groups)
+and up to 8 ADCs through 3 channel select signals (adi_chsel3 and
+adi_chsel3_b groups)
 
 Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
 ---
@@ -37,9 +37,6 @@ v1 -> v2:
       This requires the configuration to match the ADI mode in use, but
       allows users to select CHS1 or CHS2 lines alone, and dedicate other
       pins to other functions.
-
-v2 -> v3:
-    * Update commit message which I forgot to do in v2 :/
 
 ---
  drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 ++++++++++++++++++++++++++++++++++++
@@ -95,27 +92,27 @@ index 7ca37c3..75c9882 100644
 +	ADIDATA_B_MARK, ADICS_SAMP_B_MARK, ADICLK_B_MARK,
 +};
 +static const unsigned int adi_chsel0_b_pins[] = {
-+	/* ADICHS B 0 */
++	/* ADICHS 0 B */
 +	RCAR_GP_PIN(5, 28),
 +};
 +static const unsigned int adi_chsel0_b_mux[] = {
-+	/* ADICHS B 0 */
++	/* ADICHS 0 B */
 +	ADICHS0_B_MARK,
 +};
 +static const unsigned int adi_chsel1_b_pins[] = {
-+	/* ADICHS B 1 */
++	/* ADICHS 1 B */
 +	RCAR_GP_PIN(5, 29),
 +};
 +static const unsigned int adi_chsel1_b_mux[] = {
-+	/* ADICHS B 1 */
++	/* ADICHS 1 B */
 +	ADICHS1_B_MARK,
 +};
 +static const unsigned int adi_chsel2_b_pins[] = {
-+	/* ADICHS B 2 */
++	/* ADICHS 2 B */
 +	RCAR_GP_PIN(5, 30),
 +};
 +static const unsigned int adi_chsel2_b_mux[] = {
-+	/* ADICHS B 2 */
++	/* ADICHS 2 B */
 +	ADICHS2_B_MARK,
 +};
 +
