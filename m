@@ -1,100 +1,76 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v1.5 5/6] v4l: vsp1: Provide display list and VB2 queue with FCP device
-Date: Fri,  9 Dec 2016 13:35:11 +0100
-Message-Id: <1481286912-16555-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 22/22] arm64: dts: r8a7795: salvator-x: Add DU1 and DU2 external dot clocks
+Date: Fri,  2 Dec 2016 01:43:37 +0200
+Message-Id: <1480635817-1258-23-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prevents IPMMU trap during boot on r8a7795/6 Salvator-X boards:
-ipmmu-vmsa febd0000.mmu: Unhandled faut: status 0x00000101 iova 0x7f09a000
+The DU1 and DU2 external dot clocks are fixed frequency clock generators
+running at 33MHz.
 
-Code by Magnus Damm.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c    | 12 +++++++++---
- drivers/media/platform/vsp1/vsp1_video.c |  6 +++++-
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index ad545af..f610c88 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -17,6 +17,8 @@
- #include <linux/slab.h>
- #include <linux/workqueue.h>
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 08554b4d7e86..b6dc6f5188d6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -147,6 +147,19 @@
+ 		};
+ 	};
  
-+#include <media/rcar-fcp.h>
++	/* External DU dot clocks */
++	x21_clk: x21-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33000000>;
++	};
 +
- #include "vsp1.h"
- #include "vsp1_dl.h"
- 
-@@ -133,12 +135,13 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
- 			     size_t extra_size)
- {
- 	size_t size = num_entries * sizeof(*dlb->entries) + extra_size;
-+	struct device *fcp = rcar_fcp_get_device(vsp1->fcp);
- 
- 	dlb->vsp1 = vsp1;
- 	dlb->size = size;
- 
--	dlb->entries = dma_alloc_wc(vsp1->dev, dlb->size, &dlb->dma,
--				    GFP_KERNEL);
-+	dlb->entries = dma_alloc_wc(fcp ? fcp : vsp1->dev,
-+				    dlb->size, &dlb->dma, GFP_KERNEL);
- 	if (!dlb->entries)
- 		return -ENOMEM;
- 
-@@ -150,7 +153,10 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
-  */
- static void vsp1_dl_body_cleanup(struct vsp1_dl_body *dlb)
- {
--	dma_free_wc(dlb->vsp1->dev, dlb->size, dlb->entries, dlb->dma);
-+	struct device *fcp = rcar_fcp_get_device(dlb->vsp1->fcp);
++	x22_clk: x22-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33000000>;
++	};
 +
-+	dma_free_wc(fcp ? fcp : dlb->vsp1->dev,
-+		    dlb->size, dlb->entries, dlb->dma);
- }
+ 	hdmi0-out {
+ 		compatible = "hdmi-connector";
+ 		label = "HDMI0 OUT";
+@@ -245,6 +258,16 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
  
- /**
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 41e8b09..8f8e57e 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -27,6 +27,8 @@
- #include <media/videobuf2-v4l2.h>
- #include <media/videobuf2-dma-contig.h>
- 
-+#include <media/rcar-fcp.h>
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 721>,
++		 <&cpg CPG_MOD 727>,
++		 <&x21_clk>,
++		 <&x22_clk>;
++	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++		      "dclkin.1", "dclkin.2";
 +
- #include "vsp1.h"
- #include "vsp1_bru.h"
- #include "vsp1_dl.h"
-@@ -1094,6 +1096,7 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
- {
- 	struct vsp1_video *video;
- 	const char *direction;
-+	struct device *fcp;
- 	int ret;
- 
- 	video = devm_kzalloc(vsp1->dev, sizeof(*video), GFP_KERNEL);
-@@ -1151,7 +1154,8 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
- 	video->queue.ops = &vsp1_video_queue_qops;
- 	video->queue.mem_ops = &vb2_dma_contig_memops;
- 	video->queue.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
--	video->queue.dev = video->vsp1->dev;
-+	fcp = rcar_fcp_get_device(vsp1->fcp);
-+	video->queue.dev = fcp ? fcp : video->vsp1->dev;
- 	ret = vb2_queue_init(&video->queue);
- 	if (ret < 0) {
- 		dev_err(video->vsp1->dev, "failed to initialize vb2 queue\n");
+ 	ports {
+ 		port@0 {
+ 			endpoint {
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
