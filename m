@@ -1,49 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:36193 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757015AbcLARhz (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:35113 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933832AbcLARkk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 12:37:55 -0500
-Received: by mail-lf0-f50.google.com with SMTP id t196so177414925lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Dec 2016 09:37:55 -0800 (PST)
+        Thu, 1 Dec 2016 12:40:40 -0500
+Received: by mail-lf0-f54.google.com with SMTP id b14so177056014lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Dec 2016 09:40:40 -0800 (PST)
 Subject: Re: [PATCH v2] sh_eth: remove unchecked interrupts
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Brandt <chris.brandt@renesas.com>
+To: Chris Brandt <chris.brandt@renesas.com>,
+        David Miller <davem@davemloft.net>
 References: <20161201140642.28583-1-chris.brandt@renesas.com>
- <CAMuHMdU80M2qcK74YgPC8SZ20tNcKrZhj7MXo_Ok=6m4Aa0=-w@mail.gmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
+ <228704e3-fe33-1c1f-61a1-7db451af5faf@cogentembedded.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <25b92de0-806b-342b-7556-06b96b948b2c@cogentembedded.com>
-Date: Thu, 1 Dec 2016 20:37:51 +0300
+Message-ID: <7d50b5e0-ae7c-a39d-625a-c9cfc11e398f@cogentembedded.com>
+Date: Thu, 1 Dec 2016 20:40:36 +0300
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU80M2qcK74YgPC8SZ20tNcKrZhj7MXo_Ok=6m4Aa0=-w@mail.gmail.com>
+In-Reply-To: <228704e3-fe33-1c1f-61a1-7db451af5faf@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/01/2016 05:42 PM, Geert Uytterhoeven wrote:
+On 12/01/2016 08:36 PM, Sergei Shtylyov wrote:
 
->> --- a/drivers/net/ethernet/renesas/sh_eth.c
->> +++ b/drivers/net/ethernet/renesas/sh_eth.c
->> @@ -518,7 +518,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
+>> When streaming a lot of data and the RZ can't keep up, some status bits
+>> will get set that are not being checked or cleared which cause the
+>> following messages and the Ethernet driver to stop working. This
+>> patch fixes that issue.
 >>
->>         .ecsr_value     = ECSR_ICD,
->>         .ecsipr_value   = ECSIPR_ICDIP,
->> -       .eesipr_value   = 0xff7f009f,
->> +       .eesipr_value   = 0xe77f009f,
+>> irq 21: nobody cared (try booting with the "irqpoll" option)
+>> handlers:
+>> [<c036b71c>] sh_eth_interrupt
+>> Disabling IRQ #21
+>>
+>> Fixes: db893473d313a4ad ("sh_eth: Add support for r7s72100")
+>> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 >
-> Comment not directly related to the merits of this patch: the EESIPR bit
-> definitions seem to be identical to those for EESR, so we can get rid of the
-> hardcoded values here?
+> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-    Do you mean using the @define's? We have EESIPR bits also declared, see 
-enum DMAC_IM_BIT,
-
-[...]
+    One thing you've missed so far is mentioning R7S72100 (RZ/A1) in the 
+subject. This driver supports many SoCs, you're only fixing one of them...
 
 MBR, Sergei
