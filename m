@@ -1,40 +1,182 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 5 Dec 2016 10:32:40 -0600
-From: Bin Liu <b-liu@ti.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: Chanwoo Choi <cw00.choi@samsung.com>, <balbi@kernel.org>,
-        <gregkh@linuxfoundation.org>, <kishon@ti.com>, <sre@kernel.org>,
-        <Peter.Chen@nxp.com>, <wens@csie.org>,
-        <yoshihiro.shimoda.uh@renesas.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <chanwoo@kernel.org>
-Subject: Re: [PATCH 07/12] usb: sunxi: Uses the resource-managed extcon API
- when registering extcon notifier
-Message-ID: <20161205163240.GA5783@uda0271908>
-References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
- <1480485460-2663-8-git-send-email-cw00.choi@samsung.com>
- <20161130084503.v5klzl6silp6323s@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20161130084503.v5klzl6silp6323s@lukather>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 07/22] drm: bridge: dw-hdmi: Move IRQ and IO resource allocation to common code
+Date: Fri,  2 Dec 2016 01:43:22 +0200
+Message-Id: <1480635817-1258-8-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 30, 2016 at 09:45:03AM +0100, Maxime Ripard wrote:
-> On Wed, Nov 30, 2016 at 02:57:35PM +0900, Chanwoo Choi wrote:
-> > This patch just uses the resource-managed extcon API when registering
-> > the extcon notifier.
-> > 
-> > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+There's no need to duplicate identical code in multiple drivers (two at
+the moment, one more to come soon). Move it to the dw-hdmi core where it
+can be shared. If resource allocation ever becomes device-specific later
+we'll always have the option of splitting it out again.
 
-It would be ideal if the subject was "usb: musb: sunxi: ...".
+While it at pass the platform device to the bind function to avoid
+having to cast struct device to struct platform_device.
 
-Acked-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c            | 13 ++++++++++---
+ drivers/gpu/drm/imx/dw_hdmi-imx.c           | 12 +-----------
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 12 +-----------
+ include/drm/bridge/dw_hdmi.h                |  3 +--
+ 4 files changed, 13 insertions(+), 27 deletions(-)
 
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 488dc1a9204f..563cbec47da6 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1843,14 +1843,16 @@ static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+ 	return 0;
+ }
+ 
+-int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+-		 struct resource *iores, int irq,
++int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		 const struct dw_hdmi_plat_data *plat_data)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct platform_device_info pdevinfo;
+ 	struct device_node *ddc_node;
+ 	struct dw_hdmi *hdmi;
++	struct resource *iores;
++	int irq;
+ 	int ret;
+ 	u32 val = 1;
+ 	u8 config0;
+@@ -1903,6 +1905,7 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 		dev_dbg(hdmi->dev, "no ddc property found\n");
+ 	}
+ 
++	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	hdmi->regs = devm_ioremap_resource(dev, iores);
+ 	if (IS_ERR(hdmi->regs)) {
+ 		ret = PTR_ERR(hdmi->regs);
+@@ -1945,6 +1948,10 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 
+ 	initialize_hdmi_ih_mutes(hdmi);
+ 
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0)
++		goto err_iahb;
++
+ 	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
+ 					dw_hdmi_irq, IRQF_SHARED,
+ 					dev_name(dev), hdmi);
+@@ -2025,7 +2032,7 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 	if (hdmi->i2c)
+ 		dw_hdmi_i2c_init(hdmi);
+ 
+-	dev_set_drvdata(dev, hdmi);
++	platform_set_drvdata(pdev, hdmi);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index f79665801543..f645275e6e63 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -207,8 +207,6 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	struct drm_device *drm = data;
+ 	struct drm_encoder *encoder;
+ 	struct imx_hdmi *hdmi;
+-	struct resource *iores;
+-	int irq;
+ 	int ret;
+ 
+ 	if (!pdev->dev.of_node)
+@@ -223,14 +221,6 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	hdmi->dev = &pdev->dev;
+ 	encoder = &hdmi->encoder;
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
+-
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iores)
+-		return -ENXIO;
+-
+ 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+ 	/*
+ 	 * If we failed to find the CRTC(s) which this encoder is
+@@ -249,7 +239,7 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_imx_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+-	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(pdev, encoder, plat_data);
+ 
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index e8fb5c56b224..a6d4a0236e8f 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -257,8 +257,6 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	struct drm_device *drm = data;
+ 	struct drm_encoder *encoder;
+ 	struct rockchip_hdmi *hdmi;
+-	struct resource *iores;
+-	int irq;
+ 	int ret;
+ 
+ 	if (!pdev->dev.of_node)
+@@ -273,14 +271,6 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	hdmi->dev = &pdev->dev;
+ 	encoder = &hdmi->encoder;
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
+-
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iores)
+-		return -ENXIO;
+-
+ 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+ 	/*
+ 	 * If we failed to find the CRTC(s) which this encoder is
+@@ -301,7 +291,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_rockchip_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+-	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(pdev, encoder, plat_data);
+ 
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 11edda631a9d..94ff6edd070b 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -57,8 +57,7 @@ struct dw_hdmi_plat_data {
+ };
+ 
+ void dw_hdmi_unbind(struct device *dev);
+-int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+-		 struct resource *iores, int irq,
++int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		 const struct dw_hdmi_plat_data *plat_data);
+ 
+ void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+-- 
 Regards,
--Bin.
+
+Laurent Pinchart
