@@ -1,56 +1,106 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:64631 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752602AbcLASc4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 13:32:56 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3] sh_eth: remove unchecked interrupts for RZ/A1
-Date: Thu,  1 Dec 2016 13:32:14 -0500
-Message-Id: <20161201183214.30196-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 21/22] arm64: dts: r8a7795: salvator-x: Enable HDMI outputs
+Date: Fri,  2 Dec 2016 01:43:36 +0200
+Message-Id: <1480635817-1258-22-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When streaming a lot of data and the RZ/A1 can't keep up, some status bits
-will get set that are not being checked or cleared which cause the
-following messages and the Ethernet driver to stop working. This
-patch fixes that issue.
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-irq 21: nobody cared (try booting with the "irqpoll" option)
-handlers:
-[<c036b71c>] sh_eth_interrupt
-Disabling IRQ #21
+Instantiate the HDMI connectors and enable the encoders.
 
-Fixes: db893473d313a4ad ("sh_eth: Add support for r7s72100")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v3:
-* add RZ/A1 to subject line
-v2:
-* switched from modifying eesr_err_check to modifying eesipr_value
----
- drivers/net/ethernet/renesas/sh_eth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 05b0dc5..1a92de7 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -518,7 +518,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 73a22b93f7b1..08554b4d7e86 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -147,6 +147,30 @@
+ 		};
+ 	};
  
- 	.ecsr_value	= ECSR_ICD,
- 	.ecsipr_value	= ECSIPR_ICDIP,
--	.eesipr_value	= 0xff7f009f,
-+	.eesipr_value	= 0xe77f009f,
++	hdmi0-out {
++		compatible = "hdmi-connector";
++		label = "HDMI0 OUT";
++		type = "a";
++
++		port {
++			hdmi0_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_out>;
++			};
++		};
++	};
++
++	hdmi1-out {
++		compatible = "hdmi-connector";
++		label = "HDMI1 OUT";
++		type = "a";
++
++		port {
++			hdmi1_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi1_out>;
++			};
++		};
++	};
++
+ 	vga-encoder {
+ 		compatible = "adi,adv7123";
  
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
+@@ -190,6 +214,32 @@
+ 	};
+ };
+ 
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi1 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi1_out: endpoint {
++				remote-endpoint = <&hdmi1_con>;
++			};
++		};
++	};
++};
++
+ &du {
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.10.1
+Regards,
+
+Laurent Pinchart
