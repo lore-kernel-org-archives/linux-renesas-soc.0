@@ -1,63 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33295 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932989AbcLIMgQ (ORCPT
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:47673 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753640AbcLANYp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 07:36:16 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/7] Renesas *SCIF* RX FIFO support
-Date: Fri,  9 Dec 2016 13:36:04 +0100
-Message-Id: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 1 Dec 2016 08:24:45 -0500
+Subject: Re: [PATCH] can: rcar_canfd: Correct order of interrupt specifiers
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>
+References: <1479908686-14028-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <81027038-8cf6-716b-c0a8-dc2343b93d70@pengutronix.de>
+Date: Thu, 1 Dec 2016 14:24:33 +0100
+MIME-Version: 1.0
+In-Reply-To: <1479908686-14028-1-git-send-email-geert+renesas@glider.be>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="ILdBRDmh1GxT8KQ9N1ABKJ2M7ANNK1dVn"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--ILdBRDmh1GxT8KQ9N1ABKJ2M7ANNK1dVn
+Content-Type: multipart/mixed; boundary="jIfpoabaDQFDq77gFrl9p8TCsUqDHRbVP";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfgang Grandegger <wg@grandegger.com>,
+ Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ Chris Paterson <chris.paterson2@renesas.com>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Message-ID: <81027038-8cf6-716b-c0a8-dc2343b93d70@pengutronix.de>
+Subject: Re: [PATCH] can: rcar_canfd: Correct order of interrupt specifiers
+References: <1479908686-14028-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479908686-14028-1-git-send-email-geert+renesas@glider.be>
 
-This series implements support for using RX FIFO thresholds higher than one
-in PIO mode on SCIF, HSCIF, SCIFA and SCIFB serial ports.
+--jIfpoabaDQFDq77gFrl9p8TCsUqDHRbVP
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This was originally implemented to fulfill a request for a software
-timer-based solution, but I have found that it is not sensible to implement
-such a feature on SCIF and HSCIF. These IPs do not support disabling of the
-hardware timeout feature that all SCIFs have, and that triggers an interrupt
-if no new data has arrived for more than 1.5 frames.
+On 11/23/2016 02:44 PM, Geert Uytterhoeven wrote:
+> According to both DTS (example and actual files), and Linux driver code=
+,
+> the first interrupt specifier should be the Channel interrupt, while th=
+e
+> second interrupt specifier should be the Global interrupt.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This series therefore enables the hardware timeout for SCIFs and HSCIFs, and
-the software timeout for SCIFAs and SCIFBs only.
+Added to can-next.
 
-(Hardware timeout on SCIFA/B is possible, but has not been implemented here
-due to a lack of time. The same goes for the limited amount of tuning of
-the hardware timeout that is possible on HSCIF ports.)
+Thanks,
+Marc
 
-Two sysfs attributes are added to tune the FIFO behavior:
-
-- rx_fifo_trigger: Controls the trigger level at which an interrupt is
-  forced. Works for both hardware and software timeout.
-- rx_fifo_timeout: Software timeout in frames upon which the FIFOs are
-  checked even if no interrupt is triggered. Zero (default) disables the
-  timeout. (SCIFA and SCIFB only)
-
-CU
-Uli
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
-Ulrich Hecht (7):
-  serial: sh-sci: add FIFO trigger bits
-  serial: sh-sci: consider DR (data ready) bit adequately
-  serial: sh-sci: implement FIFO threshold register setting
-  serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
-  serial: sh-sci: SCIFA/B RX FIFO software timeout
-  serial: sh-sci: make RX FIFO parameters tunable via sysfs
-  arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
+--jIfpoabaDQFDq77gFrl9p8TCsUqDHRbVP--
 
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  12 +
- drivers/tty/serial/sh-sci.c                        | 254 ++++++++++++++++++---
- drivers/tty/serial/sh-sci.h                        |   7 +
- 3 files changed, 238 insertions(+), 35 deletions(-)
+--ILdBRDmh1GxT8KQ9N1ABKJ2M7ANNK1dVn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEES2FAuYbJvAGobdVQPTuqJaypJWoFAlhAJJEACgkQPTuqJayp
+JWrYhAf8DV4nJQ7xTYC23sjccBNoEXGkESvlq6ZQw4/CT2bvPKFGniwL2ezkY1TK
+cwnK6IKavZtN0IgZS61e5ktX+ORniSP9Hq1h1swlnqlNb5BgmQc059v/rNPkzCdh
+YClEScIHtVoC399/cAa1xX51GGAlt7sm5Z4UoRBj7/iruBzYFKIjGZ2OfMXmhoTE
+kFS+uGfsPseqIwaQ1+fPyflAcYm+ahJlhh4c5Gpni5HLcSM5ZmLtXEQskmvuEi2D
+rRQs5vMUOrZLHv74gcqOAYhsBrGvv+6P56rmW1ui9wbDeO4GqQ04Vi78VjilD6ov
+svniJeMlNCQWoLYPl67fbgBexpOftQ==
+=iPGA
+-----END PGP SIGNATURE-----
+
+--ILdBRDmh1GxT8KQ9N1ABKJ2M7ANNK1dVn--
