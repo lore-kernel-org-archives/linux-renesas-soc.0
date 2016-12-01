@@ -1,89 +1,60 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: "jacopo@jmondi.org" <jacopo@jmondi.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+MIME-Version: 1.0
+In-Reply-To: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
 References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
- <4558124.JutbKSQ7ug@avalon>
- <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Dec 2016 09:47:22 +0100
+Message-ID: <CAMuHMdWdcOLr+gQdeG1CHCQ8n4M2939eXA5rxQynjARpG6zmYA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+To: Jacopo Mondi <jacopo@jmondi.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <1abd7e30-f70b-1774-f51c-3e08a98f6e78@jmondi.org>
-Date: Thu, 1 Dec 2016 17:40:35 +0100
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent, Geert,
-    thanks for review
+Hi Jacopo,
 
-On 29/11/2016 22:39, Geert Uytterhoeven wrote:
-> Hi Laurent,
+On Tue, Nov 29, 2016 at 10:11 AM, Jacopo Mondi <jacopo@jmondi.org> wrote:
+> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
 >
-> On Tue, Nov 29, 2016 at 8:30 PM, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
->> On Tuesday 29 Nov 2016 10:11:56 Jacopo Mondi wrote:
->>> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
->>>
->>> The Gyro-ADC supports three different configurations:
->>> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
->>> channel select signal (adi_chsel1 and adi_chsel1_b groups),
->>
->> I've only briefly looked up at the datasheet, but is that a supported mode ?
->> It seems that mode 1 uses 4 channels and mode 2 and 3 use 8 channels.
+> The Gyro-ADC supports three different configurations:
+> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
+> channel select signal (adi_chsel1 and adi_chsel1_b groups), up to 4 ADCs
+> through 2 channel select signals (adi_chsel2 and adi_chsel2_b groups)
+> and up to 8 ADCs through 3 channel select signals (adi_chsel3 and
+> adi_chsel3_b groups)
 >
-> I think you can always connect less ADCs than there are channels.
-> If you connect e.g. only one, you don't need any CHS signals.
-> If you connect e.g. two, you can use only one CHS signal.
->
-> AFAICS, you still have to use an external demux to create individual chip
-> selects from the single CS signal and (up to 3) CHS signals.
+> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
 
-Actually Laurent's right and I have mis-interpreted the CHS signal purpose.
+> +static const char * const adi_groups[] = {
+> +       "adi",
 
-The CHS signal are not intended to select an external ADC where to 
-sample from among the several connected ones, but instead to select 
-which line to drive to a single ADC.
+As the group names below have a suffix ("_chselX"), I think it would be
+good to have a suffix in this group name, too.
+Usually we have splits like "data" and "ctrl", but in this case, the group
+covers both data and control signals.
+"adi_common"? "adi_base"? "adi_spi" (but it's only SPI in mode 2/3)?
 
-Quoting the processor manual, ADI supports three different ADC models 
-through 3 different "modes"
-- mode1: MB88101A
-- mode2: ADCS7476/ADC121 and AD7476
-- mode3: MAX1162
-and cycles through channels moving the CHS[0:1] lines in mode1, and 
-CHS[0:2] lines in mode2 and mode3.
+I'm out of inspiration...
 
-Actually, being the MB88101A a 4-channel ADC, the CHS[0:1] lines could 
-be connected to the ADC itself and used to cycle between its 4 input pins.
-In mode2 and mode3 an external DEMUX is probably required, as the 
-supported ADCs for these modes are single-channel ones.
+> +       "adi_chsel1",
+> +       "adi_chsel2",
+> +       "adi_chsel3",
 
-For pin configuration purposes anyway, it's enough to know that we 
-cannot split CHS signals in three separate groups, but in 2 only (one 
-for mode1 and one for mode2 and 3).
+Gr{oetje,eeting}s,
 
-Will send v2 shortly.
-Thanks
-    j
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
->
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
