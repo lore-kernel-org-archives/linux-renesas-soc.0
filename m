@@ -1,56 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36275 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933523AbcLBKh0 (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:56326 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755946AbcLAWE7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 05:37:26 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 1/3 pci/next] PCI: rcar-gen2: Use gen2 fallback compatibility last
-Date: Fri,  2 Dec 2016 11:36:58 +0100
-Message-Id: <1480675020-26346-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
-References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 1 Dec 2016 17:04:59 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-pm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Subject: [PATCH v4 4/4] arm64: dts: r8a7796: Add R-Car Gen3 thermal support
+Date: Thu,  1 Dec 2016 23:04:42 +0100
+Message-Id: <20161201220442.22057-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fallback compatibility strings should be used only if more specific ones
-are matched and the order of compatibility strings in the corresponding
-struct of_device_id should implement this.
-
-This does not have a run-time effect as current all relevant compatibility
-strings result in the same initialisation.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v2
-* New patch
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/pci/host/pci-rcar-gen2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
-index 1eeefa4df64c..85348590848b 100644
---- a/drivers/pci/host/pci-rcar-gen2.c
-+++ b/drivers/pci/host/pci-rcar-gen2.c
-@@ -430,10 +430,10 @@ static int rcar_pci_probe(struct platform_device *pdev)
- }
- 
- static struct of_device_id rcar_pci_of_match[] = {
--	{ .compatible = "renesas,pci-rcar-gen2", },
- 	{ .compatible = "renesas,pci-r8a7790", },
- 	{ .compatible = "renesas,pci-r8a7791", },
- 	{ .compatible = "renesas,pci-r8a7794", },
-+	{ .compatible = "renesas,pci-rcar-gen2", },
- 	{ },
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 9217da98352565..5261f0f77ce2e9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -251,5 +251,63 @@
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a7796-thermal";
++			reg = <0 0xe6198000 0 0x68>,
++			      <0 0xe61a0000 0 0x5c>,
++			      <0 0xe61a8000 0 0x5c>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
++
++		thermal-zones {
++			sensor_thermal1: sensor-thermal1 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 0>;
++
++				trips {
++					sensor1_crit: sensor1-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal2: sensor-thermal2 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 1>;
++
++				trips {
++					sensor2_crit: sensor2-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal3: sensor-thermal3 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 2>;
++
++				trips {
++					sensor3_crit: sensor3-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++		};
+ 	};
  };
- 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
