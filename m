@@ -1,40 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:38932 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752400AbcLBSzl (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:64631 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752602AbcLASc4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 13:55:41 -0500
-Date: Fri, 02 Dec 2016 13:55:39 -0500 (EST)
-Message-Id: <20161202.135539.2038699670508120973.davem@davemloft.net>
-To: chris.brandt@renesas.com
-Cc: sergei.shtylyov@cogentembedded.com, horms+renesas@verge.net.au,
-        geert+renesas@glider.be, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] sh_eth: remove unchecked interrupts for RZ/A1
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20161201183214.30196-1-chris.brandt@renesas.com>
-References: <20161201183214.30196-1-chris.brandt@renesas.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 1 Dec 2016 13:32:56 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3] sh_eth: remove unchecked interrupts for RZ/A1
+Date: Thu,  1 Dec 2016 13:32:14 -0500
+Message-Id: <20161201183214.30196-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
-Date: Thu,  1 Dec 2016 13:32:14 -0500
+When streaming a lot of data and the RZ/A1 can't keep up, some status bits
+will get set that are not being checked or cleared which cause the
+following messages and the Ethernet driver to stop working. This
+patch fixes that issue.
 
-> When streaming a lot of data and the RZ/A1 can't keep up, some status bits
-> will get set that are not being checked or cleared which cause the
-> following messages and the Ethernet driver to stop working. This
-> patch fixes that issue.
-> 
-> irq 21: nobody cared (try booting with the "irqpoll" option)
-> handlers:
-> [<c036b71c>] sh_eth_interrupt
-> Disabling IRQ #21
-> 
-> Fixes: db893473d313a4ad ("sh_eth: Add support for r7s72100")
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+irq 21: nobody cared (try booting with the "irqpoll" option)
+handlers:
+[<c036b71c>] sh_eth_interrupt
+Disabling IRQ #21
 
-Applied and queued up for -stable, thanks.
+Fixes: db893473d313a4ad ("sh_eth: Add support for r7s72100")
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+v3:
+* add RZ/A1 to subject line
+v2:
+* switched from modifying eesr_err_check to modifying eesipr_value
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index 05b0dc5..1a92de7 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -518,7 +518,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
+ 
+ 	.ecsr_value	= ECSR_ICD,
+ 	.ecsipr_value	= ECSIPR_ICDIP,
+-	.eesipr_value	= 0xff7f009f,
++	.eesipr_value	= 0xe77f009f,
+ 
+ 	.tx_check	= EESR_TC1 | EESR_FTC,
+ 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
+-- 
+2.10.1
