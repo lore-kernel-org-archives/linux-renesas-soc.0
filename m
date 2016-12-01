@@ -3,176 +3,100 @@ Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
 Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
 	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
 	Jose Abreu <Jose.Abreu@synopsys.com>,
 	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	Russell King <rmk+kernel@arm.linux.org.uk>,
 	Ulrich Hecht <ulrich.hecht@gmail.com>,
 	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 07/29] drm: bridge: dw-hdmi: Move IRQ and IO resource allocation to common code
-Date: Tue, 20 Dec 2016 03:33:38 +0200
-Message-Id: <20161220013400.28317-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 09/22] drm: bridge: dw-hdmi: Create connector in the bridge attach operation
+Date: Fri,  2 Dec 2016 01:43:24 +0200
+Message-Id: <1480635817-1258-10-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There's no need to duplicate identical code in multiple drivers (two at
-the moment, one more to come soon). Move it to the dw-hdmi core where it
-can be shared. If resource allocation ever becomes device-specific later
-we'll always have the option of splitting it out again.
-
-While it at pass the platform device to the bind function to avoid
-having to cast struct device to struct platform_device.
+The DRM device is not guaranteed by the bridge API to be available
+before the attach callback. The driver performs properly at the moment
+as it doesn't use the drm_bridge_add() registration method. As this will
+be changed later, move connector creation to attach time to ensure
+compatibility with the API.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c            | 13 ++++++++++---
- drivers/gpu/drm/imx/dw_hdmi-imx.c           | 12 +-----------
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 12 +-----------
- include/drm/bridge/dw_hdmi.h                |  3 +--
- 4 files changed, 13 insertions(+), 27 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 488dc1a9204f..563cbec47da6 100644
+index 92ce9e532603..88cd40adb977 100644
 --- a/drivers/gpu/drm/bridge/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1843,14 +1843,16 @@ static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+@@ -1667,6 +1667,25 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
+ 	.best_encoder = drm_atomic_helper_best_encoder,
+ };
+ 
++static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++	struct drm_encoder *encoder = bridge->encoder;
++	struct drm_connector *connector = &hdmi->connector;
++
++	connector->interlace_allowed = 1;
++	connector->polled = DRM_CONNECTOR_POLL_HPD;
++
++	drm_connector_helper_add(connector, &dw_hdmi_connector_helper_funcs);
++
++	drm_connector_init(bridge->dev, connector, &dw_hdmi_connector_funcs,
++			   DRM_MODE_CONNECTOR_HDMIA);
++
++	drm_mode_connector_attach_encoder(connector, encoder);
++
++	return 0;
++}
++
+ static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
+ 				    struct drm_display_mode *orig_mode,
+ 				    struct drm_display_mode *mode)
+@@ -1704,6 +1723,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+ }
+ 
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
++	.attach = dw_hdmi_bridge_attach,
+ 	.enable = dw_hdmi_bridge_enable,
+ 	.disable = dw_hdmi_bridge_disable,
+ 	.mode_set = dw_hdmi_bridge_mode_set,
+@@ -1829,17 +1849,6 @@ static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+ 		return -EINVAL;
+ 	}
+ 
+-	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
+-
+-	drm_connector_helper_add(&hdmi->connector,
+-				 &dw_hdmi_connector_helper_funcs);
+-
+-	drm_connector_init(encoder->dev, &hdmi->connector,
+-			   &dw_hdmi_connector_funcs,
+-			   DRM_MODE_CONNECTOR_HDMIA);
+-
+-	drm_mode_connector_attach_encoder(&hdmi->connector, encoder);
+-
  	return 0;
  }
  
--int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
--		 struct resource *iores, int irq,
-+int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
- 		 const struct dw_hdmi_plat_data *plat_data)
- {
-+	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct platform_device_info pdevinfo;
- 	struct device_node *ddc_node;
- 	struct dw_hdmi *hdmi;
-+	struct resource *iores;
-+	int irq;
- 	int ret;
- 	u32 val = 1;
- 	u8 config0;
-@@ -1903,6 +1905,7 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
- 		dev_dbg(hdmi->dev, "no ddc property found\n");
- 	}
+@@ -1862,8 +1871,6 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 	if (!hdmi)
+ 		return -ENOMEM;
  
-+	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	hdmi->regs = devm_ioremap_resource(dev, iores);
- 	if (IS_ERR(hdmi->regs)) {
- 		ret = PTR_ERR(hdmi->regs);
-@@ -1945,6 +1948,10 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
- 
- 	initialize_hdmi_ih_mutes(hdmi);
- 
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		goto err_iahb;
-+
- 	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
- 					dw_hdmi_irq, IRQF_SHARED,
- 					dev_name(dev), hdmi);
-@@ -2025,7 +2032,7 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
- 	if (hdmi->i2c)
- 		dw_hdmi_i2c_init(hdmi);
- 
--	dev_set_drvdata(dev, hdmi);
-+	platform_set_drvdata(pdev, hdmi);
- 
- 	return 0;
- 
-diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-index f79665801543..f645275e6e63 100644
---- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
-+++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-@@ -207,8 +207,6 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
- 	struct drm_device *drm = data;
- 	struct drm_encoder *encoder;
- 	struct imx_hdmi *hdmi;
--	struct resource *iores;
--	int irq;
- 	int ret;
- 
- 	if (!pdev->dev.of_node)
-@@ -223,14 +221,6 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
- 	hdmi->dev = &pdev->dev;
- 	encoder = &hdmi->encoder;
- 
--	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
+-	hdmi->connector.interlace_allowed = 1;
 -
--	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!iores)
--		return -ENXIO;
--
- 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
- 	/*
- 	 * If we failed to find the CRTC(s) which this encoder is
-@@ -249,7 +239,7 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
- 	drm_encoder_init(drm, encoder, &dw_hdmi_imx_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 
--	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
-+	ret = dw_hdmi_bind(pdev, encoder, plat_data);
- 
- 	/*
- 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index e8fb5c56b224..a6d4a0236e8f 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -257,8 +257,6 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- 	struct drm_device *drm = data;
- 	struct drm_encoder *encoder;
- 	struct rockchip_hdmi *hdmi;
--	struct resource *iores;
--	int irq;
- 	int ret;
- 
- 	if (!pdev->dev.of_node)
-@@ -273,14 +271,6 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- 	hdmi->dev = &pdev->dev;
- 	encoder = &hdmi->encoder;
- 
--	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
--
--	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!iores)
--		return -ENXIO;
--
- 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
- 	/*
- 	 * If we failed to find the CRTC(s) which this encoder is
-@@ -301,7 +291,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- 	drm_encoder_init(drm, encoder, &dw_hdmi_rockchip_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 
--	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
-+	ret = dw_hdmi_bind(pdev, encoder, plat_data);
- 
- 	/*
- 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 11edda631a9d..94ff6edd070b 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -57,8 +57,7 @@ struct dw_hdmi_plat_data {
- };
- 
- void dw_hdmi_unbind(struct device *dev);
--int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
--		 struct resource *iores, int irq,
-+int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
- 		 const struct dw_hdmi_plat_data *plat_data);
- 
- void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+ 	hdmi->plat_data = plat_data;
+ 	hdmi->dev = dev;
+ 	hdmi->dev_type = plat_data->dev_type;
 -- 
 Regards,
 
