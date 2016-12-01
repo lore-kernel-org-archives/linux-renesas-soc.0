@@ -1,50 +1,60 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=KIoc=XV=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/4] v4l: vsp1: Fix suspend/resume and race on M2M pipelines
-Date: Tue,  6 Dec 2016 09:35:09 +0000
-Message-Id: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:61305 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756009AbcLAO27 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Dec 2016 09:28:59 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PM / Domains: Do not print PM domain add error message if EPROBE_DEFER
+Date: Thu, 01 Dec 2016 15:25 +0100
+Message-ID: <2449753.iPCUDMXyRB@aspire.rjw.lan>
+In-Reply-To: <1480508696-19294-1-git-send-email-geert+renesas@glider.be>
+References: <1480508696-19294-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This small patchset helps rework the VSP1 driver to repair an issue on
-suspend/resume operations whereby the pipeline does not get reconfigured after
-it has been re-initialised following a resume operation.
+On Wednesday, November 30, 2016 01:24:56 PM Geert Uytterhoeven wrote:
+> EPROBE_DEFER is not an error, hence printing an error message like
+> 
+>     renesas_irqc e61c0000.interrupt-controller: failed to add to PM domain always-on: -517
+> 
+> may confuse the user.
+> 
+> Suppress the error message in case of EPROBE_DEFER to fix this.
+> 
+> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/base/power/domain.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 64164aac6ae3990a..f22137b52dcb641b 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2032,8 +2032,9 @@ int genpd_dev_pm_attach(struct device *dev)
+>  	mutex_unlock(&gpd_list_lock);
+>  
+>  	if (ret < 0) {
+> -		dev_err(dev, "failed to add to PM domain %s: %d",
+> -			pd->name, ret);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "failed to add to PM domain %s: %d",
+> +				pd->name, ret);
+>  		goto out;
+>  	}
+>  
+> 
 
-Along side this, there was an intrinsic race in the vsp1_video_start_streaming()
-function whereby multiple streams operating through a BRU, could find themselves
-commencing an operation before the pipeline has been configured, or worse -
-commencing, just as the pipeline is being configured resulting in a null pointer
-dereference on pipe->dl.
+Applied (with ACKs etc).
 
-This series superceeds a previous effort to fix the BRU race.
-
-Patch [1/4] is a code move only, with no functional change.
-Patch [2/4] refactors the vsp1_video_start_streaming() function and fixes both
-            suspend/resume, and the BRU race in a single change
-Patch [3/4] removes the context scoped 'pipe->dl' which has been susceptible to
-            races and isn't required to be in the context.
-Patch [4/4] is an RFC patch really, that fixes a segfault on error paths  and I
-            certainly expect feedback and brief discussion. Please drop Patch 4
-            in the event of any further discussion, and don't consider it as
-            blocking for the first three patches of this series.
-
-Kieran Bingham (4):
-  v4l: vsp1: Move vsp1_video_setup_pipeline()
-  v4l: vsp1: Refactor video pipeline configuration
-  v4l: vsp1: Use local display lists and remove global pipe->dl
-  media: Catch null pipes on pipeline stop
-
- drivers/media/media-entity.c             |   2 +
- drivers/media/platform/vsp1/vsp1_drm.c   |  20 ++---
- drivers/media/platform/vsp1/vsp1_drv.c   |   3 +
- drivers/media/platform/vsp1/vsp1_pipe.c  |   1 +
- drivers/media/platform/vsp1/vsp1_pipe.h  |   4 +-
- drivers/media/platform/vsp1/vsp1_video.c | 127 +++++++++++++++----------------
- 6 files changed, 78 insertions(+), 79 deletions(-)
-
--- 
-2.7.4
+Thanks,
+Rafael
