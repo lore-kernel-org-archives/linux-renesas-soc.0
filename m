@@ -1,50 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:26159 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752008AbcLASx2 (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:36749 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750775AbcLAS2o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 13:53:28 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: David Miller <davem@davemloft.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Thu, 1 Dec 2016 13:28:44 -0500
+Received: by mail-lf0-f44.google.com with SMTP id t196so178453549lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Dec 2016 10:28:44 -0800 (PST)
+Subject: Re: [PATCH v2] sh_eth: remove unchecked interrupts
+To: Chris Brandt <Chris.Brandt@renesas.com>,
+        David Miller <davem@davemloft.net>
+References: <20161201140642.28583-1-chris.brandt@renesas.com>
+ <228704e3-fe33-1c1f-61a1-7db451af5faf@cogentembedded.com>
+ <7d50b5e0-ae7c-a39d-625a-c9cfc11e398f@cogentembedded.com>
+ <SG2PR06MB1165DFB4E735FC10696F08CA8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] sh_eth: remove unchecked interrupts
-Date: Thu, 1 Dec 2016 18:53:22 +0000
-Message-ID: <SG2PR06MB1165C7D7B7DFBAC4B5BAB09A8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20161201140642.28583-1-chris.brandt@renesas.com>
- <CAMuHMdU80M2qcK74YgPC8SZ20tNcKrZhj7MXo_Ok=6m4Aa0=-w@mail.gmail.com>
- <25b92de0-806b-342b-7556-06b96b948b2c@cogentembedded.com>
-In-Reply-To: <25b92de0-806b-342b-7556-06b96b948b2c@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <88d53871-c45f-c45c-bd72-f6b363f7ea6b@cogentembedded.com>
+Date: Thu, 1 Dec 2016 21:28:40 +0300
 MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165DFB4E735FC10696F08CA8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDEyLzEvMjAxNiwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiANCj4g
-T24gMTIvMDEvMjAxNiAwNTo0MiBQTSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiANCj4g
-Pj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9zaF9ldGguYw0KPiA+PiArKysg
-Yi9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZW5lc2FzL3NoX2V0aC5jDQo+ID4+IEBAIC01MTgsNyAr
-NTE4LDcgQEAgc3RhdGljIHN0cnVjdCBzaF9ldGhfY3B1X2RhdGEgcjdzNzIxMDBfZGF0YSA9IHsN
-Cj4gPj4NCj4gPj4gICAgICAgICAuZWNzcl92YWx1ZSAgICAgPSBFQ1NSX0lDRCwNCj4gPj4gICAg
-ICAgICAuZWNzaXByX3ZhbHVlICAgPSBFQ1NJUFJfSUNESVAsDQo+ID4+IC0gICAgICAgLmVlc2lw
-cl92YWx1ZSAgID0gMHhmZjdmMDA5ZiwNCj4gPj4gKyAgICAgICAuZWVzaXByX3ZhbHVlICAgPSAw
-eGU3N2YwMDlmLA0KPiA+DQo+ID4gQ29tbWVudCBub3QgZGlyZWN0bHkgcmVsYXRlZCB0byB0aGUg
-bWVyaXRzIG9mIHRoaXMgcGF0Y2g6IHRoZSBFRVNJUFINCj4gPiBiaXQgZGVmaW5pdGlvbnMgc2Vl
-bSB0byBiZSBpZGVudGljYWwgdG8gdGhvc2UgZm9yIEVFU1IsIHNvIHdlIGNhbiBnZXQNCj4gPiBy
-aWQgb2YgdGhlIGhhcmRjb2RlZCB2YWx1ZXMgaGVyZT8NCj4gDQo+ICAgICBEbyB5b3UgbWVhbiB1
-c2luZyB0aGUgQGRlZmluZSdzPyBXZSBoYXZlIEVFU0lQUiBiaXRzIGFsc28gZGVjbGFyZWQsDQo+
-IHNlZSBlbnVtIERNQUNfSU1fQklULA0KDQoNCklzIHlvdXIgaWRlYSB0byBnZXQgcmlkIG9mIC5l
-ZXNpcHJfdmFsdWUgZm9yIGRldmljZXMgdGhhdCBoYXZlIHZhbHVlcw0KdGhhdCBhcmUgdGhlIHNh
-bWUgYXMgLmVlc3JfZXJyX2NoZWNrPw0KDQoNCkZvciBleGFtcGxlIGluIHNoX2V0aF9kZXZfaW5p
-dCgpOg0KDQoJc2hfZXRoX21vZGlmeShuZGV2LCBFRVNSLCAwLCAwKTsNCgltZHAtPmlycV9lbmFi
-bGVkID0gdHJ1ZTsNCi0Jc2hfZXRoX3dyaXRlKG5kZXYsIG1kcC0+Y2QtPmVlc2lwcl92YWx1ZSwg
-RUVTSVBSKTsNCisJaWYgKG1kcC0+Y2QtPmVlc2lwcl92YWx1ZSkNCisJCXNoX2V0aF93cml0ZShu
-ZGV2LCBtZHAtPmNkLT5lZXNpcHJfdmFsdWUsIEVFU0lQUik7DQorCWVsc2UNCisJCXNoX2V0aF93
-cml0ZShuZGV2LCBtZHAtPmNkLT5lZXNyX2Vycl9jaGVjaywgRUVTSVBSKTsNCg0KDQpDaHJpcw0K
-DQo=
+On 12/01/2016 09:24 PM, Chris Brandt wrote:
+
+>>     One thing you've missed so far is mentioning R7S72100 (RZ/A1) in the
+>> subject. This driver supports many SoCs, you're only fixing one of them...
+>
+> For the last sh_eth.c patch I submitted, I had:
+>
+> "net: ethernet: renesas: sh_eth: add POST registers for rz"
+>
+>
+> Should I resend the patch as:
+>
+> "[PATCH v3] sh_eth: remove unchecked interrupts for RZ/A1"
+>
+>
+> ??
+
+    Yes, that will do.
+
+> Chris
+
+MBR, Sergei
