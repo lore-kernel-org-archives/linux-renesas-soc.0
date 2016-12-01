@@ -1,86 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52446 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752580AbcLLOUN (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:56296 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753786AbcLAWE4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 09:20:13 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+        Thu, 1 Dec 2016 17:04:56 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-pm@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv5 0/5] thermal: add driver for R-Car Gen3
-Date: Mon, 12 Dec 2016 15:18:00 +0100
-Message-Id: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Subject: [PATCH v4 3/4] arm64: dts: r8a7795: Add R-Car Gen3 thermal support
+Date: Thu,  1 Dec 2016 23:04:41 +0100
+Message-Id: <20161201220442.22057-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-Hi all,
-
-The series adds thermal support to Renesas R-Car Gen3 SoCs. It's tested 
-on Salvator-X H3 and M3-W SoC.
-
-Wolfram asked me to have a look at the comments for v4 and to try and 
-rework the temperature formulas to work with only ints and if it worked 
-out resend the series. I have reworked code in 2/5 but kept Wolfram as 
-the author and added my SoB, hope this is OK.
-
-Reworking the formulas involved moving from s64 to int as the data type 
-used to store coefficients used in decimal scaled fixed point 
-calculations. By examining the largest values which could be produced in 
-these calculations a factor of 100 is the maximum scaling which is 
-possible and still fit inside an int, previously with s64 the scaling 
-was 1000.
-
-Reducing the decimal scaling also reduces the accuracy of the 
-calculations. In my tests this was hardly noticeable as the granularity 
-of the reported temperature to user-space is 0.5C, comparing the value 
-reported in the s64 vs int implementation only differ very slightly when 
-it rounded the value to the next 0.5C level.
-
-However the formulas used to calculate the coefficients are not 
-documented and none obvious (at lest not to me) so given different 
-initial values to calculate the coefficients the error might become 
-larger. Therefore I would like to ask Morimoto-san and/or Khiem to 
-provide or proxy testing of this less accurate formula and feedback if 
-it's OK, let me know if there is anything I can do to help out.
-
-Changes since v4:
-- Use only 32 bit ints to convert from register value to temperature.
-- Merge and simplify temp calculation functions.
-- Document what I known about the temprature conversion formulas.
-- Add new patch 5/5 which fixes a waring printout caused by trying to get 
-  temp before hardware is ready on r8a7795.
-- Fixed a few checkpatch warnings.
-
-Niklas Söderlund (1):
-  thermal: rcar_gen3_thermal: Add delay in .thermal_init on r8a7795
-
-Wolfram Sang (4):
-  thermal: rcar_gen3_thermal: Document the R-Car Gen3
-  thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver
-  arm64: dts: r8a7795: Add R-Car Gen3 thermal support
-  arm64: dts: r8a7796: Add R-Car Gen3 thermal support
-
- .../bindings/thermal/rcar-gen3-thermal.txt         |  56 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  58 ++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  58 ++++
- drivers/thermal/Kconfig                            |   9 +
- drivers/thermal/Makefile                           |   1 +
- drivers/thermal/rcar_gen3_thermal.c                | 330 +++++++++++++++++++++
- 6 files changed, 512 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
- create mode 100644 drivers/thermal/rcar_gen3_thermal.c
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 8c15040f2540d6..0699e04fbdf264 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1541,5 +1541,63 @@
+ 				};
+ 			};
+ 		};
++
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a7795-thermal";
++			reg = <0 0xe6198000 0 0x68>,
++			      <0 0xe61a0000 0 0x5c>,
++			      <0 0xe61a8000 0 0x5c>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
++
++		thermal-zones {
++			sensor_thermal1: sensor-thermal1 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 0>;
++
++				trips {
++					sensor1_crit: sensor1-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal2: sensor-thermal2 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 1>;
++
++				trips {
++					sensor2_crit: sensor2-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal3: sensor-thermal3 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 2>;
++
++				trips {
++					sensor3_crit: sensor3-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++		};
+ 	};
+ };
 -- 
 2.10.2
