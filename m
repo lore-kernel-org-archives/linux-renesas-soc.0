@@ -1,44 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34633 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753898AbcLANxV (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:54492 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759505AbcLANtn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 08:53:21 -0500
-MIME-Version: 1.0
-In-Reply-To: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
-References: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Dec 2016 14:38:20 +0100
-Message-ID: <CAMuHMdUFSLhftdPOgNDxQ1f8X88ebvxefzbg_tNcC6CM=8Z_9g@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7793: Implement voltage switching for SDHI
+        Thu, 1 Dec 2016 08:49:43 -0500
+Date: Thu, 1 Dec 2016 14:49:40 +0100
+From: Wolfram Sang <wsa-dev@sang-engineering.com>
 To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7793: Implement voltage switching
+ for SDHI
+Message-ID: <20161201134940.GA5575@katana>
+References: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Content-Disposition: inline
+In-Reply-To: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 1, 2016 at 2:21 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+
+--T4sUOijqQbZv57TR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Dec 01, 2016 at 02:21:07PM +0100, Simon Horman wrote:
 > Voltage switching is the same as on the r8a7791.
->
+>=20
 > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Will queue in sh-pfc-for-v4.11.
 
-Gr{oetje,eeting}s,
+--T4sUOijqQbZv57TR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iQIcBAEBAgAGBQJYQCp0AAoJEBQN5MwUoCm2Dy8QALB91K1mzlB6cR0vZ/fx7hzQ
+RJrMg5BVJlcASUVRldOsxNYL/QhfKnI6VYM/RvICQggoeVBfSo6+rG3iYdADjEig
+WDwoagC6q79Go+PAROasljK1m+aWGaA2V6PiiShhz5/mXWUSIPBmy0AEX52PsXw9
+w4oVKxQlFA/Y1A7C32qEAFmyq9MV03S/yGGhEGvZyd9b/Wvsn0TeTjSPhRbTaO3w
+JQOR8b2FjpHQTtMLgFQKPUPMYgS1W2O5bFI8yFisicHSuwCHuv/W2An3XW2HHjML
+jmVVHeHi74C48vN2jH+CLrcFAp9J90Nz37KW7rn9qh++XRaNstLTZ77uWrP3Txvu
+cbUzVdeLpz0dRi2tjyKfr6gojQrV9QFhdvnMWLNrAA3g5Rcnh01QYvfaTZKkgQAb
+zCgIhJit942Me1q33CwuX0GCLD5QIqI6SbBBfcgmrwngZ8dH+tIVZZg8nczZs1mp
+qpb921xK1pv051NBdWbKKQi6TmNh/4ra9Nz/RLX0hTGsIB69kaE/0cQAifx053sz
+09W7e7qV0RDrT8Ppe9FH6iTbmEGY/hRRKkfb3zZt91g4e6bw9O3fvOpmLjnzBwjg
+8hnWnAt+W0ArlPUDKB18G4oH0MeFE5nWX55mCm3uRSTCZmHQmASiYcFrJDnSiz1Q
+qxWE6L8xFIH9niMilvKM
+=xgOL
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--T4sUOijqQbZv57TR--
