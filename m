@@ -1,64 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:54492 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759505AbcLANtn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47060 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755792AbcLAN1u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 08:49:43 -0500
-Date: Thu, 1 Dec 2016 14:49:40 +0100
-From: Wolfram Sang <wsa-dev@sang-engineering.com>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thu, 1 Dec 2016 08:27:50 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7793: Implement voltage switching
- for SDHI
-Message-ID: <20161201134940.GA5575@katana>
-References: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
-Content-Disposition: inline
-In-Reply-To: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7793: Implement voltage switching for SDHI
+Date: Thu,  1 Dec 2016 14:21:07 +0100
+Message-Id: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Voltage switching is the same as on the r8a7791.
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+Based on sh-pfc-for-v4.10-tag2
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, Dec 01, 2016 at 02:21:07PM +0100, Simon Horman wrote:
-> Voltage switching is the same as on the r8a7791.
->=20
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYQCp0AAoJEBQN5MwUoCm2Dy8QALB91K1mzlB6cR0vZ/fx7hzQ
-RJrMg5BVJlcASUVRldOsxNYL/QhfKnI6VYM/RvICQggoeVBfSo6+rG3iYdADjEig
-WDwoagC6q79Go+PAROasljK1m+aWGaA2V6PiiShhz5/mXWUSIPBmy0AEX52PsXw9
-w4oVKxQlFA/Y1A7C32qEAFmyq9MV03S/yGGhEGvZyd9b/Wvsn0TeTjSPhRbTaO3w
-JQOR8b2FjpHQTtMLgFQKPUPMYgS1W2O5bFI8yFisicHSuwCHuv/W2An3XW2HHjML
-jmVVHeHi74C48vN2jH+CLrcFAp9J90Nz37KW7rn9qh++XRaNstLTZ77uWrP3Txvu
-cbUzVdeLpz0dRi2tjyKfr6gojQrV9QFhdvnMWLNrAA3g5Rcnh01QYvfaTZKkgQAb
-zCgIhJit942Me1q33CwuX0GCLD5QIqI6SbBBfcgmrwngZ8dH+tIVZZg8nczZs1mp
-qpb921xK1pv051NBdWbKKQi6TmNh/4ra9Nz/RLX0hTGsIB69kaE/0cQAifx053sz
-09W7e7qV0RDrT8Ppe9FH6iTbmEGY/hRRKkfb3zZt91g4e6bw9O3fvOpmLjnzBwjg
-8hnWnAt+W0ArlPUDKB18G4oH0MeFE5nWX55mCm3uRSTCZmHQmASiYcFrJDnSiz1Q
-qxWE6L8xFIH9niMilvKM
-=xgOL
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 7ca37c3019ab..e8de975b3a58 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -6455,6 +6455,7 @@ const struct sh_pfc_soc_info r8a7791_pinmux_info = {
+ #ifdef CONFIG_PINCTRL_PFC_R8A7793
+ const struct sh_pfc_soc_info r8a7793_pinmux_info = {
+ 	.name = "r8a77930_pfc",
++	.ops = &r8a7791_pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
+ 
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+-- 
+2.7.0.rc3.207.g0ac5344
