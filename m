@@ -1,102 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:56296 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753786AbcLAWE4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47630 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752548AbcLAO0J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 17:04:56 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Subject: [PATCH v4 3/4] arm64: dts: r8a7795: Add R-Car Gen3 thermal support
-Date: Thu,  1 Dec 2016 23:04:41 +0100
-Message-Id: <20161201220442.22057-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
-References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+        Thu, 1 Dec 2016 09:26:09 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/4] ARM: dts: r8a7791: Use renesas,rcar-gen2-usb-phy fallback binding
+Date: Thu,  1 Dec 2016 15:25:52 +0100
+Message-Id: <1480602354-1446-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1480602354-1446-1-git-send-email-horms+renesas@verge.net.au>
+References: <1480602354-1446-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+A fallback binding for the Renesas R-Car Gen2 PHY driver was
+added by commit 7777cb8ba08d ("phy: rcar-gen2: add fallback binding").
+This patch makes use of this binding in the DT for the r8a7791 SoC.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8c15040f2540d6..0699e04fbdf264 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1541,5 +1541,63 @@
- 				};
- 			};
- 		};
-+
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a7795-thermal";
-+			reg = <0 0xe6198000 0 0x68>,
-+			      <0 0xe61a0000 0 0x5c>,
-+			      <0 0xe61a8000 0 0x5c>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
-+
-+		thermal-zones {
-+			sensor_thermal1: sensor-thermal1 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 0>;
-+
-+				trips {
-+					sensor1_crit: sensor1-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal2: sensor-thermal2 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 1>;
-+
-+				trips {
-+					sensor2_crit: sensor2-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal3: sensor-thermal3 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 2>;
-+
-+				trips {
-+					sensor3_crit: sensor3-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+		};
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 4c50de2faef1..a14f0ae8c8dd 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -934,7 +934,8 @@
  	};
- };
+ 
+ 	usbphy: usb-phy@e6590100 {
+-		compatible = "renesas,usb-phy-r8a7791";
++		compatible = "renesas,usb-phy-r8a7791",
++			     "renesas,rcar-gen2-usb-phy";
+ 		reg = <0 0xe6590100 0 0x100>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
