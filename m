@@ -1,39 +1,87 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=HTCQ=X4=ideasonboard.com=kieran.bingham+renesas@kernel.org>
+Return-Path: <SRS0=i9uI=XQ=ideasonboard.com=kieran.bingham+renesas@kernel.org>
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>,
-	linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] Fix suspend/resume and race on M2M pipelines
-Date: Tue, 13 Dec 2016 18:38:14 +0000
-Message-Id: <1481654294-8214-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCHv2 2/5] scripts: Provide bin2png.sh helper
+Date: Thu,  1 Dec 2016 21:31:46 +0000
+Message-Id: <1480627909-19207-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-The following changes since commit 69973b830859bc6529a7a0468ba0d80ee5117826:
+Identify the size and format from the test output filename, and pass
+to raw2rgbpnm for conversion to a PNM file.
 
-  Linux 4.9 (2016-12-11 11:17:54 -0800)
+>From there we can convert easily to a PNG output file.
 
-are available in the git repository at:
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git vsp1/suspend-resume-race
+---
+v2:
 
-for you to fetch changes up to a952e0103f86d818a444923adeef50fdcb3f70b9:
+- use 'convert' to proces png files to png
+- strip '.bin' from target filenames
 
-  media: Catch null pipes on pipeline stop (2016-12-13 16:25:13 +0000)
+ scripts/Makefile   |  2 +-
+ scripts/bin2png.sh | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+ create mode 100755 scripts/bin2png.sh
 
-----------------------------------------------------------------
-Kieran Bingham (4):
-      v4l: vsp1: Move vsp1_video_setup_pipeline()
-      v4l: vsp1: Refactor video pipeline configuration
-      v4l: vsp1: Use local display lists and remove global pipe->dl
-      media: Catch null pipes on pipeline stop
-
- drivers/media/media-entity.c             |   2 +
- drivers/media/platform/vsp1/vsp1_drm.c   |  20 ++---
- drivers/media/platform/vsp1/vsp1_drv.c   |   4 +
- drivers/media/platform/vsp1/vsp1_pipe.c  |   1 +
- drivers/media/platform/vsp1/vsp1_pipe.h  |   4 +-
- drivers/media/platform/vsp1/vsp1_video.c | 127 +++++++++++++++----------------
- 6 files changed, 79 insertions(+), 79 deletions(-)
+diff --git a/scripts/Makefile b/scripts/Makefile
+index 8c452f4c54ce..6586b2989aed 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -1,4 +1,4 @@
+-SCRIPTS=logger.sh vsp-lib.sh
++SCRIPTS=$(wildcard *.sh)
+ 
+ all:
+ 
+diff --git a/scripts/bin2png.sh b/scripts/bin2png.sh
+new file mode 100755
+index 000000000000..bde1ddfa3eab
+--- /dev/null
++++ b/scripts/bin2png.sh
+@@ -0,0 +1,36 @@
++#!/bin/sh
++
++FILE="$1"
++
++PNM=$(echo $FILE | sed -e 's|\.bin$|.pnm|')
++PNG=$(echo $FILE | sed -e 's|\.bin$|.png|')
++
++fmt=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\1|')
++size=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\2|')
++
++case $fmt in
++	yuv410m|yvu410m|yuv411m|yuv420m|yvu420m|yuv422m|yvu422m|yuv444m|yvu444m)
++		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
++		fmt=`echo $fmt | tr 'M' 'P'`
++		;;
++	nv12m|nv21m|nv16m|nv61m)
++		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
++		fmt=`echo $fmt | tr -d 'M'`
++		;;
++	argb555|xrgb555)
++		fmt=RGB555X
++		;;
++	argb32|xrgb32)
++		fmt=RGB32
++		;;
++	abgr32|xbgr32)
++		fmt=BGR32
++		;;
++	*)
++		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
++		;;
++esac
++
++raw2rgbpnm -s $size -f $fmt $FILE $PNM && \
++	convert $PNM $PNG
++rm $PNM
+-- 
+2.7.4
