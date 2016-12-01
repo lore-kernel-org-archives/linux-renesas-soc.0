@@ -1,47 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:33209 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755026AbcLBM4p (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 07:56:45 -0500
-Received: by mail-io0-f170.google.com with SMTP id j65so479291257iof.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Dec 2016 04:56:45 -0800 (PST)
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Dec 2016 13:56:44 +0100
-Message-ID: <CAMuHMdWEjGeSEpY-hX00e7x5yBsNiC9zW1Wqj8jo2QN4pZoUvg@mail.gmail.com>
-Subject: Re: R-Car gen3 PLL0/2/4 frequencies incorrect?
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 06/22] drm: bridge: dw-hdmi: Don't forward HPD events to DRM core before attach
+Date: Fri,  2 Dec 2016 01:43:21 +0200
+Message-Id: <1480635817-1258-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hotplug events should only be forwarded to the DRM core by the interrupt
+handler when the bridge has been attached, otherwise the DRM device
+pointer will be NULL, resulting in a crash.
 
-On Sun, Oct 30, 2016 at 7:36 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> drivers/clk/renesas/rcar-gen3-cpg.c seems to forget that the PLL0/2/4 all
-> have a fixed divisor (2) while it multiplies PLLxCR.STC with 2 for the
-> 'mult' variable (see the manual). All the dependent frequencies this should
-> be reported greater x2 than the actual ones...
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The actual frequencies in /sys/kernel/debug/clk/clk_summary are correct, though,
-considering MD14=MD13=MD19=M17=1 (for a 33.3333 MHz EXTAL), while
-Salvator-X has a 16.6666 MHz EXTAL.
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index ef10bb866b2f..488dc1a9204f 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1805,7 +1805,8 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+ 	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
+ 		dev_dbg(hdmi->dev, "EVENT=%s\n",
+ 			phy_int_pol & HDMI_PHY_HPD ? "plugin" : "plugout");
+-		drm_helper_hpd_irq_event(hdmi->bridge.dev);
++		if (hdmi->bridge.dev)
++			drm_helper_hpd_irq_event(hdmi->bridge.dev);
+ 	}
+ 
+ 	hdmi_writeb(hdmi, intr_stat, HDMI_IH_PHY_STAT0);
+-- 
+Regards,
 
-Perhaps you missed the extal divider?
-
-Note that I have measured MSIOF clock signal frequencies before, and they
-matched Linux' point of view.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
