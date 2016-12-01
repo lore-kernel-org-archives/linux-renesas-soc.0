@@ -1,102 +1,236 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:56326 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755946AbcLAWE7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 17:04:59 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Subject: [PATCH v4 4/4] arm64: dts: r8a7796: Add R-Car Gen3 thermal support
-Date: Thu,  1 Dec 2016 23:04:42 +0100
-Message-Id: <20161201220442.22057-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
-References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 10/22] drm: bridge: dw-hdmi: Implement DRM bridge registration
+Date: Fri,  2 Dec 2016 01:43:25 +0200
+Message-Id: <1480635817-1258-11-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+As an option for drivers not based on the component framework, register
+the bridge with the DRM core with the DRM bridge API. Existing drivers
+based on dw_hdmi_bind() and dw_hdmi_unbind() are not affected as those
+functions are preserved with their current behaviour.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 9217da98352565..5261f0f77ce2e9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -251,5 +251,63 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 112 ++++++++++++++++++++++++++++-----------
+ include/drm/bridge/dw_hdmi.h     |   3 ++
+ 2 files changed, 83 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 88cd40adb977..107fea49c4c6 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1836,24 +1836,9 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+-{
+-	struct drm_bridge *bridge = &hdmi->bridge;
+-	int ret;
+-
+-	bridge->driver_private = hdmi;
+-	bridge->funcs = &dw_hdmi_bridge_funcs;
+-	ret = drm_bridge_attach(encoder, bridge, NULL);
+-	if (ret) {
+-		DRM_ERROR("Failed to initialize bridge with drm\n");
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+-		 const struct dw_hdmi_plat_data *plat_data)
++static struct dw_hdmi *
++__dw_hdmi_probe(struct platform_device *pdev,
++		const struct dw_hdmi_plat_data *plat_data)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+@@ -1869,7 +1854,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 
+ 	hdmi = devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
+ 	if (!hdmi)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	hdmi->plat_data = plat_data;
+ 	hdmi->dev = dev;
+@@ -1896,7 +1881,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		break;
+ 	default:
+ 		dev_err(dev, "reg-io-width must be 1 or 4\n");
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
+@@ -1905,7 +1890,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		of_node_put(ddc_node);
+ 		if (!hdmi->ddc) {
+ 			dev_dbg(hdmi->dev, "failed to read ddc node\n");
+-			return -EPROBE_DEFER;
++			return ERR_PTR(-EPROBE_DEFER);
+ 		}
+ 
+ 	} else {
+@@ -1956,8 +1941,10 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 	initialize_hdmi_ih_mutes(hdmi);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
++	if (irq < 0) {
++		ret = irq;
+ 		goto err_iahb;
++	}
+ 
+ 	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
+ 					dw_hdmi_irq, IRQF_SHARED,
+@@ -1988,11 +1975,11 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 	hdmi_writeb(hdmi, HDMI_IH_PHY_STAT0_HPD | HDMI_IH_PHY_STAT0_RX_SENSE,
+ 		    HDMI_IH_PHY_STAT0);
+ 
+-	ret = dw_hdmi_fb_registered(hdmi);
+-	if (ret)
+-		goto err_iahb;
++	hdmi->bridge.driver_private = hdmi;
++	hdmi->bridge.funcs = &dw_hdmi_bridge_funcs;
++	hdmi->bridge.of_node = pdev->dev.of_node;
+ 
+-	ret = dw_hdmi_register(encoder, hdmi);
++	ret = dw_hdmi_fb_registered(hdmi);
+ 	if (ret)
+ 		goto err_iahb;
+ 
+@@ -2041,7 +2028,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 
+ 	platform_set_drvdata(pdev, hdmi);
+ 
+-	return 0;
++	return hdmi;
+ 
+ err_iahb:
+ 	if (hdmi->i2c) {
+@@ -2055,14 +2042,11 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ err_res:
+ 	i2c_put_adapter(hdmi->ddc);
+ 
+-	return ret;
++	return ERR_PTR(ret);
+ }
+-EXPORT_SYMBOL_GPL(dw_hdmi_bind);
+ 
+-void dw_hdmi_unbind(struct device *dev)
++static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
+ {
+-	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
+-
+ 	if (hdmi->audio && !IS_ERR(hdmi->audio))
+ 		platform_device_unregister(hdmi->audio);
+ 
+@@ -2077,6 +2061,70 @@ void dw_hdmi_unbind(struct device *dev)
+ 	else
+ 		i2c_put_adapter(hdmi->ddc);
+ }
 +
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a7796-thermal";
-+			reg = <0 0xe6198000 0 0x68>,
-+			      <0 0xe61a0000 0 0x5c>,
-+			      <0 0xe61a8000 0 0x5c>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
++/* -----------------------------------------------------------------------------
++ * Probe/remove API, used from platforms based on the DRM bridge API.
++ */
++int dw_hdmi_probe(struct platform_device *pdev,
++		  const struct dw_hdmi_plat_data *plat_data)
++{
++	struct dw_hdmi *hdmi;
++	int ret;
 +
-+		thermal-zones {
-+			sensor_thermal1: sensor-thermal1 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 0>;
++	hdmi = __dw_hdmi_probe(pdev, plat_data);
++	if (IS_ERR(hdmi))
++		return PTR_ERR(hdmi);
 +
-+				trips {
-+					sensor1_crit: sensor1-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
++	ret = drm_bridge_add(&hdmi->bridge);
++	if (ret < 0) {
++		__dw_hdmi_remove(hdmi);
++		return ret;
++	}
 +
-+			sensor_thermal2: sensor-thermal2 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 1>;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dw_hdmi_probe);
 +
-+				trips {
-+					sensor2_crit: sensor2-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
++void dw_hdmi_remove(struct platform_device *pdev)
++{
++	struct dw_hdmi *hdmi = platform_get_drvdata(pdev);
 +
-+			sensor_thermal3: sensor-thermal3 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 2>;
++	drm_bridge_remove(&hdmi->bridge);
 +
-+				trips {
-+					sensor3_crit: sensor3-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+		};
- 	};
++	__dw_hdmi_remove(hdmi);
++}
++EXPORT_SYMBOL_GPL(dw_hdmi_remove);
++
++/* -----------------------------------------------------------------------------
++ * Bind/unbind API, used from platforms based on the component framework.
++ */
++int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
++		 const struct dw_hdmi_plat_data *plat_data)
++{
++	struct dw_hdmi *hdmi;
++	int ret;
++
++	hdmi = __dw_hdmi_probe(pdev, plat_data);
++	if (IS_ERR(hdmi))
++		return PTR_ERR(hdmi);
++
++	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL);
++	if (ret) {
++		dw_hdmi_remove(pdev);
++		DRM_ERROR("Failed to initialize bridge with drm\n");
++		return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dw_hdmi_bind);
++
++void dw_hdmi_unbind(struct device *dev)
++{
++	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
++
++	__dw_hdmi_remove(hdmi);
++}
+ EXPORT_SYMBOL_GPL(dw_hdmi_unbind);
+ 
+ MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 94ff6edd070b..3bb22a849830 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -56,6 +56,9 @@ struct dw_hdmi_plat_data {
+ 					   struct drm_display_mode *mode);
  };
+ 
++int dw_hdmi_probe(struct platform_device *pdev,
++		  const struct dw_hdmi_plat_data *plat_data);
++void dw_hdmi_remove(struct platform_device *pdev);
+ void dw_hdmi_unbind(struct device *dev);
+ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		 const struct dw_hdmi_plat_data *plat_data);
 -- 
-2.10.2
+Regards,
+
+Laurent Pinchart
