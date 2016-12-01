@@ -1,79 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34540 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753024AbcLBMST (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:26159 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752008AbcLASx2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 07:18:19 -0500
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1165C7D7B7DFBAC4B5BAB09A8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20161201140642.28583-1-chris.brandt@renesas.com>
- <CAMuHMdU80M2qcK74YgPC8SZ20tNcKrZhj7MXo_Ok=6m4Aa0=-w@mail.gmail.com>
- <25b92de0-806b-342b-7556-06b96b948b2c@cogentembedded.com> <SG2PR06MB1165C7D7B7DFBAC4B5BAB09A8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Dec 2016 13:18:17 +0100
-Message-ID: <CAMuHMdXGufhc9ZnW8s_ntopBn2Cv4rTu5+PcTtzELxff8ggihA@mail.gmail.com>
-Subject: Re: [PATCH v2] sh_eth: remove unchecked interrupts
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        David Miller <davem@davemloft.net>,
+        Thu, 1 Dec 2016 13:53:28 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: David Miller <davem@davemloft.net>,
         Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH v2] sh_eth: remove unchecked interrupts
+Date: Thu, 1 Dec 2016 18:53:22 +0000
+Message-ID: <SG2PR06MB1165C7D7B7DFBAC4B5BAB09A8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20161201140642.28583-1-chris.brandt@renesas.com>
+ <CAMuHMdU80M2qcK74YgPC8SZ20tNcKrZhj7MXo_Ok=6m4Aa0=-w@mail.gmail.com>
+ <25b92de0-806b-342b-7556-06b96b948b2c@cogentembedded.com>
+In-Reply-To: <25b92de0-806b-342b-7556-06b96b948b2c@cogentembedded.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Thu, Dec 1, 2016 at 7:53 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On 12/1/2016, Sergei Shtylyov wrote:
->>
->> On 12/01/2016 05:42 PM, Geert Uytterhoeven wrote:
->>
->> >> --- a/drivers/net/ethernet/renesas/sh_eth.c
->> >> +++ b/drivers/net/ethernet/renesas/sh_eth.c
->> >> @@ -518,7 +518,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
->> >>
->> >>         .ecsr_value     = ECSR_ICD,
->> >>         .ecsipr_value   = ECSIPR_ICDIP,
->> >> -       .eesipr_value   = 0xff7f009f,
->> >> +       .eesipr_value   = 0xe77f009f,
->> >
->> > Comment not directly related to the merits of this patch: the EESIPR
->> > bit definitions seem to be identical to those for EESR, so we can get
->> > rid of the hardcoded values here?
->>
->>     Do you mean using the @define's? We have EESIPR bits also declared,
->> see enum DMAC_IM_BIT,
-
-Yes, that's what I meant.
-Unfortunately the DMAC_IM_BIT enum doesn't cover all bits.
-
-> Is your idea to get rid of .eesipr_value for devices that have values
-> that are the same as .eesr_err_check?
->
->
-> For example in sh_eth_dev_init():
->
->         sh_eth_modify(ndev, EESR, 0, 0);
->         mdp->irq_enabled = true;
-> -       sh_eth_write(ndev, mdp->cd->eesipr_value, EESIPR);
-> +       if (mdp->cd->eesipr_value)
-> +               sh_eth_write(ndev, mdp->cd->eesipr_value, EESIPR);
-> +       else
-> +               sh_eth_write(ndev, mdp->cd->eesr_err_check, EESIPR);
-
-No, my intention was to just get rid of the hardcoded values when
-initializing .eesipr_value.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIDEyLzEvMjAxNiwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiANCj4g
+T24gMTIvMDEvMjAxNiAwNTo0MiBQTSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiANCj4g
+Pj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9zaF9ldGguYw0KPiA+PiArKysg
+Yi9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZW5lc2FzL3NoX2V0aC5jDQo+ID4+IEBAIC01MTgsNyAr
+NTE4LDcgQEAgc3RhdGljIHN0cnVjdCBzaF9ldGhfY3B1X2RhdGEgcjdzNzIxMDBfZGF0YSA9IHsN
+Cj4gPj4NCj4gPj4gICAgICAgICAuZWNzcl92YWx1ZSAgICAgPSBFQ1NSX0lDRCwNCj4gPj4gICAg
+ICAgICAuZWNzaXByX3ZhbHVlICAgPSBFQ1NJUFJfSUNESVAsDQo+ID4+IC0gICAgICAgLmVlc2lw
+cl92YWx1ZSAgID0gMHhmZjdmMDA5ZiwNCj4gPj4gKyAgICAgICAuZWVzaXByX3ZhbHVlICAgPSAw
+eGU3N2YwMDlmLA0KPiA+DQo+ID4gQ29tbWVudCBub3QgZGlyZWN0bHkgcmVsYXRlZCB0byB0aGUg
+bWVyaXRzIG9mIHRoaXMgcGF0Y2g6IHRoZSBFRVNJUFINCj4gPiBiaXQgZGVmaW5pdGlvbnMgc2Vl
+bSB0byBiZSBpZGVudGljYWwgdG8gdGhvc2UgZm9yIEVFU1IsIHNvIHdlIGNhbiBnZXQNCj4gPiBy
+aWQgb2YgdGhlIGhhcmRjb2RlZCB2YWx1ZXMgaGVyZT8NCj4gDQo+ICAgICBEbyB5b3UgbWVhbiB1
+c2luZyB0aGUgQGRlZmluZSdzPyBXZSBoYXZlIEVFU0lQUiBiaXRzIGFsc28gZGVjbGFyZWQsDQo+
+IHNlZSBlbnVtIERNQUNfSU1fQklULA0KDQoNCklzIHlvdXIgaWRlYSB0byBnZXQgcmlkIG9mIC5l
+ZXNpcHJfdmFsdWUgZm9yIGRldmljZXMgdGhhdCBoYXZlIHZhbHVlcw0KdGhhdCBhcmUgdGhlIHNh
+bWUgYXMgLmVlc3JfZXJyX2NoZWNrPw0KDQoNCkZvciBleGFtcGxlIGluIHNoX2V0aF9kZXZfaW5p
+dCgpOg0KDQoJc2hfZXRoX21vZGlmeShuZGV2LCBFRVNSLCAwLCAwKTsNCgltZHAtPmlycV9lbmFi
+bGVkID0gdHJ1ZTsNCi0Jc2hfZXRoX3dyaXRlKG5kZXYsIG1kcC0+Y2QtPmVlc2lwcl92YWx1ZSwg
+RUVTSVBSKTsNCisJaWYgKG1kcC0+Y2QtPmVlc2lwcl92YWx1ZSkNCisJCXNoX2V0aF93cml0ZShu
+ZGV2LCBtZHAtPmNkLT5lZXNpcHJfdmFsdWUsIEVFU0lQUik7DQorCWVsc2UNCisJCXNoX2V0aF93
+cml0ZShuZGV2LCBtZHAtPmNkLT5lZXNyX2Vycl9jaGVjaywgRUVTSVBSKTsNCg0KDQpDaHJpcw0K
+DQo=
