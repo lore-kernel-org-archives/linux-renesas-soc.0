@@ -1,68 +1,53 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:41896 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752807AbcLLTvs (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 14:51:48 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/9] mmc: sh_mobile_sdhi: improve prerequisites for tuning
-Date: Mon, 12 Dec 2016 20:51:22 +0100
-Message-Id: <20161212195128.16633-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
-References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 17/22] drm: rcar-du: Skip disabled outputs
+Date: Fri,  2 Dec 2016 01:43:32 +0200
+Message-Id: <1480635817-1258-18-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prerequisites for tuning are the same as for hw_reset. We need an SCC
-and a supported mode. Populate the tuning related functions only when
-those conditions are met. This also removes a tiny race window.
-Previously, the functions were populated when the SCC offset was not
-initialized which could have led to an OOPS.
+When a DT node connected to a DU output is disabled no bridge will ever
+be instantiated for it. Skip the output in that case.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index f3ea2c8b12040c..96ebe985d5cdc6 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -611,11 +611,6 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 		host->card_busy	= sh_mobile_sdhi_card_busy;
- 		host->start_signal_voltage_switch =
- 			sh_mobile_sdhi_start_signal_voltage_switch;
--		host->init_tuning	= sh_mobile_sdhi_init_tuning;
--		host->prepare_tuning	= sh_mobile_sdhi_prepare_tuning;
--		host->select_tuning	= sh_mobile_sdhi_select_tuning;
--		host->check_scc_error	= sh_mobile_sdhi_check_scc_error;
--		host->hw_reset		= sh_mobile_sdhi_hw_reset;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index aa84689043ae..7a6bd8bdba05 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -384,6 +384,13 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		return -ENODEV;
  	}
  
- 	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
-@@ -656,6 +651,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto efree;
++	if (!of_device_is_available(entity)) {
++		dev_dbg(rcdu->dev,
++			"connected entity %s is disabled, skipping\n",
++			entity->full_name);
++		return -ENODEV;
++	}
++
+ 	entity_ep_node = of_parse_phandle(ep->local_node, "remote-endpoint", 0);
  
-+	/* Enable tuning iff we have an SCC and a supported mode */
- 	if (of_data && of_data->scc_offset && host->mmc->caps & MMC_CAP_UHS_SDR104) {
- 		const struct sh_mobile_sdhi_scc *taps = of_data->taps;
- 		bool hit = false;
-@@ -675,6 +671,11 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 			dev_warn(&host->pdev->dev, "Unknown clock rate for SDR104\n");
- 
- 		priv->scc_ctl = host->ctl + of_data->scc_offset;
-+		host->init_tuning = sh_mobile_sdhi_init_tuning;
-+		host->prepare_tuning = sh_mobile_sdhi_prepare_tuning;
-+		host->select_tuning = sh_mobile_sdhi_select_tuning;
-+		host->check_scc_error = sh_mobile_sdhi_check_scc_error;
-+		host->hw_reset = sh_mobile_sdhi_hw_reset;
- 	}
- 
- 	i = 0;
+ 	for_each_endpoint_of_node(entity, ep_node) {
 -- 
-2.10.2
+Regards,
+
+Laurent Pinchart
