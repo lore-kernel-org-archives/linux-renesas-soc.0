@@ -1,61 +1,126 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43986 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757171AbcLAIw3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 03:52:29 -0500
-Date: Thu, 1 Dec 2016 09:52:24 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: David Miller <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] sh_eth: add missing checks for status bits
-Message-ID: <20161201085223.GD18042@verge.net.au>
-References: <20161130200148.9011-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20161130200148.9011-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 08/22] drm: bridge: dw-hdmi: Reorder functions to prepare for next commit
+Date: Fri,  2 Dec 2016 01:43:23 +0200
+Message-Id: <1480635817-1258-9-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 30, 2016 at 03:01:48PM -0500, Chris Brandt wrote:
-> When streaming a lot of data and the RZ can't keep up, some status bits
-> will get set that are not being checked or cleared which cause the
-> following messages and the Ethernet driver to stop working. This
-> patch fixes that issue.
-> 
-> irq 21: nobody cared (try booting with the "irqpoll" option)
-> handlers:
-> [<c036b71c>] sh_eth_interrupt
-> Disabling IRQ #21
-> 
-> Fixes: db893473d313a4ad ("sh_eth: Add support for r7s72100")
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+The next commit will reference structures and functions in a way that
+currently requires forward declarations. Reorder the functions to avoid
+that. No functional change to the code is performed.
 
-Hi Chris,
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 72 ++++++++++++++++++++--------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
-I am wondering if the EESR_FRC but should also be checked.
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 563cbec47da6..92ce9e532603 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1575,42 +1575,6 @@ static void dw_hdmi_update_phy_mask(struct dw_hdmi *hdmi)
+ 		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
+ }
+ 
+-static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
+-				    struct drm_display_mode *orig_mode,
+-				    struct drm_display_mode *mode)
+-{
+-	struct dw_hdmi *hdmi = bridge->driver_private;
+-
+-	mutex_lock(&hdmi->mutex);
+-
+-	/* Store the display mode for plugin/DKMS poweron events */
+-	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
+-
+-	mutex_unlock(&hdmi->mutex);
+-}
+-
+-static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
+-{
+-	struct dw_hdmi *hdmi = bridge->driver_private;
+-
+-	mutex_lock(&hdmi->mutex);
+-	hdmi->disabled = true;
+-	dw_hdmi_update_power(hdmi);
+-	dw_hdmi_update_phy_mask(hdmi);
+-	mutex_unlock(&hdmi->mutex);
+-}
+-
+-static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+-{
+-	struct dw_hdmi *hdmi = bridge->driver_private;
+-
+-	mutex_lock(&hdmi->mutex);
+-	hdmi->disabled = false;
+-	dw_hdmi_update_power(hdmi);
+-	dw_hdmi_update_phy_mask(hdmi);
+-	mutex_unlock(&hdmi->mutex);
+-}
+-
+ static enum drm_connector_status
+ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+ {
+@@ -1703,6 +1667,42 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
+ 	.best_encoder = drm_atomic_helper_best_encoder,
+ };
+ 
++static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
++				    struct drm_display_mode *orig_mode,
++				    struct drm_display_mode *mode)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++
++	mutex_lock(&hdmi->mutex);
++
++	/* Store the display mode for plugin/DKMS poweron events */
++	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
++
++	mutex_unlock(&hdmi->mutex);
++}
++
++static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++
++	mutex_lock(&hdmi->mutex);
++	hdmi->disabled = true;
++	dw_hdmi_update_power(hdmi);
++	dw_hdmi_update_phy_mask(hdmi);
++	mutex_unlock(&hdmi->mutex);
++}
++
++static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++
++	mutex_lock(&hdmi->mutex);
++	hdmi->disabled = false;
++	dw_hdmi_update_power(hdmi);
++	dw_hdmi_update_phy_mask(hdmi);
++	mutex_unlock(&hdmi->mutex);
++}
++
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+ 	.enable = dw_hdmi_bridge_enable,
+ 	.disable = dw_hdmi_bridge_disable,
+-- 
+Regards,
 
-> ---
->  drivers/net/ethernet/renesas/sh_eth.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-> index 05b0dc5..079f10e 100644
-> --- a/drivers/net/ethernet/renesas/sh_eth.c
-> +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> @@ -523,7 +523,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
->  	.tx_check	= EESR_TC1 | EESR_FTC,
->  	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
->  			  EESR_RFE | EESR_RDE | EESR_RFRMER | EESR_TFE |
-> -			  EESR_TDE | EESR_ECI,
-> +			  EESR_TDE | EESR_ECI | EESR_TUC | EESR_ROC,
->  	.fdr_value	= 0x0000070f,
->  
->  	.no_psr		= 1,
-> -- 
-> 2.10.1
-> 
-> 
+Laurent Pinchart
