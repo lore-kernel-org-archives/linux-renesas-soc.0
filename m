@@ -1,53 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Shailendra Verma <shailendra.v@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Shailendra Verma <shailendra.capricorn@gmail.com>,
-        vidushi.koul@samsung.com
-Subject: Re: [PATCH] Platform: vsp1: Clean up file handle in open() error path.
-Date: Thu, 01 Dec 2016 12:30:07 +0200
-Message-ID: <2714292.XDaUmZ9RCx@avalon>
-In-Reply-To: <1480567818-13363-1-git-send-email-shailendra.v@samsung.com>
-References: <1480567818-13363-1-git-send-email-shailendra.v@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 01/22] drm: bridge: dw-hdmi: Merge __hdmi_phy_i2c_write and hdmi_phy_i2c_write
+Date: Fri,  2 Dec 2016 01:43:16 +0200
+Message-Id: <1480635817-1258-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shailendra,
+The latter is just an int wrapper around the former void function that
+unconditionally returns 0. As the return value is never checked, merge
+the two functions into one.
 
-Thank you for the patch.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-On Thursday 01 Dec 2016 10:20:18 Shailendra Verma wrote:
-> v4l2_fh_init is already done.So call the v4l2_fh_exit in error condition
-> before returing from the function.
-> 
-> Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree for v4.11.
-
-> ---
->  drivers/media/platform/vsp1/vsp1_video.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
-> b/drivers/media/platform/vsp1/vsp1_video.c index d351b9c..cc58163 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
-> @@ -1044,6 +1044,7 @@ static int vsp1_video_open(struct file *file)
->  	ret = vsp1_device_get(video->vsp1);
->  	if (ret < 0) {
->  		v4l2_fh_del(vfh);
-> +		v4l2_fh_exit(vfh);
->  		kfree(vfh);
->  	}
-
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index f5009ae39b89..a6685502571e 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -868,7 +868,7 @@ static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
+ 	return true;
+ }
+ 
+-static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
++static void hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+ 				 unsigned char addr)
+ {
+ 	hdmi_writeb(hdmi, 0xFF, HDMI_IH_I2CMPHY_STAT0);
+@@ -882,13 +882,6 @@ static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+ 	hdmi_phy_wait_i2c_done(hdmi, 1000);
+ }
+ 
+-static int hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+-			      unsigned char addr)
+-{
+-	__hdmi_phy_i2c_write(hdmi, data, addr);
+-	return 0;
+-}
+-
+ static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
+ {
+ 	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
 -- 
 Regards,
 
