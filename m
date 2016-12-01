@@ -1,41 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:26719 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753815AbcLANNK (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:32876 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751164AbcLAKYV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 08:13:10 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Thu, 1 Dec 2016 05:24:21 -0500
+Received: by mail-lf0-f50.google.com with SMTP id c13so167629031lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Dec 2016 02:24:21 -0800 (PST)
+Subject: Re: [PATCH] sh_eth: add missing checks for status bits
+To: Chris Brandt <chris.brandt@renesas.com>,
         David Miller <davem@davemloft.net>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] sh_eth: add missing checks for status bits
-Date: Thu, 1 Dec 2016 13:13:05 +0000
-Message-ID: <SG2PR06MB1165EF1344470A957BB9C34A8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20161130200148.9011-1-chris.brandt@renesas.com>
- <aad0720f-2515-f1a0-d3ee-310562267594@cogentembedded.com>
-In-Reply-To: <aad0720f-2515-f1a0-d3ee-310562267594@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <aad0720f-2515-f1a0-d3ee-310562267594@cogentembedded.com>
+Date: Thu, 1 Dec 2016 13:24:18 +0300
 MIME-Version: 1.0
+In-Reply-To: <20161130200148.9011-1-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gMTIvMS8yMDE2LCBTZXJnZWkgU2h0eWx5b3Ygd3JvdGU6DQoNCj4gSGVsbG8hDQo+IA0KPiAg
-ICAgUGxlYXNlIGFsd2F5cyBDQyBtZSBvbiB0aGUgc2hfZXRoL3JhdmIgZHJpdmVyIHBhdGNoZXMg
-YXMgZGlyZWN0ZWQgYnkNCj4gc2NyaXB0cy9nZXRfbWFpbnRhaW5lci5wbC4NCg0KT0suIEknbSBz
-b3JyeS4NCg0KDQo+IE9uIDExLzMwLzIwMTYgMTE6MDEgUE0sIENocmlzIEJyYW5kdCB3cm90ZToN
-Cj4gDQo+ID4gV2hlbiBzdHJlYW1pbmcgYSBsb3Qgb2YgZGF0YSBhbmQgdGhlIFJaIGNhbid0IGtl
-ZXAgdXAsIHNvbWUgc3RhdHVzDQo+ID4gYml0cyB3aWxsIGdldCBzZXQgdGhhdCBhcmUgbm90IGJl
-aW5nIGNoZWNrZWQgb3IgY2xlYXJlZCB3aGljaCBjYXVzZQ0KPiA+IHRoZSBmb2xsb3dpbmcgbWVz
-c2FnZXMgYW5kIHRoZSBFdGhlcm5ldCBkcml2ZXIgdG8gc3RvcCB3b3JraW5nLiBUaGlzDQo+ID4g
-cGF0Y2ggZml4ZXMgdGhhdCBpc3N1ZS4NCj4gDQo+ICAgICBQZXJoYXBzIHdlIHNob3VsZCBqdXN0
-IGNsZWFyIHRoZSBjb3JyZXNwb2RpbmcgYml0cyBpbiBFRVNJUFIgaW5zdGVhZD8NCj4gVGhleSBh
-cmUgbm90IHNldCBmb3IgYW55IG90aGVyIFNvQy4uLg0KDQoNClRoYXQncyBhIGdvb2QgcG9pbnQu
-IElmIHdlIGRvbid0IHBsYW4gb24gZG9pbmcgYW55dGhpbmcgd2l0aCB0aG9zZSBiaXRzLCB0aGV5
-IHNob3VsZCBub3QgYmUgY2F1c2luZyBpbnRlcnJ1cHRzLg0KDQpJIHdpbGwgdHJ5IGNoYW5nZSBh
-bmQgdGhlbiByZS10ZXN0Lg0KDQoNCkNocmlzDQoNCg==
+Hello!
+
+    Please always CC me on the sh_eth/ravb driver patches as directed by 
+scripts/get_maintainer.pl.
+
+On 11/30/2016 11:01 PM, Chris Brandt wrote:
+
+> When streaming a lot of data and the RZ can't keep up, some status bits
+> will get set that are not being checked or cleared which cause the
+> following messages and the Ethernet driver to stop working. This
+> patch fixes that issue.
+
+    Perhaps we should just clear the correspoding bits in EESIPR instead? They 
+are not set for any other SoC...
+
+> irq 21: nobody cared (try booting with the "irqpoll" option)
+> handlers:
+> [<c036b71c>] sh_eth_interrupt
+> Disabling IRQ #21
+>
+> Fixes: db893473d313a4ad ("sh_eth: Add support for r7s72100")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+MBR, Sergei
