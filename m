@@ -1,92 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48239 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39200 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933485AbcLAPSY (ORCPT
+        with ESMTP id S1751606AbcLBOAi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 10:18:24 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC i2c/for-next] i2c: rcar: Add per-Generation fallback bindings
-Date: Thu,  1 Dec 2016 16:18:14 +0100
-Message-Id: <1480605494-32460-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 2 Dec 2016 09:00:38 -0500
+Date: Fri, 2 Dec 2016 15:00:32 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 0/4] ARM, arm64: dts: Use usb-phy fallback bindings
+Message-ID: <20161202140031.GA29916@verge.net.au>
+References: <1480602354-1446-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdUHBh-=nu3HqqwNq-f5QauAFAAHRS4TUYW10zP4BJMhvg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUHBh-=nu3HqqwNq-f5QauAFAAHRS4TUYW10zP4BJMhvg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
-relationship between IP blocks might be. For example, I believe that
-r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
-descendant of the former or vice versa.
+On Thu, Dec 01, 2016 at 03:47:57PM +0100, Geert Uytterhoeven wrote:
+> On Thu, Dec 1, 2016 at 3:25 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> > this short series makes use of fallback bindings for Renesas R-Car PHY
+> > drivers in the DT of SoCs which already use those drivers.
+> >
+> > Simon Horman (4):
+> >   ARM: dts: r8a7790: Use renesas,rcar-gen2-usb-phy fallback binding
+> >   ARM: dts: r8a7791: Use renesas,rcar-gen2-usb-phy fallback binding
+> >   ARM: dts: r8a7794: Use renesas,rcar-gen2-usb-phy fallback binding
+> >   arm64: dts: r8a7795: Use renesas,rcar-gen3-usb2-phy fallback binding
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
-
-Also deprecate renesas,i2c-rcar. It seems poorly named as it is only
-compatible with R-Car Gen 1. It also appears unused in mainline.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 32 ++++++++++++++--------
- 1 file changed, 20 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-index 239632a0d709..8c679b17c4c6 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -1,17 +1,25 @@
- I2C for R-Car platforms
- 
- Required properties:
--- compatible: Must be one of
--	"renesas,i2c-rcar"
--	"renesas,i2c-r8a7778"
--	"renesas,i2c-r8a7779"
--	"renesas,i2c-r8a7790"
--	"renesas,i2c-r8a7791"
--	"renesas,i2c-r8a7792"
--	"renesas,i2c-r8a7793"
--	"renesas,i2c-r8a7794"
--	"renesas,i2c-r8a7795"
--	"renesas,i2c-r8a7796"
-+- compatible:
-+	"renesas,i2c-r8a7778" if the device is a part of a R8A7778 SoC.
-+	"renesas,i2c-r8a7779" if the device is a part of a R8A7797 SoC.
-+	"renesas,i2c-r8a7790" if the device is a part of a R8A7790 SoC.
-+	"renesas,i2c-r8a7791" if the device is a part of a R8A7791 SoC.
-+	"renesas,i2c-r8a7792" if the device is a part of a R8A7792 SoC.
-+	"renesas,i2c-r8a7793" if the device is a part of a R8A7793 SoC.
-+	"renesas,i2c-r8a7794" if the device is a part of a R8A7794 SoC.
-+	"renesas,i2c-r8a7795" if the device is a part of a R8A7795 SoC.
-+	"renesas,i2c-r8a7796" if the device is a part of a R8A7796 SoC.
-+	"renesas,i2c-rcar-gen1" for a generic R-Car Gen1 compatible device.
-+	"renesas,i2c-rcar-gen2" for a generic R-Car Gen2 compatible device.
-+	"renesas,i2c-rcar-gen3" for a generic R-Car Gen3 compatible device.
-+	"renesas,i2c-rcar" (deprecated)
-+
-+	When compatible with the generic version, nodes must list the
-+	SoC-specific version corresponding to the platform first followed
-+	by the generic version.
-+
- - reg: physical base address of the controller and length of memory mapped
-   region.
- - interrupts: interrupt specifier.
-@@ -33,7 +41,7 @@ Examples :
- i2c0: i2c@e6508000 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
--	compatible = "renesas,i2c-r8a7791";
-+	compatible = "renesas,i2c-r8a7791", "renesas,i2c-rcar-gen2";
- 	reg = <0 0xe6508000 0 0x40>;
- 	interrupts = <0 287 IRQ_TYPE_LEVEL_HIGH>;
- 	clocks = <&mstp9_clks R8A7791_CLK_I2C0>;
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks, I have queued these up for v4.11.
