@@ -1,107 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57715 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753574AbcLLJMC (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34540 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753024AbcLBMST (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 04:12:02 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH renesas/devel 09/13] arm64: dts: r8a7796: Use R-Car Gen 3 fallback binding for i2c nodes
-Date: Mon, 12 Dec 2016 10:11:38 +0100
-Message-Id: <1481533902-14789-10-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 2 Dec 2016 07:18:19 -0500
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165C7D7B7DFBAC4B5BAB09A8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20161201140642.28583-1-chris.brandt@renesas.com>
+ <CAMuHMdU80M2qcK74YgPC8SZ20tNcKrZhj7MXo_Ok=6m4Aa0=-w@mail.gmail.com>
+ <25b92de0-806b-342b-7556-06b96b948b2c@cogentembedded.com> <SG2PR06MB1165C7D7B7DFBAC4B5BAB09A8A8F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Dec 2016 13:18:17 +0100
+Message-ID: <CAMuHMdXGufhc9ZnW8s_ntopBn2Cv4rTu5+PcTtzELxff8ggihA@mail.gmail.com>
+Subject: Re: [PATCH v2] sh_eth: remove unchecked interrupts
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        David Miller <davem@davemloft.net>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 3 fallback binding for i2c nodes in
-DT for r8a7796 SoC.
+Hi Chris,
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7796 and the
-fallback binding for R-Car Gen 3.
+On Thu, Dec 1, 2016 at 7:53 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On 12/1/2016, Sergei Shtylyov wrote:
+>>
+>> On 12/01/2016 05:42 PM, Geert Uytterhoeven wrote:
+>>
+>> >> --- a/drivers/net/ethernet/renesas/sh_eth.c
+>> >> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+>> >> @@ -518,7 +518,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
+>> >>
+>> >>         .ecsr_value     = ECSR_ICD,
+>> >>         .ecsipr_value   = ECSIPR_ICDIP,
+>> >> -       .eesipr_value   = 0xff7f009f,
+>> >> +       .eesipr_value   = 0xe77f009f,
+>> >
+>> > Comment not directly related to the merits of this patch: the EESIPR
+>> > bit definitions seem to be identical to those for EESR, so we can get
+>> > rid of the hardcoded values here?
+>>
+>>     Do you mean using the @define's? We have EESIPR bits also declared,
+>> see enum DMAC_IM_BIT,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+Yes, that's what I meant.
+Unfortunately the DMAC_IM_BIT enum doesn't cover all bits.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 7bf0f2f6c224..9ebf5c7ab339 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -269,7 +269,8 @@
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6500000 0 0x40>;
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 931>;
-@@ -284,7 +285,8 @@
- 		i2c1: i2c@e6508000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6508000 0 0x40>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 930>;
-@@ -299,7 +301,8 @@
- 		i2c2: i2c@e6510000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6510000 0 0x40>;
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 929>;
-@@ -314,7 +317,8 @@
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d0000 0 0x40>;
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 928>;
-@@ -328,7 +332,8 @@
- 		i2c4: i2c@e66d8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d8000 0 0x40>;
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 927>;
-@@ -342,7 +347,8 @@
- 		i2c5: i2c@e66e0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e0000 0 0x40>;
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 919>;
-@@ -356,7 +362,8 @@
- 		i2c6: i2c@e66e8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e8000 0 0x40>;
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 918>;
--- 
-2.7.0.rc3.207.g0ac5344
+> Is your idea to get rid of .eesipr_value for devices that have values
+> that are the same as .eesr_err_check?
+>
+>
+> For example in sh_eth_dev_init():
+>
+>         sh_eth_modify(ndev, EESR, 0, 0);
+>         mdp->irq_enabled = true;
+> -       sh_eth_write(ndev, mdp->cd->eesipr_value, EESIPR);
+> +       if (mdp->cd->eesipr_value)
+> +               sh_eth_write(ndev, mdp->cd->eesipr_value, EESIPR);
+> +       else
+> +               sh_eth_write(ndev, mdp->cd->eesr_err_check, EESIPR);
+
+No, my intention was to just get rid of the hardcoded values when
+initializing .eesipr_value.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
