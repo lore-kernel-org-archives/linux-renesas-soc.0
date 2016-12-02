@@ -1,65 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36698 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933572AbcLIMg1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36241 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933523AbcLBKhU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 07:36:27 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 7/7] arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
-Date: Fri,  9 Dec 2016 13:36:11 +0100
-Message-Id: <1481286971-16667-8-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 2 Dec 2016 05:37:20 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 0/3 pci/next] PCI: rcar, rcar-gen2: Bindings cleanups
+Date: Fri,  2 Dec 2016 11:36:57 +0100
+Message-Id: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enables the SCIF hooked up to the DEBUG1 connector.
+Hi,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+this short series makes some bindings cleanups to the Renesas PCI drivers.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index da46ac7..9204691 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -18,6 +18,7 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		serial1 = &scif1;
- 		ethernet0 = &avb;
- 	};
- 
-@@ -140,6 +141,11 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	scif1_pins: scif1 {
-+		groups = "scif1_data_a";
-+		function = "scif1";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
-@@ -280,6 +286,12 @@
- 	status = "okay";
- };
- 
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
+Simon Horman (3):
+  PCI: rcar-gen2: Use gen2 fallback compatibility last
+  PCI: rcar: Use gen2 fallback compatibility last
+  PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
+
+ Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
+ drivers/pci/host/pci-rcar-gen2.c                   | 2 +-
+ drivers/pci/host/pcie-rcar.c                       | 6 ++++--
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
