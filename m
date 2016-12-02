@@ -1,34 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43188 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751593AbcLFNdV (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36071 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751962AbcLBOxw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 08:33:21 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 2 Dec 2016 09:53:52 -0500
+MIME-Version: 1.0
+In-Reply-To: <1480675020-26346-3-git-send-email-horms+renesas@verge.net.au>
+References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au> <1480675020-26346-3-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Dec 2016 15:53:50 +0100
+Message-ID: <CAMuHMdW-gJezBP9-xNUqBa2qmsN1wQRnb7tuvSvYNwTou=mj0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3 pci/next] PCI: rcar: Use gen2 fallback
+ compatibility last
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH renesas/devel 0/2]  ARM: Enable r8a774[35] SoCs in defconfigs
-Date: Tue,  6 Dec 2016 14:32:51 +0100
-Message-Id: <1481031173-18600-1-git-send-email-horms+renesas@verge.net.au>
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Fri, Dec 2, 2016 at 11:36 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Fallback compatibility strings should be used only if more specific ones
+> are matched and the order of compatibility strings in the corresponding
+> struct of_device_id should implement this.
+>
+> This does not have a run-time effect as current all relevant compatibility
+> strings result in the same initialisation.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-this short series enables recently added r8a7743 (RZ/G1M) and r8a7745
-(RZ/G1E) SoCs in relevant defconfigs.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on renesas-devel-20161206-v4.9-rc8
+Gr{oetje,eeting}s,
 
-Simon Horman (2):
-  ARM: shmobile: defconfig: Enable r8a774[35] SoCs
-  ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
+                        Geert
 
- arch/arm/configs/multi_v7_defconfig | 2 ++
- arch/arm/configs/shmobile_defconfig | 2 ++
- 2 files changed, 4 insertions(+)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-2.7.0.rc3.207.g0ac5344
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
