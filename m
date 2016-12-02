@@ -1,72 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:55270 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753591AbcLAPIT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 10:08:19 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yasushi SHOJI <yashi@atmark-techno.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC] mmc: tmio: use SDIO master interrupt bit only when allowed
-Date: Thu,  1 Dec 2016 16:08:13 +0100
-Message-Id: <20161201150813.13058-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Christoph Baumann <cbaumann@visteon.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] serial: sh-sci: Fix hang in sci_reset()
+Date: Fri,  2 Dec 2016 13:35:11 +0100
+Message-Id: <1480682111-9299-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1480682111-9299-1-git-send-email-geert+renesas@glider.be>
+References: <1480682111-9299-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The master bit to enable SDIO interrupts can only be accessed if
-SCLKDIVEN bit allows that. However, the core uses the SDIO enable
-callback at times when SCLKDIVEN forbids the change. This leads to
-"timeout waiting for SD bus idle" messages.
+When the .set_termios() callback resets the UART, it first waits until
+all characters in the transmit FIFO have been transmitted, to prevent a
+port configuration change from impacting these characters.
 
-We now activate the master bit in probe once if SDIO is supported. IRQ
-en-/disabling will be done now by the individual IRQ enablement bits
-only.
+However, if the previous user of the UART had dedicated RTS/CTS hardware
+flow control enabled, these characters may have been stuck in the FIFO
+due to CTS not being asserted. When the new user opens the port,
+.set_termios() is called while transmission is still disabled, leading
+to an infinite loop:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+    NMI watchdog: BUG: soft lockup - CPU#0 stuck for 22s!
+
+This has been observed with SCIFA (on r8a7740/armadillo) and SCIFB (on
+r8a7791/koelsch).
+
+The issue does not seem to happen when using:
+  - GPIO RTS/CTS hardware flow control,
+  - No hardware flow control,
+  - HSCIF (on r8a7791/koelsch).
+
+To fix this, wait for the draining of the transmit FIFO only if
+transmission is already enabled.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+To reproduce:
 
-Compile tested only, due to no testcase.
+    stty -echo < /dev/scifb0
+    stty crtscts < /dev/scifb0
+    echo hello > /dev/scifb0	# returns early (wrote to FIFO)
+    echo hello > /dev/scifb0	# hangs
 
- drivers/mmc/host/tmio_mmc_pio.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 700567603107a0..476c4e1094a014 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -140,12 +140,10 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index c503db1900f003ed..db5de80c5399a7bd 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2137,9 +2137,11 @@ static void sci_reset(struct uart_port *port)
+ 	const struct plat_sci_reg *reg;
+ 	unsigned int status;
  
- 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL &
- 					~TMIO_SDIO_STAT_IOIRQ;
--		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
- 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
- 	} else if (!enable && host->sdio_irq_enabled) {
- 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
- 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
--		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0000);
+-	do {
+-		status = serial_port_in(port, SCxSR);
+-	} while (!(status & SCxSR_TEND(port)));
++	if (serial_port_in(port, SCSCR) & SCSCR_TE) {
++		do {
++			status = serial_port_in(port, SCxSR);
++		} while (!(status & SCxSR_TEND(port)));
++	}
  
- 		host->sdio_irq_enabled = false;
- 		pm_runtime_mark_last_busy(mmc_dev(mmc));
-@@ -1137,7 +1135,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (pdata->flags & TMIO_MMC_SDIO_IRQ) {
- 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
- 		sd_ctrl_write16(_host, CTL_SDIO_IRQ_MASK, _host->sdio_irq_mask);
--		sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0000);
-+		sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0001);
- 	}
- 
- 	spin_lock_init(&_host->lock);
-@@ -1185,6 +1183,9 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
- 	struct platform_device *pdev = host->pdev;
- 	struct mmc_host *mmc = host->mmc;
- 
-+	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ)
-+		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0000);
-+
- 	if (!host->native_hotplug)
- 		pm_runtime_get_sync(&pdev->dev);
+ 	serial_port_out(port, SCSCR, 0x00);	/* TE=0, RE=0, CKE1=0 */
  
 -- 
-2.10.2
+1.9.1
