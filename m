@@ -1,20 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 7.mo68.mail-out.ovh.net ([46.105.63.230]:48566 "EHLO
-        7.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752669AbcLEJ3e (ORCPT
+Received: from 4.mo1.mail-out.ovh.net ([46.105.76.26]:42055 "EHLO
+        4.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751400AbcLBSOX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Dec 2016 04:29:34 -0500
-Received: from player711.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo68.mail-out.ovh.net (Postfix) with ESMTP id C37B314905
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Dec 2016 10:20:13 +0100 (CET)
+        Fri, 2 Dec 2016 13:14:23 -0500
+Received: from player726.ha.ovh.net (b7.ovh.net [213.186.33.57])
+        by mo1.mail-out.ovh.net (Postfix) with ESMTP id 63EA52136C
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Dec 2016 16:44:19 +0100 (CET)
 From: Jacopo Mondi <jacopo@jmondi.org>
 To: magnus.damm@gmail.com, geert+renesas@glider.be
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [RFCv2 0/3] Enable and test MAXREFDES4# on Genmai board
-Date: Mon,  5 Dec 2016 10:20:03 +0100
-Message-Id: <1480929605-28564-1-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
-References: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
+Cc: linux-renesas-soc@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
+Subject: [RFC 0/3] Enable and test MAXREFDES4# on Genmai board
+Date: Fri,  2 Dec 2016 16:43:51 +0100
+Message-Id: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -31,7 +29,7 @@ git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
 and target Linux v3.18
 
 The series fix a compilation error for RZ gpio driver and register a
-spidev device on a gpio based SPI master.
+gpio based SPI master on CON2 pins.
 
 The test bed is setup as:
 
@@ -48,18 +46,15 @@ output value.
 Thanks
    j
 
-v1 -> v2:
-    * use "spidev" as compatible string in v1 [2/3] and drop [3/3]
-      consequentially.
-    * incorporate Geert's comments in [2/3] DTS file
-
-Jacopo Mondi (2):
+Jacopo Mondi (3):
   gpio-rz: Port to v3.18
   dts: arm: genmai: Add MAXDESREF4x spidev
+  spidev: Add back "linux,spidev" as compatible
 
- arch/arm/boot/dts/r7s72100-genmai.dts | 21 +++++++++++++++++++++
+ arch/arm/boot/dts/r7s72100-genmai.dts | 22 ++++++++++++++++++++++
  drivers/gpio/gpio-rz.c                |  3 ++-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+ drivers/spi/spidev.c                  |  1 +
+ 3 files changed, 25 insertions(+), 1 deletion(-)
 
 -- 
 2.7.4
