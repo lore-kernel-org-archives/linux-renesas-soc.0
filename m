@@ -1,98 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbcLMLqV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 06:46:21 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1480688736-7175-1-git-send-email-horms+renesas@verge.net.au>
+References: <1480688736-7175-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Dec 2016 15:59:51 +0100
+Message-ID: <CAMuHMdWBCJgaiZoKeVBH2KuRPdBFoS6D-=7-8jAwCKe8MGJgUA@mail.gmail.com>
+Subject: Re: [PATCH v4 i2c/for-next] i2c: rcar: Add per-Generation fallback bindings
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 renesas/devel 05/13] ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for i2c nodes
-Date: Tue, 13 Dec 2016 12:45:51 +0100
-Message-Id: <1481629559-14187-6-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for i2c nodes in
-DT for r8a7792 SoC.
+On Fri, Dec 2, 2016 at 3:25 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, e.g. Gen 2 and Gen 3. But beyond that it's not clear what the
+> relationship between IP blocks might be. For example, I believe that
+> r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+> descendant of the former or vice versa.
+>
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+>
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme is being adopted for
+> drivers for Renesas SoCs.
+>
+> Also:
+> * Deprecate renesas,i2c-rcar. It seems poorly named as it is only
+>   compatible with R-Car Gen 1. It also appears unused in mainline.
+> * Add some text to describe per-SoC bindings
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7792 and the
-fallback binding for R-Car Gen 2.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7792.dtsi | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index c5e834073cb3..222895fc1d0d 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -498,7 +498,8 @@
- 
- 		/* I2C doesn't need pinmux */
- 		i2c0: i2c@e6508000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6508000 0 0x40>;
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C0>;
-@@ -510,7 +511,8 @@
- 		};
- 
- 		i2c1: i2c@e6518000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6518000 0 0x40>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C1>;
-@@ -522,7 +524,8 @@
- 		};
- 
- 		i2c2: i2c@e6530000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6530000 0 0x40>;
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C2>;
-@@ -534,7 +537,8 @@
- 		};
- 
- 		i2c3: i2c@e6540000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792"
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6540000 0 0x40>;
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C3>;
-@@ -546,7 +550,8 @@
- 		};
- 
- 		i2c4: i2c@e6520000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792"
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6520000 0 0x40>;
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C4>;
-@@ -558,7 +563,8 @@
- 		};
- 
- 		i2c5: i2c@e6528000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792"
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6528000 0 0x40>;
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C5>;
--- 
-2.7.0.rc3.207.g0ac5344
+> --- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+
+> +       "renesas,i2c-r8a7779" if the device is a part of a R8A7797 SoC.
+
+R8A7779
+
+Sorry for not noticing before.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
