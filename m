@@ -1,49 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36781 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752585AbcLBLow (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36275 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933523AbcLBKh0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 06:44:52 -0500
-MIME-Version: 1.0
-In-Reply-To: <1480675020-26346-2-git-send-email-horms+renesas@verge.net.au>
-References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au> <1480675020-26346-2-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Dec 2016 12:44:50 +0100
-Message-ID: <CAMuHMdWXqZz6doeo4M6cWsLdNCX2wTO12bkwP4RY_epQDVN8EQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3 pci/next] PCI: rcar-gen2: Use gen2 fallback
- compatibility last
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Fri, 2 Dec 2016 05:37:26 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 1/3 pci/next] PCI: rcar-gen2: Use gen2 fallback compatibility last
+Date: Fri,  2 Dec 2016 11:36:58 +0100
+Message-Id: <1480675020-26346-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
+References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 2, 2016 at 11:36 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Fallback compatibility strings should be used only if more specific ones
-> are matched and the order of compatibility strings in the corresponding
-> struct of_device_id should implement this.
->
-> This does not have a run-time effect as current all relevant compatibility
-> strings result in the same initialisation.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fallback compatibility strings should be used only if more specific ones
+are matched and the order of compatibility strings in the corresponding
+struct of_device_id should implement this.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This does not have a run-time effect as current all relevant compatibility
+strings result in the same initialisation.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2
+* New patch
 
-                        Geert
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/pci/host/pci-rcar-gen2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+index 1eeefa4df64c..85348590848b 100644
+--- a/drivers/pci/host/pci-rcar-gen2.c
++++ b/drivers/pci/host/pci-rcar-gen2.c
+@@ -430,10 +430,10 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ }
+ 
+ static struct of_device_id rcar_pci_of_match[] = {
+-	{ .compatible = "renesas,pci-rcar-gen2", },
+ 	{ .compatible = "renesas,pci-r8a7790", },
+ 	{ .compatible = "renesas,pci-r8a7791", },
+ 	{ .compatible = "renesas,pci-r8a7794", },
++	{ .compatible = "renesas,pci-rcar-gen2", },
+ 	{ },
+ };
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
