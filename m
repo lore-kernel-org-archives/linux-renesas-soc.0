@@ -1,51 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:20564 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753335AbcLAU6c (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36781 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752585AbcLBLow (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 15:58:32 -0500
-Date: Thu, 1 Dec 2016 23:57:44 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Johan Hovold <johan@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Philippe Reynes <tremyfr@gmail.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [patch] net: renesas: ravb: unintialized return value
-Message-ID: <20161201205744.GB10701@mwanda>
+        Fri, 2 Dec 2016 06:44:52 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <1480675020-26346-2-git-send-email-horms+renesas@verge.net.au>
+References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au> <1480675020-26346-2-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Dec 2016 12:44:50 +0100
+Message-ID: <CAMuHMdWXqZz6doeo4M6cWsLdNCX2wTO12bkwP4RY_epQDVN8EQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3 pci/next] PCI: rcar-gen2: Use gen2 fallback
+ compatibility last
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We want to set the other "err" variable here so that we can return it
-later.  My version of GCC misses this issue but I caught it with a
-static checker.
+On Fri, Dec 2, 2016 at 11:36 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Fallback compatibility strings should be used only if more specific ones
+> are matched and the order of compatibility strings in the corresponding
+> struct of_device_id should implement this.
+>
+> This does not have a run-time effect as current all relevant compatibility
+> strings result in the same initialisation.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Fixes: 9f70eb339f52 ("net: ethernet: renesas: ravb: fix fixed-link phydev leaks")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Applies to the net tree for 4.10.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 2c0357c..92d7692 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1016,8 +1016,6 @@ static int ravb_phy_init(struct net_device *ndev)
- 	 * at this time.
- 	 */
- 	if (priv->chip_id == RCAR_GEN3) {
--		int err;
--
- 		err = phy_set_max_speed(phydev, SPEED_100);
- 		if (err) {
- 			netdev_err(ndev, "failed to limit PHY to 100Mbit/s\n");
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
