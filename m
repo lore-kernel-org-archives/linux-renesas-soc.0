@@ -1,50 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:58562 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751075AbcLBUoa (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:39010 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752475AbcLBTA6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 15:44:30 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 5/4] thermal: rcar_gen3_thermal: restrict to 64BIT
-Date: Fri,  2 Dec 2016 21:44:22 +0100
-Message-Id: <20161202204422.21832-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
-References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+        Fri, 2 Dec 2016 14:00:58 -0500
+Date: Fri, 02 Dec 2016 14:00:30 -0500 (EST)
+Message-Id: <20161202.140030.597013502556382328.davem@davemloft.net>
+To: dan.carpenter@oracle.com
+Cc: sergei.shtylyov@cogentembedded.com, johan@kernel.org,
+        ykaneko0929@gmail.com, kazuya.mizuguchi.ks@renesas.com,
+        horms+renesas@verge.net.au, wsa+renesas@sang-engineering.com,
+        andrew@lunn.ch, tremyfr@gmail.com,
+        niklas.soderlund+renesas@ragnatech.se, arnd@arndb.de,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [patch] net: renesas: ravb: unintialized return value
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20161201205744.GB10701@mwanda>
+References: <20161201205744.GB10701@mwanda>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-COMPILE_TEST triggers problems on 32 bit machines, so limit this driver
-to 64BIT for now. This is no loss because the hardware is only available
-on 64 bit SoCs anyhow. After we obtained more data from the hardware
-engineers, we will refactor the code to be usable with COMPILE_TEST.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 1 Dec 2016 23:57:44 +0300
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> We want to set the other "err" variable here so that we can return it
+> later.  My version of GCC misses this issue but I caught it with a
+> static checker.
+> 
+> Fixes: 9f70eb339f52 ("net: ethernet: renesas: ravb: fix fixed-link phydev leaks")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-buildbot reported the problem and seems to be happy now.
-
- drivers/thermal/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 3912d24a07b10f..edaed1282791bf 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -247,7 +247,7 @@ config RCAR_THERMAL
- 
- config RCAR_GEN3_THERMAL
- 	tristate "Renesas R-Car Gen3 thermal driver"
--	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on ARCH_RENESAS && 64BIT
- 	depends on HAS_IOMEM
- 	depends on OF
- 	help
--- 
-2.10.2
+Applied.
