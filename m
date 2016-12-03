@@ -1,69 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 7.mo68.mail-out.ovh.net ([46.105.63.230]:42927 "EHLO
-        7.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751496AbcLEJjZ (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33418 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750787AbcLCK3R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Dec 2016 04:39:25 -0500
-Received: from player711.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo68.mail-out.ovh.net (Postfix) with ESMTP id 7A4FE166E6
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Dec 2016 10:20:20 +0100 (CET)
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: magnus.damm@gmail.com, geert+renesas@glider.be
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [RFCv2 2/2] dts: arm: genmai: Add MAXDESREF4x spidev
-Date: Mon,  5 Dec 2016 10:20:05 +0100
-Message-Id: <1480929605-28564-3-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1480929605-28564-1-git-send-email-jacopo@jmondi.org>
+        Sat, 3 Dec 2016 05:29:17 -0500
+Received: by mail-io0-f194.google.com with SMTP id j92so12840253ioi.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Dec 2016 02:29:17 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU8mvXkhaUJJKu7KPxHsjt4k4Z3MreFiwRggGV0NkamyA@mail.gmail.com>
 References: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
- <1480929605-28564-1-git-send-email-jacopo@jmondi.org>
+ <1480693434-9415-3-git-send-email-jacopo@jmondi.org> <CAMuHMdU8mvXkhaUJJKu7KPxHsjt4k4Z3MreFiwRggGV0NkamyA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 3 Dec 2016 11:29:16 +0100
+Message-ID: <CAMuHMdVqt2LCcm-zX83bMSWYe93D1NTBP15fzK=Cqw0NWybswA@mail.gmail.com>
+Subject: Re: [RFC 2/3] dts: arm: genmai: Add MAXDESREF4x spidev
+To: Jacopo Mondi <jacopo@jmondi.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device node for the MAX11100 evaluation board connected to Genmai's
-CN2.
-The evaluation kit is connected to 3 GPIO lines configured as bitbanged
-SPI master interface.
+On Fri, Dec 2, 2016 at 8:23 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> +                       compatible = "linux,spidev";
+>
+> These days you should use "maxim,max11100", and at that compatible
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+s/at/add/, of course
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 233908b..659efbf 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -46,6 +46,23 @@
- 		};
- 	};
- 
-+	spi-gpio {
-+		compatible = "spi-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		gpio-miso = <&port11 10 GPIO_ACTIVE_HIGH>;
-+		gpio-sck = <&port11  9 GPIO_ACTIVE_HIGH>;
-+		num-chipselects = <1>;
-+		cs-gpios = <&port11 11 GPIO_ACTIVE_HIGH>;
-+		status = "ok";
-+
-+		maxrefdes4x@0 {
-+			compatible = "spidev";
-+			reg = <0>;
-+			spi-max-frequency = <240000>;
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -123,3 +140,7 @@
- 		spi-max-frequency = <5000000>;
- 	};
- };
-+
-+&port11 {
-+	status = "okay";
-+};
--- 
-2.7.4
+> value to drivers/spi/spidev.c
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
