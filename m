@@ -1,73 +1,54 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 03/22] drm: bridge: dw-hdmi: Remove unused function parameter
-Date: Fri,  2 Dec 2016 01:43:18 +0200
-Message-Id: <1480635817-1258-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36721 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750750AbcLCLUT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 3 Dec 2016 06:20:19 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161202215016.GA21497@verge.net.au>
+References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
+ <1480675020-26346-4-git-send-email-horms+renesas@verge.net.au> <20161202215016.GA21497@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 3 Dec 2016 12:19:39 +0100
+Message-ID: <CAMuHMdVhiz971JTU3T3GZehfmPqFOX6XPRjG01=NZrGONSi55g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3 pci/next] PCI: rcar: Add gen3 fallback
+ compatibility string for pcie-rcar
+To: Simon Horman <horms@verge.net.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Fri, Dec 2, 2016 at 10:50 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Dec 02, 2016 at 11:37:00AM +0100, Simon Horman wrote:
+>> --- a/drivers/pci/host/pcie-rcar.c
+>> +++ b/drivers/pci/host/pcie-rcar.c
+>> @@ -1078,6 +1078,8 @@ static const struct of_device_id rcar_pcie_of_match[] = {
+>>       { .compatible = "renesas,pcie-rcar-gen2",
+>>         .data = rcar_pcie_hw_init_gen2 },
+>>       { .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
+>> +     { .compatible = "renesas,pcie-rcar-gen3",
+>> +             .data = rcar_pcie_hw_init_hw_init },
+>
+> It looks like I failed to compile-test this.
+>
+> s/rcar_pcie_hw_init_hw_init/rcar_pcie_hw_init/
 
-The 'prep' parameter passed to hdmi_phy_configure() is useless. It is
-hardcoded as 0, and if set, simply prevents the configure function from
-executing.
+Bummer, and my tired eyes didn't notice...
 
-Remove it.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+                        Geert
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index f86894622070..5f8044a7d602 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -931,7 +931,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
- }
- 
--static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
-+static int hdmi_phy_configure(struct dw_hdmi *hdmi,
- 			      unsigned char res, int cscon)
- {
- 	unsigned res_idx;
-@@ -941,9 +941,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
- 
--	if (prep)
--		return -EINVAL;
--
- 	switch (res) {
- 	case 0:	/* color resolution 0 is 8 bit colour depth */
- 	case 8:
-@@ -1072,7 +1069,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
- 		dw_hdmi_phy_enable_powerdown(hdmi, true);
- 
- 		/* Enable CSC */
--		ret = hdmi_phy_configure(hdmi, 0, 8, cscon);
-+		ret = hdmi_phy_configure(hdmi, 8, cscon);
- 		if (ret)
- 			return ret;
- 	}
--- 
-Regards,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
