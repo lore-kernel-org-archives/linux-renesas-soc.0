@@ -1,64 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45620 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751492AbcLFPvs (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35639 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750998AbcLEIp3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 10:51:48 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH pci/next v3 3/3] PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
-Date: Tue,  6 Dec 2016 16:51:31 +0100
-Message-Id: <1481039491-30364-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481039491-30364-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481039491-30364-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 5 Dec 2016 03:45:29 -0500
+Received: by mail-io0-f193.google.com with SMTP id h133so12974895ioe.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Dec 2016 00:45:29 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <8760mzvvgm.wl%kuninori.morimoto.gx@renesas.com>
+References: <878trvvvii.wl%kuninori.morimoto.gx@renesas.com> <8760mzvvgm.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Dec 2016 09:45:28 +0100
+Message-ID: <CAMuHMdXSMabcuiGj5yzsgC=WnXb09UdxeVEQgarQtdwDeE09yQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: r8a7795: add sound MIX support
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility string for the  R-Car Gen 3 family.  This is in
-keeping with the both the existing fallback compatibility string for the
-R-Car Gen 2 family and the fallback scheme being adopted wherever
-appropriate for drivers for Renesas SoCs.
+Hi Morimoto-san,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3
-* s/rcar_pcie_hw_init_hw_init/rcar_pcie_hw_init/
-v2
-* Move fallback binding to below SoC specific bindings it covers
-  in implementation
----
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
- drivers/pci/host/pcie-rcar.c                       | 1 +
- 2 files changed, 2 insertions(+)
+On Mon, Dec 5, 2016 at 5:42 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -1184,6 +1186,11 @@
+>                                 };
+>                         };
+>
+> +                       rcar_sound,mix {
+> +                               mix0: mix@0 { };
+> +                               mix1: mix@1 { };
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index 6cf99690eef9..eee518db90b9 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -7,6 +7,7 @@ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
- 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
- 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
-+	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
- 
- 	    When compatible with the generic version, nodes must list the
- 	    SoC-specific version corresponding to the platform first
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 85971bc276c6..aca85be101f8 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1078,6 +1078,7 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- 	{ .compatible = "renesas,pcie-rcar-gen2",
- 	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
-+	{ .compatible = "renesas,pcie-rcar-gen3", .data = rcar_pcie_hw_init },
- 	{},
- };
- 
--- 
-2.7.0.rc3.207.g0ac5344
+With W=1:
+
+    Warning (unit_address_vs_reg): Node
+/sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg
+property
+
+"mix0: mix-0 { };" etc.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
