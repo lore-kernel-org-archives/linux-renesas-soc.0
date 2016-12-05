@@ -1,47 +1,40 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8BIT
-Message-id: <5846049D.70508@samsung.com>
-Date: Tue, 06 Dec 2016 09:21:49 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Bin Liu <b-liu@ti.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        sre@kernel.org, Peter.Chen@nxp.com, wens@csie.org,
-        yoshihiro.shimoda.uh@renesas.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, chanwoo@kernel.org
+Date: Mon, 5 Dec 2016 10:32:40 -0600
+From: Bin Liu <b-liu@ti.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: Chanwoo Choi <cw00.choi@samsung.com>, <balbi@kernel.org>,
+        <gregkh@linuxfoundation.org>, <kishon@ti.com>, <sre@kernel.org>,
+        <Peter.Chen@nxp.com>, <wens@csie.org>,
+        <yoshihiro.shimoda.uh@renesas.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <chanwoo@kernel.org>
 Subject: Re: [PATCH 07/12] usb: sunxi: Uses the resource-managed extcon API
  when registering extcon notifier
+Message-ID: <20161205163240.GA5783@uda0271908>
 References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
  <1480485460-2663-8-git-send-email-cw00.choi@samsung.com>
  <20161130084503.v5klzl6silp6323s@lukather>
- <CGME20161205163324epcas4p3e5b6cf1ed5faae16d041d69ee3e5543b@epcas4p3.samsung.com>
- <20161205163240.GA5783@uda0271908>
-In-reply-to: <20161205163240.GA5783@uda0271908>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20161130084503.v5klzl6silp6323s@lukather>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2016년 12월 06일 01:32, Bin Liu wrote:
-> On Wed, Nov 30, 2016 at 09:45:03AM +0100, Maxime Ripard wrote:
->> On Wed, Nov 30, 2016 at 02:57:35PM +0900, Chanwoo Choi wrote:
->>> This patch just uses the resource-managed extcon API when registering
->>> the extcon notifier.
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>
->> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Wed, Nov 30, 2016 at 09:45:03AM +0100, Maxime Ripard wrote:
+> On Wed, Nov 30, 2016 at 02:57:35PM +0900, Chanwoo Choi wrote:
+> > This patch just uses the resource-managed extcon API when registering
+> > the extcon notifier.
+> > 
+> > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > 
-> It would be ideal if the subject was "usb: musb: sunxi: ...".
-> 
-> Acked-by: Bin Liu <b-liu@ti.com>
-> 
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Thanks for the review. I'll change the subject.
+It would be ideal if the subject was "usb: musb: sunxi: ...".
 
--- 
-Best Regards,
-Chanwoo Choi
+Acked-by: Bin Liu <b-liu@ti.com>
+
+Regards,
+-Bin.
