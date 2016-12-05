@@ -1,73 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f194.google.com ([209.85.210.194]:36048 "EHLO
-        mail-wj0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933396AbcLIMfY (ORCPT
+Received: from 7.mo68.mail-out.ovh.net ([46.105.63.230]:48566 "EHLO
+        7.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752669AbcLEJ3e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 07:35:24 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, magnus.damm@gmail.com,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v1.5 2/6] v4l: rcar-fcp: Add an API to retrieve the FCP device
-Date: Fri,  9 Dec 2016 13:35:08 +0100
-Message-Id: <1481286912-16555-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 5 Dec 2016 04:29:34 -0500
+Received: from player711.ha.ovh.net (b9.ovh.net [213.186.33.59])
+        by mo68.mail-out.ovh.net (Postfix) with ESMTP id C37B314905
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Dec 2016 10:20:13 +0100 (CET)
+From: Jacopo Mondi <jacopo@jmondi.org>
+To: magnus.damm@gmail.com, geert+renesas@glider.be
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [RFCv2 0/3] Enable and test MAXREFDES4# on Genmai board
+Date: Mon,  5 Dec 2016 10:20:03 +0100
+Message-Id: <1480929605-28564-1-git-send-email-jacopo@jmondi.org>
+In-Reply-To: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
+References: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Hello Magnus and Geert, list,
+   this patch series enable the creation of a spidev device though which
+interface to a MAXREFDES4# MAX11100-ADC evaluation kit connected to Genmai
+CON2 expansion header.
 
-The new rcar_fcp_get_device() function retrieves the struct device
-related to the FCP device. This is useful to handle DMA mapping through
-the right device.
+The series is not intended for inclusion but will probably serve as base
+for future integration of MAX11100 ADC driver.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar-fcp.c | 6 ++++++
- include/media/rcar-fcp.h          | 5 +++++
- 2 files changed, 11 insertions(+)
+The series is based on branch "genmai-gpio-and-pfc" of Geert's tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+and target Linux v3.18
 
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index e9f609e..2988031 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -78,6 +78,12 @@ void rcar_fcp_put(struct rcar_fcp_device *fcp)
- }
- EXPORT_SYMBOL_GPL(rcar_fcp_put);
- 
-+struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp)
-+{
-+	return fcp->dev;
-+}
-+EXPORT_SYMBOL_GPL(rcar_fcp_get_device);
-+
- /**
-  * rcar_fcp_enable - Enable an FCP
-  * @fcp: The FCP instance
-diff --git a/include/media/rcar-fcp.h b/include/media/rcar-fcp.h
-index 8723f05..b60a7b1 100644
---- a/include/media/rcar-fcp.h
-+++ b/include/media/rcar-fcp.h
-@@ -19,6 +19,7 @@ struct rcar_fcp_device;
- #if IS_ENABLED(CONFIG_VIDEO_RENESAS_FCP)
- struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np);
- void rcar_fcp_put(struct rcar_fcp_device *fcp);
-+struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp);
- int rcar_fcp_enable(struct rcar_fcp_device *fcp);
- void rcar_fcp_disable(struct rcar_fcp_device *fcp);
- #else
-@@ -27,6 +28,10 @@ static inline struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np)
- 	return ERR_PTR(-ENOENT);
- }
- static inline void rcar_fcp_put(struct rcar_fcp_device *fcp) { }
-+static inline struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp)
-+{
-+	return NULL;
-+}
- static inline int rcar_fcp_enable(struct rcar_fcp_device *fcp)
- {
- 	return 0;
+The series fix a compilation error for RZ gpio driver and register a
+spidev device on a gpio based SPI master.
+
+The test bed is setup as:
+
+P11_11 (CN2 pin 5) connected as CS
+P11_10 (CN2 pin 6) connected as MISO
+P11_9  (CN2 pin 7) connected as SCLK
+P11_8  (CN2 pin 8) connected as AIN
+
+The ADC input is connected to gpio port 11 pin 8 (gpio863) and ADC
+functionalities have been tested reading the results of successive
+analog-to-digital conversions and verifying they match the gpio863
+output value.
+
+Thanks
+   j
+
+v1 -> v2:
+    * use "spidev" as compatible string in v1 [2/3] and drop [3/3]
+      consequentially.
+    * incorporate Geert's comments in [2/3] DTS file
+
+Jacopo Mondi (2):
+  gpio-rz: Port to v3.18
+  dts: arm: genmai: Add MAXDESREF4x spidev
+
+ arch/arm/boot/dts/r7s72100-genmai.dts | 21 +++++++++++++++++++++
+ drivers/gpio/gpio-rz.c                |  3 ++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
 -- 
 2.7.4
