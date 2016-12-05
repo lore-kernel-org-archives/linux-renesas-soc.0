@@ -1,68 +1,129 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
 Return-Path: <laurent.pinchart@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, Andy Yan <andy.yan@rock-chips.com>, Archit Taneja <architt@codeaurora.org>, Fabio Estevam <fabio.estevam@freescale.com>, Heiko Stuebner <heiko@sntech.de>, Jose Abreu <Jose.Abreu@synopsys.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Ulrich Hecht <ulrich.hecht@gmail.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, linux-renesas-soc@vger.kernel.org
+To: Jose Abreu <Jose.Abreu@synopsys.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, Andy Yan <andy.yan@rock-chips.com>, Archit Taneja <architt@codeaurora.org>, Fabio Estevam <fabio.estevam@freescale.com>, Heiko Stuebner <heiko@sntech.de>, Kieran Bingham <kieran.bingham@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Ulrich Hecht <ulrich.hecht@gmail.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH 13/22] drm: bridge: dw-hdmi: Replace device type with platform quirks
-Date: Mon, 05 Dec 2016 13:51:25 +0200
-Message-ID: <2383743.TUIngK2BGX@avalon>
-In-Reply-To: <1898458.1NNH7zlFYO@avalon>
-References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161202160817.GE14217@n2100.armlinux.org.uk> <1898458.1NNH7zlFYO@avalon>
+Date: Mon, 05 Dec 2016 13:32:15 +0200
+Message-ID: <1576280.tBdiYM6mm0@avalon>
+In-Reply-To: <b7ea84bb-4130-8936-ca94-256cf4a36548@synopsys.com>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <4921806.T6YjZHsEAd@avalon> <b7ea84bb-4130-8936-ca94-256cf4a36548@synopsys.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Jose,
 
-On Friday 02 Dec 2016 18:45:46 Laurent Pinchart wrote:
-> On Friday 02 Dec 2016 16:08:17 Russell King - ARM Linux wrote:
-> > On Fri, Dec 02, 2016 at 05:43:43PM +0200, Laurent Pinchart wrote:
-> >> DW_HDMI_QUIRK_FC_INVIDCONF is indeed a bad name, I'll fix that.
+On Monday 05 Dec 2016 10:50:19 Jose Abreu wrote:
+> On 02-12-2016 15:43, Laurent Pinchart wrote:
+> > On Friday 02 Dec 2016 14:24:01 Russell King - ARM Linux wrote:
+> >> On Fri, Dec 02, 2016 at 01:43:28AM +0200, Laurent Pinchart wrote:
+> >>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >>> 
+> >>> The dw-hdmi driver declares a dev_type to distinguish platform specific
+> >>> changes. Replace this with a quirk field, so that the platform can
+> >>> specify the required quirks for the driver, rather than the driver
+> >>> becoming conditional on multiple platforms.
+> >>> 
+> >>> As part of this, we rename the dw-hdmi 'spare' which is defined as the
+> >>> SVSRET bit in later documentation.
 > >> 
-> >> Do you know why this function needs to write to the HDMI_FC_INVIDCONF
-> >> register  four times in the normal case, and once only for IMX6DL ?
+> >> I'd really prefer that we did not go down the broken route of adding
+> >> a set of "quirk" flags - look at what a mess SDHCI has become through
+> >> allowing that kind of practice.
+> >> 
+> >> I'd much rather we find a saner structure to this - and we know that
+> >> the hardware has ID registers in it which can be used (so far) to
+> >> identify the buggy hardware.
 > > 
-> > (I don't have much time at present, I'm buried in ARM64 crud trying to
-> > get a platform to boot, and working out how to debug an ARM64 platform
-> > that even earlycon doesn't work on... no printascii() types of easy
-> > debug facilities on ARM64 make this job several orders of magnitude
-> > harder than it needs to be...)
+> > I'd much prefer something that would allow runtime identification of the
+> > device and the corresponding actions to be taken. However, the amount of
+> > documentation we have on the DWC HDMI TX IP core (and the associated PHY)
+> > is pretty limited, given that Synopsys doesn't make the documentation
+> > available publicly. Changes made to the IP core by integrators could
+> > complicate this further. I'm trying to gather as much information as
+> > possible to make clean the code up, for instance by trying to identify
+> > the PHYs used on the various platforms we support. Progress is slow on
+> > that front, there isn't enough leaked information available online :-) I
+> > haven't given up though, but I'll need more time.
+> > 
+> > I don't like quirks much either. They are however already used today, even
+> > if we trigger them through dev_type instead of quirk flags. This patch
+> > came from a previous version found in a BSP that simply sprinkled several
+> > if (hdmi-> dev_type == RCAR_HDMI) through the code. For instance,
+> > 
+> > -	if (hdmi->dev_type == RK3288_HDMI)
+> > +	if (hdmi->dev_type == RK3288_HDMI || hdmi->dev_type == RCAR_HDMI)
+> > 		dw_hdmi_phy_enable_spare(hdmi, 1);
+> > 
+> > which I think is worse than flags as it would quickly degenerate to
+> > spaghetti code.
+> > 
+> > For this specific case, we've managed to identify that on Renesas
+> > platforms the bit set by this function is called SVSRET. Its usage isn't
+> > clear yet, but I suspect it to control one of the PHY input control
+> > signals, like the other bits in the same register. I'm trying to get more
+> > information to clean the implementation further, hopefully with a way to
+> > determine whether the signal is used based on PHY identification.
 > 
-> Thanks all the more for taking time to reply.
-> 
-> > It prevents a magenta line down the left hand side of the screen, which
-> > is caused when the frame composer in the HDMI Tx gets confused -
-> > according to the errata, it does a load of maths when you write to the
-> > frame composer registers, and sometimes it doesn't update properly.
-> > 
-> > So, the four writes (and the number is critical) is there to persuade
-> > the IP to do the maths with the right values so the internal timings
-> > are correct.
-> > 
-> > The rather confusing thing is - it's actually IMX6Q which has the more
-> > severe errata, not IMX6DL - the workaround of four writes is applied
-> > in the 6Q case.
-> > 
-> > It's covered by ERR004308 in the IMX6Q Errata document (search for
-> > IMX6DQCE).  It isn't mentioned in the IMX6DL documentation, but it
-> > seems that similar workaround of one write is necessary there.
-> > 
-> > Some of this was determined by experimentation in conjunction with the
-> > errata documentation - I remember it took a while to get it right so
-> > that we didn't ever see the magenta line.
-> 
-> That's interesting. I'll test the different options on my Renesas platform
-> (no write, one write, four writes) and see what is needed. Could anyone
-> perform the same tests on a Rockchip RK3288 system ?
+> SVSRET is a low power mode consumption and is a PHY input signal
+> as you suggested.
 
-Daniel Stone has been nice enough to test HDMI output without the errata 
-workaround on RK3288 and hasn't noticed any issue. I've performed the same 
-test on R-Car H3 and haven't noticed any issue either.
+Thank you for the confirmation. Would you happen to know what SVSRET stands 
+for ?
 
-The i.MX6DL and i.MX6Q use a DWC HDMI TX version 1.31a and 1.30a respectively, 
-while RK3288 and R-Car H3 uses v2.00a and v2.01a. We could enable the 
-workaround based on the HDMI TX version.
+> Most of the configurable input signals of the PHY are available by the
+> controller regbank. I don't think it is possible to detect this at runtime,
+> I think you have at least to hardcode which version of the PHY you are
+> using.
+>
+> I would suggest that maybe all the PHY logic should be extracted and then
+> use callbacks to glue controller and phy. Then, depending on the PHY you
+> could use empty stubs if, for example, a given PHY did not support SVSRET.
+> Still, I don't know if this is the best option. What I do know is that there
+> are a large number of PHY's with different flavors that can use the same
+> controller. The controller has different versions also, and each version can
+> have quirks but I think it would be easier to manage this driver if we had a
+> clear distinction between PHY and controller.
+
+Agreed, I'd like to go in that direction. What makes it quite difficult is the 
+lack of documentation about the PHYs :-) I've found six different PHY types 
+that can be identified by the CONFIG2_ID register:
+
+Bits    | Field         	| Description
+------------------------------------------------------------------------------
+7-0     | phytype       	| PHY interface
+        |               	| 0x00: Legacy PHY (HDMI TX PHY)
+        |               	| 0xb2: MHL PHY + HEAC PHY
+        |               	| 0xc2: MHL PHY
+        |               	| 0xe2: HDMI 3D TX PHY + HEAC PHY
+        |               	| 0xf2: HDMI 3D TX PHY
+        |               	| 0xf3: HDMI2 TX PHY
+
+I'm sure there's more than that. In particular I wonder how external vendor 
+PHYs are identified.
+
+I'm also wondering whether there's a need to keep support for the legacy PHY 
+signals (ENTMDS and PDZ in the PHY_CONF0 register). As far as I understand 
+they're not used by the Gen2 PHYs (including the external vendor PHYs), but I 
+can't confirm that without more documentation (although I could test that on 
+the platforms I have access to).
+
+> > This is all work in progress, and if anyone has access to any
+> > documentation and can provide additional information I'll be grateful.
+> > 
+> >>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >>> Signed-off-by: Laurent Pinchart
+> >>> <laurent.pinchart+renesas@ideasonboard.com>
+> >>> ---
+> >>> 
+> >>>  drivers/gpu/drm/bridge/dw-hdmi.c            | 14 ++++++--------
+> >>>  drivers/gpu/drm/bridge/dw-hdmi.h            |  4 ++--
+> >>>  drivers/gpu/drm/imx/dw_hdmi-imx.c           |  3 +--
+> >>>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c |  2 +-
+> >>>  include/drm/bridge/dw_hdmi.h                | 12 +++++-------
+> >>>  5 files changed, 15 insertions(+), 20 deletions(-)
 
 -- 
 Regards,
