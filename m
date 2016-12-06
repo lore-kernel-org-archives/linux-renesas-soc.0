@@ -1,34 +1,50 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/2] irqchip/renesas-intc-irqpin: fallback enhancements
-Date: Fri,  9 Dec 2016 11:50:48 +0100
-Message-Id: <1481280650-9258-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <SRS0=KIoc=XV=ideasonboard.com=kieran.bingham+renesas@kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 0/4] v4l: vsp1: Fix suspend/resume and race on M2M pipelines
+Date: Tue,  6 Dec 2016 09:35:09 +0000
+Message-Id: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+This small patchset helps rework the VSP1 driver to repair an issue on
+suspend/resume operations whereby the pipeline does not get reconfigured after
+it has been re-initialised following a resume operation.
 
-this short series aims to improve the fallback compatibility strings
-for the renesas-intc-irqpin driver.
+Along side this, there was an intrinsic race in the vsp1_video_start_streaming()
+function whereby multiple streams operating through a BRU, could find themselves
+commencing an operation before the pipeline has been configured, or worse -
+commencing, just as the pipeline is being configured resulting in a null pointer
+dereference on pipe->dl.
 
-Based on v4.9-rc1.
+This series superceeds a previous effort to fix the BRU race.
 
-Simon Horman (2):
-  irqchip/renesas-intc-irqpin: List fallback compatibility last
-  irqchip/renesas-intc-irqpin: Add R-Car Gen1 fallback binding
+Patch [1/4] is a code move only, with no functional change.
+Patch [2/4] refactors the vsp1_video_start_streaming() function and fixes both
+            suspend/resume, and the BRU race in a single change
+Patch [3/4] removes the context scoped 'pipe->dl' which has been susceptible to
+            races and isn't required to be in the context.
+Patch [4/4] is an RFC patch really, that fixes a segfault on error paths  and I
+            certainly expect feedback and brief discussion. Please drop Patch 4
+            in the event of any further discussion, and don't consider it as
+            blocking for the first three patches of this series.
 
- .../interrupt-controller/renesas,intc-irqpin.txt   | 44 ++++++++++++----------
- drivers/irqchip/irq-renesas-intc-irqpin.c          |  4 +-
- 2 files changed, 27 insertions(+), 21 deletions(-)
+Kieran Bingham (4):
+  v4l: vsp1: Move vsp1_video_setup_pipeline()
+  v4l: vsp1: Refactor video pipeline configuration
+  v4l: vsp1: Use local display lists and remove global pipe->dl
+  media: Catch null pipes on pipeline stop
+
+ drivers/media/media-entity.c             |   2 +
+ drivers/media/platform/vsp1/vsp1_drm.c   |  20 ++---
+ drivers/media/platform/vsp1/vsp1_drv.c   |   3 +
+ drivers/media/platform/vsp1/vsp1_pipe.c  |   1 +
+ drivers/media/platform/vsp1/vsp1_pipe.h  |   4 +-
+ drivers/media/platform/vsp1/vsp1_video.c | 127 +++++++++++++++----------------
+ 6 files changed, 78 insertions(+), 79 deletions(-)
 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
