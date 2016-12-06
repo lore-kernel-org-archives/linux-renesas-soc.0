@@ -1,89 +1,128 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:60648 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751701AbcLOKsy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Dec 2016 05:48:54 -0500
-Date: Thu, 15 Dec 2016 11:42:08 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PULL REQUEST] renesas/topic/sdhi-emmc-hs for renesas drivers
-Message-ID: <20161215104204.GA1962@katana>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
-Content-Disposition: inline
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <SRS0=KIoc=XV=ideasonboard.com=kieran.bingham+renesas@kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 1/4] v4l: vsp1: Move vsp1_video_setup_pipeline()
+Date: Tue,  6 Dec 2016 09:35:10 +0000
+Message-Id: <1481016913-30608-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Move the static vsp1_video_setup_pipeline() function in preparation for
+the callee updates so that the vsp1_video_pipeline_run() call can
+configure pipelines following suspend resume actions.
 
---FL5UXtIhxfXey3p5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This commit is just a code move for clarity performing no functional
+change.
 
-Hi Geert,
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_video.c | 82 ++++++++++++++++----------------
+ 1 file changed, 41 insertions(+), 41 deletions(-)
 
-here is a topic branch for renesas-drivers adding HS200 support to SDHI.
-It is based on the tag "renesas-drivers-2016-12-06-v4.9-rc8" because the
-feature is built on top of the SDR104 series by Simon which was merged
-upstream just recently in the merge window. Is this okay? Or do you
-prefer another branch based on v4.10-rc1 once it is available?
-
-Kind regards,
-
-   Wolfram
-
-
-The following changes since commit 2122ab4824fda8009d20b754f80eefa66e5b4b18:
-
-  Merge branch 'r8a7795-hdmi-out-dts-v1' of git://github.com/uli/kernel into renesas-drivers (2016-12-06 14:18:10 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-emmc-hs
-
-for you to fetch changes up to 9f9bc225f2ada33944f95d928a9a9190b7497e33:
-
-  arm64: dts: r8a7796: enable HS200 for eMMC (2016-12-12 14:56:02 +0100)
-
-----------------------------------------------------------------
-Wolfram Sang (9):
-      mmc: sh_mobile_sdhi: simplify accessing DT data
-      mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
-      mmc: sh_mobile_sdhi: improve prerequisites for tuning
-      mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
-      mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
-      mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
-      mmc: sh_mobile_sdhi: enable HS200
-      arm64: dts: r8a7795: enable HS200 for eMMC
-      arm64: dts: r8a7796: enable HS200 for eMMC
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  1 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  1 +
- drivers/mmc/host/sh_mobile_sdhi.c                  | 67 ++++++++--------------
- 3 files changed, 27 insertions(+), 42 deletions(-)
-
---FL5UXtIhxfXey3p5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYUnN8AAoJEBQN5MwUoCm2aaAP/1V7LuQdA7Dp5vgNfY/XABrL
-phkuVCdVD3TO0OhxVjc5Cd0ng7fPgLuULKAsk8xKEAAnEyFlcA00BN7H+4Ew24Qn
-bCCY9SzCd/1VS6FrLTKLE2ZWV6egf37VcSd1jR5GGSvu28l/QRqs5NL3gGhCFiPR
-Mm2gCciPeE+H6tQJGEeEzFW10d7tTrPEk/iM+csWmU4ws90y7o4bdbOzd1HPsznB
-WZa4n+iH1bGq1M2kTTcKenS+7aWBk2A9SPXvo990wG7FwRez9xdyESbbKAdZMGXO
-aVo3ov3/UgRDG4a6H26SiIS83Q/ruZ5qYEPqgksPtqJ9O6aFFlNIhEq9xNxMTH2B
-ieR4ygJJWD2MnRQj7LQ51aptTBslWZ4K8JYPD8zzNwA2+/cwTwtUrmyou/uOgBfj
-CQ6KiiZ3AJIfxGKCzGJaMZ2L9fdGQbSYfCbl4J9r4DrGWVYGfCL4DaBcdv2KiDBt
-hdUwY3ZxVkpOBOG7Jk8Hb7OU3EoWgu6p11OyY78IzIoUZJqEQ4EmSpcdDg77ibIK
-9ISPknDysnGIC+EooHxP5AfCKvwT6enSC4ju+vATFJq78E8p4dWiZEpAYiTKoJ9F
-/+2+2qiiNLY0GURSLs7NYpCpUE8aduzuErixayBW00IrkJb68XhT/Ek/tuXPsJJy
-KE9LrJB/lDn44n5mEK4S
-=AfUI
------END PGP SIGNATURE-----
-
---FL5UXtIhxfXey3p5--
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index d351b9c768d2..44b687c0b8df 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -350,6 +350,47 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
+ 	pipe->buffers_ready |= 1 << video->pipe_index;
+ }
+ 
++static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
++{
++	struct vsp1_entity *entity;
++
++	/* Determine this pipelines sizes for image partitioning support. */
++	vsp1_video_pipeline_setup_partitions(pipe);
++
++	/* Prepare the display list. */
++	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
++	if (!pipe->dl)
++		return -ENOMEM;
++
++	if (pipe->uds) {
++		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
++
++		/* If a BRU is present in the pipeline before the UDS, the alpha
++		 * component doesn't need to be scaled as the BRU output alpha
++		 * value is fixed to 255. Otherwise we need to scale the alpha
++		 * component only when available at the input RPF.
++		 */
++		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
++			uds->scale_alpha = false;
++		} else {
++			struct vsp1_rwpf *rpf =
++				to_rwpf(&pipe->uds_input->subdev);
++
++			uds->scale_alpha = rpf->fmtinfo->alpha;
++		}
++	}
++
++	list_for_each_entry(entity, &pipe->entities, list_pipe) {
++		vsp1_entity_route_setup(entity, pipe->dl);
++
++		if (entity->ops->configure)
++			entity->ops->configure(entity, pipe, pipe->dl,
++					       VSP1_ENTITY_PARAMS_INIT);
++	}
++
++	return 0;
++}
++
+ static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
+ 					      struct vsp1_dl_list *dl)
+ {
+@@ -747,47 +788,6 @@ static void vsp1_video_buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&pipe->irqlock, flags);
+ }
+ 
+-static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
+-{
+-	struct vsp1_entity *entity;
+-
+-	/* Determine this pipelines sizes for image partitioning support. */
+-	vsp1_video_pipeline_setup_partitions(pipe);
+-
+-	/* Prepare the display list. */
+-	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
+-	if (!pipe->dl)
+-		return -ENOMEM;
+-
+-	if (pipe->uds) {
+-		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
+-
+-		/* If a BRU is present in the pipeline before the UDS, the alpha
+-		 * component doesn't need to be scaled as the BRU output alpha
+-		 * value is fixed to 255. Otherwise we need to scale the alpha
+-		 * component only when available at the input RPF.
+-		 */
+-		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
+-			uds->scale_alpha = false;
+-		} else {
+-			struct vsp1_rwpf *rpf =
+-				to_rwpf(&pipe->uds_input->subdev);
+-
+-			uds->scale_alpha = rpf->fmtinfo->alpha;
+-		}
+-	}
+-
+-	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+-		vsp1_entity_route_setup(entity, pipe->dl);
+-
+-		if (entity->ops->configure)
+-			entity->ops->configure(entity, pipe, pipe->dl,
+-					       VSP1_ENTITY_PARAMS_INIT);
+-	}
+-
+-	return 0;
+-}
+-
+ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
+ {
+ 	struct vsp1_video *video = vb2_get_drv_priv(vq);
+-- 
+2.7.4
