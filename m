@@ -1,69 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 10.mo1.mail-out.ovh.net ([178.32.96.102]:54276 "EHLO
-        10.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751882AbcLBQDq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45620 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbcLFPvs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 11:03:46 -0500
-Received: from player726.ha.ovh.net (b7.ovh.net [213.186.33.57])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id AB7F02158A
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Dec 2016 16:44:34 +0100 (CET)
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: magnus.damm@gmail.com, geert+renesas@glider.be
-Cc: linux-renesas-soc@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
-Subject: [RFC 2/3] dts: arm: genmai: Add MAXDESREF4x spidev
-Date: Fri,  2 Dec 2016 16:43:53 +0100
-Message-Id: <1480693434-9415-3-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
-References: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
+        Tue, 6 Dec 2016 10:51:48 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH pci/next v3 3/3] PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
+Date: Tue,  6 Dec 2016 16:51:31 +0100
+Message-Id: <1481039491-30364-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481039491-30364-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481039491-30364-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device node for the MAX11100 evaluation board connected to Genmai's
-CN2.
-The evaluation kit is connected to 4 GPIO lines configured ad bitbanged
-SPI master interface
+Add fallback compatibility string for the  R-Car Gen 3 family.  This is in
+keeping with the both the existing fallback compatibility string for the
+R-Car Gen 2 family and the fallback scheme being adopted wherever
+appropriate for drivers for Renesas SoCs.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+v3
+* s/rcar_pcie_hw_init_hw_init/rcar_pcie_hw_init/
+v2
+* Move fallback binding to below SoC specific bindings it covers
+  in implementation
+---
+ Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
+ drivers/pci/host/pcie-rcar.c                       | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 233908b..89a1977 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -46,6 +46,24 @@
- 		};
- 	};
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+index 6cf99690eef9..eee518db90b9 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
++++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+@@ -7,6 +7,7 @@ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
+ 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
+ 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
+ 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
++	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
  
-+	spi-gpio {
-+		compatible = "spi-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+
-+		gpio-miso = <&port11 10 GPIO_ACTIVE_HIGH>;
-+		gpio-sck = <&port11  9 GPIO_ACTIVE_HIGH>;
-+		num-chipselects = <1>;
-+		cs-gpios = <&port11 11 GPIO_ACTIVE_HIGH>;
-+		status = "ok";
-+
-+		maxrefdes4x {
-+			compatible = "linux,spidev";
-+			reg = <0>;
-+			spi-max-frequency = <240000>;
-+		};
-+	};
+ 	    When compatible with the generic version, nodes must list the
+ 	    SoC-specific version corresponding to the platform first
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 85971bc276c6..aca85be101f8 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -1078,6 +1078,7 @@ static const struct of_device_id rcar_pcie_of_match[] = {
+ 	{ .compatible = "renesas,pcie-rcar-gen2",
+ 	  .data = rcar_pcie_hw_init_gen2 },
+ 	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
++	{ .compatible = "renesas,pcie-rcar-gen3", .data = rcar_pcie_hw_init },
+ 	{},
  };
  
- &extal_clk {
-@@ -123,3 +141,7 @@
- 		spi-max-frequency = <5000000>;
- 	};
- };
-+
-+&port11 {
-+	status = "okay";
-+};
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
