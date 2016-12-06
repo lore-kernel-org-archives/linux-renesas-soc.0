@@ -1,108 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbcLMLqZ (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:50720 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752258AbcLFOMY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 06:46:25 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Tue, 6 Dec 2016 09:12:24 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cEGTm-0005Om-1L
+        for linux-renesas-soc@vger.kernel.org; Tue, 06 Dec 2016 15:12:22 +0100
+Received: from geert by ramsan with local (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cEGTq-0006x2-KB
+        for linux-renesas-soc@vger.kernel.org; Tue, 06 Dec 2016 15:12:26 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 renesas/devel 09/13] arm64: dts: r8a7796: Use R-Car Gen 3 fallback binding for i2c nodes
-Date: Tue, 13 Dec 2016 12:45:55 +0100
-Message-Id: <1481629559-14187-10-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+Subject: renesas-drivers-2016-12-06-v4.9-rc8
+Date: Tue,  6 Dec 2016 15:12:26 +0100
+Message-Id: <1481033546-26686-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 3 fallback binding for i2c nodes in
-DT for r8a7796 SoC.
+I have pushed renesas-drivers-2016-12-06-v4.9-rc8 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7796 and the
-fallback binding for R-Car Gen 3.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging branches with driver code
+submitted or planned for submission to maintainers into the development
+branch of Simon Horman's renesas.git tree.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+As we are currently focusing on a stable v4.9, no for-next branches
+of various subsystem trees have been included.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 7bf0f2f6c224..9ebf5c7ab339 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -269,7 +269,8 @@
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6500000 0 0x40>;
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 931>;
-@@ -284,7 +285,8 @@
- 		i2c1: i2c@e6508000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6508000 0 0x40>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 930>;
-@@ -299,7 +301,8 @@
- 		i2c2: i2c@e6510000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6510000 0 0x40>;
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 929>;
-@@ -314,7 +317,8 @@
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d0000 0 0x40>;
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 928>;
-@@ -328,7 +332,8 @@
- 		i2c4: i2c@e66d8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d8000 0 0x40>;
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 927>;
-@@ -342,7 +347,8 @@
- 		i2c5: i2c@e66e0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e0000 0 0x40>;
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 919>;
-@@ -356,7 +362,8 @@
- 		i2c6: i2c@e66e8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7796";
-+			compatible = "renesas,i2c-r8a7796",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e8000 0 0x40>;
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 918>;
--- 
-2.7.0.rc3.207.g0ac5344
+Today's version is based on renesas-devel-20161205-v4.9-rc8.
+
+Included branches with driver code:
+  - clk-renesas-for-v4.11
+  - sh-pfc-for-v4.11
+  - topic/rcar-secondary-booting-in-debug-mode-v2
+  - topic/r8a7796-ravb-v1-rebased1
+  - topic/r8a7796-dmac-driver-v2-rebased1
+  - topic/r8a7796-dmac-dts-v2-rebased3~3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-driver-v8
+  - topic/vin-gen2-driver-v1-rebased2
+  - topic/rcar-gen3-usb2-role-swap-v5
+  - topic/dma-map-resource-v1
+  - git://linuxtv.org/pinchartl/media.git#vsp1/histogram
+  - https://git.ragnatech.se/linux#for-renesas-drivers
+  - topic/ipmmu-multi-arch-v6
+  - topic/r8a7795-ipmmu-v2-rebased4
+  - topic/r8a7796-ipmmu-v1-rebased4
+  - topic/r8a7795-ipmmu-integration-v1
+  - topic/vin-gen2-dts-v1-rebased5
+  - topic/vsp1-pa-improvements-v1-rebased1
+  - topic/vsp1-writeback-v2-rebased2
+  - git://linuxtv.org/pinchartl/media.git#drm/r8a7796/next
+  - topic/iommu-devel-du-rebased1
+  - topic/r8a7795-es2-v1-rebased5
+  - topic/r8a7796-64b-mem+ravb-prototype-v1-rebased5~1
+  - topic/rcar-du-lvds-mode-selection-v1
+  - git://linuxtv.org/pinchartl/media.git#drm/next/lvds
+  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-driver-v1
+  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-dts-v1
+
+As we're getting close to the opening of the merge window for v4.10, I
+have also pushed renesas-drivers-next-2016-12-06-v4.9-rc8 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+
+This tree lacks the last 4 branches above, but does include the
+following for-next branches of various subsystem trees:
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.infradead.org/battery-2.6.git#master
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/thermal-on-4.10-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/lvds-panel
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/lvds-encoder
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/hdmi
+
+Included fixes:
+  - arm64: alternatives: Work around NOP generation with broken
+    assembler
+
+Included branches with driver code:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/thermal-on-4.10-next
+  - git://linuxtv.org/pinchartl/media.git drm/du/lvds-panel
+  - git://linuxtv.org/pinchartl/media.git drm/du/lvds-encoder
+  - git://linuxtv.org/pinchartl/media.git drm/du/hdmi
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
