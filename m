@@ -1,83 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:44458 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758219AbcLOQYJ (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34157 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751166AbcLFM61 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Dec 2016 11:24:09 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] arm64: dts: r8a7796: salvator-x: Enable EthernetAVB
-Date: Thu, 15 Dec 2016 17:24:02 +0100
-Message-Id: <1481819044-19605-1-git-send-email-geert+renesas@glider.be>
+        Tue, 6 Dec 2016 07:58:27 -0500
+Received: by mail-io0-f195.google.com with SMTP id r94so6252262ioe.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Dec 2016 04:58:27 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20161206123854.GA10942@verge.net.au>
+References: <1480934381-32126-1-git-send-email-geert+renesas@glider.be> <20161206123854.GA10942@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Dec 2016 13:41:41 +0100
+Message-ID: <CAMuHMdUTDqFz_5JuGHEC5ZF+j95puaPDJ+A8yVmu9dgNLGXhJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] ARM: shmobile: R-Car Gen2: Allow booting secondary
+ CPU cores in debug mode
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Hi Simon,
 
-This patch series enables networking on r8a7796/salvator-x.
+On Tue, Dec 6, 2016 at 1:39 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Mon, Dec 05, 2016 at 11:39:36AM +0100, Geert Uytterhoeven wrote:
+>> This patch series allows booting secondary CPU cores on R-Car Gen2 when
+>> hardware debug mode is enabled. In this mode, reset requests derived
 
-Network performance is currently limited to 100 Mbps by the ravb driver.
-Performance figures with nuttcp are ca. 94 Mbps for both receive and
-transmit, at 12% vs. 4% CPU load. For receive, this is comparable to
-sh_eth on Koelsch; for transmit, it's ca. 20% faster.
+> Thanks, I have tentatively queued this up for v4.11.
+>
+> I have pulled in the rcar-rst dependency with the expectation ttha
+> it will disappear when I rebase on v4.10-rc1 once it has been released.
 
-With "ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W" applied,
-network throughput is higher, but has a high variance:
-  - receive: 245-426 Mbps, at 100% CPU load (ksoftirqd + nuttcp),
-  - transmit: 426 Mbps, at 95% CPU load (nuttcp).
-When limiting memory to 1 GiB, and thus avoiding swiotlb bounce buffers,
-network throughput increases (CPU load is similar though) to 546 resp.
-625 Mbps.
-The 50% performance penalty of swiotlb is expected to be mitigated when
-IOMMU support will become available.
-
-Note that at high receive speeds, the driver sometimes prints:
-
-    ravb e6800000.ethernet eth0: Receive Descriptor Empty
-
-This may even cause nuttcp to fail with:
-
-    nuttcp-t: v6.1.2: Error: server not ACKing data
-
-NFS root survives fine, though.
-I'm wondering if this is also seen on the R-Car Gen2 boards where
-EthernetAVB is available?
-
-Changes compared to v1, as sent by Laurent before:
-  - Add pinctrl. Drive strength is not yet included, like on current
-    r8a7795/salvator-x.
-
-This series is based on renesas-devel-20161212-v4.9. To actually work,
-you need to merge my sh-pfc-for-v4.10 branch, which is upstream and will
-be in v4.10-rc1. As this is a pure runtime dependency, and does not
-imply a regression, this series can be applied now.
-
-Thanks for applying!
-
-Laurent Pinchart (2):
-  arm64: dts: renesas: r8a7796: Add EthernetAVB instance
-  arm64: dts: r8a7796: salvator-x: Enable EthernetAVB
-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 32 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 43 ++++++++++++++++++++++
- 2 files changed, 75 insertions(+)
-
--- 
-1.9.1
+Thank you very much!
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
