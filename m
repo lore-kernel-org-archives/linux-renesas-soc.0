@@ -1,43 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:41916 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752305AbcLLTvt (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:12809 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751443AbcLFBf1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 14:51:49 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 5/9] mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
-Date: Mon, 12 Dec 2016 20:51:24 +0100
-Message-Id: <20161212195128.16633-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
-References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+        Mon, 5 Dec 2016 20:35:27 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kishon@ti.com" <kishon@ti.com>, "sre@kernel.org" <sre@kernel.org>
+CC: "Peter.Chen@nxp.com" <Peter.Chen@nxp.com>,
+        "wens@csie.org" <wens@csie.org>,
+        "maxime.ripard@free-electrons.com" <maxime.ripard@free-electrons.com>,
+        "b-liu@ti.com" <b-liu@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "chanwoo@kernel.org" <chanwoo@kernel.org>
+Subject: RE: [PATCH 12/12] usb: renesas_usbhs: Replace the deprecated extcon
+ API
+Date: Tue, 6 Dec 2016 01:35:19 +0000
+Message-ID: <HK2PR06MB054887D913505E133A021D68D8820@HK2PR06MB0548.apcprd06.prod.outlook.com>
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+ <1480485460-2663-13-git-send-email-cw00.choi@samsung.com>
+In-Reply-To: <1480485460-2663-13-git-send-email-cw00.choi@samsung.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The function will only be available if SDR104 was detected in probe,
-so no need to check in the function itself again.
+Hi,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/sh_mobile_sdhi.c | 3 ---
- 1 file changed, 3 deletions(-)
+> From: Chanwoo Choi
+> Sent: Wednesday, November 30, 2016 2:58 PM
+>=20
+> This patch replaces the deprecated extcon API as following:
+> - extcon_get_cable_state_() -> extcon_get_state()
+>=20
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 7964f9a87d9c20..22bedbea8ec502 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -327,9 +327,6 @@ static unsigned int sh_mobile_sdhi_init_tuning(struct tmio_mmc_host *host)
- {
- 	struct sh_mobile_sdhi *priv;
- 
--	if (!(host->mmc->caps & MMC_CAP_UHS_SDR104))
--		return 0;
--
- 	priv = host_to_priv(host);
- 
- 	/* set sampling clock selection range */
--- 
-2.10.2
+Thank you for the patch!
+
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
