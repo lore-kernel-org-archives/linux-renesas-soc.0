@@ -1,60 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 4.mo1.mail-out.ovh.net ([46.105.76.26]:42055 "EHLO
-        4.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751400AbcLBSOX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 13:14:23 -0500
-Received: from player726.ha.ovh.net (b7.ovh.net [213.186.33.57])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id 63EA52136C
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Dec 2016 16:44:19 +0100 (CET)
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: magnus.damm@gmail.com, geert+renesas@glider.be
-Cc: linux-renesas-soc@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
-Subject: [RFC 0/3] Enable and test MAXREFDES4# on Genmai board
-Date: Fri,  2 Dec 2016 16:43:51 +0100
-Message-Id: <1480693434-9415-1-git-send-email-jacopo@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Content-transfer-encoding: 8BIT
+Message-id: <5846049D.70508@samsung.com>
+Date: Tue, 06 Dec 2016 09:21:49 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Bin Liu <b-liu@ti.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        sre@kernel.org, Peter.Chen@nxp.com, wens@csie.org,
+        yoshihiro.shimoda.uh@renesas.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, chanwoo@kernel.org
+Subject: Re: [PATCH 07/12] usb: sunxi: Uses the resource-managed extcon API
+ when registering extcon notifier
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+ <1480485460-2663-8-git-send-email-cw00.choi@samsung.com>
+ <20161130084503.v5klzl6silp6323s@lukather>
+ <CGME20161205163324epcas4p3e5b6cf1ed5faae16d041d69ee3e5543b@epcas4p3.samsung.com>
+ <20161205163240.GA5783@uda0271908>
+In-reply-to: <20161205163240.GA5783@uda0271908>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Magnus and Geert, list,
-   this patch series enable the creation of a spidev device though which
-interface to a MAXREFDES4# MAX11100-ADC evaluation kit connected to Genmai
-CON2 expansion header.
+On 2016년 12월 06일 01:32, Bin Liu wrote:
+> On Wed, Nov 30, 2016 at 09:45:03AM +0100, Maxime Ripard wrote:
+>> On Wed, Nov 30, 2016 at 02:57:35PM +0900, Chanwoo Choi wrote:
+>>> This patch just uses the resource-managed extcon API when registering
+>>> the extcon notifier.
+>>>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>
+>> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> 
+> It would be ideal if the subject was "usb: musb: sunxi: ...".
+> 
+> Acked-by: Bin Liu <b-liu@ti.com>
+> 
 
-The series is not intended for inclusion but will probably serve as base
-for future integration of MAX11100 ADC driver.
-
-The series is based on branch "genmai-gpio-and-pfc" of Geert's tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-and target Linux v3.18
-
-The series fix a compilation error for RZ gpio driver and register a
-gpio based SPI master on CON2 pins.
-
-The test bed is setup as:
-
-P11_11 (CN2 pin 5) connected as CS
-P11_10 (CN2 pin 6) connected as MISO
-P11_9  (CN2 pin 7) connected as SCLK
-P11_8  (CN2 pin 8) connected as AIN
-
-The ADC input is connected to gpio port 11 pin 8 (gpio863) and ADC
-functionalities have been tested reading the results of successive
-analog-to-digital conversions and verifying they match the gpio863
-output value.
-
-Thanks
-   j
-
-Jacopo Mondi (3):
-  gpio-rz: Port to v3.18
-  dts: arm: genmai: Add MAXDESREF4x spidev
-  spidev: Add back "linux,spidev" as compatible
-
- arch/arm/boot/dts/r7s72100-genmai.dts | 22 ++++++++++++++++++++++
- drivers/gpio/gpio-rz.c                |  3 ++-
- drivers/spi/spidev.c                  |  1 +
- 3 files changed, 25 insertions(+), 1 deletion(-)
+Thanks for the review. I'll change the subject.
 
 -- 
-2.7.4
+Best Regards,
+Chanwoo Choi
