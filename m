@@ -1,83 +1,42 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 05/22] drm: bridge: dw-hdmi: Remove encoder field from struct dw_hdmi
-Date: Fri,  2 Dec 2016 01:43:20 +0200
-Message-Id: <1480635817-1258-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34953 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751592AbcLFOBK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Dec 2016 09:01:10 -0500
+Received: by mail-io0-f195.google.com with SMTP id h133so21386493ioe.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Dec 2016 06:01:10 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1481031173-18600-3-git-send-email-horms+renesas@verge.net.au>
+References: <1481031173-18600-1-git-send-email-horms+renesas@verge.net.au> <1481031173-18600-3-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Dec 2016 15:01:09 +0100
+Message-ID: <CAMuHMdXppuXOTq_VMW3v-_hmCM=1jysEyUM_1kcNtDq2qpv0vw@mail.gmail.com>
+Subject: Re: [PATCH renesas/devel 2/2] ARM: multi_v7_defconfig: Enable
+ r8a774[35] SoCs
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The field isn't needed, remove it.
+On Tue, Dec 6, 2016 at 2:32 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 2c85b6c07a80..ef10bb866b2f 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -115,7 +115,6 @@ struct dw_hdmi_i2c {
- 
- struct dw_hdmi {
- 	struct drm_connector connector;
--	struct drm_encoder *encoder;
- 	struct drm_bridge bridge;
- 
- 	struct platform_device *audio;
-@@ -1816,9 +1815,8 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
-+static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
- {
--	struct drm_encoder *encoder = hdmi->encoder;
- 	struct drm_bridge *bridge = &hdmi->bridge;
- 	int ret;
- 
-@@ -1835,7 +1833,7 @@ static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
- 	drm_connector_helper_add(&hdmi->connector,
- 				 &dw_hdmi_connector_helper_funcs);
- 
--	drm_connector_init(drm, &hdmi->connector,
-+	drm_connector_init(encoder->dev, &hdmi->connector,
- 			   &dw_hdmi_connector_funcs,
- 			   DRM_MODE_CONNECTOR_HDMIA);
- 
-@@ -1867,7 +1865,6 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
- 	hdmi->dev = dev;
- 	hdmi->dev_type = plat_data->dev_type;
- 	hdmi->sample_rate = 48000;
--	hdmi->encoder = encoder;
- 	hdmi->disabled = true;
- 	hdmi->rxsense = true;
- 	hdmi->phy_mask = (u8)~(HDMI_PHY_HPD | HDMI_PHY_RX_SENSE);
-@@ -1980,7 +1977,7 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
- 	if (ret)
- 		goto err_iahb;
- 
--	ret = dw_hdmi_register(encoder->dev, hdmi);
-+	ret = dw_hdmi_register(encoder, hdmi);
- 	if (ret)
- 		goto err_iahb;
- 
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
