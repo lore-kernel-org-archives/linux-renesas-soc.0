@@ -1,64 +1,166 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 7 Dec 2016 04:05:27 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
-        Peter.Chen@nxp.com, wens@csie.org,
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Content-transfer-encoding: 8BIT
+Message-id: <584605A6.1010803@samsung.com>
+Date: Tue, 06 Dec 2016 09:26:14 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        sre@kernel.org
+Cc: Peter.Chen@nxp.com, wens@csie.org,
         yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
         b-liu@ti.com, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, chanwoo@kernel.org
-Subject: Re: [PATCH 03/12] power_supply: axp288_charger: Replace the extcon
- API
-Message-ID: <20161207030527.n2u4q4tf7po74clg@earth>
+Subject: Re: [PATCH 03/12] power_supply: axp288_charger: Replace the extcon API
 References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
  <CGME20161130055742epcas1p3cbb269d69275ed6684a7baab0841519b@epcas1p3.samsung.com>
  <1480485460-2663-4-git-send-email-cw00.choi@samsung.com>
- <584605A6.1010803@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="q7qlgssekejc346v"
-Content-Disposition: inline
-In-Reply-To: <584605A6.1010803@samsung.com>
+In-reply-to: <1480485460-2663-4-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Sebastian,
 
---q7qlgssekejc346v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Could you please review and pick the patch3/4 for power-supply driver?
 
-Hi Chanwoo,
+Best Regards,
+Chanwoo Choi
 
-On Tue, Dec 06, 2016 at 09:26:14AM +0900, Chanwoo Choi wrote:
-> Could you please review and pick the patch3/4 for power-supply driver?
-
-Patches look fine. As I expect the merge window to open next week I
-would rather not queue this for 4.10 and instead do it once 4.10-rc1
-has been tagged.
-
--- Sebastian
-
---q7qlgssekejc346v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlhHfHQACgkQ2O7X88g7
-+prFpxAAqP/w2pJaL/br9YQqakmUKvXOMVfsXG0PkYe9w44C9LGy9CL65bMjnU6G
-EpGF71NglC81KLJ3hiK7W4RAN/v+LhIe59TThZJR6LMpzfk7Y0Gntuy7AmueF6b4
-bJOSYcsLsXMfRjDo1bTCF8/38GWihIbI8cgAPzrfBECgbq2ZSs3EsFS4gtbUkeQU
-gDH4QEsc9upwcUfinHj4IGgK8ZE7fOeQHicPuBeYrWPtssPDLop0pPns3dnTFxYl
-yxYi6IRKmxf7blzx0smMBXHeTml+ulXFfo+4PADBUnJbpxhHq3CSRSItiURxCTVI
-KJ5pME6tcpEbmsrRsDFvzH4RvzCD924fHS0CbGDgK8n1VuehGeCEO57mobOtnddf
-i7wVTwIPVlfzXqIB91tD5egMANeOwKTSkPhJy7zmmBO8bJjREWWINGzCbI8enZsO
-CHJJDbPHqezooTzSOevGUEj39st5hlgf4eFGqpPY55+a1C+3pAuM8gPzQuc7p3Kz
-75zwNr6OtXaW4S+jd9stQARmEv8W/ulQOg9Jje0XRvL512ODbxKZtbMTN6gW+WDf
-ZM2Q18cGgFz7dvyq0kpl9dPEE3O/hqHjYwAQTEEk+U1xqyasyjoZi/GnR6Ol8uBM
-JFWB0zEehTSDcCM5tCd1ArQs/Ycomy7HR998oZeShTaX/SsDHAA=
-=LVYQ
------END PGP SIGNATURE-----
-
---q7qlgssekejc346v--
+On 2016년 11월 30일 14:57, Chanwoo Choi wrote:
+> This patch uses the resource-managed extcon API for extcon_register_notifier()
+> and replaces the deprecated extcon API as following:
+> - extcon_get_cable_state_() -> extcon_get_state()
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/power/supply/axp288_charger.c | 51 +++++++++--------------------------
+>  1 file changed, 13 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
+> index 75b8e0c7402b..1115052e9a69 100644
+> --- a/drivers/power/supply/axp288_charger.c
+> +++ b/drivers/power/supply/axp288_charger.c
+> @@ -581,15 +581,15 @@ static void axp288_charger_extcon_evt_worker(struct work_struct *work)
+>  	bool old_connected = info->cable.connected;
+>  
+>  	/* Determine cable/charger type */
+> -	if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_SDP) > 0) {
+> +	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
+>  		dev_dbg(&info->pdev->dev, "USB SDP charger  is connected");
+>  		info->cable.connected = true;
+>  		info->cable.chg_type = POWER_SUPPLY_TYPE_USB;
+> -	} else if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_CDP) > 0) {
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
+>  		dev_dbg(&info->pdev->dev, "USB CDP charger is connected");
+>  		info->cable.connected = true;
+>  		info->cable.chg_type = POWER_SUPPLY_TYPE_USB_CDP;
+> -	} else if (extcon_get_cable_state_(edev, EXTCON_CHG_USB_DCP) > 0) {
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
+>  		dev_dbg(&info->pdev->dev, "USB DCP charger is connected");
+>  		info->cable.connected = true;
+>  		info->cable.chg_type = POWER_SUPPLY_TYPE_USB_DCP;
+> @@ -686,7 +686,7 @@ static int axp288_charger_handle_otg_evt(struct notifier_block *nb,
+>  	struct axp288_chrg_info *info =
+>  	    container_of(nb, struct axp288_chrg_info, otg.id_nb);
+>  	struct extcon_dev *edev = info->otg.cable;
+> -	int usb_host = extcon_get_cable_state_(edev, EXTCON_USB_HOST);
+> +	int usb_host = extcon_get_state(edev, EXTCON_USB_HOST);
+>  
+>  	dev_dbg(&info->pdev->dev, "external connector USB-Host is %s\n",
+>  				usb_host ? "attached" : "detached");
+> @@ -841,33 +841,27 @@ static int axp288_charger_probe(struct platform_device *pdev)
+>  	/* Register for extcon notification */
+>  	INIT_WORK(&info->cable.work, axp288_charger_extcon_evt_worker);
+>  	info->cable.nb.notifier_call = axp288_charger_handle_cable_evt;
+> -	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
+> -					&info->cable.nb);
+> +	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
+> +					EXTCON_CHG_USB_SDP, &info->cable.nb);
+>  	if (ret) {
+>  		dev_err(&info->pdev->dev,
+>  			"failed to register extcon notifier for SDP %d\n", ret);
+>  		return ret;
+>  	}
+>  
+> -	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
+> -					&info->cable.nb);
+> +	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
+> +					EXTCON_CHG_USB_CDP, &info->cable.nb);
+>  	if (ret) {
+>  		dev_err(&info->pdev->dev,
+>  			"failed to register extcon notifier for CDP %d\n", ret);
+> -		extcon_unregister_notifier(info->cable.edev,
+> -				EXTCON_CHG_USB_SDP, &info->cable.nb);
+>  		return ret;
+>  	}
+>  
+> -	ret = extcon_register_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
+> -					&info->cable.nb);
+> +	ret = devm_extcon_register_notifier(&pdev->dev, info->cable.edev,
+> +					EXTCON_CHG_USB_DCP, &info->cable.nb);
+>  	if (ret) {
+>  		dev_err(&info->pdev->dev,
+>  			"failed to register extcon notifier for DCP %d\n", ret);
+> -		extcon_unregister_notifier(info->cable.edev,
+> -				EXTCON_CHG_USB_SDP, &info->cable.nb);
+> -		extcon_unregister_notifier(info->cable.edev,
+> -				EXTCON_CHG_USB_CDP, &info->cable.nb);
+>  		return ret;
+>  	}
+>  
+> @@ -887,13 +881,13 @@ static int axp288_charger_probe(struct platform_device *pdev)
+>  	/* Register for OTG notification */
+>  	INIT_WORK(&info->otg.work, axp288_charger_otg_evt_worker);
+>  	info->otg.id_nb.notifier_call = axp288_charger_handle_otg_evt;
+> -	ret = extcon_register_notifier(info->otg.cable, EXTCON_USB_HOST,
+> -				       &info->otg.id_nb);
+> +	ret = devm_extcon_register_notifier(&pdev->dev, info->otg.cable,
+> +					EXTCON_USB_HOST, &info->otg.id_nb);
+>  	if (ret)
+>  		dev_warn(&pdev->dev, "failed to register otg notifier\n");
+>  
+>  	if (info->otg.cable)
+> -		info->otg.id_short = extcon_get_cable_state_(
+> +		info->otg.id_short = extcon_get_state(
+>  					info->otg.cable, EXTCON_USB_HOST);
+>  
+>  	/* Register charger interrupts */
+> @@ -921,17 +915,8 @@ static int axp288_charger_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  intr_reg_failed:
+> -	if (info->otg.cable)
+> -		extcon_unregister_notifier(info->otg.cable, EXTCON_USB_HOST,
+> -					&info->otg.id_nb);
+>  	power_supply_unregister(info->psy_usb);
+>  psy_reg_failed:
+> -	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
+> -					&info->cable.nb);
+> -	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
+> -					&info->cable.nb);
+> -	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
+> -					&info->cable.nb);
+>  	return ret;
+>  }
+>  
+> @@ -939,16 +924,6 @@ static int axp288_charger_remove(struct platform_device *pdev)
+>  {
+>  	struct axp288_chrg_info *info =  dev_get_drvdata(&pdev->dev);
+>  
+> -	if (info->otg.cable)
+> -		extcon_unregister_notifier(info->otg.cable, EXTCON_USB_HOST,
+> -					&info->otg.id_nb);
+> -
+> -	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_SDP,
+> -					&info->cable.nb);
+> -	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_CDP,
+> -					&info->cable.nb);
+> -	extcon_unregister_notifier(info->cable.edev, EXTCON_CHG_USB_DCP,
+> -					&info->cable.nb);
+>  	power_supply_unregister(info->psy_usb);
+>  
+>  	return 0;
+> 
