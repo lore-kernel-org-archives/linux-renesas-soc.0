@@ -1,44 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57225 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbcLLIaU (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33758 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbcLGMRA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 03:30:20 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 7 Dec 2016 07:17:00 -0500
+MIME-Version: 1.0
+In-Reply-To: <1481107176-32409-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481106689-22312-1-git-send-email-horms+renesas@verge.net.au> <1481107176-32409-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 7 Dec 2016 13:16:58 +0100
+Message-ID: <CAMuHMdX0ONE9SR=av5SpfpTf7psUsEz+SNsSTooJJ91eFyHCSA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] i2c: sh_mobile: List rmobile fallback compatibility last
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: h3ulcb: Provide sd0_uhs node
-Date: Mon, 12 Dec 2016 09:30:13 +0100
-Message-Id: <8ebcb400af619ee0ddeb39c06fc35511b20cc697.1481530910.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1481530910.git.horms+renesas@verge.net.au>
-References: <cover.1481530910.git.horms+renesas@verge.net.au>
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide separaate sd0 and sd0_uhs nodes rather than duplicate sd0 nodes.
+On Wed, Dec 7, 2016 at 11:39 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Improve readability by listing the rmobile fallback compatibility string
+> after the more-specific compatibility strings they provide a fallback for.
+>
+> This does not effect run-time behaviour as it is the order in the DTB that
+> determines which compatibility string is used.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Fixes: 93373c309a70 ("arm64: dts: h3ulcb: rename SDHI0 pins")
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 6ffb0517421a..dbea2c3d8f0c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -169,7 +169,7 @@
- 		power-source = <3300>;
- 	};
- 
--	sdhi0_pins_uhs: sd0 {
-+	sdhi0_pins_uhs: sd0_uhs {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
- 		power-source = <1800>;
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
