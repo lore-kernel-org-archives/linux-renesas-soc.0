@@ -1,231 +1,70 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=KIoc=XV=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 3/4] v4l: vsp1: Use local display lists and remove global pipe->dl
-Date: Tue,  6 Dec 2016 09:35:12 +0000
-Message-Id: <1481016913-30608-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:49888 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751152AbcLGIvz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Dec 2016 03:51:55 -0500
+Date: Wed, 7 Dec 2016 09:51:51 +0100
+From: Wolfram Sang <wsa-dev@sang-engineering.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v4 5/4] thermal: rcar_gen3_thermal: restrict to 64BIT
+Message-ID: <20161207085150.GA1724@katana>
+References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+ <20161202204422.21832-1-wsa+renesas@sang-engineering.com>
+ <20161207003956.GA12562@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+Content-Disposition: inline
+In-Reply-To: <20161207003956.GA12562@localhost.localdomain>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The usage of pipe->dl is susceptible to races, and it is redundant to
-keep this pointer in a larger scoped context.
 
-Now that the calling order of vsp1_video_setup_pipeline() has been
-adapted, it is possible to remove the pipe->dl and pass the variable as
-required.
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Currently the pipe->dl is set during the atomic begin hook, but it is
-not utilised until the flush. Moving this should do no harm.
+On Tue, Dec 06, 2016 at 04:39:57PM -0800, Eduardo Valentin wrote:
+> On Fri, Dec 02, 2016 at 09:44:22PM +0100, Wolfram Sang wrote:
+> > COMPILE_TEST triggers problems on 32 bit machines, so limit this driver
+> > to 64BIT for now. This is no loss because the hardware is only available
+> > on 64 bit SoCs anyhow. After we obtained more data from the hardware
+> > engineers, we will refactor the code to be usable with COMPILE_TEST.
+> >=20
+>=20
+> Don't you want to fold this one into patch 2 and mention the limitation
+> on that patch's commit log?
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c   | 20 +++++++-------
- drivers/media/platform/vsp1/vsp1_pipe.h  |  2 --
- drivers/media/platform/vsp1/vsp1_video.c | 45 ++++++++++++++------------------
- 3 files changed, 30 insertions(+), 37 deletions(-)
+Yeah, will do with V3. Didn't want to resend before the next review.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index cd209dccff1b..bf735e85b597 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -220,9 +220,6 @@ void vsp1_du_atomic_begin(struct device *dev)
- 	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
- 
- 	vsp1->drm->num_inputs = pipe->num_inputs;
--
--	/* Prepare the display list. */
--	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
- }
- EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
- 
-@@ -426,10 +423,14 @@ void vsp1_du_atomic_flush(struct device *dev)
- 	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
- 	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
- 	struct vsp1_entity *entity;
-+	struct vsp1_dl_list *dl;
- 	unsigned long flags;
- 	unsigned int i;
- 	int ret;
- 
-+	/* Prepare the display list. */
-+	dl = vsp1_dl_list_get(pipe->output->dlm);
-+
- 	/* Count the number of enabled inputs and sort them by Z-order. */
- 	pipe->num_inputs = 0;
- 
-@@ -484,26 +485,25 @@ void vsp1_du_atomic_flush(struct device *dev)
- 			struct vsp1_rwpf *rpf = to_rwpf(&entity->subdev);
- 
- 			if (!pipe->inputs[rpf->entity.index]) {
--				vsp1_dl_list_write(pipe->dl, entity->route->reg,
-+				vsp1_dl_list_write(dl, entity->route->reg,
- 						   VI6_DPR_NODE_UNUSED);
- 				continue;
- 			}
- 		}
- 
--		vsp1_entity_route_setup(entity, pipe->dl);
-+		vsp1_entity_route_setup(entity, dl);
- 
- 		if (entity->ops->configure) {
--			entity->ops->configure(entity, pipe, pipe->dl,
-+			entity->ops->configure(entity, pipe, dl,
- 					       VSP1_ENTITY_PARAMS_INIT);
--			entity->ops->configure(entity, pipe, pipe->dl,
-+			entity->ops->configure(entity, pipe, dl,
- 					       VSP1_ENTITY_PARAMS_RUNTIME);
--			entity->ops->configure(entity, pipe, pipe->dl,
-+			entity->ops->configure(entity, pipe, dl,
- 					       VSP1_ENTITY_PARAMS_PARTITION);
- 		}
- 	}
- 
--	vsp1_dl_list_commit(pipe->dl);
--	pipe->dl = NULL;
-+	vsp1_dl_list_commit(dl);
- 
- 	/* Start or stop the pipeline if needed. */
- 	if (!vsp1->drm->num_inputs && pipe->num_inputs) {
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index 0743b9fcb655..98980c85081f 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -108,8 +108,6 @@ struct vsp1_pipeline {
- 
- 	struct list_head entities;
- 
--	struct vsp1_dl_list *dl;
--
- 	unsigned int div_size;
- 	unsigned int partitions;
- 	struct v4l2_rect partition;
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 7ff9f4c19ff0..9619ed4dda7c 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -350,18 +350,14 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
- 	pipe->buffers_ready |= 1 << video->pipe_index;
- }
- 
--static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
-+static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe,
-+				     struct vsp1_dl_list *dl)
- {
- 	struct vsp1_entity *entity;
- 
- 	/* Determine this pipelines sizes for image partitioning support. */
- 	vsp1_video_pipeline_setup_partitions(pipe);
- 
--	/* Prepare the display list. */
--	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
--	if (!pipe->dl)
--		return -ENOMEM;
--
- 	if (pipe->uds) {
- 		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
- 
-@@ -381,10 +377,10 @@ static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
- 	}
- 
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
--		vsp1_entity_route_setup(entity, pipe->dl);
-+		vsp1_entity_route_setup(entity, dl);
- 
- 		if (entity->ops->configure)
--			entity->ops->configure(entity, pipe, pipe->dl,
-+			entity->ops->configure(entity, pipe, dl,
- 					       VSP1_ENTITY_PARAMS_INIT);
- 	}
- 
-@@ -412,12 +408,16 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- {
- 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
- 	struct vsp1_entity *entity;
-+	struct vsp1_dl_list *dl;
- 
--	if (!pipe->configured)
--		vsp1_video_setup_pipeline(pipe);
-+	dl = vsp1_dl_list_get(pipe->output->dlm);
-+	if (!dl) {
-+		dev_err(vsp1->dev, "Failed to obtain a dl list\n");
-+		return;
-+	}
- 
--	if (!pipe->dl)
--		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-+	if (!pipe->configured)
-+		vsp1_video_setup_pipeline(pipe, dl);
- 
- 	/*
- 	 * Start with the runtime parameters as the configure operation can
-@@ -426,45 +426,43 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 	 */
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
- 		if (entity->ops->configure)
--			entity->ops->configure(entity, pipe, pipe->dl,
-+			entity->ops->configure(entity, pipe, dl,
- 					       VSP1_ENTITY_PARAMS_RUNTIME);
- 	}
- 
- 	/* Run the first partition */
- 	pipe->current_partition = 0;
--	vsp1_video_pipeline_run_partition(pipe, pipe->dl);
-+	vsp1_video_pipeline_run_partition(pipe, dl);
- 
- 	/* Process consecutive partitions as necessary */
- 	for (pipe->current_partition = 1;
- 	     pipe->current_partition < pipe->partitions;
- 	     pipe->current_partition++) {
--		struct vsp1_dl_list *dl;
-+		struct vsp1_dl_list *child;
- 
- 		/*
- 		 * Partition configuration operations will utilise
- 		 * the pipe->current_partition variable to determine
- 		 * the work they should complete.
- 		 */
--		dl = vsp1_dl_list_get(pipe->output->dlm);
-+		child = vsp1_dl_list_get(pipe->output->dlm);
- 
- 		/*
- 		 * An incomplete chain will still function, but output only
- 		 * the partitions that had a dl available. The frame end
- 		 * interrupt will be marked on the last dl in the chain.
- 		 */
--		if (!dl) {
-+		if (!child) {
- 			dev_err(vsp1->dev, "Failed to obtain a dl list. Frame will be incomplete\n");
- 			break;
- 		}
- 
--		vsp1_video_pipeline_run_partition(pipe, dl);
--		vsp1_dl_list_add_chain(pipe->dl, dl);
-+		vsp1_video_pipeline_run_partition(pipe, child);
-+		vsp1_dl_list_add_chain(dl, child);
- 	}
- 
- 	/* Complete, and commit the head display list. */
--	vsp1_dl_list_commit(pipe->dl);
--	pipe->dl = NULL;
--
-+	vsp1_dl_list_commit(dl);
- 	vsp1_pipeline_run(pipe);
- }
- 
-@@ -835,9 +833,6 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
- 		ret = vsp1_pipeline_stop(pipe);
- 		if (ret == -ETIMEDOUT)
- 			dev_err(video->vsp1->dev, "pipeline stop timeout\n");
--
--		vsp1_dl_list_put(pipe->dl);
--		pipe->dl = NULL;
- 	}
- 	mutex_unlock(&pipe->lock);
- 
--- 
-2.7.4
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYR82mAAoJEBQN5MwUoCm2KEEQAKdujVFlj86XUFBTQfpEEYgO
+vZldEEEcMadnFDTrPtTt4Pt9Kcs8UozQ+oDYy1uv20HZ+YteI6h0yCTgyuS3sLR3
+W/WVxc246T3QTyCZrNkswnm3tBYLXgMOqn4vgPKf5dDgge8XBPG3rBj7U9vkA3lS
+DrUwlBi7c4j1IsH3HtCOHdMRvGaJ/otnrnb4GL8E1DmX0N8e/8McSwyB/PZQfoBr
+nTVLmYsxbGJdpktrz0ByAAP1X9glO688e5R8Hs1EqBt2p3/1Bbv2H3BL2xlSmb8f
+5N3bky7KBFuAQU3k5u30jJ2Mz0prHZCUBnk6t9+FmBGxi1sDA5iTd9OABu+PUCJO
+tn9LOt6nXVLsQFfeoUP8M1Hlgu1Iwq0pbWWw/LssM11uk8cboUft8j6IScC7h4mA
+BZ3peNFphyZM0s5Jmqkb+nMFR7agtGAW2ciMAdh5QDzVd12nJeZXKUNHWgz68sXO
+ZI/orThS6TMudtCvrKf6/2t4azwct2ZIcWIxBPb3SHVvfrXcRR86g4IMXUjnjCeo
+ZvJQsqZeWt9Brt0zLhXmR6WYRXnVZs36zXvWQ3eONAecu1VSOQQc4vUl4fhpJurh
+/0j7RM2TiHqCyHwjD+mG3rJyrK4pADBBM/A0RlCKXl6WIJn7TlakQOOLAQXrztLx
+Iype87xSYku8bsEI55x5
+=61OM
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
