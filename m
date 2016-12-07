@@ -1,49 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61436 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753185AbcLUIUd (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:51912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932777AbcLGW5n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Dec 2016 03:20:33 -0500
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 1/7] media: v4l2-ctrls: Reserve controls for MAX217X
-Date: Wed, 21 Dec 2016 08:10:32 +0000
-Message-Id: <1482307838-47415-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+        Wed, 7 Dec 2016 17:57:43 -0500
+Date: Wed, 7 Dec 2016 16:57:39 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH pci/next v3 0/3] PCI: rcar, rcar-gen2: Bindings cleanups
+Message-ID: <20161207225739.GJ22129@bhelgaas-glaptop.roam.corp.google.com>
+References: <1481039491-30364-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1481039491-30364-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reserve controls for MAX217X RF to Bits tuner family. These hybrid
-radio receiver chips are highly programmable and hence reserving 32
-controls.
+On Tue, Dec 06, 2016 at 04:51:28PM +0100, Simon Horman wrote:
+> Hi,
+> 
+> this short series makes some bindings cleanups to the Renesas PCI drivers.
+> 
+> Changes v2->v3:
+> * Reworded changelogs to indicate that re-ordering struct of_device_id
+>   entries does not effect run-time behaviour
+> * Corrected compile error due to typo in symbol name
+> Changes v1->v2:
+> * re-order struct of_device_id entries
+> 
+> Simon Horman (3):
+>   PCI: rcar-gen2: Use gen2 fallback compatibility last
+>   PCI: rcar: Use gen2 fallback compatibility last
+>   PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
+> 
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
+>  drivers/pci/host/pci-rcar-gen2.c                   | 2 +-
+>  drivers/pci/host/pcie-rcar.c                       | 5 +++--
+>  3 files changed, 5 insertions(+), 3 deletions(-)
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- include/uapi/linux/v4l2-controls.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 0d2e1e0..83b28b4 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -180,6 +180,11 @@ enum v4l2_colorfx {
-  * We reserve 16 controls for this driver. */
- #define V4L2_CID_USER_TC358743_BASE		(V4L2_CID_USER_BASE + 0x1080)
- 
-+/* The base for the max217x driver controls.
-+ * We reserve 32 controls for this driver
-+ */
-+#define V4L2_CID_USER_MAX217X_BASE		(V4L2_CID_USER_BASE + 0x1090)
-+
- /* MPEG-class control IDs */
- /* The MPEG controls are applicable to all codec controls
-  * and the 'MPEG' part of the define is historical */
--- 
-1.9.1
+Applied to pci/host-rcar for v4.10, thanks!
