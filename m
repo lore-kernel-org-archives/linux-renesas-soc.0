@@ -1,92 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbcLMLqX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 06:46:23 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 renesas/devel 06/13] ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for i2c nodes
-Date: Tue, 13 Dec 2016 12:45:52 +0100
-Message-Id: <1481629559-14187-7-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Content-transfer-encoding: 8BIT
+Message-id: <584785CF.5040201@samsung.com>
+Date: Wed, 07 Dec 2016 12:45:19 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, kishon@ti.com,
+        Peter.Chen@nxp.com, wens@csie.org,
+        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
+        b-liu@ti.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, chanwoo@kernel.org
+Subject: Re: [PATCH 03/12] power_supply: axp288_charger: Replace the extcon API
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20161130055742epcas1p3cbb269d69275ed6684a7baab0841519b@epcas1p3.samsung.com>
+ <1480485460-2663-4-git-send-email-cw00.choi@samsung.com>
+ <584605A6.1010803@samsung.com> <20161207030527.n2u4q4tf7po74clg@earth>
+In-reply-to: <20161207030527.n2u4q4tf7po74clg@earth>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for i2c nodes in
-DT for r8a7793 SoC.
+Hi Sebastian,
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7793 and the
-fallback binding for R-Car Gen 2.
+On 2016년 12월 07일 12:05, Sebastian Reichel wrote:
+> Hi Chanwoo,
+> 
+> On Tue, Dec 06, 2016 at 09:26:14AM +0900, Chanwoo Choi wrote:
+>> Could you please review and pick the patch3/4 for power-supply driver?
+> 
+> Patches look fine. As I expect the merge window to open next week I
+> would rather not queue this for 4.10 and instead do it once 4.10-rc1
+> has been tagged.
+> 
+> -- Sebastian
+> 
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Thanks for your pick up.
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 84af1598e292..cbe9ac629693 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -411,7 +411,7 @@
- 	i2c0: i2c@e6508000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6508000 0 0x40>;
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C0>;
-@@ -423,7 +423,7 @@
- 	i2c1: i2c@e6518000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6518000 0 0x40>;
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C1>;
-@@ -435,7 +435,7 @@
- 	i2c2: i2c@e6530000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6530000 0 0x40>;
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C2>;
-@@ -447,7 +447,7 @@
- 	i2c3: i2c@e6540000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6540000 0 0x40>;
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C3>;
-@@ -459,7 +459,7 @@
- 	i2c4: i2c@e6520000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6520000 0 0x40>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C4>;
-@@ -472,7 +472,7 @@
- 		/* doesn't need pinmux */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6528000 0 0x40>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C5>;
 -- 
-2.7.0.rc3.207.g0ac5344
+Best Regards,
+Chanwoo Choi
