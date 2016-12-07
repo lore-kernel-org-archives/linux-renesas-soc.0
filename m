@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36352 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36033 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbcLGKxg (ORCPT
+        with ESMTP id S1752419AbcLGKmg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Dec 2016 05:53:36 -0500
-Date: Wed, 7 Dec 2016 11:53:28 +0100
+        Wed, 7 Dec 2016 05:42:36 -0500
+Date: Wed, 7 Dec 2016 11:41:36 +0100
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: kbuild test robot <fengguang.wu@intel.com>,
@@ -14,44 +14,38 @@ Cc: kbuild test robot <fengguang.wu@intel.com>,
 Subject: Re: [renesas:soc-for-v4.11 3/8] make[4]: *** No rule to make target
  'drivers/soc/renesas/renesas-soc.o', needed by
  'drivers/soc/renesas/built-in.o'.
-Message-ID: <20161207105327.GB29752@verge.net.au>
+Message-ID: <20161207104133.GA31892@verge.net.au>
 References: <201612071706.S7KfGDNg%fengguang.wu@intel.com>
  <CAMuHMdXYeJOPscg1qgwTLOiw4GD=J=X+PWRO9YSbsd-O4Eo=AQ@mail.gmail.com>
- <20161207104133.GA31892@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20161207104133.GA31892@verge.net.au>
+In-Reply-To: <CAMuHMdXYeJOPscg1qgwTLOiw4GD=J=X+PWRO9YSbsd-O4Eo=AQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 07, 2016 at 11:41:36AM +0100, Simon Horman wrote:
-> On Wed, Dec 07, 2016 at 10:38:28AM +0100, Geert Uytterhoeven wrote:
-> > On Wed, Dec 7, 2016 at 10:28 AM, kbuild test robot
-> > <fengguang.wu@intel.com> wrote:
-> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git soc-for-v4.11
-> > > head:   d22b40a6a05125debadedf78d35ce172e92b96f5
-> > > commit: 68122e60d3a6d1e7e312909108b8459489393894 [3/8] Merge branch 'rcar-rst' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into soc-for-v4.11
-> > > config: arm-allmodconfig (attached as .config)
-> > > compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
-> > > reproduce:
-> > >         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
-> > >         chmod +x ~/bin/make.cross
-> > >         git checkout 68122e60d3a6d1e7e312909108b8459489393894
-> > >         # save the attached .config to linux build tree
-> > >         make.cross ARCH=arm
-> > >
-> > > All errors (new ones prefixed by >>):
-> > >
-> > >>> make[4]: *** No rule to make target 'drivers/soc/renesas/renesas-soc.o', needed by 'drivers/soc/renesas/built-in.o'.
-> > >    make[4]: Target '__build' not remade because of errors.
-> > 
-> > That seems to be an incorrect merge conflict resolution in the above commit.
-> > drivers/soc/renesas/renesas-soc.c does not exist there, so the line to build
-> > it should not have been added to the Makefile.
+On Wed, Dec 07, 2016 at 10:38:28AM +0100, Geert Uytterhoeven wrote:
+> On Wed, Dec 7, 2016 at 10:28 AM, kbuild test robot
+> <fengguang.wu@intel.com> wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git soc-for-v4.11
+> > head:   d22b40a6a05125debadedf78d35ce172e92b96f5
+> > commit: 68122e60d3a6d1e7e312909108b8459489393894 [3/8] Merge branch 'rcar-rst' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into soc-for-v4.11
+> > config: arm-allmodconfig (attached as .config)
+> > compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
+> > reproduce:
+> >         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout 68122e60d3a6d1e7e312909108b8459489393894
+> >         # save the attached .config to linux build tree
+> >         make.cross ARCH=arm
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >>> make[4]: *** No rule to make target 'drivers/soc/renesas/renesas-soc.o', needed by 'drivers/soc/renesas/built-in.o'.
+> >    make[4]: Target '__build' not remade because of errors.
 > 
-> Thanks, I am looking into this.
+> That seems to be an incorrect merge conflict resolution in the above commit.
+> drivers/soc/renesas/renesas-soc.c does not exist there, so the line to build
+> it should not have been added to the Makefile.
 
-Should be fixed in renesas-devel-20161207-v4.9-rc8
-
-Happy 7th!
+Thanks, I am looking into this.
