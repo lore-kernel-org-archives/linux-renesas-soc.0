@@ -1,48 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43941 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753677AbcLAIsF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 03:48:05 -0500
-Date: Thu, 1 Dec 2016 09:47:58 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, arm@kernel.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Match Updates for v4.10
-Message-ID: <20161201084758.GC18042@verge.net.au>
-References: <cover.1479928995.git.horms+renesas@verge.net.au>
- <6791283.iMDbrK21lt@wuerfel>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, Andy Yan <andy.yan@rock-chips.com>, Archit Taneja <architt@codeaurora.org>, Fabio Estevam <fabio.estevam@freescale.com>, Heiko Stuebner <heiko@sntech.de>, Jose Abreu <Jose.Abreu@synopsys.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <rmk+kernel@arm.linux.org.uk>, Ulrich Hecht <ulrich.hecht@gmail.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 14/22] dt-bindings: display: dw-hdmi: Clean up DT bindings documentation
+Date: Wed, 07 Dec 2016 11:53:50 +0200
+Message-ID: <3719786.y6Dc2uNlMe@avalon>
+In-Reply-To: <20161206211550.oprrw3m76locagfo@rob-hp-laptop>
+References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1480635817-1258-15-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161206211550.oprrw3m76locagfo@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6791283.iMDbrK21lt@wuerfel>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 30, 2016 at 04:50:20PM +0100, Arnd Bergmann wrote:
-> On Wednesday, November 23, 2016 9:13:31 PM CET Simon Horman wrote:
-> > This pull request is based on the pull request "soc_device_match()
-> > interface for matching against soc_bus attributes" sent by Geert
-> > Uytterhoeven which corresponds to the soc-device-match-tag1 tag in his
-> > renesas-driver's tree. It provides infrastructure used by changes in this
-> > pull request.
-> > 
-> > This pull request is broken out of an earlier pull request,
-> > "Second Round of Renesas ARM Based SoC Drivers Updates for v4.10".
-> > The motivation for breaking up the pull request is to provide
-> > branches with minimal dependencies.
-> > 
-> > This pull request is targeted at the next/drivers branch of the arm-soc tree.
-> > 
-> > It introduces some minor merge conflicts in drivers/soc/renesas/Makefile.
-> > The resolution is to take both sides.  A sample merge resolution is
-> > provided in the renesas-next-20161123v2-v4.9-rc1 tag of the renesas tree.
-> > 
-> 
-> Pulled into next/drivers, thanks!
+Hi Rob,
 
-Thanks for pulling this and other outstanding pull requests from Geert and
-myself. I don't think we have anything more outstanding at this time.
+On Tuesday 06 Dec 2016 15:15:50 Rob Herring wrote:
+> On Fri, Dec 02, 2016 at 01:43:29AM +0200, Laurent Pinchart wrote:
+> > Make it clear that the core bridge/dw_hdmi.txt document isn't a device
+> > tree binding by itself but is meant to be referenced by platform device
+> > tree bindings, and update the Rockchip and Freescale DWC HDMI TX
+> > bindings to reference it.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  .../devicetree/bindings/display/bridge/dw_hdmi.txt | 85 +++++++----------
+> >  .../devicetree/bindings/display/imx/hdmi.txt       | 51 +++++++------
+> >  .../bindings/display/rockchip/dw_hdmi-rockchip.txt | 43 +++++++----
+> >  3 files changed, 91 insertions(+), 88 deletions(-)
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
+> Really, the ddc-i2c-bus prop needs to move to a connector node, but
+> that's a separate problem.
+
+I fully agree. One step at a time though :-)
+
+> We might also want to drop the 'ddc-' part and have a generic way to refer
+> to an i2c bus. There's a couple of other cases.
+
+Right, but a DT node might need to refer to multiple I2C buses (probably not 
+for connectors though). The ddc- prefix serves a similar purpose than the 
+power supply or GPIO name in the *-supply or *-gpios properties.
+
+-- 
+Regards,
+
+Laurent Pinchart
