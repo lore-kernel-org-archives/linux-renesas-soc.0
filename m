@@ -1,45 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33758 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751572AbcLGMRA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Dec 2016 07:17:00 -0500
-MIME-Version: 1.0
-In-Reply-To: <1481107176-32409-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481106689-22312-1-git-send-email-horms+renesas@verge.net.au> <1481107176-32409-1-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 Dec 2016 13:16:58 +0100
-Message-ID: <CAMuHMdX0ONE9SR=av5SpfpTf7psUsEz+SNsSTooJJ91eFyHCSA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] i2c: sh_mobile: List rmobile fallback compatibility last
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] i2c: sh_mobile: List rmobile fallback compatibility last
+Date: Wed,  7 Dec 2016 11:39:36 +0100
+Message-Id: <1481107176-32409-1-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481106689-22312-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481106689-22312-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 7, 2016 at 11:39 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Improve readability by listing the rmobile fallback compatibility string
-> after the more-specific compatibility strings they provide a fallback for.
->
-> This does not effect run-time behaviour as it is the order in the DTB that
-> determines which compatibility string is used.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Improve readability by listing the rmobile fallback compatibility string
+after the more-specific compatibility strings they provide a fallback for.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This does not effect run-time behaviour as it is the order in the DTB that
+determines which compatibility string is used.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/i2c/busses/i2c-sh_mobile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 192f36f00e4d..6335ad35902d 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -827,7 +827,6 @@ static const struct sh_mobile_dt_config r8a7740_dt_config = {
+ };
+ 
+ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
+-	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
+ 	{ .compatible = "renesas,iic-r8a73a4", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,iic-r8a7740", .data = &r8a7740_dt_config },
+ 	{ .compatible = "renesas,iic-r8a7790", .data = &fast_clock_dt_config },
+@@ -837,6 +836,7 @@ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
+ 	{ .compatible = "renesas,iic-r8a7794", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,iic-r8a7795", .data = &fast_clock_dt_config },
+ 	{ .compatible = "renesas,iic-sh73a0", .data = &fast_clock_dt_config },
++	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, sh_mobile_i2c_dt_ids);
+-- 
+2.7.0.rc3.207.g0ac5344
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
