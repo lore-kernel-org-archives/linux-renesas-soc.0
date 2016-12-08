@@ -1,148 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:33233 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752223AbcLJVZq (ORCPT
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:36106 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932777AbcLHQ3V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 10 Dec 2016 16:25:46 -0500
-Received: by mail-lf0-f51.google.com with SMTP id c13so22096575lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 10 Dec 2016 13:25:45 -0800 (PST)
+        Thu, 8 Dec 2016 11:29:21 -0500
+Received: by mail-wm0-f49.google.com with SMTP id g23so225068158wme.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Dec 2016 08:29:19 -0800 (PST)
 Subject: Re: [PATCH] sh_eth: add wake-on-lan support via magic packet
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20161207162843.4731-1-niklas.soderlund+renesas@ragnatech.se>
  <59a1f246-9062-20e1-3f85-a1c5f6fcfc29@cogentembedded.com>
- <20161208145635.GH21834@bigcity.dyn.berto.se>
-Cc: Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b0bc6386-45ba-2205-6cd4-dce9a1529124@cogentembedded.com>
-Date: Sun, 11 Dec 2016 00:25:41 +0300
+Message-ID: <22cd572b-b241-3d5e-0cfe-c4a2c7d0ebd0@cogentembedded.com>
+Date: Thu, 8 Dec 2016 19:29:17 +0300
 MIME-Version: 1.0
-In-Reply-To: <20161208145635.GH21834@bigcity.dyn.berto.se>
+In-Reply-To: <59a1f246-9062-20e1-3f85-a1c5f6fcfc29@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On 12/08/2016 03:28 PM, Sergei Shtylyov wrote:
 
-On 12/08/2016 05:56 PM, Niklas Söderlund wrote:
+>    Good to see that somebody cares still about this driver, one more task off
+> my back. :-)
+>
+> On 12/07/2016 07:28 PM, Niklas Söderlund wrote:
+>
+>   You only enable the WOL support fo the R-Car gen2 chips but never say that
+> explicitly, neither in the subject nor here.
 
->>   You only enable the WOL support fo the R-Car gen2 chips but never say that
->> explicitly, neither in the subject nor here.
->>
->>> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->>> ---
->>>  drivers/net/ethernet/renesas/sh_eth.c | 120 +++++++++++++++++++++++++++++++---
->>>  drivers/net/ethernet/renesas/sh_eth.h |   4 ++
->>>  2 files changed, 116 insertions(+), 8 deletions(-)
->>
->>> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
->>> index 05b0dc5..3974046 100644
->>> --- a/drivers/net/ethernet/renesas/sh_eth.c
->>> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+    Some patch description wouldn't hurt here, especially with the way you 
+implemented this support, e.g. RPM vs clk API -- that needs some explanation...
+
+>> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>> ---
+>>  drivers/net/ethernet/renesas/sh_eth.c | 120 +++++++++++++++++++++++++++++++---
+>>  drivers/net/ethernet/renesas/sh_eth.h |   4 ++
+>>  2 files changed, 116 insertions(+), 8 deletions(-)
+
+>> diff --git a/drivers/net/ethernet/renesas/sh_eth.c
+>> b/drivers/net/ethernet/renesas/sh_eth.c
+>> index 05b0dc5..3974046 100644
+>> --- a/drivers/net/ethernet/renesas/sh_eth.c
+>> +++ b/drivers/net/ethernet/renesas/sh_eth.c
 [...]
->>> @@ -1657,6 +1658,10 @@ static irqreturn_t sh_eth_interrupt(int irq, void *netdev)
->>>  		goto out;
->>>
->>>  	if (!likely(mdp->irq_enabled)) {
->>
->>    Oops, I guess unlikely(!mdp->irq_enabled) was meant here...
+>> diff --git a/drivers/net/ethernet/renesas/sh_eth.h
+>> b/drivers/net/ethernet/renesas/sh_eth.h
+>> index d050f37..26c6620 100644
+>> --- a/drivers/net/ethernet/renesas/sh_eth.h
+>> +++ b/drivers/net/ethernet/renesas/sh_eth.h
+>> @@ -493,6 +493,7 @@ struct sh_eth_cpu_data {
+>>      unsigned shift_rd0:1;    /* shift Rx descriptor word 0 right by 16 */
+>>      unsigned rmiimode:1;    /* EtherC has RMIIMODE register */
+>>      unsigned rtrate:1;    /* EtherC has RTRATE register */
+>> +    unsigned magic:1;    /* EtherC have PMDE in ECMR and MPDIP in ECSIPR */
 >
-> I can correct this in a separate patch if you wish.
+>    OK, e.g. RZ/A1 doesn't have these bits...
 
-    I'll look into this myself, I think.
+    However, I'd prefer that the comment be reworded as such:
 
->> +		/* Handle MagicPacket interrupt */
->> +		if (sh_eth_read(ndev, ECSR) & ECSR_MPD)
+/* EtherC has ECMR.PMDE and ECSR.MPD */
 
-    What if it wasn't enabled ATM?
+or
 
-[...]
->>> @@ -3111,6 +3150,10 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
->>>  	if (ret)
->>>  		goto out_napi_del;
->>>
->>> +	mdp->wol_enabled = false;
->>
->>    No need, the '*mdp' was kzalloc'ed.
->
-> OK, i prefer to explicitly set for easier reading of the code. But if
-> you wish I will remove this in v2.
-
-    Yes, remove it please.
-
->>> @@ -3150,15 +3193,71 @@ static int sh_eth_drv_remove(struct platform_device *pdev)
->>>
->>>  #ifdef CONFIG_PM
->>>  #ifdef CONFIG_PM_SLEEP
->>> +static int sh_eth_wol_setup(struct net_device *ndev)
->>> +{
->>> +	struct sh_eth_private *mdp = netdev_priv(ndev);
->>> +
->>> +	/* Only allow ECI interrupts */
->>> +	mdp->irq_enabled = false;
->>
->>    Why 'false' if you enable IRQs below?
->
-> I mask all interrupts except MagicPacket (ECSIPR_MPDIP) interrupts form
-> the ECI (DMAC_M_ECI) and by setting irq_enabled to false the interrupt
-> handler will only ack any residue interrupt.
-
-    I don't see where it ack's anything, it just clears EESIPR and returns in 
-this case.
-
-> This is how it's done in
-> other parts of the driver when disabling interrupts.
-
-    Not in all parts of the driver that disable EESIPR interrupts... I must 
-confess that I never liked that 'mdp->irq_enabled' flag and still suspect we 
-can get things done without it... I need to look at this code again, sigh...
-
-> This is also why I only check for MagicPacket interrupts if irq_enabled
-> is false.
-
-   I would have preferred that this was done with the other EMAC interrupts, 
-in sh_eth_error().
-
->>> +	synchronize_irq(ndev->irq);
->>> +	napi_disable(&mdp->napi);
->>> +	sh_eth_write(ndev, DMAC_M_ECI, EESIPR);
->>> +
->>> +	/* Enable ECI MagicPacket interrupt */
->>> +	sh_eth_write(ndev, ECSIPR_MPDIP, ECSIPR);
-
-    I'd prefer if it was always enabled via 'ecsipr_value'.
-
->>> +
->>> +	/* Enable MagicPacket */
->>> +	sh_eth_modify(ndev, ECMR, 0, ECMR_PMDE);
->>> +
->>> +	/* Increased clock usage so device won't be suspended */
->>> +	clk_enable(mdp->clk);
->>
->>    Hum, intermixiggn runtime PM with clock API doesn't look good...
->
-> I agree it looks weird but I need a way to increment the usage count for
-> the clock otherwise the PM code will disable the module clock and WoL
-> will not work.
-
-    How will it do it if you don't call sh_eth_close() in this case?
-
-> Note that this call will not enable the clock just
-> increase the usage count so it won't be disabled when the PM code
-> decrease it after the sh_eth suspend function is run.
-
-    You mean that the PM code calls RPM or clk API on its own? That's strange...
-
-> If you know of a different way of ensuring that the clock is not turned
-> off I be happy to look at it. I did some investigation into this and
-> calling clk_enable() directly is for example what happens in the
-> enable_irq_wake() call path to ensure the clock for the irq_chip is not
-> turned off if it is a wakeup source, se for example
-> gpio_rcar_irq_set_wake() in drivers/gpio/gpio-rcar.c.
-
-    Thanks, will look into it...
-
-[...]
+/* EtherC has ECMR_PMDE and ECSR_MPD */
 
 MBR, Sergei
