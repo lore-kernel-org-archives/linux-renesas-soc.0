@@ -1,63 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52503 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:36141 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752847AbcLLOUQ (ORCPT
+        with ESMTP id S1750838AbcLHRdU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 09:20:16 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thu, 8 Dec 2016 12:33:20 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv5 5/5] thermal: rcar_gen3_thermal: Add delay in .thermal_init on r8a7795
-Date: Mon, 12 Dec 2016 15:18:05 +0100
-Message-Id: <20161212141805.14946-6-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
-References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+Subject: [PATCH 0/2] gpio: rcar: (re)add Runtime PM support
+Date: Thu,  8 Dec 2016 18:32:26 +0100
+Message-Id: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi all,
 
-The .thermal_init needs to be delayed a short amount of time after
-setting REG_GEN3_CTSR to allow for the TEMP register to contain
-something useful. If it's not delayed theses warnings are common during
-boot:
+This series (re)adds Runtime PM support which was reverted by:
 
-thermal thermal_zone0: failed to read out thermal zone (-5)
-thermal thermal_zone1: failed to read out thermal zone (-5)
-thermal thermal_zone2: failed to read out thermal zone (-5)
+commit 42c25013ca95ce79 ('Revert "gpio: rcar: Add Runtime PM handling for interrupts"')
+commit ce0e2c60e69e5f87 ('Revert "gpio: rcar: Fine-grained Runtime PM support"')
 
-The warnings are triggered by the first call to .get_temp while the TEMP
-register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO since
-a TEMP value of 0 will result in a temperature reading which is out of
-specifications.
+The reason it was reverted was that 'Runtime PM handling for interrupts'
+could triggering a BUG() in linux/drivers/base/power/runtime.c 'BUG: 
+sleeping function called from invalid context', see [1]. Since then Jon 
+Hunter have solved this in a generic way in:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/thermal/rcar_gen3_thermal.c | 2 ++
- 1 file changed, 2 insertions(+)
+commit be45beb2df6909d4 ("genirq: Add runtime power management support for IRQ chips")
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 7d78498..085daec 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -199,6 +199,8 @@ static void r8a7795_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
- 				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN |
- 				CTSR_VMST | CTSR_THSST);
-+
-+	usleep_range(1000, 2000);
- }
- 
- static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+Patch 1/2 make use of Jons work to make sure proper PM handling when an 
+GPIO is requested as an interrupt and patch 2/2 is just a resurrection 
+of Geerts original patch with small fixups to catch up with changes to 
+the driver.
+
+I have tested the series on Koelsch and Salvator-X H3 and can in in 
+sysfs observe that only GPIO blocks which are used are powered on.  
+Requesting a GPIO from a powered down block will power it on and 
+releasing it will power it off.
+
+To test that patch 1/2 works as expected I have done tests on Salvator-X 
+where the EtherAVB will not work with patch 2/2 applied, which moves 
+pm_runtime_get_sync() from probe time to gpio_rcar_request(). Whit that 
+move the GPIO block used by EtherAVB will not be powered on unless done 
+so when the interrupt is requested, which we add support for in 1/2.
+
+I'm not sure on how to best resurrect a patch which have been reverted, 
+I dropped all Signed-off-by lines except Geerts as he is the author and 
+added my own Signed-off-by since I'm resending it. Hope this is OK, if 
+not please let me know.
+
+1. https://www.spinics.net/lists/linux-renesas-soc/msg02710.html
+
+Geert Uytterhoeven (1):
+  gpio: rcar: Fine-grained Runtime PM support
+
+Niklas Söderlund (1):
+  gpio: rcar: set IRQ chip parent_device
+
+ drivers/gpio/gpio-rcar.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
 -- 
 2.10.2
