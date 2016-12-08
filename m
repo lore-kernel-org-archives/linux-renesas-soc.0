@@ -1,273 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:36832 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932265AbcLHO4i (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60801 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751487AbcLHNWw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 09:56:38 -0500
-Received: by mail-wm0-f43.google.com with SMTP id g23so220894906wme.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Dec 2016 06:56:38 -0800 (PST)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Thu, 8 Dec 2016 15:56:35 +0100
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        Thu, 8 Dec 2016 08:22:52 -0500
+Date: Thu, 8 Dec 2016 14:22:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH] sh_eth: add wake-on-lan support via magic packet
-Message-ID: <20161208145635.GH21834@bigcity.dyn.berto.se>
+Message-ID: <20161208132241.GA7150@verge.net.au>
 References: <20161207162843.4731-1-niklas.soderlund+renesas@ragnatech.se>
- <59a1f246-9062-20e1-3f85-a1c5f6fcfc29@cogentembedded.com>
+ <CAMuHMdVK1DtJMajqD-eZ82QSP2ZRozwaR4zNc0ae1YT21Exq0w@mail.gmail.com>
+ <20161208071620.GG21834@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <59a1f246-9062-20e1-3f85-a1c5f6fcfc29@cogentembedded.com>
+In-Reply-To: <20161208071620.GG21834@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
-
-Thanks for your feedback.
-
-On 2016-12-08 15:28:48 +0300, Sergei Shtylyov wrote:
-> Hello!
+On do, dec 08, 2016 at 08:16:20 +0100, Niklas Söderlund wrote:
+> Hi Geert,
 > 
->    Good to see that somebody cares still about this driver, one more task
-> off my back. :-)
+> Thanks for testing and your feedback.
 > 
-> On 12/07/2016 07:28 PM, Niklas S�derlund wrote:
-> 
->   You only enable the WOL support fo the R-Car gen2 chips but never say that
-> explicitly, neither in the subject nor here.
-> 
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  drivers/net/ethernet/renesas/sh_eth.c | 120 +++++++++++++++++++++++++++++++---
-> >  drivers/net/ethernet/renesas/sh_eth.h |   4 ++
-> >  2 files changed, 116 insertions(+), 8 deletions(-)
-> 
-> > diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-> > index 05b0dc5..3974046 100644
-> > --- a/drivers/net/ethernet/renesas/sh_eth.c
-> > +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> > @@ -624,7 +624,7 @@ static struct sh_eth_cpu_data r8a779x_data = {
+> On 2016-12-07 19:14:40 +0100, Geert Uytterhoeven wrote:
+> > Hi Niklas,
 > > 
-> >  	.register_type	= SH_ETH_REG_FAST_RCAR,
+> > On Wed, Dec 7, 2016 at 5:28 PM, Niklas Söderlund
+> > <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > > 
-> > -	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
-> > +	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD | ECSR_MPD,
-> >  	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
-> >  	.eesipr_value	= 0x01ff009f,
+> > Thanks, works fine on r8a7791/koelsch!
 > > 
-> > @@ -641,6 +641,7 @@ static struct sh_eth_cpu_data r8a779x_data = {
-> >  	.tpauser	= 1,
-> >  	.hw_swap	= 1,
-> >  	.rmiimode	= 1,
-> > +	.magic		= 1,
-> >  };
-> >  #endif /* CONFIG_OF */
-> 
->    So I suggest that you add the general WOL support code in the 1st patch
-> and enable the new feature per SoC family in the follow up patches.
-
-Ok I will split this up in v2.
-
-> 
-> > @@ -1657,6 +1658,10 @@ static irqreturn_t sh_eth_interrupt(int irq, void *netdev)
-> >  		goto out;
+> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > > 
-> >  	if (!likely(mdp->irq_enabled)) {
-> 
->    Oops, I guess unlikely(!mdp->irq_enabled) was meant here...
-
-I can correct this in a separate patch if you wish.
-
-> 
-> > +		/* Handle MagicPacket interrupt */
-> > +		if (sh_eth_read(ndev, ECSR) & ECSR_MPD)
-> 
->    Why do it here?
-
-See bellow.
-
-> 
-> > +			sh_eth_modify(ndev, ECSR, 0, ECSR_MPD);
-> > +
-> >  		sh_eth_write(ndev, 0, EESIPR);
-> >  		goto out;
-> >  	}
-> [...]
-> > @@ -3017,6 +3051,11 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
-> >  		goto out_release;
-> >  	}
+> > > --- a/drivers/net/ethernet/renesas/sh_eth.c
+> > > +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> > > @@ -624,7 +624,7 @@ static struct sh_eth_cpu_data r8a779x_data = {
+> > >
+> > >         .register_type  = SH_ETH_REG_FAST_RCAR,
+> > >
+> > > -       .ecsr_value     = ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
+> > > +       .ecsr_value     = ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD | ECSR_MPD,
 > > 
-> > +	/* Get clock, if not found that's OK but Wake-On-Lan is unavailable */
-> > +	mdp->clk = devm_clk_get(&pdev->dev, NULL);
+> > Interestingly, the ECSR_MPD bit is already set for several SoCs.
 > 
->    Luckily, we have <linux/clk.h> #include'd...
+> Yes, I noticed that and my assumption was that it was set 'just in case' 
+> to clear any MagicPacket interrupts at probe time.
 > 
-> > +	if (IS_ERR(mdp->clk))
-> > +		mdp->clk = NULL;
-> > +
-> >  	ndev->base_addr = res->start;
 > > 
-> >  	spin_lock_init(&mdp->lock);
-> > @@ -3111,6 +3150,10 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
-> >  	if (ret)
-> >  		goto out_napi_del;
+> > Hence adding ".magic = 1" to the entry for r8a7740 instantly gave me working
+> > WoL support on r8a7740/armadillo. Cool!
+> 
+> Cool, I will set ".magic = 1" for r8a7740 in v2.
+> 
 > > 
-> > +	mdp->wol_enabled = false;
-> 
->    No need, the '*mdp' was kzalloc'ed.
-
-OK, i prefer to explicitly set for easier reading of the code. But if 
-you wish I will remove this in v2.
-
-> 
-> > +	if (mdp->cd->magic && mdp->clk)
-> > +		device_set_wakeup_capable(&pdev->dev, 1);
-> > +
-> >  	/* print device information */
-> >  	netdev_info(ndev, "Base address at 0x%x, %pM, IRQ %d.\n",
-> >  		    (u32)ndev->base_addr, ndev->dev_addr, ndev->irq);
-> > @@ -3150,15 +3193,71 @@ static int sh_eth_drv_remove(struct platform_device *pdev)
+> > > --- a/drivers/net/ethernet/renesas/sh_eth.h
+> > > +++ b/drivers/net/ethernet/renesas/sh_eth.h
+> > > @@ -493,6 +493,7 @@ struct sh_eth_cpu_data {
+> > >         unsigned shift_rd0:1;   /* shift Rx descriptor word 0 right by 16 */
+> > >         unsigned rmiimode:1;    /* EtherC has RMIIMODE register */
+> > >         unsigned rtrate:1;      /* EtherC has RTRATE register */
+> > > +       unsigned magic:1;       /* EtherC have PMDE in ECMR and MPDIP in ECSIPR */
 > > 
-> >  #ifdef CONFIG_PM
-> >  #ifdef CONFIG_PM_SLEEP
-> > +static int sh_eth_wol_setup(struct net_device *ndev)
-> > +{
-> > +	struct sh_eth_private *mdp = netdev_priv(ndev);
-> > +
-> > +	/* Only allow ECI interrupts */
-> > +	mdp->irq_enabled = false;
+> > Instead of adding a new flag, perhaps you can just check for the ECSR_MPD flag
+> > in ecsr_value?
 > 
->    Why 'false' if you enable IRQs below?
-
-I mask all interrupts except MagicPacket (ECSIPR_MPDIP) interrupts form 
-the ECI (DMAC_M_ECI) and by setting irq_enabled to false the interrupt 
-handler will only ack any residue interrupt. This is how it's done in 
-other parts of the driver when disabling interrupts.
-
-This is also why I only check for MagicPacket interrupts if irq_enabled 
-is false.
-
+> I briefly considered this but decided against it since I do not have 
+> documentation for all versions of the device and no way to test it. You 
+> tested and confirmed functionality on r8a7740, which leaves:
 > 
-> > +	synchronize_irq(ndev->irq);
-> > +	napi_disable(&mdp->napi);
-> > +	sh_eth_write(ndev, DMAC_M_ECI, EESIPR);
-> > +
-> > +	/* Enable ECI MagicPacket interrupt */
-> > +	sh_eth_write(ndev, ECSIPR_MPDIP, ECSIPR);
-> > +
-> > +	/* Enable MagicPacket */
-> > +	sh_eth_modify(ndev, ECMR, 0, ECMR_PMDE);
-> > +
-> > +	/* Increased clock usage so device won't be suspended */
-> > +	clk_enable(mdp->clk);
+> - sh7734-gether
+> - sh7763-gether
+> - sh7757-gether
 > 
->    Hum, intermixiggn runtime PM with clock API doesn't look good...
+> To figure out if they support MagicPacket in the same fashion as r8a7740 
+> and r8a779x. If anyone have access to documentation or hardware to 
+> confirm this I be more then happy to get rid of the magic flag in favor 
+> och checking for ECSR_MPD in ecsr_value.
 
-I agree it looks weird but I need a way to increment the usage count for 
-the clock otherwise the PM code will disable the module clock and WoL 
-will not work. Note that this call will not enable the clock just 
-increase the usage count so it won't be disabled when the PM code 
-decrease it after the sh_eth suspend function is run.
+Perhaps documentation can be found but if not I wonder if we can use some
+other mechanism to blacklist SoC which we are unsure about.
 
-If you know of a different way of ensuring that the clock is not turned 
-off I be happy to look at it. I did some investigation into this and 
-calling clk_enable() directly is for example what happens in the 
-enable_irq_wake() call path to ensure the clock for the irq_chip is not 
-turned off if it is a wakeup source, se for example 
-gpio_rcar_irq_set_wake() in drivers/gpio/gpio-rcar.c.
+>From my POV it would be very nice if things just worked™ on SoCs where
+the feature has been verified.
 
-> 
-> > +
-> > +	return enable_irq_wake(ndev->irq);
-> > +}
-> > +
-> > +static int sh_eth_wol_restore(struct net_device *ndev)
-> > +{
-> > +	struct sh_eth_private *mdp = netdev_priv(ndev);
-> > +	int ret;
-> > +
-> > +	napi_enable(&mdp->napi);
-> > +
-> > +	/* Disable MagicPacket */
-> > +	sh_eth_modify(ndev, ECMR, ECMR_PMDE, 0);
-> > +
-> > +	/* The device need to be reset to restore MagicPacket logic
-> > +	 * for next wakeup. If we close and open the device it will
-> > +	 * both be reset and all registers restored. This is what
-> > +	 * happens during suspend and resume without WoL enabled.
-> > +	 */
-> > +	ret = sh_eth_close(ndev);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	ret = sh_eth_open(ndev);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	/* Restore clock usage count */
-> > +	clk_disable(mdp->clk);
-> 
->    Hm... and RPM will think the clock is still enabled?
-> Why disable the clock here anyway if we're resuming?
-
-This call is needed to decrease the usage count for the clock we 
-increased with clk_enable() in the suspend path.
-
-> 
-> > +
-> > +	return disable_irq_wake(ndev->irq);
-> > +}
-> > +
-> [...]
-> > @@ -3166,14 +3265,19 @@ static int sh_eth_suspend(struct device *dev)
-> >  static int sh_eth_resume(struct device *dev)
-> >  {
-> >  	struct net_device *ndev = dev_get_drvdata(dev);
-> > +	struct sh_eth_private *mdp = netdev_priv(ndev);
-> >  	int ret = 0;
+> > > @@ -529,6 +530,9 @@ struct sh_eth_private {
+> > >         unsigned no_ether_link:1;
+> > >         unsigned ether_link_active_low:1;
+> > >         unsigned is_opened:1;
+> > > +
+> > > +       bool wol_enabled;
 > > 
-> > -	if (netif_running(ndev)) {
-> > +	if (!netif_running(ndev))
-> > +		return 0;
-> > +
-> > +	if (mdp->wol_enabled)
-> > +		ret = sh_eth_wol_restore(ndev);
-> > +	else
-> >  		ret = sh_eth_open(ndev);
-> > -		if (ret < 0)
-> > -			return ret;
-> > +
-> > +	if (!ret)
+> > "unsigned wol_enabled:1", to merge with the bitfield above?
 > 
->    Please keep the original error return logic, so that you can return 0 at
-> the end...
-
-Will fix for v2.
-
+> Thanks, looking it it now I don't know what I was thinking. I will 
+> changes it for v2.
 > 
-> >  		netif_device_attach(ndev);
-> > -	}
 > > 
-> >  	return ret;
-> >  }
-> > diff --git a/drivers/net/ethernet/renesas/sh_eth.h b/drivers/net/ethernet/renesas/sh_eth.h
-> > index d050f37..26c6620 100644
-> > --- a/drivers/net/ethernet/renesas/sh_eth.h
-> > +++ b/drivers/net/ethernet/renesas/sh_eth.h
-> > @@ -493,6 +493,7 @@ struct sh_eth_cpu_data {
-> >  	unsigned shift_rd0:1;	/* shift Rx descriptor word 0 right by 16 */
-> >  	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
-> >  	unsigned rtrate:1;	/* EtherC has RTRATE register */
-> > +	unsigned magic:1;	/* EtherC have PMDE in ECMR and MPDIP in ECSIPR */
+> > > +       struct clk *clk;
+> > 
+> > It's a good practice to keep all pointers at the top of the struct, to avoid
+> > gaps due to alignment restrictions, especially on 64-bit (I know that's not
+> > the case here).
 > 
->    OK, e.g. RZ/A1 doesn't have these bits...
+> Thanks, you learn new things everyday. I will move it for v2.
 > 
-> [...]
+> > 
+> > Gr{oetje,eeting}s,
+> > 
+> >                         Geert
+> > 
+> > --
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > 
+> > In personal conversations with technical people, I call myself a hacker. But
+> > when I'm talking to journalists I just say "programmer" or something like that.
+> >                                 -- Linus Torvalds
 > 
-> MBR, Sergei
+> -- 
+> Regards,
+> Niklas Söderlund
 > 
-
--- 
-Regards,
-Niklas S�derlund
