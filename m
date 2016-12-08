@@ -1,75 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34683 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752328AbcLHPcU (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34919 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753630AbcLHPN4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 10:32:20 -0500
-Date: Thu, 8 Dec 2016 16:31:44 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Thu, 8 Dec 2016 10:13:56 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161208145635.GH21834@bigcity.dyn.berto.se>
+References: <20161207162843.4731-1-niklas.soderlund+renesas@ragnatech.se>
+ <59a1f246-9062-20e1-3f85-a1c5f6fcfc29@cogentembedded.com> <20161208145635.GH21834@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Dec 2016 16:13:39 +0100
+Message-ID: <CAMuHMdUG6QRs7aF=Kdcd8_6cnQO6+UER6XjyNEmqQS7igBeFTw@mail.gmail.com>
+Subject: Re: [PATCH] sh_eth: add wake-on-lan support via magic packet
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] sh_eth: add wake-on-lan support via magic packet
-Message-ID: <20161208153142.GA31836@verge.net.au>
-References: <20161207162843.4731-1-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVK1DtJMajqD-eZ82QSP2ZRozwaR4zNc0ae1YT21Exq0w@mail.gmail.com>
- <20161208071620.GG21834@bigcity.dyn.berto.se>
- <20161208132241.GA7150@verge.net.au>
- <20161208150105.GI21834@bigcity.dyn.berto.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20161208150105.GI21834@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 08, 2016 at 04:01:05PM +0100, Niklas Söderlund wrote:
-> Hi Simon,
-> 
-> Thanks for your feedback.
-> 
-> On 2016-12-08 14:22:44 +0100, Simon Horman wrote:
-> 
-> <snip>
-> 
-> > > > 
-> > > > > --- a/drivers/net/ethernet/renesas/sh_eth.h
-> > > > > +++ b/drivers/net/ethernet/renesas/sh_eth.h
-> > > > > @@ -493,6 +493,7 @@ struct sh_eth_cpu_data {
-> > > > >         unsigned shift_rd0:1;   /* shift Rx descriptor word 0 right by 16 */
-> > > > >         unsigned rmiimode:1;    /* EtherC has RMIIMODE register */
-> > > > >         unsigned rtrate:1;      /* EtherC has RTRATE register */
-> > > > > +       unsigned magic:1;       /* EtherC have PMDE in ECMR and MPDIP in ECSIPR */
-> > > > 
-> > > > Instead of adding a new flag, perhaps you can just check for the ECSR_MPD flag
-> > > > in ecsr_value?
-> > > 
-> > > I briefly considered this but decided against it since I do not have 
-> > > documentation for all versions of the device and no way to test it. You 
-> > > tested and confirmed functionality on r8a7740, which leaves:
-> > > 
-> > > - sh7734-gether
-> > > - sh7763-gether
-> > > - sh7757-gether
-> > > 
-> > > To figure out if they support MagicPacket in the same fashion as r8a7740 
-> > > and r8a779x. If anyone have access to documentation or hardware to 
-> > > confirm this I be more then happy to get rid of the magic flag in favor 
-> > > och checking for ECSR_MPD in ecsr_value.
-> > 
-> > Perhaps documentation can be found but if not I wonder if we can use some
-> > other mechanism to blacklist SoC which we are unsure about.
-> > 
-> > From my POV it would be very nice if things just worked™ on SoCs where
-> > the feature has been verified.
-> 
-> I agree, I will follow Sergies advice and Geerts testing to enable Gen2 
-> family and r8a7740/armadillo in two separate patches. Then if we later 
-> can confirm it works on other models we can enable them in separate 
-> patches by setting the magic flag in struct sh_eth_cpu_data for those 
-> models. Do you agree this is the best way to handle this?
+On Thu, Dec 8, 2016 at 3:56 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+>> > +   /* Increased clock usage so device won't be suspended */
+>> > +   clk_enable(mdp->clk);
+>>
+>>    Hum, intermixiggn runtime PM with clock API doesn't look good...
+>
+> I agree it looks weird but I need a way to increment the usage count for
+> the clock otherwise the PM code will disable the module clock and WoL
+> will not work. Note that this call will not enable the clock just
+> increase the usage count so it won't be disabled when the PM code
+> decrease it after the sh_eth suspend function is run.
+>
+> If you know of a different way of ensuring that the clock is not turned
+> off I be happy to look at it. I did some investigation into this and
+> calling clk_enable() directly is for example what happens in the
+> enable_irq_wake() call path to ensure the clock for the irq_chip is not
+> turned off if it is a wakeup source, se for example
+> gpio_rcar_irq_set_wake() in drivers/gpio/gpio-rcar.c.
 
-Yes, I think that is reasonable.
+Ideally we want to prevent the PM code from disabling the clock, and  from
+powering down the power area, if present.
+The latter may matter on other SoCs. But on r8a7740, Ethernet is part of
+power area A4S, which we already prevent from being powered down because
+it contains the memory controller.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
