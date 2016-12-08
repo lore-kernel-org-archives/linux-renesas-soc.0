@@ -1,71 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36550 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932960AbcLIK0W (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46651 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750822AbcLHXVC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 05:26:22 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161208173228.16835-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se> <20161208173228.16835-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Dec 2016 11:26:21 +0100
-Message-ID: <CAMuHMdV8k4v4MZGGwxEv3oRhogwPQM-8SvA4muVcABuYQjYXxg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: rcar: Fine-grained Runtime PM support
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thu, 8 Dec 2016 18:21:02 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Jon Hunter <jonathanh@nvidia.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 2/2] gpio: rcar: Fine-grained Runtime PM support
+Date: Fri, 09 Dec 2016 01:21:27 +0200
+Message-ID: <2561777.Aed1u6m3Fd@avalon>
+In-Reply-To: <20161208231551.GL21834@bigcity.dyn.berto.se>
+References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se> <1984659.qgJsdhyW2B@avalon> <20161208231551.GL21834@bigcity.dyn.berto.se>
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Niklas,
 
-On Thu, Dec 8, 2016 at 6:32 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Currently gpio modules are runtime-resumed at probe time. This means the
-> gpio module will be active all the time (except during system suspend,
-> if not configured as a wake-up source).
->
-> While an R-Car Gen2 gpio module retains pins configured for output at
-> the requested level while put in standby mode, gpio register cannot be
-> accessed while suspended.  Unfortunately pm_runtime_get_sync() cannot be
-> called from all contexts where gpio register access is needed. Hence
-> move the Runtime PM handling from probe/remove time to gpio request/free
-> time, which is probably the best we can do.
->
-> On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended during
-> normal use (gpio2 is used for LEDs and regulators, gpio5 for keys, gpio6
-> for SD-Card CD & WP, gpio7 for keys and regulators).
+On Friday 09 Dec 2016 00:15:51 Niklas S=F6derlund wrote:
+> On 2016-12-08 23:40:42 +0200, Laurent Pinchart wrote:
+> > On Thursday 08 Dec 2016 18:32:28 Niklas S=F6derlund wrote:
+> >> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>=20
+> >> Currently gpio modules are runtime-resumed at probe time. This mea=
+ns the
+> >> gpio module will be active all the time (except during system susp=
+end,
+> >> if not configured as a wake-up source).
+> >>=20
+> >> While an R-Car Gen2 gpio module retains pins configured for output=
+ at
+> >> the requested level while put in standby mode, gpio register canno=
+t be
+> >> accessed while suspended.  Unfortunately pm_runtime_get_sync() can=
+not be
+> >> called from all contexts where gpio register access is needed. Hen=
+ce
+> >> move the Runtime PM handling from probe/remove time to gpio reques=
+t/free
+> >> time, which is probably the best we can do.
+> >>=20
+> >> On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended =
+during
+> >> normal use (gpio2 is used for LEDs and regulators, gpio5 for keys,=
+ gpio6
+> >> for SD-Card CD & WP, gpio7 for keys and regulators).
+> >>=20
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> [Niklas: s/gpio_to_priv(chip)/gpiochip_get_data(chip)/]
+> >=20
+> > Just curious, what's the rationale for this ?
+>=20
+> This was changed for the whole driver after the original patch was
+> applied (at the time of change the patch was not yet reverted), see [=
+1].
+> I needed to update this when I resurrected the patch, maybe I could h=
+ave
+> been more clever and reverted the revert patch but this felt cleaner,=
+ if
+> it's better to do it the other way around and revert a revert please =
+let
+> me know so I can do so in the future.
 
-FWIW, gpio module 3 is no longer suspended, as gpio3 is used by HDMI since
-commit 83a0731b39f3bc24 ("ARM: shmobile: koelsch: Add DU HDMI output suppor=
-t").
+No, this is fine. I'm a bit dubious about [1] given that it consumes mo=
+re CPU=20
+cycles without any benefit as far as I can see. Maybe I can't see far e=
+nough=20
+though, Linus Walleij could prove me wrong :-)
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> [Niklas: s/gpio_to_priv(chip)/gpiochip_get_data(chip)/]
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+> [1] c7b6f457cb53bcee ("gpio: rcar: use gpiochip data pointer").
 
-Thanks for fixing and resurrecting!
+--=20
+Regards,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Laurent Pinchart
