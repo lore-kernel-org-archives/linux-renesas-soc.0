@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33758 "EHLO
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34862 "EHLO
         mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750801AbcLMJko (ORCPT
+        with ESMTP id S1753100AbcLIJ4t (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 04:40:44 -0500
-Received: by mail-io0-f196.google.com with SMTP id p13so27422217ioi.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Dec 2016 01:40:43 -0800 (PST)
+        Fri, 9 Dec 2016 04:56:49 -0500
+Received: by mail-io0-f196.google.com with SMTP id f73so5749591ioe.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Dec 2016 01:56:49 -0800 (PST)
 MIME-Version: 1.0
 In-Reply-To: <1481129088-22026-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1481129088-22026-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481129088-22026-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Dec 2016 10:40:42 +0100
-Message-ID: <CAMuHMdVdH9qXsb0qEpknWvU9faic4vviaKTuqKgLWWAjur_ZzA@mail.gmail.com>
+Date: Fri, 9 Dec 2016 10:56:48 +0100
+Message-ID: <CAMuHMdVwFips5vrfz6RONv0Zt0t-EqvWotpS+XnvAPVHU3UAtw@mail.gmail.com>
 Subject: Re: [PATCH v2 2/4] pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups,
  and functions
 To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
@@ -21,6 +21,8 @@ Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
+
+Hi Ulrich,
 
 On Wed, Dec 7, 2016 at 5:44 PM, Ulrich Hecht
 <ulrich.hecht+renesas@gmail.com> wrote:
@@ -34,16 +36,24 @@ On Wed, Dec 7, 2016 at 5:44 PM, Ulrich Hecht
 > --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-> +/* - HSCIF4 ----------------------------------------------------------------- */
+> +static const unsigned int hscif2_clk_b_mux[] = {
+> +       HSCK1_B_MARK,
 
-> +static const unsigned int hscif4_ctrl_mux[] = {
-> +       HRTS4_N_MARK, HCTS3_N_MARK,
-
-HCTS4_N_MARK
-
-Fixing up...
+HSCK2_B_MARK
 
 > +};
+
+> +static const unsigned int hscif2_clk_c_mux[] = {
+> +       HSCK1_C_MARK,
+
+drivers/pinctrl/sh-pfc/pfc-r8a7796.c:2124:2: error: 'HSCK1_C_MARK'
+undeclared here (not in a function)
+
+HSCK2_C_MARK
+
+> +};
+
+Queued in sh-pfc-for-v4.11 after rebasing, resorting, and fixing up the above.
 
 Gr{oetje,eeting}s,
 
