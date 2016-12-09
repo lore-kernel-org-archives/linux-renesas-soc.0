@@ -1,63 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36275 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933523AbcLBKhW (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33295 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932989AbcLIMgQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Dec 2016 05:37:22 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/3 pci/next] PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
-Date: Fri,  2 Dec 2016 11:37:00 +0100
-Message-Id: <1480675020-26346-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
-References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 9 Dec 2016 07:36:16 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/7] Renesas *SCIF* RX FIFO support
+Date: Fri,  9 Dec 2016 13:36:04 +0100
+Message-Id: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility string for the  R-Car Gen 3 family.  This is in
-keeping with the both the existing fallback compatibility string for the
-R-Car Gen 2 family and the fallback scheme being adopted wherever
-appropriate for drivers for Renesas SoCs.
+Hi!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* Move fallback binding to below SoC specific bindings it covers
-  in implementation
----
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
- drivers/pci/host/pcie-rcar.c                       | 2 ++
- 2 files changed, 3 insertions(+)
+This series implements support for using RX FIFO thresholds higher than one
+in PIO mode on SCIF, HSCIF, SCIFA and SCIFB serial ports.
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index 6cf99690eef9..eee518db90b9 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -7,6 +7,7 @@ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
- 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
- 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
-+	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
- 
- 	    When compatible with the generic version, nodes must list the
- 	    SoC-specific version corresponding to the platform first
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 85971bc276c6..72058bc7af5c 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1078,6 +1078,8 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- 	{ .compatible = "renesas,pcie-rcar-gen2",
- 	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
-+	{ .compatible = "renesas,pcie-rcar-gen3",
-+		.data = rcar_pcie_hw_init_hw_init },
- 	{},
- };
- 
+This was originally implemented to fulfill a request for a software
+timer-based solution, but I have found that it is not sensible to implement
+such a feature on SCIF and HSCIF. These IPs do not support disabling of the
+hardware timeout feature that all SCIFs have, and that triggers an interrupt
+if no new data has arrived for more than 1.5 frames.
+
+This series therefore enables the hardware timeout for SCIFs and HSCIFs, and
+the software timeout for SCIFAs and SCIFBs only.
+
+(Hardware timeout on SCIFA/B is possible, but has not been implemented here
+due to a lack of time. The same goes for the limited amount of tuning of
+the hardware timeout that is possible on HSCIF ports.)
+
+Two sysfs attributes are added to tune the FIFO behavior:
+
+- rx_fifo_trigger: Controls the trigger level at which an interrupt is
+  forced. Works for both hardware and software timeout.
+- rx_fifo_timeout: Software timeout in frames upon which the FIFOs are
+  checked even if no interrupt is triggered. Zero (default) disables the
+  timeout. (SCIFA and SCIFB only)
+
+CU
+Uli
+
+
+Ulrich Hecht (7):
+  serial: sh-sci: add FIFO trigger bits
+  serial: sh-sci: consider DR (data ready) bit adequately
+  serial: sh-sci: implement FIFO threshold register setting
+  serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+  serial: sh-sci: SCIFA/B RX FIFO software timeout
+  serial: sh-sci: make RX FIFO parameters tunable via sysfs
+  arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
+
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  12 +
+ drivers/tty/serial/sh-sci.c                        | 254 ++++++++++++++++++---
+ drivers/tty/serial/sh-sci.h                        |   7 +
+ 3 files changed, 238 insertions(+), 35 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
