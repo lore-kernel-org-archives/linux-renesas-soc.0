@@ -1,61 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35189 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755917AbcLNNft (ORCPT
+Received: from mail-wj0-f195.google.com ([209.85.210.195]:33153 "EHLO
+        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933553AbcLIMgR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Dec 2016 08:35:49 -0500
-MIME-Version: 1.0
-In-Reply-To: <1481286971-16667-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481286971-16667-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Dec 2016 14:35:48 +0100
-Message-ID: <CAMuHMdU6EECyeeq=safmYsO1Dy6AXiY2C1nUW7_dLU5koaUmBg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] serial: sh-sci: add FIFO trigger bits
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        Fri, 9 Dec 2016 07:36:17 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 1/7] serial: sh-sci: add FIFO trigger bits
+Date: Fri,  9 Dec 2016 13:36:05 +0100
+Message-Id: <1481286971-16667-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+Defines the bits controlling FIFO thresholds, adds the additional
+HSCIF registers to the register map.
 
-On Fri, Dec 9, 2016 at 1:36 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Defines the bits controlling FIFO thresholds, adds the additional
-> HSCIF registers to the register map.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/tty/serial/sh-sci.c | 2 ++
+ drivers/tty/serial/sh-sci.h | 6 ++++++
+ 2 files changed, 8 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Minor comment below.
-
-> --- a/drivers/tty/serial/sh-sci.h
-> +++ b/drivers/tty/serial/sh-sci.h
-> @@ -29,6 +29,8 @@ enum {
->         SCPDR,                          /* Serial Port Data Register */
->         SCDL,                           /* BRG Frequency Division Register */
->         SCCKS,                          /* BRG Clock Select Register */
-> +       HSRTRGR,                        /* Receive FIFO Data Count Register */
-
-Receive FIFO Data Count Trigger Register
-
-(to avoid confusion with the FIFO Data Count Register)
-
-> +       HSTTRGR,                        /* Transmit FIFO Data Count Register */
-
-Transmit FIFO Data Count Trigger Register
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 4b26252..385afbe 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -377,6 +377,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
+ 		[SCPDR]		= sci_reg_invalid,
+ 		[SCDL]		= { 0x30, 16 },
+ 		[SCCKS]		= { 0x34, 16 },
++		[HSRTRGR]	= { 0x54, 16 },
++		[HSTTRGR]	= { 0x58, 16 },
+ 	},
+ 
+ 	/*
+diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
+index ffa6d68..f51f919 100644
+--- a/drivers/tty/serial/sh-sci.h
++++ b/drivers/tty/serial/sh-sci.h
+@@ -29,6 +29,8 @@ enum {
+ 	SCPDR,				/* Serial Port Data Register */
+ 	SCDL,				/* BRG Frequency Division Register */
+ 	SCCKS,				/* BRG Clock Select Register */
++	HSRTRGR,			/* Receive FIFO Data Count Register */
++	HSTTRGR,			/* Transmit FIFO Data Count Register */
+ 
+ 	SCIx_NR_REGS,
+ };
+@@ -99,6 +101,10 @@ enum {
+ #define SCIF_BREAK_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_BRK))
+ 
+ /* SCFCR (FIFO Control Register) */
++#define SCFCR_RTRG1	BIT(7)	/* Receive FIFO Data Count Trigger */
++#define SCFCR_RTRG0	BIT(6)
++#define SCFCR_TTRG1	BIT(5)	/* Transmit FIFO Data Count Trigger */
++#define SCFCR_TTRG0	BIT(4)
+ #define SCFCR_MCE	BIT(3)	/* Modem Control Enable */
+ #define SCFCR_TFRST	BIT(2)	/* Transmit FIFO Data Register Reset */
+ #define SCFCR_RFRST	BIT(1)	/* Receive FIFO Data Register Reset */
+-- 
+2.7.4
