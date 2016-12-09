@@ -1,126 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:32928 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933265AbcK2NbV (ORCPT
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:32805 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933396AbcLIMfV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 08:31:21 -0500
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cBiVD-0007Fb-81
-        for linux-renesas-soc@vger.kernel.org; Tue, 29 Nov 2016 14:31:19 +0100
-Received: from geert by ramsan with local (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cBiVF-0000Xf-UZ
-        for linux-renesas-soc@vger.kernel.org; Tue, 29 Nov 2016 14:31:21 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+        Fri, 9 Dec 2016 07:35:21 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2016-11-29-v4.9-rc7
-Date: Tue, 29 Nov 2016 14:31:21 +0100
-Message-Id: <1480426281-2049-1-git-send-email-geert+renesas@glider.be>
+Cc: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v1.5 0/6] R-Car DU: Fix IOMMU operation when connected to VSP
+Date: Fri,  9 Dec 2016 13:35:06 +0100
+Message-Id: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2016-11-29-v4.9-rc7 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi!
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging branches with driver code
-submitted or planned for submission to maintainers into the development
-branch of Simon Horman's renesas.git tree.
+This is a slightly updated version of Laurent's series that adds the fix
+suggested by Magnus Damm and connects the FCP devices on M3-W to their
+IPMMU. It also drops the patches that have already been picked up in the
+media tree.
 
-As we are currently focusing on a stable v4.9, no for-next branches
-of various subsystem trees have been included.
+With this series and an assortment of patches from the renesas-drivers tree (
+    iommu/ipmmu-vmsa: Remove platform data handling
+    iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+    iommu/ipmmu-vmsa: Break out utlb parsing code
+    iommu/ipmmu-vmsa: Break out domain allocation code
+    iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+    iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+    iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+    iommu/ipmmu-vmsa: Introduce features, break out alias
+    iommu/ipmmu-vmsa: Add optional root device feature
+    iommu/ipmmu-vmsa: Enable multi context support
+    iommu/ipmmu-vmsa: Reuse iommu groups
+    iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+    iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
+    iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
+    iommu/ipmmu-vmsa: Write IMCTR twice
+    iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+    iommu/ipmmu-vmsa: Allow two bit SL0
+    iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
+    iommu/ipmmu-vmsa: Add r8a7796 DT binding
+    iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
+    iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+    arm64: dts: r8a7795: Add IPMMU device nodes
+    arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
+    arm64: dts: r8a7795: Point FCP devices to IPMMU
+    arm64: dts: r8a7795: Connect Ethernet AVB to IPMMU
+    arm64: dts: r8a7796: Add IPMMU device nodes
+    clk: renesas: r8a7796: Add FCP clocks
+    clk: renesas: r8a7796: Add VSP clocks
+    clk: renesas: r8a7796: Add DU and LVDS clocks
+    drm: rcar-du: Add R8A7796 device support
+    arm64: dts: renesas: r8a7795: Remove FCP SoC-specific compatible strings
+    arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
+    arm64: dts: renesas: r8a7796: Add VSP instances
+    arm64: dts: renesas: r8a7796: Add DU device to DT
+    arm64: dts: renesas: r8a7796-salvator-x: Enable DU
+), I can enable IPMMU on both the H3 and M3-W Salvator-X boards with no ill
+effects on the results of the vsp-tests suite.
 
-Today's version is based on renesas-devel-20161128-v4.9-rc7.
+CU
+Uli
 
-Included branches with driver code:
-  - clk-renesas-for-v4.11
-  - sh-pfc-for-v4.11
-  - topic/rcar-secondary-booting-in-debug-mode-v1-rebased1
-  - topic/r8a7796-ravb-v1-rebased1
-  - topic/r8a7796-dmac-driver-v2-rebased1
-  - topic/r8a7796-dmac-dts-v2-rebased3~3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-driver-v8
-  - topic/vin-gen2-driver-v1-rebased2
-  - topic/rcar-du-lvds-mode-selection-v1
-  - topic/rcar-gen3-usb2-role-swap-v5
-  - topic/dma-map-resource-v1
-  - git://linuxtv.org/pinchartl/media.git#vsp1/histogram
-  - https://git.ragnatech.se/linux#for-renesas-drivers
-  - topic/ipmmu-multi-arch-v6
-  - topic/r8a7795-ipmmu-v2-rebased4
-  - topic/r8a7796-ipmmu-v1-rebased4
-  - topic/r8a7795-ipmmu-integration-v1
-  - topic/vin-gen2-dts-v1-rebased5
-  - topic/vsp1-pa-improvements-v1-rebased1
-  - topic/vsp1-writeback-v2-rebased2
-  - git://linuxtv.org/pinchartl/media.git#drm/r8a7796/next
-  - git://linuxtv.org/pinchartl/media.git#drm/next/lvds
-  - topic/iommu-devel-du-rebased1
-  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-driver-v1
-  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-dts-v1
-  - topic/r8a7795-es2-v1-rebased5
-  - topic/r8a7796-64b-mem+ravb-prototype-v1-rebased4~1
 
-As we're getting close to the opening of the merge window for v4.10, I
-have also pushed renesas-drivers-next-2016-11-29-v4.9-rc7 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Laurent Pinchart (4):
+  v4l: rcar-fcp: Don't get/put module reference
+  v4l: rcar-fcp: Add an API to retrieve the FCP device
+  v4l: vsp1: Add API to map and unmap DRM buffers through the VSP
+  drm: rcar-du: Map memory through the VSP device
 
-This tree does include the following for-next branches of various
-subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.infradead.org/battery-2.6.git#master
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+Ulrich Hecht (2):
+  v4l: vsp1: Provide display list and VB2 queue with FCP device
+  arm64: dts: r8a7796: Connect FCP devices to IPMMU
 
-Included fixes:
-  - net: phy: Fix use after free in phy_detach()
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi |  3 ++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c    | 74 +++++++++++++++++++++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.h    |  2 +
+ drivers/media/platform/rcar-fcp.c        | 17 ++++----
+ drivers/media/platform/vsp1/vsp1_dl.c    | 12 ++++--
+ drivers/media/platform/vsp1/vsp1_drm.c   | 24 +++++++++++
+ drivers/media/platform/vsp1/vsp1_video.c |  6 ++-
+ include/media/rcar-fcp.h                 |  5 +++
+ include/media/vsp1.h                     |  3 ++
+ 9 files changed, 127 insertions(+), 19 deletions(-)
 
-Included branches with driver code:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/thermal-on-4.10-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+2.7.4
