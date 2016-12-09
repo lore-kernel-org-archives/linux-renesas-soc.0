@@ -1,90 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41469 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932585AbcLTBdx (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34181 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933423AbcLIMfX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 20:33:53 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Ulrich Hecht <ulrich.hecht@gmail.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: [PATCH v2 26/29] drm: rcar-du: Add HDMI outputs to R8A7795 device description
-Date: Tue, 20 Dec 2016 03:33:57 +0200
-Message-Id: <20161220013400.28317-27-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 9 Dec 2016 07:35:23 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, magnus.damm@gmail.com,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v1.5 1/6] v4l: rcar-fcp: Don't get/put module reference
+Date: Fri,  9 Dec 2016 13:35:07 +0100
+Message-Id: <1481286912-16555-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Update the device description with the two available HDMI outputs.
+Direct callers of the FCP API hold a reference to the FCP module due to
+module linkage, there's no need to take another one manually. Take a
+reference to the device instead to ensure that it won't disappear behind
+the caller's back.
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  4 +++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 12 ++++++++++--
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ drivers/media/platform/rcar-fcp.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 6f08b7e7db06..459e5390d6e0 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -1,7 +1,7 @@
- /*
-  * rcar_du_crtc.h  --  R-Car Display Unit CRTCs
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2015 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  *
-@@ -61,6 +61,8 @@ enum rcar_du_output {
- 	RCAR_DU_OUTPUT_DPAD1,
- 	RCAR_DU_OUTPUT_LVDS0,
- 	RCAR_DU_OUTPUT_LVDS1,
-+	RCAR_DU_OUTPUT_HDMI0,
-+	RCAR_DU_OUTPUT_HDMI1,
- 	RCAR_DU_OUTPUT_TCON,
- 	RCAR_DU_OUTPUT_MAX,
- };
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 74352140f55f..3107719c4653 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -150,13 +150,21 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
- 	.num_crtcs = 4,
- 	.routes = {
--		/* R8A7795 has one RGB output, one LVDS output and two
--		 * (currently unsupported) HDMI outputs.
-+		/* R8A7795 has one RGB output, two HDMI outputs and one
-+		 * LVDS output.
- 		 */
- 		[RCAR_DU_OUTPUT_DPAD0] = {
- 			.possible_crtcs = BIT(3),
- 			.port = 0,
- 		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI1] = {
-+			.possible_crtcs = BIT(2),
-+			.port = 2,
-+		},
- 		[RCAR_DU_OUTPUT_LVDS0] = {
- 			.possible_crtcs = BIT(0),
- 			.port = 3,
+diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
+index 7146fc5..e9f609e 100644
+--- a/drivers/media/platform/rcar-fcp.c
++++ b/drivers/media/platform/rcar-fcp.c
+@@ -53,14 +53,7 @@ struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np)
+ 		if (fcp->dev->of_node != np)
+ 			continue;
+ 
+-		/*
+-		 * Make sure the module won't be unloaded behind our back. This
+-		 * is a poor man's safety net, the module should really not be
+-		 * unloaded while FCP users can be active.
+-		 */
+-		if (!try_module_get(fcp->dev->driver->owner))
+-			fcp = NULL;
+-
++		get_device(fcp->dev);
+ 		goto done;
+ 	}
+ 
+@@ -81,7 +74,7 @@ EXPORT_SYMBOL_GPL(rcar_fcp_get);
+ void rcar_fcp_put(struct rcar_fcp_device *fcp)
+ {
+ 	if (fcp)
+-		module_put(fcp->dev->driver->owner);
++		put_device(fcp->dev);
+ }
+ EXPORT_SYMBOL_GPL(rcar_fcp_put);
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
