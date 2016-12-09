@@ -1,73 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33955 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753141AbcLNOQg (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33357 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933563AbcLIMgW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Dec 2016 09:16:36 -0500
-Received: by mail-it0-f66.google.com with SMTP id 75so102514ite.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Dec 2016 06:15:57 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1481286971-16667-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481286971-16667-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Dec 2016 14:58:04 +0100
-Message-ID: <CAMuHMdVoa53E8SOhgQwN+L337rbiUvUxTwAaQGju6GkWJ6ff2w@mail.gmail.com>
-Subject: Re: [PATCH 4/7] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        Fri, 9 Dec 2016 07:36:22 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 4/7] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+Date: Fri,  9 Dec 2016 13:36:08 +0100
+Message-Id: <1481286971-16667-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/tty/serial/sh-sci.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-On Fri, Dec 9, 2016 at 1:36 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
->  drivers/tty/serial/sh-sci.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 844288f..ce3cf03 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-
-> @@ -2729,6 +2734,7 @@ static int sci_init_single(struct platform_device *dev,
->                 sci_port->overrun_reg = SCLSR;
->                 sci_port->overrun_mask = SCLSR_ORER;
->                 sci_port->sampling_rate_mask = SCI_SR_RANGE(8, 32);
-> +               sci_port->rx_trigger = 64;
->                 break;
->         case PORT_SCIFA:
->                 port->fifosize = 64;
-> @@ -2747,12 +2753,14 @@ static int sci_init_single(struct platform_device *dev,
->                         sci_port->overrun_mask = SCLSR_ORER;
->                         sci_port->sampling_rate_mask = SCI_SR(32);
->                 }
-> +               sci_port->rx_trigger = 8;
-
-PORT_SCIF is also used with SCIx_SH7705_SCIF_REGTYPE, so this should
-be moved inside the "else" branch above.
-Then, what to do with the "if" branch?
-
->From the sh7705/sh7720/sh7721 datasheets, it looks a lot like SCIFA, and thus
-would need "sci_port->rx_trigger = 32", and the same handling as SCIFA in
-scif_set_rtrg().
-
-See also "[RFC] serial: sh-sci: Correct FIFO stages on sh7705/sh7720/sh7721"
-(https://patchwork.kernel.org/patch/6810191/).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 844288f..ce3cf03 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -141,6 +141,7 @@ struct sci_port {
+ 	struct timer_list		rx_timer;
+ 	unsigned int			rx_timeout;
+ #endif
++	int				rx_trigger;
+ 
+ 	bool autorts;
+ };
+@@ -2204,6 +2205,7 @@ static void sci_reset(struct uart_port *port)
+ {
+ 	const struct plat_sci_reg *reg;
+ 	unsigned int status;
++	struct sci_port *s = to_sci_port(port);
+ 
+ 	do {
+ 		status = serial_port_in(port, SCxSR);
+@@ -2223,6 +2225,9 @@ static void sci_reset(struct uart_port *port)
+ 		status &= ~(SCLSR_TO | SCLSR_ORER);
+ 		serial_port_out(port, SCLSR, status);
+ 	}
++
++	if (s->rx_trigger > 1)
++		scif_set_rtrg(port, s->rx_trigger);
+ }
+ 
+ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+@@ -2729,6 +2734,7 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->overrun_reg = SCLSR;
+ 		sci_port->overrun_mask = SCLSR_ORER;
+ 		sci_port->sampling_rate_mask = SCI_SR_RANGE(8, 32);
++		sci_port->rx_trigger = 64;
+ 		break;
+ 	case PORT_SCIFA:
+ 		port->fifosize = 64;
+@@ -2747,12 +2753,14 @@ static int sci_init_single(struct platform_device *dev,
+ 			sci_port->overrun_mask = SCLSR_ORER;
+ 			sci_port->sampling_rate_mask = SCI_SR(32);
+ 		}
++		sci_port->rx_trigger = 8;
+ 		break;
+ 	default:
+ 		port->fifosize = 1;
+ 		sci_port->overrun_reg = SCxSR;
+ 		sci_port->overrun_mask = SCI_ORER;
+ 		sci_port->sampling_rate_mask = SCI_SR(32);
++		sci_port->rx_trigger = 1;
+ 		break;
+ 	}
+ 
+-- 
+2.7.4
