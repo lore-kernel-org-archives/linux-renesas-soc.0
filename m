@@ -1,81 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:54739 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751550AbcLNCPz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51910 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932345AbcLIKNs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 21:15:55 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>
-Subject: clk: clk-mstp has never worked for RZ/A1
-Date: Wed, 14 Dec 2016 02:14:50 +0000
-Message-ID: <SG2PR06MB1165A4A8A555A3176D0C4ED98A9A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 9 Dec 2016 05:13:48 -0500
+Date: Fri, 9 Dec 2016 11:13:37 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH renesas/devel] arm64: dts: r8a7795: Use Gen 3 fallback
+ compat string for PCIE
+Message-ID: <20161209101337.GA6439@verge.net.au>
+References: <1481210969-2574-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdV9uumxxwsU_7pL+8Eo+n7+-Os+h7n8tbNvtdVp4pH5hg@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV9uumxxwsU_7pL+8Eo+n7+-Os+h7n8tbNvtdVp4pH5hg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello all,
+On Fri, Dec 09, 2016 at 11:01:00AM +0100, Geert Uytterhoeven wrote:
+> On Thu, Dec 8, 2016 at 4:29 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> > Use recently added en 3 fallback compat string for PCIE
+> > in r8a7795 DT.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Today I realized that the clock control using clk-mstp has never actually w=
-orked for RZ/A1 (r7s72100).
-
-The reason is that the MSTP registers are 8-bit instead of the normal 32-bi=
-t, and if you do a 32-bit write to them, nothing happens.
-If you look in drivers/clk/renesas/clk-mstp.c, you'll see that clk_readl an=
-d clk_writel are used.
-
-
-The reason why I have gotten this far is because u-boot has been enabling e=
-verything early in boot, so all the clocks were already on.
-Of course if I disable everything again before I booting the kernel....noth=
-ing works.
-
-
-If I change the accesses in clk-mspt.c to 8-bit, clocks get enabled/disable=
-d as they should.
-#define clk_readl readb
-#define clk_writel writeb
-
-
-So, any suggestions on the best way to fix this???
-Ideally I would like something that can easily be integrated back into 4.9.=
-x
-
-
-
-Maybe add a new DT property named "reg_width":
-
-	mstp3_clks: mstp3_clks@fcfe0420 {
-		#clock-cells =3D <1>;
-		compatible =3D "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-		reg =3D <0xfcfe0420 4>;
-		reg_width =3D 8;
-		clocks =3D <&p0_clk>;
-		clock-indices =3D <R7S72100_CLK_MTU2>;
-		clock-output-names =3D "mtu2";
-	};
-
-and then in cpg_mstp_clocks_init(), do:
-
-	if (of_find_property(np, "reg_width", &i))
-		group->reg_width =3D i;
-	else
-		group->reg_width =3D 32;	/* default */
-
-
-In cpg_mstp_clock_endisable(), do:
-
-	if (group->reg_width =3D=3D 8)
-		writeb(value, group->smstpcr);
-	else
-		clk_writel(value, group->smstpcr);
-
-
-Thoughts?
-
-
-Chris
+Thanks, I have queued this up for v4.11.
