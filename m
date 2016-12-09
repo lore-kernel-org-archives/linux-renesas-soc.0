@@ -1,58 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54183 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752905AbcLLQK0 (ORCPT
+Received: from mail-wj0-f194.google.com ([209.85.210.194]:36048 "EHLO
+        mail-wj0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933396AbcLIMfY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 11:10:26 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 0/5] sh_eth: add wake-on-lan support via magic packet
-Date: Mon, 12 Dec 2016 17:09:26 +0100
-Message-Id: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 9 Dec 2016 07:35:24 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, magnus.damm@gmail.com,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v1.5 2/6] v4l: rcar-fcp: Add an API to retrieve the FCP device
+Date: Fri,  9 Dec 2016 13:35:08 +0100
+Message-Id: <1481286912-16555-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-This series adds support for Wake-on-Lan using Magic Packet for a few 
-models of the sh_eth driver. Patch 1/5 adds generic support to control 
-and support WoL while patches 2/5 - 5/5 enable different models.
+The new rcar_fcp_get_device() function retrieves the struct device
+related to the FCP device. This is useful to handle DMA mapping through
+the right device.
 
-Changes since v1.
-- Spit generic WoL functionality and device enablement to different 
-  patches.
-- Enable more devices then Gen2 after feedback from Geert and 
-  datasheets.
-- Do not set mdp->irq_enabled = false and remove specific MagicPacket 
-  interrupt clearing, instead let sh_eth_error() clear the interrupt as 
-  for other EMAC interrupts, thanks Sergei for the suggestion.
-- Use the original return logic in sh_eth_resume().
-- Moved sh_eth_private variable *clk to top of data structure  to avoid 
-  possible gaps due to alignment restrictions.
-- Make wol_enabled in sh_eth_private part of the already existing 
-  bitfield instead of a bool.
-- Do not initiate mdp->wol_enabled to 0, the struct is kzalloc'ed so 
-  it's already set to 0.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/rcar-fcp.c | 6 ++++++
+ include/media/rcar-fcp.h          | 5 +++++
+ 2 files changed, 11 insertions(+)
 
-Niklas Söderlund (5):
-  sh_eth: add generic wake-on-lan support via magic packet
-  sh_eth: enable wake-on-lan for Gen2 devices
-  sh_eth: enable wake-on-lan for r8a7740/armadillo
-  sh_eth: enable wake-on-lan for sh7743
-  sh_eth: enable wake-on-lan for sh7763
-
- drivers/net/ethernet/renesas/sh_eth.c | 121 +++++++++++++++++++++++++++++++---
- drivers/net/ethernet/renesas/sh_eth.h |   3 +
- 2 files changed, 114 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
+index e9f609e..2988031 100644
+--- a/drivers/media/platform/rcar-fcp.c
++++ b/drivers/media/platform/rcar-fcp.c
+@@ -78,6 +78,12 @@ void rcar_fcp_put(struct rcar_fcp_device *fcp)
+ }
+ EXPORT_SYMBOL_GPL(rcar_fcp_put);
+ 
++struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp)
++{
++	return fcp->dev;
++}
++EXPORT_SYMBOL_GPL(rcar_fcp_get_device);
++
+ /**
+  * rcar_fcp_enable - Enable an FCP
+  * @fcp: The FCP instance
+diff --git a/include/media/rcar-fcp.h b/include/media/rcar-fcp.h
+index 8723f05..b60a7b1 100644
+--- a/include/media/rcar-fcp.h
++++ b/include/media/rcar-fcp.h
+@@ -19,6 +19,7 @@ struct rcar_fcp_device;
+ #if IS_ENABLED(CONFIG_VIDEO_RENESAS_FCP)
+ struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np);
+ void rcar_fcp_put(struct rcar_fcp_device *fcp);
++struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp);
+ int rcar_fcp_enable(struct rcar_fcp_device *fcp);
+ void rcar_fcp_disable(struct rcar_fcp_device *fcp);
+ #else
+@@ -27,6 +28,10 @@ static inline struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np)
+ 	return ERR_PTR(-ENOENT);
+ }
+ static inline void rcar_fcp_put(struct rcar_fcp_device *fcp) { }
++static inline struct device *rcar_fcp_get_device(struct rcar_fcp_device *fcp)
++{
++	return NULL;
++}
+ static inline int rcar_fcp_enable(struct rcar_fcp_device *fcp)
+ {
+ 	return 0;
 -- 
-2.10.2
+2.7.4
