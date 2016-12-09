@@ -1,65 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47630 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754874AbcLAO0M (ORCPT
+Received: from mail-wj0-f195.google.com ([209.85.210.195]:36095 "EHLO
+        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932989AbcLIMfb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 09:26:12 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Fri, 9 Dec 2016 07:35:31 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/4] arm64: dts: r8a7795: Use renesas,rcar-gen3-usb2-phy fallback binding
-Date: Thu,  1 Dec 2016 15:25:54 +0100
-Message-Id: <1480602354-1446-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1480602354-1446-1-git-send-email-horms+renesas@verge.net.au>
-References: <1480602354-1446-1-git-send-email-horms+renesas@verge.net.au>
+Cc: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v1.5 6/6] arm64: dts: r8a7796: Connect FCP devices to IPMMU
+Date: Fri,  9 Dec 2016 13:35:12 +0100
+Message-Id: <1481286912-16555-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A fallback binding for the Renesas R-Car Gen3 for USB2.0 PHY driver was
-added by commit cde7bc367f09 ("phy: rcar-gen3-usb2: add fallback binding").
-This patch makes use of this binding in the DT for the r8a7795 SoC.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a39a702b904d..080f1f422cfc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1141,7 +1141,8 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 52e81bb..f5496d4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -440,6 +440,7 @@
+ 			reg = <0 0xfea27000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 603>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			iommus = <&ipmmu_vi 8>;
  		};
  
- 		usb2_phy0: usb-phy@ee080200 {
--			compatible = "renesas,usb2-phy-r8a7795";
-+			compatible = "renesas,usb2-phy-r8a7795",
-+				     "renesas,rcar-gen3-usb2-phy";
- 			reg = <0 0xee080200 0 0x700>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 703>;
-@@ -1151,7 +1152,8 @@
+ 		vspd1: vsp@fea28000 {
+@@ -457,6 +458,7 @@
+ 			reg = <0 0xfea2f000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 602>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			iommus = <&ipmmu_vi 9>;
  		};
  
- 		usb2_phy1: usb-phy@ee0a0200 {
--			compatible = "renesas,usb2-phy-r8a7795";
-+			compatible = "renesas,usb2-phy-r8a7795",
-+				     "renesas,rcar-gen3-usb2-phy";
- 			reg = <0 0xee0a0200 0 0x700>;
- 			clocks = <&cpg CPG_MOD 702>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -1160,7 +1162,8 @@
+ 		vspd2: vsp@fea30000 {
+@@ -474,6 +476,7 @@
+ 			reg = <0 0xfea37000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 601>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			iommus = <&ipmmu_vi 10>;
  		};
  
- 		usb2_phy2: usb-phy@ee0c0200 {
--			compatible = "renesas,usb2-phy-r8a7795";
-+			compatible = "renesas,usb2-phy-r8a7795",
-+				     "renesas,rcar-gen3-usb2-phy";
- 			reg = <0 0xee0c0200 0 0x700>;
- 			clocks = <&cpg CPG_MOD 701>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		du: display@feb00000 {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
