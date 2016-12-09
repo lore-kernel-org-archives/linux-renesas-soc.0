@@ -1,99 +1,34 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 11/29] drm: bridge: dw-hdmi: Remove PHY configuration resolution parameter
-Date: Tue, 20 Dec 2016 03:33:42 +0200
-Message-Id: <20161220013400.28317-12-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] irqchip/renesas-intc-irqpin: fallback enhancements
+Date: Fri,  9 Dec 2016 11:50:48 +0100
+Message-Id: <1481280650-9258-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi,
 
-The current code hard codes the call of hdmi_phy_configure() to be 8bpp
-and provides extraneous error checking to verify that this hardcoded
-value is correct. Simplify the implementation by removing the argument.
+this short series aims to improve the fallback compatibility strings
+for the renesas-intc-irqpin driver.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 27 +++++----------------------
- 1 file changed, 5 insertions(+), 22 deletions(-)
+Based on v4.9-rc1.
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 107fea49c4c6..b4fb0bd78910 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -930,31 +930,14 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
- }
- 
--static int hdmi_phy_configure(struct dw_hdmi *hdmi,
--			      unsigned char res, int cscon)
-+static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
- {
--	unsigned res_idx;
- 	u8 val, msec;
- 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
- 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
- 
--	switch (res) {
--	case 0:	/* color resolution 0 is 8 bit colour depth */
--	case 8:
--		res_idx = DW_HDMI_RES_8;
--		break;
--	case 10:
--		res_idx = DW_HDMI_RES_10;
--		break;
--	case 12:
--		res_idx = DW_HDMI_RES_12;
--		break;
--	default:
--		return -EINVAL;
--	}
--
- 	/* PLL/MPLL Cfg - always match on final entry */
- 	for (; mpll_config->mpixelclock != ~0UL; mpll_config++)
- 		if (hdmi->hdmi_data.video_mode.mpixelclock <=
-@@ -1004,11 +987,11 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi,
- 		    HDMI_PHY_I2CM_SLAVE_ADDR);
- 	hdmi_phy_test_clear(hdmi, 0);
- 
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].cpce, 0x06);
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].gmp, 0x15);
-+	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce, 0x06);
-+	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp, 0x15);
- 
- 	/* CURRCTRL */
--	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[res_idx], 0x10);
-+	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0], 0x10);
- 
- 	hdmi_phy_i2c_write(hdmi, 0x0000, 0x13);  /* PLLPHBYCTRL */
- 	hdmi_phy_i2c_write(hdmi, 0x0006, 0x17);
-@@ -1068,7 +1051,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
- 		dw_hdmi_phy_enable_powerdown(hdmi, true);
- 
- 		/* Enable CSC */
--		ret = hdmi_phy_configure(hdmi, 8, cscon);
-+		ret = hdmi_phy_configure(hdmi, cscon);
- 		if (ret)
- 			return ret;
- 	}
+Simon Horman (2):
+  irqchip/renesas-intc-irqpin: List fallback compatibility last
+  irqchip/renesas-intc-irqpin: Add R-Car Gen1 fallback binding
+
+ .../interrupt-controller/renesas,intc-irqpin.txt   | 44 ++++++++++++----------
+ drivers/irqchip/irq-renesas-intc-irqpin.c          |  4 +-
+ 2 files changed, 27 insertions(+), 21 deletions(-)
+
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
