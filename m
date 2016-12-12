@@ -1,47 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54228 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753269AbcLLQK2 (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:41916 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752305AbcLLTvt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 11:10:28 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 5/5] sh_eth: enable wake-on-lan for sh7763
-Date: Mon, 12 Dec 2016 17:09:31 +0100
-Message-Id: <20161212160931.6478-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 12 Dec 2016 14:51:49 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 5/9] mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
+Date: Mon, 12 Dec 2016 20:51:24 +0100
+Message-Id: <20161212195128.16633-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is based on public datasheet for sh7763 which shows it have the
-same behavior and registers for WoL as other versions of sh_eth.
+The function will only be available if SDR104 was detected in probe,
+so no need to check in the function itself again.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 927de77..6e80457 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -851,6 +851,7 @@ static struct sh_eth_cpu_data sh7763_data = {
- 	.no_ade		= 1,
- 	.tsu		= 1,
- 	.irq_flags	= IRQF_SHARED,
-+	.magic		= 1,
- };
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 7964f9a87d9c20..22bedbea8ec502 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -327,9 +327,6 @@ static unsigned int sh_mobile_sdhi_init_tuning(struct tmio_mmc_host *host)
+ {
+ 	struct sh_mobile_sdhi *priv;
  
- static struct sh_eth_cpu_data sh7619_data = {
+-	if (!(host->mmc->caps & MMC_CAP_UHS_SDR104))
+-		return 0;
+-
+ 	priv = host_to_priv(host);
+ 
+ 	/* set sampling clock selection range */
 -- 
 2.10.2
