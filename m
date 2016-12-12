@@ -1,95 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:56266 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752480AbcLAWE4 (ORCPT
+Received: from mo2.mail-out.ovh.net ([178.32.228.2]:60883 "EHLO
+        mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752388AbcLLSUR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 17:04:56 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hien Dang <hien.dang.eb@renesas.com>
-Subject: [PATCH v4 1/4] thermal: rcar_gen3_thermal: Document the R-Car Gen3
-Date: Thu,  1 Dec 2016 23:04:39 +0100
-Message-Id: <20161201220442.22057-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
-References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+        Mon, 12 Dec 2016 13:20:17 -0500
+Received: from player731.ha.ovh.net (b9.ovh.net [213.186.33.59])
+        by mo2.mail-out.ovh.net (Postfix) with ESMTP id DC887149A2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 19:12:05 +0100 (CET)
+Subject: Re: [PATCH] iio: Add Maxim MAX11100 driver
+To: Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+References: <1481041823-18382-1-git-send-email-jacopo@jmondi.org>
+ <alpine.DEB.2.02.1612062143480.10644@pmeerw.net>
+ <adc93632-e487-0251-1d27-a56e9215e9f6@jmondi.org>
+ <b9a7ac4d-4c48-b540-bfe9-91529567371a@kernel.org>
+Cc: wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
+        knaack.h@gmx.de, lars@metafoo.de, linux-iio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: "jacopo@jmondi.org" <jacopo@jmondi.org>
+Message-ID: <c18d166c-b6f1-0c69-7616-289da4f9c3c9@jmondi.org>
+Date: Mon, 12 Dec 2016 19:11:54 +0100
+MIME-Version: 1.0
+In-Reply-To: <b9a7ac4d-4c48-b540-bfe9-91529567371a@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- .../bindings/thermal/rcar-gen3-thermal.txt         | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+Hi Jonathan,
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-new file mode 100644
-index 00000000000000..07a9713ae6a757
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-@@ -0,0 +1,56 @@
-+* DT bindings for Renesas R-Car Gen3 Thermal Sensor driver
-+
-+On R-Car Gen3 SoCs, the thermal sensor controllers (TSC) control the thermal
-+sensors (THS) which are the analog circuits for measuring temperature (Tj)
-+inside the LSI.
-+
-+Required properties:
-+- compatible		: "renesas,<soctype>-thermal",
-+			  Examples with soctypes are:
-+			    - "renesas,r8a7795-thermal" (R-Car H3)
-+			    - "renesas,r8a7796-thermal" (R-Car M3-W)
-+- reg			: Address ranges of the thermal registers. Each sensor
-+			  needs one address range. Sorting must be done in
-+			  increasing order according to datasheet, i.e.
-+			  TSC1, TSC2, ...
-+- clocks		: Must contain a reference to the functional clock.
-+- #thermal-sensor-cells : must be <1>.
-+
-+Optional properties:
-+
-+- interrupts           : interrupts routed to the TSC (3 for H3 and M3-W)
-+- power-domain		: Must contain a reference to the power domain. This
-+			  property is mandatory if the thermal sensor instance
-+			  is part of a controllable power domain.
-+
-+Example:
-+
-+	tsc: thermal@e6198000 {
-+		compatible = "renesas,r8a7795-thermal";
-+		reg = <0 0xe6198000 0 0x68>,
-+		      <0 0xe61a0000 0 0x5c>,
-+		      <0 0xe61a8000 0 0x5c>;
-+		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 522>;
-+		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+		#thermal-sensor-cells = <1>;
-+		status = "okay";
-+	};
-+
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
--- 
-2.10.2
+On 10/12/2016 19:04, Jonathan Cameron wrote:
+> On 07/12/16 08:29, jacopo@jmondi.org wrote:
+>>
+
+  [snip]
+
+>> This driver is so minimal, I wonder if there are not drivers for
+>> similar devices to which I can add support for MAX11100 instead of
+>> writing a new one from scratch. Anyone with more expertise than me in
+>> IIO codebase maybe can suggest something here...
+> Could possibly blugeon it into the ad7476 code, but it wouldn't be pretty...
+> Some of the SPI TI parts perhaps, but again you'll end up with a fair refactoring of
+> the existing drivers to get it in.
+>
+> Seems simple I agree, but somehow there are an awful lot of simple ways to interface
+> and ADC via a couple of spi transfers!
+
+Yes there are :)
+I'll continue trying to submit this driver alone then as it seems 
+merging with existing ones is not feasible at this time!
+
+Thanks
+    j
+
+
+>
+> Jonathan
+>> Thanks
+>>    j
+>>
+>>
+>
