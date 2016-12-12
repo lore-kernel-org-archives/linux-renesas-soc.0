@@ -1,46 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36730 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932463AbcLMK7M (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54217 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753245AbcLLQK1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 05:59:12 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161212160931.6478-5-niklas.soderlund+renesas@ragnatech.se>
-References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se> <20161212160931.6478-5-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Dec 2016 11:59:11 +0100
-Message-ID: <CAMuHMdWUqt0m8vmbd0edg6XFwseSkJ5CchmM5-nhWA5_SCFzPA@mail.gmail.com>
-Subject: Re: [PATCHv2 4/5] sh_eth: enable wake-on-lan for sh7743
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Mon, 12 Dec 2016 11:10:27 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 4/5] sh_eth: enable wake-on-lan for sh7743
+Date: Mon, 12 Dec 2016 17:09:30 +0100
+Message-Id: <20161212160931.6478-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Dec 12, 2016 at 5:09 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> This is based on public datasheet for sh7743 which shows it have the
+This is based on public datasheet for sh7743 which shows it have the
+same behavior and registers for WoL as other versions of sh_eth.
 
-sh7734 (also in the one-line summary)
-it has
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> same behavior and registers for WoL as other versions of sh_eth.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index fafde6f..927de77 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -822,6 +822,7 @@ static struct sh_eth_cpu_data sh7734_data = {
+ 	.tsu		= 1,
+ 	.hw_crc		= 1,
+ 	.select_mii	= 1,
++	.magic		= 1,
+ };
+ 
+ /* SH7763 */
+-- 
+2.10.2
