@@ -1,67 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59651 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753037AbcLRU4t (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35022 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752423AbcLLNog (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Dec 2016 15:56:49 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: thierry.reding@gmail.com
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 05/13] drm: panels: Constify device node argument to of_drm_find_panel()
-Date: Sun, 18 Dec 2016 22:57:18 +0200
-Message-ID: <2000251.9mBKzr2Oz3@avalon>
-In-Reply-To: <1479526093-7014-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1479526093-7014-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 12 Dec 2016 08:44:36 -0500
+Received: by mail-io0-f193.google.com with SMTP id f73so21575790ioe.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 05:44:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1481533902-14789-13-git-send-email-horms+renesas@verge.net.au>
+References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au> <1481533902-14789-13-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Dec 2016 14:44:35 +0100
+Message-ID: <CAMuHMdUmAam8crACxT3x3M2gw8HbvoVjHd-De1E=G1uN8xWP+w@mail.gmail.com>
+Subject: Re: [PATCH renesas/devel 12/13] ARM: dts: r8a7793: Use R-Car Gen 2
+ fallback binding for i2c nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Thierry,
+On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use recently added R-Car Gen 2 fallback binding for iii nodes in
+> DT for r8a7793 SoC.
 
-Could you please review this patch ? Should it be merged through you ?
+iic etc...
 
-On Saturday 19 Nov 2016 05:28:05 Laurent Pinchart wrote:
-> The argument is never modified by the function, make it const.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  drivers/gpu/drm/drm_panel.c | 2 +-
->  include/drm/drm_panel.h     | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index 3dfe3c886502..308d442a531b 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -137,7 +137,7 @@ EXPORT_SYMBOL(drm_panel_detach);
->   * Return: A pointer to the panel registered for the specified device tree
->   * node or NULL if no panel matching the device tree node can be found.
->   */
-> -struct drm_panel *of_drm_find_panel(struct device_node *np)
-> +struct drm_panel *of_drm_find_panel(const struct device_node *np)
->  {
->  	struct drm_panel *panel;
-> 
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index 220d1e2b3db1..4b76cf2d5a7b 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -193,9 +193,9 @@ int drm_panel_attach(struct drm_panel *panel, struct
-> drm_connector *connector); int drm_panel_detach(struct drm_panel *panel);
-> 
->  #ifdef CONFIG_OF
-> -struct drm_panel *of_drm_find_panel(struct device_node *np);
-> +struct drm_panel *of_drm_find_panel(const struct device_node *np);
->  #else
-> -static inline struct drm_panel *of_drm_find_panel(struct device_node *np)
-> +static inline struct drm_panel *of_drm_find_panel(const struct device_node
-> *np) {
->  	return NULL;
->  }
+> This has no run-time effect for the current driver as the initialisation
+> sequence is the same for the SoC-specific binding for r8a7793 and the
+> fallback binding for R-Car Gen 2.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
--- 
-Regards,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
