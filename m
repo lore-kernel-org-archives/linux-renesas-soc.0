@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35763 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752423AbcLLNoI (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33984 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbcLLNef (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 08:44:08 -0500
-Received: by mail-io0-f196.google.com with SMTP id f73so21572689ioe.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 05:44:08 -0800 (PST)
+        Mon, 12 Dec 2016 08:34:35 -0500
+Received: by mail-io0-f194.google.com with SMTP id y124so21584725iof.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 05:34:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1481533902-14789-12-git-send-email-horms+renesas@verge.net.au>
-References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au> <1481533902-14789-12-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481533902-14789-5-git-send-email-horms+renesas@verge.net.au>
+References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au> <1481533902-14789-5-git-send-email-horms+renesas@verge.net.au>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Dec 2016 14:44:07 +0100
-Message-ID: <CAMuHMdWnhsK-gygfr6Y654oe3QS84oocJSzttuRmTtYemmBPag@mail.gmail.com>
-Subject: Re: [PATCH renesas/devel 11/13] ARM: dts: r8a7791: Use R-Car Gen 2
+Date: Mon, 12 Dec 2016 14:34:34 +0100
+Message-ID: <CAMuHMdWGr=WoSV+zYUzFL+ykKS3rTLEqwcJ69M1Hkp0OG6G=eA@mail.gmail.com>
+Subject: Re: [PATCH renesas/devel 04/13] ARM: dts: r8a7791: Use R-Car Gen 2
  fallback binding for i2c nodes
 To: Simon Horman <horms+renesas@verge.net.au>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -25,11 +25,9 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
 <horms+renesas@verge.net.au> wrote:
-> Use recently added R-Car Gen 2 fallback binding for iii nodes in
+> Use recently added R-Car Gen 2 fallback binding for i2c nodes in
 > DT for r8a7791 SoC.
-
-iic etc...
-
+>
 > This has no run-time effect for the current driver as the initialisation
 > sequence is the same for the SoC-specific binding for r8a7791 and the
 > fallback binding for R-Car Gen 2.
