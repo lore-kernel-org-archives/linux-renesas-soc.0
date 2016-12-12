@@ -1,46 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35951 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932574AbcLMMwT (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54201 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752923AbcLLQK0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 07:52:19 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161212160931.6478-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se> <20161212160931.6478-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Dec 2016 13:52:18 +0100
-Message-ID: <CAMuHMdV9xqsEWYXXuiuTRxdLijNTxGUoDWTyS2GZ46_EBcF5ag@mail.gmail.com>
-Subject: Re: [PATCHv2 2/5] sh_eth: enable wake-on-lan for Gen2 devices
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Mon, 12 Dec 2016 11:10:26 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 2/5] sh_eth: enable wake-on-lan for Gen2 devices
+Date: Mon, 12 Dec 2016 17:09:28 +0100
+Message-Id: <20161212160931.6478-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Dec 12, 2016 at 5:09 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Tested on Gen2 r8a7791/Koelsch.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Tested on Gen2 r8a7791/Koelsch.
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index 87640b9..348ed22 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -624,8 +624,9 @@ static struct sh_eth_cpu_data r8a779x_data = {
+ 
+ 	.register_type	= SH_ETH_REG_FAST_RCAR,
+ 
+-	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
+-	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
++	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD | ECSR_MPD,
++	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP |
++			  ECSIPR_MPDIP,
+ 	.eesipr_value	= 0x01ff009f,
+ 
+ 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
+@@ -641,6 +642,7 @@ static struct sh_eth_cpu_data r8a779x_data = {
+ 	.tpauser	= 1,
+ 	.hw_swap	= 1,
+ 	.rmiimode	= 1,
++	.magic		= 1,
+ };
+ #endif /* CONFIG_OF */
+ 
+-- 
+2.10.2
