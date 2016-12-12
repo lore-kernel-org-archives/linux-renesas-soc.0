@@ -1,98 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36127 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933423AbcLIMf0 (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35763 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752423AbcLLNoI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 07:35:26 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, magnus.damm@gmail.com,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v1.5 3/6] v4l: vsp1: Add API to map and unmap DRM buffers through the VSP
-Date: Fri,  9 Dec 2016 13:35:09 +0100
-Message-Id: <1481286912-16555-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286912-16555-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 12 Dec 2016 08:44:08 -0500
+Received: by mail-io0-f196.google.com with SMTP id f73so21572689ioe.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 05:44:08 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1481533902-14789-12-git-send-email-horms+renesas@verge.net.au>
+References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au> <1481533902-14789-12-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Dec 2016 14:44:07 +0100
+Message-ID: <CAMuHMdWnhsK-gygfr6Y654oe3QS84oocJSzttuRmTtYemmBPag@mail.gmail.com>
+Subject: Re: [PATCH renesas/devel 11/13] ARM: dts: r8a7791: Use R-Car Gen 2
+ fallback binding for i2c nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use recently added R-Car Gen 2 fallback binding for iii nodes in
+> DT for r8a7791 SoC.
 
-The display buffers must be mapped for DMA through the device that
-performs memory access. Expose an API to map and unmap memory through
-the VSP device to be used by the DU.
+iic etc...
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 24 ++++++++++++++++++++++++
- include/media/vsp1.h                   |  3 +++
- 2 files changed, 27 insertions(+)
+> This has no run-time effect for the current driver as the initialisation
+> sequence is the same for the SoC-specific binding for r8a7791 and the
+> fallback binding for R-Car Gen 2.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index cd209dc..bb35603 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -12,9 +12,11 @@
-  */
- 
- #include <linux/device.h>
-+#include <linux/dma-mapping.h>
- #include <linux/slab.h>
- 
- #include <media/media-entity.h>
-+#include <media/rcar-fcp.h>
- #include <media/v4l2-subdev.h>
- #include <media/vsp1.h>
- 
-@@ -519,6 +521,28 @@ void vsp1_du_atomic_flush(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
- 
-+int vsp1_du_map_sg(struct device *dev, struct sg_table *sgt)
-+{
-+	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
-+	struct device *map_dev;
-+
-+	map_dev = vsp1->fcp ? rcar_fcp_get_device(vsp1->fcp) : dev;
-+
-+	return dma_map_sg(map_dev, sgt->sgl, sgt->nents, DMA_TO_DEVICE);
-+}
-+EXPORT_SYMBOL_GPL(vsp1_du_map_sg);
-+
-+void vsp1_du_unmap_sg(struct device *dev, struct sg_table *sgt)
-+{
-+	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
-+	struct device *map_dev;
-+
-+	map_dev = vsp1->fcp ? rcar_fcp_get_device(vsp1->fcp) : dev;
-+
-+	dma_unmap_sg(map_dev, sgt->sgl, sgt->nents, DMA_TO_DEVICE);
-+}
-+EXPORT_SYMBOL_GPL(vsp1_du_unmap_sg);
-+
- /* -----------------------------------------------------------------------------
-  * Initialization
-  */
-diff --git a/include/media/vsp1.h b/include/media/vsp1.h
-index 458b400..8d3d07a 100644
---- a/include/media/vsp1.h
-+++ b/include/media/vsp1.h
-@@ -13,6 +13,7 @@
- #ifndef __MEDIA_VSP1_H__
- #define __MEDIA_VSP1_H__
- 
-+#include <linux/scatterlist.h>
- #include <linux/types.h>
- #include <linux/videodev2.h>
- 
-@@ -37,5 +38,7 @@ void vsp1_du_atomic_begin(struct device *dev);
- int vsp1_du_atomic_update(struct device *dev, unsigned int rpf,
- 			  const struct vsp1_du_atomic_config *cfg);
- void vsp1_du_atomic_flush(struct device *dev);
-+int vsp1_du_map_sg(struct device *dev, struct sg_table *sgt);
-+void vsp1_du_unmap_sg(struct device *dev, struct sg_table *sgt);
- 
- #endif /* __MEDIA_VSP1_H__ */
--- 
-2.7.4
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
