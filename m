@@ -1,103 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52457 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbcLLOUN (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33574 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750712AbcLLNht (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 09:20:13 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv5 1/5] thermal: rcar_gen3_thermal: Document the R-Car Gen3
-Date: Mon, 12 Dec 2016 15:18:01 +0100
-Message-Id: <20161212141805.14946-2-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
-References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+        Mon, 12 Dec 2016 08:37:49 -0500
+Received: by mail-io0-f193.google.com with SMTP id p13so21543513ioi.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 05:37:49 -0800 (PST)
 MIME-Version: 1.0
+In-Reply-To: <1481533902-14789-10-git-send-email-horms+renesas@verge.net.au>
+References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au> <1481533902-14789-10-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Dec 2016 14:37:48 +0100
+Message-ID: <CAMuHMdWzfwb_ww_t3iv1DOT4GLOdZdo2CevtiYzwvoKJQoiPGA@mail.gmail.com>
+Subject: Re: [PATCH renesas/devel 09/13] arm64: dts: r8a7796: Use R-Car Gen 3
+ fallback binding for i2c nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use recently added R-Car Gen 3 fallback binding for i2c nodes in
+> DT for r8a7796 SoC.
+>
+> This has no run-time effect for the current driver as the initialisation
+> sequence is the same for the SoC-specific binding for r8a7796 and the
+> fallback binding for R-Car Gen 3.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- .../bindings/thermal/rcar-gen3-thermal.txt         | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-new file mode 100644
-index 0000000..07a9713
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-@@ -0,0 +1,56 @@
-+* DT bindings for Renesas R-Car Gen3 Thermal Sensor driver
-+
-+On R-Car Gen3 SoCs, the thermal sensor controllers (TSC) control the thermal
-+sensors (THS) which are the analog circuits for measuring temperature (Tj)
-+inside the LSI.
-+
-+Required properties:
-+- compatible		: "renesas,<soctype>-thermal",
-+			  Examples with soctypes are:
-+			    - "renesas,r8a7795-thermal" (R-Car H3)
-+			    - "renesas,r8a7796-thermal" (R-Car M3-W)
-+- reg			: Address ranges of the thermal registers. Each sensor
-+			  needs one address range. Sorting must be done in
-+			  increasing order according to datasheet, i.e.
-+			  TSC1, TSC2, ...
-+- clocks		: Must contain a reference to the functional clock.
-+- #thermal-sensor-cells : must be <1>.
-+
-+Optional properties:
-+
-+- interrupts           : interrupts routed to the TSC (3 for H3 and M3-W)
-+- power-domain		: Must contain a reference to the power domain. This
-+			  property is mandatory if the thermal sensor instance
-+			  is part of a controllable power domain.
-+
-+Example:
-+
-+	tsc: thermal@e6198000 {
-+		compatible = "renesas,r8a7795-thermal";
-+		reg = <0 0xe6198000 0 0x68>,
-+		      <0 0xe61a0000 0 0x5c>,
-+		      <0 0xe61a8000 0 0x5c>;
-+		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 522>;
-+		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+		#thermal-sensor-cells = <1>;
-+		status = "okay";
-+	};
-+
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
--- 
-2.10.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
