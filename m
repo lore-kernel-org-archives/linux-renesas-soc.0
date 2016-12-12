@@ -1,59 +1,110 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:52483 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752810AbcLLOUO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Dec 2016 09:20:14 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv5 3/5] arm64: dts: r8a7795: Add R-Car Gen3 thermal support
+Date: Mon, 12 Dec 2016 15:18:03 +0100
+Message-Id: <20161212141805.14946-4-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20161217010203.GA140420@beast>
-References: <20161217010203.GA140420@beast>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Dec 2016 17:13:02 +0100
-Message-ID: <CAMuHMdWE=cZSTCGcoi71xQU+fBpEU5J-ZruxmvQ9RAMEzrJMkw@mail.gmail.com>
-Subject: Re: [PATCH] video: fbdev: sh_mobile_lcdcfb: use designated initializers
-To: Kees Cook <keescook@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Dec 17, 2016 at 2:02 AM, Kees Cook <keescook@chromium.org> wrote:
-> Prepare to mark sensitive kernel structures for randomization by making
-> sure they're using designated initializers. These were identified during
-> allyesconfig builds of x86, arm, and arm64, with most initializer fixes
-> extracted from grsecurity.
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-> ---
->  drivers/video/fbdev/sh_mobile_lcdcfb.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-> index 82c0a8caa9b8..42499a1afa07 100644
-> --- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-> +++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-> @@ -439,9 +439,9 @@ static unsigned long lcdc_sys_read_data(void *handle)
->  }
->
->  static struct sh_mobile_lcdc_sys_bus_ops sh_mobile_lcdc_sys_bus_ops = {
-> -       lcdc_sys_write_index,
-> -       lcdc_sys_write_data,
-> -       lcdc_sys_read_data,
-> +       .write_index = lcdc_sys_write_index,
-> +       .write_data = lcdc_sys_write_data,
-> +       .read_data = lcdc_sys_read_data,
->  };
->
->  static int sh_mobile_lcdc_sginit(struct fb_info *info,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 8c15040..0699e04 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1541,5 +1541,63 @@
+ 				};
+ 			};
+ 		};
++
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a7795-thermal";
++			reg = <0 0xe6198000 0 0x68>,
++			      <0 0xe61a0000 0 0x5c>,
++			      <0 0xe61a8000 0 0x5c>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
++
++		thermal-zones {
++			sensor_thermal1: sensor-thermal1 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 0>;
++
++				trips {
++					sensor1_crit: sensor1-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal2: sensor-thermal2 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 1>;
++
++				trips {
++					sensor2_crit: sensor2-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal3: sensor-thermal3 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 2>;
++
++				trips {
++					sensor3_crit: sensor3-crit {
++						temperature = <90000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++		};
+ 	};
+ };
+-- 
+2.10.2
