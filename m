@@ -1,40 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34361 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbcLMKsg (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:41858 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752305AbcLLTvr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 05:48:36 -0500
-MIME-Version: 1.0
-In-Reply-To: <20161212195128.16633-2-wsa+renesas@sang-engineering.com>
-References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com> <20161212195128.16633-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Dec 2016 11:48:34 +0100
-Message-ID: <CAMuHMdWQQvA9bOdY-Yf_-eJvNRiMrEdqr_K7GCxsf_KeWdBxbw@mail.gmail.com>
-Subject: Re: [PATCH 1/9] mmc: sh_mobile_sdhi: simplify accessing DT data
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 12 Dec 2016 14:51:47 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/9] mmc: sh_mobile_sdhi: simplify accessing DT data
+Date: Mon, 12 Dec 2016 20:51:20 +0100
+Message-Id: <20161212195128.16633-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Dec 12, 2016 at 8:51 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> By using the helper of_device_get_match_data(), we can skip some
-> checking and make the code simpler.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+By using the helper of_device_get_match_data(), we can skip some
+checking and make the code simpler.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/sh_mobile_sdhi.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 15c77bc6e4ee72..b48e3ae4549b6b 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -548,8 +548,7 @@ static void sh_mobile_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
+ 
+ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *of_id =
+-		of_match_device(sh_mobile_sdhi_of_match, &pdev->dev);
++	const struct sh_mobile_sdhi_of_data *of_data = of_device_get_match_data(&pdev->dev);
+ 	struct sh_mobile_sdhi *priv;
+ 	struct tmio_mmc_data *mmc_data;
+ 	struct tmio_mmc_data *mmd = pdev->dev.platform_data;
+@@ -590,9 +589,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		goto eprobe;
+ 	}
+ 
+-	if (of_id && of_id->data) {
+-		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
+-
++	if (of_data) {
+ 		mmc_data->flags |= of_data->tmio_flags;
+ 		mmc_data->capabilities |= of_data->capabilities;
+ 		mmc_data->capabilities2 |= of_data->capabilities2;
+@@ -662,14 +659,10 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 	if (host->mmc->caps & MMC_CAP_UHS_SDR104) {
+ 		host->mmc->caps |= MMC_CAP_HW_RESET;
+ 
+-		if (of_id && of_id->data) {
+-			const struct sh_mobile_sdhi_of_data *of_data;
+-			const struct sh_mobile_sdhi_scc *taps;
++		if (of_data) {
++			const struct sh_mobile_sdhi_scc *taps = of_data->taps;
+ 			bool hit = false;
+ 
+-			of_data = of_id->data;
+-			taps = of_data->taps;
+-
+ 			for (i = 0; i < of_data->taps_num; i++) {
+ 				if (taps[i].clk_rate == 0 ||
+ 				    taps[i].clk_rate == host->mmc->f_max) {
+-- 
+2.10.2
