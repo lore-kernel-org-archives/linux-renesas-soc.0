@@ -1,116 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:36172 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:52446 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbcLHRdV (ORCPT
+        with ESMTP id S1752580AbcLLOUN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 12:33:21 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mon, 12 Dec 2016 09:20:13 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] gpio: rcar: Fine-grained Runtime PM support
-Date: Thu,  8 Dec 2016 18:32:28 +0100
-Message-Id: <20161208173228.16835-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv5 0/5] thermal: add driver for R-Car Gen3
+Date: Mon, 12 Dec 2016 15:18:00 +0100
+Message-Id: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Currently gpio modules are runtime-resumed at probe time. This means the
-gpio module will be active all the time (except during system suspend,
-if not configured as a wake-up source).
+Hi all,
 
-While an R-Car Gen2 gpio module retains pins configured for output at
-the requested level while put in standby mode, gpio register cannot be
-accessed while suspended.  Unfortunately pm_runtime_get_sync() cannot be
-called from all contexts where gpio register access is needed. Hence
-move the Runtime PM handling from probe/remove time to gpio request/free
-time, which is probably the best we can do.
+The series adds thermal support to Renesas R-Car Gen3 SoCs. It's tested 
+on Salvator-X H3 and M3-W SoC.
 
-On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended during
-normal use (gpio2 is used for LEDs and regulators, gpio5 for keys, gpio6
-for SD-Card CD & WP, gpio7 for keys and regulators).
+Wolfram asked me to have a look at the comments for v4 and to try and 
+rework the temperature formulas to work with only ints and if it worked 
+out resend the series. I have reworked code in 2/5 but kept Wolfram as 
+the author and added my SoB, hope this is OK.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Niklas: s/gpio_to_priv(chip)/gpiochip_get_data(chip)/]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/gpio/gpio-rcar.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+Reworking the formulas involved moving from s64 to int as the data type 
+used to store coefficients used in decimal scaled fixed point 
+calculations. By examining the largest values which could be produced in 
+these calculations a factor of 100 is the maximum scaling which is 
+possible and still fit inside an int, previously with s64 the scaling 
+was 1000.
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 3b77c10..31ad288 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -242,11 +242,24 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
- 
- static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
- {
--	return pinctrl_request_gpio(chip->base + offset);
-+	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
-+	int error;
-+
-+	error = pm_runtime_get_sync(&p->pdev->dev);
-+	if (error < 0)
-+		return error;
-+
-+	error = pinctrl_request_gpio(chip->base + offset);
-+	if (error)
-+		pm_runtime_put(&p->pdev->dev);
-+
-+	return error;
- }
- 
- static void gpio_rcar_free(struct gpio_chip *chip, unsigned offset)
- {
-+	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
-+
- 	pinctrl_free_gpio(chip->base + offset);
- 
- 	/*
-@@ -254,6 +267,8 @@ static void gpio_rcar_free(struct gpio_chip *chip, unsigned offset)
- 	 * drive the GPIO pin as an output.
- 	 */
- 	gpio_rcar_config_general_input_output_mode(chip, offset, false);
-+
-+	pm_runtime_put(&p->pdev->dev);
- }
- 
- static int gpio_rcar_direction_input(struct gpio_chip *chip, unsigned offset)
-@@ -426,7 +441,6 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	}
- 
- 	pm_runtime_enable(dev);
--	pm_runtime_get_sync(dev);
- 
- 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-@@ -495,7 +509,6 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- err1:
- 	gpiochip_remove(gpio_chip);
- err0:
--	pm_runtime_put(dev);
- 	pm_runtime_disable(dev);
- 	return ret;
- }
-@@ -506,7 +519,6 @@ static int gpio_rcar_remove(struct platform_device *pdev)
- 
- 	gpiochip_remove(&p->gpio_chip);
- 
--	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	return 0;
- }
+Reducing the decimal scaling also reduces the accuracy of the 
+calculations. In my tests this was hardly noticeable as the granularity 
+of the reported temperature to user-space is 0.5C, comparing the value 
+reported in the s64 vs int implementation only differ very slightly when 
+it rounded the value to the next 0.5C level.
+
+However the formulas used to calculate the coefficients are not 
+documented and none obvious (at lest not to me) so given different 
+initial values to calculate the coefficients the error might become 
+larger. Therefore I would like to ask Morimoto-san and/or Khiem to 
+provide or proxy testing of this less accurate formula and feedback if 
+it's OK, let me know if there is anything I can do to help out.
+
+Changes since v4:
+- Use only 32 bit ints to convert from register value to temperature.
+- Merge and simplify temp calculation functions.
+- Document what I known about the temprature conversion formulas.
+- Add new patch 5/5 which fixes a waring printout caused by trying to get 
+  temp before hardware is ready on r8a7795.
+- Fixed a few checkpatch warnings.
+
+Niklas Söderlund (1):
+  thermal: rcar_gen3_thermal: Add delay in .thermal_init on r8a7795
+
+Wolfram Sang (4):
+  thermal: rcar_gen3_thermal: Document the R-Car Gen3
+  thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver
+  arm64: dts: r8a7795: Add R-Car Gen3 thermal support
+  arm64: dts: r8a7796: Add R-Car Gen3 thermal support
+
+ .../bindings/thermal/rcar-gen3-thermal.txt         |  56 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  58 ++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  58 ++++
+ drivers/thermal/Kconfig                            |   9 +
+ drivers/thermal/Makefile                           |   1 +
+ drivers/thermal/rcar_gen3_thermal.c                | 330 +++++++++++++++++++++
+ 6 files changed, 512 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+ create mode 100644 drivers/thermal/rcar_gen3_thermal.c
+
 -- 
 2.10.2
