@@ -1,71 +1,122 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 03/29] drm: bridge: dw-hdmi: Remove unused function parameter
-Date: Tue, 20 Dec 2016 03:33:34 +0200
-Message-Id: <20161220013400.28317-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:34098 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752544AbcLLRfb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Dec 2016 12:35:31 -0500
+Received: by mail-wm0-f43.google.com with SMTP id u144so15601961wmu.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 09:35:30 -0800 (PST)
+Subject: Re: [PATCH] sh_eth: add wake-on-lan support via magic packet
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+References: <20161207162843.4731-1-niklas.soderlund+renesas@ragnatech.se>
+ <59a1f246-9062-20e1-3f85-a1c5f6fcfc29@cogentembedded.com>
+ <20161208145635.GH21834@bigcity.dyn.berto.se>
+ <b0bc6386-45ba-2205-6cd4-dce9a1529124@cogentembedded.com>
+ <20161212154955.GA17342@bigcity.dyn.berto.se>
+Cc: Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <cadc1263-fc92-175c-6492-b466623c669f@cogentembedded.com>
+Date: Mon, 12 Dec 2016 20:35:27 +0300
+MIME-Version: 1.0
+In-Reply-To: <20161212154955.GA17342@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 12/12/2016 06:49 PM, Niklas Söderlund wrote:
 
-The 'prep' parameter passed to hdmi_phy_configure() is useless. It is
-hardcoded as 0, and if set, simply prevents the configure function from
-executing.
+> Thanks for your feedback.
 
-Remove it.
+    Not at all, it's my duty now. :-)
+    I should probably have warned you not to post the new version to netdev -- 
+DaveM has closed his net-next.git tree (ahead of the usual time, which would 
+have been 4.9 release), so you posting would only upset him...
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+[...]
+>>>>   You only enable the WOL support fo the R-Car gen2 chips but never say that
+>>>> explicitly, neither in the subject nor here.
+>>>>
+>>>>> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>>>>> ---
+>>>>>  drivers/net/ethernet/renesas/sh_eth.c | 120 +++++++++++++++++++++++++++++++---
+>>>>>  drivers/net/ethernet/renesas/sh_eth.h |   4 ++
+>>>>>  2 files changed, 116 insertions(+), 8 deletions(-)
+>>>>
+>>>>> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+>>>>> index 05b0dc5..3974046 100644
+>>>>> --- a/drivers/net/ethernet/renesas/sh_eth.c
+>>>>> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+[...]
+>>>> +		/* Handle MagicPacket interrupt */
+>>>> +		if (sh_eth_read(ndev, ECSR) & ECSR_MPD)
+>>
+>>    What if it wasn't enabled ATM?
+>
+> Sorry I don't understand this comment.
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index f86894622070..5f8044a7d602 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -931,7 +931,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
- }
- 
--static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
-+static int hdmi_phy_configure(struct dw_hdmi *hdmi,
- 			      unsigned char res, int cscon)
- {
- 	unsigned res_idx;
-@@ -941,9 +941,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
- 
--	if (prep)
--		return -EINVAL;
--
- 	switch (res) {
- 	case 0:	/* color resolution 0 is 8 bit colour depth */
- 	case 8:
-@@ -1072,7 +1069,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
- 		dw_hdmi_phy_enable_powerdown(hdmi, true);
- 
- 		/* Enable CSC */
--		ret = hdmi_phy_configure(hdmi, 0, 8, cscon);
-+		ret = hdmi_phy_configure(hdmi, 8, cscon);
- 		if (ret)
- 			return ret;
- 	}
--- 
-Regards,
+    I'm trying to handle only the enabled interrupts but this hasn't been 
+consistently done yet (only for EESR, not ECSR), so nevermind. :-)
 
-Laurent Pinchart
+[...]
+>>>>> @@ -3150,15 +3193,71 @@ static int sh_eth_drv_remove(struct platform_device *pdev)
+[...]
+
+>>> This is how it's done in
+>>> other parts of the driver when disabling interrupts.
+>>
+>>    Not in all parts of the driver that disable EESIPR interrupts... I must
+>> confess that I never liked that 'mdp->irq_enabled' flag and still suspect we
+>> can get things done without it... I need to look at this code again, sigh...
+
+    Well, we can't most probably but I have a patch almost ready that turns 
+the boolean flag into u32 field holding the EESIPR value to be written next. 
+Would that help you?
+
+>>> This is also why I only check for MagicPacket interrupts if irq_enabled
+>>> is false.
+>>
+>>   I would have preferred that this was done with the other EMAC interrupts,
+>> in sh_eth_error().
+>
+> I removed the check for Magic Packet in sh_eth_interrupt() and running
+> without setting mdp->irq_enabled = false. sh_eth_error() will then clear
+> any ECI interrupt so no need to add Magic Packet detection to it since
+> all that is needed on Magic Packet is to clear the interrupt which
+> already is done. This works and I can do multiple suspend/resume cycles,
+> will be in v2 thanks for the suggestion.
+
+    OK, let's see what you have when I have some more time. We have a lot of 
+time for ironing things out till net-next is opened again -- which will happen 
+after -rc1)...
+
+[...]
+>>>>> +
+>>>>> +	/* Enable MagicPacket */
+>>>>> +	sh_eth_modify(ndev, ECMR, 0, ECMR_PMDE);
+>>>>> +
+>>>>> +	/* Increased clock usage so device won't be suspended */
+>>>>> +	clk_enable(mdp->clk);
+>>>>
+>>>>    Hum, intermixiggn runtime PM with clock API doesn't look good...
+>>>
+>>> I agree it looks weird but I need a way to increment the usage count for
+>>> the clock otherwise the PM code will disable the module clock and WoL
+>>> will not work.
+>>
+>>    How will it do it if you don't call sh_eth_close() in this case?
+>>
+>>> Note that this call will not enable the clock just
+>>> increase the usage count so it won't be disabled when the PM code
+>>> decrease it after the sh_eth suspend function is run.
+>>
+>>    You mean that the PM code calls RPM or clk API on its own? That's strange...
+>
+> Yes it calls clk API.
+
+    Hum, will have to look into it as well...
+
+[...]
+
+MBR, Sergei
