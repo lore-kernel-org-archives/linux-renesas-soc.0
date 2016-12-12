@@ -1,88 +1,47 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 19/22] drm: rcar-du: Add HDMI outputs to R8A7795 device description
-Date: Fri,  2 Dec 2016 01:43:34 +0200
-Message-Id: <1480635817-1258-20-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54228 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753269AbcLLQK2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Dec 2016 11:10:28 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 5/5] sh_eth: enable wake-on-lan for sh7763
+Date: Mon, 12 Dec 2016 17:09:31 +0100
+Message-Id: <20161212160931.6478-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+This is based on public datasheet for sh7763 which shows it have the
+same behavior and registers for WoL as other versions of sh_eth.
 
-Update the device description with the two available HDMI outputs.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  4 +++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 12 ++++++++++--
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 6f08b7e7db06..459e5390d6e0 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -1,7 +1,7 @@
- /*
-  * rcar_du_crtc.h  --  R-Car Display Unit CRTCs
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2015 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  *
-@@ -61,6 +61,8 @@ enum rcar_du_output {
- 	RCAR_DU_OUTPUT_DPAD1,
- 	RCAR_DU_OUTPUT_LVDS0,
- 	RCAR_DU_OUTPUT_LVDS1,
-+	RCAR_DU_OUTPUT_HDMI0,
-+	RCAR_DU_OUTPUT_HDMI1,
- 	RCAR_DU_OUTPUT_TCON,
- 	RCAR_DU_OUTPUT_MAX,
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index 927de77..6e80457 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -851,6 +851,7 @@ static struct sh_eth_cpu_data sh7763_data = {
+ 	.no_ade		= 1,
+ 	.tsu		= 1,
+ 	.irq_flags	= IRQF_SHARED,
++	.magic		= 1,
  };
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 74352140f55f..3107719c4653 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -150,13 +150,21 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
- 	.num_crtcs = 4,
- 	.routes = {
--		/* R8A7795 has one RGB output, one LVDS output and two
--		 * (currently unsupported) HDMI outputs.
-+		/* R8A7795 has one RGB output, two HDMI outputs and one
-+		 * LVDS output.
- 		 */
- 		[RCAR_DU_OUTPUT_DPAD0] = {
- 			.possible_crtcs = BIT(3),
- 			.port = 0,
- 		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI1] = {
-+			.possible_crtcs = BIT(2),
-+			.port = 2,
-+		},
- 		[RCAR_DU_OUTPUT_LVDS0] = {
- 			.possible_crtcs = BIT(0),
- 			.port = 3,
+ 
+ static struct sh_eth_cpu_data sh7619_data = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.10.2
