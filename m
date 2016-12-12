@@ -1,44 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47060 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755792AbcLAN1u (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:41902 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752851AbcLLTvt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 08:27:50 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Mon, 12 Dec 2016 14:51:49 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7793: Implement voltage switching for SDHI
-Date: Thu,  1 Dec 2016 14:21:07 +0100
-Message-Id: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
+Date: Mon, 12 Dec 2016 20:51:23 +0100
+Message-Id: <20161212195128.16633-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Voltage switching is the same as on the r8a7791.
+The capability for HW_RESET is only activated if SDR104 is present, so
+no need to check for SDR104 in the function itself again.
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Based on sh-pfc-for-v4.10-tag2
----
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 7ca37c3019ab..e8de975b3a58 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -6455,6 +6455,7 @@ const struct sh_pfc_soc_info r8a7791_pinmux_info = {
- #ifdef CONFIG_PINCTRL_PFC_R8A7793
- const struct sh_pfc_soc_info r8a7793_pinmux_info = {
- 	.name = "r8a77930_pfc",
-+	.ops = &r8a7791_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 96ebe985d5cdc6..7964f9a87d9c20 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -460,9 +460,6 @@ static void sh_mobile_sdhi_hw_reset(struct tmio_mmc_host *host)
+ {
+ 	struct sh_mobile_sdhi *priv;
  
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+-	if (!(host->mmc->caps & MMC_CAP_UHS_SDR104))
+-		return;
+-
+ 	priv = host_to_priv(host);
+ 
+ 	/* Reset SCC */
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.2
