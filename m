@@ -1,77 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:41880 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752778AbcLLTvs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39561 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752419AbcLLOjx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 14:51:48 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
+        Mon, 12 Dec 2016 09:39:53 -0500
+Date: Mon, 12 Dec 2016 15:39:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/9] mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
-Date: Mon, 12 Dec 2016 20:51:21 +0100
-Message-Id: <20161212195128.16633-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
-References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH renesas/devel 10/13] ARM: dts: r8a7790: Use R-Car Gen 2
+ fallback binding for i2c nodes
+Message-ID: <20161212143942.GA31172@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX3QR00t-QwCv+AFqMmWvFZ-wuvVAa5S2p0Cnu3mWB9CQ@mail.gmail.com>
+ <0db5b88e-41fb-03db-fa61-48e754356901@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We need a SCC unit for hw_reset. Those units can only be described in
-of_data. So, of_data and a valid SCC offset are prerequisites for
-enabling the hw_reset capability. Merge the two 'if' conditions into one
-and add a check for an scc offset.
+On Mon, Dec 12, 2016 at 01:28:30PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 12/12/2016 12:11 PM, Simon Horman wrote:
+> 
+> >Use recently added R-Car Gen 2 fallback binding for iii nodes in
+> 
+>    s/iii/iic/?
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/sh_mobile_sdhi.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+Yes, thanks for noticing that.
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index b48e3ae4549b6b..f3ea2c8b12040c 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -656,27 +656,25 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto efree;
- 
--	if (host->mmc->caps & MMC_CAP_UHS_SDR104) {
-+	if (of_data && of_data->scc_offset && host->mmc->caps & MMC_CAP_UHS_SDR104) {
-+		const struct sh_mobile_sdhi_scc *taps = of_data->taps;
-+		bool hit = false;
-+
- 		host->mmc->caps |= MMC_CAP_HW_RESET;
- 
--		if (of_data) {
--			const struct sh_mobile_sdhi_scc *taps = of_data->taps;
--			bool hit = false;
--
--			for (i = 0; i < of_data->taps_num; i++) {
--				if (taps[i].clk_rate == 0 ||
--				    taps[i].clk_rate == host->mmc->f_max) {
--					host->scc_tappos = taps->tap;
--					hit = true;
--					break;
--				}
-+		for (i = 0; i < of_data->taps_num; i++) {
-+			if (taps[i].clk_rate == 0 ||
-+			    taps[i].clk_rate == host->mmc->f_max) {
-+				host->scc_tappos = taps->tap;
-+				hit = true;
-+				break;
- 			}
-+		}
- 
--			if (!hit)
--				dev_warn(&host->pdev->dev, "Unknown clock rate for SDR104\n");
-+		if (!hit)
-+			dev_warn(&host->pdev->dev, "Unknown clock rate for SDR104\n");
- 
--			priv->scc_ctl = host->ctl + of_data->scc_offset;
--		}
-+		priv->scc_ctl = host->ctl + of_data->scc_offset;
- 	}
- 
- 	i = 0;
--- 
-2.10.2
+> >DT for r8a7790 SoC.
+> >
+> >This has no run-time effect for the current driver as the initialisation
+> >sequence is the same for the SoC-specific binding for r8a7790 and the
+> >fallback binding for R-Car Gen 2.
+> >
+> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> [...]
+> 
+> MBR, Sergei
+> 
+
+On Mon, Dec 12, 2016 at 02:42:29PM +0100, Geert Uytterhoeven wrote:
+> Hi SImon,
+> 
+> On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Use recently added R-Car Gen 2 fallback binding for iii nodes in
+> 
+> As Sergei already pointed out: s/iii/iic/.
+> 
+> You may also want to s/i2c/iic/ in the one-line summary, to avoid having
+> multiple different patches with the same one-line summary (initially I was a
+> bit confused by this, as Gmail grouped them together).
+
+Yes, I meant to differentiate the subjects as you suggest.
+I'll fix things up.
+
+> These two comments apply to all iic DT patches in this series.
+
+Got it.
