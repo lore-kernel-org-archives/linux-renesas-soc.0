@@ -1,31 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36639 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752674AbcLLNdq (ORCPT
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37006 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932340AbcLLK2c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 08:33:46 -0500
-Received: by mail-io0-f196.google.com with SMTP id b194so21459313ioa.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 05:33:46 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1481533902-14789-4-git-send-email-horms+renesas@verge.net.au>
-References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au> <1481533902-14789-4-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Dec 2016 14:33:44 +0100
-Message-ID: <CAMuHMdVgeaXBkXrXS9OR70jsPoL50Zbpm63oH58ntSTygVUT2w@mail.gmail.com>
-Subject: Re: [PATCH renesas/devel 03/13] ARM: dts: r8a7790: Use R-Car Gen 2
+        Mon, 12 Dec 2016 05:28:32 -0500
+Received: by mail-wm0-f43.google.com with SMTP id t79so60265511wmt.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 02:28:32 -0800 (PST)
+Subject: Re: [PATCH renesas/devel 10/13] ARM: dts: r8a7790: Use R-Car Gen 2
  fallback binding for i2c nodes
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+To: Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
+ <1481533902-14789-11-git-send-email-horms+renesas@verge.net.au>
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <0db5b88e-41fb-03db-fa61-48e754356901@cogentembedded.com>
+Date: Mon, 12 Dec 2016 13:28:30 +0300
+MIME-Version: 1.0
+In-Reply-To: <1481533902-14789-11-git-send-email-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Use recently added R-Car Gen 2 fallback binding for i2c nodes in
+Hello!
+
+On 12/12/2016 12:11 PM, Simon Horman wrote:
+
+> Use recently added R-Car Gen 2 fallback binding for iii nodes in
+
+    s/iii/iic/?
+
 > DT for r8a7790 SoC.
 >
 > This has no run-time effect for the current driver as the initialisation
@@ -33,16 +39,6 @@ On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
 > fallback binding for R-Car Gen 2.
 >
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[...]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
