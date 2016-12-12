@@ -1,92 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbcLMLqU (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34648 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751721AbcLLNcu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 06:46:20 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 renesas/devel 07/13] ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for i2c nodes
-Date: Tue, 13 Dec 2016 12:45:53 +0100
-Message-Id: <1481629559-14187-8-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 12 Dec 2016 08:32:50 -0500
+Received: by mail-oi0-f68.google.com with SMTP id m75so10876754oig.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 05:32:49 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1481533902-14789-3-git-send-email-horms+renesas@verge.net.au>
+References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au> <1481533902-14789-3-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Dec 2016 14:32:48 +0100
+Message-ID: <CAMuHMdXi8WExEa5UiWOfAeZ6z1Vkbq6v-9sQcdVUTdezG+=fQg@mail.gmail.com>
+Subject: Re: [PATCH renesas/devel 02/13] ARM: dts: r8a7778: Use R-Car Gen 1
+ fallback binding for i2c nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for i2c nodes in
-DT for r8a7794 SoC.
+On Mon, Dec 12, 2016 at 10:11 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use recently added R-Car Gen 1 fallback binding for i2c nodes in
+> DT for r8a7778 SoC.
+>
+> This has no run-time effect for the current driver as the initialisation
+> sequence is the same for the SoC-specific binding for r8a7778 and the
+> fallback binding for R-Car Gen 1.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7794 and the
-fallback binding for R-Car Gen 2.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 78e964d5dacb..5fd382a5a7b2 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -611,7 +611,7 @@
- 
- 	/* The memory map in the User's Manual maps the cores to bus numbers */
- 	i2c0: i2c@e6508000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6508000 0 0x40>;
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C0>;
-@@ -623,7 +623,7 @@
- 	};
- 
- 	i2c1: i2c@e6518000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6518000 0 0x40>;
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C1>;
-@@ -635,7 +635,7 @@
- 	};
- 
- 	i2c2: i2c@e6530000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6530000 0 0x40>;
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C2>;
-@@ -647,7 +647,7 @@
- 	};
- 
- 	i2c3: i2c@e6540000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6540000 0 0x40>;
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C3>;
-@@ -659,7 +659,7 @@
- 	};
- 
- 	i2c4: i2c@e6520000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6520000 0 0x40>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C4>;
-@@ -671,7 +671,7 @@
- 	};
- 
- 	i2c5: i2c@e6528000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6528000 0 0x40>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C5>;
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
