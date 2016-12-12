@@ -1,42 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:36516 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754125AbcLLKcX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57715 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754013AbcLLJMI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 05:32:23 -0500
-Received: by mail-wm0-f45.google.com with SMTP id g23so54661919wme.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 02:32:22 -0800 (PST)
-Subject: Re: [PATCH renesas/devel 13/13] ARM: dts: r8a7794: Use R-Car Gen 2
- fallback binding for i2c nodes
-To: Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
- <1481533902-14789-14-git-send-email-horms+renesas@verge.net.au>
+        Mon, 12 Dec 2016 04:12:08 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <bb5c6e7e-59e9-2120-fae1-c49fa7168bcb@cogentembedded.com>
-Date: Mon, 12 Dec 2016 13:32:20 +0300
-MIME-Version: 1.0
-In-Reply-To: <1481533902-14789-14-git-send-email-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH renesas/devel 13/13] ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for i2c nodes
+Date: Mon, 12 Dec 2016 10:11:42 +0100
+Message-Id: <1481533902-14789-14-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/12/2016 12:11 PM, Simon Horman wrote:
+Use recently added R-Car Gen 2 fallback binding for iii nodes in
+DT for r8a7794 SoC.
 
-> Use recently added R-Car Gen 2 fallback binding for iii nodes in
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7794 and the
+fallback binding for R-Car Gen 2.
 
-    s/iii/iic/?
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> DT for r8a7794 SoC.
->
-> This has no run-time effect for the current driver as the initialisation
-> sequence is the same for the SoC-specific binding for r8a7794 and the
-> fallback binding for R-Car Gen 2.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[...]
-
-MBR, Sergei
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 5fd382a5a7b2..e41f1c9b4a9c 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -683,7 +683,8 @@
+ 	};
+ 
+ 	i2c6: i2c@e6500000 {
+-		compatible = "renesas,iic-r8a7794", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7794", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_IIC0>;
+@@ -697,7 +698,8 @@
+ 	};
+ 
+ 	i2c7: i2c@e6510000 {
+-		compatible = "renesas,iic-r8a7794", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7794", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_IIC1>;
+-- 
+2.7.0.rc3.207.g0ac5344
