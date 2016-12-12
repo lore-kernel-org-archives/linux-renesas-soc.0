@@ -1,122 +1,187 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:34098 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752544AbcLLRfb (ORCPT
+Received: from mail-wj0-f170.google.com ([209.85.210.170]:33664 "EHLO
+        mail-wj0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbcLLPt7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 12:35:31 -0500
-Received: by mail-wm0-f43.google.com with SMTP id u144so15601961wmu.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 09:35:30 -0800 (PST)
+        Mon, 12 Dec 2016 10:49:59 -0500
+Received: by mail-wj0-f170.google.com with SMTP id xy5so75903735wjc.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Dec 2016 07:49:58 -0800 (PST)
+Date: Mon, 12 Dec 2016 16:49:55 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] sh_eth: add wake-on-lan support via magic packet
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+Message-ID: <20161212154955.GA17342@bigcity.dyn.berto.se>
 References: <20161207162843.4731-1-niklas.soderlund+renesas@ragnatech.se>
  <59a1f246-9062-20e1-3f85-a1c5f6fcfc29@cogentembedded.com>
  <20161208145635.GH21834@bigcity.dyn.berto.se>
  <b0bc6386-45ba-2205-6cd4-dce9a1529124@cogentembedded.com>
- <20161212154955.GA17342@bigcity.dyn.berto.se>
-Cc: Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <cadc1263-fc92-175c-6492-b466623c669f@cogentembedded.com>
-Date: Mon, 12 Dec 2016 20:35:27 +0300
 MIME-Version: 1.0
-In-Reply-To: <20161212154955.GA17342@bigcity.dyn.berto.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0bc6386-45ba-2205-6cd4-dce9a1529124@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/12/2016 06:49 PM, Niklas Söderlund wrote:
+Hi Sergei,
 
-> Thanks for your feedback.
+Thanks for your feedback.
 
-    Not at all, it's my duty now. :-)
-    I should probably have warned you not to post the new version to netdev -- 
-DaveM has closed his net-next.git tree (ahead of the usual time, which would 
-have been 4.9 release), so you posting would only upset him...
+On 2016-12-11 00:25:41 +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 12/08/2016 05:56 PM, Niklas S�derlund wrote:
+> 
+> > >   You only enable the WOL support fo the R-Car gen2 chips but never say that
+> > > explicitly, neither in the subject nor here.
+> > > 
+> > > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > ---
+> > > >  drivers/net/ethernet/renesas/sh_eth.c | 120 +++++++++++++++++++++++++++++++---
+> > > >  drivers/net/ethernet/renesas/sh_eth.h |   4 ++
+> > > >  2 files changed, 116 insertions(+), 8 deletions(-)
+> > > 
+> > > > diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> > > > index 05b0dc5..3974046 100644
+> > > > --- a/drivers/net/ethernet/renesas/sh_eth.c
+> > > > +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> [...]
+> > > > @@ -1657,6 +1658,10 @@ static irqreturn_t sh_eth_interrupt(int irq, void *netdev)
+> > > >  		goto out;
+> > > > 
+> > > >  	if (!likely(mdp->irq_enabled)) {
+> > > 
+> > >    Oops, I guess unlikely(!mdp->irq_enabled) was meant here...
+> > 
+> > I can correct this in a separate patch if you wish.
+> 
+>    I'll look into this myself, I think.
 
-[...]
->>>>   You only enable the WOL support fo the R-Car gen2 chips but never say that
->>>> explicitly, neither in the subject nor here.
->>>>
->>>>> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->>>>> ---
->>>>>  drivers/net/ethernet/renesas/sh_eth.c | 120 +++++++++++++++++++++++++++++++---
->>>>>  drivers/net/ethernet/renesas/sh_eth.h |   4 ++
->>>>>  2 files changed, 116 insertions(+), 8 deletions(-)
->>>>
->>>>> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
->>>>> index 05b0dc5..3974046 100644
->>>>> --- a/drivers/net/ethernet/renesas/sh_eth.c
->>>>> +++ b/drivers/net/ethernet/renesas/sh_eth.c
-[...]
->>>> +		/* Handle MagicPacket interrupt */
->>>> +		if (sh_eth_read(ndev, ECSR) & ECSR_MPD)
->>
->>    What if it wasn't enabled ATM?
->
-> Sorry I don't understand this comment.
+OK.
 
-    I'm trying to handle only the enabled interrupts but this hasn't been 
-consistently done yet (only for EESR, not ECSR), so nevermind. :-)
+> 
+> > > +		/* Handle MagicPacket interrupt */
+> > > +		if (sh_eth_read(ndev, ECSR) & ECSR_MPD)
+> 
+>    What if it wasn't enabled ATM?
 
-[...]
->>>>> @@ -3150,15 +3193,71 @@ static int sh_eth_drv_remove(struct platform_device *pdev)
-[...]
+Sorry I don't understand this comment.
 
->>> This is how it's done in
->>> other parts of the driver when disabling interrupts.
->>
->>    Not in all parts of the driver that disable EESIPR interrupts... I must
->> confess that I never liked that 'mdp->irq_enabled' flag and still suspect we
->> can get things done without it... I need to look at this code again, sigh...
+> 
+> [...]
+> > > > @@ -3111,6 +3150,10 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+> > > >  	if (ret)
+> > > >  		goto out_napi_del;
+> > > > 
+> > > > +	mdp->wol_enabled = false;
+> > > 
+> > >    No need, the '*mdp' was kzalloc'ed.
+> > 
+> > OK, i prefer to explicitly set for easier reading of the code. But if
+> > you wish I will remove this in v2.
+> 
+>    Yes, remove it please.
 
-    Well, we can't most probably but I have a patch almost ready that turns 
-the boolean flag into u32 field holding the EESIPR value to be written next. 
-Would that help you?
+Will remove for v2.
 
->>> This is also why I only check for MagicPacket interrupts if irq_enabled
->>> is false.
->>
->>   I would have preferred that this was done with the other EMAC interrupts,
->> in sh_eth_error().
->
-> I removed the check for Magic Packet in sh_eth_interrupt() and running
-> without setting mdp->irq_enabled = false. sh_eth_error() will then clear
-> any ECI interrupt so no need to add Magic Packet detection to it since
-> all that is needed on Magic Packet is to clear the interrupt which
-> already is done. This works and I can do multiple suspend/resume cycles,
-> will be in v2 thanks for the suggestion.
+> 
+> > > > @@ -3150,15 +3193,71 @@ static int sh_eth_drv_remove(struct platform_device *pdev)
+> > > > 
+> > > >  #ifdef CONFIG_PM
+> > > >  #ifdef CONFIG_PM_SLEEP
+> > > > +static int sh_eth_wol_setup(struct net_device *ndev)
+> > > > +{
+> > > > +	struct sh_eth_private *mdp = netdev_priv(ndev);
+> > > > +
+> > > > +	/* Only allow ECI interrupts */
+> > > > +	mdp->irq_enabled = false;
+> > > 
+> > >    Why 'false' if you enable IRQs below?
+> > 
+> > I mask all interrupts except MagicPacket (ECSIPR_MPDIP) interrupts form
+> > the ECI (DMAC_M_ECI) and by setting irq_enabled to false the interrupt
+> > handler will only ack any residue interrupt.
+> 
+>    I don't see where it ack's anything, it just clears EESIPR and returns in
+> this case.
 
-    OK, let's see what you have when I have some more time. We have a lot of 
-time for ironing things out till net-next is opened again -- which will happen 
-after -rc1)...
+You are right, I must have misread when looking at this.
 
-[...]
->>>>> +
->>>>> +	/* Enable MagicPacket */
->>>>> +	sh_eth_modify(ndev, ECMR, 0, ECMR_PMDE);
->>>>> +
->>>>> +	/* Increased clock usage so device won't be suspended */
->>>>> +	clk_enable(mdp->clk);
->>>>
->>>>    Hum, intermixiggn runtime PM with clock API doesn't look good...
->>>
->>> I agree it looks weird but I need a way to increment the usage count for
->>> the clock otherwise the PM code will disable the module clock and WoL
->>> will not work.
->>
->>    How will it do it if you don't call sh_eth_close() in this case?
->>
->>> Note that this call will not enable the clock just
->>> increase the usage count so it won't be disabled when the PM code
->>> decrease it after the sh_eth suspend function is run.
->>
->>    You mean that the PM code calls RPM or clk API on its own? That's strange...
->
-> Yes it calls clk API.
+> 
+> > This is how it's done in
+> > other parts of the driver when disabling interrupts.
+> 
+>    Not in all parts of the driver that disable EESIPR interrupts... I must
+> confess that I never liked that 'mdp->irq_enabled' flag and still suspect we
+> can get things done without it... I need to look at this code again, sigh...
+> 
+> > This is also why I only check for MagicPacket interrupts if irq_enabled
+> > is false.
+> 
+>   I would have preferred that this was done with the other EMAC interrupts,
+> in sh_eth_error().
 
-    Hum, will have to look into it as well...
+I removed the check for Magic Packet in sh_eth_interrupt() and running 
+without setting mdp->irq_enabled = false. sh_eth_error() will then clear 
+any ECI interrupt so no need to add Magic Packet detection to it since 
+all that is needed on Magic Packet is to clear the interrupt which 
+already is done. This works and I can do multiple suspend/resume cycles, 
+will be in v2 thanks for the suggestion.
 
-[...]
+> 
+> > > > +	synchronize_irq(ndev->irq);
+> > > > +	napi_disable(&mdp->napi);
+> > > > +	sh_eth_write(ndev, DMAC_M_ECI, EESIPR);
+> > > > +
+> > > > +	/* Enable ECI MagicPacket interrupt */
+> > > > +	sh_eth_write(ndev, ECSIPR_MPDIP, ECSIPR);
+> 
+>    I'd prefer if it was always enabled via 'ecsipr_value'.
 
-MBR, Sergei
+Will do so in v2.
+
+> 
+> > > > +
+> > > > +	/* Enable MagicPacket */
+> > > > +	sh_eth_modify(ndev, ECMR, 0, ECMR_PMDE);
+> > > > +
+> > > > +	/* Increased clock usage so device won't be suspended */
+> > > > +	clk_enable(mdp->clk);
+> > > 
+> > >    Hum, intermixiggn runtime PM with clock API doesn't look good...
+> > 
+> > I agree it looks weird but I need a way to increment the usage count for
+> > the clock otherwise the PM code will disable the module clock and WoL
+> > will not work.
+> 
+>    How will it do it if you don't call sh_eth_close() in this case?
+> 
+> > Note that this call will not enable the clock just
+> > increase the usage count so it won't be disabled when the PM code
+> > decrease it after the sh_eth suspend function is run.
+> 
+>    You mean that the PM code calls RPM or clk API on its own? That's strange...
+
+Yes it calls clk API.
+
+> 
+> > If you know of a different way of ensuring that the clock is not turned
+> > off I be happy to look at it. I did some investigation into this and
+> > calling clk_enable() directly is for example what happens in the
+> > enable_irq_wake() call path to ensure the clock for the irq_chip is not
+> > turned off if it is a wakeup source, se for example
+> > gpio_rcar_irq_set_wake() in drivers/gpio/gpio-rcar.c.
+> 
+>    Thanks, will look into it...
+> 
+> [...]
+> 
+> MBR, Sergei
+> 
+
+-- 
+Regards,
+Niklas S�derlund
