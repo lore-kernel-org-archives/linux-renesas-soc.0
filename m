@@ -1,51 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51394 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753183AbcLNRi1 (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36621 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932883AbcLMNvT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Dec 2016 12:38:27 -0500
-Date: Wed, 14 Dec 2016 17:38:11 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Message-ID: <20161214173811.iporb5qqulmndvg3@sirena.org.uk>
-References: <1481536175-17238-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 13 Dec 2016 08:51:19 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sgpdmudl7gbvkuhn"
-Content-Disposition: inline
 In-Reply-To: <1481536175-17238-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481536175-17238-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Dec 2016 14:51:17 +0100
+Message-ID: <CAMuHMdVC4FrvznJzCvc-cSp1eHtpd4uzjcVnZ6p=D4xG-EPXtw@mail.gmail.com>
 Subject: Re: [PATCH spi/for-next] spi: sh-msiof: Add R-Car Gen 2 and 3
  fallback bindings
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Mon, Dec 12, 2016 at 10:49 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, e.g. Gen 2 and Gen 3. But beyond that it's not clear what the
+> relationship between IP blocks might be. For example, I believe that
+> r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+> descendant of the former or vice versa.
+>
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+>
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme is being adopted for
+> drivers for Renesas SoCs.
+>
+> Also:
+> * Deprecate renesas,sh-msiof. It seems poorly named as it is only
+>   compatible with SH-Mobile. It also appears unused in mainline.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
---sgpdmudl7gbvkuhn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Mon, Dec 12, 2016 at 10:49:35AM +0100, Simon Horman wrote:
+Gr{oetje,eeting}s,
 
-> +	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, // Deprecated
+                        Geert
 
-C++ style comment here, please send a followup fixing this.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---sgpdmudl7gbvkuhn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhRg4IACgkQJNaLcl1U
-h9BE5Af2IxQr1UZETSwENwVf2BDEj/59k7G5Ym5ITsWdwXmycvgDb+CjeaCxZ2Rk
-bB4Fw1ufqCOnpXXX44EDCtVrytc5Wq2RnSTTjmOD9pmmiYPPXGiOs/0KUNNDXRkL
-W6ZjfMYabeSKO6+sSatYfWROEYeve//VxRVPCIU7HxfjQ+inxFVXjqau4GMjQv5r
-5B2JAUhPwdPgu0cRx9eJjbiRcYMwbUIKG56SPikPEMOiTR6BmROZ07s+ShUHa22l
-Mi2RjdErBb40qSswMZpshIZjj4N4MFzHkSx4aRQG3Sya8aLPprkUROAmgIVIAIBk
-Chx6WBzYGoPngGr43ULTm0aP42Rf
-=E/cR
------END PGP SIGNATURE-----
-
---sgpdmudl7gbvkuhn--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
