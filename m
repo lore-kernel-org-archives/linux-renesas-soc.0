@@ -1,143 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:38402 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752456AbcLMJnn (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:47508 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752892AbcLMIjH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 04:43:43 -0500
-Received: by mail-wm0-f50.google.com with SMTP id f82so110957429wmf.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Dec 2016 01:43:42 -0800 (PST)
-Date: Tue, 13 Dec 2016 10:43:40 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: linux-pm@vger.kernel.org,
+        Tue, 13 Dec 2016 03:39:07 -0500
+Date: Tue, 13 Dec 2016 09:39:04 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Hien Dang <hien.dang.eb@renesas.com>,
-        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
 Subject: Re: [PATCHv5 2/5] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal
  driver
-Message-ID: <20161213094339.GB24175@bigcity.dyn.berto.se>
+Message-ID: <20161213083903.GA2773@katana>
 References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
  <20161212141805.14946-3-niklas.soderlund@ragnatech.se>
- <20161213035052.GA22105@localhost.localdomain>
+ <20161212214514.GA17631@katana>
+ <CAMuHMdXPZvHPRNx_VJ5VkowcTZbt_tOtRE1yPPVfv2fMYL8xLA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20161213035052.GA22105@localhost.localdomain>
+In-Reply-To: <CAMuHMdXPZvHPRNx_VJ5VkowcTZbt_tOtRE1yPPVfv2fMYL8xLA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Eduardo,
 
-Thanks for your feedback. I will skip commenting where Wolfram already 
-have.
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2016-12-12 19:50:54 -0800, Eduardo Valentin wrote:
 
-<snip>
+> Perhaps the macros should be called e.g. FIXPT_MUL() and FIXPT_DIV()?
 
-> > +/* Structure for thermal temperature calculation */
-> > +struct equation_coefs {
-> > +	int a1;
-> > +	int b1;
-> > +	int a2;
-> > +	int b2;
-> 
-> a little description of each coeff would be welcome.
+Yes, that naming would be more readable to me.
 
-Yes, I too would like to have better documentation of the formulas and 
-the meaning of the coefficients.
 
-<snip, Wolfram already covert this>
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> > +
-> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +	if (!priv)
-> > +		return -ENOMEM;
-> > +
-> > +	platform_set_drvdata(pdev, priv);
-> > +
-> > +	pm_runtime_enable(dev);
-> > +	pm_runtime_get_sync(dev);
-> > +
-> > +	for (i = 0; i < TSC_MAX_NUM; i++) {
-> > +		struct rcar_gen3_thermal_tsc *tsc;
-> > +
-> > +		tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
-> > +		if (!tsc) {
-> > +			ret = -ENOMEM;
-> > +			goto error_unregister;
-> > +		}
-> > +
-> > +		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-> > +		if (!res)
-> > +			break;
-> > +
-> > +		tsc->base = devm_ioremap_resource(dev, res);
-> > +		if (IS_ERR(tsc->base)) {
-> > +			ret = PTR_ERR(tsc->base);
-> > +			goto error_unregister;
-> > +		}
-> > +
-> > +		priv->tscs[i] = tsc;
-> > +		mutex_init(&tsc->lock);
-> > +
-> > +		match_data->thermal_init(tsc);
-> > +		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
-> 
-> oh, the thcode's are currently not read then?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-No as Wolfram commented, reading THCODE and PTAT from hardware is not 
-possible on the boards we have to test on so I think this needs to be 
-added once we can test it. Do you agree this is the best option?
+iQIcBAEBAgAGBQJYT7OnAAoJEBQN5MwUoCm2K1wP+wSVPIor7GsoRCLmh8+40r0I
+wALlO+O+F62bE95SumPrUUw3+uGW55qvxryztXqppQCdv1wskyHm1DmA4ltguhGZ
+UK0Jkfa4ynwThsy33EUUol7kgcexolK18fo2odp2MRzNIlzHVKHRDWmpbWKVAjrm
+dafuVraKF8NyAlmFeK/Pnle51DAwmBKQIauitjPmgnCdlXv0TJueaQVMVy9iqjVR
+Ax2E8gl1U5bSrpIDKEHgPc2qFBcAbtABliMs9KC1x04Tr92qGhgcvje2D3EdoNzS
+qgThMQoSljG2rmngHuOMZm7QRSreTcaV15ahxyj1xm7R5iTbA8h850DfgTGAeICC
+ajHK80u78okxffOdzAuzRQ0aVF2TjbOeJmaSAzDR2k34refc44sty34NfnD1HGM1
+PCWjzWadNYnTf3xwCPCpFsNbz05LbaWs7v+oEiAI+CQg+ZMjz61cuQ5hPI0M6UQV
+diL5AskhkYxo3w3QhoYL7tk8SLPrvdno9CXpVDmxLFfW//ReQY7PqylbBRXnNoTB
+sblCwy2L+alfIgFV1hLqYIb8vcu46WUnMvTqRUU+pkxM2sIFDMA6ixsC6Ocd5fBZ
+RK8CgrargULzNXsxiGgGXH6241NzVB0rRJWEVtyy3aylUYQJTQPZJY2pXO8rOzoe
+Vty6lR9plxc8XK1uQpnZ
+=rM+J
+-----END PGP SIGNATURE-----
 
-> 
-> > +
-> > +		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
-> > +							    &rcar_gen3_tz_of_ops);
-> 
-> and you are already doing it, therefore those coeff could really come
-> from the DT, no?
-> 
-> > +		if (IS_ERR(zone)) {
-> > +			dev_err(dev, "Can't register thermal zone\n");
-> > +			ret = PTR_ERR(zone);
-> > +			goto error_unregister;
-> > +		}
-> > +		tsc->zone = zone;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +error_unregister:
-> > +	rcar_gen3_thermal_remove(pdev);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static struct platform_driver rcar_gen3_thermal_driver = {
-> > +	.driver	= {
-> > +		.name	= "rcar_gen3_thermal",
-> > +		.of_match_table = rcar_gen3_thermal_dt_ids,
-> > +	},
-> > +	.probe		= rcar_gen3_thermal_probe,
-> > +	.remove		= rcar_gen3_thermal_remove,
-> > +};
-> > +module_platform_driver(rcar_gen3_thermal_driver);
-> > +
-> > +MODULE_LICENSE("GPL v2");
-> > +MODULE_DESCRIPTION("R-Car Gen3 THS thermal sensor driver");
-> > +MODULE_AUTHOR("Wolfram Sang <wsa+renesas@sang-engineering.com>");
-> > -- 
-> > 2.10.2
-> > 
-
--- 
-Regards,
-Niklas S�derlund
+--GvXjxJ+pjyke8COw--
