@@ -1,132 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45810 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752820AbcLFQB7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 11:01:59 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 i2c/for-next] i2c: rcar: Add per-Generation fallback bindings
-Date: Tue,  6 Dec 2016 17:01:28 +0100
-Message-Id: <1481040088-22596-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <SRS0=HTCQ=X4=ideasonboard.com=kieran.bingham+renesas@kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCHv3 0/4] v4l: vsp1: Fix suspend/resume and race on M2M pipelines
+Date: Tue, 13 Dec 2016 17:59:40 +0000
+Message-Id: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, e.g. Gen 2 and Gen 3. But beyond that it's not clear what the
-relationship between IP blocks might be. For example, I believe that
-r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
-descendant of the former or vice versa.
+This small patchset helps rework the VSP1 driver to repair an issue on
+suspend/resume operations whereby the pipeline does not get reconfigured after
+it has been re-initialised following a resume operation.
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
+Along side this, there was an intrinsic race in the vsp1_video_start_streaming()
+function whereby multiple streams operating through a BRU, could find themselves
+commencing an operation before the pipeline has been configured, or worse -
+commencing, just as the pipeline is being configured resulting in a null pointer
+dereference on pipe->dl.
 
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme is being adopted for
-drivers for Renesas SoCs.
+This series superceeds a previous effort to fix the BRU race.
 
-Also:
-* Deprecate renesas,i2c-rcar. It seems poorly named as it is only
-  compatible with R-Car Gen 1. It also appears unused in mainline.
-* Add some text to describe per-SoC bindings
+Patch [1/4] is a code move only, with no functional change.
+Patch [2/4] refactors the vsp1_video_start_streaming() function and fixes both
+            suspend/resume, and the BRU race in a single change
+Patch [3/4] removes the context scoped 'pipe->dl' which has been susceptible to
+            races and isn't required to be in the context.
+Patch [4/4] is an RFC patch really, that fixes a segfault on error paths  and I
+            certainly expect feedback and brief discussion. Please drop Patch 4
+            in the event of any further discussion, and don't consider it as
+            blocking for the first three patches of this series.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5
-* s/R8A7797/R8A777/
+v3:
+ - Move configured=false from vsp1_device_init to vsp1_reset_wpf()
+ - Clean up flag dereferencing with a local struct *
 
-v4
-* Correct grammar in changelog
+v2:
+ - Refactor video pipeline configuration implementation to solve both suspend
+   resume and the VSP BRU race in a single change
 
-v3
-* Consistently use renesas,<family>-<module> for new compat strings
-* Drop RFC designation
+v1:
+ - Original pipeline configuration rework
 
-v2
-* Include accidently omitted i2c-rcar.c portion of patch
----
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 32 ++++++++++++++--------
- drivers/i2c/busses/i2c-rcar.c                      |  5 +++-
- 2 files changed, 24 insertions(+), 13 deletions(-)
+Kieran Bingham (4):
+  v4l: vsp1: Move vsp1_video_setup_pipeline()
+  v4l: vsp1: Refactor video pipeline configuration
+  v4l: vsp1: Use local display lists and remove global pipe->dl
+  media: Catch null pipes on pipeline stop
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-index 239632a0d709..2b8bd33dbf8d 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -1,17 +1,25 @@
- I2C for R-Car platforms
- 
- Required properties:
--- compatible: Must be one of
--	"renesas,i2c-rcar"
--	"renesas,i2c-r8a7778"
--	"renesas,i2c-r8a7779"
--	"renesas,i2c-r8a7790"
--	"renesas,i2c-r8a7791"
--	"renesas,i2c-r8a7792"
--	"renesas,i2c-r8a7793"
--	"renesas,i2c-r8a7794"
--	"renesas,i2c-r8a7795"
--	"renesas,i2c-r8a7796"
-+- compatible:
-+	"renesas,i2c-r8a7778" if the device is a part of a R8A7778 SoC.
-+	"renesas,i2c-r8a7779" if the device is a part of a R8A7779 SoC.
-+	"renesas,i2c-r8a7790" if the device is a part of a R8A7790 SoC.
-+	"renesas,i2c-r8a7791" if the device is a part of a R8A7791 SoC.
-+	"renesas,i2c-r8a7792" if the device is a part of a R8A7792 SoC.
-+	"renesas,i2c-r8a7793" if the device is a part of a R8A7793 SoC.
-+	"renesas,i2c-r8a7794" if the device is a part of a R8A7794 SoC.
-+	"renesas,i2c-r8a7795" if the device is a part of a R8A7795 SoC.
-+	"renesas,i2c-r8a7796" if the device is a part of a R8A7796 SoC.
-+	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
-+	"renesas,rcar-gen2-i2c" for a generic R-Car Gen2 compatible device.
-+	"renesas,rcar-gen3-i2c" for a generic R-Car Gen3 compatible device.
-+	"renesas,i2c-rcar" (deprecated)
-+
-+	When compatible with the generic version, nodes must list the
-+	SoC-specific version corresponding to the platform first followed
-+	by the generic version.
-+
- - reg: physical base address of the controller and length of memory mapped
-   region.
- - interrupts: interrupt specifier.
-@@ -33,7 +41,7 @@ Examples :
- i2c0: i2c@e6508000 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
--	compatible = "renesas,i2c-r8a7791";
-+	compatible = "renesas,i2c-r8a7791", "renesas,rcar-gen2-i2c";
- 	reg = <0 0xe6508000 0 0x40>;
- 	interrupts = <0 287 IRQ_TYPE_LEVEL_HIGH>;
- 	clocks = <&mstp9_clks R8A7791_CLK_I2C0>;
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 726615e54f2a..622def6b43e2 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -793,7 +793,6 @@ static const struct i2c_algorithm rcar_i2c_algo = {
- };
- 
- static const struct of_device_id rcar_i2c_dt_ids[] = {
--	{ .compatible = "renesas,i2c-rcar", .data = (void *)I2C_RCAR_GEN1 },
- 	{ .compatible = "renesas,i2c-r8a7778", .data = (void *)I2C_RCAR_GEN1 },
- 	{ .compatible = "renesas,i2c-r8a7779", .data = (void *)I2C_RCAR_GEN1 },
- 	{ .compatible = "renesas,i2c-r8a7790", .data = (void *)I2C_RCAR_GEN2 },
-@@ -803,6 +802,10 @@ static const struct of_device_id rcar_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,i2c-r8a7794", .data = (void *)I2C_RCAR_GEN2 },
- 	{ .compatible = "renesas,i2c-r8a7795", .data = (void *)I2C_RCAR_GEN3 },
- 	{ .compatible = "renesas,i2c-r8a7796", .data = (void *)I2C_RCAR_GEN3 },
-+	{ .compatible = "renesas,i2c-rcar", .data = (void *)I2C_RCAR_GEN1 },	// Deprecated
-+	{ .compatible = "renesas,rcar-gen1-i2c", .data = (void *)I2C_RCAR_GEN1 },
-+	{ .compatible = "renesas,rcar-gen2-i2c", .data = (void *)I2C_RCAR_GEN2 },
-+	{ .compatible = "renesas,rcar-gen3-i2c", .data = (void *)I2C_RCAR_GEN3 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_i2c_dt_ids);
+ drivers/media/media-entity.c             |   2 +
+ drivers/media/platform/vsp1/vsp1_drm.c   |  20 ++---
+ drivers/media/platform/vsp1/vsp1_drv.c   |   4 +
+ drivers/media/platform/vsp1/vsp1_pipe.c  |   1 +
+ drivers/media/platform/vsp1/vsp1_pipe.h  |   4 +-
+ drivers/media/platform/vsp1/vsp1_video.c | 127 +++++++++++++++----------------
+ 6 files changed, 79 insertions(+), 79 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
