@@ -1,58 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35852 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759582AbcLRM1K (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932441AbcLMLqY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Dec 2016 07:27:10 -0500
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Simon Horman <horms@verge.net.au>,
+        Tue, 13 Dec 2016 06:46:24 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH pci/next] PCI: rcar: Add compatible string for r8a7796
-Date: Sun, 18 Dec 2016 21:27:02 +0900
-Message-Id: <1482064022-8998-1-git-send-email-ykaneko0929@gmail.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 renesas/devel 08/13] arm64: dts: r8a7795: Use R-Car Gen 3 fallback binding for i2c nodes
+Date: Tue, 13 Dec 2016 12:45:54 +0100
+Message-Id: <1481629559-14187-9-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Use recently added R-Car Gen 3 fallback binding for i2c nodes in
+DT for r8a7795 SoC.
 
-This patch adds support for r8a7796.
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7795 and the
+fallback binding for R-Car Gen 3.
 
-Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-This patch is based on the next branch of the pci tree.
-
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
- drivers/pci/host/pcie-rcar.c                       | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index eee518d..34712d6 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -6,6 +6,7 @@ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
- 	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
- 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
- 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
-+	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
- 	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
- 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index aca85be..02e5777 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1078,6 +1078,7 @@ static int rcar_pcie_parse_map_dma_ranges(struct rcar_pcie *pcie,
- 	{ .compatible = "renesas,pcie-rcar-gen2",
- 	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
-+	{ .compatible = "renesas,pcie-r8a7796", .data = rcar_pcie_hw_init },
- 	{ .compatible = "renesas,pcie-rcar-gen3", .data = rcar_pcie_hw_init },
- 	{},
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index e4110243817d..428056d287a9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -792,7 +792,8 @@
+ 		i2c0: i2c@e6500000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6500000 0 0x40>;
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 931>;
+@@ -806,7 +807,8 @@
+ 		i2c1: i2c@e6508000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6508000 0 0x40>;
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 930>;
+@@ -820,7 +822,8 @@
+ 		i2c2: i2c@e6510000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6510000 0 0x40>;
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 929>;
+@@ -834,7 +837,8 @@
+ 		i2c3: i2c@e66d0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66d0000 0 0x40>;
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 928>;
+@@ -848,7 +852,8 @@
+ 		i2c4: i2c@e66d8000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66d8000 0 0x40>;
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 927>;
+@@ -862,7 +867,8 @@
+ 		i2c5: i2c@e66e0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66e0000 0 0x40>;
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 919>;
+@@ -876,7 +882,8 @@
+ 		i2c6: i2c@e66e8000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66e8000 0 0x40>;
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
