@@ -1,52 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932369AbcLMLqS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 13 Dec 2016 06:46:18 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] irqchip/renesas-intc-irqpin: List fallback compatibility last
-Date: Fri,  9 Dec 2016 11:50:49 +0100
-Message-Id: <1481280650-9258-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481280650-9258-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481280650-9258-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 renesas/devel 01/13] ARM: dts: r8a7779: Use R-Car Gen 1 fallback binding for i2c nodes
+Date: Tue, 13 Dec 2016 12:45:47 +0100
+Message-Id: <1481629559-14187-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve readability by listing the rmobile fallback compatibility string
-after the more-specific compatibility strings they provide a fallback for.
+Use recently added R-Car Gen 1 fallback binding for i2c nodes in
+DT for r8a7779 SoC.
 
-This does not effect run-time behaviour as it is the order in the DTB that
-determines which compatibility string is used.
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7779 and the
+fallback binding for R-Car Gen 1.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/irqchip/irq-renesas-intc-irqpin.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 713177d97c7a..5fe1207a079c 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -374,7 +374,6 @@ static const struct intc_irqpin_config intc_irqpin_rmobile = {
- };
- 
- static const struct of_device_id intc_irqpin_dt_ids[] = {
--	{ .compatible = "renesas,intc-irqpin", },
- 	{ .compatible = "renesas,intc-irqpin-r8a7778",
- 	  .data = &intc_irqpin_irlm_r8a777x },
- 	{ .compatible = "renesas,intc-irqpin-r8a7779",
-@@ -383,6 +382,7 @@ static const struct of_device_id intc_irqpin_dt_ids[] = {
- 	  .data = &intc_irqpin_rmobile },
- 	{ .compatible = "renesas,intc-irqpin-sh73a0",
- 	  .data = &intc_irqpin_rmobile },
-+	{ .compatible = "renesas,intc-irqpin", },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, intc_irqpin_dt_ids);
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 55a7c1e37c57..f47a0edc26d4 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -173,7 +173,7 @@
+ 	i2c0: i2c@ffc70000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc70000 0x1000>;
+ 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
+@@ -184,7 +184,7 @@
+ 	i2c1: i2c@ffc71000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc71000 0x1000>;
+ 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
+@@ -195,7 +195,7 @@
+ 	i2c2: i2c@ffc72000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc72000 0x1000>;
+ 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
+@@ -206,7 +206,7 @@
+ 	i2c3: i2c@ffc73000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc73000 0x1000>;
+ 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
 -- 
 2.7.0.rc3.207.g0ac5344
