@@ -1,13 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:47508 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752892AbcLMIjH (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35547 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932193AbcLMIZL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 03:39:07 -0500
-Date: Tue, 13 Dec 2016 09:39:04 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Tue, 13 Dec 2016 03:25:11 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161212214514.GA17631@katana>
+References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+ <20161212141805.14946-3-niklas.soderlund@ragnatech.se> <20161212214514.GA17631@katana>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Dec 2016 09:25:04 +0100
+Message-ID: <CAMuHMdXPZvHPRNx_VJ5VkowcTZbt_tOtRE1yPPVfv2fMYL8xLA@mail.gmail.com>
+Subject: Re: [PATCHv5 2/5] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
@@ -17,53 +23,59 @@ Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Eduardo Valentin <edubezval@gmail.com>,
         Hien Dang <hien.dang.eb@renesas.com>,
         Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCHv5 2/5] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal
- driver
-Message-ID: <20161213083903.GA2773@katana>
-References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
- <20161212141805.14946-3-niklas.soderlund@ragnatech.se>
- <20161212214514.GA17631@katana>
- <CAMuHMdXPZvHPRNx_VJ5VkowcTZbt_tOtRE1yPPVfv2fMYL8xLA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXPZvHPRNx_VJ5VkowcTZbt_tOtRE1yPPVfv2fMYL8xLA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Mon, Dec 12, 2016 at 10:45 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> +/*
+>> + * Linear approximation for temperature
+>> + *
+>> + * [reg] = [temp] * a + b => [temp] = ([reg] - b) / a
+>> + *
+>> + * The constants a and b are calculated using two triplets of int values PTAT
+>> + * and THCODE. PTAT and THCODE can either be read from hardware or use hard
+>> + * coded values from driver. The formula to calculate a and b are taken from
+>> + * BSP and sparsely documented and understood.
+>> + *
+>> + * Examining the linear formula and the formula used to calculate constants a
+>> + * and b while knowing that the span for PTAT and THCODE values are between
+>> + * 0x000 and 0xfff the largest integer possible is 0xfff * 0xfff == 0xffe001.
+>> + * Integer also needs to be signed so that leaves 7 bits for decimal
+>> + * fixed point scaling, which amounts to a decimal scaling factor of 100.
+>> + */
+>> +
+>> +#define SCALE_FACTOR 100
+>> +#define SCALE_INT(_x) ((_x) * SCALE_FACTOR)
+>> +#define SCALE_MUL(_a, _b) (((_a)*(_b)) / SCALE_FACTOR)
+>> +#define SCALE_DIV(_a, _b) (((_a)*SCALE_FACTOR)/(_b))
+>> +#define SCALE_TO_MCELSIUS(_x) ((_x) * 10)
+>
+> Spaces around operators everywhere, please.
+>
+> I wonder about SCALE_MUL; isn't that more like "unscaling" because _a
+> and _b are already scaled?
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+No, it's a standard fixed point multiplication, where you have to compensate
+for the double scaling due to the multiplication.
 
+Perhaps the macros should be called e.g. FIXPT_MUL() and FIXPT_DIV()?
 
-> Perhaps the macros should be called e.g. FIXPT_MUL() and FIXPT_DIV()?
+> And since _b is always a constant, couldn't we simply drop this macro
+> and simply do _a * _b (with _a being scaled already and _b not)?
 
-Yes, that naming would be more readable to me.
+Yes, for multiplication by an integer (not a fixed point number), you can
+just do the multiplication. Which also avoids having to care about rounding.
 
+Gr{oetje,eeting}s,
 
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIcBAEBAgAGBQJYT7OnAAoJEBQN5MwUoCm2K1wP+wSVPIor7GsoRCLmh8+40r0I
-wALlO+O+F62bE95SumPrUUw3+uGW55qvxryztXqppQCdv1wskyHm1DmA4ltguhGZ
-UK0Jkfa4ynwThsy33EUUol7kgcexolK18fo2odp2MRzNIlzHVKHRDWmpbWKVAjrm
-dafuVraKF8NyAlmFeK/Pnle51DAwmBKQIauitjPmgnCdlXv0TJueaQVMVy9iqjVR
-Ax2E8gl1U5bSrpIDKEHgPc2qFBcAbtABliMs9KC1x04Tr92qGhgcvje2D3EdoNzS
-qgThMQoSljG2rmngHuOMZm7QRSreTcaV15ahxyj1xm7R5iTbA8h850DfgTGAeICC
-ajHK80u78okxffOdzAuzRQ0aVF2TjbOeJmaSAzDR2k34refc44sty34NfnD1HGM1
-PCWjzWadNYnTf3xwCPCpFsNbz05LbaWs7v+oEiAI+CQg+ZMjz61cuQ5hPI0M6UQV
-diL5AskhkYxo3w3QhoYL7tk8SLPrvdno9CXpVDmxLFfW//ReQY7PqylbBRXnNoTB
-sblCwy2L+alfIgFV1hLqYIb8vcu46WUnMvTqRUU+pkxM2sIFDMA6ixsC6Ocd5fBZ
-RK8CgrargULzNXsxiGgGXH6241NzVB0rRJWEVtyy3aylUYQJTQPZJY2pXO8rOzoe
-Vty6lR9plxc8XK1uQpnZ
-=rM+J
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
