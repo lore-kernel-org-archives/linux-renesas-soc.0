@@ -1,58 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57715 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753917AbcLLJLz (ORCPT
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:38239 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753055AbcLMJPp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 04:11:55 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH renesas/devel 00/13] ARM, arm64: dts: Use R-Car fallback bindings for i2c/iic nodes
-Date: Mon, 12 Dec 2016 10:11:29 +0100
-Message-Id: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 13 Dec 2016 04:15:45 -0500
+Received: by mail-wm0-f51.google.com with SMTP id f82so109757956wmf.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Dec 2016 01:15:44 -0800 (PST)
+Date: Tue, 13 Dec 2016 10:15:42 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv5 5/5] thermal: rcar_gen3_thermal: Add delay in
+ .thermal_init on r8a7795
+Message-ID: <20161213091542.GA24175@bigcity.dyn.berto.se>
+References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+ <20161212141805.14946-6-niklas.soderlund@ragnatech.se>
+ <20161213033125.GA11329@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20161213033125.GA11329@localhost.localdomain>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On 2016-12-12 19:31:26 -0800, Eduardo Valentin wrote:
+> On Mon, Dec 12, 2016 at 03:18:05PM +0100, Niklas S�derlund wrote:
+> > From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > 
+> > The .thermal_init needs to be delayed a short amount of time after
+> > setting REG_GEN3_CTSR to allow for the TEMP register to contain
+> > something useful. If it's not delayed theses warnings are common during
+> > boot:
+> > 
+> > thermal thermal_zone0: failed to read out thermal zone (-5)
+> > thermal thermal_zone1: failed to read out thermal zone (-5)
+> > thermal thermal_zone2: failed to read out thermal zone (-5)
+> > 
+> > The warnings are triggered by the first call to .get_temp while the TEMP
+> > register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO since
+> > a TEMP value of 0 will result in a temperature reading which is out of
+> > specifications.
+> 
+> I think this one can be folded on patch 2/5.
 
-this short series makes use of newly added R-Car fallback bindings in
-i2c and iic nodes of the DTs for SoCs where the drivers in question are
-already used.
-
-This should have no run-time effect at this time as the current
-driver implementations use the same initialisation squeuences for
-SoC-specific and R-Car fallback bindings for all the cases covered by
-this patch-set.
-
-Based on renesas-devel-20161212-v4.9
-
-Simon Horman (13):
-  ARM: dts: r8a7779: Use R-Car Gen 1 fallback binding for i2c nodes
-  ARM: dts: r8a7778: Use R-Car Gen 1 fallback binding for i2c nodes
-  ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for i2c nodes
-  ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for i2c nodes
-  ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for i2c nodes
-  ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for i2c nodes
-  ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for i2c nodes
-  arm64: dts: r8a7795: Use R-Car Gen 3 fallback binding for i2c nodes
-  arm64: dts: r8a7796: Use R-Car Gen 3 fallback binding for i2c nodes
-  ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for i2c nodes
-  ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for i2c nodes
-  ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for i2c nodes
-  ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for i2c nodes
-
- arch/arm/boot/dts/r8a7778.dtsi           |  8 ++++----
- arch/arm/boot/dts/r8a7779.dtsi           |  8 ++++----
- arch/arm/boot/dts/r8a7790.dtsi           | 20 ++++++++++++--------
- arch/arm/boot/dts/r8a7791.dtsi           | 21 ++++++++++++---------
- arch/arm/boot/dts/r8a7792.dtsi           | 18 ++++++++++++------
- arch/arm/boot/dts/r8a7793.dtsi           | 21 ++++++++++++---------
- arch/arm/boot/dts/r8a7794.dtsi           | 18 ++++++++++--------
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 ++++++++++++++-------
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 21 ++++++++++++++-------
- 9 files changed, 94 insertions(+), 62 deletions(-)
+OK, will do this in next version.
 
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+Niklas S�derlund
