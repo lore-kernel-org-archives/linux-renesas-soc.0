@@ -1,66 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:47146 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932463AbcLMLIj (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36523 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752746AbcLMKv4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 06:08:39 -0500
-Date: Tue, 13 Dec 2016 12:08:35 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Tue, 13 Dec 2016 05:51:56 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161212195128.16633-3-wsa+renesas@sang-engineering.com>
+References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com> <20161212195128.16633-3-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Dec 2016 11:51:54 +0100
+Message-ID: <CAMuHMdWnhtQb6OyZ5Q-O3H4h+D2bWu=z2q=K2qY9oDfCZKxzeQ@mail.gmail.com>
+Subject: Re: [PATCH 2/9] mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 2/9] mmc: sh_mobile_sdhi: improve prerequisite for
- hw_reset
-Message-ID: <20161213110835.GF2773@katana>
-References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
- <20161212195128.16633-3-wsa+renesas@sang-engineering.com>
- <CAMuHMdWnhtQb6OyZ5Q-O3H4h+D2bWu=z2q=K2qY9oDfCZKxzeQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IbVRjBtIbJdbeK1C"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWnhtQb6OyZ5Q-O3H4h+D2bWu=z2q=K2qY9oDfCZKxzeQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Mon, Dec 12, 2016 at 8:51 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> We need a SCC unit for hw_reset. Those units can only be described in
+> of_data. So, of_data and a valid SCC offset are prerequisites for
+> enabling the hw_reset capability. Merge the two 'if' conditions into one
+> and add a check for an scc offset.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---IbVRjBtIbJdbeK1C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+> ---
+>  drivers/mmc/host/sh_mobile_sdhi.c | 30 ++++++++++++++----------------
+>  1 file changed, 14 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+> index b48e3ae4549b6b..f3ea2c8b12040c 100644
+> --- a/drivers/mmc/host/sh_mobile_sdhi.c
+> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
+> @@ -656,27 +656,25 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+>         if (ret < 0)
+>                 goto efree;
+>
+> -       if (host->mmc->caps & MMC_CAP_UHS_SDR104) {
+> +       if (of_data && of_data->scc_offset && host->mmc->caps & MMC_CAP_UHS_SDR104) {
 
-> > -       if (host->mmc->caps & MMC_CAP_UHS_SDR104) {
-> > +       if (of_data && of_data->scc_offset && host->mmc->caps & MMC_CAP=
-_UHS_SDR104) {
->=20
-> For readability, you may want to add parentheses around the last check,
-> and break the long line before the classical punch card line limit.
+For readability, you may want to add parentheses around the last check,
+and break the long line before the classical punch card line limit.
 
-Your wish comes true in patch 7 :)
+Gr{oetje,eeting}s,
 
+                        Geert
 
---IbVRjBtIbJdbeK1C
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYT9azAAoJEBQN5MwUoCm23l4P/R/Fir6I7uDAb7ScBijYG1bb
-xQUuH2bj+1hDxxxx4h954zpgJ1GPqR5ZLdVYSmDPnpiqWWd1T9Ajwbl53il0CC6T
-e3rTp+h+dWOmRZP56L7V71pRXssmfYA+/Bcv3w8BnVFcO4or1sTihwNkajNlsP28
-0urcbMVB+NSEANgXiVaFuFgkwWpl2Hbnkfpqs/3GL9RuDC/lPL7g6M8bkXs6Vn9n
-Yhr1xLlKvYOxjcGZmDhs2AO1v0WZs5u2CHuuTULbYsSI3D2yaLNvLUjnqjLiGw6L
-22RnygWIsB802aLOSkTr1+CQFVNlJTWjoiBQamuN3epp1cdQ6RFbfY0ZjgP91r5a
-7j1Hti4n+r/HOOhgRoCCu3uWYWcX0L3DfHr8eLAbB0keRfqQ4Bjna4UiGZ884U7z
-ki0sLmN0HXQdEGyv6Ae6k+rPfKBAnuxdxIMjPUZcB+30nhhuiUJ2iQJyRrVt/A33
-ZdyqYML1A+FIOUq1GuZayrI4nrYcY/HbGirvoGTtdrvANA6QJ+Ugm9siyl2T5z25
-2ZkXQ4KFP1gImFLKV8ExtVijzpngeziwup5g88IJEhqU1ZFkAGoQul8QH/14owdI
-8mEmnX+frGY/T4/cU6LJA09VUCFouIBm+7pzrHq4DpSNZvrTbH8uGQxOO1Exm+p9
-CxHWfp+Au3Fs6X8Rfscx
-=EV3h
------END PGP SIGNATURE-----
-
---IbVRjBtIbJdbeK1C--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
