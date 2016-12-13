@@ -1,42 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45601 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751492AbcLFPvq (ORCPT
+        with ESMTP id S932441AbcLMLq1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 10:51:46 -0500
+        Tue, 13 Dec 2016 06:46:27 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH pci/next v3 0/3] PCI: rcar, rcar-gen2: Bindings cleanups
-Date: Tue,  6 Dec 2016 16:51:28 +0100
-Message-Id: <1481039491-30364-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH v2 renesas/devel 10/13] ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for iic nodes
+Date: Tue, 13 Dec 2016 12:45:56 +0100
+Message-Id: <1481629559-14187-11-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Use recently added R-Car Gen 2 fallback binding for iic nodes in
+DT for r8a7790 SoC.
 
-this short series makes some bindings cleanups to the Renesas PCI drivers.
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7790 and the
+fallback binding for R-Car Gen 2.
 
-Changes v2->v3:
-* Reworded changelogs to indicate that re-ordering struct of_device_id
-  entries does not effect run-time behaviour
-* Corrected compile error due to typo in symbol name
-Changes v1->v2:
-* re-order struct of_device_id entries
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Simon Horman (3):
-  PCI: rcar-gen2: Use gen2 fallback compatibility last
-  PCI: rcar: Use gen2 fallback compatibility last
-  PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
-
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
- drivers/pci/host/pci-rcar-gen2.c                   | 2 +-
- drivers/pci/host/pcie-rcar.c                       | 5 +++--
- 3 files changed, 5 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 823ab536175d..ddf6a8cbe6c1 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -528,7 +528,8 @@
+ 	iic0: i2c@e6500000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
+@@ -542,7 +543,8 @@
+ 	iic1: i2c@e6510000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC1>;
+@@ -556,7 +558,8 @@
+ 	iic2: i2c@e6520000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6520000 0 0x425>;
+ 		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC2>;
+@@ -570,7 +573,8 @@
+ 	iic3: i2c@e60b0000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_IICDVFS>;
 -- 
 2.7.0.rc3.207.g0ac5344
