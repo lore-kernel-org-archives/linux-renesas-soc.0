@@ -1,67 +1,68 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=HTCQ=X4=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCHv3 RFC 4/4] media: Catch null pipes on pipeline stop
-Date: Tue, 13 Dec 2016 17:59:44 +0000
-Message-Id: <1481651984-7687-5-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932441AbcLMLqa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 13 Dec 2016 06:46:30 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 renesas/devel 12/13] ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for iic nodes
+Date: Tue, 13 Dec 2016 12:45:58 +0100
+Message-Id: <1481629559-14187-13-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-media_entity_pipeline_stop() can be called through error paths with a
-NULL entity pipe object. In this instance, stopping is a no-op, so
-simply return without any action
+Use recently added R-Car Gen 2 fallback binding for iic nodes in
+DT for r8a7793 SoC.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7793 and the
+fallback binding for R-Car Gen 2.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ arch/arm/boot/dts/r8a7793.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I've marked this patch as RFC, although if deemed suitable, by all means
-integrate it as is.
-
-When testing suspend/resume operations on VSP1, I encountered a segfault on the
-WARN_ON(!pipe->streaming_count) line, where 'pipe == NULL'. The simple
-protection fix is to return early in this instance, as this patch does however:
-
-A) Does this early return path warrant a WARN() statement itself, to identify
-drivers which are incorrectly calling media_entity_pipeline_stop() with an
-invalid entity, or would this just be noise ...
-
-and therefore..
-
-B) I also partly assume this patch could simply get NAK'd with a request to go
-and dig out the root cause of calling media_entity_pipeline_stop() with an
-invalid entity. 
-
-My brief investigation so far here so far shows that it's almost a second order
-fault - where the first suspend resume cycle completes but leaves the entity in
-an invalid state having followed an error path - and then on a second
-suspend/resume - the stop fails with the affected segfault.
-
-If statement A) or B) apply here, please drop this patch from the series, and
-don't consider it a blocking issue for the other 3 patches.
-
-Kieran
-
-
- drivers/media/media-entity.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index c68239e60487..93c9cbf4bf46 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -508,6 +508,8 @@ void __media_entity_pipeline_stop(struct media_entity *entity)
- 	struct media_entity_graph *graph = &entity->pipe->graph;
- 	struct media_pipeline *pipe = entity->pipe;
- 
-+	if (!pipe)
-+		return;
- 
- 	WARN_ON(!pipe->streaming_count);
- 	media_entity_graph_walk_start(graph, entity);
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index cbe9ac629693..d5114cac656d 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -485,7 +485,8 @@
+ 		/* doesn't need pinmux */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
+@@ -499,7 +500,8 @@
+ 	i2c7: i2c@e6500000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
+@@ -513,7 +515,8 @@
+ 	i2c8: i2c@e6510000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
