@@ -1,53 +1,74 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 17/22] drm: rcar-du: Skip disabled outputs
-Date: Fri,  2 Dec 2016 01:43:32 +0200
-Message-Id: <1480635817-1258-18-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57072 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932369AbcLMLqN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 13 Dec 2016 06:46:13 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 renesas/devel 03/13] ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for i2c nodes
+Date: Tue, 13 Dec 2016 12:45:49 +0100
+Message-Id: <1481629559-14187-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When a DT node connected to a DU output is disabled no bridge will ever
-be instantiated for it. Skip the output in that case.
+Use recently added R-Car Gen 2 fallback binding for i2c nodes in
+DT for r8a7790 SoC.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7790 and the
+fallback binding for R-Car Gen 2.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index aa84689043ae..7a6bd8bdba05 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -384,6 +384,13 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		return -ENODEV;
- 	}
- 
-+	if (!of_device_is_available(entity)) {
-+		dev_dbg(rcdu->dev,
-+			"connected entity %s is disabled, skipping\n",
-+			entity->full_name);
-+		return -ENODEV;
-+	}
-+
- 	entity_ep_node = of_parse_phandle(ep->local_node, "remote-endpoint", 0);
- 
- 	for_each_endpoint_of_node(entity, ep_node) {
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index b7ed7466308b..823ab536175d 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -480,7 +480,7 @@
+ 	i2c0: i2c@e6508000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7790";
++		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6508000 0 0x40>;
+ 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C0>;
+@@ -492,7 +492,7 @@
+ 	i2c1: i2c@e6518000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7790";
++		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6518000 0 0x40>;
+ 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C1>;
+@@ -504,7 +504,7 @@
+ 	i2c2: i2c@e6530000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7790";
++		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6530000 0 0x40>;
+ 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C2>;
+@@ -516,7 +516,7 @@
+ 	i2c3: i2c@e6540000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7790";
++		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6540000 0 0x40>;
+ 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C3>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
