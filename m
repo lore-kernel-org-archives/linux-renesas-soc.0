@@ -1,36 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38756 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755418AbcLTKvu (ORCPT
+        with ESMTP id S932369AbcLMLqR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Dec 2016 05:51:50 -0500
-Date: Tue, 20 Dec 2016 11:51:44 +0100
-From: Simon Horman <horms@verge.net.au>
+        Tue, 13 Dec 2016 06:46:17 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2 renesas/devel 00/13] ARM, arm64: dts: Use R-Car
- fallback bindings for i2c/iic nodes
-Message-ID: <20161220105144.GJ19532@verge.net.au>
-References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 renesas/devel 00/13] ARM, arm64: dts: Use R-Car fallback bindings for i2c/iic nodes
+Date: Tue, 13 Dec 2016 12:45:46 +0100
+Message-Id: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 13, 2016 at 12:45:46PM +0100, Simon Horman wrote:
-> Hi,
-> 
-> this short series makes use of newly added R-Car fallback bindings in i2c
-> and iic nodes of the DTs for SoCs where the drivers in question are already
-> used.
-> 
-> This should have no run-time effect at this time as the current driver
-> implementations use the same initialisation squeuences for SoC-specific and
-> R-Car fallback bindings for all the cases covered by this patch-set.
-> 
-> Based on renesas-devel-20161212-v4.9
+Hi,
 
-I have queued these up for v4.11.
+this short series makes use of newly added R-Car fallback bindings in i2c
+and iic nodes of the DTs for SoCs where the drivers in question are already
+used.
+
+This should have no run-time effect at this time as the current driver
+implementations use the same initialisation squeuences for SoC-specific and
+R-Car fallback bindings for all the cases covered by this patch-set.
+
+Based on renesas-devel-20161212-v4.9
+
+Changes since v1:
+* s/iii/iic/
+* Differentiate subject lines for i2c and iic patches
+* Reviewed-by tags from Geert
+
+Simon Horman (13):
+  ARM: dts: r8a7779: Use R-Car Gen 1 fallback binding for i2c nodes
+  ARM: dts: r8a7778: Use R-Car Gen 1 fallback binding for i2c nodes
+  ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for i2c nodes
+  ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for i2c nodes
+  ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for i2c nodes
+  ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for i2c nodes
+  ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for i2c nodes
+  arm64: dts: r8a7795: Use R-Car Gen 3 fallback binding for i2c nodes
+  arm64: dts: r8a7796: Use R-Car Gen 3 fallback binding for i2c nodes
+  ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for iic nodes
+  ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for iic nodes
+  ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for iic nodes
+  ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for iic nodes
+
+ arch/arm/boot/dts/r8a7778.dtsi           |  8 ++++----
+ arch/arm/boot/dts/r8a7779.dtsi           |  8 ++++----
+ arch/arm/boot/dts/r8a7790.dtsi           | 20 ++++++++++++--------
+ arch/arm/boot/dts/r8a7791.dtsi           | 21 ++++++++++++---------
+ arch/arm/boot/dts/r8a7792.dtsi           | 18 ++++++++++++------
+ arch/arm/boot/dts/r8a7793.dtsi           | 21 ++++++++++++---------
+ arch/arm/boot/dts/r8a7794.dtsi           | 18 ++++++++++--------
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 ++++++++++++++-------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 21 ++++++++++++++-------
+ 9 files changed, 94 insertions(+), 62 deletions(-)
+
+-- 
+2.7.0.rc3.207.g0ac5344
