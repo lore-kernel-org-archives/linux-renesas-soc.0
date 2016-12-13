@@ -1,60 +1,153 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 01/29] drm: bridge: dw-hdmi: Merge __hdmi_phy_i2c_write and hdmi_phy_i2c_write
-Date: Tue, 20 Dec 2016 03:33:32 +0200
-Message-Id: <20161220013400.28317-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34648 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752941AbcLMDWn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Dec 2016 22:22:43 -0500
+Date: Mon, 12 Dec 2016 19:22:42 -0800
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Subject: Re: [PATCH v4 2/4] thermal: rcar_gen3_thermal: Add R-Car Gen3
+ thermal driver
+Message-ID: <20161213032236.GB9668@localhost.localdomain>
+References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+ <20161201220442.22057-3-wsa+renesas@sang-engineering.com>
+ <20161207010119.GB12562@localhost.localdomain>
+ <20161207090627.GB1724@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161207090627.GB1724@katana>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The latter is just an int wrapper around the former void function that
-unconditionally returns 0. As the return value is never checked, merge
-the two functions into one.
+On Wed, Dec 07, 2016 at 10:06:27AM +0100, Wolfram Sang wrote:
+> 
+> > Would you please check the following from checkpatch too?
+> 
+> I saw them and chose to ignore them. I am not strict with those warnings
+> within the i2c subsystem as well. I can change the series if your mileage
+> varies, of course.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+at least those that make sense.
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index f5009ae39b89..a6685502571e 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -868,7 +868,7 @@ static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
- 	return true;
- }
- 
--static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
-+static void hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- 				 unsigned char addr)
- {
- 	hdmi_writeb(hdmi, 0xFF, HDMI_IH_I2CMPHY_STAT0);
-@@ -882,13 +882,6 @@ static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- 	hdmi_phy_wait_i2c_done(hdmi, 1000);
- }
- 
--static int hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
--			      unsigned char addr)
--{
--	__hdmi_phy_i2c_write(hdmi, data, addr);
--	return 0;
--}
--
- static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
- {
- 	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
--- 
-Regards,
+> 
+> > WARNING: please write a paragraph that describes the config symbol fully
+> > #82: FILE: drivers/thermal/Kconfig:248:
+> > +config RCAR_GEN3_THERMAL
+> 
+> I can make up something.
 
-Laurent Pinchart
+cool
+
+> 
+> > WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+> 
+> Is this mandatory?
+
+not really.
+
+> 
+> > CHECK: struct mutex definition without comment
+> > #186: FILE: drivers/thermal/rcar_gen3_thermal.c:75:
+> > +	struct mutex lock;
+> 
+> Can change, but if there is only one lock, I don't really see much
+> benefit from this check.
+> 
+
+still good to explicitly write it down to prevent future changes to
+abuse the lock.
+
+> > WARNING: line over 80 characters
+> > #204: FILE: drivers/thermal/rcar_gen3_thermal.c:93:
+> > +static inline u32 rcar_gen3_thermal_read(struct rcar_gen3_thermal_tsc *tsc, u32 reg)
+> > 
+> > CHECK: Alignment should match open parenthesis
+> > #210: FILE: drivers/thermal/rcar_gen3_thermal.c:99:
+> > +static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
+> > +				     u32 reg, u32 data)
+> 
+> I have those warnings (80 chars and open parens) ignored by default but
+> if you think it makes the code more readable, I'll change it.
+> 
+
+I typically ask to keep checkpatch as clean as possible. The above can
+easily be avoided by returning right after static inline.
+
+> > > +static void _linear_coefficient_calculation(struct rcar_gen3_thermal_tsc *tsc,
+> > > +					    int *ptat, int *thcode)
+> > > +{
+> > > +	int tj_2;
+> > > +	s64 a1, b1;
+> > > +	s64 a2, b2;
+> > > +	s64 a1_num, a1_den;
+> > > +	s64 a2_num, a2_den;
+> > > +
+> > > +	tj_2 = (CODETSD((ptat[1] - ptat[2]) * 137)
+> > > +		/ (ptat[0] - ptat[2])) - CODETSD(41);
+> > > +
+> > > +	/* calculate coefficients for linear equation */
+> > > +	a1_num = CODETSD(thcode[1] - thcode[2]);
+> > > +	a1_den = tj_2 - TJ_3;
+> > > +	a1 = (10000 * a1_num) / a1_den;
+> > > +	b1 = (10000 * thcode[2]) - ((a1 * TJ_3) / 1000);
+> > > +
+> > > +	a2_num = CODETSD(thcode[1] - thcode[0]);
+> > > +	a2_den = tj_2 - TJ_1;
+> > > +	a2 = (10000 * a2_num) / a2_den;
+> > > +	b2 = (10000 * thcode[0]) - ((a2 * TJ_1) / 1000);
+> > > +
+> > > +	tsc->coef.a1 = DIV_ROUND_CLOSEST(a1, 10);
+> > > +	tsc->coef.b1 = DIV_ROUND_CLOSEST(b1, 10);
+> > > +	tsc->coef.a2 = DIV_ROUND_CLOSEST(a2, 10);
+> > > +	tsc->coef.b2 = DIV_ROUND_CLOSEST(b2, 10);
+> > 
+> > What is a a1, b1, a2, b2 typical values?
+> > 
+> > are you sure they do not fit into int? Looks like you start from pretty small values,
+> > but multiply by 10^3 on num and den to get better precision?
+> 
+> Typical values are a few thousand. a1_num uses CODETSD which multiplies
+> by 1000 and makes it a million. a1 then multiplies again by 10000 which
+> makes it 10 billion. No int.
+> 
+> I am quite sure the formulas can be rearranged to fit into an int. As
+> mentioned before, I hoped we could start with the already tested
+> formulas since documentation on them is sparse.
+> 
+> > > +static int _linear_temp_converter(struct equation_coefs *coef,
+> > > +					int temp_code)
+> > > +{
+> > > +	int temp, temp1, temp2;
+> > > +
+> > > +	temp1 = MCELSIUS((CODETSD(temp_code) - coef->b1)) / coef->a1;
+> > > +	temp2 = MCELSIUS((CODETSD(temp_code) - coef->b2)) / coef->a2;
+> > 
+> > aren't we overflowing the result of this 64 bit math assigned into an int?
+> 
+> The division ensures that we get an int. Hmmm, not very pretty, I agree.
+> 
+> Sigh, maybe it is better to refactor the formulas before submitting
+> upstream :/
+> 
+
+cool,  I am checking on the next version.
+
+> Regards,
+> 
+>    Wolfram
+> 
+
+
+BR,
+
+Eduardo Valentin
