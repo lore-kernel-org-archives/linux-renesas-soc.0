@@ -1,113 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33729 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754618AbcLNEiF (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33731 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753115AbcLMKJc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 23:38:05 -0500
-Date: Tue, 13 Dec 2016 20:38:00 -0800
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-Cc: linux-pm@vger.kernel.org,
+        Tue, 13 Dec 2016 05:09:32 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161213095305.GA28801@bigcity.dyn.berto.se>
+References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+ <20161212141805.14946-3-niklas.soderlund@ragnatech.se> <CAMuHMdVpuWO9Do9VvkVjZoEOCbmd72Gah-d2f4GCZavpo9EGpQ@mail.gmail.com>
+ <20161213095305.GA28801@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Dec 2016 11:09:31 +0100
+Message-ID: <CAMuHMdUfFSxT+7F9Zx9JWue0g6rdqwg-NEoBWe2UT-O5RuFOnw@mail.gmail.com>
+Subject: Re: [PATCHv5 2/5] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Hien Dang <hien.dang.eb@renesas.com>,
         Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Subject: Re: [PATCHv5 2/5] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal
- driver
-Message-ID: <20161214043758.GA2765@localhost.localdomain>
-References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
- <20161212141805.14946-3-niklas.soderlund@ragnatech.se>
- <20161213035052.GA22105@localhost.localdomain>
- <20161213094339.GB24175@bigcity.dyn.berto.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20161213094339.GB24175@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-hey,
+Hi Niklas,
 
-On Tue, Dec 13, 2016 at 10:43:40AM +0100, Niklas S�derlund wrote:
-> Hi Eduardo,
-> 
-> Thanks for your feedback. I will skip commenting where Wolfram already 
-> have.
-> 
-> On 2016-12-12 19:50:54 -0800, Eduardo Valentin wrote:
-> 
-> <snip>
-> 
-> > > +/* Structure for thermal temperature calculation */
-> > > +struct equation_coefs {
-> > > +	int a1;
-> > > +	int b1;
-> > > +	int a2;
-> > > +	int b2;
-> > 
-> > a little description of each coeff would be welcome.
-> 
-> Yes, I too would like to have better documentation of the formulas and 
-> the meaning of the coefficients.
-> 
-> <snip, Wolfram already covert this>
+On Tue, Dec 13, 2016 at 10:53 AM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> On 2016-12-13 09:19:53 +0100, Geert Uytterhoeven wrote:
+>> On Mon, Dec 12, 2016 at 3:18 PM, Niklas S=C3=B6derlund
+>> <niklas.soderlund@ragnatech.se> wrote:
+>> > +/*
+>> > + * Linear approximation for temperature
+>> > + *
+>> > + * [reg] =3D [temp] * a + b =3D> [temp] =3D ([reg] - b) / a
+>> > + *
+>> > + * The constants a and b are calculated using two triplets of int val=
+ues PTAT
+>> > + * and THCODE. PTAT and THCODE can either be read from hardware or us=
+e hard
+>> > + * coded values from driver. The formula to calculate a and b are tak=
+en from
+>> > + * BSP and sparsely documented and understood.
+>> > + *
+>> > + * Examining the linear formula and the formula used to calculate con=
+stants a
+>> > + * and b while knowing that the span for PTAT and THCODE values are b=
+etween
+>> > + * 0x000 and 0xfff the largest integer possible is 0xfff * 0xfff =3D=
+=3D 0xffe001.
+>> > + * Integer also needs to be signed so that leaves 7 bits for decimal
+>> > + * fixed point scaling, which amounts to a decimal scaling factor of =
+100.
+>> > + */
+>> > +
+>> > +#define SCALE_FACTOR 100
+>>
+>> What about using 128 instead?
+>> Fixed point is much easier with shifts
+>> (the compiler will turn multiplications in shifts where appropriate).
+>
+> I tried using binary scaled instead of decimal scaled fixed point but
+> noticed that the diff I got compared to the original formula which used
+> decimal scaled (factor 1000) where larger so I picked decimal scaling.
 
-Ok..
+Interesting...
 
-> 
-> > 
-> > > +
-> > > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > > +	if (!priv)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	platform_set_drvdata(pdev, priv);
-> > > +
-> > > +	pm_runtime_enable(dev);
-> > > +	pm_runtime_get_sync(dev);
-> > > +
-> > > +	for (i = 0; i < TSC_MAX_NUM; i++) {
-> > > +		struct rcar_gen3_thermal_tsc *tsc;
-> > > +
-> > > +		tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
-> > > +		if (!tsc) {
-> > > +			ret = -ENOMEM;
-> > > +			goto error_unregister;
-> > > +		}
-> > > +
-> > > +		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-> > > +		if (!res)
-> > > +			break;
-> > > +
-> > > +		tsc->base = devm_ioremap_resource(dev, res);
-> > > +		if (IS_ERR(tsc->base)) {
-> > > +			ret = PTR_ERR(tsc->base);
-> > > +			goto error_unregister;
-> > > +		}
-> > > +
-> > > +		priv->tscs[i] = tsc;
-> > > +		mutex_init(&tsc->lock);
-> > > +
-> > > +		match_data->thermal_init(tsc);
-> > > +		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
-> > 
-> > oh, the thcode's are currently not read then?
-> 
-> No as Wolfram commented, reading THCODE and PTAT from hardware is not 
-> possible on the boards we have to test on so I think this needs to be 
-> added once we can test it. Do you agree this is the best option?
+>> > +#define SCALE_INT(_x) ((_x) * SCALE_FACTOR)
+>> > +#define SCALE_MUL(_a, _b) (((_a)*(_b)) / SCALE_FACTOR)
+>> > +#define SCALE_DIV(_a, _b) (((_a)*SCALE_FACTOR)/(_b))
+>>
+>> DIV_ROUND_CLOSEST()
+>
+> Don't DIV_ROUND_CLOSEST() require the divisor to be a positive integer?
 
-I agree here. I was under the impression that would be both types of
-chips out there, with and without thcode. But looks like, at the end,
-only a few engineers will have access to those without it, right?
+Right.
 
-If you still think those without the support need right support, I would
-suggest moving the hardcoded values to DT. Specially if those hardcoded
-values change across chip version (so you can better describe using DT).
-But, in case you think this population of chips wont grow, then might be
-ok to keep the way it is, even though looks not so nice in the code :-).
+>   tj_2 =3D SCALE_DIV(SCALE_MUL(SCALE_INT(ptat[1] - ptat[2]), SCALE_INT(13=
+7)),
+>                    SCALE_INT(ptat[0] - ptat[2])) - SCALE_INT(41);
+>
+> In this case if ptat[0] < (ptat[2] + 41) the divisor is negative so I
+> think DIV_ROUND_CLOSEST() can't be used, or am I misunderstanding?
+
+Then we need our own macro that can handle that. Or enhance
+DIV_ROUND_CLOSEST().
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
