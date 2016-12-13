@@ -1,76 +1,231 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Christoph Baumann <cbaumann@visteon.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] serial: sh-sci: Fix early deassertion of dedicated RTS
-Date: Fri,  2 Dec 2016 13:35:10 +0100
-Message-Id: <1480682111-9299-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1480682111-9299-1-git-send-email-geert+renesas@glider.be>
-References: <1480682111-9299-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <SRS0=HTCQ=X4=ideasonboard.com=kieran.bingham+renesas@kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCHv3 3/4] v4l: vsp1: Use local display lists and remove global pipe->dl
+Date: Tue, 13 Dec 2016 17:59:43 +0000
+Message-Id: <1481651984-7687-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a UART has dedicated RTS/CTS pins, there are some issues:
+The usage of pipe->dl is susceptible to races, and it is redundant to
+keep this pointer in a larger scoped context.
 
-1. When changing hardware control flow, the new AUTORTS state is not
-   immediately reflected in the hardware, but only when RTS is raised.
-   However, the serial core doesn't call .set_mctrl() after
-   .set_termios(), hence AUTORTS may only become effective when the port
-   is closed, and reopened later.
-   Note that this problem does not happen when manually using stty to
-   change CRTSCTS, as AUTORTS will work fine on next open.
+Now that the calling order of vsp1_video_setup_pipeline() has been
+adapted, it is possible to remove the pipe->dl and pass the variable as
+required.
 
-2. When hardware control flow is disabled (or AUTORTS is not yet
-   effective), changing any serial port configuration deasserts RTS, as
-   .set_termios() calls sci_init_pins().
+Currently the pipe->dl is set during the atomic begin hook, but it is
+not utilised until the flush. Moving this should do no harm.
 
-To fix both issues, call .set_mctrl() from .set_termios() when dedicated
-RTS/CTS pins are present, to refresh the AUTORTS or RTS state.
-This is similar to what other drivers supporting AUTORTS do (e.g.
-omap-serial).
-
-Reported-by: Baumann, Christoph (C.) <cbaumann@visteon.com> (issue 1)
-Fixes: 33f50ffc253854cf ("serial: sh-sci: Fix support for hardware-assisted RTS/CTS")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-Tested on r8a7791/koelsch with HSCIF1 (GPIO hardware flow control),
-and HSCIF2 and SCIFB0 (dedicated hardware flow control).
+ drivers/media/platform/vsp1/vsp1_drm.c   | 20 +++++++-------
+ drivers/media/platform/vsp1/vsp1_pipe.h  |  2 --
+ drivers/media/platform/vsp1/vsp1_video.c | 45 ++++++++++++++------------------
+ 3 files changed, 30 insertions(+), 37 deletions(-)
 
-A simple test program (basically "cat" with CRTSCTS configuration
-capability) can be found at https://github.com/geertu/sercat
-
-Without this patch the following will fail:
-
-  1. sercat -f /dev/hscif2 &
-     seq 100 120 | sercat -f -w /dev/hscif1 # hangs
-
-  2. seq 200 220 | sercat -f -w /dev/hscif2 &
-     sercat -f /dev/hscif1 # no data received
----
- drivers/tty/serial/sh-sci.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 91e7dddbf72cd3de..c503db1900f003ed 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2340,6 +2340,10 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index cd209dccff1b..bf735e85b597 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -220,9 +220,6 @@ void vsp1_du_atomic_begin(struct device *dev)
+ 	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
  
- 		serial_port_out(port, SCFCR, ctrl);
+ 	vsp1->drm->num_inputs = pipe->num_inputs;
+-
+-	/* Prepare the display list. */
+-	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
+ 
+@@ -426,10 +423,14 @@ void vsp1_du_atomic_flush(struct device *dev)
+ 	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
+ 	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
+ 	struct vsp1_entity *entity;
++	struct vsp1_dl_list *dl;
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	int ret;
+ 
++	/* Prepare the display list. */
++	dl = vsp1_dl_list_get(pipe->output->dlm);
++
+ 	/* Count the number of enabled inputs and sort them by Z-order. */
+ 	pipe->num_inputs = 0;
+ 
+@@ -484,26 +485,25 @@ void vsp1_du_atomic_flush(struct device *dev)
+ 			struct vsp1_rwpf *rpf = to_rwpf(&entity->subdev);
+ 
+ 			if (!pipe->inputs[rpf->entity.index]) {
+-				vsp1_dl_list_write(pipe->dl, entity->route->reg,
++				vsp1_dl_list_write(dl, entity->route->reg,
+ 						   VI6_DPR_NODE_UNUSED);
+ 				continue;
+ 			}
+ 		}
+ 
+-		vsp1_entity_route_setup(entity, pipe->dl);
++		vsp1_entity_route_setup(entity, dl);
+ 
+ 		if (entity->ops->configure) {
+-			entity->ops->configure(entity, pipe, pipe->dl,
++			entity->ops->configure(entity, pipe, dl,
+ 					       VSP1_ENTITY_PARAMS_INIT);
+-			entity->ops->configure(entity, pipe, pipe->dl,
++			entity->ops->configure(entity, pipe, dl,
+ 					       VSP1_ENTITY_PARAMS_RUNTIME);
+-			entity->ops->configure(entity, pipe, pipe->dl,
++			entity->ops->configure(entity, pipe, dl,
+ 					       VSP1_ENTITY_PARAMS_PARTITION);
+ 		}
  	}
-+	if (port->flags & UPF_HARD_FLOW) {
-+		/* Refresh (Auto) RTS */
-+		sci_set_mctrl(port, port->mctrl);
+ 
+-	vsp1_dl_list_commit(pipe->dl);
+-	pipe->dl = NULL;
++	vsp1_dl_list_commit(dl);
+ 
+ 	/* Start or stop the pipeline if needed. */
+ 	if (!vsp1->drm->num_inputs && pipe->num_inputs) {
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
+index 0743b9fcb655..98980c85081f 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.h
++++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+@@ -108,8 +108,6 @@ struct vsp1_pipeline {
+ 
+ 	struct list_head entities;
+ 
+-	struct vsp1_dl_list *dl;
+-
+ 	unsigned int div_size;
+ 	unsigned int partitions;
+ 	struct v4l2_rect partition;
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 7ff9f4c19ff0..9619ed4dda7c 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -350,18 +350,14 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
+ 	pipe->buffers_ready |= 1 << video->pipe_index;
+ }
+ 
+-static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
++static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe,
++				     struct vsp1_dl_list *dl)
+ {
+ 	struct vsp1_entity *entity;
+ 
+ 	/* Determine this pipelines sizes for image partitioning support. */
+ 	vsp1_video_pipeline_setup_partitions(pipe);
+ 
+-	/* Prepare the display list. */
+-	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
+-	if (!pipe->dl)
+-		return -ENOMEM;
+-
+ 	if (pipe->uds) {
+ 		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
+ 
+@@ -381,10 +377,10 @@ static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
+ 	}
+ 
+ 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+-		vsp1_entity_route_setup(entity, pipe->dl);
++		vsp1_entity_route_setup(entity, dl);
+ 
+ 		if (entity->ops->configure)
+-			entity->ops->configure(entity, pipe, pipe->dl,
++			entity->ops->configure(entity, pipe, dl,
+ 					       VSP1_ENTITY_PARAMS_INIT);
+ 	}
+ 
+@@ -412,12 +408,16 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
+ {
+ 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
+ 	struct vsp1_entity *entity;
++	struct vsp1_dl_list *dl;
+ 
+-	if (!pipe->configured)
+-		vsp1_video_setup_pipeline(pipe);
++	dl = vsp1_dl_list_get(pipe->output->dlm);
++	if (!dl) {
++		dev_err(vsp1->dev, "Failed to obtain a dl list\n");
++		return;
 +	}
  
- 	scr_val |= s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0);
- 	dev_dbg(port->dev, "SCSCR 0x%x\n", scr_val);
+-	if (!pipe->dl)
+-		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
++	if (!pipe->configured)
++		vsp1_video_setup_pipeline(pipe, dl);
+ 
+ 	/*
+ 	 * Start with the runtime parameters as the configure operation can
+@@ -426,45 +426,43 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
+ 	 */
+ 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+ 		if (entity->ops->configure)
+-			entity->ops->configure(entity, pipe, pipe->dl,
++			entity->ops->configure(entity, pipe, dl,
+ 					       VSP1_ENTITY_PARAMS_RUNTIME);
+ 	}
+ 
+ 	/* Run the first partition */
+ 	pipe->current_partition = 0;
+-	vsp1_video_pipeline_run_partition(pipe, pipe->dl);
++	vsp1_video_pipeline_run_partition(pipe, dl);
+ 
+ 	/* Process consecutive partitions as necessary */
+ 	for (pipe->current_partition = 1;
+ 	     pipe->current_partition < pipe->partitions;
+ 	     pipe->current_partition++) {
+-		struct vsp1_dl_list *dl;
++		struct vsp1_dl_list *child;
+ 
+ 		/*
+ 		 * Partition configuration operations will utilise
+ 		 * the pipe->current_partition variable to determine
+ 		 * the work they should complete.
+ 		 */
+-		dl = vsp1_dl_list_get(pipe->output->dlm);
++		child = vsp1_dl_list_get(pipe->output->dlm);
+ 
+ 		/*
+ 		 * An incomplete chain will still function, but output only
+ 		 * the partitions that had a dl available. The frame end
+ 		 * interrupt will be marked on the last dl in the chain.
+ 		 */
+-		if (!dl) {
++		if (!child) {
+ 			dev_err(vsp1->dev, "Failed to obtain a dl list. Frame will be incomplete\n");
+ 			break;
+ 		}
+ 
+-		vsp1_video_pipeline_run_partition(pipe, dl);
+-		vsp1_dl_list_add_chain(pipe->dl, dl);
++		vsp1_video_pipeline_run_partition(pipe, child);
++		vsp1_dl_list_add_chain(dl, child);
+ 	}
+ 
+ 	/* Complete, and commit the head display list. */
+-	vsp1_dl_list_commit(pipe->dl);
+-	pipe->dl = NULL;
+-
++	vsp1_dl_list_commit(dl);
+ 	vsp1_pipeline_run(pipe);
+ }
+ 
+@@ -835,9 +833,6 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
+ 		ret = vsp1_pipeline_stop(pipe);
+ 		if (ret == -ETIMEDOUT)
+ 			dev_err(video->vsp1->dev, "pipeline stop timeout\n");
+-
+-		vsp1_dl_list_put(pipe->dl);
+-		pipe->dl = NULL;
+ 	}
+ 	mutex_unlock(&pipe->lock);
+ 
 -- 
-1.9.1
+2.7.4
