@@ -1,53 +1,144 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 2/3 pci/next] PCI: rcar: Use gen2 fallback compatibility last
-Date: Fri,  2 Dec 2016 11:36:59 +0100
-Message-Id: <1480675020-26346-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
-References: <1480675020-26346-1-git-send-email-horms+renesas@verge.net.au>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52694 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753488AbcLNSEj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Dec 2016 13:04:39 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+In-Reply-To: <1481536175-17238-1-git-send-email-horms+renesas@verge.net.au>
+Message-Id: <E1cHDu0-0007CT-Mr@debutante>
+Date: Wed, 14 Dec 2016 18:03:40 +0000
+Subject: Applied "spi: sh-msiof: Add R-Car Gen 2 and 3 fallback bindings" to the spi tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fallback compatibility strings should be used only if more specific ones
-are matched and the order of compatibility strings in the corresponding
-struct of_device_id should implement this.
+The patch
 
-This does not have a run-time effect as current all relevant compatibility
-strings result in the same initialisation.
+   spi: sh-msiof: Add R-Car Gen 2 and 3 fallback bindings
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4286db8456f4fa0c6af2b6b9abc5991a7e7da69c Mon Sep 17 00:00:00 2001
+From: Simon Horman <horms+renesas@verge.net.au>
+Date: Mon, 12 Dec 2016 10:49:35 +0100
+Subject: [PATCH] spi: sh-msiof: Add R-Car Gen 2 and 3 fallback bindings
+
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, e.g. Gen 2 and Gen 3. But beyond that it's not clear what the
+relationship between IP blocks might be. For example, I believe that
+r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+descendant of the former or vice versa.
+
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
+
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme is being adopted for
+drivers for Renesas SoCs.
+
+Also:
+* Deprecate renesas,sh-msiof. It seems poorly named as it is only
+  compatible with SH-Mobile. It also appears unused in mainline.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v2
-* New patch
----
- drivers/pci/host/pcie-rcar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 19 +++++++++++++------
+ drivers/spi/spi-sh-msiof.c                         |  4 +++-
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 62700d1896f4..85971bc276c6 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1071,12 +1071,12 @@ static int rcar_pcie_parse_map_dma_ranges(struct rcar_pcie *pcie,
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index da6614c63796..dc975064fa27 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -1,17 +1,23 @@
+ Renesas MSIOF spi controller
  
- static const struct of_device_id rcar_pcie_of_match[] = {
- 	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
--	{ .compatible = "renesas,pcie-rcar-gen2",
--	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7790",
- 	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7791",
- 	  .data = rcar_pcie_hw_init_gen2 },
-+	{ .compatible = "renesas,pcie-rcar-gen2",
-+	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
+ Required properties:
+-- compatible           : "renesas,msiof-<soctype>" for SoCs,
+-			 "renesas,sh-msiof" for SuperH, or
+-			 "renesas,sh-mobile-msiof" for SH Mobile series.
+-			 Examples with soctypes are:
+-			 "renesas,msiof-r8a7790" (R-Car H2)
++- compatible           : "renesas,msiof-r8a7790" (R-Car H2)
+ 			 "renesas,msiof-r8a7791" (R-Car M2-W)
+ 			 "renesas,msiof-r8a7792" (R-Car V2H)
+ 			 "renesas,msiof-r8a7793" (R-Car M2-N)
+ 			 "renesas,msiof-r8a7794" (R-Car E2)
+ 			 "renesas,msiof-r8a7796" (R-Car M3-W)
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
++			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
++			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 compatible device)
++			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 compatible device)
++			 "renesas,sh-msiof"      (deprecated)
++
++			 When compatible with the generic version, nodes
++			 must list the SoC-specific version corresponding
++			 to the platform first followed by the generic
++			 version.
++
+ - reg                  : A list of offsets and lengths of the register sets for
+ 			 the device.
+ 			 If only one register set is present, it is to be used
+@@ -61,7 +67,8 @@ Documentation/devicetree/bindings/pinctrl/renesas,*.
+ Example:
+ 
+ 	msiof0: spi@e6e20000 {
+-		compatible = "renesas,msiof-r8a7791";
++		compatible = "renesas,msiof-r8a7791",
++			     "renesas,rcar-gen2-msiof";
+ 		reg = <0 0xe6e20000 0 0x0064>;
+ 		interrupts = <0 156 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7791_CLK_MSIOF0>;
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 0012ad02e569..471ca211b76c 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -973,14 +973,16 @@ static const struct sh_msiof_chipdata r8a779x_data = {
+ };
+ 
+ static const struct of_device_id sh_msiof_match[] = {
+-	{ .compatible = "renesas,sh-msiof",        .data = &sh_data },
+ 	{ .compatible = "renesas,sh-mobile-msiof", .data = &sh_data },
+ 	{ .compatible = "renesas,msiof-r8a7790",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7791",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
++	{ .compatible = "renesas,rcar-gen2-msiof", .data = &r8a779x_data },
+ 	{ .compatible = "renesas,msiof-r8a7796",   .data = &r8a779x_data },
++	{ .compatible = "renesas,rcar-gen3-msiof", .data = &r8a779x_data },
++	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, // Deprecated
  	{},
  };
+ MODULE_DEVICE_TABLE(of, sh_msiof_match);
 -- 
-2.7.0.rc3.207.g0ac5344
-
+2.11.0
