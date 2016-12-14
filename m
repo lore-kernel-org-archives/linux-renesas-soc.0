@@ -1,47 +1,117 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36041 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750900AbcL2VHm (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 16:07:42 -0500
-Received: by mail-lf0-f48.google.com with SMTP id t196so227714896lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Dec 2016 13:07:41 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: ben.hutchings@codethink.co.uk
-Subject: [PATCH] sh_eth: fix branch prediction in sh_eth_interrupt()
-Date: Fri, 30 Dec 2016 00:07:38 +0300
-Message-ID: <2810883.6xQhqSTVDe@wasted.cogentembedded.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: rcar-du: Fix R-Car Gen3 crash when VSP is disabled
+Date: Thu, 15 Dec 2016 00:24:07 +0200
+Message-ID: <2166053.VbRxZgtpQk@avalon>
+In-Reply-To: <6891266.RiLSMIFh5n@avalon>
+References: <20161026033143.6617.5834.sendpatchset@little-apple> <CANqRtoTbjD7aqceT1JaOr3S+g7S68aUu5nWAOrLHU_--NHgcLQ@mail.gmail.com> <6891266.RiLSMIFh5n@avalon>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-IIUC, likely()/unlikely() should apply to the whole *if* statement's
-expression, not a part of it  -- fix such expression in  sh_eth_interrupt()
-accordingly...
+Hi Magnus,
 
-Fixes: 283e38db65e7 ("sh_eth: Fix serialisation of interrupt disable with interrupt & NAPI handlers")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Tuesday 06 Dec 2016 16:07:02 Laurent Pinchart wrote:
+> On Wednesday 26 Oct 2016 18:13:23 Magnus Damm wrote:
+> > On Wed, Oct 26, 2016 at 4:31 PM, Geert Uytterhoeven wrote:
+> >> On Wed, Oct 26, 2016 at 5:31 AM, Magnus Damm wrote:
+> >>> From: Magnus Damm <damm+renesas@opensource.se>
+> >>> 
+> >>> For the DU to operate on R-Car Gen3 hardware a combination of DU
+> >>> and VSP devices are required. Since the DU driver also supports
+> >>> earlier generations hardware the VSP portion is enabled via Kconfig.
+> >>> 
+> >>> The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
+> >>> as a module, however this is not enough to support R-Car Gen3. In
+> >>> the current case of CONFIG_DRM_RCAR_VSP=n then the kernel crashes
+> >>> when loading the module. This patch is fixing that particular case.
+> >>> 
+> >>> In more detail, the crash triggers in drm_atomic_get_plane_state()
+> >>> when __drm_atomic_helper_set_config() passes NULL as crtc->primary.
+> >>> 
+> >>> This patch corrects this issue by failing to load the DU driver on
+> >>> R-Car Gen3 when VSP is not available.
+> >>> 
+> >>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> >>> ---
+> >>> 
+> >>>  drivers/gpu/drm/rcar-du/rcar_du_vsp.h |    2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>> 
+> >>> --- 0001/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
+> >>> +++ work/drivers/gpu/drm/rcar-du/rcar_du_vsp.h  2016-10-26
+> >>> 00:01:12.920607110 +0900 @@ -70,7 +70,7 @@ void
+> >>> rcar_du_vsp_disable(struct rcar_du_
+> >>> 
+> >>>  void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc);
+> >>>  void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc);
+> >>>  #else
+> >>> 
+> >>> -static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return
+> >>> 0;
+> >>> };
+> >>> +static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return
+> >>> -ENXIO; };
+> 
+> With this patch applied the DU will fail to probe on Gen2 if DRM_RCAR_VSP is
+> disabled.
+> 
+> DRM_RCAR_DU should instead depend on VIDEO_RENESAS_VSP1 (with DRM_RCAR_VSP
+> always set) on Gen3.
 
----
-The patch is against DaveM's 'net-next.git' repo; I'm not sure if it should
-be  targeted to the 'net.git' repo instead...
+Do you plan to work on a v2 that fixes this in Kconfig ? I gave it a quick try 
+but ran into a Kconfig circular dependency that I don't have time to debug 
+now.
 
- drivers/net/ethernet/renesas/sh_eth.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > > -ENODEV sounds more appropriate
+> > 
+> > Ok, however -ENXIO is the same error code as the DU driver currently
+> > returns when dealing with the VSP and not finding DT nodes.
+> > 
+> > To avoid dealing with this again I would prefer skipping per-driver
+> > Kconfig options entirely, for instance something like this:
+> > 
+> > [PATCH/RFC] Simplify Gen3 DU and VSP Kconfig bits
+> > https://www.spinics.net/lists/linux-sh/msg45978.html
+> > 
+> >>>  static inline void rcar_du_vsp_enable(struct rcar_du_crtc *crtc) { };
+> >>>  static inline void rcar_du_vsp_disable(struct rcar_du_crtc *crtc) { };
+> >>>  static inline void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc)
+> >>>  {
+> >>>  };
+> >> 
+> >> Alternatively,  DRM_RCAR_DU can force DRM_RCAR_VSP to y if ARCH_R8A7795
+> >> or ARCH_R8A7796 is enabled.
+> > 
+> > The DU driver has symbol dependencies on VSP and FCP driver code
+> > (V4L2), so we need to take the state of driver support for those
+> > modules into consideration as well instead of only depending on
+> > SoC-specific Kconfig symbols.
+> > 
+> > On Wed, Oct 26, 2016 at 4:31 PM, Geert Uytterhoeven wrote:
+> >> On Wed, Oct 26, 2016 at 5:31 AM, Magnus Damm wrote:
+> >>> The arm64 defconfig is as of v4.9-rc1 having the DU driver enabled
+> >>> as a module, however this is not enough to support R-Car Gen3. In
+> >> 
+> >> Nope, arm64 defconfig on v4.9-rc1:
+> >> # CONFIG_DRM_RCAR_DU is not set
+> > 
+> > Right, you are correct. Sorry for the noise. It seems that I was using
+> > renesas-drivers-2016-10-18-v4.9-rc1 - not mainline v4.9-rc1.
+> > 
+> > Without this fix the driver still crashes, but not due to defconfig in
+> > v4.9-rc1.
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1656,7 +1656,7 @@ static irqreturn_t sh_eth_interrupt(int
- 	else
- 		goto out;
- 
--	if (!likely(mdp->irq_enabled)) {
-+	if (unlikely(!mdp->irq_enabled)) {
- 		sh_eth_write(ndev, 0, EESIPR);
- 		goto out;
- 	}
+-- 
+Regards,
+
+Laurent Pinchart
