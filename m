@@ -1,126 +1,73 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 08/22] drm: bridge: dw-hdmi: Reorder functions to prepare for next commit
-Date: Fri,  2 Dec 2016 01:43:23 +0200
-Message-Id: <1480635817-1258-9-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1480635817-1258-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33955 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753141AbcLNOQg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Dec 2016 09:16:36 -0500
+Received: by mail-it0-f66.google.com with SMTP id 75so102514ite.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Dec 2016 06:15:57 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1481286971-16667-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481286971-16667-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Dec 2016 14:58:04 +0100
+Message-ID: <CAMuHMdVoa53E8SOhgQwN+L337rbiUvUxTwAaQGju6GkWJ6ff2w@mail.gmail.com>
+Subject: Re: [PATCH 4/7] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The next commit will reference structures and functions in a way that
-currently requires forward declarations. Reorder the functions to avoid
-that. No functional change to the code is performed.
+Hi Uli,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 72 ++++++++++++++++++++--------------------
- 1 file changed, 36 insertions(+), 36 deletions(-)
+On Fri, Dec 9, 2016 at 1:36 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  drivers/tty/serial/sh-sci.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 844288f..ce3cf03 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 563cbec47da6..92ce9e532603 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1575,42 +1575,6 @@ static void dw_hdmi_update_phy_mask(struct dw_hdmi *hdmi)
- 		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
- }
- 
--static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
--				    struct drm_display_mode *orig_mode,
--				    struct drm_display_mode *mode)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--
--	/* Store the display mode for plugin/DKMS poweron events */
--	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
--
--	mutex_unlock(&hdmi->mutex);
--}
--
--static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--	hdmi->disabled = true;
--	dw_hdmi_update_power(hdmi);
--	dw_hdmi_update_phy_mask(hdmi);
--	mutex_unlock(&hdmi->mutex);
--}
--
--static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--	hdmi->disabled = false;
--	dw_hdmi_update_power(hdmi);
--	dw_hdmi_update_phy_mask(hdmi);
--	mutex_unlock(&hdmi->mutex);
--}
--
- static enum drm_connector_status
- dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
- {
-@@ -1703,6 +1667,42 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
- 	.best_encoder = drm_atomic_helper_best_encoder,
- };
- 
-+static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
-+				    struct drm_display_mode *orig_mode,
-+				    struct drm_display_mode *mode)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+
-+	/* Store the display mode for plugin/DKMS poweron events */
-+	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
-+
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
-+static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+	hdmi->disabled = true;
-+	dw_hdmi_update_power(hdmi);
-+	dw_hdmi_update_phy_mask(hdmi);
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
-+static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+	hdmi->disabled = false;
-+	dw_hdmi_update_power(hdmi);
-+	dw_hdmi_update_phy_mask(hdmi);
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
- 	.enable = dw_hdmi_bridge_enable,
- 	.disable = dw_hdmi_bridge_disable,
--- 
-Regards,
+> @@ -2729,6 +2734,7 @@ static int sci_init_single(struct platform_device *dev,
+>                 sci_port->overrun_reg = SCLSR;
+>                 sci_port->overrun_mask = SCLSR_ORER;
+>                 sci_port->sampling_rate_mask = SCI_SR_RANGE(8, 32);
+> +               sci_port->rx_trigger = 64;
+>                 break;
+>         case PORT_SCIFA:
+>                 port->fifosize = 64;
+> @@ -2747,12 +2753,14 @@ static int sci_init_single(struct platform_device *dev,
+>                         sci_port->overrun_mask = SCLSR_ORER;
+>                         sci_port->sampling_rate_mask = SCI_SR(32);
+>                 }
+> +               sci_port->rx_trigger = 8;
 
-Laurent Pinchart
+PORT_SCIF is also used with SCIx_SH7705_SCIF_REGTYPE, so this should
+be moved inside the "else" branch above.
+Then, what to do with the "if" branch?
+
+>From the sh7705/sh7720/sh7721 datasheets, it looks a lot like SCIFA, and thus
+would need "sci_port->rx_trigger = 32", and the same handling as SCIFA in
+scif_set_rtrg().
+
+See also "[RFC] serial: sh-sci: Correct FIFO stages on sh7705/sh7720/sh7721"
+(https://patchwork.kernel.org/patch/6810191/).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
