@@ -1,41 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:33442 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752856AbcLST7B (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44936 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753188AbcLNUy1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 14:59:01 -0500
-Received: by mail-lf0-f41.google.com with SMTP id c13so61682862lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Dec 2016 11:59:00 -0800 (PST)
-Subject: Re: [PATCH] drm: rcar-du: enable VSPDs on R8A7791
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <4947043.txDs5ZU4mH@wasted.cogentembedded.com>
- <1823239.KB8yzOkpmW@avalon>
+        Wed, 14 Dec 2016 15:54:27 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1e9a678f-939d-fa4a-1550-d806ffe47697@cogentembedded.com>
-Date: Mon, 19 Dec 2016 22:58:57 +0300
+Subject: Re: [PATCH] drm: rcar-du: enable VSPDs on R8A7791
+Date: Wed, 14 Dec 2016 22:55:01 +0200
+Message-ID: <1823239.KB8yzOkpmW@avalon>
+In-Reply-To: <4947043.txDs5ZU4mH@wasted.cogentembedded.com>
+References: <4947043.txDs5ZU4mH@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1823239.KB8yzOkpmW@avalon>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Sergei,
 
-On 12/14/2016 11:55 PM, Laurent Pinchart wrote:
+Thank you for the patch.
 
->> We're going to use R8A7791 VSPDs to control DU, so set the corresponding
->> flag.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> For the same reason I nacked the corresponding patch to the VSP1 driver, I
-> have to nack this one as well. The Gen2 DU has native planes, this patch would
-> prevent using them. I don't see a good reason to do so.
+On Wednesday 14 Dec 2016 23:37:08 Sergei Shtylyov wrote:
+> We're going to use R8A7791 VSPDs to control DU, so set the corresponding
+> flag.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-    One of the reasons is that these patches kill the horizontal noise when 
-playing video in Weston...
+For the same reason I nacked the corresponding patch to the VSP1 driver, I 
+have to nack this one as well. The Gen2 DU has native planes, this patch would 
+prevent using them. I don't see a good reason to do so.
 
-WBR, Sergei
+> ---
+> The patch is against David Airlie's 'linux.git' repo's 'drm-next' branch.
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> Index: linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> ===================================================================
+> --- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -90,7 +90,8 @@ static const struct rcar_du_device_info
+>  static const struct rcar_du_device_info rcar_du_r8a7791_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> -		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+>  	.num_crtcs = 2,
+>  	.routes = {
+>  		/* R8A779[13] has one RGB output, one LVDS output and one
+
+-- 
+Regards,
+
+Laurent Pinchart
