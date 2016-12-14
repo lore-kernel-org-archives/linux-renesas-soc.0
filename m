@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:31958 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:62578 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752737AbcLNQWO (ORCPT
+        by vger.kernel.org with ESMTP id S1753284AbcLNLqB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Dec 2016 11:22:14 -0500
+        Wed, 14 Dec 2016 06:46:01 -0500
 From: Chris Brandt <Chris.Brandt@renesas.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 CC: "linux-renesas-soc@vger.kernel.org"
@@ -11,8 +11,8 @@ CC: "linux-renesas-soc@vger.kernel.org"
         "geert+renesas@glider.be" <geert+renesas@glider.be>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Subject: RE: clk: clk-mstp has never worked for RZ/A1
-Date: Wed, 14 Dec 2016 16:22:06 +0000
-Message-ID: <SG2PR06MB11657308A9FA6EF71F5F89688A9A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Date: Wed, 14 Dec 2016 11:43:43 +0000
+Message-ID: <SG2PR06MB1165A2D1E74663B03BD6B87C8A9A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <SG2PR06MB1165A4A8A555A3176D0C4ED98A9A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdUJFSbX96pqY2Ogxztxz-SWCNfbe=d3eWKn+eWSdHLwfw@mail.gmail.com>
 In-Reply-To: <CAMuHMdUJFSbX96pqY2Ogxztxz-SWCNfbe=d3eWKn+eWSdHLwfw@mail.gmail.com>
@@ -23,20 +23,20 @@ MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIERlYyAxNCwgMjAxNiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0K
-PiBBbm90aGVyIG9wdGlvbiBpcyB0byBsZXQgdGhlIGRyaXZlciBiaW5kIGFnYWluc3QgInJlbmVz
-YXMscjdzNzIxMDAtbXN0cC0NCj4gY2xvY2tzIiwgYW5kIHN3aXRjaCB0byA4LWJpdCBhY2Nlc3Mg
-bW9kZS4NCj4gDQo+IENMS19PRl9ERUNMQVJFKGNwZ19tc3RwX2Nsa3MsICJyZW5lc2FzLHI3czcy
-MTAwLW1zdHAtY2xvY2tzIiwNCj4gY3BnX21zdHBfY2xvY2tzX2luaXQ4KTsNCj4gDQo+IGNwZ19t
-c3RwX2Nsb2Nrc19pbml0OCgpIGNhbiBzZXQgYSBnbG9hbCBmbGFnLCBhbmQgY2FsbA0KPiBjcGdf
-bXN0cF9jbG9ja3NfaW5pdCgpLg0KPiANCj4gVGhlIGxhdHRlciBtZWFucyBubyBEVCB1cGRhdGUg
-aXMgbmVlZGVkLCBhbmQgdGh1cyBwcmVzZXJ2ZXMgY29tcGF0aWJpbGl0eQ0KPiB3aXRoIG9sZCBE
-VEJzLg0KDQpJIGp1c3QgY29kZWQgdGhhdCBhbmQgaXQgd29ya3MgZ29vZC4gVGhhbmsgeW91Lg0K
-DQoNCk5vdywgb25lIG1vcmUgcXVlc3Rpb24gYmVmb3JlIEkgc3VibWl0IGEgcGF0Y2ggZm9yIHJl
-dmlldzoNCg0KSSB3b3VsZCBsaWtlIHRvIGFkZCBhICJGaXhlczoiIHRvIHRoZSBjb21taXQgbG9n
-IHNvIGl0IGNhbiBiZSBjb25zaWRlcmVkIGZvciA0Ljktc3RhYmxlIChpbiByZWFsaXR5IGl0IGNv
-dWxkIGdvIGFsbCB0aGUgd2F5IGJhY2sgdG8gd2hlbiByN3M3MjEwMCBzdXBwb3J0IHdhcyBhZGRl
-ZCkNCg0KQnV0LCB0aGUgY3VycmVudCBmaWxlIHBhdGggZGlkbid0IGV4aXN0IHVudGlsIGFmdGVy
-IGNvbW1pdCBiM2EzMzA3N2MwZGQgKCJjbGs6IHJlbmVzYXM6IG1vdmUgZHJpdmVycyB0byByZW5l
-c2FzIGRpcmVjdG9yeSIpIG9uIDIwMTYtMDMtMDIuDQoNClNvIHNob3VsZCBJIHVzZSB0aGF0IGNv
-bW1pdCBmb3IgbXkgJ0ZpeGVzJz8NCg0KDQpUaGFua3MsDQpDaHJpcw0KDQo=
+SGkgR2VlcnQsDQoNCk9uIDEyLzE0LzIwNiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiBP
+b3BzLi4uIFdoZXJlIGRpZCB5b3VyIChvZmZsaXN0KSBidWcgcmVwb3J0IGZvciByc3BpIG5lZWRp
+bmcgYSBkZWxheSBhZnRlcg0KPiBjbG9jayBlbmFibGUgY29tZSBmcm9tPw0KDQpCZWNhdXNlIHRo
+ZSBSU1BJIGRyaXZlciBpbiBvdXIgY3VycmVudCBCU1AgaXMgYWxtb3N0IGV4YWN0bHkgdGhlIHNh
+bWUgc28gSSB3YXMgbWFraW5nIHRoZSBhc3N1bXB0aW9uIHRoYXQgaXQgd291bGQgYmUgYSBwcm9i
+bGVtIChidXQgSSBoYXZlIG5vdCB0ZXN0ZWQgaXQgeWV0KS4NCg0KDQo+IEkgd2FzIGF3YXJlIHRo
+ZSByZWdpc3RlcnMgYXJlIGRvY3VtZW50ZWQgdG8gYmUgOC1iaXQgd2lkZSwgYnV0IEkgYWx3YXlz
+DQo+IGFzc3VtZWQgMzItYml0IGFjY2Vzc2VzIGRvIHdvcmsuDQoNCkF0IGZpcnN0LCBJIGRpZCB0
+b28uDQoNCg0KPiBBbm90aGVyIG9wdGlvbiBpcyB0byBsZXQgdGhlIGRyaXZlciBiaW5kIGFnYWlu
+c3QgInJlbmVzYXMscjdzNzIxMDAtbXN0cC0NCj4gY2xvY2tzIiwgYW5kIHN3aXRjaCB0byA4LWJp
+dCBhY2Nlc3MgbW9kZS4NCj4gDQo+IENMS19PRl9ERUNMQVJFKGNwZ19tc3RwX2Nsa3MsICJyZW5l
+c2FzLHI3czcyMTAwLW1zdHAtY2xvY2tzIiwNCj4gY3BnX21zdHBfY2xvY2tzX2luaXQ4KTsNCj4g
+DQo+IGNwZ19tc3RwX2Nsb2Nrc19pbml0OCgpIGNhbiBzZXQgYSBnbG9hbCBmbGFnLCBhbmQgY2Fs
+bA0KPiBjcGdfbXN0cF9jbG9ja3NfaW5pdCgpLg0KPiANCj4gVGhlIGxhdHRlciBtZWFucyBubyBE
+VCB1cGRhdGUgaXMgbmVlZGVkLCBhbmQgdGh1cyBwcmVzZXJ2ZXMgY29tcGF0aWJpbGl0eQ0KPiB3
+aXRoIG9sZCBEVEJzLg0KDQpJIGxpa2UgdGhpcyBpZGVhLiBJJ2xsIGNvZGUgaXQgdXAgYW5kIGdp
+dmUgaXQgYSBzaG90Lg0KDQpUaGFuayB5b3UuDQoNCkNocmlzDQo=
