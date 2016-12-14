@@ -1,123 +1,61 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 08/29] drm: bridge: dw-hdmi: Reorder functions to prepare for next commit
-Date: Tue, 20 Dec 2016 03:33:39 +0200
-Message-Id: <20161220013400.28317-9-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35189 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755917AbcLNNft (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Dec 2016 08:35:49 -0500
+MIME-Version: 1.0
+In-Reply-To: <1481286971-16667-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481286971-16667-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Dec 2016 14:35:48 +0100
+Message-ID: <CAMuHMdU6EECyeeq=safmYsO1Dy6AXiY2C1nUW7_dLU5koaUmBg@mail.gmail.com>
+Subject: Re: [PATCH 1/7] serial: sh-sci: add FIFO trigger bits
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The next commit will reference structures and functions in a way that
-currently requires forward declarations. Reorder the functions to avoid
-that. No functional change to the code is performed.
+Hi Ulrich,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 72 ++++++++++++++++++++--------------------
- 1 file changed, 36 insertions(+), 36 deletions(-)
+On Fri, Dec 9, 2016 at 1:36 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Defines the bits controlling FIFO thresholds, adds the additional
+> HSCIF registers to the register map.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 563cbec47da6..92ce9e532603 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1575,42 +1575,6 @@ static void dw_hdmi_update_phy_mask(struct dw_hdmi *hdmi)
- 		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
- }
- 
--static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
--				    struct drm_display_mode *orig_mode,
--				    struct drm_display_mode *mode)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--
--	/* Store the display mode for plugin/DKMS poweron events */
--	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
--
--	mutex_unlock(&hdmi->mutex);
--}
--
--static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--	hdmi->disabled = true;
--	dw_hdmi_update_power(hdmi);
--	dw_hdmi_update_phy_mask(hdmi);
--	mutex_unlock(&hdmi->mutex);
--}
--
--static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--	hdmi->disabled = false;
--	dw_hdmi_update_power(hdmi);
--	dw_hdmi_update_phy_mask(hdmi);
--	mutex_unlock(&hdmi->mutex);
--}
--
- static enum drm_connector_status
- dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
- {
-@@ -1703,6 +1667,42 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
- 	.best_encoder = drm_atomic_helper_best_encoder,
- };
- 
-+static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
-+				    struct drm_display_mode *orig_mode,
-+				    struct drm_display_mode *mode)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+
-+	/* Store the display mode for plugin/DKMS poweron events */
-+	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
-+
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
-+static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+	hdmi->disabled = true;
-+	dw_hdmi_update_power(hdmi);
-+	dw_hdmi_update_phy_mask(hdmi);
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
-+static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+	hdmi->disabled = false;
-+	dw_hdmi_update_power(hdmi);
-+	dw_hdmi_update_phy_mask(hdmi);
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
- 	.enable = dw_hdmi_bridge_enable,
- 	.disable = dw_hdmi_bridge_disable,
--- 
-Regards,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Laurent Pinchart
+Minor comment below.
+
+> --- a/drivers/tty/serial/sh-sci.h
+> +++ b/drivers/tty/serial/sh-sci.h
+> @@ -29,6 +29,8 @@ enum {
+>         SCPDR,                          /* Serial Port Data Register */
+>         SCDL,                           /* BRG Frequency Division Register */
+>         SCCKS,                          /* BRG Clock Select Register */
+> +       HSRTRGR,                        /* Receive FIFO Data Count Register */
+
+Receive FIFO Data Count Trigger Register
+
+(to avoid confusion with the FIFO Data Count Register)
+
+> +       HSTTRGR,                        /* Transmit FIFO Data Count Register */
+
+Transmit FIFO Data Count Trigger Register
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
