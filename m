@@ -1,47 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:41932 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752656AbcLLTvu (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35508 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755854AbcLNOKI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 14:51:50 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 6/9] mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
-Date: Mon, 12 Dec 2016 20:51:25 +0100
-Message-Id: <20161212195128.16633-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
-References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+        Wed, 14 Dec 2016 09:10:08 -0500
+MIME-Version: 1.0
+In-Reply-To: <1481286971-16667-8-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481286971-16667-8-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Dec 2016 15:10:07 +0100
+Message-ID: <CAMuHMdUKzcPndJcQYEKDucpTSNemjZE=Q3R=DgD5T45OoPXjNQ@mail.gmail.com>
+Subject: Re: [PATCH 7/7] arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The function will only be available if SDR104 was detected in probe,
-so no need to check in the function itself again.
+Hi Uli,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/sh_mobile_sdhi.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+On Fri, Dec 9, 2016 at 1:36 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Enables the SCIF hooked up to the DEBUG1 connector.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> index da46ac7..9204691 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> @@ -18,6 +18,7 @@
+>
+>         aliases {
+>                 serial0 = &scif2;
+> +               serial1 = &scif1;
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 22bedbea8ec502..2bd17890ec4b77 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -433,12 +433,7 @@ static int sh_mobile_sdhi_select_tuning(struct tmio_mmc_host *host)
- 
- static bool sh_mobile_sdhi_check_scc_error(struct tmio_mmc_host *host)
- {
--	struct sh_mobile_sdhi *priv;
--
--	if (!(host->mmc->caps & MMC_CAP_UHS_SDR104))
--		return 0;
--
--	priv = host_to_priv(host);
-+	struct sh_mobile_sdhi *priv = host_to_priv(host);
- 
- 	/* Check SCC error */
- 	if (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL) &
--- 
-2.10.2
+Is there any specific reason you chose scif1 over hscif1?
+
+>                 ethernet0 = &avb;
+>         };
+>
+> @@ -140,6 +141,11 @@
+>         pinctrl-0 = <&scif_clk_pins>;
+>         pinctrl-names = "default";
+>
+> +       scif1_pins: scif1 {
+> +               groups = "scif1_data_a";
+
+Please add "scif1_ctrl_a".
+
+> +               function = "scif1";
+> +       };
+> +
+>         scif2_pins: scif2 {
+>                 groups = "scif2_data_a";
+>                 function = "scif2";
+> @@ -280,6 +286,12 @@
+>         status = "okay";
+>  };
+>
+> +&scif1 {
+> +       pinctrl-0 = <&scif1_pins>;
+> +       pinctrl-names = "default";
+
+Please add "uart-has-rtscts".
+
+> +       status = "okay";
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
