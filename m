@@ -1,132 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:39608 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932564AbcLMNgt (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:33729 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754618AbcLNEiF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 08:36:49 -0500
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cGnGB-0003RB-9d
-        for linux-renesas-soc@vger.kernel.org; Tue, 13 Dec 2016 14:36:47 +0100
-Received: from geert by ramsan with local (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cGnGI-0006sK-5t
-        for linux-renesas-soc@vger.kernel.org; Tue, 13 Dec 2016 14:36:54 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2016-12-13-v4.9
-Date: Tue, 13 Dec 2016 14:36:54 +0100
-Message-Id: <1481636214-26394-1-git-send-email-geert+renesas@glider.be>
+        Tue, 13 Dec 2016 23:38:05 -0500
+Date: Tue, 13 Dec 2016 20:38:00 -0800
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Subject: Re: [PATCHv5 2/5] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal
+ driver
+Message-ID: <20161214043758.GA2765@localhost.localdomain>
+References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+ <20161212141805.14946-3-niklas.soderlund@ragnatech.se>
+ <20161213035052.GA22105@localhost.localdomain>
+ <20161213094339.GB24175@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20161213094339.GB24175@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2016-12-13-v4.9 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+hey,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging branches with driver code
-submitted or planned for submission to maintainers into the development
-branch of Simon Horman's renesas.git tree.
+On Tue, Dec 13, 2016 at 10:43:40AM +0100, Niklas S�derlund wrote:
+> Hi Eduardo,
+> 
+> Thanks for your feedback. I will skip commenting where Wolfram already 
+> have.
+> 
+> On 2016-12-12 19:50:54 -0800, Eduardo Valentin wrote:
+> 
+> <snip>
+> 
+> > > +/* Structure for thermal temperature calculation */
+> > > +struct equation_coefs {
+> > > +	int a1;
+> > > +	int b1;
+> > > +	int a2;
+> > > +	int b2;
+> > 
+> > a little description of each coeff would be welcome.
+> 
+> Yes, I too would like to have better documentation of the formulas and 
+> the meaning of the coefficients.
+> 
+> <snip, Wolfram already covert this>
 
-As we are currently focusing on a stable v4.9, no for-next branches
-of various subsystem trees have been included.
+Ok..
 
-Today's version is based on renesas-devel-20161212-v4.9.
+> 
+> > 
+> > > +
+> > > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > > +	if (!priv)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	platform_set_drvdata(pdev, priv);
+> > > +
+> > > +	pm_runtime_enable(dev);
+> > > +	pm_runtime_get_sync(dev);
+> > > +
+> > > +	for (i = 0; i < TSC_MAX_NUM; i++) {
+> > > +		struct rcar_gen3_thermal_tsc *tsc;
+> > > +
+> > > +		tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
+> > > +		if (!tsc) {
+> > > +			ret = -ENOMEM;
+> > > +			goto error_unregister;
+> > > +		}
+> > > +
+> > > +		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+> > > +		if (!res)
+> > > +			break;
+> > > +
+> > > +		tsc->base = devm_ioremap_resource(dev, res);
+> > > +		if (IS_ERR(tsc->base)) {
+> > > +			ret = PTR_ERR(tsc->base);
+> > > +			goto error_unregister;
+> > > +		}
+> > > +
+> > > +		priv->tscs[i] = tsc;
+> > > +		mutex_init(&tsc->lock);
+> > > +
+> > > +		match_data->thermal_init(tsc);
+> > > +		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
+> > 
+> > oh, the thcode's are currently not read then?
+> 
+> No as Wolfram commented, reading THCODE and PTAT from hardware is not 
+> possible on the boards we have to test on so I think this needs to be 
+> added once we can test it. Do you agree this is the best option?
 
-Included branches with driver code:
-  - clk-renesas-for-v4.11
-  - sh-pfc-for-v4.11
-  - topic/r8a7791-pfc-adi
-  - topic/r8a7796-ravb-v1-rebased1
-  - topic/r8a7796-dmac-driver-v2-rebased1~1
-  - topic/r8a7796-dmac-dts-v2-rebased3~3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-driver-v8
-  - topic/vin-gen2-driver-v1-rebased2
-  - topic/rcar-gen3-usb2-role-swap-v5
-  - topic/dma-map-resource-v1
-  - git://linuxtv.org/pinchartl/media.git#vsp1/histogram
-  - https://git.ragnatech.se/linux#for-renesas-drivers
-  - topic/ipmmu-multi-arch-v6
-  - topic/r8a7795-ipmmu-v2-rebased4
-  - topic/r8a7796-ipmmu-v1-rebased4
-  - topic/r8a7795-ipmmu-integration-v1
-  - topic/vin-gen2-dts-v1-rebased5
-  - topic/vsp1-pa-improvements-v1-rebased1
-  - topic/vsp1-writeback-v2-rebased2
-  - git://linuxtv.org/pinchartl/media.git#drm/r8a7796/next
-  - topic/iommu-devel-du-rebased1
-  - topic/r8a7795-es2-v1-rebased5
-  - topic/r8a7796-64b-mem+ravb-prototype-v1-rebased6~1
-  - topic/rcar-du-lvds-mode-selection-v1
-  - d2a726e6d677e403
-  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-driver-v1
-  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-dts-v1
+I agree here. I was under the impression that would be both types of
+chips out there, with and without thcode. But looks like, at the end,
+only a few engineers will have access to those without it, right?
 
-As v4.9 has just been released, I have also pushed
-renesas-drivers-next-2016-12-06-v4.9-rc8 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
-
-This tree lacks the last 4 branches above, but does include the
-following for-next branches of various subsystem trees:
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.infradead.org/battery-2.6.git#master
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/thermal-on-4.10-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/lvds-panel
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/lvds-encoder
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/hdmi
-
-Included branches with driver code:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/thermal-on-4.10-next
-  - git://linuxtv.org/pinchartl/media.git drm/du/lvds-panel
-  - git://linuxtv.org/pinchartl/media.git drm/du/lvds-encoder
-  - git://linuxtv.org/pinchartl/media.git drm/du/hdmi
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+If you still think those without the support need right support, I would
+suggest moving the hardcoded values to DT. Specially if those hardcoded
+values change across chip version (so you can better describe using DT).
+But, in case you think this population of chips wont grow, then might be
+ok to keep the way it is, even though looks not so nice in the code :-).
