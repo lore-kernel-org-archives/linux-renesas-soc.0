@@ -1,56 +1,65 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        David Vrabel <david.vrabel@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] x86, swiotlb: Simplify pci_swiotlb_detect_override()
-Date: Fri, 16 Dec 2016 14:28:40 +0100
-Message-Id: <1481894922-28828-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
-References: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33473 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754898AbcLNQMw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Dec 2016 11:12:52 -0500
+MIME-Version: 1.0
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Dec 2016 17:12:45 +0100
+Message-ID: <CAMuHMdXfPtOKkfNakAgXRQxLTt2fh7Cr26inkp7KAxP6vD-oTg@mail.gmail.com>
+Subject: ravb/sh_eth/b44: BUG: sleeping function called from invalid context
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Michael Chan <michael.chan@broadcom.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-At the end of the function, the local variable use_swiotlb has always
-the same value as the global variable swiotlb. Hence drop the local
-variable completely.
+Hi,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- arch/x86/kernel/pci-swiotlb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+When CONFIG_DEBUG_ATOMIC_SLEEP=y, running "ethtool -s eth0 speed 100"
+on Salvator-X gives:
 
-diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
-index b47edb8f52566e22..36049af2715ebd13 100644
---- a/arch/x86/kernel/pci-swiotlb.c
-+++ b/arch/x86/kernel/pci-swiotlb.c
-@@ -68,12 +68,10 @@ void x86_swiotlb_free_coherent(struct device *dev, size_t size,
-  */
- int __init pci_swiotlb_detect_override(void)
- {
--	int use_swiotlb = swiotlb | swiotlb_force;
--
- 	if (swiotlb_force)
- 		swiotlb = 1;
- 
--	return use_swiotlb;
-+	return swiotlb;
- }
- IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
- 		  pci_xen_swiotlb_detect,
--- 
-1.9.1
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
+in_atomic(): 1, irqs_disabled(): 128, pid: 1683, name: ethtool
+CPU: 0 PID: 1683 Comm: ethtool Tainted: G        W
+4.9.0-salvator-x-00426-g326519df42c65007-dirty #976
+Hardware name: Renesas Salvator-X board based on r8a7796 (DT)
+Call trace:
+[<ffffff8008089400>] dump_backtrace+0x0/0x208
+[<ffffff800808961c>] show_stack+0x14/0x1c
+[<ffffff8008233424>] dump_stack+0x94/0xb4
+[<ffffff80080c377c>] ___might_sleep+0x108/0x11c
+[<ffffff80080c3814>] __might_sleep+0x84/0x94
+[<ffffff800855db0c>] mutex_lock+0x24/0x40
+[<ffffff800837610c>] phy_start_aneg+0x20/0x130
+[<ffffff80083763b8>] phy_ethtool_ksettings_set+0xd0/0xe8
+[<ffffff8008386724>] ravb_set_link_ksettings+0x4c/0xa4
+[<ffffff80084a7b94>] ethtool_set_settings+0xec/0xfc
+[<ffffff80084aa918>] dev_ethtool+0x188/0x17c4
+[<ffffff80084bce3c>] dev_ioctl+0x53c/0x6b8
+[<ffffff8008488acc>] sock_do_ioctl.constprop.45+0x3c/0x4c
+[<ffffff80084897b4>] sock_ioctl+0x33c/0x370
+[<ffffff8008171878>] vfs_ioctl+0x20/0x38
+[<ffffff8008172198>] do_vfs_ioctl+0x844/0x954
+[<ffffff80081722ec>] SyS_ioctl+0x44/0x68
+[<ffffff80080830f0>] el0_svc_naked+0x24/0x28
+
+ravb_set_link_ksettings() calls phy_ethtool_ksettings_set() with a spinlock
+held and interrupts disabled, while phy_start_aneg() tries to obtain a mutex.
+
+The same issue is present in sh_eth_set_link_ksettings() (verified) and
+b44_set_link_ksettings() (code inspection).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
