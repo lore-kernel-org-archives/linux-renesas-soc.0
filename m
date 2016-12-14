@@ -1,50 +1,64 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=QJMP=YJ=m4x.org=nicolas.iooss_linux@bounces.m4x.org>
-From: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-To: Kieran Bingham <kieran@bingham.xyz>,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Subject: [PATCH 1/1] [media] v4l: rcar_fdp1: use %4.4s to format a 4-byte string
-Date: Mon, 26 Dec 2016 14:31:39 +0100
-Message-Id: <20161226133139.3775-1-nicolas.iooss_linux@m4x.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33208 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932479AbcLNNvH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Dec 2016 08:51:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <1481286971-16667-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481286971-16667-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Dec 2016 14:50:59 +0100
+Message-ID: <CAMuHMdWtXjx485oO_yhw2apYJAZxk6EqV4RwpPuKr8vC5yWxBQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] serial: sh-sci: implement FIFO threshold register setting
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Using %4s to format f->fmt.pix_mp.pixelformat in fdp1_try_fmt() and
-fdp1_s_fmt() may lead to more characters being printed (when the byte
-following field pixelformat is not zero).
+Hi Uli,
 
-Add ".4" to the format specifier to limit the number of printed
-characters to four. The resulting format specifier "%4.4s" is also used
-by other media drivers to print pixelformat value.
+On Fri, Dec 9, 2016 at 1:36 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Sets the closest match for a desired RX trigger level.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
----
- drivers/media/platform/rcar_fdp1.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
-index 674cc1309b43..42f25d241edd 100644
---- a/drivers/media/platform/rcar_fdp1.c
-+++ b/drivers/media/platform/rcar_fdp1.c
-@@ -1596,7 +1596,7 @@ static int fdp1_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 	else
- 		fdp1_try_fmt_capture(ctx, NULL, &f->fmt.pix_mp);
- 
--	dprintk(ctx->fdp1, "Try %s format: %4s (0x%08x) %ux%u field %u\n",
-+	dprintk(ctx->fdp1, "Try %s format: %4.4s (0x%08x) %ux%u field %u\n",
- 		V4L2_TYPE_IS_OUTPUT(f->type) ? "output" : "capture",
- 		(char *)&f->fmt.pix_mp.pixelformat, f->fmt.pix_mp.pixelformat,
- 		f->fmt.pix_mp.width, f->fmt.pix_mp.height, f->fmt.pix_mp.field);
-@@ -1671,7 +1671,7 @@ static int fdp1_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 
- 	fdp1_set_format(ctx, &f->fmt.pix_mp, f->type);
- 
--	dprintk(ctx->fdp1, "Set %s format: %4s (0x%08x) %ux%u field %u\n",
-+	dprintk(ctx->fdp1, "Set %s format: %4.4s (0x%08x) %ux%u field %u\n",
- 		V4L2_TYPE_IS_OUTPUT(f->type) ? "output" : "capture",
- 		(char *)&f->fmt.pix_mp.pixelformat, f->fmt.pix_mp.pixelformat,
- 		f->fmt.pix_mp.width, f->fmt.pix_mp.height, f->fmt.pix_mp.field);
--- 
-2.11.0
+> index de25db8..844288f 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1103,6 +1103,61 @@ static int sci_handle_breaks(struct uart_port *port)
+>         return copied;
+>  }
+>
+> +static int scif_set_rtrg(struct uart_port *port, int rx_trig)
+> +{
+
+> +       if (port->type == PORT_SCIF) {
+
+> +       } else if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+
+> +       } else {
+> +               WARN(1, "unknown FIFO configuration");
+
+This cannot happen, right?
+
+> +               return 1;
+> +       }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
