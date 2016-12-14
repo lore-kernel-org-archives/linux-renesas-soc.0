@@ -1,107 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57715 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753574AbcLLJME (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35010 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755210AbcLNOFv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 04:12:04 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH renesas/devel 08/13] arm64: dts: r8a7795: Use R-Car Gen 3 fallback binding for i2c nodes
-Date: Mon, 12 Dec 2016 10:11:37 +0100
-Message-Id: <1481533902-14789-9-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481533902-14789-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 14 Dec 2016 09:05:51 -0500
+MIME-Version: 1.0
+In-Reply-To: <1481286971-16667-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1481286971-16667-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Dec 2016 15:04:56 +0100
+Message-ID: <CAMuHMdVO=yawgj8TjMuGx=rBKMiohyDHh=zV5-P1RcX3KK_SWw@mail.gmail.com>
+Subject: Re: [PATCH 6/7] serial: sh-sci: make RX FIFO parameters tunable via sysfs
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 3 fallback binding for i2c nodes in
-DT for r8a7795 SoC.
+Hi Uli,
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7795 and the
-fallback binding for R-Car Gen 3.
+On Fri, Dec 9, 2016 at 1:36 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
+> only applicable to SCIFA and SCIFB).
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index e4110243817d..428056d287a9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -792,7 +792,8 @@
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6500000 0 0x40>;
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 931>;
-@@ -806,7 +807,8 @@
- 		i2c1: i2c@e6508000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6508000 0 0x40>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 930>;
-@@ -820,7 +822,8 @@
- 		i2c2: i2c@e6510000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6510000 0 0x40>;
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 929>;
-@@ -834,7 +837,8 @@
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d0000 0 0x40>;
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 928>;
-@@ -848,7 +852,8 @@
- 		i2c4: i2c@e66d8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d8000 0 0x40>;
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 927>;
-@@ -862,7 +867,8 @@
- 		i2c5: i2c@e66e0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e0000 0 0x40>;
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 919>;
-@@ -876,7 +882,8 @@
- 		i2c6: i2c@e66e8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e8000 0 0x40>;
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 918>;
--- 
-2.7.0.rc3.207.g0ac5344
+> @@ -3193,6 +3262,19 @@ static int sci_probe(struct platform_device *dev)
+>         if (ret)
+>                 return ret;
+>
+> +       if (sp->port.fifosize > 1) {
+> +               ret = sysfs_create_file(&dev->dev.kobj,
+> +                               &dev_attr_rx_fifo_trigger.attr);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +       if (sp->port.type == PORT_SCIFA || sp->port.type ==  PORT_SCIFB) {
+> +               ret = sysfs_create_file(&dev->dev.kobj,
+> +                               &dev_attr_rx_fifo_timeout.attr);
+> +               if (ret)
+> +                       return ret;
+
+Returning here may leak the rx_fifo_trigger file created above.
+
+> +       }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
