@@ -1,105 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35645 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754908AbcLNJZG (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:54739 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751550AbcLNCPz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Dec 2016 04:25:06 -0500
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1165A4A8A555A3176D0C4ED98A9A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <SG2PR06MB1165A4A8A555A3176D0C4ED98A9A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Dec 2016 10:25:04 +0100
-Message-ID: <CAMuHMdUJFSbX96pqY2Ogxztxz-SWCNfbe=d3eWKn+eWSdHLwfw@mail.gmail.com>
-Subject: Re: clk: clk-mstp has never worked for RZ/A1
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
+        Tue, 13 Dec 2016 21:15:55 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        "geert+renesas@glider.be" <geert+renesas@glider.be>
+Subject: clk: clk-mstp has never worked for RZ/A1
+Date: Wed, 14 Dec 2016 02:14:50 +0000
+Message-ID: <SG2PR06MB1165A4A8A555A3176D0C4ED98A9A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
+Hello all,
 
-CC devicetree
+Today I realized that the clock control using clk-mstp has never actually w=
+orked for RZ/A1 (r7s72100).
 
-On Wed, Dec 14, 2016 at 3:14 AM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> Today I realized that the clock control using clk-mstp has never actually worked for RZ/A1 (r7s72100).
+The reason is that the MSTP registers are 8-bit instead of the normal 32-bi=
+t, and if you do a 32-bit write to them, nothing happens.
+If you look in drivers/clk/renesas/clk-mstp.c, you'll see that clk_readl an=
+d clk_writel are used.
 
-Oops... Where did your (offlist) bug report for rspi needing a delay after
-clock enable come from?
 
-> The reason is that the MSTP registers are 8-bit instead of the normal 32-bit, and if you do a 32-bit write to them, nothing happens.
-> If you look in drivers/clk/renesas/clk-mstp.c, you'll see that clk_readl and clk_writel are used.
+The reason why I have gotten this far is because u-boot has been enabling e=
+verything early in boot, so all the clocks were already on.
+Of course if I disable everything again before I booting the kernel....noth=
+ing works.
 
-I was aware the registers are documented to be 8-bit wide, but I always
-assumed 32-bit accesses do work.
 
-> The reason why I have gotten this far is because u-boot has been enabling everything early in boot, so all the clocks were already on.
-> Of course if I disable everything again before I booting the kernel....nothing works.
+If I change the accesses in clk-mspt.c to 8-bit, clocks get enabled/disable=
+d as they should.
+#define clk_readl readb
+#define clk_writel writeb
 
-Oops, I only have MSTP early disable debug code for boards I do have
-physical access to (cfr. my topic/renesas-debug branch)...
 
-> If I change the accesses in clk-mspt.c to 8-bit, clocks get enabled/disabled as they should.
-> #define clk_readl readb
-> #define clk_writel writeb
->
->
-> So, any suggestions on the best way to fix this???
-> Ideally I would like something that can easily be integrated back into 4.9.x
->
->
->
-> Maybe add a new DT property named "reg_width":
->
->         mstp3_clks: mstp3_clks@fcfe0420 {
->                 #clock-cells = <1>;
->                 compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
->                 reg = <0xfcfe0420 4>;
->                 reg_width = 8;
->                 clocks = <&p0_clk>;
->                 clock-indices = <R7S72100_CLK_MTU2>;
->                 clock-output-names = "mtu2";
->         };
->
-> and then in cpg_mstp_clocks_init(), do:
->
->         if (of_find_property(np, "reg_width", &i))
->                 group->reg_width = i;
->         else
->                 group->reg_width = 32;  /* default */
->
->
-> In cpg_mstp_clock_endisable(), do:
->
->         if (group->reg_width == 8)
->                 writeb(value, group->smstpcr);
->         else
->                 clk_writel(value, group->smstpcr);
+So, any suggestions on the best way to fix this???
+Ideally I would like something that can easily be integrated back into 4.9.=
+x
 
-That's one option. Note that the standard name for such property seems to be
-"reg-io-width".
 
-Another option is to let the driver bind against
-"renesas,r7s72100-mstp-clocks", and switch to 8-bit access mode.
 
-CLK_OF_DECLARE(cpg_mstp_clks, "renesas,r7s72100-mstp-clocks",
-cpg_mstp_clocks_init8);
+Maybe add a new DT property named "reg_width":
 
-cpg_mstp_clocks_init8() can set a gloal flag, and call cpg_mstp_clocks_init().
+	mstp3_clks: mstp3_clks@fcfe0420 {
+		#clock-cells =3D <1>;
+		compatible =3D "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+		reg =3D <0xfcfe0420 4>;
+		reg_width =3D 8;
+		clocks =3D <&p0_clk>;
+		clock-indices =3D <R7S72100_CLK_MTU2>;
+		clock-output-names =3D "mtu2";
+	};
 
-The latter means no DT update is needed, and thus preserves compatibility
-with old DTBs.
+and then in cpg_mstp_clocks_init(), do:
 
-Gr{oetje,eeting}s,
+	if (of_find_property(np, "reg_width", &i))
+		group->reg_width =3D i;
+	else
+		group->reg_width =3D 32;	/* default */
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+In cpg_mstp_clock_endisable(), do:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	if (group->reg_width =3D=3D 8)
+		writeb(value, group->smstpcr);
+	else
+		clk_writel(value, group->smstpcr);
+
+
+Thoughts?
+
+
+Chris
