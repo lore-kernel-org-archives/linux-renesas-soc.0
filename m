@@ -1,110 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52495 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbcLLOUQ (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:36928 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751633AbcLOK55 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 09:20:16 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv5 4/5] arm64: dts: r8a7796: Add R-Car Gen3 thermal support
-Date: Mon, 12 Dec 2016 15:18:04 +0100
-Message-Id: <20161212141805.14946-5-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
-References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+        Thu, 15 Dec 2016 05:57:57 -0500
+Date: Thu, 15 Dec 2016 11:57:55 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PULL REQUEST] renesas/topic/sdhi-emmc-hs for renesas drivers
+Message-ID: <20161215105755.GA1439@katana>
+References: <20161215104204.GA1962@katana>
+ <CAMuHMdX0MS8rmYBjSabEJ-vPoHPj-hgELY9reMMtazGN8ouBGw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX0MS8rmYBjSabEJ-vPoHPj-hgELY9reMMtazGN8ouBGw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 9217da9..5261f0f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -251,5 +251,63 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a7796-thermal";
-+			reg = <0 0xe6198000 0 0x68>,
-+			      <0 0xe61a0000 0 0x5c>,
-+			      <0 0xe61a8000 0 0x5c>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
-+
-+		thermal-zones {
-+			sensor_thermal1: sensor-thermal1 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 0>;
-+
-+				trips {
-+					sensor1_crit: sensor1-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal2: sensor-thermal2 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 1>;
-+
-+				trips {
-+					sensor2_crit: sensor2-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal3: sensor-thermal3 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 2>;
-+
-+				trips {
-+					sensor3_crit: sensor3-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+		};
- 	};
- };
--- 
-2.10.2
+
+> >       mmc: sh_mobile_sdhi: simplify accessing DT data
+> >       mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
+> >       mmc: sh_mobile_sdhi: improve prerequisites for tuning
+> >       mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
+> >       mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
+> >       mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
+> >       mmc: sh_mobile_sdhi: enable HS200
+>=20
+> Please base this on Ulf's mmc/next, or on v4.10-rc1 once it becomes avail=
+able.
+
+Okay, thought so. Will wait for the latter.
+
+Thanks,
+
+   Wolfram
+
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYUncyAAoJEBQN5MwUoCm2ojgP/1k0ZdKCh+Onec1uk/TPO/m6
+Rlt7MWf81LoTK3GMVOatfGj42670tXDr1EbXd2Yo3BGaexEJW6axjzH0KDAxD27P
+Ak4bpxnnipNcBKHYxcSkvvy2PbAfyl24IaKu75BX4+fFn1ggB/ceNynvsgwgPyhn
+2hRBpsxsK+VeXRFH2Zka24Yt6l9ByWqAU77RSajghFWOQ33Df+6DQFRwNvQ9xkzp
+8/BePC3sx+VSamuj6x4L53wLEM1dfGG03F5qT+B6Ku4h1giykKzmInv+wHQ7JW6W
+W2e6eY8KGSkl7PG9uJtGAG975MThkFhuYhsea7IIIAERz2v5NzyJ6k3rUjYBhpCc
+pKNcWLKX96swoPYmtiD5DrKJD7SUbXiaejFrkOk6PmWVuq5tughVqUwkbmI7m+oQ
+MTdDUbt+ENzXroV0UykvufaCXZQKvr2fb+RfdiaKrpOtlpb9FNXvfbjdXSmfv9C0
+7t91zdbUD6S8EheHPSmY2Q9OIT0Z5wBCslcgZ1NIeW5CB8d7DcuFeHlRWF0nqXal
+0l6suUoANy1F4tzwmQR7gMM3sh7yfNHprM643IE47XqxqRzsOaFN8qx2vp75jA7Z
+33U4JzfEV6aQrGTkEtgMQWKuvDcudBT9P0sNpXHHfvBYWqnmi1IfC+VBRHSBLuff
+DlqFH/RZ7jpCKFDX1UZF
+=5fVh
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
