@@ -1,86 +1,46 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=i9uI=XQ=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCHv2 1/5] scripts: Test suite runner
-Date: Thu,  1 Dec 2016 21:31:45 +0000
-Message-Id: <1480627909-19207-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:33694 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751334AbcLOJ7a (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Dec 2016 04:59:30 -0500
+MIME-Version: 1.0
+In-Reply-To: <1922293.x1RvWWSErN@wasted.cogentembedded.com>
+References: <1529351.Fac5N2tKoF@wasted.cogentembedded.com> <1922293.x1RvWWSErN@wasted.cogentembedded.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 15 Dec 2016 18:59:28 +0900
+Message-ID: <CANqRtoRg6RxnqQAmuqFw1sjC6+zUUKR+6cBt9tkCOnR-d06OhQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r8a7791: link DU to VSPDs
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "Simon Horman [Horms]" <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Hi Sergei,
 
-Provide a utility script to execute all vsp unit tests, as well
-as the option to execute multiple iterations of the suite.
+On Thu, Dec 15, 2016 at 7:07 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the "vsps" property to the DU device node in order to link this node to
+> the VSPD nodes.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> ---
+> This patch is against the 'renesas-devel-20161212-v4.9' of Simon Horman's
+> 'renesas.git' repo.  It's  only meaningful if the DU driver patch I've just
+> posted is applied.
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Next time, please consider pointing out the exact name of the patch
+you are referring to.
 
----
-v2
-- remove spurious uses of ';'
-- fix output logging
+Thanks,
 
- scripts/vsp-tests.sh | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100755 scripts/vsp-tests.sh
-
-diff --git a/scripts/vsp-tests.sh b/scripts/vsp-tests.sh
-new file mode 100755
-index 000000000000..8b21176ccc09
---- /dev/null
-+++ b/scripts/vsp-tests.sh
-@@ -0,0 +1,49 @@
-+#!/bin/sh
-+
-+##
-+## VSP Tests runner
-+##
-+## Automatically execute all vsp-unit tests
-+## Move test failure results to a specific folder for
-+## the running kernel version
-+##
-+## An argument can be provided to specify the number of
-+## iterations to perform
-+##
-+## usage:
-+##  ./vsp-tests.sh <n>
-+##
-+##   n: Number of iterations to execute test suite
-+##
-+
-+KERNEL_VERSION=`uname -r`
-+
-+run_test() {
-+	echo $1
-+	./$1
-+
-+	if [ $(ls *.bin 2>/dev/null | wc -l) != 0 ]
-+	then
-+		RESULTS_DIR=$KERNEL_VERSION/test-$1/$2/
-+
-+		echo "Moving *.bin to $RESULTS_DIR"
-+		mkdir -p $RESULTS_DIR
-+		mv *.bin $RESULTS_DIR
-+		for f in $RESULTS_DIR/*.bin
-+		do
-+			./bin2png.sh "$f"
-+		done
-+	fi
-+}
-+
-+run_suite() {
-+	echo "Test loop $1"
-+
-+	for test in vsp-unit-test*.sh; do
-+		run_test $test $1;
-+	done;
-+}
-+
-+for loop in `seq 1 1 $1`; do
-+	run_suite $loop
-+done;
--- 
-2.7.4
+/ magnus
