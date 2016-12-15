@@ -1,57 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49078 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753431AbcLAQ2W (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36072 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758189AbcLOQYD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 11:28:22 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+        Thu, 15 Dec 2016 11:24:03 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH pci/next] PCI: rcar: Add gen3 fallback compatibility string for pcie-rcar
-Date: Thu,  1 Dec 2016 17:28:13 +0100
-Message-Id: <1480609693-25746-1-git-send-email-horms+renesas@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/2] arm64: dts: r8a7796: Add EthernetAVB instance
+Date: Thu, 15 Dec 2016 17:24:03 +0100
+Message-Id: <1481819044-19605-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1481819044-19605-1-git-send-email-geert+renesas@glider.be>
+References: <1481819044-19605-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility string for the  R-Car Gen 3 family.  This is in
-keeping with the both the existing fallback compatibility string for the
-R-Car Gen 2 family and the fallback scheme being adopted wherever
-appropriate for drivers for Renesas SoCs.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
- drivers/pci/host/pcie-rcar.c                       | 2 ++
- 2 files changed, 3 insertions(+)
+v2:
+  - Rebased.
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 43 ++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index 6cf99690eef9..eee518db90b9 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -7,6 +7,7 @@ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
- 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
- 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
-+	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 7bf0f2f6c2243cfc..d9d8dc53b408c36e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -421,6 +421,49 @@
+ 			};
+ 		};
  
- 	    When compatible with the generic version, nodes must list the
- 	    SoC-specific version corresponding to the platform first
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 62700d1896f4..962aa3942107 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1077,6 +1077,8 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- 	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7791",
- 	  .data = rcar_pcie_hw_init_gen2 },
-+	{ .compatible = "renesas,pcie-rcar-gen3",
-+	  .data = rcar_pcie_hw_init_hw_init },
- 	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
- 	{},
- };
++		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a7796",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			phy-mode = "rgmii-id";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a7796",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
