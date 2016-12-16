@@ -1,162 +1,217 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 16/29] drm: bridge: dw-hdmi: Detect PHY type at runtime
-Date: Tue, 20 Dec 2016 03:33:47 +0200
-Message-Id: <20161220013400.28317-17-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        David Vrabel <david.vrabel@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/3] swiotlb: Convert swiotlb_force from int to enum
+Date: Fri, 16 Dec 2016 14:28:41 +0100
+Message-Id: <1481894922-28828-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
+References: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Detect the PHY type and use it to handle the PHY type-specific SVSRET
-signal.
+Convert the flag swiotlb_force from an int to an enum, to prepare for
+the advent of more possible values.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 68 ++++++++++++++++++++++++++++++++++++++--
- include/drm/bridge/dw_hdmi.h     | 10 ++++++
- 2 files changed, 75 insertions(+), 3 deletions(-)
+v2:
+  - New.
+---
+ arch/arm64/mm/dma-mapping.c    |  3 ++-
+ arch/arm64/mm/init.c           |  3 ++-
+ arch/x86/kernel/pci-swiotlb.c  |  2 +-
+ arch/x86/xen/pci-swiotlb-xen.c |  2 +-
+ drivers/xen/swiotlb-xen.c      |  4 ++--
+ include/linux/swiotlb.h        |  7 ++++++-
+ include/trace/events/swiotlb.h | 16 +++++++++-------
+ lib/swiotlb.c                  |  8 ++++----
+ 8 files changed, 27 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index f4faa14213e5..ef4f2f96ed2c 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -113,6 +113,12 @@ struct dw_hdmi_i2c {
- 	bool			is_regaddr;
- };
+diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+index 290a84f3351f706b..e04082700bb16c35 100644
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@ -524,7 +524,8 @@ struct dma_map_ops dummy_dma_ops = {
  
-+struct dw_hdmi_phy_data {
-+	enum dw_hdmi_phy_type type;
-+	const char *name;
-+	bool has_svsret;
+ static int __init arm64_dma_init(void)
+ {
+-	if (swiotlb_force || max_pfn > (arm64_dma_phys_limit >> PAGE_SHIFT))
++	if (swiotlb_force == SWIOTLB_FORCE ||
++	    max_pfn > (arm64_dma_phys_limit >> PAGE_SHIFT))
+ 		swiotlb = 1;
+ 
+ 	return atomic_pool_init();
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 212c4d1e2f26df7f..716d1226ba6925ba 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -401,7 +401,8 @@ static void __init free_unused_memmap(void)
+  */
+ void __init mem_init(void)
+ {
+-	if (swiotlb_force || max_pfn > (arm64_dma_phys_limit >> PAGE_SHIFT))
++	if (swiotlb_force == SWIOTLB_FORCE ||
++	    max_pfn > (arm64_dma_phys_limit >> PAGE_SHIFT))
+ 		swiotlb_init(1);
+ 
+ 	set_max_mapnr(pfn_to_page(max_pfn) - mem_map);
+diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+index 36049af2715ebd13..410efb2c7b80028b 100644
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -68,7 +68,7 @@ void x86_swiotlb_free_coherent(struct device *dev, size_t size,
+  */
+ int __init pci_swiotlb_detect_override(void)
+ {
+-	if (swiotlb_force)
++	if (swiotlb_force == SWIOTLB_FORCE)
+ 		swiotlb = 1;
+ 
+ 	return swiotlb;
+diff --git a/arch/x86/xen/pci-swiotlb-xen.c b/arch/x86/xen/pci-swiotlb-xen.c
+index a9fafb5c873897ee..a0b36a9d5df149e6 100644
+--- a/arch/x86/xen/pci-swiotlb-xen.c
++++ b/arch/x86/xen/pci-swiotlb-xen.c
+@@ -48,7 +48,7 @@ int __init pci_xen_swiotlb_detect(void)
+ 	 * activate this IOMMU. If running as PV privileged, activate it
+ 	 * irregardless.
+ 	 */
+-	if ((xen_initial_domain() || swiotlb || swiotlb_force))
++	if (xen_initial_domain() || swiotlb || swiotlb_force == SWIOTLB_FORCE)
+ 		xen_swiotlb = 1;
+ 
+ 	/* If we are running under Xen, we MUST disable the native SWIOTLB.
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index 478fb91e3df2b8a9..aba12009422e343d 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -392,7 +392,7 @@ dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
+ 	if (dma_capable(dev, dev_addr, size) &&
+ 	    !range_straddles_page_boundary(phys, size) &&
+ 		!xen_arch_need_swiotlb(dev, phys, dev_addr) &&
+-		!swiotlb_force) {
++		(swiotlb_force != SWIOTLB_FORCE)) {
+ 		/* we are not interested in the dma_addr returned by
+ 		 * xen_dma_map_page, only in the potential cache flushes executed
+ 		 * by the function. */
+@@ -552,7 +552,7 @@ void xen_swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
+ 		phys_addr_t paddr = sg_phys(sg);
+ 		dma_addr_t dev_addr = xen_phys_to_bus(paddr);
+ 
+-		if (swiotlb_force ||
++		if (swiotlb_force == SWIOTLB_FORCE ||
+ 		    xen_arch_need_swiotlb(hwdev, paddr, dev_addr) ||
+ 		    !dma_capable(hwdev, dev_addr, sg->length) ||
+ 		    range_straddles_page_boundary(paddr, sg->length)) {
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 183f37c8a5e164ad..71d104e4c8490763 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -9,7 +9,12 @@
+ struct page;
+ struct scatterlist;
+ 
+-extern int swiotlb_force;
++enum swiotlb_force {
++	SWIOTLB_NORMAL,		/* Default - depending on HW DMA mask etc. */
++	SWIOTLB_FORCE,		/* swiotlb=force */
 +};
 +
- struct dw_hdmi {
- 	struct drm_connector connector;
- 	struct drm_bridge bridge;
-@@ -134,7 +140,9 @@ struct dw_hdmi {
- 	u8 edid[HDMI_EDID_LEN];
- 	bool cable_plugin;
++extern enum swiotlb_force swiotlb_force;
  
-+	const struct dw_hdmi_phy_data *phy;
- 	bool phy_enabled;
-+
- 	struct drm_display_mode previous_mode;
+ /*
+  * Maximum allowable number of contiguous slabs to map,
+diff --git a/include/trace/events/swiotlb.h b/include/trace/events/swiotlb.h
+index 7ea4c5e7c4487a96..5e2e30a7efce0ebd 100644
+--- a/include/trace/events/swiotlb.h
++++ b/include/trace/events/swiotlb.h
+@@ -11,16 +11,16 @@
+ 	TP_PROTO(struct device *dev,
+ 		 dma_addr_t dev_addr,
+ 		 size_t size,
+-		 int swiotlb_force),
++		 enum swiotlb_force swiotlb_force),
  
- 	struct i2c_adapter *ddc;
-@@ -1015,7 +1023,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
- 	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
- 	dw_hdmi_phy_gen2_pddq(hdmi, 0);
+ 	TP_ARGS(dev, dev_addr, size, swiotlb_force),
  
--	if (hdmi->dev_type == RK3288_HDMI)
-+	/* The DWC MHL and HDMI 2.0 PHYs need the SVSRET signal to be set. */
-+	if (hdmi->phy->has_svsret)
- 		dw_hdmi_phy_enable_svsret(hdmi, 1);
+ 	TP_STRUCT__entry(
+-		__string(	dev_name,	dev_name(dev)	)
+-		__field(	u64,	dma_mask		)
+-		__field(	dma_addr_t,	dev_addr	)
+-		__field(	size_t,	size			)
+-		__field(	int,	swiotlb_force		)
++		__string(	dev_name,	dev_name(dev)		)
++		__field(	u64,	dma_mask			)
++		__field(	dma_addr_t,	dev_addr		)
++		__field(	size_t,	size				)
++		__field(	enum swiotlb_force,	swiotlb_force	)
+ 	),
  
- 	/*Wait for PHY PLL lock */
-@@ -1840,6 +1849,54 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
+ 	TP_fast_assign(
+@@ -37,7 +37,9 @@
+ 		__entry->dma_mask,
+ 		(unsigned long long)__entry->dev_addr,
+ 		__entry->size,
+-		__entry->swiotlb_force ? "swiotlb_force" : "" )
++		__print_symbolic(__entry->swiotlb_force,
++			{ SWIOTLB_NORMAL,	"NORMAL" },
++			{ SWIOTLB_FORCE,	"FORCE" }))
+ );
+ 
+ #endif /*  _TRACE_SWIOTLB_H */
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index cb1b54ee8527241d..a32dce6d5101f408 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -53,7 +53,7 @@
+  */
+ #define IO_TLB_MIN_SLABS ((1<<20) >> IO_TLB_SHIFT)
+ 
+-int swiotlb_force;
++enum swiotlb_force swiotlb_force;
+ 
+ /*
+  * Used to do a quick range check in swiotlb_tbl_unmap_single and
+@@ -107,7 +107,7 @@
+ 	if (*str == ',')
+ 		++str;
+ 	if (!strcmp(str, "force"))
+-		swiotlb_force = 1;
++		swiotlb_force = SWIOTLB_FORCE;
+ 
+ 	return 0;
  }
+@@ -763,7 +763,7 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+ 	 * we can safely return the device addr and not worry about bounce
+ 	 * buffering it.
+ 	 */
+-	if (dma_capable(dev, dev_addr, size) && !swiotlb_force)
++	if (dma_capable(dev, dev_addr, size) && swiotlb_force != SWIOTLB_FORCE)
+ 		return dev_addr;
  
-+static const struct dw_hdmi_phy_data dw_hdmi_phys[] = {
-+	{
-+		.type = DW_HDMI_PHY_DWC_HDMI_TX_PHY,
-+		.name = "DWC HDMI TX PHY",
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_MHL_PHY_HEAC,
-+		.name = "DWC MHL PHY + HEAC PHY",
-+		.has_svsret = true,
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_MHL_PHY,
-+		.name = "DWC MHL PHY",
-+		.has_svsret = true,
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY_HEAC,
-+		.name = "DWC HDMI 3D TX PHY + HEAC PHY",
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY,
-+		.name = "DWC HDMI 3D TX PHY",
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_HDMI20_TX_PHY,
-+		.name = "DWC HDMI 2.0 TX PHY",
-+		.has_svsret = true,
-+	}
-+};
-+
-+static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
-+{
-+	unsigned int i;
-+	u8 phy_type;
-+
-+	phy_type = hdmi_readb(hdmi, HDMI_CONFIG2_ID);
-+
-+	for (i = 0; i < ARRAY_SIZE(dw_hdmi_phys); ++i) {
-+		if (dw_hdmi_phys[i].type == phy_type) {
-+			hdmi->phy = &dw_hdmi_phys[i];
-+			return 0;
-+		}
-+	}
-+
-+	if (phy_type == DW_HDMI_PHY_VENDOR_PHY)
-+		dev_err(hdmi->dev, "Unsupported vendor HDMI PHY\n");
-+	else
-+		dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n",
-+			phy_type);
-+
-+	return -ENODEV;
-+}
-+
- static struct dw_hdmi *
- __dw_hdmi_probe(struct platform_device *pdev,
- 		const struct dw_hdmi_plat_data *plat_data)
-@@ -1950,9 +2007,14 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 		goto err_iahb;
- 	}
+ 	trace_swiotlb_bounced(dev, dev_addr, size, swiotlb_force);
+@@ -904,7 +904,7 @@ void swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
+ 		phys_addr_t paddr = sg_phys(sg);
+ 		dma_addr_t dev_addr = phys_to_dma(hwdev, paddr);
  
--	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP\n",
-+	ret = dw_hdmi_detect_phy(hdmi);
-+	if (ret < 0)
-+		goto err_iahb;
-+
-+	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
- 		 hdmi->version >> 12, hdmi->version & 0xfff,
--		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without");
-+		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without",
-+		 hdmi->phy->name);
- 
- 	initialize_hdmi_ih_mutes(hdmi);
- 
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 3bb22a849830..b080a171a23f 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -27,6 +27,16 @@ enum dw_hdmi_devtype {
- 	RK3288_HDMI,
- };
- 
-+enum dw_hdmi_phy_type {
-+	DW_HDMI_PHY_DWC_HDMI_TX_PHY = 0x00,
-+	DW_HDMI_PHY_DWC_MHL_PHY_HEAC = 0xb2,
-+	DW_HDMI_PHY_DWC_MHL_PHY = 0xc2,
-+	DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY_HEAC = 0xe2,
-+	DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY = 0xf2,
-+	DW_HDMI_PHY_DWC_HDMI20_TX_PHY = 0xf3,
-+	DW_HDMI_PHY_VENDOR_PHY = 0xfe,
-+};
-+
- struct dw_hdmi_mpll_config {
- 	unsigned long mpixelclock;
- 	struct {
+-		if (swiotlb_force ||
++		if (swiotlb_force == SWIOTLB_FORCE ||
+ 		    !dma_capable(hwdev, dev_addr, sg->length)) {
+ 			phys_addr_t map = map_single(hwdev, sg_phys(sg),
+ 						     sg->length, dir, attrs);
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
