@@ -1,213 +1,56 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: [PATCH v2 25/29] drm: rcar-du: Add DPLL support
-Date: Tue, 20 Dec 2016 03:33:56 +0200
-Message-Id: <20161220013400.28317-26-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        David Vrabel <david.vrabel@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] x86, swiotlb: Simplify pci_swiotlb_detect_override()
+Date: Fri, 16 Dec 2016 14:28:40 +0100
+Message-Id: <1481894922-28828-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
+References: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+At the end of the function, the local variable use_swiotlb has always
+the same value as the global variable swiotlb. Hence drop the local
+variable completely.
 
-The implementation hardcodes a workaround for the H3 ES1.x SoC
-regardless of the SoC revision, as the workaround can be safely applied
-on all devices in the Gen3 family without any side effect.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 81 +++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_regs.h | 23 ++++++++++
- 4 files changed, 105 insertions(+), 1 deletion(-)
+v2:
+  - New.
+---
+ arch/x86/kernel/pci-swiotlb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index a2ec6d8796a0..cec20abd61aa 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -106,9 +106,62 @@ static void rcar_du_crtc_put(struct rcar_du_crtc *rcrtc)
-  * Hardware Setup
+diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+index b47edb8f52566e22..36049af2715ebd13 100644
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -68,12 +68,10 @@ void x86_swiotlb_free_coherent(struct device *dev, size_t size,
   */
- 
-+struct dpll_info {
-+	unsigned int output;
-+	unsigned int fdpll;
-+	unsigned int n;
-+	unsigned int m;
-+};
-+
-+static void rcar_du_dpll_divider(struct rcar_du_crtc *rcrtc,
-+				 struct dpll_info *dpll,
-+				 unsigned long input,
-+				 unsigned long target)
-+{
-+	unsigned long best_diff = (unsigned long)-1;
-+	unsigned long diff;
-+	unsigned int fdpll;
-+	unsigned int m;
-+	unsigned int n;
-+
-+	for (n = 39; n < 120; n++) {
-+		for (m = 0; m < 4; m++) {
-+			for (fdpll = 1; fdpll < 32; fdpll++) {
-+				unsigned long output;
-+
-+				/* 1/2 (FRQSEL=1) for duty rate 50% */
-+				output = input * (n + 1) / (m + 1)
-+				       / (fdpll + 1) / 2;
-+
-+				if (output >= 400000000)
-+					continue;
-+
-+				diff = abs((long)output - (long)target);
-+				if (best_diff > diff) {
-+					best_diff = diff;
-+					dpll->n = n;
-+					dpll->m = m;
-+					dpll->fdpll = fdpll;
-+					dpll->output = output;
-+				}
-+
-+				if (diff == 0)
-+					goto done;
-+			}
-+		}
-+	}
-+
-+done:
-+	dev_dbg(rcrtc->group->dev->dev,
-+		"output:%u, fdpll:%u, n:%u, m:%u, diff:%lu\n",
-+		 dpll->output, dpll->fdpll, dpll->n, dpll->m,
-+		 best_diff);
-+}
-+
- static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ int __init pci_swiotlb_detect_override(void)
  {
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
-+	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 	unsigned long mode_clock = mode->clock * 1000;
- 	unsigned long clk;
- 	u32 value;
-@@ -124,12 +177,18 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	escr = div | ESCR_DCLKSEL_CLKS;
+-	int use_swiotlb = swiotlb | swiotlb_force;
+-
+ 	if (swiotlb_force)
+ 		swiotlb = 1;
  
- 	if (rcrtc->extclock) {
-+		struct dpll_info dpll = { 0 };
- 		unsigned long extclk;
- 		unsigned long extrate;
- 		unsigned long rate;
- 		u32 extdiv;
- 
- 		extclk = clk_get_rate(rcrtc->extclock);
-+		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-+			rcar_du_dpll_divider(rcrtc, &dpll, extclk, mode_clock);
-+			extclk = dpll.output;
-+		}
-+
- 		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
- 		extdiv = clamp(extdiv, 1U, 64U) - 1;
- 
-@@ -140,7 +199,27 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		    abs((long)rate - (long)mode_clock)) {
- 			dev_dbg(rcrtc->group->dev->dev,
- 				"crtc%u: using external clock\n", rcrtc->index);
--			escr = extdiv | ESCR_DCLKSEL_DCLKIN;
-+
-+			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-+				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
-+					   | DPLLCR_FDPLL(dpll.fdpll)
-+					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
-+					   | DPLLCR_STBY;
-+
-+				if (rcrtc->index == 1)
-+					dpllcr |= DPLLCR_PLCS1
-+					       |  DPLLCR_INCS_DOTCLKIN1;
-+				else
-+					dpllcr |= DPLLCR_PLCS0
-+					       |  DPLLCR_INCS_DOTCLKIN0;
-+
-+				rcar_du_group_write(rcrtc->group, DPLLCR,
-+						    dpllcr);
-+
-+				escr = ESCR_DCLKSEL_DCLKIN | 1;
-+			} else {
-+				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
-+			}
- 		}
- 	}
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 4da5edacab19..74352140f55f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -163,6 +163,7 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 		},
- 	},
- 	.num_lvds = 1,
-+	.dpll_ch =  BIT(1) | BIT(2),
- };
- 
- static const struct rcar_du_device_info rcar_du_r8a7796_info = {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 9393b26efe89..c4b6b7238601 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -65,6 +65,7 @@ struct rcar_du_device_info {
- 	unsigned int num_crtcs;
- 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
- 	unsigned int num_lvds;
-+	unsigned int dpll_ch;
- };
- 
- #define RCAR_DU_MAX_CRTCS		4
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-index fedb0161e234..d5bae99d3cfe 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-@@ -277,6 +277,29 @@
- #define DEFR10_TSEL_H3_TCON1	(0 << 1) /* DEFR102 register only (DU2/DU3) */
- #define DEFR10_DEFE10		(1 << 0)
- 
-+#define DPLLCR			0x20044
-+#define DPLLCR_CODE		(0x95 << 24)
-+#define DPLLCR_PLCS1		(1 << 23)
-+/*
-+ * PLCS0 is bit 21, but H3 ES1.x requires bit 20 to be set as well. As bit 20
-+ * isn't implemented by other SoC in the Gen3 family it can safely be set
-+ * unconditionally.
-+ */
-+#define DPLLCR_PLCS0		(3 << 20)
-+#define DPLLCR_CLKE		(1 << 18)
-+#define DPLLCR_FDPLL(n)		((n) << 12)
-+#define DPLLCR_N(n)		((n) << 5)
-+#define DPLLCR_M(n)		((n) << 3)
-+#define DPLLCR_STBY		(1 << 2)
-+#define DPLLCR_INCS_DOTCLKIN0	(0 << 0)
-+#define DPLLCR_INCS_DOTCLKIN1	(1 << 1)
-+
-+#define DPLLC2R			0x20048
-+#define DPLLC2R_CODE		(0x95 << 24)
-+#define DPLLC2R_SELC		(1 << 12)
-+#define DPLLC2R_M(n)		((n) << 8)
-+#define DPLLC2R_FDPLL(n)	((n) << 0)
-+
- /* -----------------------------------------------------------------------------
-  * Display Timing Generation Registers
-  */
+-	return use_swiotlb;
++	return swiotlb;
+ }
+ IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
+ 		  pci_xen_swiotlb_detect,
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
