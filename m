@@ -1,113 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41472 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932745AbcLTBd4 (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:35306 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752695AbcLQVxC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 20:33:56 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Ulrich Hecht <ulrich.hecht@gmail.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 27/29] arm64: dts: r8a7795: Add HDMI encoder support
-Date: Tue, 20 Dec 2016 03:33:58 +0200
-Message-Id: <20161220013400.28317-28-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+        Sat, 17 Dec 2016 16:53:02 -0500
+Received: by mail-lf0-f52.google.com with SMTP id b14so30723599lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 17 Dec 2016 13:53:01 -0800 (PST)
+Subject: Re: [PATCHv2 2/5] sh_eth: enable wake-on-lan for Gen2 devices
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+ <20161212160931.6478-3-niklas.soderlund+renesas@ragnatech.se>
+ <eeff27f9-25eb-a981-33a9-15aa98ce9db1@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f433b87e-c228-fa2c-b563-3cd5a7ab9546@cogentembedded.com>
+Date: Sun, 18 Dec 2016 00:52:58 +0300
+MIME-Version: 1.0
+In-Reply-To: <eeff27f9-25eb-a981-33a9-15aa98ce9db1@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+On 12/14/2016 04:37 PM, Sergei Shtylyov wrote:
 
-Add DT nodes for the two HDMI encoders in disabled state.
+>> Tested on Gen2 r8a7791/Koelsch.
+>>
+>> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>> ---
+>>  drivers/net/ethernet/renesas/sh_eth.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/renesas/sh_eth.c
+>> b/drivers/net/ethernet/renesas/sh_eth.c
+>> index 87640b9..348ed22 100644
+>> --- a/drivers/net/ethernet/renesas/sh_eth.c
+>> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+>> @@ -624,8 +624,9 @@ static struct sh_eth_cpu_data r8a779x_data = {
+>>
+>>      .register_type    = SH_ETH_REG_FAST_RCAR,
+>>
+>> -    .ecsr_value    = ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
+>> -    .ecsipr_value    = ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
+>> +    .ecsr_value    = ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD | ECSR_MPD,
+>> +    .ecsipr_value    = ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP |
+>> +              ECSIPR_MPDIP,
+>
+>   These expressions seem to have been sorted by the bit # before your patch,
+> now they aren't... care to fix? :-)
 
-Based on work by Koji Matsuoka.
+    After looking at the SH7743/64 code, nevermind this request. Sorry. :-)
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 50 ++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 9b717dee1f7b..5e8f231cf5a0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1590,11 +1590,13 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
- 				};
- 				port@2 {
- 					reg = <2>;
- 					du_out_hdmi1: endpoint {
-+						remote-endpoint = <&dw_hdmi1_in>;
- 					};
- 				};
- 				port@3 {
-@@ -1604,5 +1606,53 @@
- 				};
- 			};
- 		};
-+
-+		hdmi0: hdmi0@fead0000 {
-+			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi1: hdmi1@feae0000 {
-+			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfeae0000 0 0x10000>;
-+			interrupts = <0 436 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 728>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi1_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi1>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
- 	};
- };
--- 
-Regards,
-
-Laurent Pinchart
+MBR, Sergei
