@@ -1,88 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35931 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752190AbcLGKkA (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59651 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753037AbcLRU4t (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Dec 2016 05:40:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] i2c: sh_mobile: Add per-Generation fallback bindings
-Date: Wed,  7 Dec 2016 11:39:53 +0100
-Message-Id: <1481107193-32502-1-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481106689-22312-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481106689-22312-1-git-send-email-horms+renesas@verge.net.au>
+        Sun, 18 Dec 2016 15:56:49 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: thierry.reding@gmail.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 05/13] drm: panels: Constify device node argument to of_drm_find_panel()
+Date: Sun, 18 Dec 2016 22:57:18 +0200
+Message-ID: <2000251.9mBKzr2Oz3@avalon>
+In-Reply-To: <1479526093-7014-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1479526093-7014-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add per-Generation fallback bindings for R-Car SoCs.
+Hi Thierry,
 
-This is in keeping with the compatibility string scheme is being adopted
-for drivers for Renesas SoCs.
+Could you please review this patch ? Should it be merged through you ?
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 17 ++++++++++++++---
- drivers/i2c/busses/i2c-sh_mobile.c                      |  2 ++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+On Saturday 19 Nov 2016 05:28:05 Laurent Pinchart wrote:
+> The argument is never modified by the function, make it const.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/drm_panel.c | 2 +-
+>  include/drm/drm_panel.h     | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> index 3dfe3c886502..308d442a531b 100644
+> --- a/drivers/gpu/drm/drm_panel.c
+> +++ b/drivers/gpu/drm/drm_panel.c
+> @@ -137,7 +137,7 @@ EXPORT_SYMBOL(drm_panel_detach);
+>   * Return: A pointer to the panel registered for the specified device tree
+>   * node or NULL if no panel matching the device tree node can be found.
+>   */
+> -struct drm_panel *of_drm_find_panel(struct device_node *np)
+> +struct drm_panel *of_drm_find_panel(const struct device_node *np)
+>  {
+>  	struct drm_panel *panel;
+> 
+> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> index 220d1e2b3db1..4b76cf2d5a7b 100644
+> --- a/include/drm/drm_panel.h
+> +++ b/include/drm/drm_panel.h
+> @@ -193,9 +193,9 @@ int drm_panel_attach(struct drm_panel *panel, struct
+> drm_connector *connector); int drm_panel_detach(struct drm_panel *panel);
+> 
+>  #ifdef CONFIG_OF
+> -struct drm_panel *of_drm_find_panel(struct device_node *np);
+> +struct drm_panel *of_drm_find_panel(const struct device_node *np);
+>  #else
+> -static inline struct drm_panel *of_drm_find_panel(struct device_node *np)
+> +static inline struct drm_panel *of_drm_find_panel(const struct device_node
+> *np) {
+>  	return NULL;
+>  }
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-index 214f94c25d37..7716acc55dec 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-@@ -1,8 +1,7 @@
- Device tree configuration for Renesas IIC (sh_mobile) driver
- 
- Required properties:
--- compatible      : "renesas,iic-<soctype>". "renesas,rmobile-iic" as fallback
--		     Examples with soctypes are:
-+- compatible      :
- 			- "renesas,iic-r8a73a4" (R-Mobile APE6)
- 			- "renesas,iic-r8a7740" (R-Mobile A1)
- 			- "renesas,iic-r8a7790" (R-Car H2)
-@@ -12,6 +11,17 @@ Required properties:
- 			- "renesas,iic-r8a7794" (R-Car E2)
- 			- "renesas,iic-r8a7795" (R-Car H3)
- 			- "renesas,iic-sh73a0" (SH-Mobile AG5)
-+			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 compatible device)
-+			- "renesas,rcar-gen3-iic" (generic R-Car Gen3 compatible device)
-+			- "renesas,rmobile-iic" (generic device)
-+
-+			When compatible with a generic R-Car version, nodes
-+			must list the SoC-specific version corresponding to
-+			the platform first followed by the generic R-Car
-+			version.
-+
-+			renesas,rmobile-iic must always follow.
-+
- - reg             : address start and address range size of device
- - interrupts      : interrupt of device
- - clocks          : clock for device
-@@ -31,7 +41,8 @@ Pinctrl properties might be needed, too. See there.
- Example:
- 
- 	iic0: i2c@e6500000 {
--		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
-+		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <0 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 6335ad35902d..3d9ebe6e5716 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -834,7 +834,9 @@ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,iic-r8a7792", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7793", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7794", .data = &fast_clock_dt_config },
-+	{ .compatible = "renesas,rcar-gen2-iic", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7795", .data = &fast_clock_dt_config },
-+	{ .compatible = "renesas,rcar-gen3-iic", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-sh73a0", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
- 	{},
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
