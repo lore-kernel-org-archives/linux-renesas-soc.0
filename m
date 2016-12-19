@@ -1,6 +1,6 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 19 Dec 2016 08:38:19 -0500
+Date: Mon, 19 Dec 2016 08:31:44 -0500
 From: Konrad Rzeszutek Wilk <konrad@darnok.org>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
@@ -15,42 +15,74 @@ Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Juergen Gross <jgross@suse.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] swiotlb: Add swiotlb=noforce debug option
-Message-ID: <20161219133817.GA4358@localhost.localdomain>
+Subject: Re: [PATCH v2 0/3] swiotlb: Add swiotlb=noforce debug option
+Message-ID: <20161219133143.GA4182@localhost.localdomain>
 References: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
- <1481894922-28828-4-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1481894922-28828-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 16, 2016 at 02:28:42PM +0100, Geert Uytterhoeven wrote:
-> On architectures like arm64, swiotlb is tied intimately to the core
-> architecture DMA support. In addition, ZONE_DMA cannot be disabled.
+On Fri, Dec 16, 2016 at 02:28:39PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Konrad,
+
+Heya!
 > 
-> To aid debugging and catch devices not supporting DMA to memory outside
-> the 32-bit address space, add a kernel command line option
-> "swiotlb=noforce", which disables the use of bounce buffers.
-> If specified, trying to map memory that cannot be used with DMA will
-> fail, and a rate-limited warning will be printed.
+> This patch series adds a kernel command line option to aid debugging
+> when developing support for DMA to memory outside the 32-bit address
+> space.  If specified, trying to map memory that cannot be used with DMA
+> will fail, and a warning will be printed.  This has been used
+> succesfully to find drivers and DMA engines that do not support 64-bit
+> memory.
 > 
-> Note that io_tlb_nslabs is set to 1, which is the minimal supported
-> value.
+> Changes compared to v1:
+>   - Dropp patch "swiotlb: Rate-limit printing when running out of
+>     SW-IOMMU space", which has been picked up,
+>   - Add cleanup patch 1/3,
+>   - Add patch 2/3, to convert the flag swiotlb_force from an int to an
+>     enum,
+>   - Change the kernel parameter "swiotlb=nobounce" to "swiotlb=noforce"
+>     (requested by Konrad Wilk),
+>   - Extend swiotlb_force enum instead of adding an swiotlb_nobounce
+>     variable (requested by Konrad Wilk).
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> This has been tested on ra7796/salvator-x, and compile-tested on x86.
 
-What is this based on? I can't apply it on my latest that I had
-sent to Linus?
-
-Could you rebase this one please on:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb.git stable/for-linus-4.9
-
-Thanks?
-
-Or if alternatively that does not - then please rebase it on
-b5cab0da75c292ffa0fbd68dd2c820066b2842de
+Let me run it on various combinations of x86 and if all is good
+will ask Linus to pick it up for rc1.
 
 Thanks!
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (3):
+>   x86, swiotlb: Simplify pci_swiotlb_detect_override()
+>   swiotlb: Convert swiotlb_force from int to enum
+>   swiotlb: Add swiotlb=noforce debug option
+> 
+>  Documentation/admin-guide/kernel-parameters.txt |  3 ++-
+>  arch/arm64/mm/dma-mapping.c                     |  3 ++-
+>  arch/arm64/mm/init.c                            |  3 ++-
+>  arch/x86/kernel/pci-swiotlb.c                   |  6 ++----
+>  arch/x86/xen/pci-swiotlb-xen.c                  |  2 +-
+>  drivers/xen/swiotlb-xen.c                       |  4 ++--
+>  include/linux/swiotlb.h                         |  8 +++++++-
+>  include/trace/events/swiotlb.h                  | 17 +++++++++-------
+>  lib/swiotlb.c                                   | 26 +++++++++++++++++++------
+>  9 files changed, 48 insertions(+), 24 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
