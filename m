@@ -1,89 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:33370 "EHLO
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33177 "EHLO
         mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932546AbcLSQmC (ORCPT
+        with ESMTP id S1763381AbcLSQjI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 11:42:02 -0500
-Received: by mail-lf0-f43.google.com with SMTP id c13so58012355lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Dec 2016 08:42:01 -0800 (PST)
+        Mon, 19 Dec 2016 11:39:08 -0500
+Received: by mail-lf0-f43.google.com with SMTP id c13so57953326lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Dec 2016 08:39:07 -0800 (PST)
 From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Mon, 19 Dec 2016 17:41:59 +0100
+Date: Mon, 19 Dec 2016 17:39:04 +0100
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCHv2 1/5] sh_eth: add generic wake-on-lan support via magic
  packet
-Message-ID: <20161219164159.GF21006@bigcity.dyn.berto.se>
+Message-ID: <20161219163904.GE21006@bigcity.dyn.berto.se>
 References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
  <20161212160931.6478-2-niklas.soderlund+renesas@ragnatech.se>
- <079800f0-2e80-7a0b-01e2-51e09f05345c@cogentembedded.com>
+ <87e3f9e6-0f5a-986c-772d-006cb25b9fd9@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <079800f0-2e80-7a0b-01e2-51e09f05345c@cogentembedded.com>
+In-Reply-To: <87e3f9e6-0f5a-986c-772d-006cb25b9fd9@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Sergei,
 
-On 2016-12-18 00:50:59 +0300, Sergei Shtylyov wrote:
-> Hello!
+Thanks for the spelling feedback, will include your suggestions in v3.
+Which I hope to post once rc1 is released and netdev opens, as you 
+suggested to me previously.
+
+On 2016-12-18 23:26:11 +0300, Sergei Shtylyov wrote:
+> Hello.
 > 
 > On 12/12/2016 07:09 PM, Niklas S�derlund wrote:
 > 
->    Not the complete review yet, just some superficial comments.
-> 
 > > Add generic functionality to support Wake-on-Lan using MagicPacket which
-> 
->    LAN.
-> 
 > > are supported by at least a few versions of sh_eth. Only add
 > > functionality for WoL, no specific sh_eth version are marked to support
+> 
+>    Versions.
+> 
 > > WoL yet.
+> > 
+> > WoL is enabled in the suspend callback by setting MagicPacket detection
+> > and disabling all interrupts expect MagicPacket. In the resume path the
+> > driver needs to reset the hardware to rearm the WoL logic, this prevents
+> > the driver from simply restoring the registers and to take advantage of
+> > that sh_eth was not suspended to reduce resume time. To reset the
+> > hardware the driver close and reopens the device just like it would do
 > 
-> [...]
+>    Closes.
 > 
-> > diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-> > index 05b0dc5..87640b9 100644
-> > --- a/drivers/net/ethernet/renesas/sh_eth.c
-> > +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> [...]
-> > @@ -3150,15 +3187,67 @@ static int sh_eth_drv_remove(struct platform_device *pdev)
-> [...]
-> > +static int sh_eth_wol_restore(struct net_device *ndev)
-> > +{
-> > +	struct sh_eth_private *mdp = netdev_priv(ndev);
-> > +	int ret;
-> > +
-> > +	napi_enable(&mdp->napi);
-> > +
-> > +	/* Disable MagicPacket */
-> > +	sh_eth_modify(ndev, ECMR, ECMR_PMDE, 0);
-> > +
-> > +	/* The device need to be reset to restore MagicPacket logic
+> > in a normal suspend/resume scenario without WoL enabled, but it both
+> > close and open the device in the resume callback since the device needs
 > 
->    Needs.
+>    Closes and opens.
 > 
-> [...]
-> > index d050f37..4ceed00 100644
-> > --- a/drivers/net/ethernet/renesas/sh_eth.h
-> > +++ b/drivers/net/ethernet/renesas/sh_eth.h
-> > @@ -493,6 +493,7 @@ struct sh_eth_cpu_data {
-> >  	unsigned shift_rd0:1;	/* shift Rx descriptor word 0 right by 16 */
-> >  	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
-> >  	unsigned rtrate:1;	/* EtherC has RTRATE register */
-> > +	unsigned magic:1;	/* EtherC has ECMR.PMDE and ECSR.MPD */
+> > to be open for WoL to work.
 > 
->    After looking at the SH7734/63 manuals it became obvious that PMDE was a
-> result of typo, the bit is called MPDE actually, the current name doesn't
-> make sense anyway. Care to fix?
+> > One quirk needed for WoL is that the module clock needs to be prevented
+> > from being switched off by Runtime PM. To keep the clock alive the
+> 
+>    I tried to find the code in question and failed, getting muddled in the
+> RPM maze. Could you point at this code for my education? :-)
 
-Sure, I add fixup patch to the front of this series which cleans this up 
-before adding WoL support. Or would you prefer I sent a separate patch 
-and have the WoL series depend on it?
+In my investigation I observed this (simplified) call graph with regards
+to clocks for suspend:
 
+pm_suspend
+  pm_clk_suspend
+    clk_disable
+      clk_core_disable
+        cpg_mstp_clock_disable
+
+The interesting function here are clk_core_disable(). In that function a
+'enable_count' for each clock is decremented and the clock is only
+turned of if the count reaches zero, hence cpg_mstp_clock_disable() are
+only called if the counter reaches 0. At runtime the enable_count can be
+displayed by examining /sys/kernel/debug/clk/clk_summary.
+
+However the value for enable_count show at runtime are not the values
+which are used when the pm_clk_suspend() are called. For a clock to not
+be switched off when suspending the enable_count needs to incremented,
+which a few drivers do if they can be used as a wake-up source.
+
+> 
+> > suspend callback need to call clk_enable() directly to increase the
+> 
+>    My main concern is why we need to manipulate the clock directly --
+> can't you call RPM to achieve the same effect?
+
+In my early attempts to keep the clock alive when suspending I used 
+pm_clk_resume()/pm_clk_suspend() to increment/decrement the clock usage 
+count. pm_clk_resume()/pm_clk_suspend() calls clk_enable()/clk_disable() 
+for all clocks in the device's PM clock list, among other things.
+
+Geert pointed out to me that this might have side effects and to manages 
+its clock directly is preferred. Looking how these functions are used at 
+other places I can only agree with Geert that this feels like the wrong 
+solution and a layer violation.
+
+> 
+> > usage count of the clock. Then when Runtime PM decreases the clock usage
+> > count it won't reach 0 and be switched off.
+> 
+>    You mean it does this even though we don't call pr_runtime_put_sync()
+> as done in sh_eth_close()?
+
+Yes.
+
+I had a look at the pm_runtime_* functions in include/linux/pm_runtime.h 
+and drivers/base/power/runtime.c and could not find any clock handling.  
+Maybe they only deal with power domains?
+
+I might have missed something when looking in to this. But if I do not 
+call clk_enable()/clk_disable() (or something equivalent) in the sh_eth 
+suspend/resume callbacks WoL do not work. That is it suspends fine but 
+sending a MagicPacket do not wake the system :-)
+
+> 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> [...]
 > 
 > MBR, Sergei
 > 
