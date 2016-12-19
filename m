@@ -1,136 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34796 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933568AbcLIMgZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 07:36:25 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 6/7] serial: sh-sci: make RX FIFO parameters tunable via sysfs
-Date: Fri,  9 Dec 2016 13:36:10 +0100
-Message-Id: <1481286971-16667-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20161217010203.GA140420@beast>
+References: <20161217010203.GA140420@beast>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Dec 2016 17:13:02 +0100
+Message-ID: <CAMuHMdWE=cZSTCGcoi71xQU+fBpEU5J-ZruxmvQ9RAMEzrJMkw@mail.gmail.com>
+Subject: Re: [PATCH] video: fbdev: sh_mobile_lcdcfb: use designated initializers
+To: Kees Cook <keescook@chromium.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
-only applicable to SCIFA and SCIFB).
+On Sat, Dec 17, 2016 at 2:02 AM, Kees Cook <keescook@chromium.org> wrote:
+> Prepare to mark sensitive kernel structures for randomization by making
+> sure they're using designated initializers. These were identified during
+> allyesconfig builds of x86, arm, and arm64, with most initializer fixes
+> extracted from grsecurity.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/sh-sci.c | 82 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 0af4997..5ad08d6 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1180,6 +1180,66 @@ static void rx_fifo_timer_fn(unsigned long arg)
- 	scif_set_rtrg(port, 1);
- }
- 
-+static ssize_t rx_trigger_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+
-+	return sprintf(buf, "%d\n", sci->rx_trigger);
-+}
-+
-+static ssize_t rx_trigger_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf,
-+				size_t count)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+	long r;
-+
-+	if (kstrtol(buf, 0, &r) == -EINVAL)
-+		return -EINVAL;
-+	sci->rx_trigger = scif_set_rtrg(port, r);
-+	scif_set_rtrg(port, 1);
-+	return count;
-+}
-+
-+static DEVICE_ATTR(rx_fifo_trigger, 0644, rx_trigger_show, rx_trigger_store);
-+
-+static ssize_t rx_fifo_timeout_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+
-+	return sprintf(buf, "%d\n", sci->rx_fifo_timeout);
-+}
-+
-+static ssize_t rx_fifo_timeout_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf,
-+				size_t count)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+	long r;
-+
-+	if (kstrtol(buf, 0, &r) == -EINVAL)
-+		return -EINVAL;
-+	sci->rx_fifo_timeout = r;
-+	scif_set_rtrg(port, 1);
-+	if (r > 0)
-+		setup_timer(&sci->rx_fifo_timer, rx_fifo_timer_fn,
-+			    (unsigned long)sci);
-+	return count;
-+}
-+
-+static DEVICE_ATTR(rx_fifo_timeout, 0644, rx_fifo_timeout_show, rx_fifo_timeout_store);
-+
-+
- #ifdef CONFIG_SERIAL_SH_SCI_DMA
- static void sci_dma_tx_complete(void *arg)
- {
-@@ -3028,6 +3088,15 @@ static int sci_remove(struct platform_device *dev)
- 
- 	sci_cleanup_single(port);
- 
-+	if (port->port.fifosize > 1) {
-+		sysfs_remove_file(&dev->dev.kobj,
-+				  &dev_attr_rx_fifo_trigger.attr);
-+	}
-+	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB) {
-+		sysfs_remove_file(&dev->dev.kobj,
-+				  &dev_attr_rx_fifo_timeout.attr);
-+	}
-+
- 	return 0;
- }
- 
-@@ -3193,6 +3262,19 @@ static int sci_probe(struct platform_device *dev)
- 	if (ret)
- 		return ret;
- 
-+	if (sp->port.fifosize > 1) {
-+		ret = sysfs_create_file(&dev->dev.kobj,
-+				&dev_attr_rx_fifo_trigger.attr);
-+		if (ret)
-+			return ret;
-+	}
-+	if (sp->port.type == PORT_SCIFA || sp->port.type ==  PORT_SCIFB) {
-+		ret = sysfs_create_file(&dev->dev.kobj,
-+				&dev_attr_rx_fifo_timeout.attr);
-+		if (ret)
-+			return ret;
-+	}
-+
- #ifdef CONFIG_SH_STANDARD_BIOS
- 	sh_bios_gdb_detach();
- #endif
--- 
-2.7.4
+> ---
+>  drivers/video/fbdev/sh_mobile_lcdcfb.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+> index 82c0a8caa9b8..42499a1afa07 100644
+> --- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
+> +++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+> @@ -439,9 +439,9 @@ static unsigned long lcdc_sys_read_data(void *handle)
+>  }
+>
+>  static struct sh_mobile_lcdc_sys_bus_ops sh_mobile_lcdc_sys_bus_ops = {
+> -       lcdc_sys_write_index,
+> -       lcdc_sys_write_data,
+> -       lcdc_sys_read_data,
+> +       .write_index = lcdc_sys_write_index,
+> +       .write_data = lcdc_sys_write_data,
+> +       .read_data = lcdc_sys_read_data,
+>  };
+>
+>  static int sh_mobile_lcdc_sginit(struct fb_info *info,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
