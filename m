@@ -1,65 +1,133 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33473 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754898AbcLNQMw (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41469 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932220AbcLTBdv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Dec 2016 11:12:52 -0500
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Dec 2016 17:12:45 +0100
-Message-ID: <CAMuHMdXfPtOKkfNakAgXRQxLTt2fh7Cr26inkp7KAxP6vD-oTg@mail.gmail.com>
-Subject: ravb/sh_eth/b44: BUG: sleeping function called from invalid context
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Michael Chan <michael.chan@broadcom.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 19 Dec 2016 20:33:51 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Ulrich Hecht <ulrich.hecht@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 22/29] dt-bindings: display: renesas: Add R-Car Gen3 HDMI TX DT bindings
+Date: Tue, 20 Dec 2016 03:33:53 +0200
+Message-Id: <20161220013400.28317-23-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+The Renesas R-Car Gen3 SoCs use a Synopsys DWC HDMI TX encoder IP. Add
+corresponding device tree bindings based on the DWC HDMI TX bindings
+model.
 
-When CONFIG_DEBUG_ATOMIC_SLEEP=y, running "ethtool -s eth0 speed 100"
-on Salvator-X gives:
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/display/bridge/renesas,dw-hdmi.txt    | 75 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 76 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
-in_atomic(): 1, irqs_disabled(): 128, pid: 1683, name: ethtool
-CPU: 0 PID: 1683 Comm: ethtool Tainted: G        W
-4.9.0-salvator-x-00426-g326519df42c65007-dirty #976
-Hardware name: Renesas Salvator-X board based on r8a7796 (DT)
-Call trace:
-[<ffffff8008089400>] dump_backtrace+0x0/0x208
-[<ffffff800808961c>] show_stack+0x14/0x1c
-[<ffffff8008233424>] dump_stack+0x94/0xb4
-[<ffffff80080c377c>] ___might_sleep+0x108/0x11c
-[<ffffff80080c3814>] __might_sleep+0x84/0x94
-[<ffffff800855db0c>] mutex_lock+0x24/0x40
-[<ffffff800837610c>] phy_start_aneg+0x20/0x130
-[<ffffff80083763b8>] phy_ethtool_ksettings_set+0xd0/0xe8
-[<ffffff8008386724>] ravb_set_link_ksettings+0x4c/0xa4
-[<ffffff80084a7b94>] ethtool_set_settings+0xec/0xfc
-[<ffffff80084aa918>] dev_ethtool+0x188/0x17c4
-[<ffffff80084bce3c>] dev_ioctl+0x53c/0x6b8
-[<ffffff8008488acc>] sock_do_ioctl.constprop.45+0x3c/0x4c
-[<ffffff80084897b4>] sock_ioctl+0x33c/0x370
-[<ffffff8008171878>] vfs_ioctl+0x20/0x38
-[<ffffff8008172198>] do_vfs_ioctl+0x844/0x954
-[<ffffff80081722ec>] SyS_ioctl+0x44/0x68
-[<ffffff80080830f0>] el0_svc_naked+0x24/0x28
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+new file mode 100644
+index 000000000000..f6b3f36d422b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+@@ -0,0 +1,75 @@
++Renesas Gen3 DWC HDMI TX Encoder
++================================
++
++The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
++with a companion PHY IP.
++
++These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
++Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
++following device-specific properties.
++
++
++Required properties:
++
++- compatible : Shall contain one or more of
++  - "renesas,r8a7795-hdmi" for R8A7795 (R-Car H3) compatible HDMI TX
++  - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 compatible HDMI TX
++
++    When compatible with generic versions, nodes must list the SoC-specific
++    version corresponding to the platform first, followed by the
++    family-specific version.
++
++- reg: See dw_hdmi.txt.
++- interrupts: HDMI interrupt number
++- clocks: See dw_hdmi.txt.
++- clock-names: Shall contain "iahb" and "isfr" as defined in dw_hdmi.txt.
++- ports: See dw_hdmi.txt. The DWC HDMI shall have one port numbered 0
++  corresponding to the video input of the controller and one port numbered 1
++  corresponding to its HDMI output. Each port shall have a single endpoint.
++
++Optional properties:
++
++- power-domains: Shall reference the power domain that contains the DWC HDMI,
++  if any.
++
++
++Example:
++
++	hdmi0: hdmi0@fead0000 {
++		compatible = "renesas,r8a7795-dw-hdmi";
++		reg = <0 0xfead0000 0 0x10000>;
++		interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_CORE R8A7795_CLK_S0D4>, <&cpg CPG_MOD 729>;
++		clock-names = "iahb", "isfr";
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				dw_hdmi0_in: endpoint {
++					remote-endpoint = <&du_out_hdmi0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				rcar_dw_hdmi0_out: endpoint {
++					remote-endpoint = <&hdmi0_con>;
++				};
++			};
++		};
++	};
++
++	hdmi0-out {
++		compatible = "hdmi-connector";
++		label = "HDMI0 OUT";
++		type = "a";
++
++		port {
++			hdmi0_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_out>;
++			};
++		};
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1a7a773114aa..162d904d5cc3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4247,6 +4247,7 @@ S:	Supported
+ F:	drivers/gpu/drm/rcar-du/
+ F:	drivers/gpu/drm/shmobile/
+ F:	include/linux/platform_data/shmob_drm.h
++F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+ F:	Documentation/devicetree/bindings/display/renesas,du.txt
+ 
+ DRM DRIVER FOR QXL VIRTUAL GPU
+-- 
+Regards,
 
-ravb_set_link_ksettings() calls phy_ethtool_ksettings_set() with a spinlock
-held and interrupts disabled, while phy_start_aneg() tries to obtain a mutex.
-
-The same issue is present in sh_eth_set_link_ksettings() (verified) and
-b44_set_link_ksettings() (code inspection).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
