@@ -1,45 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36450 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753112AbcLGQoh (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41472 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932585AbcLTBd5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Dec 2016 11:44:37 -0500
-Received: by mail-wm0-f66.google.com with SMTP id m203so28906731wma.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Dec 2016 08:44:36 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org
-Cc: magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 1/3] clk: renesas: r8a7796: Add SCIF clocks
-Date: Wed,  7 Dec 2016 17:44:25 +0100
-Message-Id: <1481129067-21949-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481129067-21949-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481129067-21949-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 19 Dec 2016 20:33:57 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Ulrich Hecht <ulrich.hecht@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 29/29] arm64: dts: r8a7795: salvator-x: Add DU1 and DU2 external dot clocks
+Date: Tue, 20 Dec 2016 03:34:00 +0200
+Message-Id: <20161220013400.28317-30-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+The DU1 and DU2 external dot clocks are fixed frequency clock generators
+running at 33MHz.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 1c144b2..5ab8bed 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -110,6 +110,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- };
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 08554b4d7e86..b6dc6f5188d6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -147,6 +147,19 @@
+ 		};
+ 	};
  
- static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
-+	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif1",		 206,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif0",		 207,	R8A7796_CLK_S3D4),
- 	DEF_MOD("cmt3",			 300,	R8A7796_CLK_R),
- 	DEF_MOD("cmt2",			 301,	R8A7796_CLK_R),
- 	DEF_MOD("cmt1",			 302,	R8A7796_CLK_R),
++	/* External DU dot clocks */
++	x21_clk: x21-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33000000>;
++	};
++
++	x22_clk: x22-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33000000>;
++	};
++
+ 	hdmi0-out {
+ 		compatible = "hdmi-connector";
+ 		label = "HDMI0 OUT";
+@@ -245,6 +258,16 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 721>,
++		 <&cpg CPG_MOD 727>,
++		 <&x21_clk>,
++		 <&x22_clk>;
++	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++		      "dclkin.1", "dclkin.2";
++
+ 	ports {
+ 		port@0 {
+ 			endpoint {
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
