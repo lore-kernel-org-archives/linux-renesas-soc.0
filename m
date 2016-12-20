@@ -1,108 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41469 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753970AbcLTBd4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38143 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933423AbcLTKVl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 20:33:56 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Ulrich Hecht <ulrich.hecht@gmail.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: [PATCH v2 28/29] arm64: dts: r8a7795: salvator-x: Enable HDMI outputs
-Date: Tue, 20 Dec 2016 03:33:59 +0200
-Message-Id: <20161220013400.28317-29-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 20 Dec 2016 05:21:41 -0500
+Date: Tue, 20 Dec 2016 11:21:31 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Mark Brown <broonie@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH spi/for-next] spi: sh-msiof: Add R-Car Gen 2 and 3
+ fallback bindings
+Message-ID: <20161220102131.GI19532@verge.net.au>
+References: <1481536175-17238-1-git-send-email-horms+renesas@verge.net.au>
+ <20161214173811.iporb5qqulmndvg3@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161214173811.iporb5qqulmndvg3@sirena.org.uk>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+On Wed, Dec 14, 2016 at 05:38:11PM +0000, Mark Brown wrote:
+> On Mon, Dec 12, 2016 at 10:49:35AM +0100, Simon Horman wrote:
+> 
+> > +	{ .compatible = "renesas,sh-msiof",        .data = &sh_data }, // Deprecated
+> 
+> C++ style comment here, please send a followup fixing this.
 
-Instantiate the HDMI connectors and enable the encoders.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 50 ++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 73a22b93f7b1..08554b4d7e86 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -147,6 +147,30 @@
- 		};
- 	};
- 
-+	hdmi0-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI0 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi0_con: endpoint {
-+				remote-endpoint = <&rcar_dw_hdmi0_out>;
-+			};
-+		};
-+	};
-+
-+	hdmi1-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI1 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi1_con: endpoint {
-+				remote-endpoint = <&rcar_dw_hdmi1_out>;
-+			};
-+		};
-+	};
-+
- 	vga-encoder {
- 		compatible = "adi,adv7123";
- 
-@@ -190,6 +214,32 @@
- 	};
- };
- 
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi1_out: endpoint {
-+				remote-endpoint = <&hdmi1_con>;
-+			};
-+		};
-+	};
-+};
-+
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, done.
