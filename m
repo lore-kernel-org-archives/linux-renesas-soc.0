@@ -1,147 +1,94 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=KIoc=XV=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/4] v4l: vsp1: Refactor video pipeline configuration
-Date: Tue,  6 Dec 2016 09:35:11 +0000
-Message-Id: <1481016913-30608-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1481016913-30608-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 18/29] drm: bridge: dw-hdmi: Move CSC configuration out of PHY code
+Date: Tue, 20 Dec 2016 03:33:49 +0200
+Message-Id: <20161220013400.28317-19-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With multiple inputs through the BRU it is feasible for the streams to
-race each other at stream-on. In the case of the video pipelines, this
-can present two serious issues.
+The color space converter isn't part of the PHY, move its configuration
+out of PHY code.
 
- 1) A null-dereference if the pipe->dl is committed at the same time as
-    the vsp1_video_setup_pipeline() is processing
-
- 2) A hardware hang, where a display list is committed without having
-    called vsp1_video_setup_pipeline() first
-
-Along side these race conditions, the work done by
-vsp1_video_setup_pipeline() is undone by the re-initialisation during a
-suspend resume cycle, and an active pipeline does not attempt to
-reconfigure the correct routing and init parameters for the entities.
-
-To repair all of these issues, we can move the call to a conditional
-inside vsp1_video_pipeline_run() and ensure that this can only be called
-on the last stream which calls into vsp1_video_start_streaming()
-
-As a convenient side effect of this, by specifying that the
-configuration has been lost during suspend/resume actions - the
-vsp1_video_pipeline_run() call can re-initialise pipelines when
-necessary thus repairing resume actions for active m2m pipelines.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_drv.c   |  3 +++
- drivers/media/platform/vsp1/vsp1_pipe.c  |  1 +
- drivers/media/platform/vsp1/vsp1_pipe.h  |  2 ++
- drivers/media/platform/vsp1/vsp1_video.c | 20 +++++++++-----------
- 4 files changed, 15 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 57c713a4e1df..dd26549a6912 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -447,6 +447,9 @@ static int vsp1_device_init(struct vsp1_device *vsp1)
- 		ret = vsp1_reset_wpf(vsp1, i);
- 		if (ret < 0)
- 			return ret;
-+
-+		if (vsp1->wpf[i] && vsp1->wpf[i]->pipe)
-+			vsp1->wpf[i]->pipe->configured = false;
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 6167eb6806fe..7c69c8c0285e 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -966,7 +966,7 @@ static void dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
  	}
- 
- 	vsp1_write(vsp1, VI6_CLK_DCSWT, (8 << VI6_CLK_DCSWT_CSTPW_SHIFT) |
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-index 756ca4ea7668..7ddf862ee403 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-@@ -208,6 +208,7 @@ void vsp1_pipeline_init(struct vsp1_pipeline *pipe)
- 
- 	INIT_LIST_HEAD(&pipe->entities);
- 	pipe->state = VSP1_PIPELINE_STOPPED;
-+	pipe->configured = false;
  }
  
- /* Must be called with the pipe irqlock held. */
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index ac4ad2655551..0743b9fcb655 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -61,6 +61,7 @@ enum vsp1_pipeline_state {
-  * @pipe: the media pipeline
-  * @irqlock: protects the pipeline state
-  * @state: current state
-+ * @configured: determines routing configuration active on cell.
-  * @wq: wait queue to wait for state change completion
-  * @frame_end: frame end interrupt handler
-  * @lock: protects the pipeline use count and stream count
-@@ -86,6 +87,7 @@ struct vsp1_pipeline {
- 
- 	spinlock_t irqlock;
- 	enum vsp1_pipeline_state state;
-+	bool configured;
- 	wait_queue_head_t wq;
- 
- 	void (*frame_end)(struct vsp1_pipeline *pipe);
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 44b687c0b8df..7ff9f4c19ff0 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -388,6 +388,8 @@ static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
- 					       VSP1_ENTITY_PARAMS_INIT);
+-static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
++static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ {
+ 	u8 val, msec;
+ 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+@@ -998,14 +998,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+ 		return -EINVAL;
  	}
  
-+	pipe->configured = true;
-+
- 	return 0;
- }
- 
-@@ -411,6 +413,9 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
- 	struct vsp1_entity *entity;
- 
-+	if (!pipe->configured)
-+		vsp1_video_setup_pipeline(pipe);
-+
- 	if (!pipe->dl)
- 		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
- 
-@@ -793,25 +798,18 @@ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	struct vsp1_video *video = vb2_get_drv_priv(vq);
- 	struct vsp1_pipeline *pipe = video->rwpf->pipe;
- 	unsigned long flags;
--	int ret;
- 
- 	mutex_lock(&pipe->lock);
- 	if (pipe->stream_count == pipe->num_inputs) {
--		ret = vsp1_video_setup_pipeline(pipe);
--		if (ret < 0) {
--			mutex_unlock(&pipe->lock);
--			return ret;
--		}
-+		spin_lock_irqsave(&pipe->irqlock, flags);
-+		if (vsp1_pipeline_ready(pipe))
-+			vsp1_video_pipeline_run(pipe);
-+		spin_unlock_irqrestore(&pipe->irqlock, flags);
- 	}
- 
- 	pipe->stream_count++;
- 	mutex_unlock(&pipe->lock);
- 
--	spin_lock_irqsave(&pipe->irqlock, flags);
--	if (vsp1_pipeline_ready(pipe))
--		vsp1_video_pipeline_run(pipe);
--	spin_unlock_irqrestore(&pipe->irqlock, flags);
+-	/* Enable csc path */
+-	if (cscon)
+-		val = HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_IN_PATH;
+-	else
+-		val = HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_BYPASS;
 -
- 	return 0;
+-	hdmi_writeb(hdmi, val, HDMI_MC_FLOWCTRL);
+-
+ 	dw_hdmi_phy_power_off(hdmi);
+ 
+ 	/* PHY reset */
+@@ -1063,18 +1055,13 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ {
+ 	int i, ret;
+-	bool cscon;
+-
+-	/*check csc whether needed activated in HDMI mode */
+-	cscon = hdmi->sink_is_hdmi && is_color_space_conversion(hdmi);
+ 
+ 	/* HDMI Phy spec says to do the phy initialization sequence twice */
+ 	for (i = 0; i < 2; i++) {
+ 		dw_hdmi_phy_sel_data_en_pol(hdmi, 1);
+ 		dw_hdmi_phy_sel_interface_control(hdmi, 0);
+ 
+-		/* Enable CSC */
+-		ret = hdmi_phy_configure(hdmi, cscon);
++		ret = hdmi_phy_configure(hdmi);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -1334,6 +1321,14 @@ static void dw_hdmi_enable_video_path(struct dw_hdmi *hdmi)
+ 		clkdis &= ~HDMI_MC_CLKDIS_CSCCLK_DISABLE;
+ 		hdmi_writeb(hdmi, clkdis, HDMI_MC_CLKDIS);
+ 	}
++
++	/* Enable color space conversion if needed (for HDMI sinks only). */
++	if (hdmi->sink_is_hdmi && is_color_space_conversion(hdmi))
++		hdmi_writeb(hdmi, HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_IN_PATH,
++			    HDMI_MC_FLOWCTRL);
++	else
++		hdmi_writeb(hdmi, HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_BYPASS,
++			    HDMI_MC_FLOWCTRL);
  }
  
+ static void hdmi_enable_audio_clk(struct dw_hdmi *hdmi)
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
