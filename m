@@ -1,68 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57088 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbcLMLqa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 06:46:30 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 renesas/devel 12/13] ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for iic nodes
-Date: Tue, 13 Dec 2016 12:45:58 +0100
-Message-Id: <1481629559-14187-13-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 11/29] drm: bridge: dw-hdmi: Remove PHY configuration resolution parameter
+Date: Tue, 20 Dec 2016 03:33:42 +0200
+Message-Id: <20161220013400.28317-12-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for iic nodes in
-DT for r8a7793 SoC.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7793 and the
-fallback binding for R-Car Gen 2.
+The current code hard codes the call of hdmi_phy_configure() to be 8bpp
+and provides extraneous error checking to verify that this hardcoded
+value is correct. Simplify the implementation by removing the argument.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 27 +++++----------------------
+ 1 file changed, 5 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index cbe9ac629693..d5114cac656d 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -485,7 +485,8 @@
- 		/* doesn't need pinmux */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
-+		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
- 		reg = <0 0xe60b0000 0 0x425>;
- 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
-@@ -499,7 +500,8 @@
- 	i2c7: i2c@e6500000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
-+		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
-@@ -513,7 +515,8 @@
- 	i2c8: i2c@e6510000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
-+		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 107fea49c4c6..b4fb0bd78910 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -930,31 +930,14 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+ 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+ }
+ 
+-static int hdmi_phy_configure(struct dw_hdmi *hdmi,
+-			      unsigned char res, int cscon)
++static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+ {
+-	unsigned res_idx;
+ 	u8 val, msec;
+ 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+ 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
+ 
+-	switch (res) {
+-	case 0:	/* color resolution 0 is 8 bit colour depth */
+-	case 8:
+-		res_idx = DW_HDMI_RES_8;
+-		break;
+-	case 10:
+-		res_idx = DW_HDMI_RES_10;
+-		break;
+-	case 12:
+-		res_idx = DW_HDMI_RES_12;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+ 	/* PLL/MPLL Cfg - always match on final entry */
+ 	for (; mpll_config->mpixelclock != ~0UL; mpll_config++)
+ 		if (hdmi->hdmi_data.video_mode.mpixelclock <=
+@@ -1004,11 +987,11 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi,
+ 		    HDMI_PHY_I2CM_SLAVE_ADDR);
+ 	hdmi_phy_test_clear(hdmi, 0);
+ 
+-	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].cpce, 0x06);
+-	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].gmp, 0x15);
++	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce, 0x06);
++	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp, 0x15);
+ 
+ 	/* CURRCTRL */
+-	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[res_idx], 0x10);
++	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0], 0x10);
+ 
+ 	hdmi_phy_i2c_write(hdmi, 0x0000, 0x13);  /* PLLPHBYCTRL */
+ 	hdmi_phy_i2c_write(hdmi, 0x0006, 0x17);
+@@ -1068,7 +1051,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ 		dw_hdmi_phy_enable_powerdown(hdmi, true);
+ 
+ 		/* Enable CSC */
+-		ret = hdmi_phy_configure(hdmi, 8, cscon);
++		ret = hdmi_phy_configure(hdmi, cscon);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
