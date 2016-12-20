@@ -1,86 +1,213 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:34761 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933553AbcLIMgT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 07:36:19 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/7] serial: sh-sci: consider DR (data ready) bit adequately
-Date: Fri,  9 Dec 2016 13:36:06 +0100
-Message-Id: <1481286971-16667-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: [PATCH v2 25/29] drm: rcar-du: Add DPLL support
+Date: Tue, 20 Dec 2016 03:33:56 +0200
+Message-Id: <20161220013400.28317-26-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To allow operation with a higher RX FIFO interrupt threshold in PIO
-mode, it is necessary to consider the DR bit ("FIFO not full, but no
-data received for 1.5 frames") as an indicator that data can be read.
-Otherwise the driver will let data rot in the FIFO until the threshold
-is reached.
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
+The implementation hardcodes a workaround for the H3 ES1.x SoC
+regardless of the SoC revision, as the workaround can be safely applied
+on all devices in the Gen3 family without any side effect.
+
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/tty/serial/sh-sci.c | 9 +++++----
- drivers/tty/serial/sh-sci.h | 1 +
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 81 +++++++++++++++++++++++++++++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_regs.h | 23 ++++++++++
+ 4 files changed, 105 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 385afbe..de25db8 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -677,7 +677,7 @@ static int sci_poll_get_char(struct uart_port *port)
- 		break;
- 	} while (1);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index a2ec6d8796a0..cec20abd61aa 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -106,9 +106,62 @@ static void rcar_du_crtc_put(struct rcar_du_crtc *rcrtc)
+  * Hardware Setup
+  */
  
--	if (!(status & SCxSR_RDxF(port)))
-+	if (!(status & (SCxSR_RDxF(port) | SCxSR_DR(port))))
- 		return NO_POLL_CHAR;
++struct dpll_info {
++	unsigned int output;
++	unsigned int fdpll;
++	unsigned int n;
++	unsigned int m;
++};
++
++static void rcar_du_dpll_divider(struct rcar_du_crtc *rcrtc,
++				 struct dpll_info *dpll,
++				 unsigned long input,
++				 unsigned long target)
++{
++	unsigned long best_diff = (unsigned long)-1;
++	unsigned long diff;
++	unsigned int fdpll;
++	unsigned int m;
++	unsigned int n;
++
++	for (n = 39; n < 120; n++) {
++		for (m = 0; m < 4; m++) {
++			for (fdpll = 1; fdpll < 32; fdpll++) {
++				unsigned long output;
++
++				/* 1/2 (FRQSEL=1) for duty rate 50% */
++				output = input * (n + 1) / (m + 1)
++				       / (fdpll + 1) / 2;
++
++				if (output >= 400000000)
++					continue;
++
++				diff = abs((long)output - (long)target);
++				if (best_diff > diff) {
++					best_diff = diff;
++					dpll->n = n;
++					dpll->m = m;
++					dpll->fdpll = fdpll;
++					dpll->output = output;
++				}
++
++				if (diff == 0)
++					goto done;
++			}
++		}
++	}
++
++done:
++	dev_dbg(rcrtc->group->dev->dev,
++		"output:%u, fdpll:%u, n:%u, m:%u, diff:%lu\n",
++		 dpll->output, dpll->fdpll, dpll->n, dpll->m,
++		 best_diff);
++}
++
+ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ {
+ 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
++	struct rcar_du_device *rcdu = rcrtc->group->dev;
+ 	unsigned long mode_clock = mode->clock * 1000;
+ 	unsigned long clk;
+ 	u32 value;
+@@ -124,12 +177,18 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	escr = div | ESCR_DCLKSEL_CLKS;
  
- 	c = serial_port_in(port, SCxRDR);
-@@ -773,7 +773,8 @@ static int sci_rxfill(struct uart_port *port)
- 	if (reg->size)
- 		return serial_port_in(port, SCFDR) & ((port->fifosize << 1) - 1);
+ 	if (rcrtc->extclock) {
++		struct dpll_info dpll = { 0 };
+ 		unsigned long extclk;
+ 		unsigned long extrate;
+ 		unsigned long rate;
+ 		u32 extdiv;
  
--	return (serial_port_in(port, SCxSR) & SCxSR_RDxF(port)) != 0;
-+	return (serial_port_in(port, SCxSR) &
-+		(SCxSR_RDxF(port) | SCxSR_DR(port))) != 0;
- }
+ 		extclk = clk_get_rate(rcrtc->extclock);
++		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
++			rcar_du_dpll_divider(rcrtc, &dpll, extclk, mode_clock);
++			extclk = dpll.output;
++		}
++
+ 		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
+ 		extdiv = clamp(extdiv, 1U, 64U) - 1;
  
- /*
-@@ -864,7 +865,7 @@ static void sci_receive_chars(struct uart_port *port)
- 	unsigned char flag;
+@@ -140,7 +199,27 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 		    abs((long)rate - (long)mode_clock)) {
+ 			dev_dbg(rcrtc->group->dev->dev,
+ 				"crtc%u: using external clock\n", rcrtc->index);
+-			escr = extdiv | ESCR_DCLKSEL_DCLKIN;
++
++			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
++				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
++					   | DPLLCR_FDPLL(dpll.fdpll)
++					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
++					   | DPLLCR_STBY;
++
++				if (rcrtc->index == 1)
++					dpllcr |= DPLLCR_PLCS1
++					       |  DPLLCR_INCS_DOTCLKIN1;
++				else
++					dpllcr |= DPLLCR_PLCS0
++					       |  DPLLCR_INCS_DOTCLKIN0;
++
++				rcar_du_group_write(rcrtc->group, DPLLCR,
++						    dpllcr);
++
++				escr = ESCR_DCLKSEL_DCLKIN | 1;
++			} else {
++				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
++			}
+ 		}
+ 	}
  
- 	status = serial_port_in(port, SCxSR);
--	if (!(status & SCxSR_RDxF(port)))
-+	if (!(status & (SCxSR_RDxF(port) | SCxSR_DR(port))))
- 		return;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 4da5edacab19..74352140f55f 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -163,6 +163,7 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ 		},
+ 	},
+ 	.num_lvds = 1,
++	.dpll_ch =  BIT(1) | BIT(2),
+ };
  
- 	while (1) {
-@@ -1672,7 +1673,7 @@ static irqreturn_t sci_mpxed_interrupt(int irq, void *ptr)
- 	 * Rx Interrupt: if we're using DMA, the DMA controller clears RDF /
- 	 * DR flags
- 	 */
--	if (((ssr_status & SCxSR_RDxF(port)) || s->chan_rx) &&
-+	if (((ssr_status & (SCxSR_RDxF(port) | SCxSR_DR(port))) || s->chan_rx) &&
- 	    (scr_status & SCSCR_RIE))
- 		ret = sci_rx_interrupt(irq, ptr);
+ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+index 9393b26efe89..c4b6b7238601 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+@@ -65,6 +65,7 @@ struct rcar_du_device_info {
+ 	unsigned int num_crtcs;
+ 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
+ 	unsigned int num_lvds;
++	unsigned int dpll_ch;
+ };
  
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index f51f919..44997a5 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -156,6 +156,7 @@ enum {
- #define SCxSR_FER(port)		(((port)->type == PORT_SCI) ? SCI_FER    : SCIF_FER)
- #define SCxSR_PER(port)		(((port)->type == PORT_SCI) ? SCI_PER    : SCIF_PER)
- #define SCxSR_BRK(port)		(((port)->type == PORT_SCI) ? 0x00       : SCIF_BRK)
-+#define SCxSR_DR(port)		(((port)->type == PORT_SCI) ? 0x00       : SCIF_DR)
+ #define RCAR_DU_MAX_CRTCS		4
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+index fedb0161e234..d5bae99d3cfe 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+@@ -277,6 +277,29 @@
+ #define DEFR10_TSEL_H3_TCON1	(0 << 1) /* DEFR102 register only (DU2/DU3) */
+ #define DEFR10_DEFE10		(1 << 0)
  
- #define SCxSR_ERRORS(port)	(to_sci_port(port)->error_mask)
- 
++#define DPLLCR			0x20044
++#define DPLLCR_CODE		(0x95 << 24)
++#define DPLLCR_PLCS1		(1 << 23)
++/*
++ * PLCS0 is bit 21, but H3 ES1.x requires bit 20 to be set as well. As bit 20
++ * isn't implemented by other SoC in the Gen3 family it can safely be set
++ * unconditionally.
++ */
++#define DPLLCR_PLCS0		(3 << 20)
++#define DPLLCR_CLKE		(1 << 18)
++#define DPLLCR_FDPLL(n)		((n) << 12)
++#define DPLLCR_N(n)		((n) << 5)
++#define DPLLCR_M(n)		((n) << 3)
++#define DPLLCR_STBY		(1 << 2)
++#define DPLLCR_INCS_DOTCLKIN0	(0 << 0)
++#define DPLLCR_INCS_DOTCLKIN1	(1 << 1)
++
++#define DPLLC2R			0x20048
++#define DPLLC2R_CODE		(0x95 << 24)
++#define DPLLC2R_SELC		(1 << 12)
++#define DPLLC2R_M(n)		((n) << 8)
++#define DPLLC2R_FDPLL(n)	((n) << 0)
++
+ /* -----------------------------------------------------------------------------
+  * Display Timing Generation Registers
+  */
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
