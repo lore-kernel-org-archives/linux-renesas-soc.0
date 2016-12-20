@@ -1,115 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:34863 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753112AbcLGQoj (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41472 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753954AbcLTBdn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Dec 2016 11:44:39 -0500
-Received: by mail-wj0-f193.google.com with SMTP id he10so36606093wjc.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Dec 2016 08:44:38 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org
-Cc: magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 2/3] arm64: renesas: r8a7796: Add all SCIF nodes
-Date: Wed,  7 Dec 2016 17:44:26 +0100
-Message-Id: <1481129067-21949-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481129067-21949-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481129067-21949-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 19 Dec 2016 20:33:43 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Ulrich Hecht <ulrich.hecht@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 09/29] drm: bridge: dw-hdmi: Create connector in the bridge attach operation
+Date: Tue, 20 Dec 2016 03:33:40 +0200
+Message-Id: <20161220013400.28317-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the device nodes for all R-Car H3 SCIF serial ports, incl. clocks
-and clock domain.
+The DRM device is not guaranteed by the bridge API to be available
+before the attach callback. The driver performs properly at the moment
+as it doesn't use the drm_bridge_add() registration method. As this will
+be changed later, move connector creation to attach time to ensure
+compatibility with the API.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 65 ++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 7bf0f2f..c5f0df5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -421,6 +421,32 @@
- 			};
- 		};
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 92ce9e532603..88cd40adb977 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1667,6 +1667,25 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
+ 	.best_encoder = drm_atomic_helper_best_encoder,
+ };
  
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
++static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++	struct drm_encoder *encoder = bridge->encoder;
++	struct drm_connector *connector = &hdmi->connector;
 +
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
++	connector->interlace_allowed = 1;
++	connector->polled = DRM_CONNECTOR_POLL_HPD;
 +
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
-@@ -434,6 +460,45 @@
- 			status = "disabled";
- 		};
++	drm_connector_helper_add(connector, &dw_hdmi_connector_helper_funcs);
++
++	drm_connector_init(bridge->dev, connector, &dw_hdmi_connector_funcs,
++			   DRM_MODE_CONNECTOR_HDMIA);
++
++	drm_mode_connector_attach_encoder(connector, encoder);
++
++	return 0;
++}
++
+ static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
+ 				    struct drm_display_mode *orig_mode,
+ 				    struct drm_display_mode *mode)
+@@ -1704,6 +1723,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+ }
  
-+		scif3: serial@e6c50000 {
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c50000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c40000 0 64>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		scif5: serial@e6f30000 {
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6f30000 0 64>;
-+			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 202>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		msiof0: spi@e6e90000 {
- 			compatible = "renesas,msiof-r8a7796";
- 			reg = <0 0xe6e90000 0 0x0064>;
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
++	.attach = dw_hdmi_bridge_attach,
+ 	.enable = dw_hdmi_bridge_enable,
+ 	.disable = dw_hdmi_bridge_disable,
+ 	.mode_set = dw_hdmi_bridge_mode_set,
+@@ -1829,17 +1849,6 @@ static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+ 		return -EINVAL;
+ 	}
+ 
+-	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
+-
+-	drm_connector_helper_add(&hdmi->connector,
+-				 &dw_hdmi_connector_helper_funcs);
+-
+-	drm_connector_init(encoder->dev, &hdmi->connector,
+-			   &dw_hdmi_connector_funcs,
+-			   DRM_MODE_CONNECTOR_HDMIA);
+-
+-	drm_mode_connector_attach_encoder(&hdmi->connector, encoder);
+-
+ 	return 0;
+ }
+ 
+@@ -1862,8 +1871,6 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 	if (!hdmi)
+ 		return -ENOMEM;
+ 
+-	hdmi->connector.interlace_allowed = 1;
+-
+ 	hdmi->plat_data = plat_data;
+ 	hdmi->dev = dev;
+ 	hdmi->dev_type = plat_data->dev_type;
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
