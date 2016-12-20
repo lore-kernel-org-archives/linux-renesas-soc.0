@@ -1,110 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52483 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752810AbcLLOUO (ORCPT
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:43317 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754180AbcLTK6T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 09:20:14 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv5 3/5] arm64: dts: r8a7795: Add R-Car Gen3 thermal support
-Date: Mon, 12 Dec 2016 15:18:03 +0100
-Message-Id: <20161212141805.14946-4-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
-References: <20161212141805.14946-1-niklas.soderlund@ragnatech.se>
+        Tue, 20 Dec 2016 05:58:19 -0500
+Subject: Re: [PATCH v2 12/29] drm: bridge: dw-hdmi: Rename CONF0 SPARECTRL bit
+ to SVSRET
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        <dri-devel@lists.freedesktop.org>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20161220013400.28317-13-laurent.pinchart+renesas@ideasonboard.com>
+CC: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Ulrich Hecht <ulrich.hecht@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        <linux-renesas-soc@vger.kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <a337e579-6403-8325-218f-d2b4ed3a628f@synopsys.com>
+Date: Tue, 20 Dec 2016 10:58:13 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20161220013400.28317-13-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Laurent,
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8c15040..0699e04 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1541,5 +1541,63 @@
- 				};
- 			};
- 		};
-+
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a7795-thermal";
-+			reg = <0 0xe6198000 0 0x68>,
-+			      <0 0xe61a0000 0 0x5c>,
-+			      <0 0xe61a8000 0 0x5c>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
-+
-+		thermal-zones {
-+			sensor_thermal1: sensor-thermal1 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 0>;
-+
-+				trips {
-+					sensor1_crit: sensor1-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal2: sensor-thermal2 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 1>;
-+
-+				trips {
-+					sensor2_crit: sensor2-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal3: sensor-thermal3 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 2>;
-+
-+				trips {
-+					sensor3_crit: sensor3-crit {
-+						temperature = <90000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+		};
- 	};
- };
--- 
-2.10.2
+On 20-12-2016 01:33, Laurent Pinchart wrote:
+> The bit is documented in a Rockchip BSP as
+>
+>  #define m_SVSRET_SIG		(1 << 5) /* depend on PHY_MHL_COMB0=1 */
+>
+> This is confirmed by a Renesas platform, which uses a 2.0 DWC HDMI TX as
+> the RK3288. Rename the bit accordingly.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+
+> ---
+>  drivers/gpu/drm/bridge/dw-hdmi.c | 8 ++++----
+>  drivers/gpu/drm/bridge/dw-hdmi.h | 4 ++--
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+> index b4fb0bd78910..06c252f560ad 100644
+> --- a/drivers/gpu/drm/bridge/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+> @@ -895,11 +895,11 @@ static void dw_hdmi_phy_enable_tmds(struct dw_hdmi *hdmi, u8 enable)
+>  			 HDMI_PHY_CONF0_ENTMDS_MASK);
+>  }
+>  
+> -static void dw_hdmi_phy_enable_spare(struct dw_hdmi *hdmi, u8 enable)
+> +static void dw_hdmi_phy_enable_svsret(struct dw_hdmi *hdmi, u8 enable)
+>  {
+>  	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
+> -			 HDMI_PHY_CONF0_SPARECTRL_OFFSET,
+> -			 HDMI_PHY_CONF0_SPARECTRL_MASK);
+> +			 HDMI_PHY_CONF0_SVSRET_OFFSET,
+> +			 HDMI_PHY_CONF0_SVSRET_MASK);
+>  }
+>  
+>  static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
+> @@ -1014,7 +1014,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+>  	dw_hdmi_phy_gen2_pddq(hdmi, 0);
+>  
+>  	if (hdmi->dev_type == RK3288_HDMI)
+> -		dw_hdmi_phy_enable_spare(hdmi, 1);
+> +		dw_hdmi_phy_enable_svsret(hdmi, 1);
+>  
+>  	/*Wait for PHY PLL lock */
+>  	msec = 5;
+> diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
+> index 55135bbd0c16..08235aef2fa3 100644
+> --- a/drivers/gpu/drm/bridge/dw-hdmi.h
+> +++ b/drivers/gpu/drm/bridge/dw-hdmi.h
+> @@ -847,8 +847,8 @@ enum {
+>  	HDMI_PHY_CONF0_PDZ_OFFSET = 7,
+>  	HDMI_PHY_CONF0_ENTMDS_MASK = 0x40,
+>  	HDMI_PHY_CONF0_ENTMDS_OFFSET = 6,
+> -	HDMI_PHY_CONF0_SPARECTRL_MASK = 0x20,
+> -	HDMI_PHY_CONF0_SPARECTRL_OFFSET = 5,
+> +	HDMI_PHY_CONF0_SVSRET_MASK = 0x20,
+> +	HDMI_PHY_CONF0_SVSRET_OFFSET = 5,
+>  	HDMI_PHY_CONF0_GEN2_PDDQ_MASK = 0x10,
+>  	HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET = 4,
+>  	HDMI_PHY_CONF0_GEN2_TXPWRON_MASK = 0x8,
