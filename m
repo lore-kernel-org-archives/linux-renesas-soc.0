@@ -1,132 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S941124AbcLMSDX (ORCPT
+Received: from mail.kmu-office.ch ([178.209.48.109]:45501 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932415AbcLTNii (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Dec 2016 13:03:23 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCHv3 1/4] v4l: vsp1: Move vsp1_video_setup_pipeline()
-Date: Tue, 13 Dec 2016 17:59:41 +0000
-Message-Id: <1481651984-7687-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        Tue, 20 Dec 2016 08:38:38 -0500
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Tue, 20 Dec 2016 14:31:54 +0100
+From: Stefan Agner <stefan@agner.ch>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 04/13] drm: Add data mirror bus flag
+In-Reply-To: <2022101.xOBCGyn98G@avalon>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1945420.2ppkyQgY5N@avalon> <127f384d92291ce5d9447b763340432c@agner.ch>
+ <2022101.xOBCGyn98G@avalon>
+Message-ID: <7f668e382fa001811f961abfb398c9c9@agner.ch>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the static vsp1_video_setup_pipeline() function in preparation for
-the callee updates so that the vsp1_video_pipeline_run() call can
-configure pipelines following suspend resume actions.
+On 2016-12-20 14:21, Laurent Pinchart wrote:
+> Hi Stefan,
+> 
+> Thank you for the review.
+> 
+> On Tuesday 20 Dec 2016 14:01:46 Stefan Agner wrote:
+>> On 2016-12-18 21:31, Laurent Pinchart wrote:
+>> > Hi Stefan and Thierry,
+>> >
+>> > As the author and suggester of the other bus flags, could you please
+>> > review this patch ?
+>>
+>> It looks to me like an appropriate use case for the flag. One remark
+>> below:
+>>
+>> > On Saturday 19 Nov 2016 05:28:04 Laurent Pinchart wrote:
+>> >> The flag indicates that data is mirrored on the bus. The exact meaning
+>> >> is bus-type dependent. For LVDS buses it indicates that the seven data
+>> >> bits that transmitted in a clock pulse are sent in slots 6 to 0 order.
+>> >>
+>> >> Signed-off-by: Laurent Pinchart
+>> >> <laurent.pinchart+renesas@ideasonboard.com>
+>> >> ---
+>> >>
+>> >>  include/drm/drm_connector.h | 2 ++
+>> >>  1 file changed, 2 insertions(+)
+>> >>
+>> >> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+>> >> index ac9d7d8e0e43..5c1dda236760 100644
+>> >> --- a/include/drm/drm_connector.h
+>> >> +++ b/include/drm/drm_connector.h
+>> >> @@ -159,6 +159,8 @@ struct drm_display_info {
+>> >>
+>> >>  #define DRM_BUS_FLAG_PIXDATA_POSEDGE	(1<<2)
+>> >>  /* drive data on neg. edge */
+>> >>  #define DRM_BUS_FLAG_PIXDATA_NEGEDGE	(1<<3)
+>> >>
+>> >> +/* data is mirrored on the bus */
+>> >> +#define DRM_BUS_FLAG_DATA_MIRROR	(1<<4)
+>>
+>> Sounds like a bit endianness issue. I am wondering is if "mirror" is a
+>> good term. Can we name the possible orderings? How about:
+>>
+>> DRM_BUS_FLAG_DATA_MSB_TO_LSB
+>> DRM_BUS_FLAG_DATA_LSB_TO_MSB
+> 
+> LVDS display buses send pixels in RGB666 or RGB888 as follows.
+> 
+> - "jeida-18" - 18-bit data mapping compatible with the [JEIDA], [LDI] and
+>   [VESA] specifications. Data are transferred as follows on 3 LVDS lanes.
+> 
+> Slot	    0       1       2       3       4       5       6
+> 	________________                         _________________
+> Clock	                \_______________________/
+> 	  ______  ______  ______  ______  ______  ______  ______
+> DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
+> DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
+> DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
+> 
+> - "jeida-24" - 24-bit data mapping compatible with the [DSIM] and [LDI]
+>   specifications. Data are transferred as follows on 4 LVDS lanes.
+> 
+> Slot	    0       1       2       3       4       5       6
+> 	________________                         _________________
+> Clock	                \_______________________/
+> 	  ______  ______  ______  ______  ______  ______  ______
+> DATA0	><__G2__><__R7__><__R6__><__R5__><__R4__><__R3__><__R2__><
+> DATA1	><__B3__><__B2__><__G7__><__G6__><__G5__><__G4__><__G3__><
+> DATA2	><_CTL2_><_CTL1_><_CTL0_><__B7__><__B6__><__B5__><__B4__><
+> DATA3	><_CTL3_><__B1__><__B0__><__G1__><__G0__><__R1__><__R0__><
+> 
+> - "vesa-24" - 24-bit data mapping compatible with the [VESA] specification.
+>   Data are transferred as follows on 4 LVDS lanes.
+> 
+> Slot	    0       1       2       3       4       5       6
+> 	________________                         _________________
+> Clock	                \_______________________/
+> 	  ______  ______  ______  ______  ______  ______  ______
+> DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
+> DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
+> DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
+> DATA3	><_CTL3_><__B7__><__B6__><__G7__><__G6__><__R7__><__R6__><
+> 
+> 
+> Mirroring flips slots 0 to 6, resulting in a sort of LSB to MSB transmission 
+> (I'm not sure I'd call that endianness though). I'm fine renaming the flag as 
+> you propose. Do we need two flags, or should we assume MSB to LSB by default 
+> and add a single flag ?
 
-This commit is just a code move for clarity performing no functional
-change.
+Wikipedia has a chapter about bit endianness, but I agree, I would not
+call it that way; the term endianness usually refers to byte endianness.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_video.c | 82 ++++++++++++++++----------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
+For the other flags we usually have both variants. One variant is the
+(unwritten) default for most displays (and most drivers/display
+controllers configure it that way). And most displays only specify a
+flag if they require the non-default setting.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index d351b9c768d2..44b687c0b8df 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -350,6 +350,47 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
- 	pipe->buffers_ready |= 1 << video->pipe_index;
- }
- 
-+static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_entity *entity;
-+
-+	/* Determine this pipelines sizes for image partitioning support. */
-+	vsp1_video_pipeline_setup_partitions(pipe);
-+
-+	/* Prepare the display list. */
-+	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-+	if (!pipe->dl)
-+		return -ENOMEM;
-+
-+	if (pipe->uds) {
-+		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
-+
-+		/* If a BRU is present in the pipeline before the UDS, the alpha
-+		 * component doesn't need to be scaled as the BRU output alpha
-+		 * value is fixed to 255. Otherwise we need to scale the alpha
-+		 * component only when available at the input RPF.
-+		 */
-+		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
-+			uds->scale_alpha = false;
-+		} else {
-+			struct vsp1_rwpf *rpf =
-+				to_rwpf(&pipe->uds_input->subdev);
-+
-+			uds->scale_alpha = rpf->fmtinfo->alpha;
-+		}
-+	}
-+
-+	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-+		vsp1_entity_route_setup(entity, pipe->dl);
-+
-+		if (entity->ops->configure)
-+			entity->ops->configure(entity, pipe, pipe->dl,
-+					       VSP1_ENTITY_PARAMS_INIT);
-+	}
-+
-+	return 0;
-+}
-+
- static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
- 					      struct vsp1_dl_list *dl)
- {
-@@ -747,47 +788,6 @@ static void vsp1_video_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&pipe->irqlock, flags);
- }
- 
--static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
--{
--	struct vsp1_entity *entity;
--
--	/* Determine this pipelines sizes for image partitioning support. */
--	vsp1_video_pipeline_setup_partitions(pipe);
--
--	/* Prepare the display list. */
--	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
--	if (!pipe->dl)
--		return -ENOMEM;
--
--	if (pipe->uds) {
--		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
--
--		/* If a BRU is present in the pipeline before the UDS, the alpha
--		 * component doesn't need to be scaled as the BRU output alpha
--		 * value is fixed to 255. Otherwise we need to scale the alpha
--		 * component only when available at the input RPF.
--		 */
--		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
--			uds->scale_alpha = false;
--		} else {
--			struct vsp1_rwpf *rpf =
--				to_rwpf(&pipe->uds_input->subdev);
--
--			uds->scale_alpha = rpf->fmtinfo->alpha;
--		}
--	}
--
--	list_for_each_entry(entity, &pipe->entities, list_pipe) {
--		vsp1_entity_route_setup(entity, pipe->dl);
--
--		if (entity->ops->configure)
--			entity->ops->configure(entity, pipe, pipe->dl,
--					       VSP1_ENTITY_PARAMS_INIT);
--	}
--
--	return 0;
--}
--
- static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct vsp1_video *video = vb2_get_drv_priv(vq);
--- 
-2.7.4
+I suggest to add both, just for the sake of completeness.
+
+--
+Stefan
+
+
+> 
+>> >>  	/**
+>> >>  	 * @bus_flags: Additional information (like pixel signal polarity) for
