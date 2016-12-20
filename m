@@ -1,47 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 pci/next] PCI: rcar: Add compatible string for r8a7796
-Date: Wed, 21 Dec 2016 03:37:06 +0900
-Message-Id: <1482259026-7180-1-git-send-email-ykaneko0929@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 24/29] drm: rcar-du: Skip disabled outputs
+Date: Tue, 20 Dec 2016 03:33:55 +0200
+Message-Id: <20161220013400.28317-25-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+When a DT node connected to a DU output is disabled no bridge will ever
+be instantiated for it. Skip the output in that case.
 
-This patch adds support for r8a7796.
-
-Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-This patch is based on the next branch of the pci tree.
-
-v2 [Yoshihiro Kaneko]
-* As suggested by Geert Uytterhoeven
-  Dropped the update of the driver.
-
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index eee518d..34712d6 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -6,6 +6,7 @@ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
- 	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
- 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
- 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
-+	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
- 	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index aa84689043ae..7a6bd8bdba05 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -384,6 +384,13 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		return -ENODEV;
+ 	}
  
++	if (!of_device_is_available(entity)) {
++		dev_dbg(rcdu->dev,
++			"connected entity %s is disabled, skipping\n",
++			entity->full_name);
++		return -ENODEV;
++	}
++
+ 	entity_ep_node = of_parse_phandle(ep->local_node, "remote-endpoint", 0);
+ 
+ 	for_each_endpoint_of_node(entity, ep_node) {
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
