@@ -1,60 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 15 Dec 2016 17:46:29 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Fengguang Wu <fengguang.wu@intel.com>
-Message-ID: <20161215174629.x7zzbgvjhe4q7cpt@sirena.org.uk>
-References: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
- <1473713446-30366-4-git-send-email-geert+renesas@glider.be>
- <CAMuHMdWhuqSg+qUnDUqad-SBJOY5rOuRGuG7oUfTXiQA_rUtoA@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38810 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754180AbcLTKyb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 20 Dec 2016 05:54:31 -0500
+Date: Tue, 20 Dec 2016 11:54:25 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH resend] arm64: dts: r8a7796: salvator-x: Update memory
+ node to 4 GiB map
+Message-ID: <20161220105424.GK19532@verge.net.au>
+References: <1481815889-15583-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tevkpkhsj4t2dyso"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWhuqSg+qUnDUqad-SBJOY5rOuRGuG7oUfTXiQA_rUtoA@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 3/7] spi: core: Add support for registering SPI
- slave controllers
-Sender: linux-kernel-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-
---tevkpkhsj4t2dyso
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1481815889-15583-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Sep 18, 2016 at 11:04:18AM +0200, Geert Uytterhoeven wrote:
+On Thu, Dec 15, 2016 at 04:31:29PM +0100, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch updates memory region:
+> 
+>   - After changes, the new map of the Salvator-X board on R8A7796 SoC
+>     Bank0: 2GiB RAM : 0x000048000000 -> 0x000bfffffff
+>     Bank1: 2GiB RAM : 0x000600000000 -> 0x0067fffffff
+> 
+>   - Before changes, the old map looked like this:
+>     Bank0: 2GiB RAM : 0x000048000000 -> 0x000bfffffff
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [geert: Correct size of old map]
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Simon, please apply!
+> 
+> U-Boot already adds the second memory region to the "reg" property of
+> the first memory node in DT, so this patch is actually a no-op.
+> IMHO it doesn't make much sense to keep on pretending we don't have
+> enabled memory outside the 32-bit address space.
 
-> This is caused by moving the setup of master->dev.class.
-> To fix this, I can
->   1) Introduce a separate spi_alloc_slave() function, which sets up
->      spi_slave_class instead of spi_master class,
+Hi Geert,
 
-This seems more idiomatic.
+I agree with the reasoning above and have queued up this patch for v4.11.
 
---tevkpkhsj4t2dyso
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhS1vQACgkQJNaLcl1U
-h9BhrAf+J9/Y3iKtbQh+owYF7HlBgzBwUi6OgtYENNkhBl6Pi5XWkmlK3JhpyE7y
-8IpbuFuKOBFOFKl0BWEsoKt2wm2KmWeqY08ydM97ffpl4MBJ+qDFjyjqutfOkMb2
-0zhwcb2m1dq3svBzpiE/PVK9ORdfXkhbgSD/0wxbALpfH1bXPRSlG53VliZkhA1L
-S6RYaMXhKP672FOYUJeG18YuHP3/LY/HQ9MqI17YKwF+m+XTQbymtBVIrkh0NKx6
-19SBls44g9zFsZyYyruSMvCIdHx6sOiTZ4r/jpwdKXsw6dhHdY3eT+dIsEogwX7z
-tsn9He/CyzvMw00CjDrRQ6I0kZBtMg==
-=60zH
------END PGP SIGNATURE-----
-
---tevkpkhsj4t2dyso--
+It is a shame that u-boot has enabled this for us as it would have
+been nice to retain control of that occuring. But alas it was not to be so.
