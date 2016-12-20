@@ -1,61 +1,121 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=HTCQ=X4=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCHv3 0/4] v4l: vsp1: Fix suspend/resume and race on M2M pipelines
-Date: Tue, 13 Dec 2016 17:59:40 +0000
-Message-Id: <1481651984-7687-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41469 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754714AbcLTBdt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Dec 2016 20:33:49 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Ulrich Hecht <ulrich.hecht@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 20/29] drm: bridge: dw-hdmi: Remove device type from platform data
+Date: Tue, 20 Dec 2016 03:33:51 +0200
+Message-Id: <20161220013400.28317-21-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This small patchset helps rework the VSP1 driver to repair an issue on
-suspend/resume operations whereby the pipeline does not get reconfigured after
-it has been re-initialised following a resume operation.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Along side this, there was an intrinsic race in the vsp1_video_start_streaming()
-function whereby multiple streams operating through a BRU, could find themselves
-commencing an operation before the pipeline has been configured, or worse -
-commencing, just as the pipeline is being configured resulting in a null pointer
-dereference on pipe->dl.
+The device type isn't used anymore now that workarounds and PHY-specific
+operations are performed based on version information read at runtime.
+Remove it.
 
-This series superceeds a previous effort to fix the BRU race.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c            | 2 --
+ drivers/gpu/drm/imx/dw_hdmi-imx.c           | 2 --
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 1 -
+ include/drm/bridge/dw_hdmi.h                | 7 -------
+ 4 files changed, 12 deletions(-)
 
-Patch [1/4] is a code move only, with no functional change.
-Patch [2/4] refactors the vsp1_video_start_streaming() function and fixes both
-            suspend/resume, and the BRU race in a single change
-Patch [3/4] removes the context scoped 'pipe->dl' which has been susceptible to
-            races and isn't required to be in the context.
-Patch [4/4] is an RFC patch really, that fixes a segfault on error paths  and I
-            certainly expect feedback and brief discussion. Please drop Patch 4
-            in the event of any further discussion, and don't consider it as
-            blocking for the first three patches of this series.
-
-v3:
- - Move configured=false from vsp1_device_init to vsp1_reset_wpf()
- - Clean up flag dereferencing with a local struct *
-
-v2:
- - Refactor video pipeline configuration implementation to solve both suspend
-   resume and the VSP BRU race in a single change
-
-v1:
- - Original pipeline configuration rework
-
-Kieran Bingham (4):
-  v4l: vsp1: Move vsp1_video_setup_pipeline()
-  v4l: vsp1: Refactor video pipeline configuration
-  v4l: vsp1: Use local display lists and remove global pipe->dl
-  media: Catch null pipes on pipeline stop
-
- drivers/media/media-entity.c             |   2 +
- drivers/media/platform/vsp1/vsp1_drm.c   |  20 ++---
- drivers/media/platform/vsp1/vsp1_drv.c   |   4 +
- drivers/media/platform/vsp1/vsp1_pipe.c  |   1 +
- drivers/media/platform/vsp1/vsp1_pipe.h  |   4 +-
- drivers/media/platform/vsp1/vsp1_video.c | 127 +++++++++++++++----------------
- 6 files changed, 79 insertions(+), 79 deletions(-)
-
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index ebea96ad5dd0..8480f95d3e0b 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -127,7 +127,6 @@ struct dw_hdmi {
+ 	struct drm_connector connector;
+ 	struct drm_bridge bridge;
+ 
+-	enum dw_hdmi_devtype dev_type;
+ 	unsigned int version;
+ 
+ 	struct platform_device *audio;
+@@ -1969,7 +1968,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 
+ 	hdmi->plat_data = plat_data;
+ 	hdmi->dev = dev;
+-	hdmi->dev_type = plat_data->dev_type;
+ 	hdmi->sample_rate = 48000;
+ 	hdmi->disabled = true;
+ 	hdmi->rxsense = true;
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index f645275e6e63..f039641070ac 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -175,7 +175,6 @@ static struct dw_hdmi_plat_data imx6q_hdmi_drv_data = {
+ 	.mpll_cfg   = imx_mpll_cfg,
+ 	.cur_ctr    = imx_cur_ctr,
+ 	.phy_config = imx_phy_config,
+-	.dev_type   = IMX6Q_HDMI,
+ 	.mode_valid = imx6q_hdmi_mode_valid,
+ };
+ 
+@@ -183,7 +182,6 @@ static struct dw_hdmi_plat_data imx6dl_hdmi_drv_data = {
+ 	.mpll_cfg = imx_mpll_cfg,
+ 	.cur_ctr  = imx_cur_ctr,
+ 	.phy_config = imx_phy_config,
+-	.dev_type = IMX6DL_HDMI,
+ 	.mode_valid = imx6dl_hdmi_mode_valid,
+ };
+ 
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index a6d4a0236e8f..d53827413996 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -237,7 +237,6 @@ static const struct dw_hdmi_plat_data rockchip_hdmi_drv_data = {
+ 	.mpll_cfg   = rockchip_mpll_cfg,
+ 	.cur_ctr    = rockchip_cur_ctr,
+ 	.phy_config = rockchip_phy_config,
+-	.dev_type   = RK3288_HDMI,
+ };
+ 
+ static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index c539f64a280a..735a8ab2509c 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -21,12 +21,6 @@ enum {
+ 	DW_HDMI_RES_MAX,
+ };
+ 
+-enum dw_hdmi_devtype {
+-	IMX6Q_HDMI,
+-	IMX6DL_HDMI,
+-	RK3288_HDMI,
+-};
+-
+ enum dw_hdmi_phy_type {
+ 	DW_HDMI_PHY_DWC_HDMI_TX_PHY = 0x00,
+ 	DW_HDMI_PHY_DWC_MHL_PHY_HEAC = 0xb2,
+@@ -58,7 +52,6 @@ struct dw_hdmi_phy_config {
+ };
+ 
+ struct dw_hdmi_plat_data {
+-	enum dw_hdmi_devtype dev_type;
+ 	const struct dw_hdmi_mpll_config *mpll_cfg;
+ 	const struct dw_hdmi_curr_ctrl *cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config;
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
