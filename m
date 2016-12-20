@@ -1,72 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:36141 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbcLHRdU (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41469 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932585AbcLTBdx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 12:33:20 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] gpio: rcar: (re)add Runtime PM support
-Date: Thu,  8 Dec 2016 18:32:26 +0100
-Message-Id: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Dec 2016 20:33:53 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Ulrich Hecht <ulrich.hecht@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: [PATCH v2 26/29] drm: rcar-du: Add HDMI outputs to R8A7795 device description
+Date: Tue, 20 Dec 2016 03:33:57 +0200
+Message-Id: <20161220013400.28317-27-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-This series (re)adds Runtime PM support which was reverted by:
+Update the device description with the two available HDMI outputs.
 
-commit 42c25013ca95ce79 ('Revert "gpio: rcar: Add Runtime PM handling for interrupts"')
-commit ce0e2c60e69e5f87 ('Revert "gpio: rcar: Fine-grained Runtime PM support"')
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  4 +++-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 12 ++++++++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-The reason it was reverted was that 'Runtime PM handling for interrupts'
-could triggering a BUG() in linux/drivers/base/power/runtime.c 'BUG: 
-sleeping function called from invalid context', see [1]. Since then Jon 
-Hunter have solved this in a generic way in:
-
-commit be45beb2df6909d4 ("genirq: Add runtime power management support for IRQ chips")
-
-Patch 1/2 make use of Jons work to make sure proper PM handling when an 
-GPIO is requested as an interrupt and patch 2/2 is just a resurrection 
-of Geerts original patch with small fixups to catch up with changes to 
-the driver.
-
-I have tested the series on Koelsch and Salvator-X H3 and can in in 
-sysfs observe that only GPIO blocks which are used are powered on.  
-Requesting a GPIO from a powered down block will power it on and 
-releasing it will power it off.
-
-To test that patch 1/2 works as expected I have done tests on Salvator-X 
-where the EtherAVB will not work with patch 2/2 applied, which moves 
-pm_runtime_get_sync() from probe time to gpio_rcar_request(). Whit that 
-move the GPIO block used by EtherAVB will not be powered on unless done 
-so when the interrupt is requested, which we add support for in 1/2.
-
-I'm not sure on how to best resurrect a patch which have been reverted, 
-I dropped all Signed-off-by lines except Geerts as he is the author and 
-added my own Signed-off-by since I'm resending it. Hope this is OK, if 
-not please let me know.
-
-1. https://www.spinics.net/lists/linux-renesas-soc/msg02710.html
-
-Geert Uytterhoeven (1):
-  gpio: rcar: Fine-grained Runtime PM support
-
-Niklas Söderlund (1):
-  gpio: rcar: set IRQ chip parent_device
-
- drivers/gpio/gpio-rcar.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index 6f08b7e7db06..459e5390d6e0 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -1,7 +1,7 @@
+ /*
+  * rcar_du_crtc.h  --  R-Car Display Unit CRTCs
+  *
+- * Copyright (C) 2013-2014 Renesas Electronics Corporation
++ * Copyright (C) 2013-2015 Renesas Electronics Corporation
+  *
+  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+  *
+@@ -61,6 +61,8 @@ enum rcar_du_output {
+ 	RCAR_DU_OUTPUT_DPAD1,
+ 	RCAR_DU_OUTPUT_LVDS0,
+ 	RCAR_DU_OUTPUT_LVDS1,
++	RCAR_DU_OUTPUT_HDMI0,
++	RCAR_DU_OUTPUT_HDMI1,
+ 	RCAR_DU_OUTPUT_TCON,
+ 	RCAR_DU_OUTPUT_MAX,
+ };
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 74352140f55f..3107719c4653 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -150,13 +150,21 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+ 	.num_crtcs = 4,
+ 	.routes = {
+-		/* R8A7795 has one RGB output, one LVDS output and two
+-		 * (currently unsupported) HDMI outputs.
++		/* R8A7795 has one RGB output, two HDMI outputs and one
++		 * LVDS output.
+ 		 */
+ 		[RCAR_DU_OUTPUT_DPAD0] = {
+ 			.possible_crtcs = BIT(3),
+ 			.port = 0,
+ 		},
++		[RCAR_DU_OUTPUT_HDMI0] = {
++			.possible_crtcs = BIT(1),
++			.port = 1,
++		},
++		[RCAR_DU_OUTPUT_HDMI1] = {
++			.possible_crtcs = BIT(2),
++			.port = 2,
++		},
+ 		[RCAR_DU_OUTPUT_LVDS0] = {
+ 			.possible_crtcs = BIT(0),
+ 			.port = 3,
 -- 
-2.10.2
+Regards,
+
+Laurent Pinchart
