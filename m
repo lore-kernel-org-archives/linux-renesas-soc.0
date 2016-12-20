@@ -1,86 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:58296 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751601AbcLAKq0 (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34745 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752329AbcLTKov (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 05:46:26 -0500
-Date: Thu, 1 Dec 2016 11:46:22 +0100
-From: Wolfram Sang <wsa-dev@sang-engineering.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Yasushi SHOJI <yashi@atmark-techno.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: mmc: tmio: why enable/disable SDIO irq on every transaction with
- IOMOD?
-Message-ID: <20161201104622.GA1541@katana>
-References: <87h96qkdn0.wl@dns1.atmark-techno.com>
- <CAPDyKFop3a6eHhOZq1E=BdFiHzmpu4uEx0F79nyBVCOu6z6usw@mail.gmail.com>
+        Tue, 20 Dec 2016 05:44:51 -0500
+Received: by mail-io0-f195.google.com with SMTP id y124so22074072iof.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Dec 2016 02:44:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFop3a6eHhOZq1E=BdFiHzmpu4uEx0F79nyBVCOu6z6usw@mail.gmail.com>
+In-Reply-To: <1482229959-25584-4-git-send-email-horms+renesas@verge.net.au>
+References: <1482229959-25584-1-git-send-email-horms+renesas@verge.net.au> <1482229959-25584-4-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Dec 2016 11:44:49 +0100
+Message-ID: <CAMuHMdXHwE1OTj7dH4qJNG0Kbb9CEp0nZrL0nNQxd-+TZ6aCMg@mail.gmail.com>
+Subject: Re: [PATCH renesas/devel 3/4] ARM: dts: r8a7792: Use R-Car Gen 2
+ fallback binding for msiof nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Dec 20, 2016 at 11:32 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Use recently added R-Car Gen 2 fallback binding for msiof nodes in
+> DT for r8a7792 SoC.
+>
+> This has no run-time effect for the current driver as the initialisation
+> sequence is the same for the SoC-specific binding for r8a7792 and the
+> fallback binding for R-Car Gen 2.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-thanks for the report and thanks to Ulf for forwarding. Adding
-renesas-soc list, too.
-
-> > So my question is that "What is the reason behind to disable IRQ with
-> > SDIO_MODE?  Is there any situation which masking with SDIO_INFO1_MASK
-> > is not enough?
-
-This code predates the time since I took over maintainership of the
-driver, so I had to dig in git history.
-
-The code was introduced with 845ecd20239c28 ("mmc: tmio_mmc: implement
-SDIO IRQ support") which was in 2010. I don't have that old datasheets
-to check if the SCLKDIVEN restriction was already present in the SDHI
-cores which were available back then.
-
-My assumption is that it was not, or it was overlooked. So, it might be
-just for completeness that not only the individual IRQs have been
-disabled but also the big master switch (IOMOD) was turned off.
-
-My further assumption is that it is very likely good enough to disable
-the individual IRQs. If we can't guarantee the conditions to set IOMOD,
-it seems okay to me to just leave it.
-
-Do you have a patch which works for you?
-
-Regards,
-
-   Wolfram
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+-- 
+Gr{oetje,eeting}s,
 
-iQIcBAEBAgAGBQJYP/9+AAoJEBQN5MwUoCm27mIP/0Eclxe6j41WRlyBLevwZo/Z
-rUyS7yBkxcrQcYIuBiCBVIrwK6ZvTnpy4FQpfUsAeLJK7+c81/tOx0Ki1VljN+L5
-6cLYBBV/vsr4/OEnE7CJOK7IqRclrqa8Q8G48xAoZMXERnW/70rVc6/vJt8+Cskh
-VEWSkD7I6HyAqWbLtgcqG0pKCM8cpHQlAvXN62NLM58OAbOUmm6rOItksfUEpszc
-9ygrZWuM20zFfPO6ebIEGJNZv091WgkMuUwtqBm8uYdscfg0lbZIoUgSqYSdBATA
-frkM1zkwvqeCpensYMDIy0eJS5UdBNEsU9aMqJEp0Lf5Pm6rb2dYs1qpOAfJzvvt
-aF1vtkE6hrMcXfXrA6UPk+O4JPrsTGIDrB6Eshz6KIWl5MflBYITxHdJGx1ZaaeY
-JfR0mP+hyaposJ0L0jpL/KP8RbV4aVA2ToSTmod/lNkPHSfcDb92UJl2RrWyICKK
-EX1F10lEWpyQai22oxQJ4WA86Mq7RSKP7eQ7GVrZEyhOOUEkRfNU70QCJGzsVsi9
-bFc21iCCSaqMiWDGuh6+EYFh7xX9CbnwxrOVcmpP/dVuXw/xh3qE3tofwZ2xE1D2
-YYmqXSo2QavldCjcqAE1yEtgUPrr2y5X3hw0hIgbnHT1tugW/0gHWMS0Jv1XY1LQ
-K8iVMRyMgwUwmRPzyc3e
-=Fahq
------END PGP SIGNATURE-----
+                        Geert
 
---5mCyUwZo2JvN/JJP--
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
