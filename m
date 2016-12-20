@@ -1,54 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59606 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753531AbcLRUbB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38942 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755351AbcLTLEV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Dec 2016 15:31:01 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Stefan Agner <stefan@agner.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 04/13] drm: Add data mirror bus flag
-Date: Sun, 18 Dec 2016 22:31:28 +0200
-Message-ID: <1945420.2ppkyQgY5N@avalon>
-In-Reply-To: <1479526093-7014-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1479526093-7014-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 20 Dec 2016 06:04:21 -0500
+Date: Tue, 20 Dec 2016 12:04:15 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH renesas/devel 1/4] arm64: dts: r8a7796: Use R-Car Gen 3
+ fallback binding for msiof nodes
+Message-ID: <20161220110415.GM19532@verge.net.au>
+References: <1482229959-25584-1-git-send-email-horms+renesas@verge.net.au>
+ <1482229959-25584-2-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdXpN9x5YH0tiSRxme0yySS1NpaF41_DaePzuWd+3QD=AQ@mail.gmail.com>
+ <CAMuHMdV50sQtV_Rk5Kw=dyJ=rzX3_Fq=WThjhaFU+GPbzXNhbg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV50sQtV_Rk5Kw=dyJ=rzX3_Fq=WThjhaFU+GPbzXNhbg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Stefan and Thierry,
-
-As the author and suggester of the other bus flags, could you please review 
-this patch ?
-
-On Saturday 19 Nov 2016 05:28:04 Laurent Pinchart wrote:
-> The flag indicates that data is mirrored on the bus. The exact meaning
-> is bus-type dependent. For LVDS buses it indicates that the seven data
-> bits that transmitted in a clock pulse are sent in slots 6 to 0 order.
+On Tue, Dec 20, 2016 at 11:44:14AM +0100, Geert Uytterhoeven wrote:
+> On Tue, Dec 20, 2016 at 11:42 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Tue, Dec 20, 2016 at 11:32 AM, Simon Horman
+> > <horms+renesas@verge.net.au> wrote:
+> >> Use recently added R-Car Gen 3 fallback binding for msiof nodes in
+> >> DT for r8a7796 SoC.
+> >>
+> >> This has no run-time effect for the current driver as the initialisation
+> >> sequence is the same for the SoC-specific binding for r8a7796 and the
+> >> fallback binding for R-Car Gen 3.
+> >>
+> >> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  include/drm/drm_connector.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index ac9d7d8e0e43..5c1dda236760 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -159,6 +159,8 @@ struct drm_display_info {
->  #define DRM_BUS_FLAG_PIXDATA_POSEDGE	(1<<2)
->  /* drive data on neg. edge */
->  #define DRM_BUS_FLAG_PIXDATA_NEGEDGE	(1<<3)
-> +/* data is mirrored on the bus */
-> +#define DRM_BUS_FLAG_DATA_MIRROR	(1<<4)
-> 
->  	/**
->  	 * @bus_flags: Additional information (like pixel signal polarity) for
+> and
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--- 
-Regards,
-
-Laurent Pinchart
+I have taken the liberty of only adding your second tag.
