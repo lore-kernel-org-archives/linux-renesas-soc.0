@@ -1,51 +1,133 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: kishon@ti.com, maxime.ripard@free-electrons.com, wens@csie.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, chanwoo@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 2/2] phy: sun4i-usb: Replace the deprecated extcon API
-Date: Fri, 30 Dec 2016 13:11:29 +0900
-Message-id: <1483071089-8362-3-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
-References: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
- <CGME20161230041136epcas5p4719845a9e04914e91dd6dac1a5d257ef@epcas5p4.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 02/29] drm: bridge: dw-hdmi: Remove unneeded arguments to bind/unbind functions
+Date: Tue, 20 Dec 2016 03:33:33 +0200
+Message-Id: <20161220013400.28317-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch replaces the deprecated extcon API as following:
-- extcon_set_cable_state_() -> extcon_set_state_sync()
+The master argument isn't used. The data argument, a void pointer, is
+used by the bind function only where it's cast to a drm_device pointer,
+which can easily be obtained from the encoder argument instead. Remove
+them.
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/phy/phy-sun4i-usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c            | 8 +++-----
+ drivers/gpu/drm/imx/dw_hdmi-imx.c           | 4 ++--
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 4 ++--
+ include/drm/bridge/dw_hdmi.h                | 5 ++---
+ 4 files changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/phy/phy-sun4i-usb.c b/drivers/phy/phy-sun4i-usb.c
-index bf28a0fdd569..eae171e18043 100644
---- a/drivers/phy/phy-sun4i-usb.c
-+++ b/drivers/phy/phy-sun4i-usb.c
-@@ -534,7 +534,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
- 	mutex_unlock(&phy0->mutex);
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index a6685502571e..f86894622070 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1854,12 +1854,10 @@ static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
+ 	return 0;
+ }
  
- 	if (id_notify) {
--		extcon_set_cable_state_(data->extcon, EXTCON_USB_HOST,
-+		extcon_set_state_sync(data->extcon, EXTCON_USB_HOST,
- 					!id_det);
- 		/* When leaving host mode force end the session here */
- 		if (force_session_end && id_det == 1) {
-@@ -547,7 +547,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
- 	}
+-int dw_hdmi_bind(struct device *dev, struct device *master,
+-		 void *data, struct drm_encoder *encoder,
++int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 		 struct resource *iores, int irq,
+ 		 const struct dw_hdmi_plat_data *plat_data)
+ {
+-	struct drm_device *drm = data;
+ 	struct device_node *np = dev->of_node;
+ 	struct platform_device_info pdevinfo;
+ 	struct device_node *ddc_node;
+@@ -1992,7 +1990,7 @@ int dw_hdmi_bind(struct device *dev, struct device *master,
+ 	if (ret)
+ 		goto err_iahb;
  
- 	if (vbus_notify)
--		extcon_set_cable_state_(data->extcon, EXTCON_USB, vbus_det);
-+		extcon_set_state_sync(data->extcon, EXTCON_USB, vbus_det);
+-	ret = dw_hdmi_register(drm, hdmi);
++	ret = dw_hdmi_register(encoder->dev, hdmi);
+ 	if (ret)
+ 		goto err_iahb;
  
- 	if (sun4i_usb_phy0_poll(data))
- 		queue_delayed_work(system_wq, &data->detect, POLL_TIME);
+@@ -2059,7 +2057,7 @@ int dw_hdmi_bind(struct device *dev, struct device *master,
+ }
+ EXPORT_SYMBOL_GPL(dw_hdmi_bind);
+ 
+-void dw_hdmi_unbind(struct device *dev, struct device *master, void *data)
++void dw_hdmi_unbind(struct device *dev)
+ {
+ 	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
+ 
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index 359cd2765552..f79665801543 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -249,7 +249,7 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_imx_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+-	ret = dw_hdmi_bind(dev, master, data, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
+ 
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+@@ -264,7 +264,7 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ static void dw_hdmi_imx_unbind(struct device *dev, struct device *master,
+ 			       void *data)
+ {
+-	return dw_hdmi_unbind(dev, master, data);
++	return dw_hdmi_unbind(dev);
+ }
+ 
+ static const struct component_ops dw_hdmi_imx_ops = {
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index 0665fb915579..e8fb5c56b224 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -301,7 +301,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_rockchip_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+-	ret = dw_hdmi_bind(dev, master, data, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
+ 
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+@@ -316,7 +316,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ static void dw_hdmi_rockchip_unbind(struct device *dev, struct device *master,
+ 				    void *data)
+ {
+-	return dw_hdmi_unbind(dev, master, data);
++	return dw_hdmi_unbind(dev);
+ }
+ 
+ static const struct component_ops dw_hdmi_rockchip_ops = {
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index bae79f3c4d28..11edda631a9d 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -56,9 +56,8 @@ struct dw_hdmi_plat_data {
+ 					   struct drm_display_mode *mode);
+ };
+ 
+-void dw_hdmi_unbind(struct device *dev, struct device *master, void *data);
+-int dw_hdmi_bind(struct device *dev, struct device *master,
+-		 void *data, struct drm_encoder *encoder,
++void dw_hdmi_unbind(struct device *dev);
++int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 		 struct resource *iores, int irq,
+ 		 const struct dw_hdmi_plat_data *plat_data);
+ 
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
