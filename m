@@ -1,44 +1,113 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Christoph Baumann <cbaumann@visteon.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] serial: sh-sci: Assorted flow control fixes
-Date: Fri,  2 Dec 2016 13:35:09 +0100
-Message-Id: <1480682111-9299-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41472 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932745AbcLTBd4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Dec 2016 20:33:56 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Ulrich Hecht <ulrich.hecht@gmail.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 27/29] arm64: dts: r8a7795: Add HDMI encoder support
+Date: Tue, 20 Dec 2016 03:33:58 +0200
+Message-Id: <20161220013400.28317-28-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Greg, Jiri,
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-This patch series fixes two issues related to hardware flow control on
-Renesas SCIF UARTs.
+Add DT nodes for the two HDMI encoders in disabled state.
 
-Thanks!
+Based on work by Koji Matsuoka.
 
-Geert Uytterhoeven (2):
-  serial: sh-sci: Fix early deassertion of dedicated RTS
-  serial: sh-sci: Fix hang in sci_reset()
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 50 ++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
- drivers/tty/serial/sh-sci.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 9b717dee1f7b..5e8f231cf5a0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1590,11 +1590,13 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_hdmi0: endpoint {
++						remote-endpoint = <&dw_hdmi0_in>;
+ 					};
+ 				};
+ 				port@2 {
+ 					reg = <2>;
+ 					du_out_hdmi1: endpoint {
++						remote-endpoint = <&dw_hdmi1_in>;
+ 					};
+ 				};
+ 				port@3 {
+@@ -1604,5 +1606,53 @@
+ 				};
+ 			};
+ 		};
++
++		hdmi0: hdmi0@fead0000 {
++			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
++			reg = <0 0xfead0000 0 0x10000>;
++			interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
++			clock-names = "iahb", "isfr";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					dw_hdmi0_in: endpoint {
++						remote-endpoint = <&du_out_hdmi0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi1: hdmi1@feae0000 {
++			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
++			reg = <0 0xfeae0000 0 0x10000>;
++			interrupts = <0 436 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 728>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
++			clock-names = "iahb", "isfr";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					dw_hdmi1_in: endpoint {
++						remote-endpoint = <&du_out_hdmi1>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++				};
++			};
++		};
+ 	};
+ };
 -- 
-1.9.1
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
