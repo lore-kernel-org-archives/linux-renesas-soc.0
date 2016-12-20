@@ -1,139 +1,36 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        David Vrabel <david.vrabel@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/3] swiotlb: Add swiotlb=noforce debug option
-Date: Fri, 16 Dec 2016 14:28:42 +0100
-Message-Id: <1481894922-28828-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
-References: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38756 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755418AbcLTKvu (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 20 Dec 2016 05:51:50 -0500
+Date: Tue, 20 Dec 2016 11:51:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 renesas/devel 00/13] ARM, arm64: dts: Use R-Car
+ fallback bindings for i2c/iic nodes
+Message-ID: <20161220105144.GJ19532@verge.net.au>
+References: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1481629559-14187-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On architectures like arm64, swiotlb is tied intimately to the core
-architecture DMA support. In addition, ZONE_DMA cannot be disabled.
+On Tue, Dec 13, 2016 at 12:45:46PM +0100, Simon Horman wrote:
+> Hi,
+> 
+> this short series makes use of newly added R-Car fallback bindings in i2c
+> and iic nodes of the DTs for SoCs where the drivers in question are already
+> used.
+> 
+> This should have no run-time effect at this time as the current driver
+> implementations use the same initialisation squeuences for SoC-specific and
+> R-Car fallback bindings for all the cases covered by this patch-set.
+> 
+> Based on renesas-devel-20161212-v4.9
 
-To aid debugging and catch devices not supporting DMA to memory outside
-the 32-bit address space, add a kernel command line option
-"swiotlb=noforce", which disables the use of bounce buffers.
-If specified, trying to map memory that cannot be used with DMA will
-fail, and a rate-limited warning will be printed.
-
-Note that io_tlb_nslabs is set to 1, which is the minimal supported
-value.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Change kernel parameter value from "nobounce" to "noforce",
-  - Extend swiotlb_force enum instead of adding swiotlb_nobounce
-    variable (both requested by Konrad Wilk).
----
- Documentation/admin-guide/kernel-parameters.txt |  3 ++-
- include/linux/swiotlb.h                         |  1 +
- include/trace/events/swiotlb.h                  |  3 ++-
- lib/swiotlb.c                                   | 18 ++++++++++++++++--
- 4 files changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 21e2d88637050b7a..24fb691b2da5f78d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3811,10 +3811,11 @@
- 			it if 0 is given (See Documentation/cgroup-v1/memory.txt)
- 
- 	swiotlb=	[ARM,IA-64,PPC,MIPS,X86]
--			Format: { <int> | force }
-+			Format: { <int> | force | noforce }
- 			<int> -- Number of I/O TLB slabs
- 			force -- force using of bounce buffers even if they
- 			         wouldn't be automatically used by the kernel
-+			noforce -- Never use bounce buffers (for debugging)
- 
- 	switches=	[HW,M68k]
- 
-diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-index 71d104e4c8490763..d9c84a9cde3dd7d7 100644
---- a/include/linux/swiotlb.h
-+++ b/include/linux/swiotlb.h
-@@ -12,6 +12,7 @@
- enum swiotlb_force {
- 	SWIOTLB_NORMAL,		/* Default - depending on HW DMA mask etc. */
- 	SWIOTLB_FORCE,		/* swiotlb=force */
-+	SWIOTLB_NO_FORCE,	/* swiotlb=noforce */
- };
- 
- extern enum swiotlb_force swiotlb_force;
-diff --git a/include/trace/events/swiotlb.h b/include/trace/events/swiotlb.h
-index 5e2e30a7efce0ebd..288c0c54a2b4ace6 100644
---- a/include/trace/events/swiotlb.h
-+++ b/include/trace/events/swiotlb.h
-@@ -39,7 +39,8 @@
- 		__entry->size,
- 		__print_symbolic(__entry->swiotlb_force,
- 			{ SWIOTLB_NORMAL,	"NORMAL" },
--			{ SWIOTLB_FORCE,	"FORCE" }))
-+			{ SWIOTLB_FORCE,	"FORCE" },
-+			{ SWIOTLB_NO_FORCE,	"NO_FORCE" }))
- );
- 
- #endif /*  _TRACE_SWIOTLB_H */
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index a32dce6d5101f408..9def738af4f4e568 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -106,8 +106,12 @@
- 	}
- 	if (*str == ',')
- 		++str;
--	if (!strcmp(str, "force"))
-+	if (!strcmp(str, "force")) {
- 		swiotlb_force = SWIOTLB_FORCE;
-+	} else if (!strcmp(str, "noforce")) {
-+		swiotlb_force = SWIOTLB_NO_FORCE;
-+		io_tlb_nslabs = 1;
-+	}
- 
- 	return 0;
- }
-@@ -543,8 +547,15 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
- map_single(struct device *hwdev, phys_addr_t phys, size_t size,
- 	   enum dma_data_direction dir, unsigned long attrs)
- {
--	dma_addr_t start_dma_addr = phys_to_dma(hwdev, io_tlb_start);
-+	dma_addr_t start_dma_addr;
-+
-+	if (swiotlb_force == SWIOTLB_NO_FORCE) {
-+		dev_warn_ratelimited(hwdev, "Cannot do DMA to address %pa\n",
-+				     &phys);
-+		return SWIOTLB_MAP_ERROR;
-+	}
- 
-+	start_dma_addr = phys_to_dma(hwdev, io_tlb_start);
- 	return swiotlb_tbl_map_single(hwdev, start_dma_addr, phys, size,
- 				      dir, attrs);
- }
-@@ -721,6 +732,9 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
- swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
- 	     int do_panic)
- {
-+	if (swiotlb_force == SWIOTLB_NO_FORCE)
-+		return;
-+
- 	/*
- 	 * Ran out of IOMMU space for this operation. This is very bad.
- 	 * Unfortunately the drivers cannot handle this operation properly.
--- 
-1.9.1
+I have queued these up for v4.11.
