@@ -1,37 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47622 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751364AbcLAO0H (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 09:26:07 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/4] ARM, arm64: dts: Use usb-phy fallback bindings
-Date: Thu,  1 Dec 2016 15:25:50 +0100
-Message-Id: <1480602354-1446-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 03/29] drm: bridge: dw-hdmi: Remove unused function parameter
+Date: Tue, 20 Dec 2016 03:33:34 +0200
+Message-Id: <20161220013400.28317-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-this short series makes use of fallback bindings for Renesas R-Car PHY
-drivers in the DT of SoCs which already use those drivers.
+The 'prep' parameter passed to hdmi_phy_configure() is useless. It is
+hardcoded as 0, and if set, simply prevents the configure function from
+executing.
 
-Simon Horman (4):
-  ARM: dts: r8a7790: Use renesas,rcar-gen2-usb-phy fallback binding
-  ARM: dts: r8a7791: Use renesas,rcar-gen2-usb-phy fallback binding
-  ARM: dts: r8a7794: Use renesas,rcar-gen2-usb-phy fallback binding
-  arm64: dts: r8a7795: Use renesas,rcar-gen3-usb2-phy fallback binding
+Remove it.
 
- arch/arm/boot/dts/r8a7790.dtsi           | 3 ++-
- arch/arm/boot/dts/r8a7791.dtsi           | 3 ++-
- arch/arm/boot/dts/r8a7794.dtsi           | 3 ++-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 ++++++---
- 4 files changed, 12 insertions(+), 6 deletions(-)
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index f86894622070..5f8044a7d602 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -931,7 +931,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+ 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+ }
+ 
+-static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
++static int hdmi_phy_configure(struct dw_hdmi *hdmi,
+ 			      unsigned char res, int cscon)
+ {
+ 	unsigned res_idx;
+@@ -941,9 +941,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
+ 
+-	if (prep)
+-		return -EINVAL;
+-
+ 	switch (res) {
+ 	case 0:	/* color resolution 0 is 8 bit colour depth */
+ 	case 8:
+@@ -1072,7 +1069,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ 		dw_hdmi_phy_enable_powerdown(hdmi, true);
+ 
+ 		/* Enable CSC */
+-		ret = hdmi_phy_configure(hdmi, 0, 8, cscon);
++		ret = hdmi_phy_configure(hdmi, 8, cscon);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
