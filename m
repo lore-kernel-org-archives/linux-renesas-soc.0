@@ -1,79 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33357 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933563AbcLIMgW (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41393 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933063AbcLTBHi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 07:36:22 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 4/7] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
-Date: Fri,  9 Dec 2016 13:36:08 +0100
-Message-Id: <1481286971-16667-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1481286971-16667-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 19 Dec 2016 20:07:38 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] gpu: drm: rcar-du: rcar_du_drv: don't open code of_device_get_match_data()
+Date: Tue, 20 Dec 2016 03:08:05 +0200
+Message-ID: <2560269.bN5qXdpXVS@avalon>
+In-Reply-To: <1456850269-8290-1-git-send-email-wsa@the-dreams.de>
+References: <1456850269-8290-1-git-send-email-wsa@the-dreams.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/sh-sci.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi Wolfram,
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 844288f..ce3cf03 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -141,6 +141,7 @@ struct sci_port {
- 	struct timer_list		rx_timer;
- 	unsigned int			rx_timeout;
- #endif
-+	int				rx_trigger;
- 
- 	bool autorts;
- };
-@@ -2204,6 +2205,7 @@ static void sci_reset(struct uart_port *port)
- {
- 	const struct plat_sci_reg *reg;
- 	unsigned int status;
-+	struct sci_port *s = to_sci_port(port);
- 
- 	do {
- 		status = serial_port_in(port, SCxSR);
-@@ -2223,6 +2225,9 @@ static void sci_reset(struct uart_port *port)
- 		status &= ~(SCLSR_TO | SCLSR_ORER);
- 		serial_port_out(port, SCLSR, status);
- 	}
-+
-+	if (s->rx_trigger > 1)
-+		scif_set_rtrg(port, s->rx_trigger);
- }
- 
- static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
-@@ -2729,6 +2734,7 @@ static int sci_init_single(struct platform_device *dev,
- 		sci_port->overrun_reg = SCLSR;
- 		sci_port->overrun_mask = SCLSR_ORER;
- 		sci_port->sampling_rate_mask = SCI_SR_RANGE(8, 32);
-+		sci_port->rx_trigger = 64;
- 		break;
- 	case PORT_SCIFA:
- 		port->fifosize = 64;
-@@ -2747,12 +2753,14 @@ static int sci_init_single(struct platform_device *dev,
- 			sci_port->overrun_mask = SCLSR_ORER;
- 			sci_port->sampling_rate_mask = SCI_SR(32);
- 		}
-+		sci_port->rx_trigger = 8;
- 		break;
- 	default:
- 		port->fifosize = 1;
- 		sci_port->overrun_reg = SCxSR;
- 		sci_port->overrun_mask = SCI_ORER;
- 		sci_port->sampling_rate_mask = SCI_SR(32);
-+		sci_port->rx_trigger = 1;
- 		break;
- 	}
- 
+Thank you for the patch. It looks like I've missed it, sorry about that.
+
+On Tuesday 01 March 2016 17:37:34 Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> This change will also make Coverity happy by avoiding a theoretical NULL
+> pointer dereference; yet another reason is to use the above helper function
+> to tighten the code and make it more readable.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and taken in my tree.
+
+> ---
+> 
+> Compile tested only. I am on the road and can't test the multimedia drivers
+> because of no cables :( If someone could test it, that would be much
+> appreciated. Or I'll do it next week. The pattern worked for other drivers
+> I could actually test, though.
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index
+> ed6006bf6bd893..ac95509e80bb7c 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -318,7 +318,7 @@ static int rcar_du_probe(struct platform_device *pdev)
+>  	init_waitqueue_head(&rcdu->commit.wait);
+> 
+>  	rcdu->dev = &pdev->dev;
+> -	rcdu->info = of_match_device(rcar_du_of_table, rcdu->dev)->data;
+> +	rcdu->info = of_device_get_match_data(rcdu->dev);
+> 
+>  	ddev = drm_dev_alloc(&rcar_du_driver, &pdev->dev);
+>  	if (!ddev)
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
