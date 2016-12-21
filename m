@@ -1,53 +1,112 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34614 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750851AbcLHPbA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 10:31:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH renesas/devel] arm64: dts: r8a7795: Use Gen 3 fallback compat string for PCIE
-Date: Thu,  8 Dec 2016 16:29:29 +0100
-Message-Id: <1481210969-2574-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v2 2/7] dt-bindings: media: Add MAX2175 binding description
+Date: Wed, 21 Dec 2016 08:10:33 +0000
+Message-Id: <1482307838-47415-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added en 3 fallback compat string for PCIE
-in r8a7795 DT.
+Add device tree binding documentation for MAX2175 Rf to bits tuner
+device.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-Based on renesas-devel-20161207-v4.9-rc8
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/media/i2c/max2175.txt      | 61 ++++++++++++++++++++++
+ .../devicetree/bindings/property-units.txt         |  1 +
+ 2 files changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 598bec1629cf..e8718e7d8d97 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1259,7 +1259,8 @@
- 		};
+diff --git a/Documentation/devicetree/bindings/media/i2c/max2175.txt b/Documentation/devicetree/bindings/media/i2c/max2175.txt
+new file mode 100644
+index 0000000..f591ab4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/max2175.txt
+@@ -0,0 +1,61 @@
++Maxim Integrated MAX2175 RF to Bits tuner
++-----------------------------------------
++
++The MAX2175 IC is an advanced analog/digital hybrid-radio receiver with
++RF to Bits® front-end designed for software-defined radio solutions.
++
++Required properties:
++--------------------
++- compatible: "maxim,max2175" for MAX2175 RF-to-bits tuner.
++- clocks: phandle to the fixed xtal clock.
++- clock-names: name of the fixed xtal clock.
++- port: child port node of a tuner that defines the local and remote
++  endpoints. The remote endpoint is assumed to be an SDR device
++  that is capable of receiving the digital samples from the tuner.
++
++Optional properties:
++--------------------
++- maxim,slave	      : phandle to the master tuner if it is a slave. This
++			is used to define two tuners in diversity mode
++			(1 master, 1 slave). By default each tuner is an
++			individual master.
++- maxim,refout-load-pF: load capacitance value (in pF) on reference
++			output drive level. The possible load values are
++			 0 (default - refout disabled)
++			10
++			20
++			30
++			40
++			60
++			70
++- maxim,am-hiz	      : empty property indicates AM Hi-Z filter path is
++			selected for AM antenna input. By default this
++			filter path is not used.
++
++Example:
++--------
++
++Board specific DTS file
++
++/* Fixed XTAL clock node */
++maxim_xtal: clock {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <36864000>;
++};
++
++/* A tuner device instance under i2c bus */
++max2175_0: tuner@60 {
++	compatible = "maxim,max2175";
++	reg = <0x60>;
++	clocks = <&maxim_xtal>;
++	clock-names = "xtal";
++	maxim,refout-load-pF = <10>;
++
++	port {
++		max2175_0_ep: endpoint {
++			remote-endpoint = <&slave_rx_device>;
++		};
++	};
++
++};
+diff --git a/Documentation/devicetree/bindings/property-units.txt b/Documentation/devicetree/bindings/property-units.txt
+index 12278d7..f1f1c22 100644
+--- a/Documentation/devicetree/bindings/property-units.txt
++++ b/Documentation/devicetree/bindings/property-units.txt
+@@ -28,6 +28,7 @@ Electricity
+ -ohms		: Ohms
+ -micro-ohms	: micro Ohms
+ -microvolt	: micro volts
++-pF		: pico farads
  
- 		pciec0: pcie@fe000000 {
--			compatible = "renesas,pcie-r8a7795";
-+			compatible = "renesas,pcie-r8a7795",
-+				     "renesas,pcie-rcar-gen3";
- 			reg = <0 0xfe000000 0 0x80000>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
-@@ -1284,7 +1285,8 @@
- 		};
- 
- 		pciec1: pcie@ee800000 {
--			compatible = "renesas,pcie-r8a7795";
-+			compatible = "renesas,pcie-r8a7795",
-+				     "renesas,pcie-rcar-gen3";
- 			reg = <0 0xee800000 0 0x80000>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
+ Temperature
+ ----------------------------------------
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
+
