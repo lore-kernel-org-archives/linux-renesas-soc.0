@@ -1,50 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:37771 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934166AbcLUPc7 (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36180 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750738AbcLUHD3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Dec 2016 10:32:59 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 21 Dec 2016 02:03:29 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161220225552.GE5423@codeaurora.org>
+References: <20161215170027.28411-1-chris.brandt@renesas.com>
+ <CAMuHMdXxiH5ryerpCnDirOXf=b-Gw5R8gJrj4Kk8NmM_3FYBqw@mail.gmail.com> <20161220225552.GE5423@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Dec 2016 08:03:28 +0100
+Message-ID: <CAMuHMdWR7NE4zkN6eyR9=OZT6Bh63QtRmsnd-Xeoc4+7xaLJQg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for r7s72100
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for
- r7s72100
-Date: Wed, 21 Dec 2016 15:32:52 +0000
-Message-ID: <SG2PR06MB116559EE20D18336D26392D38A930@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20161215170027.28411-1-chris.brandt@renesas.com>
- <CAMuHMdXxiH5ryerpCnDirOXf=b-Gw5R8gJrj4Kk8NmM_3FYBqw@mail.gmail.com>
- <20161220225552.GE5423@codeaurora.org>
- <CAMuHMdWR7NE4zkN6eyR9=OZT6Bh63QtRmsnd-Xeoc4+7xaLJQg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWR7NE4zkN6eyR9=OZT6Bh63QtRmsnd-Xeoc4+7xaLJQg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gRGVjZW1iZXIgMjEsIDIwMTYsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPj4gTWlr
-ZS9TdGVwaGVuOiBhcyB0aGlzIGlzIGEgZml4IGZvciBzdGFibGUgKHYzLjE2KyksIGNhbiB5b3Ug
-cGxlYXNlDQo+ID4+IHRha2UgaXQgZGlyZWN0bHk/DQo+ID4NCj4gPiBTdXJlLCBpcyBpdCBhIGZp
-eCBmb3Igc29tZXRoaW5nIHRoYXQgaGFzIGJlZW4gZXhwb3NlZCBhcyBhIHByb2JsZW0gaW4NCj4g
-PiB0aGlzIG1lcmdlIHdpbmRvdz8gSnVzdCB0cnlpbmcgdG8gZ2F1Z2UgdGhlIHVyZ2VuY3kgb2Yg
-bWVyZ2luZyB0aGlzLg0KPiANCj4gTm8sIEkgZG9uJ3QgdGhpbmsgaXQgaGFzIGJlZW4gZXhwb3Nl
-ZCBieSBjaGFuZ2VzIGluIHRoaXMgbWVyZ2Ugd2luZG93ICh0aGUNCj4gb25seSBSWi9BMSBjaGFu
-Z2VzIHdlcmUgdGhlIGVuYWJsZW1lbnQgb2YgU0RISSBhbmQgTU1DKS4NCj4gQ2hyaXMsIGNhbiB5
-b3UgcGxlYXNlIGNvbmZpcm0/DQoNClRoYXQncyBjb3JyZWN0LiBJbiByZWFsaXR5LCBub25lIG9m
-IHRoZSBleGlzdGluZyBSWi9BMSBkcml2ZXJzIGluIHRoZSBrZXJuZWwNCnNob3VsZCBoYXZlIGV2
-ZXIgd29ya2VkIChFVEgsIFNQSSwgSTJDLCBNVFUyLCBldGMuLi4pIGJlY2F1c2Ugb24gY2hpcCBy
-ZXNldA0KYWxsIHRoZSBwZXJpcGhlcmFsIGNsb2NrcyBhcmUgdHVybmVkIG9mZi4NCg0KSG93ZXZl
-ci4uLmxpa2UgR2VlcnQgbWVudGlvbmVkLi4udGhlIGJvb3QgbG9hZGVyIHdhcyB0dXJuaW5nIGV2
-ZXJ5dGhpbmcgb24NCnNob3J0bHkgYWZ0ZXIgcmVzZXQgc28gZXZlbiB0aG91Z2ggdGhlIGNsb2Nr
-IGRyaXZlciBuZXZlciB3b3JrZWQsIGl0IG1hZGUNCml0IHNlZW1zIHNvLiBPb3BzLg0KDQpPZiBj
-b3Vyc2Ugbm93IGdvaW5nIGZvcndhcmQsIEkgdXNlIGEgbW9kaWZpZWQgYm9vdCBsb2FkZXIgdG8g
-dHVybiBldmVyeXRoaW5nDQpiYWNrIG9mZiAoZXhjZXB0IHRoZSBzZXJpYWwgY29uc29sZSkgc28g
-SSBjYW4gY29uZmlybSB0aGF0IGNsb2NrIGdhdGluZyBpcw0KcmVhbGx5IHdvcmtpbmcuDQoNCg0K
-Q2hyaXMNCg==
+Hi Stephen,
+
+On Tue, Dec 20, 2016 at 11:55 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 12/19, Geert Uytterhoeven wrote:
+>> On Thu, Dec 15, 2016 at 6:00 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+>> > The RZ/A1 is different than the other Renesas SOCs because the MSTP
+>> > registers are 8-bit instead of 32-bit and if you try writing values as
+>> > 32-bit nothing happens...meaning this driver never worked for r7s72100.
+>>
+>> Thanks for your patch!
+>>
+>> The only reason it ever worked was that almost all module clocks are
+>> enabled at boot time...
+>>
+>> > Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+>> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> Mike/Stephen: as this is a fix for stable (v3.16+), can you please take it
+>> directly?
+>
+> Sure, is it a fix for something that has been exposed as a
+> problem in this merge window? Just trying to gauge the urgency of
+> merging this.
+
+No, I don't think it has been exposed by changes in this merge window
+(the only RZ/A1 changes were the enablement of SDHI and MMC).
+Chris, can you please confirm?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
