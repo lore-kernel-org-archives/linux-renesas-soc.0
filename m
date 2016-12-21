@@ -1,63 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:36704 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758551AbcLUXDs (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:37771 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934166AbcLUPc7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Dec 2016 18:03:48 -0500
-Date: Wed, 21 Dec 2016 14:53:44 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 21 Dec 2016 10:32:59 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for
+Subject: RE: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for
  r7s72100
-Message-ID: <20161221225344.GI5423@codeaurora.org>
+Date: Wed, 21 Dec 2016 15:32:52 +0000
+Message-ID: <SG2PR06MB116559EE20D18336D26392D38A930@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20161215170027.28411-1-chris.brandt@renesas.com>
  <CAMuHMdXxiH5ryerpCnDirOXf=b-Gw5R8gJrj4Kk8NmM_3FYBqw@mail.gmail.com>
  <20161220225552.GE5423@codeaurora.org>
  <CAMuHMdWR7NE4zkN6eyR9=OZT6Bh63QtRmsnd-Xeoc4+7xaLJQg@mail.gmail.com>
- <SG2PR06MB116559EE20D18336D26392D38A930@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <CAMuHMdWR7NE4zkN6eyR9=OZT6Bh63QtRmsnd-Xeoc4+7xaLJQg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB116559EE20D18336D26392D38A930@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/21, Chris Brandt wrote:
-> On December 21, 2016, Geert Uytterhoeven wrote:
-> > >> Mike/Stephen: as this is a fix for stable (v3.16+), can you please
-> > >> take it directly?
-> > >
-> > > Sure, is it a fix for something that has been exposed as a problem in
-> > > this merge window? Just trying to gauge the urgency of merging this.
-> > 
-> > No, I don't think it has been exposed by changes in this merge window (the
-> > only RZ/A1 changes were the enablement of SDHI and MMC).
-> > Chris, can you please confirm?
-> 
-> That's correct. In reality, none of the existing RZ/A1 drivers in the kernel
-> should have ever worked (ETH, SPI, I2C, MTU2, etc...) because on chip reset
-> all the peripheral clocks are turned off.
-> 
-> However...like Geert mentioned...the boot loader was turning everything on
-> shortly after reset so even though the clock driver never worked, it made
-> it seems so. Oops.
-> 
-> Of course now going forward, I use a modified boot loader to turn everything
-> back off (except the serial console) so I can confirm that clock gating is
-> really working.
-> 
-
-Ok, it seems like a more urgent fix due to the fact that the
-bootloader update has caused the drivers to stop working. I'll
-make sure to send it as a fix this release cycle.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+T24gRGVjZW1iZXIgMjEsIDIwMTYsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPj4gTWlr
+ZS9TdGVwaGVuOiBhcyB0aGlzIGlzIGEgZml4IGZvciBzdGFibGUgKHYzLjE2KyksIGNhbiB5b3Ug
+cGxlYXNlDQo+ID4+IHRha2UgaXQgZGlyZWN0bHk/DQo+ID4NCj4gPiBTdXJlLCBpcyBpdCBhIGZp
+eCBmb3Igc29tZXRoaW5nIHRoYXQgaGFzIGJlZW4gZXhwb3NlZCBhcyBhIHByb2JsZW0gaW4NCj4g
+PiB0aGlzIG1lcmdlIHdpbmRvdz8gSnVzdCB0cnlpbmcgdG8gZ2F1Z2UgdGhlIHVyZ2VuY3kgb2Yg
+bWVyZ2luZyB0aGlzLg0KPiANCj4gTm8sIEkgZG9uJ3QgdGhpbmsgaXQgaGFzIGJlZW4gZXhwb3Nl
+ZCBieSBjaGFuZ2VzIGluIHRoaXMgbWVyZ2Ugd2luZG93ICh0aGUNCj4gb25seSBSWi9BMSBjaGFu
+Z2VzIHdlcmUgdGhlIGVuYWJsZW1lbnQgb2YgU0RISSBhbmQgTU1DKS4NCj4gQ2hyaXMsIGNhbiB5
+b3UgcGxlYXNlIGNvbmZpcm0/DQoNClRoYXQncyBjb3JyZWN0LiBJbiByZWFsaXR5LCBub25lIG9m
+IHRoZSBleGlzdGluZyBSWi9BMSBkcml2ZXJzIGluIHRoZSBrZXJuZWwNCnNob3VsZCBoYXZlIGV2
+ZXIgd29ya2VkIChFVEgsIFNQSSwgSTJDLCBNVFUyLCBldGMuLi4pIGJlY2F1c2Ugb24gY2hpcCBy
+ZXNldA0KYWxsIHRoZSBwZXJpcGhlcmFsIGNsb2NrcyBhcmUgdHVybmVkIG9mZi4NCg0KSG93ZXZl
+ci4uLmxpa2UgR2VlcnQgbWVudGlvbmVkLi4udGhlIGJvb3QgbG9hZGVyIHdhcyB0dXJuaW5nIGV2
+ZXJ5dGhpbmcgb24NCnNob3J0bHkgYWZ0ZXIgcmVzZXQgc28gZXZlbiB0aG91Z2ggdGhlIGNsb2Nr
+IGRyaXZlciBuZXZlciB3b3JrZWQsIGl0IG1hZGUNCml0IHNlZW1zIHNvLiBPb3BzLg0KDQpPZiBj
+b3Vyc2Ugbm93IGdvaW5nIGZvcndhcmQsIEkgdXNlIGEgbW9kaWZpZWQgYm9vdCBsb2FkZXIgdG8g
+dHVybiBldmVyeXRoaW5nDQpiYWNrIG9mZiAoZXhjZXB0IHRoZSBzZXJpYWwgY29uc29sZSkgc28g
+SSBjYW4gY29uZmlybSB0aGF0IGNsb2NrIGdhdGluZyBpcw0KcmVhbGx5IHdvcmtpbmcuDQoNCg0K
+Q2hyaXMNCg==
