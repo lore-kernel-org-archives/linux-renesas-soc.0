@@ -1,194 +1,93 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 0/7] Add V4L2 SDR (DRIF & MAX2175) driver
-Date: Wed, 21 Dec 2016 08:10:31 +0000
-Message-Id: <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [RFC/PATCH] linux/kernel.h: Fix DIV_ROUND_CLOSEST to support
+ negative divisors
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20161222102217.29011-1-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <a79e35da-a39c-46e4-8bb5-58136374a594@roeck-us.net>
+Date: Thu, 22 Dec 2016 06:48:32 -0800
+MIME-Version: 1.0
+In-Reply-To: <20161222102217.29011-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set contains two drivers
- - Renesas R-Car Digital Radio Interface (DRIF) driver
- - Maxim's MAX2175 RF to Bits tuner driver
+On 12/22/2016 02:22 AM, Niklas Söderlund wrote:
+> Add support to DIV_ROUND_CLOSEST for negative divisors if both dividend
+> and divisor variable types are signed. This should not alter current
+> behavior for users of the macro as previously negative divisors where
+> not supported.
+>
+> Before:
+>
+> DIV_ROUND_CLOSEST(  59,  4) =  15
+> DIV_ROUND_CLOSEST(  59, -4) = -14
+> DIV_ROUND_CLOSEST( -59,  4) = -15
+> DIV_ROUND_CLOSEST( -59, -4) =  14
+>
+> After:
+>
+> DIV_ROUND_CLOSEST(  59,  4) =  15
+> DIV_ROUND_CLOSEST(  59, -4) = -15
+> DIV_ROUND_CLOSEST( -59,  4) = -15
+> DIV_ROUND_CLOSEST( -59, -4) =  15
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>
+> Hi,
+>
+> While working on a thermal driver I encounter a scenario where the
+> divisor could be negative, instead of adding local code to handle this I
+> though I first try to add support for this in DIV_ROUND_CLOSEST.
+>
+> Maybe there is a reason why this is not already supported? If so please
+> let me know and I can do something locally in the driver and sorry for
+> the noise.
+>
 
-These patches were based on top of media-next repo
-commit: 65390ea01ce678379da32b01f39fcfac4903f256
+Only reason is that I could not figure out a way to make it work.
+LGTM except for nitpick.
 
-These two drivers combined together expose a V4L2 SDR device that is compliant
-with the V4L2 framework [1]. Agreed review comments are incorporated in this
-series.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-The rcar_drif device is modelled using "renesas,bonding" property. The
-discussion on this property is available here [2].
+>  include/linux/kernel.h | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> index bc6ed52a39b9..f1b2f7e1b2f0 100644
+> --- a/include/linux/kernel.h
+> +++ b/include/linux/kernel.h
+> @@ -95,16 +95,18 @@
+>  )
+>
+>  /*
+> - * Divide positive or negative dividend by positive divisor and round
+> - * to closest integer. Result is undefined for negative divisors and
+> - * for negative dividends if the divisor variable type is unsigned.
+> + * Divide positive or negative dividend by positive or negative divisor
+> + * and round to closest integer. Result is undefined for negative
+> + * divisors if dividends variable type is unsigned and for negative
 
-Change history:
+s/dividends/the dividend/
 
-v1 -> v2:
- - SDR formats renamed as "planar" instead of sliced (Hans)
- - Documentation formatting correction (Laurent)
-
- rcar_drif:
- - DT model using "bonding" property
- - Addressed Laurent's coments on bindings - DT optional parameters rename & rework
- - Addressed Han's comments on driver
- - Addressed Geert's comments on DT
-
- max2175:
- - Avoided scaling using method proposed by Antti. Thanks
- - Bindings is a separate patch (Rob)
- - Addressed Rob's comment on bindings
- - Added Custom controls documentation (Laurent)
-
-Ramesh Shanmugasundaram (7):
-  media: v4l2-ctrls: Reserve controls for MAX217X
-  dt-bindings: media: Add MAX2175 binding description
-  media: i2c: max2175: Add MAX2175 support
-  media: Add new SDR formats PC16, PC18 & PC20
-  doc_rst: media: New SDR formats PC16, PC18 & PC20
-  dt-bindings: media: Add Renesas R-Car DRIF binding
-  media: platform: rcar_drif: Add DRIF support
-
-[1] v4l2-compliance report:
-
-root@salvator-x:~# v4l2-compliance -S /dev/swradio0
-v4l2-compliance SHA   : 188e604d57bec065078ff772c802b93ddb6def4b
-
-Driver Info:
-        Driver name   : rcar_drif
-        Card type     : R-Car DRIF
-        Bus info      : platform:R-Car DRIF
-        Driver version: 4.9.0
-        Capabilities  : 0x85310000
-                SDR Capture
-                Tuner
-                Read/Write
-                Streaming
-                Extended Pix Format
-                Device Capabilities
-        Device Caps   : 0x05310000
-                SDR Capture
-                Tuner
-                Read/Write
-                Streaming
-                Extended Pix Format
-
-Compliance test for device /dev/swradio0 (not using libv4l2):
-
-Required ioctls:
-        test VIDIOC_QUERYCAP: OK
-
-Allow for multiple opens:
-        test second sdr open: OK
-        test VIDIOC_QUERYCAP: OK
-        test VIDIOC_G/S_PRIORITY: OK
-        test for unlimited opens: OK
-
-Debug ioctls:
-        test VIDIOC_DBG_G/S_REGISTER: OK
-        test VIDIOC_LOG_STATUS: OK
-
-Input ioctls:
-        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK
-        test VIDIOC_G/S_FREQUENCY: OK
-        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-        test VIDIOC_ENUMAUDIO: OK (Not Supported)
-        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDIO: OK (Not Supported)
-        Inputs: 0 Audio Inputs: 0 Tuners: 1
-
-Output ioctls:
-        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK
-        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-        Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Input/Output configuration ioctls:
-        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-        test VIDIOC_G/S_EDID: OK (Not Supported)
-
-        Control ioctls:
-                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-                test VIDIOC_QUERYCTRL: OK
-                test VIDIOC_G/S_CTRL: OK
-                test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
-                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-                Standard Controls: 5 Private Controls: 3
-
-        Format ioctls:
-                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-                test VIDIOC_G/S_PARM: OK (Not Supported)
-                test VIDIOC_G_FBUF: OK (Not Supported)
-                test VIDIOC_G_FMT: OK
-                test VIDIOC_TRY_FMT: OK
-                test VIDIOC_S_FMT: OK
-                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-                test Cropping: OK (Not Supported)
-                test Composing: OK (Not Supported)
-                test Scaling: OK (Not Supported)
-
-        Codec ioctls:
-                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-
-        Buffer ioctls:
-                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-                test VIDIOC_EXPBUF: OK (Not Supported)
-
-Test input 0:
-
-
-Total: 43, Succeeded: 43, Failed: 0, Warnings: 0
-root@salvator-x:~#
-
-[2] "bonding" DT property discussion (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg09415.html)
-
- .../devicetree/bindings/media/i2c/max2175.txt      |   61 +
- .../devicetree/bindings/media/renesas,drif.txt     |  202 +++
- .../devicetree/bindings/property-units.txt         |    1 +
- .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          |   55 +
- .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          |   55 +
- .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          |   55 +
- Documentation/media/uapi/v4l/sdr-formats.rst       |    3 +
- Documentation/media/v4l-drivers/index.rst          |    1 +
- Documentation/media/v4l-drivers/max2175.rst        |   60 +
- drivers/media/i2c/Kconfig                          |    4 +
- drivers/media/i2c/Makefile                         |    2 +
- drivers/media/i2c/max2175/Kconfig                  |    8 +
- drivers/media/i2c/max2175/Makefile                 |    4 +
- drivers/media/i2c/max2175/max2175.c                | 1438 ++++++++++++++++++
- drivers/media/i2c/max2175/max2175.h                |  108 ++
- drivers/media/platform/Kconfig                     |   25 +
- drivers/media/platform/Makefile                    |    1 +
- drivers/media/platform/rcar_drif.c                 | 1593 ++++++++++++++++++++
- drivers/media/v4l2-core/v4l2-ioctl.c               |    3 +
- include/uapi/linux/v4l2-controls.h                 |    5 +
- include/uapi/linux/videodev2.h                     |    3 +
- 21 files changed, 3687 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
- create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
- create mode 100644 Documentation/media/v4l-drivers/max2175.rst
- create mode 100644 drivers/media/i2c/max2175/Kconfig
- create mode 100644 drivers/media/i2c/max2175/Makefile
- create mode 100644 drivers/media/i2c/max2175/max2175.c
- create mode 100644 drivers/media/i2c/max2175/max2175.h
- create mode 100644 drivers/media/platform/rcar_drif.c
-
--- 
-1.9.1
-
+> + * dividends if the divisor variable type is unsigned.
+>   */
+>  #define DIV_ROUND_CLOSEST(x, divisor)(			\
+>  {							\
+>  	typeof(x) __x = x;				\
+>  	typeof(divisor) __d = divisor;			\
+>  	(((typeof(x))-1) > 0 ||				\
+> -	 ((typeof(divisor))-1) > 0 || (__x) > 0) ?	\
+> +	 ((typeof(divisor))-1) > 0 ||			\
+> +	 (((__x) > 0) == ((__d) > 0))) ?		\
+>  		(((__x) + ((__d) / 2)) / (__d)) :	\
+>  		(((__x) - ((__d) / 2)) / (__d));	\
+>  }							\
+>
