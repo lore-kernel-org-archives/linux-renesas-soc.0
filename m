@@ -1,111 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33198 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932836AbcLSC0p (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34065 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965015AbcLVTFH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Dec 2016 21:26:45 -0500
-Received: by mail-pg0-f68.google.com with SMTP id g1so4974530pgn.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Dec 2016 18:26:44 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Mon, 19 Dec 2016 11:19:50 +0900
-Message-Id: <148211399048.8020.7153630286323992170.sendpatchset@little-apple>
-In-Reply-To: <148211397261.8020.4659661835061990009.sendpatchset@little-apple>
-References: <148211397261.8020.4659661835061990009.sendpatchset@little-apple>
-Subject: [PATCH v2 02/02] arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
+        Thu, 22 Dec 2016 14:05:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <11494368.ZdobxT7gGY@avalon>
+References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1482307838-47415-7-git-send-email-ramesh.shanmugasundaram@bp.renesas.com> <11494368.ZdobxT7gGY@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Dec 2016 20:05:05 +0100
+Message-ID: <CAMuHMdXj-xBrnBXfYu6BeXr7Gfv4wogH4z610Ddq-BSyVS=-8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] dt-bindings: media: Add Renesas R-Car DRIF binding
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Laurent,
 
-Hook up r8a7795 DMAC nodes to IPMMU-MP1, IPMMU-DS0 and IPMMU-DS1.
+On Thu, Dec 22, 2016 at 6:05 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wednesday 21 Dec 2016 08:10:37 Ramesh Shanmugasundaram wrote:
+>> Add binding documentation for Renesas R-Car Digital Radio Interface
+>> (DRIF) controller.
+>>
+>> Signed-off-by: Ramesh Shanmugasundaram
+>> <ramesh.shanmugasundaram@bp.renesas.com> ---
+>>  .../devicetree/bindings/media/renesas,drif.txt     | 202 ++++++++++++++++++
+>>  1 file changed, 202 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt
+>> b/Documentation/devicetree/bindings/media/renesas,drif.txt new file mode
+>> 100644
+>> index 0000000..1f3feaf
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+>> +Optional properties of an internal channel when:
+>> +     - It is the only enabled channel of the bond (or)
+>> +     - If it acts as primary among enabled bonds
+>> +--------------------------------------------------------
+>> +- renesas,syncmd       : sync mode
+>> +                      0 (Frame start sync pulse mode. 1-bit width pulse
+>> +                         indicates start of a frame)
+>> +                      1 (L/R sync or I2S mode) (default)
+>> +- renesas,lsb-first    : empty property indicates lsb bit is received
+>> first.
+>> +                      When not defined msb bit is received first (default)
+>> +- renesas,syncac-active: Indicates sync signal polarity, 0/1 for low/high
+>> +                      respectively. The default is 1 (active high)
+>> +- renesas,dtdl         : delay between sync signal and start of reception.
+>> +                      The possible values are represented in 0.5 clock
+>> +                      cycle units and the range is 0 to 4. The default
+>> +                      value is 2 (i.e.) 1 clock cycle delay.
+>> +- renesas,syncdl       : delay between end of reception and sync signal
+>> edge.
+>> +                      The possible values are represented in 0.5 clock
+>> +                      cycle units and the range is 0 to 4 & 6. The default
+>> +                      value is 0 (i.e.) no delay.
+>
+> Most of these properties are pretty similar to the video bus properties
+> defined at the endpoint level in
+> Documentation/devicetree/bindings/media/video-interfaces.txt. I believe it
+> would make sense to use OF graph and try to standardize these properties
+> similarly.
 
- Changes from V1:
- - None
+Note that the last two properties match the those in
+Documentation/devicetree/bindings/spi/sh-msiof.txt.
+We may want to use one DRIF channel as a plain SPI slave with the
+(modified) MSIOF driver in the future.
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |   40 ++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Gr{oetje,eeting}s,
 
---- 0002/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-12-19 11:03:23.310607110 +0900
-@@ -368,6 +368,14 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp1 0>, <&ipmmu_mp1 1>,
-+			       <&ipmmu_mp1 2>, <&ipmmu_mp1 3>,
-+			       <&ipmmu_mp1 4>, <&ipmmu_mp1 5>,
-+			       <&ipmmu_mp1 6>, <&ipmmu_mp1 7>,
-+			       <&ipmmu_mp1 8>, <&ipmmu_mp1 9>,
-+			       <&ipmmu_mp1 10>, <&ipmmu_mp1 11>,
-+			       <&ipmmu_mp1 12>, <&ipmmu_mp1 13>,
-+			       <&ipmmu_mp1 14>, <&ipmmu_mp1 15>;
- 		};
- 
- 		audma1: dma-controller@ec720000 {
-@@ -401,6 +409,14 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp1 16>, <&ipmmu_mp1 17>,
-+			       <&ipmmu_mp1 18>, <&ipmmu_mp1 19>,
-+			       <&ipmmu_mp1 20>, <&ipmmu_mp1 21>,
-+			       <&ipmmu_mp1 22>, <&ipmmu_mp1 23>,
-+			       <&ipmmu_mp1 24>, <&ipmmu_mp1 25>,
-+			       <&ipmmu_mp1 26>, <&ipmmu_mp1 27>,
-+			       <&ipmmu_mp1 28>, <&ipmmu_mp1 29>,
-+			       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
- 		};
- 
- 		pfc: pfc@e6060000 {
-@@ -567,6 +583,14 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
- 		};
- 
- 		dmac1: dma-controller@e7300000 {
-@@ -600,6 +624,14 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -633,6 +665,14 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 		};
- 
- 		avb: ethernet@e6800000 {
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
