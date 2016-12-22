@@ -1,83 +1,104 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56560 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761571AbcLVKlB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Dec 2016 05:41:01 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hien Dang <hien.dang.eb@renesas.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [RFC/PATCH] linux/kernel.h: Fix DIV_ROUND_CLOSEST to support negative divisors
-Date: Thu, 22 Dec 2016 11:22:17 +0100
-Message-Id: <20161222102217.29011-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv6 1/4] thermal: rcar_gen3_thermal: Document the R-Car Gen3
+Date: Thu, 22 Dec 2016 11:38:20 +0100
+Message-Id: <20161222103823.8300-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20161222103823.8300-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20161222103823.8300-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support to DIV_ROUND_CLOSEST for negative divisors if both dividend
-and divisor variable types are signed. This should not alter current
-behavior for users of the macro as previously negative divisors where
-not supported.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Before:
-
-DIV_ROUND_CLOSEST(  59,  4) =  15
-DIV_ROUND_CLOSEST(  59, -4) = -14
-DIV_ROUND_CLOSEST( -59,  4) = -15
-DIV_ROUND_CLOSEST( -59, -4) =  14
-
-After:
-
-DIV_ROUND_CLOSEST(  59,  4) =  15
-DIV_ROUND_CLOSEST(  59, -4) = -15
-DIV_ROUND_CLOSEST( -59,  4) = -15
-DIV_ROUND_CLOSEST( -59, -4) =  15
-
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ .../bindings/thermal/rcar-gen3-thermal.txt         | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
 
-Hi,
-
-While working on a thermal driver I encounter a scenario where the 
-divisor could be negative, instead of adding local code to handle this I 
-though I first try to add support for this in DIV_ROUND_CLOSEST.
-
-Maybe there is a reason why this is not already supported? If so please 
-let me know and I can do something locally in the driver and sorry for 
-the noise.
-
- include/linux/kernel.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index bc6ed52a39b9..f1b2f7e1b2f0 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -95,16 +95,18 @@
- )
- 
- /*
-- * Divide positive or negative dividend by positive divisor and round
-- * to closest integer. Result is undefined for negative divisors and
-- * for negative dividends if the divisor variable type is unsigned.
-+ * Divide positive or negative dividend by positive or negative divisor
-+ * and round to closest integer. Result is undefined for negative
-+ * divisors if dividends variable type is unsigned and for negative
-+ * dividends if the divisor variable type is unsigned.
-  */
- #define DIV_ROUND_CLOSEST(x, divisor)(			\
- {							\
- 	typeof(x) __x = x;				\
- 	typeof(divisor) __d = divisor;			\
- 	(((typeof(x))-1) > 0 ||				\
--	 ((typeof(divisor))-1) > 0 || (__x) > 0) ?	\
-+	 ((typeof(divisor))-1) > 0 ||			\
-+	 (((__x) > 0) == ((__d) > 0))) ?		\
- 		(((__x) + ((__d) / 2)) / (__d)) :	\
- 		(((__x) - ((__d) / 2)) / (__d));	\
- }							\
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+new file mode 100644
+index 000000000000..07a9713ae6a7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+@@ -0,0 +1,56 @@
++* DT bindings for Renesas R-Car Gen3 Thermal Sensor driver
++
++On R-Car Gen3 SoCs, the thermal sensor controllers (TSC) control the thermal
++sensors (THS) which are the analog circuits for measuring temperature (Tj)
++inside the LSI.
++
++Required properties:
++- compatible		: "renesas,<soctype>-thermal",
++			  Examples with soctypes are:
++			    - "renesas,r8a7795-thermal" (R-Car H3)
++			    - "renesas,r8a7796-thermal" (R-Car M3-W)
++- reg			: Address ranges of the thermal registers. Each sensor
++			  needs one address range. Sorting must be done in
++			  increasing order according to datasheet, i.e.
++			  TSC1, TSC2, ...
++- clocks		: Must contain a reference to the functional clock.
++- #thermal-sensor-cells : must be <1>.
++
++Optional properties:
++
++- interrupts           : interrupts routed to the TSC (3 for H3 and M3-W)
++- power-domain		: Must contain a reference to the power domain. This
++			  property is mandatory if the thermal sensor instance
++			  is part of a controllable power domain.
++
++Example:
++
++	tsc: thermal@e6198000 {
++		compatible = "renesas,r8a7795-thermal";
++		reg = <0 0xe6198000 0 0x68>,
++		      <0 0xe61a0000 0 0x5c>,
++		      <0 0xe61a8000 0 0x5c>;
++		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 522>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		#thermal-sensor-cells = <1>;
++		status = "okay";
++	};
++
++	thermal-zones {
++		sensor_thermal1: sensor-thermal1 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 0>;
++
++			trips {
++				sensor1_crit: sensor1-crit {
++					temperature = <90000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++	};
 -- 
 2.11.0
