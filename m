@@ -1,241 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:43763 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750762AbcLUIZs (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:57964 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757724AbcLWLC2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Dec 2016 03:25:48 -0500
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 6/7] dt-bindings: media: Add Renesas R-Car DRIF binding
-Date: Wed, 21 Dec 2016 08:10:37 +0000
-Message-Id: <1482307838-47415-7-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+        Fri, 23 Dec 2016 06:02:28 -0500
+Date: Fri, 23 Dec 2016 12:02:25 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv6 0/4] thermal: add driver for R-Car Gen3
+Message-ID: <20161223110224.GA1440@katana>
+References: <20161222103823.8300-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Disposition: inline
+In-Reply-To: <20161222103823.8300-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add binding documentation for Renesas R-Car Digital Radio Interface
-(DRIF) controller.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- .../devicetree/bindings/media/renesas,drif.txt     | 202 +++++++++++++++++++++
- 1 file changed, 202 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+--sm4nu43k4a2Rpi4c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt b/Documentation/devicetree/bindings/media/renesas,drif.txt
-new file mode 100644
-index 0000000..1f3feaf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
-@@ -0,0 +1,202 @@
-+Renesas R-Car Gen3 Digital Radio Interface controller (DRIF)
-+------------------------------------------------------------
-+
-+R-Car Gen3 DRIF is a SPI like receive only slave device. A general
-+representation of DRIF interfacing with a master device is shown below.
-+
-++---------------------+                +---------------------+
-+|                     |-----SCK------->|CLK                  |
-+|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-+|                     |-----SD0------->|D0                   |
-+|                     |-----SD1------->|D1                   |
-++---------------------+                +---------------------+
-+
-+As per datasheet, each DRIF channel (drifn) is made up of two internal
-+channels (drifn0 & drifn1). These two internal channels share the common
-+CLK & SYNC. Each internal channel has its own dedicated resources like
-+irq, dma channels, address space & clock. This internal split is not
-+visible to the external master device.
-+
-+The device tree model represents each internal channel as a separate node.
-+The internal channels sharing the CLK & SYNC are tied together by their
-+phandles using a new property called "renesas,bonding". For the rest of
-+the documentation, unless explicitly stated, the word channel implies an
-+internal channel.
-+
-+When both internal channels are enabled they need to be managed together
-+as one (i.e.) they cannot operate alone as independent devices. Out of the
-+two, one of them needs to act as a primary device that accepts common
-+properties of both the internal channels. This channel is identified by a
-+new property called "renesas,primary-bond".
-+
-+To summarize,
-+   - When both the internal channels that are bonded together are enabled,
-+     the zeroth channel is selected as primary-bond. This channels accepts
-+     properties common to all the members of the bond.
-+   - When only one of the bonded channels need to be enabled, the property
-+     "renesas,bonding" or "renesas,primary-bond" will have no effect. That
-+     enabled channel can act alone as any other independent device.
-+
-+Required properties of an internal channel:
-+-------------------------------------------
-+- compatible: "renesas,r8a7795-drif" if DRIF controller is a part of R8A7795 SoC.
-+	      "renesas,rcar-gen3-drif" for a generic R-Car Gen3 compatible device.
-+	      When compatible with the generic version, nodes must list the
-+	      SoC-specific version corresponding to the platform first
-+	      followed by the generic version.
-+- reg: offset and length of that channel.
-+- interrupts: associated with that channel.
-+- clocks: phandle and clock specifier of that channel.
-+- clock-names: clock input name string: "fck".
-+- dmas: phandles to the DMA channels.
-+- dma-names: names of the DMA channel: "rx".
-+- renesas,bonding: phandle to the other channel.
-+
-+Optional properties of an internal channel:
-+-------------------------------------------
-+- power-domains: phandle to the respective power domain.
-+
-+Required properties of an internal channel when:
-+	- It is the only enabled channel of the bond (or)
-+	- If it acts as primary among enabled bonds
-+--------------------------------------------------------
-+- pinctrl-0: pin control group to be used for this channel.
-+- pinctrl-names: must be "default".
-+- renesas,primary-bond: empty property indicating the channel acts as primary
-+			among the bonded channels.
-+- port: child port node of a channel that defines the local and remote
-+	endpoints. The remote endpoint is assumed to be a third party tuner
-+	device endpoint.
-+
-+Optional properties of an internal channel when:
-+	- It is the only enabled channel of the bond (or)
-+	- If it acts as primary among enabled bonds
-+--------------------------------------------------------
-+- renesas,syncmd       : sync mode
-+			 0 (Frame start sync pulse mode. 1-bit width pulse
-+			    indicates start of a frame)
-+			 1 (L/R sync or I2S mode) (default)
-+- renesas,lsb-first    : empty property indicates lsb bit is received first.
-+			 When not defined msb bit is received first (default)
-+- renesas,syncac-active: Indicates sync signal polarity, 0/1 for low/high
-+			 respectively. The default is 1 (active high)
-+- renesas,dtdl         : delay between sync signal and start of reception.
-+			 The possible values are represented in 0.5 clock
-+			 cycle units and the range is 0 to 4. The default
-+			 value is 2 (i.e.) 1 clock cycle delay.
-+- renesas,syncdl       : delay between end of reception and sync signal edge.
-+			 The possible values are represented in 0.5 clock
-+			 cycle units and the range is 0 to 4 & 6. The default
-+			 value is 0 (i.e.) no delay.
-+
-+Example
-+--------
-+
-+SoC common dtsi file
-+
-+		drif00: rif@e6f40000 {
-+			compatible = "renesas,r8a7795-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f40000 0 0x64>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 515>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x20>, <&dmac2 0x20>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			renesas,bonding = <&drif01>;
-+			status = "disabled";
-+		};
-+
-+		drif01: rif@e6f50000 {
-+			compatible = "renesas,r8a7795-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f50000 0 0x64>;
-+			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 514>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x22>, <&dmac2 0x22>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			renesas,bonding = <&drif00>;
-+			status = "disabled";
-+		};
-+
-+
-+Board specific dts file
-+
-+(1) Both internal channels enabled, primary-bond = 0
-+-----------------------------------------------------
-+
-+When interfacing with a third party tuner device with two data pins as shown
-+below.
-+
-++---------------------+                +---------------------+
-+|                     |-----SCK------->|CLK                  |
-+|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-+|                     |-----SD0------->|D0                   |
-+|                     |-----SD1------->|D1                   |
-++---------------------+                +---------------------+
-+
-+pfc {
-+	...
-+
-+	drif0_pins: drif0 {
-+		groups = "drif0_ctrl_a", "drif0_data0_a",
-+				 "drif0_data1_a";
-+		function = "drif0";
-+	};
-+	...
-+}
-+
-+&drif00 {
-+	pinctrl-0 = <&drif0_pins>;
-+	pinctrl-names = "default";
-+	renesas,syncac-active = <1>;
-+	renesas,primary-bond;
-+	status = "okay";
-+	port {
-+		drif0_ep: endpoint {
-+		     remote-endpoint = <&tuner_ep>;
-+		};
-+	};
-+};
-+
-+&drif01 {
-+	status = "okay";
-+};
-+
-+(2) Internal channel 1 alone is enabled:
-+----------------------------------------
-+
-+When interfacing with a third party tuner device with one data pin as shown
-+below.
-+
-++---------------------+                +---------------------+
-+|                     |-----SCK------->|CLK                  |
-+|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-+|                     |                |D0 (unused)          |
-+|                     |-----SD-------->|D1                   |
-++---------------------+                +---------------------+
-+
-+pfc {
-+	...
-+
-+	drif0_pins: drif0 {
-+		groups = "drif0_ctrl_a", "drif0_data1_a";
-+		function = "drif0";
-+	};
-+	...
-+}
-+
-+&drif01 {
-+	pinctrl-0 = <&drif0_pins>;
-+	pinctrl-names = "default";
-+	renesas,syncac-active = <0>;
-+	status = "okay";
-+	port {
-+		drif0_ep: endpoint {
-+		     remote-endpoint = <&tuner_ep>;
-+		};
-+	};
-+};
--- 
-1.9.1
+
+> Changes since v5
+> - Switch fixpoint scaling from decimal with a factor 100 to binary with=
+=20
+>   a shift of 7 bits to increase accuracy. In v5 decimal scaling was used=
+=20
+>   since it closest resembled the v4 implementation of a decimal scaling=
+=20
+>   with 1000 as a factor. The big change in v5 was to fit all =20
+>   calculations inside a int instead of s64.
+
+Pity, I couldn't test it on HW before leaving for christmas. Will
+definately do when I come back!
+
+Thanks for this update!
+
+
+--sm4nu43k4a2Rpi4c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYXQRAAAoJEBQN5MwUoCm2zNsQAJO8JGNiLxsYoAApDV7/HJu9
+QFb0lvmSYt58XNmZVnJgVQKeiMoAh2HOtiSPFA54NABWbQocqy0sdAYNNW0HVYiD
+f59K1QAp8wPjLh9kA5ST322SBAIClIRqhb3yqnyxLH2G+DQ/bmuG18M3gW+gebIu
+2DB6pull629smPcj6KwlJEaBfQMO3Dpj7kyuwv0/4gRKeh1WRNdTDePatrhcIowk
+Vy52mG/uEiPfxf1jCONsXa9akbzWKD2l4m0q/zq4zVr+tbxiiZXBVKCR//Vk1tQl
+DHIGvVVpcvoGj9t+UMk64tlum6SiLP03GNvX46ACHxy8L3/2o7U1EyumDSFn+ObM
+jDDZMtiyZerRwvpqqEx4t/SNn73Hk+/u2IatDeNA+N1WcSPGpe89sMDXuocUOF4D
+qibtA4DX7Vmrl4PhogGFnzNJv/T7MLXmBxszbo4Kvw1to3JvkQWWmt1tsE37+2aS
+m3aOlNT32jkveYcs1dIf5znqPDeasjfp5JQEeK874+yYV+H95rg2+dD2MG9iv4l9
+JcDEfBFetif8EU+0+PAE3f0si2hEN12oCQSJsOAQUbBiI8cgZW8DE4VGJ4XCg/Ce
++HNsUYYwUIVJtLbP2qqyZidpKLyc+jksN/IbBhj8qQBpU1TzFaa2e3vBYyzOlWpG
+N7Yxg1KbxVYvc19xqfuu
+=v3wX
+-----END PGP SIGNATURE-----
+
+--sm4nu43k4a2Rpi4c--
