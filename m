@@ -1,136 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:50720 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbcLFOMY (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:34750 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752823AbcLXVx6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 09:12:24 -0500
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cEGTm-0005Om-1L
-        for linux-renesas-soc@vger.kernel.org; Tue, 06 Dec 2016 15:12:22 +0100
-Received: from geert by ramsan with local (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cEGTq-0006x2-KB
-        for linux-renesas-soc@vger.kernel.org; Tue, 06 Dec 2016 15:12:26 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2016-12-06-v4.9-rc8
-Date: Tue,  6 Dec 2016 15:12:26 +0100
-Message-Id: <1481033546-26686-1-git-send-email-geert+renesas@glider.be>
+        Sat, 24 Dec 2016 16:53:58 -0500
+Received: by mail-lf0-f54.google.com with SMTP id y21so156207148lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Dec 2016 13:53:57 -0800 (PST)
+Subject: Re: [PATCHv2 1/5] sh_eth: add generic wake-on-lan support via magic
+ packet
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+References: <20161212160931.6478-1-niklas.soderlund+renesas@ragnatech.se>
+ <20161212160931.6478-2-niklas.soderlund+renesas@ragnatech.se>
+ <87e3f9e6-0f5a-986c-772d-006cb25b9fd9@cogentembedded.com>
+ <20161219163904.GE21006@bigcity.dyn.berto.se>
+ <CAMuHMdXVVS_eLozvDnEz67_Fwg7jGDK0YEGh84rS+EAm4RFnag@mail.gmail.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <8339b438-5fb2-6a19-23bd-8ce32e29f30d@cogentembedded.com>
+Date: Sun, 25 Dec 2016 00:53:53 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXVVS_eLozvDnEz67_Fwg7jGDK0YEGh84rS+EAm4RFnag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2016-12-06-v4.9-rc8 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hello!
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging branches with driver code
-submitted or planned for submission to maintainers into the development
-branch of Simon Horman's renesas.git tree.
+On 12/19/2016 08:11 PM, Geert Uytterhoeven wrote:
 
-As we are currently focusing on a stable v4.9, no for-next branches
-of various subsystem trees have been included.
+>>>> One quirk needed for WoL is that the module clock needs to be prevented
+>>>> from being switched off by Runtime PM. To keep the clock alive the
+>>>
+>>>    I tried to find the code in question and failed, getting muddled in the
+>>> RPM maze. Could you point at this code for my education? :-)
+>>
+>> In my investigation I observed this (simplified) call graph with regards
+>> to clocks for suspend:
+>>
+>> pm_suspend
 
-Today's version is based on renesas-devel-20161205-v4.9-rc8.
+    There's a long list of the calls skipped here. :-)
 
-Included branches with driver code:
-  - clk-renesas-for-v4.11
-  - sh-pfc-for-v4.11
-  - topic/rcar-secondary-booting-in-debug-mode-v2
-  - topic/r8a7796-ravb-v1-rebased1
-  - topic/r8a7796-dmac-driver-v2-rebased1
-  - topic/r8a7796-dmac-dts-v2-rebased3~3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-driver-v8
-  - topic/vin-gen2-driver-v1-rebased2
-  - topic/rcar-gen3-usb2-role-swap-v5
-  - topic/dma-map-resource-v1
-  - git://linuxtv.org/pinchartl/media.git#vsp1/histogram
-  - https://git.ragnatech.se/linux#for-renesas-drivers
-  - topic/ipmmu-multi-arch-v6
-  - topic/r8a7795-ipmmu-v2-rebased4
-  - topic/r8a7796-ipmmu-v1-rebased4
-  - topic/r8a7795-ipmmu-integration-v1
-  - topic/vin-gen2-dts-v1-rebased5
-  - topic/vsp1-pa-improvements-v1-rebased1
-  - topic/vsp1-writeback-v2-rebased2
-  - git://linuxtv.org/pinchartl/media.git#drm/r8a7796/next
-  - topic/iommu-devel-du-rebased1
-  - topic/r8a7795-es2-v1-rebased5
-  - topic/r8a7796-64b-mem+ravb-prototype-v1-rebased5~1
-  - topic/rcar-du-lvds-mode-selection-v1
-  - git://linuxtv.org/pinchartl/media.git#drm/next/lvds
-  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-driver-v1
-  - git://github.com/uli/kernel.git#r8a7795-hdmi-out-dts-v1
+>>   pm_clk_suspend
+>>     clk_disable
+>>       clk_core_disable
+>>         cpg_mstp_clock_disable
+>>
+>> The interesting function here are clk_core_disable(). In that function a
+>> 'enable_count' for each clock is decremented and the clock is only
+>> turned of if the count reaches zero, hence cpg_mstp_clock_disable() are
+>> only called if the counter reaches 0. At runtime the enable_count can be
+>> displayed by examining /sys/kernel/debug/clk/clk_summary.
 
-As we're getting close to the opening of the merge window for v4.10, I
-have also pushed renesas-drivers-next-2016-12-06-v4.9-rc8 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+    Well, this is not new to me... it's more interesting how we get there... :-)
 
-This tree lacks the last 4 branches above, but does include the
-following for-next branches of various subsystem trees:
+[...]
+>>>> usage count of the clock. Then when Runtime PM decreases the clock usage
+>>>> count it won't reach 0 and be switched off.
+>>>
+>>>    You mean it does this even though we don't call pr_runtime_put_sync()
+>>> as done in sh_eth_close()?
+>>
+>> Yes.
+>>
+>> I had a look at the pm_runtime_* functions in include/linux/pm_runtime.h
+>> and drivers/base/power/runtime.c and could not find any clock handling.
+>> Maybe they only deal with power domains?
+>
+> There should be a generic way to prevent a device from being suspended.
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.infradead.org/battery-2.6.git#master
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/thermal-on-4.10-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/lvds-panel
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/lvds-encoder
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/linuxtv.org/pinchartl/media.git drm/du/hdmi
+    Indeed.
 
-Included fixes:
-  - arm64: alternatives: Work around NOP generation with broken
-    assembler
+> This will make sure the module clock is not disabled, and the power domain
+> (if applicable) is not powered down.
 
-Included branches with driver code:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/thermal-on-4.10-next
-  - git://linuxtv.org/pinchartl/media.git drm/du/lvds-panel
-  - git://linuxtv.org/pinchartl/media.git drm/du/lvds-encoder
-  - git://linuxtv.org/pinchartl/media.git drm/du/hdmi
+    I've just bumped into <linux/pm_wakeirq.h>, it looks promising...
 
-Gr{oetje,eeting}s,
+[...]
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+MBR, Sergei
