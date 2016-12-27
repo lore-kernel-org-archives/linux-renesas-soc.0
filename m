@@ -1,47 +1,76 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: kishon@ti.com, maxime.ripard@free-electrons.com, wens@csie.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, chanwoo@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 1/2] phy: rcar-gen3-usb2: Replace the deprecated extcon API
-Date: Fri, 30 Dec 2016 13:11:28 +0900
-Message-id: <1483071089-8362-2-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
-References: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
- <CGME20161230041136epcas5p45074607ce44561b57561bfb20a8c3bc4@epcas5p4.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36022 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754170AbcL0Mkp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 27 Dec 2016 07:40:45 -0500
+Received: by mail-it0-f65.google.com with SMTP id n68so33375457itn.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Dec 2016 04:40:45 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1480410283-28698-13-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1480410283-28698-13-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 27 Dec 2016 13:40:44 +0100
+Message-ID: <CAMuHMdX3cJ+Ykv1aCgirQ4+6e8nU3yU6Yarq79kMAdGUs_WBrA@mail.gmail.com>
+Subject: Re: [PATCH v3 12/13] drm: rcar-du: Replace manual bridge
+ implementation with DRM bridge
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Archit Taneja <architt@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch replaces the deprecated extcon API as following:
-- extcon_set_cable_state_() -> extcon_set_state_sync()
+Hi Laurent,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/phy-rcar-gen3-usb2.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Tue, Nov 29, 2016 at 10:04 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The rcar-du driver contains a manual implementation of HDMI and VGA
+> bridges. Use DRM bridges to replace it.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/rcar-du/Kconfig           |   6 --
+>  drivers/gpu/drm/rcar-du/Makefile          |   5 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 104 +++++++++++++----------
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.h |   2 -
+>  drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c | 134 ------------------------------
+>  drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h |  35 --------
+>  drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  82 ------------------
+>  drivers/gpu/drm/rcar-du/rcar_du_vgacon.h  |  23 -----
+>  8 files changed, 60 insertions(+), 331 deletions(-)
+>  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+>  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
+>  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+>  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
+>
+> diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+> index 2bab449add76..06121eeba9e5 100644
+> --- a/drivers/gpu/drm/rcar-du/Kconfig
+> +++ b/drivers/gpu/drm/rcar-du/Kconfig
+> @@ -11,12 +11,6 @@ config DRM_RCAR_DU
+>           Choose this option if you have an R-Car chipset.
+>           If M is selected the module will be called rcar-du-drm.
+>
+> -config DRM_RCAR_HDMI
+> -       bool "R-Car DU HDMI Encoder Support"
+> -       depends on DRM_RCAR_DU
+> -       help
+> -         Enable support for external HDMI encoders.
+> -
 
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index c63da1b955c1..54a83675f0a8 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -94,11 +94,11 @@ static void rcar_gen3_phy_usb2_work(struct work_struct *work)
- 						 work);
- 
- 	if (ch->extcon_host) {
--		extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, true);
--		extcon_set_cable_state_(ch->extcon, EXTCON_USB, false);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, true);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB, false);
- 	} else {
--		extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, false);
--		extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, false);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB, true);
- 	}
- }
- 
--- 
-1.9.1
+Please note this symbol is selected in several defconfigs, so these should
+be updated with its replacement symbol.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
