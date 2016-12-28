@@ -1,47 +1,70 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 06/29] drm: bridge: dw-hdmi: Don't forward HPD events to DRM core before attach
-Date: Tue, 20 Dec 2016 03:33:37 +0200
-Message-Id: <20161220013400.28317-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+Subject: Re: [PATCH 1/1] [media] v4l: rcar_fdp1: use %4.4s to format a 4-byte
+ string
+To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>, linux-media@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20161226133139.3775-1-nicolas.iooss_linux@m4x.org>
+Cc: linux-kernel@vger.kernel.org
+From: Kieran Bingham <kieran@bingham.xyz>
+Message-ID: <63afb58e-e588-c3f0-7950-2e2b5dfa453e@bingham.xyz>
+Date: Wed, 28 Dec 2016 09:47:15 +0000
+MIME-Version: 1.0
+In-Reply-To: <20161226133139.3775-1-nicolas.iooss_linux@m4x.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hotplug events should only be forwarded to the DRM core by the interrupt
-handler when the bridge has been attached, otherwise the DRM device
-pointer will be NULL, resulting in a crash.
+Hi Nicolas,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thankyou for the patch
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index ef10bb866b2f..488dc1a9204f 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1805,7 +1805,8 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- 	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
- 		dev_dbg(hdmi->dev, "EVENT=%s\n",
- 			phy_int_pol & HDMI_PHY_HPD ? "plugin" : "plugout");
--		drm_helper_hpd_irq_event(hdmi->bridge.dev);
-+		if (hdmi->bridge.dev)
-+			drm_helper_hpd_irq_event(hdmi->bridge.dev);
- 	}
- 
- 	hdmi_writeb(hdmi, intr_stat, HDMI_IH_PHY_STAT0);
+This looks like a good catch,
+
+On 26/12/16 13:31, Nicolas Iooss wrote:
+> Using %4s to format f->fmt.pix_mp.pixelformat in fdp1_try_fmt() and
+> fdp1_s_fmt() may lead to more characters being printed (when the byte
+> following field pixelformat is not zero).
+> 
+> Add ".4" to the format specifier to limit the number of printed
+> characters to four. The resulting format specifier "%4.4s" is also used
+> by other media drivers to print pixelformat value.
+> 
+> Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+
+Reviewed-by: Kieran Bingham <kieran@bingham.xyz>
+
+> ---
+>  drivers/media/platform/rcar_fdp1.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+> index 674cc1309b43..42f25d241edd 100644
+> --- a/drivers/media/platform/rcar_fdp1.c
+> +++ b/drivers/media/platform/rcar_fdp1.c
+> @@ -1596,7 +1596,7 @@ static int fdp1_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  	else
+>  		fdp1_try_fmt_capture(ctx, NULL, &f->fmt.pix_mp);
+>  
+> -	dprintk(ctx->fdp1, "Try %s format: %4s (0x%08x) %ux%u field %u\n",
+> +	dprintk(ctx->fdp1, "Try %s format: %4.4s (0x%08x) %ux%u field %u\n",
+>  		V4L2_TYPE_IS_OUTPUT(f->type) ? "output" : "capture",
+>  		(char *)&f->fmt.pix_mp.pixelformat, f->fmt.pix_mp.pixelformat,
+>  		f->fmt.pix_mp.width, f->fmt.pix_mp.height, f->fmt.pix_mp.field);
+> @@ -1671,7 +1671,7 @@ static int fdp1_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  
+>  	fdp1_set_format(ctx, &f->fmt.pix_mp, f->type);
+>  
+> -	dprintk(ctx->fdp1, "Set %s format: %4s (0x%08x) %ux%u field %u\n",
+> +	dprintk(ctx->fdp1, "Set %s format: %4.4s (0x%08x) %ux%u field %u\n",
+>  		V4L2_TYPE_IS_OUTPUT(f->type) ? "output" : "capture",
+>  		(char *)&f->fmt.pix_mp.pixelformat, f->fmt.pix_mp.pixelformat,
+>  		f->fmt.pix_mp.width, f->fmt.pix_mp.height, f->fmt.pix_mp.field);
+> 
+
 -- 
-Regards,
+Regards
 
-Laurent Pinchart
+Kieran Bingham
