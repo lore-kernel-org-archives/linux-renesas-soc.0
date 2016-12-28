@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:18861 "EHLO
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:25446 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750705AbcL1De3 (ORCPT
+        with ESMTP id S1752807AbcL1B5X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Dec 2016 22:34:29 -0500
+        Tue, 27 Dec 2016 20:57:23 -0500
 Subject: Re: The failure summary report of GEN3 for linux stable v4.9
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 References: <1482814415969201000053a8@nat.cybozu.com>
@@ -25,24 +25,26 @@ Cc: =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?=
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Xuan Truong Nguyen <nx-truong@jinso.co.jp>
 From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-Message-ID: <0b71715d-aeaa-e4e6-0b85-8633cfdbeb70@jinso.co.jp>
-Date: Wed, 28 Dec 2016 10:40:23 +0900
+Message-ID: <0e3d316d-6501-5681-c916-68c2246102fa@jinso.co.jp>
+Date: Wed, 28 Dec 2016 10:57:18 +0900
 MIME-Version: 1.0
 In-Reply-To: <CAMuHMdUXqU=O7Q=omkWC3KkgGA06LqFRWejObgvt9jY47sybEA@mail.gmail.com>
 Content-Type: multipart/mixed;
- boundary="------------5F52C94B769ACC9D4BA4797A"
+ boundary="------------A99CA1AF2CF95475EBEBF60A"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 This is a multi-part message in MIME format.
---------------5F52C94B769ACC9D4BA4797A
+--------------A99CA1AF2CF95475EBEBF60A
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Dear Geert Uytterhoeven,
-
+(I resend my mail because of making mistake at previous mail)
 I have retested PM, recheck the PM test procedures.
-I am using board H3 ES1.1,  procedures involving i2cset is right.
+
+> Are you using R-Car H3 ES1.0?
+I am using board H3 ES1.1.
 
 With the same test procedures and setting for this version and previous 
 version(v4.9-rc2), but the results are different.
@@ -52,23 +54,6 @@ version(v4.9-rc2), but the results are different.
 I am using U-boot version(U-Boot 2015.04 (Sep 13 2016 - 11:32:36)).
 
 I attach the test log file of PM. Please have a look at the log.
-
-
-On 27/12/16 22:02, Geert Uytterhoeven wrote:
-> Hi Hoan,
->
-> On Tue, Dec 27, 2016 at 11:35 AM, Hoan Nguyen An <na-hoan@jinso.co.jp> wrote:
->> My name is Hoan from Jinzai Solution.
->> We have tested the linux stable v4.9 for Gen3 Salvator-X (H3)
->>
->> So we would like to report the summary of the failure.
->> 1 PM: It is not working, can't return to the system. NG New issue
->> root@linaro-nano:~# echo mem > /sys/power/state
->> [  221.280712] PM: Syncing filesystems ... done.
->> [  221.286474] Freezing user space processes ... (elapsed 0.001 seconds) done.
->> [  221.295013] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
->> [  221.303691] Suspending console(s) (use no_console_suspend to debug)
-> Are you using R-Car H3 ES1.0?
 > AFAIK, tbe newer firmware supports system suspend/resume on H3 ES1.1 only,
 > and only when following the right procedure involving i2cset.
 I only set the following command for test.
@@ -85,7 +70,8 @@ Thanks,
 Jinzai Solution/Linux Team,
 Hoan.
 
---------------5F52C94B769ACC9D4BA4797A
+
+--------------A99CA1AF2CF95475EBEBF60A
 Content-Type: text/plain; charset=UTF-8;
  name="Log_PMtesting20161228"
 Content-Transfer-Encoding: base64
@@ -559,4 +545,4 @@ ZXNzZXMgLi4uIChlbGFwc2VkIDAuMDAxIHNlY29uZHMpIGRvbmUuClsgIDc4Mi44MzE3MDNd
 IEZyZWV6aW5nIHJlbWFpbmluZyBmcmVlemFibGUgdGFza3MgLi4uIChlbGFwc2VkIDAuMDAx
 IHNlY29uZHMpIGRvbmUuClsgIDc4Mi44NDAzMThdIFN1c3BlbmRpbmcgY29uc29sZShzKSAo
 dXNlIG5vX2NvbnNvbGVfc3VzcGVuZCB0byBkZWJ1ZykKCgo=
---------------5F52C94B769ACC9D4BA4797A--
+--------------A99CA1AF2CF95475EBEBF60A--
