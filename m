@@ -1,79 +1,79 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 3/6] usb: phy: omap-otg: Replace the extcon API
-Date: Fri, 30 Dec 2016 13:08:12 +0900
-Message-id: <1483070895-8213-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
-References: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
- <CGME20161230040816epcas5p47433110fddafafca1a8b8a64acee1835@epcas5p4.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:36127 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752749AbcL2TCf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 29 Dec 2016 14:02:35 -0500
+Received: by mail-wm0-f43.google.com with SMTP id c85so123010233wmi.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Dec 2016 11:02:34 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+References: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 29 Dec 2016 20:02:32 +0100
+Message-ID: <CAPDyKFrOtcct_bN2qscrLK1pCRKnZiGhicHVAw4Rnwp5ymqRhA@mail.gmail.com>
+Subject: Re: [PATCH 0/9] mmc: sh_mobile_sdhi: add HS200 support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch uses the resource-managed extcon API for extcon_register_notifier()
-and replaces the deprecated extcon API as following:
-- extcon_get_cable_state_() -> extcon_get_state()
+On 12 December 2016 at 20:51, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Here is a series adding HS200 support to the SDHI driver. Building the actual
+> functionality on top of SDR104 support was rather easy. However, I figured the
+> checks for enabling tuning were rather scattered over the driver and could be
+> further improved. So I did some refactoring of that to make adding HS200
+> support then a one-liner :)
+>
+> This has been tested on Salvator-X boards with R-Car H3 and M3-W SoCs. It has
+> also been tested on a Lager board (R-Car H2) checking SDR50/104 for
+> regressions. The whole test document showing significant speed-ups reading from
+> the on-board eMMC can be found here:
+>
+> http://elinux.org/Tests:eMMC-HS
+>
+> and the branch can be found here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-emmc-hs
+>
+> Please comment, review, apply...
+>
+> Thanks,
+>
+>    Wolfram
+>
+>
+> Wolfram Sang (9):
+>   mmc: sh_mobile_sdhi: simplify accessing DT data
+>   mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
+>   mmc: sh_mobile_sdhi: improve prerequisites for tuning
+>   mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
+>   mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
+>   mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
+>   mmc: sh_mobile_sdhi: enable HS200
+>   arm64: dts: r8a7795: enable HS200 for eMMC
+>   arm64: dts: r8a7796: enable HS200 for eMMC
+>
+>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  1 +
+>  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  1 +
+>  drivers/mmc/host/sh_mobile_sdhi.c                  | 67 ++++++++--------------
+>  3 files changed, 27 insertions(+), 42 deletions(-)
+>
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
----
- drivers/usb/phy/phy-omap-otg.c | 24 ++++++------------------
- 1 file changed, 6 insertions(+), 18 deletions(-)
+Thanks, applied patch 1 -> 7 for next. DTS changes in patch 8 and 9
+are for Simon to pick up.
 
-diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
-index 6523af4f8f93..800d1d90753d 100644
---- a/drivers/usb/phy/phy-omap-otg.c
-+++ b/drivers/usb/phy/phy-omap-otg.c
-@@ -118,19 +118,19 @@ static int omap_otg_probe(struct platform_device *pdev)
- 	otg_dev->id_nb.notifier_call = omap_otg_id_notifier;
- 	otg_dev->vbus_nb.notifier_call = omap_otg_vbus_notifier;
- 
--	ret = extcon_register_notifier(extcon, EXTCON_USB_HOST, &otg_dev->id_nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, extcon,
-+					EXTCON_USB_HOST, &otg_dev->id_nb);
- 	if (ret)
- 		return ret;
- 
--	ret = extcon_register_notifier(extcon, EXTCON_USB, &otg_dev->vbus_nb);
-+	ret = devm_extcon_register_notifier(&pdev->dev, extcon,
-+					EXTCON_USB, &otg_dev->vbus_nb);
- 	if (ret) {
--		extcon_unregister_notifier(extcon, EXTCON_USB_HOST,
--					&otg_dev->id_nb);
- 		return ret;
- 	}
- 
--	otg_dev->id = extcon_get_cable_state_(extcon, EXTCON_USB_HOST);
--	otg_dev->vbus = extcon_get_cable_state_(extcon, EXTCON_USB);
-+	otg_dev->id = extcon_get_state(extcon, EXTCON_USB_HOST);
-+	otg_dev->vbus = extcon_get_state(extcon, EXTCON_USB);
- 	omap_otg_set_mode(otg_dev);
- 
- 	rev = readl(otg_dev->base);
-@@ -145,20 +145,8 @@ static int omap_otg_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int omap_otg_remove(struct platform_device *pdev)
--{
--	struct otg_device *otg_dev = platform_get_drvdata(pdev);
--	struct extcon_dev *edev = otg_dev->extcon;
--
--	extcon_unregister_notifier(edev, EXTCON_USB_HOST, &otg_dev->id_nb);
--	extcon_unregister_notifier(edev, EXTCON_USB, &otg_dev->vbus_nb);
--
--	return 0;
--}
--
- static struct platform_driver omap_otg_driver = {
- 	.probe		= omap_otg_probe,
--	.remove		= omap_otg_remove,
- 	.driver		= {
- 		.name	= "omap_otg",
- 	},
--- 
-1.9.1
+Kind regards
+Uffe
+
+> --
+> 2.10.2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
