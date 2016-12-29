@@ -1,110 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59637 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753037AbcLRUxg (ORCPT
+Received: from mail-wj0-f178.google.com ([209.85.210.178]:35779 "EHLO
+        mail-wj0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752906AbcL2TCQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Dec 2016 15:53:36 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Rob Herring <robh@kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 01/13] devicetree/bindings: display: Document common panel properties
-Date: Sun, 18 Dec 2016 22:54:03 +0200
-Message-ID: <2900223.pppRAbRhe6@avalon>
-In-Reply-To: <2064799.n5laApbQHL@avalon>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAL_JsqL0+4--nE1UDHWzqS-s18A+q2i76S8=woCb5huV3jUMew@mail.gmail.com> <2064799.n5laApbQHL@avalon>
+        Thu, 29 Dec 2016 14:02:16 -0500
+Received: by mail-wj0-f178.google.com with SMTP id v7so364571753wjy.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Dec 2016 11:02:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20161209165141.26599-1-wsa+renesas@sang-engineering.com>
+References: <20161209165141.26599-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 29 Dec 2016 20:02:13 +0100
+Message-ID: <CAPDyKFowJcswT+=JaaL-vDLwAHDb9w8KopiunVwQNPE8esKALw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: use SDIO master interrupt bit only when allowed
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yasushi SHOJI <yashi@atmark-techno.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+On 9 December 2016 at 17:51, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> The master bit to enable SDIO interrupts can only be accessed if
+> SCLKDIVEN bit allows that. However, the core uses the SDIO enable
+> callback at times when SCLKDIVEN forbids the change. This leads to
+> "timeout waiting for SD bus idle" messages.
+>
+> We now activate the master bit in probe once if SDIO is supported. IRQ
+> en-/disabling will be done now by the individual IRQ enablement bits
+> only.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Yasushi SHOJI <yashi@atmark-techno.com>
 
-On Tuesday 29 Nov 2016 20:23:41 Laurent Pinchart wrote:
-> On Tuesday 29 Nov 2016 09:14:09 Rob Herring wrote:
-> > On Tue, Nov 29, 2016 at 2:27 AM, Laurent Pinchart wrote:
-> >> On Tuesday 22 Nov 2016 11:36:55 Laurent Pinchart wrote:
-> >>> On Monday 21 Nov 2016 10:48:15 Rob Herring wrote:
-> >>>> On Sat, Nov 19, 2016 at 05:28:01AM +0200, Laurent Pinchart wrote:
-> >>>>> Document properties common to several display panels in a central
-> >>>>> location that can be referenced by the panel device tree bindings.
-> >>>> 
-> >>>> Looks good. Just one comment...
-> >>>> 
-> >>>> [...]
-> >>>> 
-> >>>>> +Connectivity
-> >>>>> +------------
-> >>>>> +
-> >>>>> +- ports: Panels receive video data through one or multiple
-> >>>>> connections. While
-> >>>>> +  the nature of those connections is specific to the panel type, the
-> >>>>> +  connectivity is expressed in a standard fashion using ports as
-> >>>>> specified in
-> >>>>> +  the device graph bindings defined in
-> >>>>> +  Documentation/devicetree/bindings/graph.txt.
-> >>>> 
-> >>>> We allow panels to either use graph binding or be a child of the
-> >>>> display controller.
-> >>> 
-> >>> I knew that some display controllers use a phandle to the panel (see
-> >>> the fsl,panel and nvidia,panel properties), but I didn't know we had
-> >>> panels as children of display controller nodes. I don't think we should
-> >>> allow that for anything but DSI panels, as the DT hierarchy is based on
-> >>> control buses. Are you sure we have other panels instantiated through
-> >>> that mechanism ?
-> > 
-> > Some panels have no control bus, so were do we place them?
-> 
-> I'd say under the root node, like all similar control-less devices.
-> 
-> > I would say the hierarchy is based on buses with a preference for the
-> > control bus when there are multiple buses. I'm not a fan of just sticking
-> > things are the top level.
-> 
-> OK, so much for my comment a few lines up :-)
-> 
-> The problem with placing non-DSI panels as children of the display
-> controller and not using OF graph is that the panel bindings become
-> dependent of the display controller being used. A display controller using
-> OF graph would require the panel to do the same, while a display controller
-> expecting a panel child node (with a specific name) would require DT
-> properties for the panel node.
-> 
-> I'm also not sure the complexity of OF graph is really that prohibitive if
-> you compare it to panels as child nodes. To get the panel driver to bind to
-> the panel DT node the display controller driver would need to create a
-> platform device for the panel and register it. That's not very difficult,
-> but parsing a single port and endpoint isn't either (and we could even
-> provide a helper function for that, a version of of_drm_find_panel() that
-> would take as an argument the display controller device node instead of the
-> panel device node).
+Thanks, applied for next!
 
-Ping ?
+Kind regards
+Uffe
 
-I'd like to standardize on one model for panel DT bindings, but I'm not sure 
-that can be achieved given that we already have multiple competing models. In 
-any case, is that blocking to merge this patch ? I only describe one 
-connectivity model here as that's what my panel driver needs, but I have no 
-issue adding more models later when needed. I believe this patch is a good 
-step forward already.
-
-> >> Ping ?
-> >> 
-> >> Please note that this file documents properties common to multiple panel
-> >> DT bindings, but in no way makes it mandatory to use the OF graph
-> >> bindings for panels. The decision is left to individual bindings.
-> > 
-> > It is mandatory in the sense that we don't want more cases of "fsl,panel".
-> 
-> That I agree with :-)
-
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>
+> No change from RFC, only Rev-by added (which included testing).
+>
+>  drivers/mmc/host/tmio_mmc_pio.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+> index 7ef24ec620b542..526e52719f81b9 100644
+> --- a/drivers/mmc/host/tmio_mmc_pio.c
+> +++ b/drivers/mmc/host/tmio_mmc_pio.c
+> @@ -140,12 +140,10 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+>
+>                 host->sdio_irq_mask = TMIO_SDIO_MASK_ALL &
+>                                         ~TMIO_SDIO_STAT_IOIRQ;
+> -               sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
+>                 sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
+>         } else if (!enable && host->sdio_irq_enabled) {
+>                 host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+>                 sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
+> -               sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0000);
+>
+>                 host->sdio_irq_enabled = false;
+>                 pm_runtime_mark_last_busy(mmc_dev(mmc));
+> @@ -1203,7 +1201,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+>         if (pdata->flags & TMIO_MMC_SDIO_IRQ) {
+>                 _host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+>                 sd_ctrl_write16(_host, CTL_SDIO_IRQ_MASK, _host->sdio_irq_mask);
+> -               sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0000);
+> +               sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0001);
+>         }
+>
+>         spin_lock_init(&_host->lock);
+> @@ -1251,6 +1249,9 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
+>         struct platform_device *pdev = host->pdev;
+>         struct mmc_host *mmc = host->mmc;
+>
+> +       if (host->pdata->flags & TMIO_MMC_SDIO_IRQ)
+> +               sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0000);
+> +
+>         if (!host->native_hotplug)
+>                 pm_runtime_get_sync(&pdev->dev);
+>
+> --
+> 2.10.2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
