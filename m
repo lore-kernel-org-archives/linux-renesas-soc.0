@@ -1,87 +1,62 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+Content-transfer-encoding: 8BIT
+Message-id: <5865CA76.1020001@samsung.com>
+Date: Fri, 30 Dec 2016 11:46:14 +0900
 From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 1/6] usb: dwc3: omap: Replace the extcon API
-Date: Fri, 30 Dec 2016 13:08:10 +0900
-Message-id: <1483070895-8213-2-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
-References: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
- <CGME20161230040816epcas5p4c76ef8f364678a34e2a0ff67b0119ef9@epcas5p4.samsung.com>
+To: Felipe Balbi <balbi@kernel.org>, gregkh@linuxfoundation.org,
+        kishon@ti.com, sre@kernel.org
+Cc: Peter.Chen@nxp.com, wens@csie.org,
+        yoshihiro.shimoda.uh@renesas.com, maxime.ripard@free-electrons.com,
+        b-liu@ti.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, chanwoo@kernel.org
+Subject: Re: [PATCH 06/12] usb: dwc3: omap: Replace the extcon API
+In-reply-to: <87fum6vh1p.fsf@linux.intel.com>
+References: <1480485460-2663-1-git-send-email-cw00.choi@samsung.com>
+ <1480485460-2663-7-git-send-email-cw00.choi@samsung.com>
+ <CGME20161130103827epcas4p268ee1cbc6b7b2ace7c987dd7baba82d4@epcas4p2.samsung.com>
+ <877f7lntjq.fsf@linux.intel.com> <58412848.5070209@samsung.com>
+ <87fum6vh1p.fsf@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch uses the resource-managed extcon API for extcon_register_notifier()
-and replaces the deprecated extcon API as following:
-- extcon_get_cable_state_() -> extcon_get_state()
+Hi Felipe,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
----
- drivers/usb/dwc3/dwc3-omap.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+On 2016년 12월 02일 18:03, Felipe Balbi wrote:
+> 
+> Hi,
+> 
+> Chanwoo Choi <cw00.choi@samsung.com> writes:
+>> Hi Felipe,
+>>
+>> On 2016년 11월 30일 19:36, Felipe Balbi wrote:
+>>>
+>>> Hi,
+>>>
+>>> Chanwoo Choi <cw00.choi@samsung.com> writes:
+>>>> This patch uses the resource-managed extcon API for extcon_register_notifier()
+>>>> and replaces the deprecated extcon API as following:
+>>>> - extcon_get_cable_state_() -> extcon_get_state()
+>>>>
+>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>
+>>> Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+>>>
+>>
+>> Thanks for your review.
+>>
+>> Each patch has no any dependency among patches.
+>> So, If possible, could you pick the patch6/8/9/10/11/12 on your tree?
+> 
+> my tree is closed for v4.10, I can pick it up for v4.11
 
-diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
-index 29e80cc9b634..2d2e9aa1db08 100644
---- a/drivers/usb/dwc3/dwc3-omap.c
-+++ b/drivers/usb/dwc3/dwc3-omap.c
-@@ -425,20 +425,20 @@ static int dwc3_omap_extcon_register(struct dwc3_omap *omap)
- 		}
- 
- 		omap->vbus_nb.notifier_call = dwc3_omap_vbus_notifier;
--		ret = extcon_register_notifier(edev, EXTCON_USB,
--						&omap->vbus_nb);
-+		ret = devm_extcon_register_notifier(omap->dev, edev,
-+						EXTCON_USB, &omap->vbus_nb);
- 		if (ret < 0)
- 			dev_vdbg(omap->dev, "failed to register notifier for USB\n");
- 
- 		omap->id_nb.notifier_call = dwc3_omap_id_notifier;
--		ret = extcon_register_notifier(edev, EXTCON_USB_HOST,
--						&omap->id_nb);
-+		ret = devm_extcon_register_notifier(omap->dev, edev,
-+						EXTCON_USB_HOST, &omap->id_nb);
- 		if (ret < 0)
- 			dev_vdbg(omap->dev, "failed to register notifier for USB-HOST\n");
- 
--		if (extcon_get_cable_state_(edev, EXTCON_USB) == true)
-+		if (extcon_get_state(edev, EXTCON_USB) == true)
- 			dwc3_omap_set_mailbox(omap, OMAP_DWC3_VBUS_VALID);
--		if (extcon_get_cable_state_(edev, EXTCON_USB_HOST) == true)
-+		if (extcon_get_state(edev, EXTCON_USB_HOST) == true)
- 			dwc3_omap_set_mailbox(omap, OMAP_DWC3_ID_GROUND);
- 
- 		omap->edev = edev;
-@@ -527,17 +527,13 @@ static int dwc3_omap_probe(struct platform_device *pdev)
- 	ret = of_platform_populate(node, NULL, NULL, dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to create dwc3 core\n");
--		goto err2;
-+		goto err1;
- 	}
- 
- 	dwc3_omap_enable_irqs(omap);
- 
- 	return 0;
- 
--err2:
--	extcon_unregister_notifier(omap->edev, EXTCON_USB, &omap->vbus_nb);
--	extcon_unregister_notifier(omap->edev, EXTCON_USB_HOST, &omap->id_nb);
--
- err1:
- 	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
-@@ -549,8 +545,6 @@ static int dwc3_omap_remove(struct platform_device *pdev)
- {
- 	struct dwc3_omap	*omap = platform_get_drvdata(pdev);
- 
--	extcon_unregister_notifier(omap->edev, EXTCON_USB, &omap->vbus_nb);
--	extcon_unregister_notifier(omap->edev, EXTCON_USB_HOST, &omap->id_nb);
- 	dwc3_omap_disable_irqs(omap);
- 	of_platform_depopulate(omap->dev);
- 	pm_runtime_put_sync(&pdev->dev);
+Could you please pick up these patches(patch6/8/9/10/11/12)?
+These patches were already reviewed by you.
+
 -- 
-1.9.1
+Regards,
+Chanwoo Choi
