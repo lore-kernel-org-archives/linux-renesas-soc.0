@@ -1,49 +1,77 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58057 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753096AbcL3EIU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 23:08:20 -0500
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Chanwoo Choi <cw00.choi@samsung.com>
 To: balbi@kernel.org, gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 0/6] usb: Replace the deprecated extcon API
-Date: Fri, 30 Dec 2016 13:08:09 +0900
-Message-id: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
-References: <CGME20161230040816epcas5p4616cb93324a5d60bc2a763817e34e37d@epcas5p4.samsung.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v2 4/6] usb: phy: qcom-8x16-usb: Replace the extcon API
+Date: Fri, 30 Dec 2016 13:08:13 +0900
+Message-id: <1483070895-8213-5-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+References: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20161230040817epcas5p430bfef6b76d46ab5e69d5f45816b1af4@epcas5p4.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patches just replace the deprecated extcon API without any change
-of extcon operation and use the resource-managed function for
-extcon_register_notifier().
+This patch uses the resource-managed extcon API for extcon_register_notifier()
+and replaces the deprecated extcon API as following:
+- extcon_get_cable_state_() -> extcon_get_state()
 
-The new extcon API instead of deprecated API.
-- extcon_set_cable_state_() -> extcon_set_state_sync();
-- extcon_get_cable_state_() -> extcon_get_state();
-
-Changes from v1:
-- Rebase these patches based on v4.10-rc1.
-- Add acked-by tag from usb maintainer and reviewer.
-- Drop the phy/power-supply/chipidea patches.
-
-Chanwoo Choi (6):
-  usb: dwc3: omap: Replace the extcon API
-  usb: phy: msm: Replace the extcon API
-  usb: phy: omap-otg: Replace the extcon API
-  usb: phy: qcom-8x16-usb: Replace the extcon API
-  usb: phy: tahvo: Replace the deprecated extcon API
-  usb: renesas_usbhs: Replace the deprecated extcon API
-
- drivers/usb/dwc3/dwc3-omap.c        | 20 +++++++-------------
- drivers/usb/phy/phy-msm-usb.c       | 33 +++++++++++----------------------
- drivers/usb/phy/phy-omap-otg.c      | 24 ++++++------------------
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+---
  drivers/usb/phy/phy-qcom-8x16-usb.c | 13 ++++---------
- drivers/usb/phy/phy-tahvo.c         | 10 +++++-----
- drivers/usb/renesas_usbhs/common.c  |  2 +-
- 6 files changed, 34 insertions(+), 68 deletions(-)
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/usb/phy/phy-qcom-8x16-usb.c b/drivers/usb/phy/phy-qcom-8x16-usb.c
+index d8593adb3621..fdf686398772 100644
+--- a/drivers/usb/phy/phy-qcom-8x16-usb.c
++++ b/drivers/usb/phy/phy-qcom-8x16-usb.c
+@@ -187,7 +187,7 @@ static int phy_8x16_init(struct usb_phy *phy)
+ 	val = ULPI_PWR_OTG_COMP_DISABLE;
+ 	usb_phy_io_write(phy, val, ULPI_SET(ULPI_PWR_CLK_MNG_REG));
+ 
+-	state = extcon_get_cable_state_(qphy->vbus_edev, EXTCON_USB);
++	state = extcon_get_state(qphy->vbus_edev, EXTCON_USB);
+ 	if (state)
+ 		phy_8x16_vbus_on(qphy);
+ 	else
+@@ -316,23 +316,20 @@ static int phy_8x16_probe(struct platform_device *pdev)
+ 		goto off_clks;
+ 
+ 	qphy->vbus_notify.notifier_call = phy_8x16_vbus_notify;
+-	ret = extcon_register_notifier(qphy->vbus_edev, EXTCON_USB,
+-				       &qphy->vbus_notify);
++	ret = devm_extcon_register_notifier(&pdev->dev, qphy->vbus_edev,
++					EXTCON_USB, &qphy->vbus_notify);
+ 	if (ret < 0)
+ 		goto off_power;
+ 
+ 	ret = usb_add_phy_dev(&qphy->phy);
+ 	if (ret)
+-		goto off_extcon;
++		goto off_power;
+ 
+ 	qphy->reboot_notify.notifier_call = phy_8x16_reboot_notify;
+ 	register_reboot_notifier(&qphy->reboot_notify);
+ 
+ 	return 0;
+ 
+-off_extcon:
+-	extcon_unregister_notifier(qphy->vbus_edev, EXTCON_USB,
+-				   &qphy->vbus_notify);
+ off_power:
+ 	regulator_bulk_disable(ARRAY_SIZE(qphy->regulator), qphy->regulator);
+ off_clks:
+@@ -347,8 +344,6 @@ static int phy_8x16_remove(struct platform_device *pdev)
+ 	struct phy_8x16 *qphy = platform_get_drvdata(pdev);
+ 
+ 	unregister_reboot_notifier(&qphy->reboot_notify);
+-	extcon_unregister_notifier(qphy->vbus_edev, EXTCON_USB,
+-				   &qphy->vbus_notify);
+ 
+ 	/*
+ 	 * Ensure that D+/D- lines are routed to uB connector, so
 -- 
 1.9.1
