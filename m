@@ -1,56 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57218 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbcLLIaS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 03:30:18 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Fixes for v4.10
-Date: Mon, 12 Dec 2016 09:30:00 +0100
-Message-Id: <cover.1481530910.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: kishon@ti.com, maxime.ripard@free-electrons.com, wens@csie.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, chanwoo@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 1/2] phy: rcar-gen3-usb2: Replace the deprecated extcon API
+Date: Fri, 30 Dec 2016 13:11:28 +0900
+Message-id: <1483071089-8362-2-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
+References: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20161230041136epcas5p45074607ce44561b57561bfb20a8c3bc4@epcas5p4.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+This patch replaces the deprecated extcon API as following:
+- extcon_set_cable_state_() -> extcon_set_state_sync()
 
-Please consider these Renesas ARM based SoC fixes for v4.10.
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/phy/phy-rcar-gen3-usb2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-This provides an sd0_uhs node rather than duplicate sdh0 nodes
-resolving an error introduced in a clean-up patch.
-
-This pull request is based on "Second Round of Renesas ARM Based SoC DT
-Updates for v4.10", tagged as renesas-arm64-dt2-for-v4.10,
-which you have already pulled. The error corrected by this change
-was introduced in that pull-request.
-
-
-The following changes since commit 5de68961cf5618c1ce5bb15848b36121247f23d5:
-
-  arm64: dts: r8a7796: Add device node for PRR (2016-11-21 10:18:53 +0100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v4.10
-
-for you to fetch changes up to 8ebcb400af619ee0ddeb39c06fc35511b20cc697:
-
-  arm64: dts: h3ulcb: Provide sd0_uhs node (2016-12-08 14:29:17 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Fixes for v4.10
-
-* Provide sd0_uhs node
-
-----------------------------------------------------------------
-Simon Horman (1):
-      arm64: dts: h3ulcb: Provide sd0_uhs node
-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index c63da1b955c1..54a83675f0a8 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -94,11 +94,11 @@ static void rcar_gen3_phy_usb2_work(struct work_struct *work)
+ 						 work);
+ 
+ 	if (ch->extcon_host) {
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, true);
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB, false);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, true);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB, false);
+ 	} else {
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, false);
+-		extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, false);
++		extcon_set_state_sync(ch->extcon, EXTCON_USB, true);
+ 	}
+ }
+ 
+-- 
+1.9.1
