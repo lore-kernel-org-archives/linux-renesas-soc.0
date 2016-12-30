@@ -1,30 +1,79 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:33420 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752004AbcL1VSp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Dec 2016 16:18:45 -0500
-Received: by mail-lf0-f43.google.com with SMTP id c13so211087374lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Dec 2016 13:18:44 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] Enable R8A7794 DU VSPD compositor
-Date: Thu, 29 Dec 2016 00:18:40 +0300
-Message-ID: <18781159.4YChoBxRU5@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 3/6] usb: phy: omap-otg: Replace the extcon API
+Date: Fri, 30 Dec 2016 13:08:12 +0900
+Message-id: <1483070895-8213-4-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+References: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20161230040816epcas5p47433110fddafafca1a8b8a64acee1835@epcas5p4.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+This patch uses the resource-managed extcon API for extcon_register_notifier()
+and replaces the deprecated extcon API as following:
+- extcon_get_cable_state_() -> extcon_get_state()
 
-   Here's the set of 2 patches against the 'drm-next' branch of David Airlie's
-'linux.git' repo. We're switching to the DU compositor for the DU driver on the
-Renesas R8A7794 SoC.
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+---
+ drivers/usb/phy/phy-omap-otg.c | 24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
-[1/2] drm: rcar-du: support less VSPs than CRTCs
-[2/2] drm: rcar-du: enable VSPD on R8A7794
-
-MBR, Sergei
+diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
+index 6523af4f8f93..800d1d90753d 100644
+--- a/drivers/usb/phy/phy-omap-otg.c
++++ b/drivers/usb/phy/phy-omap-otg.c
+@@ -118,19 +118,19 @@ static int omap_otg_probe(struct platform_device *pdev)
+ 	otg_dev->id_nb.notifier_call = omap_otg_id_notifier;
+ 	otg_dev->vbus_nb.notifier_call = omap_otg_vbus_notifier;
+ 
+-	ret = extcon_register_notifier(extcon, EXTCON_USB_HOST, &otg_dev->id_nb);
++	ret = devm_extcon_register_notifier(&pdev->dev, extcon,
++					EXTCON_USB_HOST, &otg_dev->id_nb);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = extcon_register_notifier(extcon, EXTCON_USB, &otg_dev->vbus_nb);
++	ret = devm_extcon_register_notifier(&pdev->dev, extcon,
++					EXTCON_USB, &otg_dev->vbus_nb);
+ 	if (ret) {
+-		extcon_unregister_notifier(extcon, EXTCON_USB_HOST,
+-					&otg_dev->id_nb);
+ 		return ret;
+ 	}
+ 
+-	otg_dev->id = extcon_get_cable_state_(extcon, EXTCON_USB_HOST);
+-	otg_dev->vbus = extcon_get_cable_state_(extcon, EXTCON_USB);
++	otg_dev->id = extcon_get_state(extcon, EXTCON_USB_HOST);
++	otg_dev->vbus = extcon_get_state(extcon, EXTCON_USB);
+ 	omap_otg_set_mode(otg_dev);
+ 
+ 	rev = readl(otg_dev->base);
+@@ -145,20 +145,8 @@ static int omap_otg_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int omap_otg_remove(struct platform_device *pdev)
+-{
+-	struct otg_device *otg_dev = platform_get_drvdata(pdev);
+-	struct extcon_dev *edev = otg_dev->extcon;
+-
+-	extcon_unregister_notifier(edev, EXTCON_USB_HOST, &otg_dev->id_nb);
+-	extcon_unregister_notifier(edev, EXTCON_USB, &otg_dev->vbus_nb);
+-
+-	return 0;
+-}
+-
+ static struct platform_driver omap_otg_driver = {
+ 	.probe		= omap_otg_probe,
+-	.remove		= omap_otg_remove,
+ 	.driver		= {
+ 		.name	= "omap_otg",
+ 	},
+-- 
+1.9.1
