@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:33267 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbcL3KHC (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36779 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753560AbcL3Jqx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Dec 2016 05:07:02 -0500
-Received: by mail-lf0-f46.google.com with SMTP id c13so234823473lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Dec 2016 02:07:01 -0800 (PST)
+        Fri, 30 Dec 2016 04:46:53 -0500
+Received: by mail-lf0-f53.google.com with SMTP id t196so234704841lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Dec 2016 01:46:52 -0800 (PST)
 Subject: Re: [PATCH 1/2] arm64: dma_mapping: allow PCI host driver to limit
  DMA mask
 To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
@@ -17,35 +17,81 @@ To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
         Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
 References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
- <b83c353c-c054-4378-9308-e625c460bdd9@cogentembedded.com>
 Cc: artemi.ivanov@cogentembedded.com, linux-kernel@vger.kernel.org
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <afde074d-c796-56bd-b337-f285f37414c6@cogentembedded.com>
-Date: Fri, 30 Dec 2016 13:06:58 +0300
+Message-ID: <b83c353c-c054-4378-9308-e625c460bdd9@cogentembedded.com>
+Date: Fri, 30 Dec 2016 12:46:49 +0300
 MIME-Version: 1.0
-In-Reply-To: <b83c353c-c054-4378-9308-e625c460bdd9@cogentembedded.com>
+In-Reply-To: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/30/2016 12:46 PM, Sergei Shtylyov wrote:
+Hello!
 
->> It is possible that PCI device supports 64-bit DMA addressing, and thus
->> it's driver sets device's dma_mask to DMA_BIT_MASK(64), however PCI host
->
->    Its.
->
->> bridge has limitations on inbound transactions addressing. Example of
->> such setup is NVME
->
->    Isn't it called NVMe?
->
->> SSD device connected to RCAR PCIe controller.
->
->    R=Car.
+On 12/29/2016 11:45 PM, Nikita Yushchenko wrote:
 
-    Sorry, R-Car. :-)
+> It is possible that PCI device supports 64-bit DMA addressing, and thus
+> it's driver sets device's dma_mask to DMA_BIT_MASK(64), however PCI host
+
+    Its.
+
+> bridge has limitations on inbound transactions addressing. Example of
+> such setup is NVME
+
+    Isn't it called NVMe?
+
+> SSD device connected to RCAR PCIe controller.
+
+    R=Car.
+
+> Previously there was attempt to handle this via bus notifier: after
+> driver is attached to PCI device, bridge driver gets notifier callback,
+> and resets dma_mask from there. However, this is racy: PCI device driver
+> could already allocate buffers and/or start i/o in probe routine.
+> In NVME case, i/o is started in workqueue context, and this race gives
+> "sometimes works, sometimes not" effect.
+>
+> Proper solution should make driver's dma_set_mask() call to fail if host
+> bridge can't support mask being set.
+>
+> This patch makes __swiotlb_dma_supported() to check mask being set for
+
+    "To" not needed here.
+
+> PCI device against dma_mask of struct device corresponding to PCI host
+> bridge (one with name "pciXXXX:YY"), if that dma_mask is set.
+>
+> This is the least destructive approach: currently dma_mask of that device
+> object is not used anyhow, thus all existing setups will work as before,
+> and modification is required only in actually affected components -
+> driver of particular PCI host bridge, and dma_map_ops of particular
+> platform.
+>
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> ---
+>  arch/arm64/mm/dma-mapping.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+> index 290a84f..49645277 100644
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+[...]
+> @@ -347,6 +348,16 @@ static int __swiotlb_get_sgtable(struct device *dev, struct sg_table *sgt,
+>
+>  static int __swiotlb_dma_supported(struct device *hwdev, u64 mask)
+>  {
+> +#ifdef CONFIG_PCI
+> +	if (dev_is_pci(hwdev)) {
+> +		struct pci_dev *pdev = to_pci_dev(hwdev);
+> +		struct pci_host_bridge *br = pci_find_host_bridge(pdev->bus);
+> +
+> +		if (br->dev.dma_mask && (*br->dev.dma_mask) &&
+> +				(mask & (*br->dev.dma_mask)) != mask)
+
+    Hum, inner parens not necessary?
 
 [...]
 
