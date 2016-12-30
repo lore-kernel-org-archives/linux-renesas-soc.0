@@ -1,87 +1,52 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=i9uI=XQ=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCHv2 2/5] scripts: Provide bin2png.sh helper
-Date: Thu,  1 Dec 2016 21:31:46 +0000
-Message-Id: <1480627909-19207-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:33267 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751662AbcL3KHC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Dec 2016 05:07:02 -0500
+Received: by mail-lf0-f46.google.com with SMTP id c13so234823473lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Dec 2016 02:07:01 -0800 (PST)
+Subject: Re: [PATCH 1/2] arm64: dma_mapping: allow PCI host driver to limit
+ DMA mask
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms@verge.net.au>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
+ <b83c353c-c054-4378-9308-e625c460bdd9@cogentembedded.com>
+Cc: artemi.ivanov@cogentembedded.com, linux-kernel@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <afde074d-c796-56bd-b337-f285f37414c6@cogentembedded.com>
+Date: Fri, 30 Dec 2016 13:06:58 +0300
+MIME-Version: 1.0
+In-Reply-To: <b83c353c-c054-4378-9308-e625c460bdd9@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+On 12/30/2016 12:46 PM, Sergei Shtylyov wrote:
 
-Identify the size and format from the test output filename, and pass
-to raw2rgbpnm for conversion to a PNM file.
+>> It is possible that PCI device supports 64-bit DMA addressing, and thus
+>> it's driver sets device's dma_mask to DMA_BIT_MASK(64), however PCI host
+>
+>    Its.
+>
+>> bridge has limitations on inbound transactions addressing. Example of
+>> such setup is NVME
+>
+>    Isn't it called NVMe?
+>
+>> SSD device connected to RCAR PCIe controller.
+>
+>    R=Car.
 
->From there we can convert easily to a PNG output file.
+    Sorry, R-Car. :-)
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+[...]
 
----
-v2:
-
-- use 'convert' to proces png files to png
-- strip '.bin' from target filenames
-
- scripts/Makefile   |  2 +-
- scripts/bin2png.sh | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+), 1 deletion(-)
- create mode 100755 scripts/bin2png.sh
-
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 8c452f4c54ce..6586b2989aed 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -1,4 +1,4 @@
--SCRIPTS=logger.sh vsp-lib.sh
-+SCRIPTS=$(wildcard *.sh)
- 
- all:
- 
-diff --git a/scripts/bin2png.sh b/scripts/bin2png.sh
-new file mode 100755
-index 000000000000..bde1ddfa3eab
---- /dev/null
-+++ b/scripts/bin2png.sh
-@@ -0,0 +1,36 @@
-+#!/bin/sh
-+
-+FILE="$1"
-+
-+PNM=$(echo $FILE | sed -e 's|\.bin$|.pnm|')
-+PNG=$(echo $FILE | sed -e 's|\.bin$|.png|')
-+
-+fmt=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\1|')
-+size=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\2|')
-+
-+case $fmt in
-+	yuv410m|yvu410m|yuv411m|yuv420m|yvu420m|yuv422m|yvu422m|yuv444m|yvu444m)
-+		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
-+		fmt=`echo $fmt | tr 'M' 'P'`
-+		;;
-+	nv12m|nv21m|nv16m|nv61m)
-+		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
-+		fmt=`echo $fmt | tr -d 'M'`
-+		;;
-+	argb555|xrgb555)
-+		fmt=RGB555X
-+		;;
-+	argb32|xrgb32)
-+		fmt=RGB32
-+		;;
-+	abgr32|xbgr32)
-+		fmt=BGR32
-+		;;
-+	*)
-+		fmt=`echo $fmt | tr '[:lower:]' '[:upper:]'`
-+		;;
-+esac
-+
-+raw2rgbpnm -s $size -f $fmt $FILE $PNM && \
-+	convert $PNM $PNG
-+rm $PNM
--- 
-2.7.4
+MBR, Sergei
