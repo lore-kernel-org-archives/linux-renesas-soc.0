@@ -1,59 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:34609 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbcL2UpU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 15:45:20 -0500
-Received: by mail-lf0-f47.google.com with SMTP id y21so227075116lfa.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Dec 2016 12:45:19 -0800 (PST)
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: artemi.ivanov@cogentembedded.com, linux-kernel@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH 2/2] rcar-pcie: set host bridge's DMA mask
-Date: Thu, 29 Dec 2016 23:45:04 +0300
-Message-Id: <1483044304-2085-2-git-send-email-nikita.yoush@cogentembedded.com>
-In-Reply-To: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
-References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: kishon@ti.com, maxime.ripard@free-electrons.com, wens@csie.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, chanwoo@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 2/2] phy: sun4i-usb: Replace the deprecated extcon API
+Date: Fri, 30 Dec 2016 13:11:29 +0900
+Message-id: <1483071089-8362-3-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
+References: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20161230041136epcas5p4719845a9e04914e91dd6dac1a5d257ef@epcas5p4.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This gives platform DMA mapping code a chance to disallow setting device
-DMA mask to something that host bridge can't support.
+This patch replaces the deprecated extcon API as following:
+- extcon_set_cable_state_() -> extcon_set_state_sync()
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/pci/host/pcie-rcar.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/phy/phy-sun4i-usb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index aca85be..b1edc3c 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -451,6 +451,7 @@ static int rcar_pcie_enable(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct pci_bus *bus, *child;
-+	struct pci_host_bridge *bridge;
- 	LIST_HEAD(res);
+diff --git a/drivers/phy/phy-sun4i-usb.c b/drivers/phy/phy-sun4i-usb.c
+index bf28a0fdd569..eae171e18043 100644
+--- a/drivers/phy/phy-sun4i-usb.c
++++ b/drivers/phy/phy-sun4i-usb.c
+@@ -534,7 +534,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
+ 	mutex_unlock(&phy0->mutex);
  
- 	/* Try setting 5 GT/s link speed */
-@@ -480,6 +481,10 @@ static int rcar_pcie_enable(struct rcar_pcie *pcie)
- 	list_for_each_entry(child, &bus->children, node)
- 		pcie_bus_configure_settings(child);
+ 	if (id_notify) {
+-		extcon_set_cable_state_(data->extcon, EXTCON_USB_HOST,
++		extcon_set_state_sync(data->extcon, EXTCON_USB_HOST,
+ 					!id_det);
+ 		/* When leaving host mode force end the session here */
+ 		if (force_session_end && id_det == 1) {
+@@ -547,7 +547,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
+ 	}
  
-+	bridge = pci_find_host_bridge(bus);
-+	bridge->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+	bridge->dev.dma_mask = &bridge->dev.coherent_dma_mask;
-+
- 	pci_bus_add_devices(bus);
+ 	if (vbus_notify)
+-		extcon_set_cable_state_(data->extcon, EXTCON_USB, vbus_det);
++		extcon_set_state_sync(data->extcon, EXTCON_USB, vbus_det);
  
- 	return 0;
+ 	if (sun4i_usb_phy0_poll(data))
+ 		queue_delayed_work(system_wq, &data->detect, POLL_TIME);
 -- 
-2.1.4
+1.9.1
