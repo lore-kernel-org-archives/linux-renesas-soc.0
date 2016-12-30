@@ -1,59 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:41850 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752492AbcLLTvs (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56998 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753096AbcL3EIZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 14:51:48 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/9] mmc: sh_mobile_sdhi: add HS200 support
-Date: Mon, 12 Dec 2016 20:51:19 +0100
-Message-Id: <20161212195128.16633-1-wsa+renesas@sang-engineering.com>
+        Thu, 29 Dec 2016 23:08:25 -0500
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 5/6] usb: phy: tahvo: Replace the deprecated extcon API
+Date: Fri, 30 Dec 2016 13:08:14 +0900
+Message-id: <1483070895-8213-6-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+References: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20161230040817epcas5p403afe9ebb60e55eee9a5c47c27b82b65@epcas5p4.samsung.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Here is a series adding HS200 support to the SDHI driver. Building the actual
-functionality on top of SDR104 support was rather easy. However, I figured the
-checks for enabling tuning were rather scattered over the driver and could be
-further improved. So I did some refactoring of that to make adding HS200
-support then a one-liner :)
+This patch replaces the deprecated extcon API as following:
+- extcon_set_cable_state_() -> extcon_set_state_sync()
 
-This has been tested on Salvator-X boards with R-Car H3 and M3-W SoCs. It has
-also been tested on a Lager board (R-Car H2) checking SDR50/104 for
-regressions. The whole test document showing significant speed-ups reading from
-the on-board eMMC can be found here:
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+---
+ drivers/usb/phy/phy-tahvo.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-http://elinux.org/Tests:eMMC-HS
-
-and the branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-emmc-hs
-
-Please comment, review, apply...
-
-Thanks,
-
-   Wolfram
-
-
-Wolfram Sang (9):
-  mmc: sh_mobile_sdhi: simplify accessing DT data
-  mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
-  mmc: sh_mobile_sdhi: improve prerequisites for tuning
-  mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
-  mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
-  mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
-  mmc: sh_mobile_sdhi: enable HS200
-  arm64: dts: r8a7795: enable HS200 for eMMC
-  arm64: dts: r8a7796: enable HS200 for eMMC
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  1 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  1 +
- drivers/mmc/host/sh_mobile_sdhi.c                  | 67 ++++++++--------------
- 3 files changed, 27 insertions(+), 42 deletions(-)
-
+diff --git a/drivers/usb/phy/phy-tahvo.c b/drivers/usb/phy/phy-tahvo.c
+index ab5d364f6e8c..a31c8682e998 100644
+--- a/drivers/usb/phy/phy-tahvo.c
++++ b/drivers/usb/phy/phy-tahvo.c
+@@ -121,7 +121,7 @@ static void check_vbus_state(struct tahvo_usb *tu)
+ 	prev_state = tu->vbus_state;
+ 	tu->vbus_state = reg & TAHVO_STAT_VBUS;
+ 	if (prev_state != tu->vbus_state) {
+-		extcon_set_cable_state_(tu->extcon, EXTCON_USB, tu->vbus_state);
++		extcon_set_state_sync(tu->extcon, EXTCON_USB, tu->vbus_state);
+ 		sysfs_notify(&tu->pt_dev->dev.kobj, NULL, "vbus_state");
+ 	}
+ }
+@@ -130,7 +130,7 @@ static void tahvo_usb_become_host(struct tahvo_usb *tu)
+ {
+ 	struct retu_dev *rdev = dev_get_drvdata(tu->pt_dev->dev.parent);
+ 
+-	extcon_set_cable_state_(tu->extcon, EXTCON_USB_HOST, true);
++	extcon_set_state_sync(tu->extcon, EXTCON_USB_HOST, true);
+ 
+ 	/* Power up the transceiver in USB host mode */
+ 	retu_write(rdev, TAHVO_REG_USBR, USBR_REGOUT | USBR_NSUSPEND |
+@@ -149,7 +149,7 @@ static void tahvo_usb_become_peripheral(struct tahvo_usb *tu)
+ {
+ 	struct retu_dev *rdev = dev_get_drvdata(tu->pt_dev->dev.parent);
+ 
+-	extcon_set_cable_state_(tu->extcon, EXTCON_USB_HOST, false);
++	extcon_set_state_sync(tu->extcon, EXTCON_USB_HOST, false);
+ 
+ 	/* Power up transceiver and set it in USB peripheral mode */
+ 	retu_write(rdev, TAHVO_REG_USBR, USBR_SLAVE_CONTROL | USBR_REGOUT |
+@@ -379,9 +379,9 @@ static int tahvo_usb_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Set the initial cable state. */
+-	extcon_set_cable_state_(tu->extcon, EXTCON_USB_HOST,
++	extcon_set_state_sync(tu->extcon, EXTCON_USB_HOST,
+ 			       tu->tahvo_mode == TAHVO_MODE_HOST);
+-	extcon_set_cable_state_(tu->extcon, EXTCON_USB, tu->vbus_state);
++	extcon_set_state_sync(tu->extcon, EXTCON_USB, tu->vbus_state);
+ 
+ 	/* Create OTG interface */
+ 	tahvo_usb_power_off(tu);
 -- 
-2.10.2
+1.9.1
