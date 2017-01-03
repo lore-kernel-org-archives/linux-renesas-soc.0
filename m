@@ -1,120 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud6.xs4all.net ([194.109.24.28]:44560 "EHLO
-        lb2-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752574AbdAINhD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 08:37:03 -0500
-Subject: Re: [PATCH v2 6/7] dt-bindings: media: Add Renesas R-Car DRIF binding
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Antti Palosaari" <crope@iki.fi>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 6/7] dt-bindings: media: Add Renesas R-Car DRIF binding
+Date: Tue, 3 Jan 2017 15:20:50 +0000
+Message-ID: <HK2PR06MB05453E11C8931F881E106939C36E0@HK2PR06MB0545.apcprd06.prod.outlook.com>
 References: <1478706284-59134-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <1482307838-47415-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <1482307838-47415-7-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <11494368.ZdobxT7gGY@avalon>
  <CAMuHMdXj-xBrnBXfYu6BeXr7Gfv4wogH4z610Ddq-BSyVS=-8Q@mail.gmail.com>
- <HK2PR06MB05453E11C8931F881E106939C36E0@HK2PR06MB0545.apcprd06.prod.outlook.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <cca1ade8-01ef-8eab-f4b1-7dd7f204fdea@xs4all.nl>
-Date: Mon, 9 Jan 2017 14:36:55 +0100
+In-Reply-To: <CAMuHMdXj-xBrnBXfYu6BeXr7Gfv4wogH4z610Ddq-BSyVS=-8Q@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <HK2PR06MB05453E11C8931F881E106939C36E0@HK2PR06MB0545.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/03/2017 04:20 PM, Ramesh Shanmugasundaram wrote:
-> Hi Laurent, Geert,
-> 
-> Thanks for the review comments.
-> 
->>> On Wednesday 21 Dec 2016 08:10:37 Ramesh Shanmugasundaram wrote:
->>>> Add binding documentation for Renesas R-Car Digital Radio Interface
->>>> (DRIF) controller.
->>>>
->>>> Signed-off-by: Ramesh Shanmugasundaram
->>>> <ramesh.shanmugasundaram@bp.renesas.com> ---
->>>>  .../devicetree/bindings/media/renesas,drif.txt     | 202
->> ++++++++++++++++++
->>>>  1 file changed, 202 insertions(+)
->>>>  create mode 100644
->>>> Documentation/devicetree/bindings/media/renesas,drif.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt
->>>> b/Documentation/devicetree/bindings/media/renesas,drif.txt new file
->>>> mode
->>>> 100644
->>>> index 0000000..1f3feaf
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
->>
->>>> +Optional properties of an internal channel when:
->>>> +     - It is the only enabled channel of the bond (or)
->>>> +     - If it acts as primary among enabled bonds
->>>> +--------------------------------------------------------
->>>> +- renesas,syncmd       : sync mode
->>>> +                      0 (Frame start sync pulse mode. 1-bit width
->> pulse
->>>> +                         indicates start of a frame)
->>>> +                      1 (L/R sync or I2S mode) (default)
->>>> +- renesas,lsb-first    : empty property indicates lsb bit is received
->>>> first.
->>>> +                      When not defined msb bit is received first
->>>> +(default)
->>>> +- renesas,syncac-active: Indicates sync signal polarity, 0/1 for
->> low/high
-
-Shouldn't this be 'renesas,sync-active' instead of syncac-active?
-
-I'm not sure if syncac is intended or if it is a typo.
-
->>>> +                      respectively. The default is 1 (active high)
->>>> +- renesas,dtdl         : delay between sync signal and start of
->> reception.
->>>> +                      The possible values are represented in 0.5 clock
->>>> +                      cycle units and the range is 0 to 4. The default
->>>> +                      value is 2 (i.e.) 1 clock cycle delay.
->>>> +- renesas,syncdl       : delay between end of reception and sync
->> signal
->>>> edge.
->>>> +                      The possible values are represented in 0.5 clock
->>>> +                      cycle units and the range is 0 to 4 & 6. The
->> default
->>>> +                      value is 0 (i.e.) no delay.
->>>
->>> Most of these properties are pretty similar to the video bus
->>> properties defined at the endpoint level in
->>> Documentation/devicetree/bindings/media/video-interfaces.txt. I
->>> believe it would make sense to use OF graph and try to standardize
->>> these properties similarly.
-
-Other than sync-active, is there really anything else that is similar? And
-even the sync-active isn't a good fit since here there is only one sync
-signal instead of two for video (h and vsync).
-
-Regards,
-
-	Hans
-
->> Note that the last two properties match the those in
->> Documentation/devicetree/bindings/spi/sh-msiof.txt.
->> We may want to use one DRIF channel as a plain SPI slave with the
->> (modified) MSIOF driver in the future.
-> 
-> Should I leave it as it is or modify these as in video-interfaces.txt? Shall we conclude on this please?
-> 
-> Thanks,
-> Ramesh
-> N�����r��y���b�X��ǧv�^�)޺{.n�+����{���bj)���w*jg��������ݢj/���z�ޖ��2�ޙ���&�)ߡ�a�����G���h��j:+v���w�٥
-> 
+SGkgTGF1cmVudCwgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIHJldmlldyBjb21tZW50cy4NCg0K
+PiA+IE9uIFdlZG5lc2RheSAyMSBEZWMgMjAxNiAwODoxMDozNyBSYW1lc2ggU2hhbm11Z2FzdW5k
+YXJhbSB3cm90ZToNCj4gPj4gQWRkIGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3IgUmVuZXNhcyBS
+LUNhciBEaWdpdGFsIFJhZGlvIEludGVyZmFjZQ0KPiA+PiAoRFJJRikgY29udHJvbGxlci4NCj4g
+Pj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0NCj4gPj4gPHJh
+bWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPiAtLS0NCj4gPj4gIC4uLi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL21lZGlhL3JlbmVzYXMsZHJpZi50eHQgICAgIHwgMjAyDQo+ICsrKysr
+KysrKysrKysrKysrKw0KPiA+PiAgMSBmaWxlIGNoYW5nZWQsIDIwMiBpbnNlcnRpb25zKCspDQo+
+ID4+ICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL21lZGlhL3JlbmVzYXMsZHJpZi50eHQNCj4gPj4NCj4gPj4gZGlmZiAtLWdpdCBhL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9yZW5lc2FzLGRyaWYudHh0DQo+
+ID4+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3JlbmVzYXMsZHJp
+Zi50eHQgbmV3IGZpbGUNCj4gPj4gbW9kZQ0KPiA+PiAxMDA2NDQNCj4gPj4gaW5kZXggMDAwMDAw
+MC4uMWYzZmVhZg0KPiA+PiAtLS0gL2Rldi9udWxsDQo+ID4+ICsrKyBiL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9yZW5lc2FzLGRyaWYudHh0DQo+IA0KPiA+PiArT3B0
+aW9uYWwgcHJvcGVydGllcyBvZiBhbiBpbnRlcm5hbCBjaGFubmVsIHdoZW46DQo+ID4+ICsgICAg
+IC0gSXQgaXMgdGhlIG9ubHkgZW5hYmxlZCBjaGFubmVsIG9mIHRoZSBib25kIChvcikNCj4gPj4g
+KyAgICAgLSBJZiBpdCBhY3RzIGFzIHByaW1hcnkgYW1vbmcgZW5hYmxlZCBib25kcw0KPiA+PiAr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0N
+Cj4gPj4gKy0gcmVuZXNhcyxzeW5jbWQgICAgICAgOiBzeW5jIG1vZGUNCj4gPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAwIChGcmFtZSBzdGFydCBzeW5jIHB1bHNlIG1vZGUuIDEtYml0IHdpZHRo
+DQo+IHB1bHNlDQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgaW5kaWNhdGVzIHN0YXJ0
+IG9mIGEgZnJhbWUpDQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgMSAoTC9SIHN5bmMgb3Ig
+STJTIG1vZGUpIChkZWZhdWx0KQ0KPiA+PiArLSByZW5lc2FzLGxzYi1maXJzdCAgICA6IGVtcHR5
+IHByb3BlcnR5IGluZGljYXRlcyBsc2IgYml0IGlzIHJlY2VpdmVkDQo+ID4+IGZpcnN0Lg0KPiA+
+PiArICAgICAgICAgICAgICAgICAgICAgIFdoZW4gbm90IGRlZmluZWQgbXNiIGJpdCBpcyByZWNl
+aXZlZCBmaXJzdA0KPiA+PiArKGRlZmF1bHQpDQo+ID4+ICstIHJlbmVzYXMsc3luY2FjLWFjdGl2
+ZTogSW5kaWNhdGVzIHN5bmMgc2lnbmFsIHBvbGFyaXR5LCAwLzEgZm9yDQo+IGxvdy9oaWdoDQo+
+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgcmVzcGVjdGl2ZWx5LiBUaGUgZGVmYXVsdCBpcyAx
+IChhY3RpdmUgaGlnaCkNCj4gPj4gKy0gcmVuZXNhcyxkdGRsICAgICAgICAgOiBkZWxheSBiZXR3
+ZWVuIHN5bmMgc2lnbmFsIGFuZCBzdGFydCBvZg0KPiByZWNlcHRpb24uDQo+ID4+ICsgICAgICAg
+ICAgICAgICAgICAgICAgVGhlIHBvc3NpYmxlIHZhbHVlcyBhcmUgcmVwcmVzZW50ZWQgaW4gMC41
+IGNsb2NrDQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgY3ljbGUgdW5pdHMgYW5kIHRoZSBy
+YW5nZSBpcyAwIHRvIDQuIFRoZSBkZWZhdWx0DQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAg
+dmFsdWUgaXMgMiAoaS5lLikgMSBjbG9jayBjeWNsZSBkZWxheS4NCj4gPj4gKy0gcmVuZXNhcyxz
+eW5jZGwgICAgICAgOiBkZWxheSBiZXR3ZWVuIGVuZCBvZiByZWNlcHRpb24gYW5kIHN5bmMNCj4g
+c2lnbmFsDQo+ID4+IGVkZ2UuDQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgVGhlIHBvc3Np
+YmxlIHZhbHVlcyBhcmUgcmVwcmVzZW50ZWQgaW4gMC41IGNsb2NrDQo+ID4+ICsgICAgICAgICAg
+ICAgICAgICAgICAgY3ljbGUgdW5pdHMgYW5kIHRoZSByYW5nZSBpcyAwIHRvIDQgJiA2LiBUaGUN
+Cj4gZGVmYXVsdA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgIHZhbHVlIGlzIDAgKGkuZS4p
+IG5vIGRlbGF5Lg0KPiA+DQo+ID4gTW9zdCBvZiB0aGVzZSBwcm9wZXJ0aWVzIGFyZSBwcmV0dHkg
+c2ltaWxhciB0byB0aGUgdmlkZW8gYnVzDQo+ID4gcHJvcGVydGllcyBkZWZpbmVkIGF0IHRoZSBl
+bmRwb2ludCBsZXZlbCBpbg0KPiA+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9t
+ZWRpYS92aWRlby1pbnRlcmZhY2VzLnR4dC4gSQ0KPiA+IGJlbGlldmUgaXQgd291bGQgbWFrZSBz
+ZW5zZSB0byB1c2UgT0YgZ3JhcGggYW5kIHRyeSB0byBzdGFuZGFyZGl6ZQ0KPiA+IHRoZXNlIHBy
+b3BlcnRpZXMgc2ltaWxhcmx5Lg0KPiANCj4gTm90ZSB0aGF0IHRoZSBsYXN0IHR3byBwcm9wZXJ0
+aWVzIG1hdGNoIHRoZSB0aG9zZSBpbg0KPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3Mvc3BpL3NoLW1zaW9mLnR4dC4NCj4gV2UgbWF5IHdhbnQgdG8gdXNlIG9uZSBEUklGIGNoYW5u
+ZWwgYXMgYSBwbGFpbiBTUEkgc2xhdmUgd2l0aCB0aGUNCj4gKG1vZGlmaWVkKSBNU0lPRiBkcml2
+ZXIgaW4gdGhlIGZ1dHVyZS4NCg0KU2hvdWxkIEkgbGVhdmUgaXQgYXMgaXQgaXMgb3IgbW9kaWZ5
+IHRoZXNlIGFzIGluIHZpZGVvLWludGVyZmFjZXMudHh0PyBTaGFsbCB3ZSBjb25jbHVkZSBvbiB0
+aGlzIHBsZWFzZT8NCg0KVGhhbmtzLA0KUmFtZXNoDQo=
