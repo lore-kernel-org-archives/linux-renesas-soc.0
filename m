@@ -1,30 +1,125 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 0/4] arm64: renesas: enable M3ULCB board peripherals
-Date: Thu, 26 Jan 2017 17:53:42 +0300
-Message-Id: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+In-Reply-To: <2477026.2bVvJoQSTE@avalon>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <2900223.pppRAbRhe6@avalon> <CAL_JsqKBoAJFiOqNhMPzF5VXjdXT2jbWHV0zxfX0gdSz0yGZLQ@mail.gmail.com>
+ <2477026.2bVvJoQSTE@avalon>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 3 Jan 2017 16:33:13 -0600
+Message-ID: <CAL_JsqJyN3-PkJMK87c+zYbkK5+_HzOBSTzjxTYNcVQ5mPzj3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 01/13] devicetree/bindings: display: Document common
+ panel properties
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On Mon, Dec 19, 2016 at 10:54 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Rob,
+>
+> On Monday 19 Dec 2016 09:38:49 Rob Herring wrote:
+>> On Sun, Dec 18, 2016 at 2:54 PM, Laurent Pinchart wrote:
+>> > On Tuesday 29 Nov 2016 20:23:41 Laurent Pinchart wrote:
+>> >> On Tuesday 29 Nov 2016 09:14:09 Rob Herring wrote:
+>> >>> On Tue, Nov 29, 2016 at 2:27 AM, Laurent Pinchart wrote:
+>> >>>> On Tuesday 22 Nov 2016 11:36:55 Laurent Pinchart wrote:
+>> >>>>> On Monday 21 Nov 2016 10:48:15 Rob Herring wrote:
+>> >>>>>> On Sat, Nov 19, 2016 at 05:28:01AM +0200, Laurent Pinchart wrote:
+>> >>>>>>> Document properties common to several display panels in a central
+>> >>>>>>> location that can be referenced by the panel device tree bindings.
+>> >>>>>>
+>> >>>>>> Looks good. Just one comment...
+>> >>>>>>
+>> >>>>>> [...]
+>> >>>>>>
+>> >>>>>>> +Connectivity
+>> >>>>>>> +------------
+>> >>>>>>> +
+>> >>>>>>> +- ports: Panels receive video data through one or multiple
+>> >>>>>>> connections. While
+>> >>>>>>> +  the nature of those connections is specific to the panel type,
+>> >>>>>>> the
+>> >>>>>>> +  connectivity is expressed in a standard fashion using ports as
+>> >>>>>>> specified in
+>> >>>>>>> +  the device graph bindings defined in
+>> >>>>>>> +  Documentation/devicetree/bindings/graph.txt.
+>> >>>>>>
+>> >>>>>> We allow panels to either use graph binding or be a child of the
+>> >>>>>> display controller.
+>> >>>>>
+>> >>>>> I knew that some display controllers use a phandle to the panel (see
+>> >>>>> the fsl,panel and nvidia,panel properties), but I didn't know we had
+>> >>>>> panels as children of display controller nodes. I don't think we
+>> >>>>> should allow that for anything but DSI panels, as the DT hierarchy is
+>> >>>>> based on control buses. Are you sure we have other panels instantiated
+>> >>>>> through that mechanism ?
+>> >>>
+>> >>> Some panels have no control bus, so were do we place them?
+>> >>
+>> >> I'd say under the root node, like all similar control-less devices.
+>> >>
+>> >>> I would say the hierarchy is based on buses with a preference for the
+>> >>> control bus when there are multiple buses. I'm not a fan of just
+>> >>> sticking things are the top level.
+>> >>
+>> >> OK, so much for my comment a few lines up :-)
+>> >>
+>> >> The problem with placing non-DSI panels as children of the display
+>> >> controller and not using OF graph is that the panel bindings become
+>> >> dependent of the display controller being used. A display controller
+>> >> using OF graph would require the panel to do the same, while a display
+>> >> controller expecting a panel child node (with a specific name) would
+>> >> require DT properties for the panel node.
+>>
+>> Not sure I follow.
+>
+> Sorry, I meant "would not requite DT properties".
+>
+>> They become dependent on the controller driver to probe the panel, but the
+>> contents of the panel node would not be controller dependent.
+>
+> If a display controller uses OF graph then the panel DT node has to declare
+> ports. If the display controller doesn't use OF graph but instead expects the
+> panel to be a direct subnode, or points to the panel using a property such as
+> fsl,panel, then the panel DT node will not have ports.
 
-This adds the folowing:
-- R8A7796 SoC based M3ULCB board peripherals
+The controller should just ask for the panel via a common function.
+That function should then look for either a child node (called
+'panel') or a graph port. Of course, for more complex cases, only OF
+graph may work. It really just the simple case of a controller with a
+single output and single panel that I'm talking about.
 
-Vladimir Barinov (4):
-[1/4] arm64: dts: m3ulcb: enable I2C
-[2/4] arm64: dts: m3ulcb: Update memory node to 2 GiB map
-[3/4] arm64: dts: m3ulcb: enable EthernetAVB
-[4/4] arm64: dts: m3ulcb: enable HS200 for eMMC
 
----
-This patchset is against the 'kernel/git/horms/renesas.git' repo.
+>> >> I'm also not sure the complexity of OF graph is really that prohibitive
+>> >> if you compare it to panels as child nodes. To get the panel driver to
+>> >> bind to the panel DT node the display controller driver would need to
+>> >> create a platform device for the panel and register it. That's not very
+>> >> difficult, but parsing a single port and endpoint isn't either (and we
+>> >> could even provide a helper function for that, a version of
+>> >> of_drm_find_panel() that would take as an argument the display controller
+>> >> device node instead of the panel device node).
+>> >
+>> > Ping ?
+>> >
+>> > I'd like to standardize on one model for panel DT bindings, but I'm not
+>> > sure that can be achieved given that we already have multiple competing
+>> > models. In any case, is that blocking to merge this patch ? I only
+>> > describe one connectivity model here as that's what my panel driver
+>> > needs, but I have no issue adding more models later when needed. I
+>> > believe this patch is a good step forward already.
+>>
+>> It is an improvement which I appreciate, so yes I guess we can address
+>> it later when needed.
+>
+> Thank you. Can I get your ack then ? :-)
 
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     | 50 +++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Yes.
+
+Acked-by: Rob Herring <robh@kernel.org>
