@@ -1,129 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967569AbdAKOn5 (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:34933 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935823AbdADMKZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:57 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 18/18] serial: sh-sci: Compute the regshift value for SCI ports
-Date: Wed, 11 Jan 2017 16:43:40 +0200
-Message-Id: <20170111144340.29074-19-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 4 Jan 2017 07:10:25 -0500
+Received: by mail-lf0-f54.google.com with SMTP id b14so303214653lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jan 2017 04:10:24 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/3] sh_eth: handle only enabled E-MAC interrupts
+Date: Wed, 04 Jan 2017 15:10:21 +0300
+Message-ID: <3040246.Jqm8G9qTbW@wasted.cogentembedded.com>
+In-Reply-To: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
+References: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SCI instances found in SH SoCs have different spacing between registers
-depending on the SoC. The platform data contains a regshift field that
-tells the driver by how many bits to shift the register offset to
-compute its address. We can compute the regshift value automatically
-based on the memory resource size, there's no need to pass the value
-through platform data.
+The driver should only handle the enabled E-MAC interrupts, like it does
+for the E-DMAC interrupts since commit 3893b27345ac ("sh_eth: workaround
+for spurious ECI interrupt"),  so mask ECSR with  ECSIPR when reading it
+in sh_eth_error().
 
-Fix the sh7750 SCI and sh7760 SIM port memory resources length to ensure
-proper computation of the regshift value.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 -
- arch/sh/kernel/cpu/sh4/setup-sh7750.c |  3 +--
- arch/sh/kernel/cpu/sh4/setup-sh7760.c | 10 ++++++++--
- drivers/tty/serial/sh-sci.c           |  8 +++++++-
- include/linux/serial_sci.h            |  1 -
- 5 files changed, 16 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-index 592cd9ab30c4..59a88611df55 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-@@ -111,7 +111,6 @@ static struct platform_device rtc_device = {
- static struct plat_sci_port scif0_platform_data = {
- 	.type		= PORT_SCI,
- 	.ops		= &sh770x_sci_port_ops,
--	.regshift	= 1,
- };
+Index: renesas/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- renesas.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ renesas/drivers/net/ethernet/renesas/sh_eth.c
+@@ -1535,7 +1535,8 @@ static void sh_eth_error(struct net_devi
+ 	u32 mask;
  
- static struct resource scif0_resources[] = {
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7750.c b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-index d98a55416306..57d30689204d 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-@@ -39,11 +39,10 @@ static struct platform_device rtc_device = {
- 
- static struct plat_sci_port sci_platform_data = {
- 	.type		= PORT_SCI,
--	.regshift	= 2,
- };
- 
- static struct resource sci_resources[] = {
--	DEFINE_RES_MEM(0xffe00000, 0x100),
-+	DEFINE_RES_MEM(0xffe00000, 0x20),
- 	DEFINE_RES_IRQ(evt2irq(0x4e0)),
- };
- 
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-index 0c0cdfc69dcc..e51fe1734e13 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-@@ -200,12 +200,18 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
-+	/*
-+	 * This is actually a SIM card module serial port, based on an SCI with
-+	 * additional registers. The sh-sci driver doesn't support the SIM port
-+	 * type, declare it as a SCI. Don't declare the additional registers in
-+	 * the memory resource or the driver will compute an incorrect regshift
-+	 * value.
-+	 */
- 	.type		= PORT_SCI,
--	.regshift	= 2,
- };
- 
- static struct resource scif3_resources[] = {
--	DEFINE_RES_MEM(0xfe480000, 0x100),
-+	DEFINE_RES_MEM(0xfe480000, 0x10),
- 	DEFINE_RES_IRQ(evt2irq(0xc00)),
- 	DEFINE_RES_IRQ(evt2irq(0xc20)),
- 	DEFINE_RES_IRQ(evt2irq(0xc40)),
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 7906255b097c..fbffe89b493f 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2572,9 +2572,15 @@ static int sci_init_single(struct platform_device *dev,
- 
- 	port->type		= p->type;
- 	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
--	port->regshift		= p->regshift;
- 	port->fifosize		= sci_port->params->fifosize;
- 
-+	if (port->type == PORT_SCI) {
-+		if (sci_port->reg_size >= 0x20)
-+			port->regshift = 2;
-+		else
-+			port->regshift = 1;
-+	}
-+
- 	/*
- 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
- 	 * for the multi-IRQ ports, which is where we are primarily
-diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
-index f9a4526f4ec5..e598eaef3962 100644
---- a/include/linux/serial_sci.h
-+++ b/include/linux/serial_sci.h
-@@ -56,7 +56,6 @@ struct plat_sci_port {
- 	/*
- 	 * Platform overrides if necessary, defaults otherwise.
- 	 */
--	unsigned char	regshift;
- 	unsigned char	regtype;
- 
- 	struct plat_sci_port_ops	*ops;
--- 
-Regards,
-
-Laurent Pinchart
+ 	if (intr_status & EESR_ECI) {
+-		felic_stat = sh_eth_read(ndev, ECSR);
++		felic_stat = sh_eth_read(ndev, ECSR) &
++			     sh_eth_read(ndev, ECSIPR);
+ 		sh_eth_write(ndev, felic_stat, ECSR);	/* clear int */
+ 		if (felic_stat & ECSR_ICD)
+ 			ndev->stats.tx_carrier_errors++;
