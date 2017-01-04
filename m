@@ -1,74 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:47320 "EHLO mail.zeus03.de"
+Received: from www.zeus03.de ([194.117.254.33]:44402 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S970582AbdAELuX (ORCPT
+        id S968690AbdADRkC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 06:50:23 -0500
+        Wed, 4 Jan 2017 12:40:02 -0500
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC 2/3] mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
-Date: Thu,  5 Jan 2017 12:43:25 +0100
-Message-Id: <20170105114326.12426-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170105114326.12426-1-wsa+renesas@sang-engineering.com>
-References: <20170105114326.12426-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH RESEND 2/2] arm64: dts: r8a7796: enable HS200 for eMMC
+Date: Wed,  4 Jan 2017 18:39:54 +0100
+Message-Id: <20170104173954.3135-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170104173954.3135-1-wsa+renesas@sang-engineering.com>
+References: <20170104173954.3135-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-QUIRK sounds like there is something wrong, but actually there are just
-some bits which need to be 1. Rename it to be more clear.
-
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 6 ++----
- drivers/mmc/host/tmio_mmc_pio.c   | 2 +-
- include/linux/mfd/tmio.h          | 2 +-
- 3 files changed, 4 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 59db14b4827c33..1600fefc2c3e2c 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -641,10 +641,8 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	 */
- 	mmc_data->flags |= TMIO_MMC_HAVE_CMD12_CTRL;
- 
--	/*
--	 * All SDHI need SDIO_INFO1 reserved bit
--	 */
--	mmc_data->flags |= TMIO_MMC_SDIO_STATUS_QUIRK;
-+	/* All SDHI have reserved bits */
-+	mmc_data->flags |= TMIO_MMC_SDIO_STATUS_SETBITS;
- 
- 	ret = tmio_mmc_host_probe(host, mmc_data);
- 	if (ret < 0)
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 60dc43b4574117..d6033620a45c12 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -723,7 +723,7 @@ static void __tmio_mmc_sdio_irq(struct tmio_mmc_host *host)
- 	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdio_irq_mask;
- 
- 	sdio_status = status & ~TMIO_SDIO_MASK_ALL;
--	if (pdata->flags & TMIO_MMC_SDIO_STATUS_QUIRK)
-+	if (pdata->flags & TMIO_MMC_SDIO_STATUS_SETBITS)
- 		sdio_status |= 6;
- 
- 	sd_ctrl_write16(host, CTL_SDIO_STATUS, sdio_status);
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index fba44abd05ba1a..5a05a34cc1a292 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -97,7 +97,7 @@
- /*
-  * Some controllers needs to set 1 on SDIO status reserved bits
-  */
--#define TMIO_MMC_SDIO_STATUS_QUIRK	(1 << 8)
-+#define TMIO_MMC_SDIO_STATUS_SETBITS	(1 << 8)
- 
- /*
-  * Some controllers have a 32-bit wide data port register
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index f35e96ca7d6050..5fa6e91953d494 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -184,6 +184,7 @@
+ 	vmmc-supply = <&reg_3p3v>;
+ 	vqmmc-supply = <&reg_1p8v>;
+ 	bus-width = <8>;
++	mmc-hs200-1_8v;
+ 	non-removable;
+ 	status = "okay";
+ };
 -- 
-2.11.0
+2.10.2
