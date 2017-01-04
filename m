@@ -1,27 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34314 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761337AbdAEJd1 (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:32903 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762401AbdADV3g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 04:33:27 -0500
-Received: by mail-lf0-f50.google.com with SMTP id d16so29455100lfb.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Jan 2017 01:33:23 -0800 (PST)
-Subject: Re: [PATCH] sh_eth: R8A7740 supports packet shecksumming
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        David Miller <davem@davemloft.net>
-References: <1871204.P0zXJRoIfd@wasted.cogentembedded.com>
+        Wed, 4 Jan 2017 16:29:36 -0500
+Received: by mail-lf0-f44.google.com with SMTP id k86so23444659lfi.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jan 2017 13:29:35 -0800 (PST)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <9109092d-f781-1177-12f1-de9edda07f69@cogentembedded.com>
-Date: Thu, 5 Jan 2017 12:33:21 +0300
+To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] sh_eth: R8A7740 supports packet shecksumming
+Date: Thu, 05 Jan 2017 00:29:32 +0300
+Message-ID: <1871204.P0zXJRoIfd@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1871204.P0zXJRoIfd@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+The R8A7740 GEther controller supports the packet checksum offloading
+but the 'hw_crc' (bad name, I'll fix it) flag isn't set in the R8A7740
+data,  thus CSMR isn't cleared...
 
-    Oops, typo in the subject, "shecksumming". David, should I resend?
+Fixes: 73a0d907301e ("net: sh_eth: add support R8A7740")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-MBR, Sergei
+---
+This patch is against DaveM's 'net.git' repo plus the fixes sent recently...
+
+ drivers/net/ethernet/renesas/sh_eth.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+Index: net/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net/drivers/net/ethernet/renesas/sh_eth.c
+@@ -574,6 +574,7 @@ static struct sh_eth_cpu_data r8a7740_da
+ 	.rpadir_value   = 2 << 16,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
++	.hw_crc		= 1,
+ 	.tsu		= 1,
+ 	.select_mii	= 1,
+ 	.shift_rd0	= 1,
