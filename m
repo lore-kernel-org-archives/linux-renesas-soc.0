@@ -1,44 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:45738 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752009AbdATVWV (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:34098 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756764AbdADMK7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 16:22:21 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] ARM: dts: add ostm support for r7s72100
-Date: Fri, 20 Jan 2017 16:20:52 -0500
-Message-Id: <20170120212055.4157-1-chris.brandt@renesas.com>
+        Wed, 4 Jan 2017 07:10:59 -0500
+Received: by mail-lf0-f44.google.com with SMTP id d16so11839181lfb.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jan 2017 04:10:59 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/3] sh_eth: no need for *else* after *goto*
+Date: Wed, 04 Jan 2017 15:10:50 +0300
+Message-ID: <2432748.6uHGRc6GHQ@wasted.cogentembedded.com>
+In-Reply-To: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
+References: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set enables the use of the newly created driver
-renesas-ostm.c for the r7s72100 SoC.
+Well, checkpatch.pl complains about *else* after *return* and *break* but
+not after *goto*... and it probably should have complained about the code
+in sh_eth_error().  Win couple LoCs by removing that *else*. :-)
 
-v2:
-* The biggest change was now the channels are independent of each
-  other and have separate nodes in the DT. The first probed will
-  be set up as a clock source, and any additional channels probed
-  will become a clock event.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+---
+ drivers/net/ethernet/renesas/sh_eth.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Chris Brandt (3):
-  ARM: dts: r7s72100: add ostm clock to device tree
-  ARM: dts: r7s72100: add ostm to device tree
-  ARM: dts: rskrza1: add ostm DT support
-
- arch/arm/boot/dts/r7s72100-rskrza1.dts     |  8 ++++++++
- arch/arm/boot/dts/r7s72100.dtsi            | 25 +++++++++++++++++++++++++
- include/dt-bindings/clock/r7s72100-clock.h |  4 ++++
- 3 files changed, 37 insertions(+)
-
--- 
-2.10.1
+Index: renesas/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- renesas.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ renesas/drivers/net/ethernet/renesas/sh_eth.c
+@@ -1542,13 +1542,11 @@ static void sh_eth_error(struct net_devi
+ 			ndev->stats.tx_carrier_errors++;
+ 		if (felic_stat & ECSR_LCHNG) {
+ 			/* Link Changed */
+-			if (mdp->cd->no_psr || mdp->no_ether_link) {
++			if (mdp->cd->no_psr || mdp->no_ether_link)
+ 				goto ignore_link;
+-			} else {
+-				link_stat = (sh_eth_read(ndev, PSR));
+-				if (mdp->ether_link_active_low)
+-					link_stat = ~link_stat;
+-			}
++			link_stat = sh_eth_read(ndev, PSR);
++			if (mdp->ether_link_active_low)
++				link_stat = ~link_stat;
+ 			if (!(link_stat & PHY_ST_LINK)) {
+ 				sh_eth_rcv_snd_disable(ndev);
+ 			} else {
