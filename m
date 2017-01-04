@@ -1,51 +1,38 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 2/4] arm64: dts: m3ulcb: Update memory node to 2 GiB map
-Date: Thu, 26 Jan 2017 17:54:20 +0300
-Message-Id: <1485442460-18339-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:35047 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757330AbdADMOY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 4 Jan 2017 07:14:24 -0500
+Received: by mail-lf0-f43.google.com with SMTP id b14so303266341lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jan 2017 04:13:58 -0800 (PST)
+Subject: Re: [PATCH 3/3] sh_eth: factor out sh_eth_emac_interrupt()
+To: netdev@vger.kernel.org
+References: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
+ <2316251.zKWDf5AMHG@wasted.cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <cab4c624-2225-beed-25f5-7bcf25b16e9b@cogentembedded.com>
+Date: Wed, 4 Jan 2017 15:13:54 +0300
+MIME-Version: 1.0
+In-Reply-To: <2316251.zKWDf5AMHG@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On 01/04/2017 03:11 PM, Sergei Shtylyov wrote:
 
-This patch updates memory region:
+> The E-MAC interrupt (EESR.ECI) is not always caused  by an error condition,
+> so  it really shouldn't be handled by sh_eth_error(). Factor out the E-MAC
+> interrupt handler, sh_eth_emac_interrupt(),  removing the ECI bit from the
+> EESR's values throughout the driver...
+>
+> Update Cogent Embedded's copyright and clean up the whitespace in Renesas'
+> copyright, while at it...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-  - After changes, the new map of the m3ulcb board on R8A7796 SoC
-    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
-    Bank1: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
+    Scrap it, I've just realized I never enable EESR.ECI...
 
-  - Before changes, the old map looked like this:
-    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index f35e96c..38bde9d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -32,6 +32,11 @@
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
- 
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
--- 
-1.9.1
-
+MBR, Sergei
