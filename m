@@ -1,12 +1,7 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 1/2] arm64: dma_mapping: allow PCI host driver to limit
- DMA mask
-To: Arnd Bergmann <arnd@arndb.de>
-References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
- <5224989.KFLmAz9Gqk@wuerfel>
- <4bbc3494-bf95-9765-ccaf-cc3b3e1cd297@cogentembedded.com>
- <2104402.puPT8SttTe@wuerfel>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 Cc: linux-arm-kernel@lists.infradead.org,
         Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -14,80 +9,73 @@ Cc: linux-arm-kernel@lists.infradead.org,
         Simon Horman <horms@verge.net.au>, linux-pci@vger.kernel.org,
         Bjorn Helgaas <bhelgaas@google.com>,
         artemi.ivanov@cogentembedded.com
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Message-ID: <412396ac-4535-08a3-e4c7-dd8d0078a518@cogentembedded.com>
-Date: Wed, 4 Jan 2017 17:30:19 +0300
+Subject: Re: [PATCH 1/2] arm64: dma_mapping: allow PCI host driver to limit DMA mask
+Date: Wed, 04 Jan 2017 14:29:01 +0100
+Message-ID: <2104402.puPT8SttTe@wuerfel>
+In-Reply-To: <4bbc3494-bf95-9765-ccaf-cc3b3e1cd297@cogentembedded.com>
+References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com> <5224989.KFLmAz9Gqk@wuerfel> <4bbc3494-bf95-9765-ccaf-cc3b3e1cd297@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2104402.puPT8SttTe@wuerfel>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
->> For OF platforms, this is called via of_dma_configure(), that checks
->> dma-ranges of node that is *parent* for host bridge. Host bridge
->> currently does not control this at all.
+On Wednesday, January 4, 2017 9:24:09 AM CET Nikita Yushchenko wrote:
+> > commit 9a57d58d116800a535510053136c6dd7a9c26e25
+> > Author: Arnd Bergmann <arnd@arndb.de>
+> > Date:   Tue Nov 17 14:06:55 2015 +0100
+> > 
+> >     [EXPERIMENTAL] ARM64: check implement dma_set_mask
+> >     
+> >     Needs work for coherent mask
+> >     
+> >     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > 
-> We need to think about this a bit. Is it actually the PCI host
-> bridge that limits the ranges here, or the bus that it is connected
-> to. In the latter case, the caller needs to be adapted to handle
-> both.
-
-In r-car case, I'm not sure what is the source of limitation at physical
-level.
-
-pcie-rcar driver configures ranges for PCIe inbound transactions based
-on dma-ranges property in it's device tree node. In the current device
-tree for this platform, that only contains one range and it is in lower
-memory.
-
-NVMe driver tries i/o to kmalloc()ed area. That returns 0x5xxxxxxxx
-addresses here. As a quick experiment, I tried to add second range to
-pcie-rcar's dma-ranges to cover 0x5xxxxxxxx area - but that did not make
-DMA to high addresses working.
-
-My current understanding is that host bridge hardware module can't
-handle inbound transactions to PCI addresses above 4G - and this
-limitations comes from host bridge itself.
-
-I've read somewhere in the lists that pcie-rcar hardware is "32-bit" -
-but I don't remember where, and don't know lowlevel details. Maybe
-somebody from linux-renesas can elaborate?
-
-
->> In current device trees no dma-ranges is defined for nodes that are
->> parents to pci host bridges. This will make of_dma_configure() to fall
->> back to 32-bit size for all devices on all current platforms.  Thus
->> applying this patch will immediately break 64-bit dma masks on all
->> hardware that supports it.
+> Unfortunately this is far incomplete
 > 
-> No, it won't break it, it will just fall back to swiotlb for all the
-> ones that are lacking the dma-ranges property. I think this is correct
-> behavior.
-
-I'd say - for all ones that have parents without dma-ranges property.
-
-As of 4.10-rc2, I see only two definitions of wide parent dma-ranges
-under arch/arm64/boot/dts/ - in amd/amd-seattle-soc.dtsi and
-apm/apm-storm.dtsi
-
-Are these the only arm64 platforms that can to DMA to high addresses?
-I'm not arm64 expert but I'd be surprised if that's the case.
-
-
->> Also related: dma-ranges property used by several pci host bridges is
->> *not* compatible with "legacy" dma-ranges parsed by of_get_dma_range() -
->> former uses additional flags word at beginning.
+> > @@ -957,6 +983,18 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> >  	if (!dev->archdata.dma_ops)
+> >  		dev->archdata.dma_ops = &swiotlb_dma_ops;
+> >  
+> > +	/*
+> > +	 * we don't yet support buses that have a non-zero mapping.
+> > +	 *  Let's hope we won't need it
+> > +	 */
+> > +	WARN_ON(dma_base != 0);
+> > +
+> > +	/*
+> > +	 * Whatever the parent bus can set. A device must not set
+> > +	 * a DMA mask larger than this.
+> > +	 */
+> > +	dev->archdata.parent_dma_mask = size;
+> > +
 > 
-> Can you elaborate? Do we have PCI host bridges that use wrongly formatted
-> dma-ranges properties?
+> ... because size/mask passed here for PCI devices are meaningless.
+> 
+> For OF platforms, this is called via of_dma_configure(), that checks
+> dma-ranges of node that is *parent* for host bridge. Host bridge
+> currently does not control this at all.
 
-of_dma_get_range() expects <dma_addr cpu_addr size> format.
+We need to think about this a bit. Is it actually the PCI host
+bridge that limits the ranges here, or the bus that it is connected
+to. In the latter case, the caller needs to be adapted to handle
+both.
 
-pcie-rcar.c, pci-rcar-gen2.c, pci-xgene.c and pcie-iproc.c from
-drivers/pci/host/ all parse dma-ranges using of_pci_range_parser that
-uses <flags pci-addr cpu-addr size> format - i.e. something different
-from what of_dma_get_range() uses.
+> In current device trees no dma-ranges is defined for nodes that are
+> parents to pci host bridges. This will make of_dma_configure() to fall
+> back to 32-bit size for all devices on all current platforms.  Thus
+> applying this patch will immediately break 64-bit dma masks on all
+> hardware that supports it.
 
+No, it won't break it, it will just fall back to swiotlb for all the
+ones that are lacking the dma-ranges property. I think this is correct
+behavior.
 
-Nikita
+> Also related: dma-ranges property used by several pci host bridges is
+> *not* compatible with "legacy" dma-ranges parsed by of_get_dma_range() -
+> former uses additional flags word at beginning.
+
+Can you elaborate? Do we have PCI host bridges that use wrongly formatted
+dma-ranges properties?
+
+	Arnd
