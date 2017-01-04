@@ -1,48 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36361 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753841AbdA0GVs (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33686 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968329AbdADPNw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 01:21:48 -0500
-Received: by mail-pf0-f193.google.com with SMTP id 19so17915725pfo.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 22:20:25 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
-Date: Fri, 27 Jan 2017 15:14:07 +0900
-Message-Id: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
-Subject: [PATCH/RFC v2 0/4] iommu/ipmmu-vmsa: IPMMU slave device whitelist V2
+        Wed, 4 Jan 2017 10:13:52 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 06/13] drm: bridge: Add LVDS encoder driver
+Date: Wed, 04 Jan 2017 17:13:23 +0200
+Message-ID: <7936513.8Ot9e1G3ck@avalon>
+In-Reply-To: <20170104145824.bnjdsv77bay75ie2@phenom.ffwll.local>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <2223998.87cnrdv6Vi@avalon> <20170104145824.bnjdsv77bay75ie2@phenom.ffwll.local>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: IPMMU slave device whitelist V2
+Hi Daniel,
 
-[PATCH/RFC v2 1/4] iommu/of: Skip IOMMU devices disabled in DT
-[PATCH/RFC v2 2/4] iommu/ipmmu-vmsa: Get rid of disabled device check
-[PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Check devices in xlate()
-[PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Opt-in slave devices based on ES version
+On Wednesday 04 Jan 2017 15:58:25 Daniel Vetter wrote:
+> On Wed, Jan 04, 2017 at 04:33:57PM +0200, Laurent Pinchart wrote:
+> > On Wednesday 04 Jan 2017 14:51:48 Daniel Vetter wrote:
+> >> Hm, something like drm_bridge_panel_bridge_init(dev, panel) should be
+> >> enough, or not? My idea is to use this for the case where the only
+> >> thing in dt is the panel, with no real bridge chip. And I think we
+> >> don't need anything beyond that one _init function, plus maybe some
+> >> additional paramaters ...
+> > 
+> > There should be no bridge then. If you want the DRM core to manage panels
+> > automatically, then we should create specific helpers for that, not abuse
+> > the bridge infrastructure. Bridges should be instantiated from a hardware
+> > device and bound to drivers as usual.
+> 
+> I guess that's the part where I disagree: Just because there's physically
+> no bridge doesn't mean we shouldn't just treat it as one in the software
+> abstraction. If it looks and acts like a bridge (even an empty one), then
+> imo it can be a bridge.
+> 
+> If you insist on panels being panels, then I guess we need some other kind
+> of glue to bind them into arbitrary bridge chains. But given that the
+> callbacks match very closely, I don't see the point.
+> 
+> In an idea world a panel would probably derive from a drm_bridge, but
+> we're not in that universe unfortunately ;-)
 
-Here's an updated prototype that shows how DT integration of IPMMU details
-may be integrated and merged upstream based on SoC data sheet ahead of
-time followed by enablement in the IPMMU driver code once the appropriate
-SoC ES version has been released and the hardware has been tested.
+Or both would derive from another object, but I agree that's how it should 
+work. That's what I want to achieve, one step at a time. Creating dummy 
+bridges isn't a step in that direction in my opinion, so I'd rather not do 
+that, but work towards the right abstraction.
 
-Changes since V1:
- - Broke out patch 1 from the IPMMU driver
- - Moved slave device check from ->add_device() to ->xlate() (Thanks Robin!)
- - Updated white list patch to hook into ->xlate()
+-- 
+Regards,
 
-Patch 1 may be suitable for upstream merge, however other patches should
-in the future if agreed on be rolled into the IPMMU driver series.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Developed on top of renesas-drivers-2017-01-24-v4.10-rc5
-
- drivers/iommu/ipmmu-vmsa.c |   59 +++++++++++++++++++++++---------------------
- drivers/iommu/of_iommu.c   |    2 -
- 2 files changed, 33 insertions(+), 28 deletions(-)
+Laurent Pinchart
