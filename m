@@ -1,38 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:47314 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S970578AbdAELuS (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:59712 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752418AbdADSs6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 06:50:18 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC 0/3] mmc: host: tmio: sdio irq improvements
-Date: Thu,  5 Jan 2017 12:43:23 +0100
-Message-Id: <20170105114326.12426-1-wsa+renesas@sang-engineering.com>
+        Wed, 4 Jan 2017 13:48:58 -0500
+Date: Wed, 04 Jan 2017 13:48:13 -0500 (EST)
+Message-Id: <20170104.134813.597034024837629584.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] sh_eth: E-MAC interrupt handler cleanups
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
+References: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Here is a small series with two minor improvements (patches 1+2) and one bigger
-change (patch 3) for SDIO handling with TMIO/SDHI. It is marked as RFC because
-I wonder why other drivers are largely not clearing interrupts before enabling
-them (patch 3 again). I really think it should be done, but maybe I am missing
-something?
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Wed, 04 Jan 2017 15:09:36 +0300
 
-Based on mmc/next and tested on Renesas R-Car H3 and M3-W.
+>    Here's a set of 3 patches against DaveM's 'net-next.git' repo. I'm cleaning
+> up the E-MAC interrupt handling with the main goal of factoring out the E-MAC
+> interrupt handler into a separate function.
+> 
+> [1/3] sh_eth: handle only enabled E-MAC interrupts
+> [2/3] sh_eth: no need for *else* after *goto*
+> [3/3] sh_eth: factor out sh_eth_emac_interrupt()
 
-
-Wolfram Sang (3):
-  mmc: host: tmio: refactor calls to sdio irq
-  mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
-  mmc: tmio: discard obsolete SDIO irqs before enabling irqs
-
- drivers/mmc/host/sh_mobile_sdhi.c |  6 ++----
- drivers/mmc/host/tmio_mmc_pio.c   | 18 +++++++++++++-----
- include/linux/mfd/tmio.h          |  2 +-
- 3 files changed, 16 insertions(+), 10 deletions(-)
-
--- 
-2.11.0
+Series applied to net-next, thanks.
