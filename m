@@ -1,49 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39431 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940154AbdAFLSn (ORCPT
+        with ESMTP id S1758671AbdADJIc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:43 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/25] ARM: dts: r8a7743: Add device node for PRR
-Date: Fri,  6 Jan 2017 12:18:12 +0100
-Message-Id: <11d4407e939e74e89a29df88b1557b59ece9e9f9.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Wed, 4 Jan 2017 04:08:32 -0500
+Date: Wed, 4 Jan 2017 10:08:25 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] arm64: dts: r8a7795: salvator-x: Add DU LVDS
+ output endpoint
+Message-ID: <20170104090824.GG9909@verge.net.au>
+References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1479526093-7014-9-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <3777454.z0GnxGZg1M@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3777454.z0GnxGZg1M@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Jan 04, 2017 at 03:07:14AM +0200, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> Could you please pick this patch up ?
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+Hi Laurent,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index ca0cda28a3eb..0956125597fd 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -102,6 +102,11 @@
- 			#power-domain-cells = <0>;
- 		};
- 
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
-+
- 		rst: reset-controller@e6160000 {
- 			compatible = "renesas,r8a7743-rst";
- 			reg = <0 0xe6160000 0 0x100>;
--- 
-2.7.0.rc3.207.g0ac5344
+I believe this is present in v4.10-rc1 as ea3c17b03b9b ("arm64: dts:
+r8a7795: salvator-x: Add DU LVDS output endpoint").
