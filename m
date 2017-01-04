@@ -1,47 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:43352 "EHLO
+Received: from albert.telenet-ops.be ([195.130.137.90]:37770 "EHLO
         albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbdAQMts (ORCPT
+        with ESMTP id S1753331AbdADKPP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 07:49:48 -0500
+        Wed, 4 Jan 2017 05:15:15 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] ARM: dts: r8a7743: Link ARM GIC to clock and clock domain
-Date: Tue, 17 Jan 2017 13:49:17 +0100
-Message-Id: <1484657360-13101-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
-References: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/2] spi: rspi: Remove useless memory allocation failure message
+Date: Wed,  4 Jan 2017 11:15:07 +0100
+Message-Id: <1483524908-32497-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Link the ARM GIC to the INTC-SYS module clock, and add it to the SYSC
-"always-on" PM Domain, so it can be power managed using that clock.
-
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
+Printing an error on memory allocation failure is unnecessary.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/spi/spi-rspi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0956125597fdf835..40d2cdede7022ff6 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -60,6 +60,9 @@
- 			      <0 0xf1006000 0 0x2000>;
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
- 						 IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 		};
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 48b0d2162ae62da3..2af58a72d702bf17 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1227,10 +1227,8 @@ static int rspi_probe(struct platform_device *pdev)
+ 	const struct spi_ops *ops;
  
- 		irqc: interrupt-controller@e61c0000 {
+ 	master = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
+-	if (master == NULL) {
+-		dev_err(&pdev->dev, "spi_alloc_master error.\n");
++	if (master == NULL)
+ 		return -ENOMEM;
+-	}
+ 
+ 	of_id = of_match_device(rspi_of_match, &pdev->dev);
+ 	if (of_id) {
 -- 
 1.9.1
