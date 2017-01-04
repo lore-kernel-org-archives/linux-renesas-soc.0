@@ -1,57 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from newton.telenet-ops.be ([195.130.132.45]:41204 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754767AbdA0JXU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:23:20 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 3v8tcK1TqhzMrXJT
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2017 10:22:57 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.11 (take two)
-Date: Fri, 27 Jan 2017 10:21:58 +0100
-Message-Id: <1485508918-22980-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 4 Jan 2017 13:25:19 -0500
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        David Vrabel <david.vrabel@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] swiotlb: Convert swiotlb_force from int to enum
+Message-ID: <20170104182519.GA30554@char.us.oracle.com>
+References: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
+ <1481894922-28828-3-git-send-email-geert+renesas@glider.be>
+ <20170104175716.GD31066@e104818-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170104175716.GD31066@e104818-lin.cambridge.arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
+On Wed, Jan 04, 2017 at 05:57:17PM +0000, Catalin Marinas wrote:
+> On Fri, Dec 16, 2016 at 02:28:41PM +0100, Geert Uytterhoeven wrote:
+> > Convert the flag swiotlb_force from an int to an enum, to prepare for
+> > the advent of more possible values.
+> > 
+> > Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v2:
+> >   - New.
+> > ---
+> >  arch/arm64/mm/dma-mapping.c    |  3 ++-
+> >  arch/arm64/mm/init.c           |  3 ++-
+> >  arch/x86/kernel/pci-swiotlb.c  |  2 +-
+> >  arch/x86/xen/pci-swiotlb-xen.c |  2 +-
+> >  drivers/xen/swiotlb-xen.c      |  4 ++--
+> >  include/linux/swiotlb.h        |  7 ++++++-
+> >  include/trace/events/swiotlb.h | 16 +++++++++-------
+> >  lib/swiotlb.c                  |  8 ++++----
+> >  8 files changed, 27 insertions(+), 18 deletions(-)
+> 
+> If this hasn't been queued somewhere yet, for arm64:
 
-The following changes since commit 0e4e4999aac16641f47699e8929693b83a7a4d64:
-
-  pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions (2016-12-27 10:57:39 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.11-tag2
-
-for you to fetch changes up to 07254d835dfc1e06a8cdfb565e7371176a4b93f9:
-
-  pinctrl: sh-pfc: r8a7791: Add ADI pinconf support (2017-01-20 14:23:40 +0100)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.11 (take two)
-
-  - Add Gyro-ADC pin groups for R-Car M2-W.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Jacopo Mondi (1):
-      pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+It is on swiotlb git tree.
+> 
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
