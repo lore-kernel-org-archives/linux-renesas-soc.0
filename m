@@ -1,192 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936888AbdAKOnk (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38970 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936830AbdADShd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:40 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 07/18] sh: Don't set sh-sci port_reg
-Date: Wed, 11 Jan 2017 16:43:29 +0200
-Message-Id: <20170111144340.29074-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 4 Jan 2017 13:37:33 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <1483524908-32497-2-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1cOqRA-00022Q-Kf@debutante>
+Date: Wed, 04 Jan 2017 18:37:24 +0000
+Subject: Applied "spi: sh-msiof: Remove useless memory allocation failure message" to the spi tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver considers all negative or zero values of the port_reg field
-as invalid. The four platforms that set the field to a register address
-all use an address higher than 0x7fffffff, which is thus considered by
-the driver as invalid. The feature is thus never used, remove it.
+The patch
 
-The feature could be implemented properly in the future using the
-pinctrl and GPIO APIs if desired.
+   spi: sh-msiof: Remove useless memory allocation failure message
 
-While at it, don't set the field to SCIx_NOT_SUPPORTED (-1) either,
-leaving it unset leads to the same result. This will allow removing the
-SCIx_NOT_SUPPORTED macro.
+has been applied to the spi tree at
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e7ad4a73364c21f40963a35631b285b60fa3198c Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 4 Jan 2017 11:15:08 +0100
+Subject: [PATCH] spi: sh-msiof: Remove useless memory allocation failure
+ message
+
+Printing an error on memory allocation failure is unnecessary.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/sh/kernel/cpu/sh3/setup-sh770x.c  | 2 --
- arch/sh/kernel/cpu/sh4/setup-sh7750.c  | 1 -
- arch/sh/kernel/cpu/sh4a/setup-sh7366.c | 1 -
- arch/sh/kernel/cpu/sh4a/setup-sh7723.c | 6 ------
- arch/sh/kernel/cpu/sh4a/setup-sh7724.c | 6 ------
- 5 files changed, 16 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-index e64fe24d860c..e1e54258b822 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-@@ -109,7 +109,6 @@ static struct platform_device rtc_device = {
- };
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 1f00eeb0b5a3..2ce15ca97782 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1164,10 +1164,8 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+ 	int ret;
  
- static struct plat_sci_port scif0_platform_data = {
--	.port_reg	= 0xa4000136,
- 	.type		= PORT_SCI,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regshift	= 1,
-@@ -156,7 +155,6 @@ static struct platform_device scif1_device = {
- #if defined(CONFIG_CPU_SUBTYPE_SH7707) || \
-     defined(CONFIG_CPU_SUBTYPE_SH7709)
- static struct plat_sci_port scif2_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.type		= PORT_IRDA,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regshift	= 1,
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7750.c b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-index f693f122a286..d98a55416306 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-@@ -38,7 +38,6 @@ static struct platform_device rtc_device = {
- };
+ 	master = spi_alloc_master(&pdev->dev, sizeof(struct sh_msiof_spi_priv));
+-	if (master == NULL) {
+-		dev_err(&pdev->dev, "failed to allocate spi master\n");
++	if (master == NULL)
+ 		return -ENOMEM;
+-	}
  
- static struct plat_sci_port sci_platform_data = {
--	.port_reg	= 0xffe0001C,
- 	.type		= PORT_SCI,
- 	.regshift	= 2,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7366.c b/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
-index 3fc1a3ab634e..646918713d9a 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
-@@ -20,7 +20,6 @@
- #include <asm/clock.h>
+ 	p = spi_master_get_devdata(master);
  
- static struct plat_sci_port scif0_platform_data = {
--	.port_reg	= 0xa405013e,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-index 9f47ec950af8..6c5cb234aa33 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-@@ -23,7 +23,6 @@
- 
- /* Serial */
- static struct plat_sci_port scif0_platform_data = {
--	.port_reg	= 0xa4050160,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -45,7 +44,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -67,7 +65,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -89,7 +86,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
-@@ -111,7 +107,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
-@@ -133,7 +128,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7724.c b/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
-index 3ce55884c787..c20258b18775 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
-@@ -290,7 +290,6 @@ static struct platform_device dma1_device = {
- 
- /* Serial */
- static struct plat_sci_port scif0_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -312,7 +311,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -334,7 +332,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -356,7 +353,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
-@@ -377,7 +373,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
-@@ -398,7 +393,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
