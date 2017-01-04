@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:47328 "EHLO mail.zeus03.de"
+Received: from www.zeus03.de ([194.117.254.33]:35848 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752639AbdASMUG (ORCPT
+        id S1753578AbdADXlr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 07:20:06 -0500
-Date: Thu, 19 Jan 2017 13:19:58 +0100
+        Wed, 4 Jan 2017 18:41:47 -0500
+Date: Thu, 5 Jan 2017 00:41:42 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Niklas =?utf-8?Q?S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
@@ -16,58 +16,48 @@ Cc: linux-pm@vger.kernel.org,
         Eduardo Valentin <edubezval@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCHv6 0/4] thermal: add driver for R-Car Gen3
-Message-ID: <20170119121958.GA1530@katana>
+Message-ID: <20170104234142.j4tyhhxbfjk4dz5j@ninjato>
 References: <20161222103823.8300-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 In-Reply-To: <20161222103823.8300-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
+On Thu, Dec 22, 2016 at 11:38:19AM +0100, Niklas Söderlund wrote:
+> Hi all,
+> 
+> The series adds thermal support to Renesas R-Car Gen3 SoCs. It's tested
+> on Salvator-X H3 and M3-W SoC.
+> 
+> Wolfram asked me to have a look at the comments for v4 and to try and
+> rework the temperature formulas to work with only ints and if it worked
+> out resend the series. I have reworked code in 2/4 but kept Wolfram as
+> the author and added my SoB, hope this is OK.
+> 
+> Reworking the formulas involved moving from s64 to int as the data type
+> used to store coefficients used in binary scaled fixed point
+> calculations. By examining the largest values which could be produced in
+> these calculations a shift of 7 is the maximum scaling which is
+> possible and still fit inside an int, previously with s64 the decimal scaling
+> was 1000.
+> 
+> Changing the decimal scaling also reduces the accuracy of the
+> calculations. In my tests this was hardly noticeable as the granularity
+> of the reported temperature to user-space is 0.5C, comparing the value
+> reported in the s64 vs int implementation only differ very slightly when
+> it rounded the value to the next 0.5C level.
+> 
+> However the formulas used to calculate the coefficients are not
+> documented and none obvious (at lest not to me) so given different
+> initial values to calculate the coefficients the error might become
 > larger. Therefore I would like to ask Morimoto-san and/or Khiem to
 > provide or proxy testing of this less accurate formula and feedback if
 > it's OK, let me know if there is anything I can do to help out.
 
-We now got the results of Renesas internal testing via internal
-channels. So, for this series:
+Tested on H3 and M3-W. The temperatures I get when plugging the fan
+on/off are very very similar to previous versions of this driver. Thus:
 
-Tested-by: Hien Dang <hien.dang.eb@renesas.com>
-
-So, from our point of view, this series is ready to go upstream. 4.11
-would be most welcome.
-
-Thanks,
-
-   Wolfram
-
-
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYgK7tAAoJEBQN5MwUoCm2k0IP/jJRTluPsvPmgHmaYXfTgl5k
-wH4sznqz7JL05m8dqEBP+fKZ88R6FSrqIbvkCd4TbuOyGGOtk7VwFolOnX6Gy+Ku
-IlYdIZKEm2gdDdPKzuDrtsPBfZK+EctSuFvwHrFvUoeItTOz10W59oc4osXJRWS5
-Trb2xjGP+VATukp8pGpsakth+6LxutsuI2Q4nIYJrWK152W0yeIWU1oZhPrOnDTr
-9J6+aTnYuHnIWZfYG7Ux9UUtRI9l7q0Wz6CKaIWm0t75bTIF+FBva45TCPN9M06Y
-W9CuLUKOTn/WTRJzhyouJKJgLdvMJ+2Hk+EgNlltu5p31ExBpjhghPlKRTkRfat4
-fxIZ6ObTSdRIckock5kNm6d31qLrEee6UuaN9OrVV4LHXJ6upT1zm9fOMn6/qmgK
-faiIJt4DQeux4un1poxVBzB1HWyRfExu8T6TFi8CENffR9dgZGSWeDaNnHPOGGU/
-6niqpMa0mfDiHE5ugJrwJJsq/NIoAXQMx7oZWiKxnXYDbASVPVzQi6CtUojfsFsC
-HjfO8c9fnyiyC1Im/lD80SDpDEVZ5W3GhYOIOJbGIZxE76OZoedyKqcl/zeO39PQ
-bKpcrbpplKnP10+qmf4MVgBTYKbeYwO8gk8I7c7TfUGRCaW3icA6NLvYRbsYTjAH
-BzpsdL8mL13NysvM3s1A
-=9Qml
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
