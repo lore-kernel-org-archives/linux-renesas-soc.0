@@ -4,10 +4,10 @@ From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Jose Abreu <Jose.Abreu@synopsys.com>
 Cc: dri-devel@lists.freedesktop.org, Fabio Estevam <fabio.estevam@freescale.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, Ulrich Hecht <ulrich.hecht@gmail.com>, Andy Yan <andy.yan@rock-chips.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 Subject: Re: [PATCH v2 17/29] drm: bridge: dw-hdmi: Refactor PHY power handling
-Date: Fri, 06 Jan 2017 03:48:29 +0200
-Message-ID: <30295846.0iPnmn0IgG@avalon>
-In-Reply-To: <21211642.vKbn0SAu3E@avalon>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com> <df08a05b-1a17-688a-4710-eb1c9663c698@synopsys.com> <21211642.vKbn0SAu3E@avalon>
+Date: Thu, 05 Jan 2017 17:33:58 +0200
+Message-ID: <21211642.vKbn0SAu3E@avalon>
+In-Reply-To: <df08a05b-1a17-688a-4710-eb1c9663c698@synopsys.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com> <5812310.k87Vx0mP1E@avalon> <df08a05b-1a17-688a-4710-eb1c9663c698@synopsys.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -15,100 +15,94 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Jose,
 
-On Thursday 05 Jan 2017 17:33:58 Laurent Pinchart wrote:
-> On Thursday 05 Jan 2017 15:06:49 Jose Abreu wrote:
-> > On 05-01-2017 12:29, Laurent Pinchart wrote:
-> >> On Tuesday 20 Dec 2016 12:17:23 Jose Abreu wrote:
-> >>> On 20-12-2016 11:45, Russell King - ARM Linux wrote:
-> >>>> On Tue, Dec 20, 2016 at 03:33:48AM +0200, Laurent Pinchart wrote:
-> >>>>> Instead of spreading version-dependent PHY power handling code
-> >>>>> around, group it in two functions to power the PHY on and off and use
-> >>>>> them through the driver.
-> >>>>> 
-> >>>>> Powering off the PHY at the beginning of the setup phase is currently
-> >>>>> split in two locations for first and second generation PHYs, group
-> >>>>> all the operations in the dw_hdmi_phy_init() function.
+On Thursday 05 Jan 2017 15:06:49 Jose Abreu wrote:
+> On 05-01-2017 12:29, Laurent Pinchart wrote:
+> > On Tuesday 20 Dec 2016 12:17:23 Jose Abreu wrote:
+> >> On 20-12-2016 11:45, Russell King - ARM Linux wrote:
+> >>> On Tue, Dec 20, 2016 at 03:33:48AM +0200, Laurent Pinchart wrote:
+> >>>> Instead of spreading version-dependent PHY power handling code around,
+> >>>> group it in two functions to power the PHY on and off and use them
+> >>>> through the driver.
 > >>>> 
-> >>>> This changes the behaviour of the driver.
-> >>>> 
-> >>>>> +static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
-> >>>>> +{
-> >>>>> +	if (hdmi->phy->gen == 1) {
-> >>>>> +		dw_hdmi_phy_enable_tmds(hdmi, 0);
-> >>>>> +		dw_hdmi_phy_enable_powerdown(hdmi, true);
-> >>>>> +	} else {
-> >>>>> +		dw_hdmi_phy_gen2_txpwron(hdmi, 0);
-> >>>>> +		dw_hdmi_phy_gen2_pddq(hdmi, 1);
-> >>>>> +	}
-> >>>>> +}
-> >>>>> @@ -1290,9 +1302,7 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
-> >>>>> *hdmi)
-> >>>>>  	if (!hdmi->phy_enabled)
-> >>>>>  		return;
-> >>>>> 
-> >>>>> -	dw_hdmi_phy_enable_tmds(hdmi, 0);
-> >>>>> -	dw_hdmi_phy_enable_powerdown(hdmi, true);
-> >>>>> -
-> >>>>> +	dw_hdmi_phy_power_off(hdmi);
-> >>>> 
-> >>>> This makes dw_hdmi_phy_disable() power down a gen2 phy.
-> >>>> 
-> >>>> The iMX6 has a DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY phy, which you list as a
-> >>>> gen2 phy.  I've been carrying this change for a while, which I've had
-> >>>> to revert (and finally expunge), as it causes problems on iMX6:
-> >>>> 
-> >>>> @@ -1112,6 +1112,14 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
-> >>>> *hdmi)
-> >>>>         if (!hdmi->phy_enabled)
-> >>>>                 return;
-> >>>> 
-> >>>> +       /* Actually set the phy into low power mode */
-> >>>> +       dw_hdmi_phy_gen2_txpwron(hdmi, 0);
-> >>>> +
-> >>>> +       /* FIXME: We should wait for TX_READY to be deasserted */
-> >>>> +
-> >>>> +       dw_hdmi_phy_gen2_pddq(hdmi, 1);
-> >>>> +
-> >>>> +       /* This appears to have no effect on iMX6 */
-> >>>>         dw_hdmi_phy_enable_tmds(hdmi, 0);
-> >>>>         dw_hdmi_phy_enable_powerdown(hdmi, true);
-> >>>> 
-> >>>> So, I think your change here will cause problems for iMX6.
-> >>>> 
-> >>>> From what I remember, it seems that iMX6 has issues with RXSENSE/HPD
-> >>>> bouncing when the PHY is powered down.  I can't promise when I'll be
-> >>>> able to check for that again.
+> >>>> Powering off the PHY at the beginning of the setup phase is currently
+> >>>> split in two locations for first and second generation PHYs, group all
+> >>>> the operations in the dw_hdmi_phy_init() function.
 > >>> 
-> >>> Indeed TX_READY must be low before asserting pddq.
+> >>> This changes the behaviour of the driver.
+> >>> 
+> >>>> +static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+> >>>> +{
+> >>>> +	if (hdmi->phy->gen == 1) {
+> >>>> +		dw_hdmi_phy_enable_tmds(hdmi, 0);
+> >>>> +		dw_hdmi_phy_enable_powerdown(hdmi, true);
+> >>>> +	} else {
+> >>>> +		dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+> >>>> +		dw_hdmi_phy_gen2_pddq(hdmi, 1);
+> >>>> +	}
+> >>>> +}
+> >>>> @@ -1290,9 +1302,7 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
+> >>>> *hdmi)
+> >>>> 
+> >>>>  	if (!hdmi->phy_enabled)
+> >>>>  	
+> >>>>  		return;
+> >>>> 
+> >>>> -	dw_hdmi_phy_enable_tmds(hdmi, 0);
+> >>>> -	dw_hdmi_phy_enable_powerdown(hdmi, true);
+> >>>> -
+> >>>> +	dw_hdmi_phy_power_off(hdmi);
+> >>> 
+> >>> This makes dw_hdmi_phy_disable() power down a gen2 phy.
+> >>> 
+> >>> The iMX6 has a DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY phy, which you list as a
+> >>> gen2 phy.  I've been carrying this change for a while, which I've had
+> >>> to revert (and finally expunge), as it causes problems on iMX6:
+> >>> 
+> >>> @@ -1112,6 +1112,14 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
+> >>> *hdmi)>
+> >>> 
+> >>>         if (!hdmi->phy_enabled)
+> >>>         
+> >>>                 return;
+> >>> 
+> >>> +       /* Actually set the phy into low power mode */
+> >>> +       dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+> >>> +
+> >>> +       /* FIXME: We should wait for TX_READY to be deasserted */
+> >>> +
+> >>> +       dw_hdmi_phy_gen2_pddq(hdmi, 1);
+> >>> +
+> >>> +       /* This appears to have no effect on iMX6 */
+> >>> 
+> >>>         dw_hdmi_phy_enable_tmds(hdmi, 0);
+> >>>         dw_hdmi_phy_enable_powerdown(hdmi, true);
+> >>> 
+> >>> So, I think your change here will cause problems for iMX6.
+> >>> 
+> >>> From what I remember, it seems that iMX6 has issues with RXSENSE/HPD
+> >>> bouncing when the PHY is powered down.  I can't promise when I'll be
+> >>> able to check for that again.
 > >> 
-> >> The TX_READY signal is documented in the i.MX6 datasheet as being a PHY
-> >> output signal, but there seems to be no HDMI TX register from which its
-> >> state can be read. Do I need to poll the HDMI_PHY_PTRPT_ENBL register
-> >> through I2C ? How long is the PHY expected to take to set TX_READY to 0
-> >> ?
+> >> Indeed TX_READY must be low before asserting pddq.
 > > 
-> > TX_READY can be read from register 0x1A of phy, BIT(2) (through
-> > I2C).
+> > The TX_READY signal is documented in the i.MX6 datasheet as being a PHY
+> > output signal, but there seems to be no HDMI TX register from which its
+> > state can be read. Do I need to poll the HDMI_PHY_PTRPT_ENBL register
+> > through I2C ? How long is the PHY expected to take to set TX_READY to 0 ?
 > 
-> That's what I thought, I'll poll that then. Do you have any idea how long
-> it's supposed to take, to set an appropriate timeout ?
+> TX_READY can be read from register 0x1A of phy, BIT(2) (through
+> I2C).
 
-On i.MX6 (3D TX PHY) register 0x1a reads as 0x0007 before powering down the 
-PHY (by deasserting TXPWRON) and as 0x0000 immediately after. On RK3288 (MHL 
-PHY) the register reads as 0x0207 and as 0x0000 immediately after deasserting 
-TXPWRON. It seems that one I2C read is a sufficient delay for TX_READY to go 
-low.
+That's what I thought, I'll poll that then. Do you have any idea how long it's 
+supposed to take, to set an appropriate timeout ?
 
-> > Not sure if same offset for all phys though.
-> 
-> Most probably not, it would be too easy :-) I'll investigate (which will
-> likely include lots of guesswork). If you can find any information about
-> that (and especially about the MHL and HDMI 2.0 PHYs) that would be very
-> appreciated, as I don't have access to any documentation that mentions a
-> TX_READY bit for those.
+> Not sure if same offset for all phys though.
 
-I haven't tested the HDMI 2.0 PHY yet, but I'd be surprised if the TX_READY 
-bit was in the same register at the same position.
+Most probably not, it would be too easy :-) I'll investigate (which will 
+likely include lots of guesswork). If you can find any information about that 
+(and especially about the MHL and HDMI 2.0 PHYs) that would be very 
+appreciated, as I don't have access to any documentation that mentions a 
+TX_READY bit for those.
 
 -- 
 Regards,
