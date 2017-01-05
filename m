@@ -1,134 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:35947 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936366AbdAFTCl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56091 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762039AbdAEKnr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 14:02:41 -0500
-Received: by mail-lf0-f49.google.com with SMTP id o140so4549408lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Jan 2017 11:02:40 -0800 (PST)
-Subject: Re: [PATCH/RFC v2 net-next] ravb: unmap descriptors when freeing
- rings
-To: Simon Horman <horms+renesas@verge.net.au>,
-        David Miller <davem@davemloft.net>
-References: <1483613000-537-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 5 Jan 2017 05:43:47 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <6fcec500-bed6-ffa3-2887-d45b34703682@cogentembedded.com>
-Date: Fri, 6 Jan 2017 22:02:36 +0300
-MIME-Version: 1.0
-In-Reply-To: <1483613000-537-1-git-send-email-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH/RFC v2 net-next] ravb: unmap descriptors when freeing rings
+Date: Thu,  5 Jan 2017 11:43:20 +0100
+Message-Id: <1483613000-537-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-On 01/05/2017 01:43 PM, Simon Horman wrote:
+"swiotlb buffer is full" errors occur after repeated initialisation of a
+device - f.e. suspend/resume or ip link set up/down. This is because memory
+mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
+is not released.  Resolve this problem by unmapping descriptors when
+freeing rings.
 
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> "swiotlb buffer is full" errors occur after repeated initialisation of a
-> device - f.e. suspend/resume or ip link set up/down. This is because memory
-> mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
-> is not released.  Resolve this problem by unmapping descriptors when
-> freeing rings.
->
-> Note, ravb_tx_free() is moved but not otherwise modified by this patch.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> [simon: reworked]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> --
-> v1 [Kazuya Mizuguchi]
->
-> v2 [Simon Horman]
-> * As suggested by Sergei Shtylyov
->   - Use dma_mapping_error() and rx_desc->ds_cc when unmapping RX descriptors;
->     this is consistent with the way that they are mapped
->   - Use ravb_tx_free() to clear TX descriptors
+Note, ravb_tx_free() is moved but not otherwise modified by this patch.
 
-    Not sure that was good idea (sorry)... ravb_tx_ring() only unmaps the 
-transmitted buffers, while we need to unmap everything...
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+[simon: reworked]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+--
+v1 [Kazuya Mizuguchi]
 
-> * Reduce scope of new local variable
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 89 ++++++++++++++++++--------------
->  1 file changed, 51 insertions(+), 38 deletions(-)
->
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 92d7692c840d..1797c48e3176 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -179,6 +179,44 @@ static struct mdiobb_ops bb_ops = {
->  	.get_mdio_data = ravb_get_mdio_data,
->  };
->
-> +/* Free TX skb function for AVB-IP */
-> +static int ravb_tx_free(struct net_device *ndev, int q)
-> +{
-> +	struct ravb_private *priv = netdev_priv(ndev);
-> +	struct net_device_stats *stats = &priv->stats[q];
-> +	struct ravb_tx_desc *desc;
-> +	int free_num = 0;
-> +	int entry;
-> +	u32 size;
-> +
-> +	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
-> +		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
-> +					     NUM_TX_DESC);
-> +		desc = &priv->tx_ring[q][entry];
-> +		if (desc->die_dt != DT_FEMPTY)
+v2 [Simon Horman]
+* As suggested by Sergei Shtylyov
+  - Use dma_mapping_error() and rx_desc->ds_cc when unmapping RX descriptors;
+    this is consistent with the way that they are mapped
+  - Use ravb_tx_free() to clear TX descriptors
+* Reduce scope of new local variable
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 89 ++++++++++++++++++--------------
+ 1 file changed, 51 insertions(+), 38 deletions(-)
 
-    Here, it stop once an untransmitted buffer is encountered...
-
-> +			break;
-> +		/* Descriptor type must be checked before all other reads */
-> +		dma_rmb();
-> +		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
-> +		/* Free the original skb. */
-> +		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
-> +			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
-> +					 size, DMA_TO_DEVICE);
-> +			/* Last packet descriptor? */
-> +			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
-> +				entry /= NUM_TX_DESC;
-> +				dev_kfree_skb_any(priv->tx_skb[q][entry]);
-> +				priv->tx_skb[q][entry] = NULL;
-> +				stats->tx_packets++;
-> +			}
-> +			free_num++;
-> +		}
-> +		stats->tx_bytes += size;
-> +		desc->die_dt = DT_EEMPTY;
-> +	}
-> +	return free_num;
-> +}
-> +
->  /* Free skb's and DMA buffers for Ethernet AVB */
->  static void ravb_ring_free(struct net_device *ndev, int q)
->  {
-> @@ -207,6 +245,18 @@ static void ravb_ring_free(struct net_device *ndev, int q)
->  	priv->tx_align[q] = NULL;
->
->  	if (priv->rx_ring[q]) {
-> +		for (i = 0; i < priv->num_rx_ring[q]; i++) {
-> +			struct ravb_ex_rx_desc *rx_desc = &priv->rx_ring[q][i];
-> +
-> +			if (!dma_mapping_error(ndev->dev.parent,
-> +					       rx_desc->dptr)) {
-
-   You forgot le32_to_cpu() here, we can't use the raw descriptor fields.
-
-> +				dma_unmap_single(ndev->dev.parent,
-> +						 le32_to_cpu(rx_desc->dptr),
-> +						 PKT_BUF_SZ,
-> +						 DMA_FROM_DEVICE);
-> +				rx_desc->ds_cc = cpu_to_le16(0);
-
-    You don't check it anyway, not sure what that buys...
-
-[...]
-
-MBR, Sergei
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 92d7692c840d..1797c48e3176 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -179,6 +179,44 @@ static struct mdiobb_ops bb_ops = {
+ 	.get_mdio_data = ravb_get_mdio_data,
+ };
+ 
++/* Free TX skb function for AVB-IP */
++static int ravb_tx_free(struct net_device *ndev, int q)
++{
++	struct ravb_private *priv = netdev_priv(ndev);
++	struct net_device_stats *stats = &priv->stats[q];
++	struct ravb_tx_desc *desc;
++	int free_num = 0;
++	int entry;
++	u32 size;
++
++	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
++		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
++					     NUM_TX_DESC);
++		desc = &priv->tx_ring[q][entry];
++		if (desc->die_dt != DT_FEMPTY)
++			break;
++		/* Descriptor type must be checked before all other reads */
++		dma_rmb();
++		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
++		/* Free the original skb. */
++		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
++			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
++					 size, DMA_TO_DEVICE);
++			/* Last packet descriptor? */
++			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
++				entry /= NUM_TX_DESC;
++				dev_kfree_skb_any(priv->tx_skb[q][entry]);
++				priv->tx_skb[q][entry] = NULL;
++				stats->tx_packets++;
++			}
++			free_num++;
++		}
++		stats->tx_bytes += size;
++		desc->die_dt = DT_EEMPTY;
++	}
++	return free_num;
++}
++
+ /* Free skb's and DMA buffers for Ethernet AVB */
+ static void ravb_ring_free(struct net_device *ndev, int q)
+ {
+@@ -207,6 +245,18 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+ 	priv->tx_align[q] = NULL;
+ 
+ 	if (priv->rx_ring[q]) {
++		for (i = 0; i < priv->num_rx_ring[q]; i++) {
++			struct ravb_ex_rx_desc *rx_desc = &priv->rx_ring[q][i];
++
++			if (!dma_mapping_error(ndev->dev.parent,
++					       rx_desc->dptr)) {
++				dma_unmap_single(ndev->dev.parent,
++						 le32_to_cpu(rx_desc->dptr),
++						 PKT_BUF_SZ,
++						 DMA_FROM_DEVICE);
++				rx_desc->ds_cc = cpu_to_le16(0);
++			}
++		}
+ 		ring_size = sizeof(struct ravb_ex_rx_desc) *
+ 			    (priv->num_rx_ring[q] + 1);
+ 		dma_free_coherent(ndev->dev.parent, ring_size, priv->rx_ring[q],
+@@ -215,6 +265,7 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+ 	}
+ 
+ 	if (priv->tx_ring[q]) {
++		ravb_tx_free(ndev, q);
+ 		ring_size = sizeof(struct ravb_tx_desc) *
+ 			    (priv->num_tx_ring[q] * NUM_TX_DESC + 1);
+ 		dma_free_coherent(ndev->dev.parent, ring_size, priv->tx_ring[q],
+@@ -431,44 +482,6 @@ static int ravb_dmac_init(struct net_device *ndev)
+ 	return 0;
+ }
+ 
+-/* Free TX skb function for AVB-IP */
+-static int ravb_tx_free(struct net_device *ndev, int q)
+-{
+-	struct ravb_private *priv = netdev_priv(ndev);
+-	struct net_device_stats *stats = &priv->stats[q];
+-	struct ravb_tx_desc *desc;
+-	int free_num = 0;
+-	int entry;
+-	u32 size;
+-
+-	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
+-		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
+-					     NUM_TX_DESC);
+-		desc = &priv->tx_ring[q][entry];
+-		if (desc->die_dt != DT_FEMPTY)
+-			break;
+-		/* Descriptor type must be checked before all other reads */
+-		dma_rmb();
+-		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
+-		/* Free the original skb. */
+-		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
+-			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
+-					 size, DMA_TO_DEVICE);
+-			/* Last packet descriptor? */
+-			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
+-				entry /= NUM_TX_DESC;
+-				dev_kfree_skb_any(priv->tx_skb[q][entry]);
+-				priv->tx_skb[q][entry] = NULL;
+-				stats->tx_packets++;
+-			}
+-			free_num++;
+-		}
+-		stats->tx_bytes += size;
+-		desc->die_dt = DT_EEMPTY;
+-	}
+-	return free_num;
+-}
+-
+ static void ravb_get_tx_tstamp(struct net_device *ndev)
+ {
+ 	struct ravb_private *priv = netdev_priv(ndev);
+-- 
+2.7.0.rc3.207.g0ac5344
