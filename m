@@ -1,47 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:56486 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750866AbdAQUAQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 15:00:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 5 Jan 2017 20:32:42 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] mmc: sh_mobile_sdhi: fix missing r7s72100 clocks
-Date: Tue, 17 Jan 2017 14:59:37 -0500
-Message-Id: <20170117195940.25092-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        arnd.bergmann@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-mips@linux-mips.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: Remove CONFIG_CPU_FREQ_STAT_DETAILS config
+ option
+Message-ID: <20170105183242.cwyymvr37mdqb6mj@kozik-lap>
+References: <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-At first this started out as a simple typo fix, until I realized
-that the SDHI in the RZ/A1 has 2 clocks per channel and both need
-to be turned on/off.
+On Thu, Jan 05, 2017 at 01:57:41PM +0530, Viresh Kumar wrote:
+> This doesn't have any benefit apart from saving a small amount of memory
+> when it is disabled. The ifdef hackery in the code makes it dirty
+> unnecessarily.
+> 
+> Clean it up by removing the Kconfig option completely. Few defconfigs
+> are also updated and CONFIG_CPU_FREQ_STAT_DETAILS is replaced with
+> CONFIG_CPU_FREQ_STAT now in them, as users wanted stats to be enabled.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  arch/arm/configs/exynos_defconfig         |  2 +-
+>  arch/arm/configs/multi_v5_defconfig       |  2 +-
+>  arch/arm/configs/multi_v7_defconfig       |  2 +-
+>  arch/arm/configs/mvebu_v5_defconfig       |  2 +-
+>  arch/arm/configs/pxa_defconfig            |  2 +-
+>  arch/arm/configs/shmobile_defconfig       |  2 +-
+>  arch/mips/configs/lemote2f_defconfig      |  1 -
+>  arch/powerpc/configs/ppc6xx_defconfig     |  1 -
+>  arch/sh/configs/sh7785lcr_32bit_defconfig |  2 +-
+>  drivers/cpufreq/Kconfig                   |  8 --------
+>  drivers/cpufreq/cpufreq_stats.c           | 14 --------------
+>  11 files changed, 7 insertions(+), 31 deletions(-)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 79c415c33f69..809f0bf3042a 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -24,7 +24,7 @@ CONFIG_ARM_APPENDED_DTB=y
+>  CONFIG_ARM_ATAG_DTB_COMPAT=y
+>  CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=m
 
-This patch series adds the ability to specify 2 clocks instead of
-just 1, and does so for the RZ/A1 r7s72100.
+For Exynos:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-This patch has been tested on an RZ/A1 RSK board. Card detect works
-fine as well as bind/unbind.
-
-
-
-Chris Brandt (3):
-  mmc: sh_mobile_sdhi: add support for 2 clocks
-  mmc: sh_mobile_sdhi: explain clock bindings
-  ARM: dts: r7s72100: update sdhi clock bindings
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 21 +++++++++++++++++++++
- arch/arm/boot/dts/r7s72100.dtsi                    | 17 ++++++++++++-----
- drivers/mmc/host/sh_mobile_sdhi.c                  | 11 +++++++++++
- include/dt-bindings/clock/r7s72100-clock.h         |  6 ++++--
- 4 files changed, 48 insertions(+), 7 deletions(-)
-
--- 
-2.10.1
+Best regards,
+Krzysztof
