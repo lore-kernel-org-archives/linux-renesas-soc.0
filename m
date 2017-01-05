@@ -1,84 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938273AbdAFLSE (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:47314 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S970578AbdAELuS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:04 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.11
-Date: Fri,  6 Jan 2017 12:17:56 +0100
-Message-Id: <cover.1483700694.git.horms+renesas@verge.net.au>
+        Thu, 5 Jan 2017 06:50:18 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC 0/3] mmc: host: tmio: sdio irq improvements
+Date: Thu,  5 Jan 2017 12:43:23 +0100
+Message-Id: <20170105114326.12426-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Here is a small series with two minor improvements (patches 1+2) and one bigger
+change (patch 3) for SDIO handling with TMIO/SDHI. It is marked as RFC because
+I wonder why other drivers are largely not clearing interrupts before enabling
+them (patch 3 again). I really think it should be done, but maybe I am missing
+something?
 
-Please consider these Renesas ARM64 based SoC DT updates for v4.11.
-
-This is based on v4.10-rc2 as v4.10-rc1 does not compile using
-the defconfig.
+Based on mmc/next and tested on Renesas R-Car H3 and M3-W.
 
 
-The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+Wolfram Sang (3):
+  mmc: host: tmio: refactor calls to sdio irq
+  mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
+  mmc: tmio: discard obsolete SDIO irqs before enabling irqs
 
-  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+ drivers/mmc/host/sh_mobile_sdhi.c |  6 ++----
+ drivers/mmc/host/tmio_mmc_pio.c   | 18 +++++++++++++-----
+ include/linux/mfd/tmio.h          |  2 +-
+ 3 files changed, 16 insertions(+), 10 deletions(-)
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.11
-
-for you to fetch changes up to b2b9443beee5017ebdb3f2be9ef472c73d260481:
-
-  arm64: dts: r8a7795: Add PWM support (2017-01-04 10:00:44 +0100)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC DT Updates for v4.11
-
-* Add PWM, and sound MIX and CTU support to r8a7795 SoC
-* Add CAN, CAN FD and all MSIOF nodes to r8a7796 SoC
-* Use Gen 3 fallback binding for i2c, msiof, PCIE and USB2 phy
-* Enable Ethernet and 4 GiB memory on r8a7796/salvator-x board
-* Add r8a7796/salvator-x board part number to bindings
-
-----------------------------------------------------------------
-Chris Paterson (3):
-      arm64: dts: r8a7796: Add CAN external clock support
-      arm64: dts: r8a7796: Add CAN support
-      arm64: dts: r8a7796: Add CAN FD support
-
-Geert Uytterhoeven (2):
-      arm64: dts: r8a7796: Add all MSIOF nodes
-      arm64: renesas: r8a7796/salvator-x: Add board part number to DT bindings
-
-Kuninori Morimoto (2):
-      arm64: dts: r8a7795: add sound CTU support
-      arm64: dts: r8a7795: add sound MIX support
-
-Laurent Pinchart (3):
-      arm64: dts: renesas: r8a7796: Add EthernetAVB instance
-      arm64: dts: r8a7796: salvator-x: Enable EthernetAVB
-      arm64: dts: r8a7795: Add PWM support
-
-Simon Horman (5):
-      arm64: dts: r8a7795: Use renesas,rcar-gen3-usb2-phy fallback binding
-      arm64: dts: r8a7795: Use Gen 3 fallback compat string for PCIE
-      arm64: dts: r8a7795: Use R-Car Gen 3 fallback binding for i2c nodes
-      arm64: dts: r8a7796: Use R-Car Gen 3 fallback binding for i2c nodes
-      arm64: dts: r8a7796: Use R-Car Gen 3 fallback binding for msiof nodes
-
-Takeshi Kihara (1):
-      arm64: dts: r8a7796: salvator-x: Update memory node to 4 GiB map
-
- Documentation/devicetree/bindings/arm/shmobile.txt |   2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   2 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 119 ++++++++++++--
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  37 +++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 183 ++++++++++++++++++++-
- 5 files changed, 323 insertions(+), 20 deletions(-)
+-- 
+2.11.0
