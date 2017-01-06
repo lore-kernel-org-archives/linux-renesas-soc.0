@@ -1,76 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:8774 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751052AbdAWOBA (ORCPT
+Received: from mail-hk2apc01on0108.outbound.protection.outlook.com ([104.47.124.108]:45079
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1030752AbdAFGvl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 09:01:00 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 1/2] dt-bindings: document renesas-ostm timer
-Date: Mon, 23 Jan 2017 08:54:22 -0500
-Message-Id: <20170123135423.28780-2-chris.brandt@renesas.com>
-In-Reply-To: <20170123135423.28780-1-chris.brandt@renesas.com>
-References: <20170123135423.28780-1-chris.brandt@renesas.com>
+        Fri, 6 Jan 2017 01:51:41 -0500
+From: Jithin T Raj <jithin.t@tataelxsi.co.in>
+To: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Karl Auer <kauer@biplane.com.au>,
+        Simon Horman <horms@verge.net.au>
+Subject: Writing data to Video buffer
+Date: Fri, 6 Jan 2017 06:16:11 +0000
+Message-ID: <HK2PR04MB1220D10B662C4A4C1C4CC351D8630@HK2PR04MB1220.apcprd04.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-* changed ostm@fcfec000 to timer@fcfec000 in example
-* added power-domains in example
-v2:
-* remove sw implementation specific portions
----
- .../devicetree/bindings/timer/renesas,ostm.txt     | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
+Hi =A0all,
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-new file mode 100644
-index 0000000..be3ae0f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-@@ -0,0 +1,30 @@
-+* Renesas OS Timer (OSTM)
-+
-+The OSTM is a multi-channel 32-bit timer/counter with fixed clock
-+source that can operate in either interval count down timer or free-running
-+compare match mode.
-+
-+Channels are independent from each other.
-+
-+Required Properties:
-+
-+  - compatible: must be one or more of the following:
-+    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
-+    - "renesas,ostm" for any OSTM
-+		This is a fallback for the above renesas,*-ostm entries
-+
-+  - reg: base address and length of the register block for a timer channel.
-+
-+  - interrupts: interrupt specifier for the timer channel.
-+
-+  - clocks: clock specifier for the timer channel.
-+
-+Example: R7S72100 (RZ/A1H) OSTM node
-+
-+	ostm0: timer@fcfec000 {
-+		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+		reg = <0xfcfec000 0x30>;
-+		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
-+		power-domains = <&cpg_clocks>;
-+	};
--- 
-2.10.1
+=A0 =A0 =A0 =A0 I have an RCAR E2 Board with me which runs smoothly under l=
+inux 4.8 ..Now I want to make display output from HDMI as flipped 180 degre=
+e ..Through which area that I have to focus to do so.here I pointed only an=
+ example only. I am thinking to tap the video buffer/framebuffer to customi=
+ze the output..Is there any other way =A0to control individual display outp=
+ut from kernel source...?
+
+hopping for your suggestions=A0
+
+    =20
+=20
+ Best Regards,
+ Jithin T Raj
+=20
+=20
+      =
