@@ -1,109 +1,58 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 13/20] drm: bridge: dw-hdmi: Reject invalid product IDs
-Date: Tue, 17 Jan 2017 10:29:03 +0200
-Message-Id: <20170117082910.27023-14-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940142AbdAFLSV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 06:18:21 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/16] arm64: dts: r8a7796: salvator-x: Update memory node to 4 GiB map
+Date: Fri,  6 Jan 2017 12:17:54 +0100
+Message-Id: <d78fcc47e6814605eb90cd4ab1d79f9609ff32a4.1483700694.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DWC HDMI TX can be recognized by the two product identification
-registers. If the registers don't read as expect the IP will be very
-different than what the driver has been designed for, or will be
-misconfigured in a way that makes it non-operational (invalid memory
-address, incorrect clocks, ...). We should reject this situation with an
-error.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-While this isn't critical for proper operation with supported IPs at the
-moment, the driver will soon gain automatic device-specific handling
-based on runtime device identification. This change makes it easier to
-implement that without having to default to a random guess in case the
-device can't be identified.
+This patch updates memory region:
 
-While at it print a readable version number in the device identification
-message instead of raw register values.
+  - After changes, the new map of the Salvator-X board on R8A7796 SoC
+    Bank0: 2GiB RAM : 0x000048000000 -> 0x000bfffffff
+    Bank1: 2GiB RAM : 0x000600000000 -> 0x0067fffffff
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+  - Before changes, the old map looked like this:
+    Bank0: 2GiB RAM : 0x000048000000 -> 0x000bfffffff
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Correct size of old map]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 25 +++++++++++++++++++------
- drivers/gpu/drm/bridge/dw-hdmi.h |  8 ++++++++
- 2 files changed, 27 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 06c252f560ad..1809247745b8 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1832,6 +1832,9 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	int irq;
- 	int ret;
- 	u32 val = 1;
-+	u16 version;
-+	u8 prod_id0;
-+	u8 prod_id1;
- 	u8 config0;
- 	u8 config1;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index f35e96ca7d60..38bde9de3250 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -31,6 +31,11 @@
+ 		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
  
-@@ -1914,12 +1917,22 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	}
- 
- 	/* Product and revision IDs */
--	dev_info(dev,
--		 "Detected HDMI controller 0x%x:0x%x:0x%x:0x%x\n",
--		 hdmi_readb(hdmi, HDMI_DESIGN_ID),
--		 hdmi_readb(hdmi, HDMI_REVISION_ID),
--		 hdmi_readb(hdmi, HDMI_PRODUCT_ID0),
--		 hdmi_readb(hdmi, HDMI_PRODUCT_ID1));
-+	version = (hdmi_readb(hdmi, HDMI_DESIGN_ID) << 8)
-+		| (hdmi_readb(hdmi, HDMI_REVISION_ID) << 0);
-+	prod_id0 = hdmi_readb(hdmi, HDMI_PRODUCT_ID0);
-+	prod_id1 = hdmi_readb(hdmi, HDMI_PRODUCT_ID1);
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x80000000>;
++	};
 +
-+	if (prod_id0 != HDMI_PRODUCT_ID0_HDMI_TX ||
-+	    (prod_id1 & ~HDMI_PRODUCT_ID1_HDCP) != HDMI_PRODUCT_ID1_HDMI_TX) {
-+		dev_err(dev, "Unsupported HDMI controller (%04x:%02x:%02x)\n",
-+			version, prod_id0, prod_id1);
-+		ret = -ENODEV;
-+		goto err_iahb;
-+	}
-+
-+	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP\n",
-+		 version >> 12, version & 0xfff,
-+		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without");
- 
- 	initialize_hdmi_ih_mutes(hdmi);
- 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
-index 08235aef2fa3..91d7fabbd6e5 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.h
-@@ -545,6 +545,14 @@
- #define HDMI_I2CM_FS_SCL_LCNT_0_ADDR            0x7E12
- 
- enum {
-+/* PRODUCT_ID0 field values */
-+	HDMI_PRODUCT_ID0_HDMI_TX = 0xa0,
-+
-+/* PRODUCT_ID1 field values */
-+	HDMI_PRODUCT_ID1_HDCP = 0xc0,
-+	HDMI_PRODUCT_ID1_HDMI_RX = 0x02,
-+	HDMI_PRODUCT_ID1_HDMI_TX = 0x01,
-+
- /* CONFIG0_ID field values */
- 	HDMI_CONFIG0_I2S = 0x10,
- 
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
