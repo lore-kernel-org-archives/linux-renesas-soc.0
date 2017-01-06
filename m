@@ -1,41 +1,42 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1479154644-28475-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1479154644-28475-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Jan 2017 11:01:10 +0100
-Message-ID: <CAMuHMdXREc17M50-e0aw_TSVdnoJTPOh+YOHGtRjSXGXaeJ1Kw@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] VSP Partition algorithm improvements
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940150AbdAFLSc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 06:18:32 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/4] ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
+Date: Fri,  6 Jan 2017 12:18:12 +0100
+Message-Id: <e37278d83e348eb53029452e65892780359b6bea.1483701293.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483701293.git.horms+renesas@verge.net.au>
+References: <cover.1483701293.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
 
-On Mon, Nov 14, 2016 at 9:17 PM, Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> The following changes since commit 8bc55e5947b58dee3c8b126d7c303991ae0db130:
->
->   tty: serial_core: Fix serial console crash on port shutdown (2016-10-25 13:53:49 +0200)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/pa-improvements/v1
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Dropped from renesas-drivers, as this branch is based on a very old tree
-(v4.9-rc2), and many (but not all!) commits have found their way upstream.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index b01a43851294..f084a0a928b8 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -87,6 +87,8 @@ CONFIG_ARCH_EMEV2=y
+ CONFIG_ARCH_R7S72100=y
+ CONFIG_ARCH_R8A73A4=y
+ CONFIG_ARCH_R8A7740=y
++CONFIG_ARCH_R8A7743=y
++CONFIG_ARCH_R8A7745=y
+ CONFIG_ARCH_R8A7778=y
+ CONFIG_ARCH_R8A7779=y
+ CONFIG_ARCH_R8A7790=y
+-- 
+2.7.0.rc3.207.g0ac5344
