@@ -1,72 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967557AbdAKOnm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940139AbdAFLSR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:42 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 6 Jan 2017 06:18:17 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 09/18] sh: Don't set the sh-sci platform data REIE bit when not implemented
-Date: Wed, 11 Jan 2017 16:43:31 +0200
-Message-Id: <20170111144340.29074-10-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/16] arm64: dts: r8a7795: Use R-Car Gen 3 fallback binding for i2c nodes
+Date: Fri,  6 Jan 2017 12:17:52 +0100
+Message-Id: <d8ebefc9ace7c9810fd433e6ff18559e7c2f228a.1483700694.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the datasheets, the sh7760 SIM and sh7723 SCIFA instances
-don't implement the REIE bit. Don't set it in platform data.
+Use recently added R-Car Gen 3 fallback binding for i2c nodes in
+DT for r8a7795 SoC.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7795 and the
+fallback binding for R-Car Gen 3.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/sh/kernel/cpu/sh4/setup-sh7760.c  | 1 -
- arch/sh/kernel/cpu/sh4a/setup-sh7723.c | 3 ---
- 2 files changed, 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-index 641b85865a63..0c0cdfc69dcc 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-@@ -200,7 +200,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCI,
- 	.regshift	= 2,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-index 6c5cb234aa33..1c1b3c469831 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-@@ -86,7 +86,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
-@@ -107,7 +106,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
-@@ -128,7 +126,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 91a797b18c11..3fe7e0af5989 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -792,7 +792,8 @@
+ 		i2c0: i2c@e6500000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6500000 0 0x40>;
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 931>;
+@@ -806,7 +807,8 @@
+ 		i2c1: i2c@e6508000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6508000 0 0x40>;
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 930>;
+@@ -820,7 +822,8 @@
+ 		i2c2: i2c@e6510000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6510000 0 0x40>;
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 929>;
+@@ -834,7 +837,8 @@
+ 		i2c3: i2c@e66d0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66d0000 0 0x40>;
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 928>;
+@@ -848,7 +852,8 @@
+ 		i2c4: i2c@e66d8000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66d8000 0 0x40>;
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 927>;
+@@ -862,7 +867,8 @@
+ 		i2c5: i2c@e66e0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66e0000 0 0x40>;
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 919>;
+@@ -876,7 +882,8 @@
+ 		i2c6: i2c@e66e8000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7795";
++			compatible = "renesas,i2c-r8a7795",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66e8000 0 0x40>;
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
