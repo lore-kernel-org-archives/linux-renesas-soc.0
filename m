@@ -1,61 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940182AbdAFLTP (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36615 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751980AbdAFK3j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:15 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] ARM: shmobile: r8a7791: Allow booting secondary CPU cores in debug mode
-Date: Fri,  6 Jan 2017 12:18:59 +0100
-Message-Id: <367ed998fa3e04d8bde42f431e880cd3e5922095.1483701101.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483701101.git.horms+renesas@verge.net.au>
-References: <cover.1483701101.git.horms+renesas@verge.net.au>
+        Fri, 6 Jan 2017 05:29:39 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170103230639.19660-11-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-11-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jan 2017 11:23:00 +0100
+Message-ID: <CAMuHMdVmFyx8OM+cO8w0+3RYvRj9_+2yZRpj8eaXsPGRF-n-DQ@mail.gmail.com>
+Subject: Re: [PATCH 10/19] sh: Don't set the sh-sci platform data scscr CKE0 bit
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The bit is only set by platforms that also set the CKE1 but, in which
+> case its value is ignored by the device. Don't set it, this simplifies
+> platform data and only leaves the CKE1 bit to be handled.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Now debug resource reset is handled properly, allow booting secondary
-CPU cores when hardware debug mode is enabled (MD21=1, SW8-4=OFF on
-koelsch) on legacy r8a7791.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/smp-r8a7791.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/mach-shmobile/smp-r8a7791.c b/arch/arm/mach-shmobile/smp-r8a7791.c
-index 2d6417af73b5..2948c22cfc53 100644
---- a/arch/arm/mach-shmobile/smp-r8a7791.c
-+++ b/arch/arm/mach-shmobile/smp-r8a7791.c
-@@ -42,21 +42,9 @@ static void __init r8a7791_smp_prepare_cpus(unsigned int max_cpus)
- 	rcar_gen2_pm_init();
- }
- 
--static int r8a7791_smp_boot_secondary(unsigned int cpu,
--				      struct task_struct *idle)
--{
--	/* Error out when hardware debug mode is enabled */
--	if (rcar_gen2_read_mode_pins() & BIT(21)) {
--		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
--		return -ENOTSUPP;
--	}
--
--	return shmobile_smp_apmu_boot_secondary(cpu, idle);
--}
--
- const struct smp_operations r8a7791_smp_ops __initconst = {
- 	.smp_prepare_cpus	= r8a7791_smp_prepare_cpus,
--	.smp_boot_secondary	= r8a7791_smp_boot_secondary,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
- #ifdef CONFIG_HOTPLUG_CPU
- 	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
- 	.cpu_die		= shmobile_smp_apmu_cpu_die,
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
