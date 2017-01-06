@@ -1,72 +1,108 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 03/20] drm: bridge: dw-hdmi: Remove unused function parameter
-Date: Tue, 17 Jan 2017 10:28:53 +0200
-Message-Id: <20170117082910.27023-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940140AbdAFLSS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 06:18:18 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/16] arm64: dts: r8a7796: Use R-Car Gen 3 fallback binding for i2c nodes
+Date: Fri,  6 Jan 2017 12:17:53 +0100
+Message-Id: <5553e2196229501346f262a9ebdc4e4ed74ff45c.1483700694.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Use recently added R-Car Gen 3 fallback binding for i2c nodes in
+DT for r8a7796 SoC.
 
-The 'prep' parameter passed to hdmi_phy_configure() is useless. It is
-hardcoded as 0, and if set, simply prevents the configure function from
-executing.
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7796 and the
+fallback binding for R-Car Gen 3.
 
-Remove it.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index f86894622070..5f8044a7d602 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -931,7 +931,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
- }
- 
--static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
-+static int hdmi_phy_configure(struct dw_hdmi *hdmi,
- 			      unsigned char res, int cscon)
- {
- 	unsigned res_idx;
-@@ -941,9 +941,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
- 
--	if (prep)
--		return -EINVAL;
--
- 	switch (res) {
- 	case 0:	/* color resolution 0 is 8 bit colour depth */
- 	case 8:
-@@ -1072,7 +1069,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
- 		dw_hdmi_phy_enable_powerdown(hdmi, true);
- 
- 		/* Enable CSC */
--		ret = hdmi_phy_configure(hdmi, 0, 8, cscon);
-+		ret = hdmi_phy_configure(hdmi, 8, cscon);
- 		if (ret)
- 			return ret;
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index a37bb5eb062c..26a0506e3013 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -269,7 +269,8 @@
+ 		i2c0: i2c@e6500000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7796";
++			compatible = "renesas,i2c-r8a7796",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6500000 0 0x40>;
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 931>;
+@@ -284,7 +285,8 @@
+ 		i2c1: i2c@e6508000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7796";
++			compatible = "renesas,i2c-r8a7796",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6508000 0 0x40>;
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 930>;
+@@ -299,7 +301,8 @@
+ 		i2c2: i2c@e6510000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7796";
++			compatible = "renesas,i2c-r8a7796",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe6510000 0 0x40>;
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 929>;
+@@ -314,7 +317,8 @@
+ 		i2c3: i2c@e66d0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7796";
++			compatible = "renesas,i2c-r8a7796",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66d0000 0 0x40>;
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 928>;
+@@ -328,7 +332,8 @@
+ 		i2c4: i2c@e66d8000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7796";
++			compatible = "renesas,i2c-r8a7796",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66d8000 0 0x40>;
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 927>;
+@@ -342,7 +347,8 @@
+ 		i2c5: i2c@e66e0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7796";
++			compatible = "renesas,i2c-r8a7796",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66e0000 0 0x40>;
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 919>;
+@@ -356,7 +362,8 @@
+ 		i2c6: i2c@e66e8000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			compatible = "renesas,i2c-r8a7796";
++			compatible = "renesas,i2c-r8a7796",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66e8000 0 0x40>;
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
