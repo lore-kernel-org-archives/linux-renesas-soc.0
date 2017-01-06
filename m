@@ -1,43 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59372 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753267AbdADBQn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940177AbdAFLTJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 20:16:43 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Simon Horman <simon@horms.net>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 07/13] arm64: dts: r8a7795: Add PWM support
-Date: Wed, 04 Jan 2017 03:06:24 +0200
-Message-ID: <4365877.NaHERmcSzR@avalon>
-In-Reply-To: <7240025.pvPQj9XMyK@avalon>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXLQyBX3i73Swr-3W8s-a_5J7rObimDh1DA1tfYSTMNYw@mail.gmail.com> <7240025.pvPQj9XMyK@avalon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 6 Jan 2017 06:19:09 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 24/25] ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for msiof nodes
+Date: Fri,  6 Jan 2017 12:18:33 +0100
+Message-Id: <50a15093c6f1bf5f89b9954075b27b52c0322beb.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Use recently added R-Car Gen 2 fallback binding for msiof nodes in
+DT for r8a7792 SoC.
 
-On Monday 21 Nov 2016 11:18:59 Laurent Pinchart wrote:
-> On Monday 21 Nov 2016 09:27:38 Geert Uytterhoeven wrote:
-> > On Sat, Nov 19, 2016 at 4:28 AM, Laurent Pinchart wrote:
-> >> Add the 7 PWM channels to the r8a7795 device tree, in the disabled
-> >> state.
-> >> 
-> >> Signed-off-by: Laurent Pinchart
-> >> <laurent.pinchart+renesas@ideasonboard.com>
-> > 
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> This patch is independent from the rest of the series, could you please pick
-> it up ?
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7792 and the
+fallback binding for R-Car Gen 2.
 
-Ping ?
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7792.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 59d31d433244..135e06920e2d 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -591,7 +591,8 @@
+ 		};
+ 
+ 		msiof0: spi@e6e20000 {
+-			compatible = "renesas,msiof-r8a7792";
++			compatible = "renesas,msiof-r8a7792",
++				     "renesas,rcar-gen2-msiof";
+ 			reg = <0 0xe6e20000 0 0x0064>;
+ 			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp0_clks R8A7792_CLK_MSIOF0>;
+@@ -605,7 +606,8 @@
+ 		};
+ 
+ 		msiof1: spi@e6e10000 {
+-			compatible = "renesas,msiof-r8a7792";
++			compatible = "renesas,msiof-r8a7792",
++				     "renesas,rcar-gen2-msiof";
+ 			reg = <0 0xe6e10000 0 0x0064>;
+ 			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp2_clks R8A7792_CLK_MSIOF1>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
