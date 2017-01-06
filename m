@@ -1,60 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940146AbdAFLS1 (ORCPT
+        with ESMTP id S940173AbdAFLTE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:27 -0500
+        Fri, 6 Jan 2017 06:19:04 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Defconfig Updates for v4.11
-Date: Fri,  6 Jan 2017 12:18:10 +0100
-Message-Id: <cover.1483701293.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 19/25] ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for iic nodes
+Date: Fri,  6 Jan 2017 12:18:28 +0100
+Message-Id: <b8075eea36546f55aca0d645561b6713d9ae562e.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Use recently added R-Car Gen 2 fallback binding for iic nodes in
+DT for r8a7790 SoC.
 
-Please consider these Renesas ARM based SoC defconfig updates for v4.11.
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7790 and the
+fallback binding for R-Car Gen 2.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-defconfig-for-v4.11
-
-for you to fetch changes up to e37278d83e348eb53029452e65892780359b6bea:
-
-  ARM: multi_v7_defconfig: Enable r8a774[35] SoCs (2017-01-03 10:44:04 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Defconfig Updates for v4.11
-
-Enable:
-* Recently added Enable r8a774[35] SoCs
-* CMA for DMA to allow use of VIN with large frame sizes
-* CONFIG_VIDEO_ADV7604 to allow use of HDMI input
-
-----------------------------------------------------------------
-Niklas Söderlund (2):
-      ARM: shmobile: defconfig: Enable CONFIG_VIDEO_ADV7604
-      ARM: shmobile: defconfig: Enable CMA for DMA
-
-Simon Horman (2):
-      ARM: shmobile: defconfig: Enable r8a774[35] SoCs
-      ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
-
- arch/arm/configs/multi_v7_defconfig | 2 ++
- arch/arm/configs/shmobile_defconfig | 6 ++++++
- 2 files changed, 8 insertions(+)
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 823ab536175d..ddf6a8cbe6c1 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -528,7 +528,8 @@
+ 	iic0: i2c@e6500000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
+@@ -542,7 +543,8 @@
+ 	iic1: i2c@e6510000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC1>;
+@@ -556,7 +558,8 @@
+ 	iic2: i2c@e6520000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6520000 0 0x425>;
+ 		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC2>;
+@@ -570,7 +573,8 @@
+ 	iic3: i2c@e60b0000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7790", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_IICDVFS>;
+-- 
+2.7.0.rc3.207.g0ac5344
