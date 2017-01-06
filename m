@@ -1,58 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:31188 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751052AbdAWOA5 (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35678 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761283AbdAFKL6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 09:00:57 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Fri, 6 Jan 2017 05:11:58 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170103230639.19660-5-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-5-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jan 2017 11:11:56 +0100
+Message-ID: <CAMuHMdVw5icWzY0G8b1QW+EsNG_u-8F=CP1B9a_odBQWCKzEfw@mail.gmail.com>
+Subject: Re: [PATCH 04/19] sh: Don't set sh-sci pdata scscr TIE and RIE bits
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 0/2] clocksource: Add renesas-ostm timer driver
-Date: Mon, 23 Jan 2017 08:54:21 -0500
-Message-Id: <20170123135423.28780-1-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set adds a new clocksource driver that uses the OS Timer
-(OSTM) that exists in the R7S72100 (RZ/A1) SoC.
+On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The scscr platform data field is used by the driver in three locations.
+> One of them masks out all bits except SCSCR_REIE. The two other are the
+> set_termios handler and the console write handler.
+>
+> The set_termios handler calls sci_start_rx() to enable the receiver,
+> which sets the RIE bit unconditionally. It then calls sci_port_disable()
+> that effectively disables both the transmitter and the receiver. The
+> TIE bit will thus get set later when the serial cores reenables the
+> serial port.
+>
+> The console write handler runs with interrupts disabled, and saves and
+> restores the SCSCR register value. The RIE and TIE bits are thus not
+> needed there.
+>
+> The bits are thus not necessary in platform data, remove them.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-The operation of the driver was tested with a simple user application
-that does multiple calls to nanosleep() and gettimeofday().
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The purpose of adding this driver is to get better time keeping
-accuracy over the default MTU2 clocksource timer.
+Gr{oetje,eeting}s,
 
-v3:
-* Changed ostm@fcfec000 to timer@fcfec000
-* Added power-domains to nodes
+                        Geert
 
-v2:
-* The biggest change was now the channels are independent of each
-  other and have separate nodes in the DT. The first probed will
-  be set up as a clock source, and any additional channels probed
-  will become a clock event.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-Chris Brandt (2):
-  dt-bindings: document renesas-ostm timer
-  clocksource: Add renesas-ostm timer driver
-
- .../devicetree/bindings/timer/renesas,ostm.txt     |  30 ++
- arch/arm/mach-shmobile/Kconfig                     |   1 +
- drivers/clocksource/Kconfig                        |  12 +
- drivers/clocksource/Makefile                       |   1 +
- drivers/clocksource/renesas-ostm.c                 | 349 +++++++++++++++++++++
- 5 files changed, 393 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
- create mode 100644 drivers/clocksource/renesas-ostm.c
-
--- 
-2.10.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
