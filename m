@@ -1,50 +1,134 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52242 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937989AbdAIPfM (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:43244 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1761818AbdAFMQY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 10:35:12 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-pm@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 1/6] sh_eth: use correct name for ECMR_MPDE bit
-Date: Mon,  9 Jan 2017 16:34:04 +0100
-Message-Id: <20170109153409.13956-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 6 Jan 2017 07:16:24 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 2/4] v4l: vsp1: Move vsp1_video_setup_pipeline()
+Date: Fri,  6 Jan 2017 12:15:29 +0000
+Message-Id: <703b4aa60797b9ce28ed26a0d8b2583a62a181f4.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This bit was wrongly named due to a typo, Sergei checked the SH7734/63
-manuals and this bit should be named MPDE.
+Move the static vsp1_video_setup_pipeline() function in preparation for
+the callee updates so that the vsp1_video_pipeline_run() call can
+configure pipelines following suspend resume actions.
 
-Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This commit is just a code move for clarity performing no functional
+change.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/net/ethernet/renesas/sh_eth.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_video.c | 82 ++++++++++++-------------
+ 1 file changed, 41 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.h b/drivers/net/ethernet/renesas/sh_eth.h
-index 9eec1e185adf..11798d5c4a1d 100644
---- a/drivers/net/ethernet/renesas/sh_eth.h
-+++ b/drivers/net/ethernet/renesas/sh_eth.h
-@@ -339,7 +339,7 @@ enum FELIC_MODE_BIT {
- 	ECMR_DPAD = 0x00200000, ECMR_RZPF = 0x00100000,
- 	ECMR_ZPF = 0x00080000, ECMR_PFR = 0x00040000, ECMR_RXF = 0x00020000,
- 	ECMR_TXF = 0x00010000, ECMR_MCT = 0x00002000, ECMR_PRCEF = 0x00001000,
--	ECMR_PMDE = 0x00000200, ECMR_RE = 0x00000040, ECMR_TE = 0x00000020,
-+	ECMR_MPDE = 0x00000200, ECMR_RE = 0x00000040, ECMR_TE = 0x00000020,
- 	ECMR_RTM = 0x00000010, ECMR_ILB = 0x00000008, ECMR_ELB = 0x00000004,
- 	ECMR_DM = 0x00000002, ECMR_PRM = 0x00000001,
- };
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index f7dc249eb398..938ecc2766ed 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -355,6 +355,47 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
+ 	pipe->buffers_ready |= 1 << video->pipe_index;
+ }
+ 
++static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
++{
++	struct vsp1_entity *entity;
++
++	/* Determine this pipelines sizes for image partitioning support. */
++	vsp1_video_pipeline_setup_partitions(pipe);
++
++	/* Prepare the display list. */
++	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
++	if (!pipe->dl)
++		return -ENOMEM;
++
++	if (pipe->uds) {
++		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
++
++		/* If a BRU is present in the pipeline before the UDS, the alpha
++		 * component doesn't need to be scaled as the BRU output alpha
++		 * value is fixed to 255. Otherwise we need to scale the alpha
++		 * component only when available at the input RPF.
++		 */
++		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
++			uds->scale_alpha = false;
++		} else {
++			struct vsp1_rwpf *rpf =
++				to_rwpf(&pipe->uds_input->subdev);
++
++			uds->scale_alpha = rpf->fmtinfo->alpha;
++		}
++	}
++
++	list_for_each_entry(entity, &pipe->entities, list_pipe) {
++		vsp1_entity_route_setup(entity, pipe->dl);
++
++		if (entity->ops->configure)
++			entity->ops->configure(entity, pipe, pipe->dl,
++					       VSP1_ENTITY_PARAMS_INIT);
++	}
++
++	return 0;
++}
++
+ static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
+ 					      struct vsp1_dl_list *dl)
+ {
+@@ -752,47 +793,6 @@ static void vsp1_video_buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&pipe->irqlock, flags);
+ }
+ 
+-static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
+-{
+-	struct vsp1_entity *entity;
+-
+-	/* Determine this pipelines sizes for image partitioning support. */
+-	vsp1_video_pipeline_setup_partitions(pipe);
+-
+-	/* Prepare the display list. */
+-	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
+-	if (!pipe->dl)
+-		return -ENOMEM;
+-
+-	if (pipe->uds) {
+-		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
+-
+-		/* If a BRU is present in the pipeline before the UDS, the alpha
+-		 * component doesn't need to be scaled as the BRU output alpha
+-		 * value is fixed to 255. Otherwise we need to scale the alpha
+-		 * component only when available at the input RPF.
+-		 */
+-		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
+-			uds->scale_alpha = false;
+-		} else {
+-			struct vsp1_rwpf *rpf =
+-				to_rwpf(&pipe->uds_input->subdev);
+-
+-			uds->scale_alpha = rpf->fmtinfo->alpha;
+-		}
+-	}
+-
+-	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+-		vsp1_entity_route_setup(entity, pipe->dl);
+-
+-		if (entity->ops->configure)
+-			entity->ops->configure(entity, pipe, pipe->dl,
+-					       VSP1_ENTITY_PARAMS_INIT);
+-	}
+-
+-	return 0;
+-}
+-
+ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
+ {
+ 	struct vsp1_video *video = vb2_get_drv_priv(vq);
 -- 
-2.11.0
+git-series 0.9.1
