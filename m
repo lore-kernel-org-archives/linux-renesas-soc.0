@@ -1,76 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:31614 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753586AbdAZQp2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940134AbdAFLSK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 11:45:28 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 6 Jan 2017 06:18:10 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v5 1/2] dt-bindings: document renesas-ostm timer
-Date: Thu, 26 Jan 2017 11:44:30 -0500
-Message-Id: <20170126164431.11995-2-chris.brandt@renesas.com>
-In-Reply-To: <20170126164431.11995-1-chris.brandt@renesas.com>
-References: <20170126164431.11995-1-chris.brandt@renesas.com>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/16] arm64: dts: r8a7796: Add CAN FD support
+Date: Fri,  6 Jan 2017 12:17:46 +0100
+Message-Id: <f4176d7c7c03ed23d8335465f309b44519fb6ad5.1483700694.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-* changed ostm@fcfec000 to timer@fcfec000 in example
-* added power-domains in example
-v2:
-* remove sw implementation specific portions
----
- .../devicetree/bindings/timer/renesas,ostm.txt     | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
+From: Chris Paterson <chris.paterson2@renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-new file mode 100644
-index 0000000..be3ae0f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-@@ -0,0 +1,30 @@
-+* Renesas OS Timer (OSTM)
+Adds CAN FD controller node for r8a7796.
+
+Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
+
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index a97ef2e7202c..a37bb5eb062c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -397,6 +397,30 @@
+ 			status = "disabled";
+ 		};
+ 
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a7796-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
 +
-+The OSTM is a multi-channel 32-bit timer/counter with fixed clock
-+source that can operate in either interval count down timer or free-running
-+compare match mode.
++			channel0 {
++				status = "disabled";
++			};
 +
-+Channels are independent from each other.
++			channel1 {
++				status = "disabled";
++			};
++		};
 +
-+Required Properties:
-+
-+  - compatible: must be one or more of the following:
-+    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
-+    - "renesas,ostm" for any OSTM
-+		This is a fallback for the above renesas,*-ostm entries
-+
-+  - reg: base address and length of the register block for a timer channel.
-+
-+  - interrupts: interrupt specifier for the timer channel.
-+
-+  - clocks: clock specifier for the timer channel.
-+
-+Example: R7S72100 (RZ/A1H) OSTM node
-+
-+	ostm0: timer@fcfec000 {
-+		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+		reg = <0xfcfec000 0x30>;
-+		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
-+		power-domains = <&cpg_clocks>;
-+	};
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a7796",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
-2.10.1
+2.7.0.rc3.207.g0ac5344
