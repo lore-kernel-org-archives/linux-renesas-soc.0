@@ -1,69 +1,28 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36843 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbdAWQEb (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:40378 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938700AbdAFUfh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 11:04:31 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 1/7] serial: sh-sci: add FIFO trigger bits
-Date: Mon, 23 Jan 2017 17:04:12 +0100
-Message-Id: <1485187458-8195-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 6 Jan 2017 15:35:37 -0500
+Date: Fri, 06 Jan 2017 15:35:35 -0500 (EST)
+Message-Id: <20170106.153535.2034007087459962239.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] sh_eth: R8A7740 supports packet shecksumming
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <9109092d-f781-1177-12f1-de9edda07f69@cogentembedded.com>
+References: <1871204.P0zXJRoIfd@wasted.cogentembedded.com>
+        <9109092d-f781-1177-12f1-de9edda07f69@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Defines the bits controlling FIFO thresholds, adds the additional
-HSCIF registers to the register map.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Thu, 5 Jan 2017 12:33:21 +0300
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 2 ++
- drivers/tty/serial/sh-sci.h | 6 ++++++
- 2 files changed, 8 insertions(+)
+>    Oops, typo in the subject, "shecksumming". David, should I resend?
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index db5de80..3a9c001 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -377,6 +377,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCPDR]		= sci_reg_invalid,
- 		[SCDL]		= { 0x30, 16 },
- 		[SCCKS]		= { 0x34, 16 },
-+		[HSRTRGR]	= { 0x54, 16 },
-+		[HSTTRGR]	= { 0x58, 16 },
- 	},
- 
- 	/*
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index ffa6d68..2c45e79 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -29,6 +29,8 @@ enum {
- 	SCPDR,				/* Serial Port Data Register */
- 	SCDL,				/* BRG Frequency Division Register */
- 	SCCKS,				/* BRG Clock Select Register */
-+	HSRTRGR,			/* Rx FIFO Data Count Trigger Register */
-+	HSTTRGR,			/* Tx FIFO Data Count Trigger Register */
- 
- 	SCIx_NR_REGS,
- };
-@@ -99,6 +101,10 @@ enum {
- #define SCIF_BREAK_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_BRK))
- 
- /* SCFCR (FIFO Control Register) */
-+#define SCFCR_RTRG1	BIT(7)	/* Receive FIFO Data Count Trigger */
-+#define SCFCR_RTRG0	BIT(6)
-+#define SCFCR_TTRG1	BIT(5)	/* Transmit FIFO Data Count Trigger */
-+#define SCFCR_TTRG0	BIT(4)
- #define SCFCR_MCE	BIT(3)	/* Modem Control Enable */
- #define SCFCR_TFRST	BIT(2)	/* Transmit FIFO Data Register Reset */
- #define SCFCR_RFRST	BIT(1)	/* Receive FIFO Data Register Reset */
--- 
-2.7.4
+I accidently pushed this out without fixing the typo, sorry about
+that but that's going to be how it is I'm afraid :-)
