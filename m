@@ -1,54 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:57018 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751476AbdAYJo5 (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34470 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938195AbdAFK3f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 04:44:57 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Fri, 6 Jan 2017 05:29:35 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170103230639.19660-13-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-13-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jan 2017 11:29:33 +0100
+Message-ID: <CAMuHMdWhKhr0Xy4BcU6sNiaTyMDSqXLRWqYavd6R8zChdstmHg@mail.gmail.com>
+Subject: Re: [PATCH 12/19] serial: sh-sci: Remove initialization of zero
+ fields in sci_port_params
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] clk: renesas: cpg-mssr: Document suitability for RZ/G1
-Date: Wed, 25 Jan 2017 10:15:01 +0100
-Message-Id: <1485335703-27184-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
-References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas CPG/MSSR driver is already in active use for RZ/G1 since
-commits c0b2d75d2a4bf6a3 ("clk: renesas: cpg-mssr: Add R8A7743 support")
-and 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support").
+On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The compiler zeros uninitialized fields, don't zero them manually.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
-v2:
-  - Add Acked-by.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 6947482d48a55094..eb8534e5ebf3007d 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -43,7 +43,7 @@
-  * Module Standby and Software Reset register offets.
-  *
-  * If the registers exist, these are valid for SH-Mobile, R-Mobile,
-- * R-Car Gen 2, and R-Car Gen 3.
-+ * R-Car Gen2, R-Car Gen3, and RZ/G1.
-  * These are NOT valid for R-Car Gen1 and RZ/A1!
-  */
- 
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
