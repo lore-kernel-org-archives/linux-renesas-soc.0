@@ -1,55 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:37794 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbdAXPbN (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:32785 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755910AbdAFVDm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 10:31:13 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laura Abbott <labbott@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] drivers: firmware: psci: Use __pa_symbol for cpu_resume
-Date: Tue, 24 Jan 2017 16:30:19 +0100
-Message-Id: <1485271819-2977-1-git-send-email-geert+renesas@glider.be>
+        Fri, 6 Jan 2017 16:03:42 -0500
+Received: by mail-lf0-f41.google.com with SMTP id k86so61425259lfi.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Jan 2017 13:03:41 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/2] sh_eth: rename 'sh_eth_cpu_data::hw_crc'
+Date: Sat, 07 Jan 2017 00:03:37 +0300
+Message-ID: <2080510.zUc1S61HLy@wasted.cogentembedded.com>
+In-Reply-To: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
+References: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If CONFIG_DEBUG_VIRTUAL=y, during s2ram:
+The 'struct sh_eth_cpu_data' field indicating the "intelligent checksum"
+support was misnamed 'hw_crc' -- rename it to 'hw_checksum'.
 
-    virt_to_phys used for non-linear address: ffffff80085db280 (cpu_resume+0x0/0x20)
-    ------------[ cut here ]------------
-    WARNING: CPU: 0 PID: 1628 at arch/arm64/mm/physaddr.c:14 __virt_to_phys+0x28/0x60
-    ...
-    [<ffffff800809abb4>] __virt_to_phys+0x28/0x60
-    [<ffffff80084a0c38>] psci_system_suspend+0x20/0x44
-    [<ffffff8008095b28>] cpu_suspend+0x3c/0x68
-    [<ffffff80084a0b48>] psci_system_suspend_enter+0x18/0x20
-    [<ffffff80080ea3e0>] suspend_devices_and_enter+0x3f8/0x7e8
-    [<ffffff80080ead14>] pm_suspend+0x544/0x5f4
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Fixes: 1a08e3d9e0ac4577 ("drivers: firmware: psci: Use __pa_symbol for kernel symbol")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/firmware/psci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/sh_eth.c |   12 ++++++------
+ drivers/net/ethernet/renesas/sh_eth.h |    2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index 66a8793f3b3793ff..493a56a4cfc4a836 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -419,7 +419,7 @@ int psci_cpu_suspend_enter(unsigned long index)
- static int psci_system_suspend(unsigned long unused)
- {
- 	return invoke_psci_fn(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND),
--			      virt_to_phys(cpu_resume), 0, 0);
-+			      __pa_symbol(cpu_resume), 0, 0);
- }
+Index: net/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net/drivers/net/ethernet/renesas/sh_eth.c
+@@ -535,7 +535,7 @@ static struct sh_eth_cpu_data r7s72100_d
+ 	.rpadir_value   = 2 << 16,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
+-	.hw_crc		= 1,
++	.hw_checksum	= 1,
+ 	.tsu		= 1,
+ };
  
- static int psci_system_suspend_enter(suspend_state_t state)
--- 
-1.9.1
+@@ -573,7 +573,7 @@ static struct sh_eth_cpu_data r8a7740_da
+ 	.rpadir_value   = 2 << 16,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
+-	.hw_crc		= 1,
++	.hw_checksum	= 1,
+ 	.tsu		= 1,
+ 	.select_mii	= 1,
+ };
+@@ -816,7 +816,7 @@ static struct sh_eth_cpu_data sh7734_dat
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
+ 	.tsu		= 1,
+-	.hw_crc		= 1,
++	.hw_checksum	= 1,
+ 	.select_mii	= 1,
+ };
+ 
+@@ -933,7 +933,7 @@ static int sh_eth_reset(struct net_devic
+ 		sh_eth_write(ndev, 0x0, RDFFR);
+ 
+ 		/* Reset HW CRC register */
+-		if (mdp->cd->hw_crc)
++		if (mdp->cd->hw_checksum)
+ 			sh_eth_write(ndev, 0x0, CSMR);
+ 
+ 		/* Select MII mode */
+@@ -1418,7 +1418,7 @@ static int sh_eth_rx(struct net_device *
+ 		 * the RFS bits are from bit 25 to bit 16. So, the
+ 		 * driver needs right shifting by 16.
+ 		 */
+-		if (mdp->cd->hw_crc)
++		if (mdp->cd->hw_checksum)
+ 			desc_status >>= 16;
+ 
+ 		skb = mdp->rx_skbuff[entry];
+@@ -1986,7 +1986,7 @@ static size_t __sh_eth_get_regs(struct n
+ 	add_reg(MAFCR);
+ 	if (cd->rtrate)
+ 		add_reg(RTRATE);
+-	if (cd->hw_crc)
++	if (cd->hw_checksum)
+ 		add_reg(CSMR);
+ 	if (cd->select_mii)
+ 		add_reg(RMII_MII);
+Index: net/drivers/net/ethernet/renesas/sh_eth.h
+===================================================================
+--- net.orig/drivers/net/ethernet/renesas/sh_eth.h
++++ net/drivers/net/ethernet/renesas/sh_eth.h
+@@ -488,7 +488,7 @@ struct sh_eth_cpu_data {
+ 	unsigned rpadir:1;	/* E-DMAC have RPADIR */
+ 	unsigned no_trimd:1;	/* E-DMAC DO NOT have TRIMD */
+ 	unsigned no_ade:1;	/* E-DMAC DO NOT have ADE bit in EESR */
+-	unsigned hw_crc:1;	/* E-DMAC have CSMR */
++	unsigned hw_checksum:1;	/* E-DMAC has CSMR */
+ 	unsigned select_mii:1;	/* EtherC have RMII_MII (MII select register) */
+ 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
+ 	unsigned rtrate:1;	/* EtherC has RTRATE register */
