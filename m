@@ -1,123 +1,44 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 08/20] drm: bridge: dw-hdmi: Reorder functions to prepare for next commit
-Date: Tue, 17 Jan 2017 10:28:58 +0200
-Message-Id: <20170117082910.27023-9-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54425 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754979AbdAFLFp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 06:05:45 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 18/19] serial: sh-sci: Remove unused platform data capabilities field
+Date: Fri, 06 Jan 2017 13:05:50 +0200
+Message-ID: <1843445.xM9acOKP5n@avalon>
+In-Reply-To: <CAMuHMdWwcj16L6_bdBODo8RtM9PtBO0L5S_yjnKs-jQww3TYqg@mail.gmail.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-19-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWwcj16L6_bdBODo8RtM9PtBO0L5S_yjnKs-jQww3TYqg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The next commit will reference structures and functions in a way that
-currently requires forward declarations. Reorder the functions to avoid
-that. No functional change to the code is performed.
+Hi Geert,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 72 ++++++++++++++++++++--------------------
- 1 file changed, 36 insertions(+), 36 deletions(-)
+On Friday 06 Jan 2017 11:59:58 Geert Uytterhoeven wrote:
+> On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart wrote:
+> > The field isn't set by any platform but is only used internally in the
+> > driver to hold data parsed from DT. Move it to the sci_port structure.
+> 
+> This does mean legacy platform data can no longer set it
+> (no platform data did).
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 563cbec47da6..92ce9e532603 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1575,42 +1575,6 @@ static void dw_hdmi_update_phy_mask(struct dw_hdmi *hdmi)
- 		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
- }
- 
--static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
--				    struct drm_display_mode *orig_mode,
--				    struct drm_display_mode *mode)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--
--	/* Store the display mode for plugin/DKMS poweron events */
--	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
--
--	mutex_unlock(&hdmi->mutex);
--}
--
--static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--	hdmi->disabled = true;
--	dw_hdmi_update_power(hdmi);
--	dw_hdmi_update_phy_mask(hdmi);
--	mutex_unlock(&hdmi->mutex);
--}
--
--static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
--
--	mutex_lock(&hdmi->mutex);
--	hdmi->disabled = false;
--	dw_hdmi_update_power(hdmi);
--	dw_hdmi_update_phy_mask(hdmi);
--	mutex_unlock(&hdmi->mutex);
--}
--
- static enum drm_connector_status
- dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
- {
-@@ -1703,6 +1667,42 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
- 	.best_encoder = drm_atomic_helper_best_encoder,
- };
- 
-+static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
-+				    struct drm_display_mode *orig_mode,
-+				    struct drm_display_mode *mode)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+
-+	/* Store the display mode for plugin/DKMS poweron events */
-+	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
-+
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
-+static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+	hdmi->disabled = true;
-+	dw_hdmi_update_power(hdmi);
-+	dw_hdmi_update_phy_mask(hdmi);
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
-+static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	mutex_lock(&hdmi->mutex);
-+	hdmi->disabled = false;
-+	dw_hdmi_update_power(hdmi);
-+	dw_hdmi_update_phy_mask(hdmi);
-+	mutex_unlock(&hdmi->mutex);
-+}
-+
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
- 	.enable = dw_hdmi_bridge_enable,
- 	.disable = dw_hdmi_bridge_disable,
+Correct. Platforms that want to set it should migrate to DT :-)
+
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 -- 
 Regards,
 
