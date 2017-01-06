@@ -1,72 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52233 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934162AbdAIPfM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940141AbdAFLST (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 10:35:12 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-pm@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 0/6] sh_eth: add wake-on-lan support via magic packet
-Date: Mon,  9 Jan 2017 16:34:03 +0100
-Message-Id: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 6 Jan 2017 06:18:19 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 13/16] arm64: dts: renesas: r8a7796: Add EthernetAVB instance
+Date: Fri,  6 Jan 2017 12:17:55 +0100
+Message-Id: <8e8b9eaef8fb05d9707087ea82c1c928317ac9f8.1483700694.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-This series adds support for Wake-on-Lan using Magic Packet for a few
-models of the sh_eth driver. Patch 1/6 fix a naming error, patch 2/6 
-adds generic support to control and support WoL while patches 3/6 - 6/6 
-enable different models.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 43 ++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-Based ontop of net-next master.
-
-Changes since v2.
-- Fix bookkeeping for "active_count" and "event_count" reported in 
-  /sys/kernel/debug/wakeup_sources. Thanks Geert for noticing this.
-- Add new patch 1/6 which corrects the name of ECMR_MPDE bit, suggested 
-  by Sergei.
-- s/sh7743/sh7734/ in patch 5/6. Thanks Geert for spotting this.
-- Spelling improvements suggested by Sergei and Geert.
-- Add Tested-by to 3/6 and 4/6.
-
-Changes since v1.
-- Split generic WoL functionality and device enablement to different
-  patches.
-- Enable more devices then Gen2 after feedback from Geert and
-  datasheets.
-- Do not set mdp->irq_enabled = false and remove specific MagicPacket
-  interrupt clearing, instead let sh_eth_error() clear the interrupt as
-  for other EMAC interrupts, thanks Sergei for the suggestion.
-- Use the original return logic in sh_eth_resume().
-- Moved sh_eth_private variable *clk to top of data structure  to avoid
-  possible gaps due to alignment restrictions.
-- Make wol_enabled in sh_eth_private part of the already existing
-  bitfield instead of a bool.
-- Do not initiate mdp->wol_enabled to 0, the struct is kzalloc'ed so
-  it's already set to 0.
-
-Niklas Söderlund (6):
-  sh_eth: use correct name for ECMR_MPDE bit
-  sh_eth: add generic wake-on-lan support via magic packet
-  sh_eth: enable wake-on-lan for R-Car Gen2 devices
-  sh_eth: enable wake-on-lan for r8a7740/armadillo
-  sh_eth: enable wake-on-lan for sh7734
-  sh_eth: enable wake-on-lan for sh7763
-
- drivers/net/ethernet/renesas/sh_eth.c | 123 +++++++++++++++++++++++++++++++---
- drivers/net/ethernet/renesas/sh_eth.h |   5 +-
- 2 files changed, 117 insertions(+), 11 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 26a0506e3013..d4beb15b076a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -428,6 +428,49 @@
+ 			};
+ 		};
+ 
++		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a7796",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			phy-mode = "rgmii-id";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a7796",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
-2.11.0
+2.7.0.rc3.207.g0ac5344
