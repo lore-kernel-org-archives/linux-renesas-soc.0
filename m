@@ -1,183 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59075 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936229AbdACXGp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940154AbdAFLSn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 18:06:45 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 6 Jan 2017 06:18:43 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/19] sh: sh726[49]: Don't set sh-sci pdata scscr TOIE bit
-Date: Wed,  4 Jan 2017 01:06:25 +0200
-Message-Id: <20170103230639.19660-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/25] ARM: dts: r8a7743: Add device node for PRR
+Date: Fri,  6 Jan 2017 12:18:12 +0100
+Message-Id: <11d4407e939e74e89a29df88b1557b59ece9e9f9.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SCIF ports on sh7264 and sh7269 don't support the TOIE bit according
-to the datasheets.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Add a device node for the Product Register, which provides SoC product
+and revision information.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/sh/kernel/cpu/sh2a/setup-sh7264.c | 16 ++++++++--------
- arch/sh/kernel/cpu/sh2a/setup-sh7269.c | 16 ++++++++--------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-index f111c20177ea..aebaa7a4da46 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-@@ -227,7 +227,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7264", vectors, groups,
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index ca0cda28a3eb..0956125597fd 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -102,6 +102,11 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
- static struct plat_sci_port scif0_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -252,7 +252,7 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -277,7 +277,7 @@ static struct platform_device scif1_device = {
- 
- static struct plat_sci_port scif2_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -302,7 +302,7 @@ static struct platform_device scif2_device = {
- 
- static struct plat_sci_port scif3_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -327,7 +327,7 @@ static struct platform_device scif3_device = {
- 
- static struct plat_sci_port scif4_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -352,7 +352,7 @@ static struct platform_device scif4_device = {
- 
- static struct plat_sci_port scif5_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -377,7 +377,7 @@ static struct platform_device scif5_device = {
- 
- static struct plat_sci_port scif6_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -402,7 +402,7 @@ static struct platform_device scif6_device = {
- 
- static struct plat_sci_port scif7_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-index b3445e59841a..6d7ac07b4e54 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-@@ -249,7 +249,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7269", vectors, groups,
- 
- static struct plat_sci_port scif0_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -274,7 +274,7 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -299,7 +299,7 @@ static struct platform_device scif1_device = {
- 
- static struct plat_sci_port scif2_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -324,7 +324,7 @@ static struct platform_device scif2_device = {
- 
- static struct plat_sci_port scif3_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -349,7 +349,7 @@ static struct platform_device scif3_device = {
- 
- static struct plat_sci_port scif4_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -374,7 +374,7 @@ static struct platform_device scif4_device = {
- 
- static struct plat_sci_port scif5_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -399,7 +399,7 @@ static struct platform_device scif5_device = {
- 
- static struct plat_sci_port scif6_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -424,7 +424,7 @@ static struct platform_device scif6_device = {
- 
- static struct plat_sci_port scif7_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
++		prr: chipid@ff000044 {
++			compatible = "renesas,prr";
++			reg = <0 0xff000044 0 4>;
++		};
++
+ 		rst: reset-controller@e6160000 {
+ 			compatible = "renesas,r8a7743-rst";
+ 			reg = <0 0xe6160000 0 0x100>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
