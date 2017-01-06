@@ -1,258 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59072 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54314 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761722AbdACXGo (ORCPT
+        with ESMTP id S1161326AbdAFKZT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 18:06:44 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Fri, 6 Jan 2017 05:25:19 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/19] sh: Don't set sh-sci pdata scscr TIE and RIE bits
-Date: Wed,  4 Jan 2017 01:06:24 +0200
-Message-Id: <20170103230639.19660-5-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH 08/19] sh: sh3: sh770x: Fix platform data for the IRDA serial port
+Date: Fri, 06 Jan 2017 12:25:22 +0200
+Message-ID: <2288755.l0GGsSiyi2@avalon>
+In-Reply-To: <CAMuHMdVzm4D=Pdd6PoGzXUoO8Va4g1Y5KncaRS19PnSeGUn9Gw@mail.gmail.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-9-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdVzm4D=Pdd6PoGzXUoO8Va4g1Y5KncaRS19PnSeGUn9Gw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The scscr platform data field is used by the driver in three locations.
-One of them masks out all bits except SCSCR_REIE. The two other are the
-set_termios handler and the console write handler.
+Hi Geert,
 
-The set_termios handler calls sci_start_rx() to enable the receiver,
-which sets the RIE bit unconditionally. It then calls sci_port_disable()
-that effectively disables both the transmitter and the receiver. The
-TIE bit will thus get set later when the serial cores reenables the
-serial port.
+On Friday 06 Jan 2017 11:18:32 Geert Uytterhoeven wrote:
+> On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart wrote:
+> > Even though most of its registers are 8-bit wide, the IRDA has two
+> > 16-bit registers that make it a 16-bit peripheral and not a 8-bit
+> > peripheral with addresses shifted by one. Fix the memory resource size
+> > and the platform data regshift value.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  arch/sh/kernel/cpu/sh3/setup-sh770x.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+> > b/arch/sh/kernel/cpu/sh3/setup-sh770x.c index e1e54258b822..084a91e6027e
+> > 100644
+> > --- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+> > +++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+> > @@ -157,11 +157,10 @@ static struct platform_device scif1_device = {
+> >  static struct plat_sci_port scif2_platform_data = {
+> >         .type           = PORT_IRDA,
+> >         .ops            = &sh770x_sci_port_ops,
+> > -       .regshift       = 1,
+> 
+> According to my sh7707 and sh7709 datasheets. regshift = 1 is correct.
+> 
+> SCIx_IRDA_REGTYPE uses:
+> 
+>                 [SCSMR]         = { 0x00,  8 },
+>                 [SCBRR]         = { 0x01,  8 },
+>                 [SCSCR]         = { 0x02,  8 },
+>                 [SCxTDR]        = { 0x03,  8 },
+>                 [SCxSR]         = { 0x04,  8 },
+>                 [SCxRDR]        = { 0x05,  8 },
+>                 [SCFCR]         = { 0x06,  8 },
+>                 [SCFDR]         = { 0x07, 16 },
+> 
+> While the datasheet says:
+> 
+>         SCSMR1  H'A4000140      8 bits
+>         SCBRR1  H'A4000142      8 bits
+>         SCSCR1  H'A4000144      8 bits
+>         SCFTDR1 H'A4000146      8 bits
+>         SCSSR1  H'A4000148      16 bits
+>         SCFRDR1 H'A400014A      8 bits
+>         SCFCR1  H'A400014C      8 bits
+>         SCFDR1  H'A400014E      16 bits
+> 
+> So you do need regshift = 1 to handle the gaps.
+> 
+> Note that SCSSR1 is a 16-bit registers, while SCIx_IRDA_REGTYPE
+> declares it as 8-bit, so it may not work at all...
+> 
+> Ah, you're fixing all this in "[PATCH 19/19] serial: sh-sci: Compute the
+> regshift value for SCI ports".
+> I think that part should be moved to this patch, to not break bisection.
 
-The console write handler runs with interrupts disabled, and saves and
-restores the SCSCR register value. The RIE and TIE bits are thus not
-needed there.
+Yes, I realized that after sending the series. If you think we need to care 
+about bisection here (given that it seems that sh-sci hasn't been tested on SH 
+since at least v3.1...) we can fix that.
 
-The bits are thus not necessary in platform data, remove them.
+> >  static struct resource scif2_resources[] = {
+> > -       DEFINE_RES_MEM(0xa4000140, 0x10),
+> > +       DEFINE_RES_MEM(0xa4000140, 0x20),
+> >         DEFINE_RES_IRQ(evt2irq(0x880)),
+> >  };
+> 
+> According to the register list above, resource size 0x10 is correct.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/sh/kernel/cpu/sh2a/setup-sh7203.c |  8 ++++----
- arch/sh/kernel/cpu/sh2a/setup-sh7264.c | 16 ++++++++--------
- arch/sh/kernel/cpu/sh2a/setup-sh7269.c | 16 ++++++++--------
- arch/sh/kernel/cpu/sh3/setup-sh7705.c  |  3 +--
- 4 files changed, 21 insertions(+), 22 deletions(-)
+I'll fix this.
 
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7203.c b/arch/sh/kernel/cpu/sh2a/setup-sh7203.c
-index d0d1a36d1264..146a7d9a20fd 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7203.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7203.c
-@@ -175,7 +175,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7203", vectors, groups,
- 
- static struct plat_sci_port scif0_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -197,7 +197,7 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -219,7 +219,7 @@ static struct platform_device scif1_device = {
- 
- static struct plat_sci_port scif2_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -241,7 +241,7 @@ static struct platform_device scif2_device = {
- 
- static struct plat_sci_port scif3_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE,
-+	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-index 0d66fd664836..f111c20177ea 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-@@ -227,7 +227,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7264", vectors, groups,
- 
- static struct plat_sci_port scif0_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -252,7 +252,7 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -277,7 +277,7 @@ static struct platform_device scif1_device = {
- 
- static struct plat_sci_port scif2_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -302,7 +302,7 @@ static struct platform_device scif2_device = {
- 
- static struct plat_sci_port scif3_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -327,7 +327,7 @@ static struct platform_device scif3_device = {
- 
- static struct plat_sci_port scif4_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -352,7 +352,7 @@ static struct platform_device scif4_device = {
- 
- static struct plat_sci_port scif5_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -377,7 +377,7 @@ static struct platform_device scif5_device = {
- 
- static struct plat_sci_port scif6_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -402,7 +402,7 @@ static struct platform_device scif6_device = {
- 
- static struct plat_sci_port scif7_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-index 26abbfbeb99a..b3445e59841a 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-@@ -249,7 +249,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7269", vectors, groups,
- 
- static struct plat_sci_port scif0_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -274,7 +274,7 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -299,7 +299,7 @@ static struct platform_device scif1_device = {
- 
- static struct plat_sci_port scif2_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -324,7 +324,7 @@ static struct platform_device scif2_device = {
- 
- static struct plat_sci_port scif3_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -349,7 +349,7 @@ static struct platform_device scif3_device = {
- 
- static struct plat_sci_port scif4_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -374,7 +374,7 @@ static struct platform_device scif4_device = {
- 
- static struct plat_sci_port scif5_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -399,7 +399,7 @@ static struct platform_device scif5_device = {
- 
- static struct plat_sci_port scif6_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-@@ -424,7 +424,7 @@ static struct platform_device scif6_device = {
- 
- static struct plat_sci_port scif7_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_RIE | SCSCR_TIE | SCSCR_REIE | SCSCR_TOIE,
-+	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
- };
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh7705.c b/arch/sh/kernel/cpu/sh3/setup-sh7705.c
-index 62b1559dbe99..4f7b4f9b7d02 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh7705.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh7705.c
-@@ -71,7 +71,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7705", vectors, NULL,
- 
- static struct plat_sci_port scif0_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_TIE | SCSCR_RIE | SCSCR_CKE1 | SCSCR_CKE0,
-+	.scscr		= SCSCR_CKE1 | SCSCR_CKE0,
- 	.type		= PORT_SCIF,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regtype	= SCIx_SH7705_SCIF_REGTYPE,
-@@ -94,7 +94,6 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.flags		= UPF_BOOT_AUTOCONF,
--	.scscr		= SCSCR_TIE | SCSCR_RIE,
- 	.type		= PORT_SCIF,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regtype	= SCIx_SH7705_SCIF_REGTYPE,
 -- 
 Regards,
 
