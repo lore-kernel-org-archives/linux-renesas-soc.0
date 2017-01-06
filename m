@@ -1,212 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940164AbdAFLSy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 06:18:54 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>, fkan@apm.com,
-        linux-kernel@vger.kernel.org,
-        Artemi Ivanov <artemi.ivanov@cogentembedded.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH 1/2] dma-mapping: let arch know origin of dma range passed to arch_setup_dma_ops()
-Date: Wed, 11 Jan 2017 21:31:51 +0300
-Message-Id: <1484159512-28515-2-git-send-email-nikita.yoush@cogentembedded.com>
-In-Reply-To: <1484159512-28515-1-git-send-email-nikita.yoush@cogentembedded.com>
-References: <dca35acf-1adf-aa85-7a0b-d0c6ec702fa1@arm.com>
- <1484159512-28515-1-git-send-email-nikita.yoush@cogentembedded.com>
-Sender: linux-kernel-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/25] ARM: dts: r8a7779: Use R-Car Gen 1 fallback binding for i2c nodes
+Date: Fri,  6 Jan 2017 12:18:21 +0100
+Message-Id: <137d27f10f638781d5487b44302c2a2ee5d12655.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There are cases when device is capable of wide DMA mask (and driver
-issues corresponding dma_set_mask() call), but bus device sits on can't
-support wide address. Example: NVMe device behind PCIe controller
-sitting on 32-bit SoC bus.
+Use recently added R-Car Gen 1 fallback binding for i2c nodes in
+DT for r8a7779 SoC.
 
-To support such case, architecture needs information about such
-limitations. Such information can originate from dma-ranges property
-in device tree, and is passed to architecture via arch_setup_dma_ops()
-call.
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7779 and the
+fallback binding for R-Car Gen 1.
 
-Problem is that in wide majority of cases, no dma range is defined.
-E.g. ACPI has no means to define it. Thus default range (usually
-full 32-bit range, i.e. 4G starting at zero address) is passed instead.
-
-If architecture enforce this range, all setups currently using
-wide DMA addresses without explicitly defining support for that via
-device tree will break. This is bad, especially for ACPI based
-platforms.
-
-To avoid that, this patch adds additional boolean argument to
-arch_setup_dma_ops() to show if range originates from authorative source
-and thus should be enforced, or is just a guess and should be handled as
-such.
-
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/include/asm/dma-mapping.h             | 1 +
- arch/arm/mm/dma-mapping.c                      | 3 ++-
- arch/arm64/include/asm/dma-mapping.h           | 3 ++-
- arch/arm64/mm/dma-mapping.c                    | 3 ++-
- arch/mips/include/asm/dma-mapping.h            | 3 ++-
- drivers/acpi/scan.c                            | 2 +-
- drivers/iommu/rockchip-iommu.c                 | 2 +-
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 2 +-
- drivers/of/device.c                            | 5 ++++-
- drivers/staging/fsl-mc/bus/fsl-mc-bus.c        | 2 +-
- 10 files changed, 17 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
-index bf02dbd..2a3863e 100644
---- a/arch/arm/include/asm/dma-mapping.h
-+++ b/arch/arm/include/asm/dma-mapping.h
-@@ -117,6 +117,7 @@ static inline unsigned long dma_max_pfn(struct device *dev)
- 
- #define arch_setup_dma_ops arch_setup_dma_ops
- extern void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-+			       bool enforce_range,
- 			       const struct iommu_ops *iommu, bool coherent);
- 
- #define arch_teardown_dma_ops arch_teardown_dma_ops
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index ab77100..b8b11f8 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2380,7 +2380,8 @@ static struct dma_map_ops *arm_get_dma_map_ops(bool coherent)
- }
- 
- void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
--			const struct iommu_ops *iommu, bool coherent)
-+			bool enforce_range, const struct iommu_ops *iommu,
-+			bool coherent)
- {
- 	struct dma_map_ops *dma_ops;
- 
-diff --git a/arch/arm64/include/asm/dma-mapping.h b/arch/arm64/include/asm/dma-mapping.h
-index ccea82c..ae1c23f 100644
---- a/arch/arm64/include/asm/dma-mapping.h
-+++ b/arch/arm64/include/asm/dma-mapping.h
-@@ -48,7 +48,8 @@ static inline struct dma_map_ops *get_dma_ops(struct device *dev)
- }
- 
- void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
--			const struct iommu_ops *iommu, bool coherent);
-+			bool enforce_range, const struct iommu_ops *iommu,
-+			bool coherent);
- #define arch_setup_dma_ops	arch_setup_dma_ops
- 
- #ifdef CONFIG_IOMMU_DMA
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index e040827..ea295f1 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -953,7 +953,8 @@ static void __iommu_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- #endif  /* CONFIG_IOMMU_DMA */
- 
- void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
--			const struct iommu_ops *iommu, bool coherent)
-+			bool enforce_range, const struct iommu_ops *iommu,
-+			bool coherent)
- {
- 	if (!dev->archdata.dma_ops)
- 		dev->archdata.dma_ops = &swiotlb_dma_ops;
-diff --git a/arch/mips/include/asm/dma-mapping.h b/arch/mips/include/asm/dma-mapping.h
-index 7aa71b9..6af4d87 100644
---- a/arch/mips/include/asm/dma-mapping.h
-+++ b/arch/mips/include/asm/dma-mapping.h
-@@ -34,7 +34,8 @@ extern void dma_cache_sync(struct device *dev, void *vaddr, size_t size,
- 
- #define arch_setup_dma_ops arch_setup_dma_ops
- static inline void arch_setup_dma_ops(struct device *dev, u64 dma_base,
--				      u64 size, const struct iommu_ops *iommu,
-+				      u64 size, bool enforce_range,
-+				      const struct iommu_ops *iommu,
- 				      bool coherent)
- {
- #ifdef CONFIG_DMA_PERDEV_COHERENT
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 1926918..dea17a5 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1385,7 +1385,7 @@ void acpi_dma_configure(struct device *dev, enum dev_dma_attr attr)
- 	 * Assume dma valid range starts at 0 and covers the whole
- 	 * coherent_dma_mask.
- 	 */
--	arch_setup_dma_ops(dev, 0, dev->coherent_dma_mask + 1, iommu,
-+	arch_setup_dma_ops(dev, 0, dev->coherent_dma_mask + 1, false, iommu,
- 			   attr == DEV_DMA_COHERENT);
- }
- EXPORT_SYMBOL_GPL(acpi_dma_configure);
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index 9afcbf7..0995ab3 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -1096,7 +1096,7 @@ static int rk_iommu_domain_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	/* Set dma_ops for dev, otherwise it would be dummy_dma_ops */
--	arch_setup_dma_ops(dev, 0, DMA_BIT_MASK(32), NULL, false);
-+	arch_setup_dma_ops(dev, 0, DMA_BIT_MASK(32), false, NULL, false);
- 
- 	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
- 	dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index c9b7ad6..19f70d8 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2533,7 +2533,7 @@ static int dpaa_eth_probe(struct platform_device *pdev)
- 	priv->buf_layout[TX].priv_data_size = DPAA_TX_PRIV_DATA_SIZE; /* Tx */
- 
- 	/* device used for DMA mapping */
--	arch_setup_dma_ops(dev, 0, 0, NULL, false);
-+	arch_setup_dma_ops(dev, 0, 0, false, NULL, false);
- 	err = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(40));
- 	if (err) {
- 		dev_err(dev, "dma_coerce_mask_and_coherent() failed\n");
-diff --git a/drivers/of/device.c b/drivers/of/device.c
-index fd5cfad..1cc2115 100644
---- a/drivers/of/device.c
-+++ b/drivers/of/device.c
-@@ -89,6 +89,7 @@ void of_dma_configure(struct device *dev, struct device_node *np)
- 	bool coherent;
- 	unsigned long offset;
- 	const struct iommu_ops *iommu;
-+	bool enforce_range = false;
- 
- 	/*
- 	 * Set default coherent_dma_mask to 32 bit.  Drivers are expected to
-@@ -126,6 +127,8 @@ void of_dma_configure(struct device *dev, struct device_node *np)
- 			return;
- 		}
- 		dev_dbg(dev, "dma_pfn_offset(%#08lx)\n", offset);
-+
-+		enforce_range = true;
- 	}
- 
- 	dev->dma_pfn_offset = offset;
-@@ -147,7 +150,7 @@ void of_dma_configure(struct device *dev, struct device_node *np)
- 	dev_dbg(dev, "device is%sbehind an iommu\n",
- 		iommu ? " " : " not ");
- 
--	arch_setup_dma_ops(dev, dma_addr, size, iommu, coherent);
-+	arch_setup_dma_ops(dev, dma_addr, size, enforce_range, iommu, coherent);
- }
- EXPORT_SYMBOL_GPL(of_dma_configure);
- 
-diff --git a/drivers/staging/fsl-mc/bus/fsl-mc-bus.c b/drivers/staging/fsl-mc/bus/fsl-mc-bus.c
-index 5ac373c..480b644 100644
---- a/drivers/staging/fsl-mc/bus/fsl-mc-bus.c
-+++ b/drivers/staging/fsl-mc/bus/fsl-mc-bus.c
-@@ -540,7 +540,7 @@ int fsl_mc_device_add(struct dprc_obj_desc *obj_desc,
- 
- 	/* Objects are coherent, unless 'no shareability' flag set. */
- 	if (!(obj_desc->flags & DPRC_OBJ_FLAG_NO_MEM_SHAREABILITY))
--		arch_setup_dma_ops(&mc_dev->dev, 0, 0, NULL, true);
-+		arch_setup_dma_ops(&mc_dev->dev, 0, 0, false, NULL, true);
- 
- 	/*
- 	 * The device-specific probe callback will get invoked by device_add()
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 55a7c1e37c57..f47a0edc26d4 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -173,7 +173,7 @@
+ 	i2c0: i2c@ffc70000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc70000 0x1000>;
+ 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
+@@ -184,7 +184,7 @@
+ 	i2c1: i2c@ffc71000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc71000 0x1000>;
+ 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
+@@ -195,7 +195,7 @@
+ 	i2c2: i2c@ffc72000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc72000 0x1000>;
+ 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
+@@ -206,7 +206,7 @@
+ 	i2c3: i2c@ffc73000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7779";
++		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc73000 0x1000>;
+ 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
