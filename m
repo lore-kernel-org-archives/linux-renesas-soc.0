@@ -1,262 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53683 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751303AbdAMJuz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940131AbdAFLSG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 04:50:55 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, marek.vasut@gmail.com, geert@linux-m68k.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 1/2] iio: adc: Add Maxim MAX11100 driver
-Date: Fri, 13 Jan 2017 10:50:37 +0100
-Message-Id: <1484301038-16386-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1484301038-16386-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1484301038-16386-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 6 Jan 2017 06:18:06 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/16] arm64: dts: r8a7796: Add CAN support
+Date: Fri,  6 Jan 2017 12:17:45 +0100
+Message-Id: <909c1625241515aa2a5027a24e17d77b54e8ce4b.1483700694.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo@jmondi.org>
+From: Chris Paterson <chris.paterson2@renesas.com>
 
-Add iio driver for Maxim MAX11100 single-channel ADC.
+Adds CAN controller nodes for r8a7796.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Tested-by: Marek Vasut <marek.vasut@gmail.com>
+Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
 
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/iio/adc/Kconfig    |   9 +++
- drivers/iio/adc/Makefile   |   1 +
- drivers/iio/adc/max11100.c | 187 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 197 insertions(+)
- create mode 100644 drivers/iio/adc/max11100.c
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 38bc319..c32bc7a 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -307,6 +307,15 @@ config MAX1027
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called max1027.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index c0f9ced8df7e..a97ef2e7202c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -367,6 +367,36 @@
+ 			status = "disabled";
+ 		};
  
-+config MAX11100
-+	tristate "Maxim max11100 ADC driver"
-+	depends on SPI_MASTER
-+	help
-+	  Say yes here to build support for Maxim max11100 SPI ADC
++		can0: can@e6c30000 {
++			compatible = "renesas,can-r8a7796",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c30000 0 0x1000>;
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>,
++			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called max11100.
++		can1: can@e6c38000 {
++			compatible = "renesas,can-r8a7796",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c38000 0 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>,
++			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
- config MAX1363
- 	tristate "Maxim max1363 ADC driver"
- 	depends on I2C
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index d36c4be..5684369 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_LP8788_ADC) += lp8788_adc.o
- obj-$(CONFIG_LPC18XX_ADC) += lpc18xx_adc.o
- obj-$(CONFIG_LTC2485) += ltc2485.o
- obj-$(CONFIG_MAX1027) += max1027.o
-+obj-$(CONFIG_MAX11100) += max11100.o
- obj-$(CONFIG_MAX1363) += max1363.o
- obj-$(CONFIG_MCP320X) += mcp320x.o
- obj-$(CONFIG_MCP3422) += mcp3422.o
-diff --git a/drivers/iio/adc/max11100.c b/drivers/iio/adc/max11100.c
-new file mode 100644
-index 0000000..78e2a45
---- /dev/null
-+++ b/drivers/iio/adc/max11100.c
-@@ -0,0 +1,187 @@
-+/*
-+ * iio/adc/max11100.c
-+ * Maxim max11100 ADC Driver with IIO interface
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Jacopo Mondi
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/delay.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+
-+#include <linux/iio/iio.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/driver.h>
-+
-+/*
-+ * LSB is the ADC single digital step
-+ * 1 LSB = (vref_mv / 2 ^ 16)
-+ *
-+ * LSB is used to calculate analog voltage value
-+ * from the number of ADC steps count
-+ *
-+ * Ain = (count * LSB)
-+ */
-+#define MAX11100_LSB_DIV		(1 << 16)
-+
-+struct max11100_state {
-+	const struct max11100_chip_desc *desc;
-+	struct regulator *vref_reg;
-+	struct spi_device *spi;
-+};
-+
-+static struct iio_chan_spec max11100_channels[] = {
-+	{ /* [0] */
-+		.type = IIO_VOLTAGE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE),
-+	},
-+};
-+
-+static struct max11100_chip_desc {
-+	unsigned int num_chan;
-+	const struct iio_chan_spec *channels;
-+} max11100_desc = {
-+	.num_chan = ARRAY_SIZE(max11100_channels),
-+	.channels = max11100_channels,
-+};
-+
-+static int max11100_read_single(struct iio_dev *indio_dev, int *val)
-+{
-+	int ret;
-+	struct max11100_state *state = iio_priv(indio_dev);
-+	uint8_t buffer[3];
-+
-+	ret = spi_read(state->spi, buffer, sizeof(buffer));
-+	if (ret) {
-+		dev_err(&indio_dev->dev, "SPI transfer failed\n");
-+		return ret;
-+	}
-+
-+	/* the first 8 bits sent out from ADC must be 0s */
-+	if (buffer[0]) {
-+		dev_err(&indio_dev->dev, "Invalid value: buffer[0] != 0\n");
-+		return -EINVAL;
-+	}
-+
-+	*val = (buffer[1] << 8) | buffer[2];
-+
-+	return 0;
-+}
-+
-+static int max11100_read_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     int *val, int *val2, long info)
-+{
-+	int ret, vref_uv;
-+	struct max11100_state *state = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = max11100_read_single(indio_dev, val);
-+		if (ret)
-+			return ret;
-+
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		vref_uv = regulator_get_voltage(state->vref_reg);
-+		if (vref_uv < 0)
-+			/* dummy regulator "get_voltage" returns -EINVAL */
-+			return -EINVAL;
-+
-+		*val =  vref_uv / 1000;
-+		*val2 = MAX11100_LSB_DIV;
-+		return IIO_VAL_FRACTIONAL;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct iio_info max11100_info = {
-+	.driver_module = THIS_MODULE,
-+	.read_raw = max11100_read_raw,
-+};
-+
-+static int max11100_probe(struct spi_device *spi)
-+{
-+	int ret;
-+	struct iio_dev *indio_dev;
-+	struct max11100_state *state;
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*state));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	spi_set_drvdata(spi, indio_dev);
-+
-+	state = iio_priv(indio_dev);
-+	state->spi = spi;
-+	state->desc = &max11100_desc;
-+
-+	indio_dev->dev.parent = &spi->dev;
-+	indio_dev->dev.of_node = spi->dev.of_node;
-+	indio_dev->info = &max11100_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = state->desc->channels;
-+	indio_dev->num_channels = state->desc->num_chan;
-+
-+	state->vref_reg = devm_regulator_get(&spi->dev, "vref");
-+	if (IS_ERR(state->vref_reg))
-+		return PTR_ERR(state->vref_reg);
-+
-+	ret = regulator_enable(state->vref_reg);
-+	if (ret)
-+		return ret;
-+
-+	ret = iio_device_register(indio_dev);
-+	if (ret)
-+		goto disable_regulator;
-+
-+	return 0;
-+
-+disable_regulator:
-+	regulator_disable(state->vref_reg);
-+
-+	return ret;
-+}
-+
-+static int max11100_remove(struct spi_device *spi)
-+{
-+	struct iio_dev *indio_dev = spi_get_drvdata(spi);
-+	struct max11100_state *state = iio_priv(indio_dev);
-+
-+	regulator_disable(state->vref_reg);
-+
-+	iio_device_unregister(indio_dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id max11100_ids[] = {
-+	{.compatible = "maxim,max11100"},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, max11100_ids);
-+
-+static struct spi_driver max11100_driver = {
-+	.driver = {
-+		.name	= "max11100",
-+		.owner	= THIS_MODULE,
-+		.of_match_table = of_match_ptr(max11100_ids),
-+	},
-+	.probe		= max11100_probe,
-+	.remove		= max11100_remove,
-+};
-+
-+module_spi_driver(max11100_driver);
-+
-+MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
-+MODULE_DESCRIPTION("Maxim max11100 ADC Driver");
-+MODULE_LICENSE("GPL v2");
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a7796",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
