@@ -1,40 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60039 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754810AbdA0KHa (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33231 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761242AbdAFKLn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 05:07:30 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] arm64: dts: r8a7796: Enable I2C DVFS DMA
-Date: Fri, 27 Jan 2017 11:06:22 +0100
-Message-Id: <1485511583-21614-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1485511583-21614-1-git-send-email-horms+renesas@verge.net.au>
-References: <1485511583-21614-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 6 Jan 2017 05:11:43 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170103230639.19660-4-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-4-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jan 2017 11:11:42 +0100
+Message-ID: <CAMuHMdVNOO7XvUSbY+q9n4iZVKPEvG1nP30Rq86Nyr_v850Nmw@mail.gmail.com>
+Subject: Re: [PATCH 03/19] sh: Don't set sh-sci pdata scscr TE and RE bits
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The bits are set by the driver internally, don't set them in platform
+> data.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index c95ad177b097..c8592d05620b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -280,6 +280,9 @@
- 			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 926>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			dmas = <&dmac1 0x11>, <&dmac1 0x10>,
-+			       <&dmac2 0x11>, <&dmac2 0x10>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			status = "disabled";
- 		};
- 
--- 
-2.7.0.rc3.207.g0ac5344
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
