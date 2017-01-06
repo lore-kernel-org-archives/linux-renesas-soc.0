@@ -1,47 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34991 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbdAWLqh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940153AbdAFLSl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 06:46:37 -0500
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 23 Jan 2017 20:39:49 +0900
-Message-Id: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
-Subject: [PATCH v2 0/3] iommu/ipmmu-vmsa: r8a7796 support V2
+        Fri, 6 Jan 2017 06:18:41 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/25] ARM: dts: r8a7743: Move RST node before SYSC node
+Date: Fri,  6 Jan 2017 12:18:10 +0100
+Message-Id: <a97f1dfb7f6eec1998d51e7335e265be5c6314a1.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: r8a7796 support V2
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[PATCH v2 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-[PATCH v2 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
-[PATCH v2 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+To preserve both alphabetical (label) and numerical ordering (unit
+address).
 
-This series adds r8a7796 support to the IPMMU driver. The DT binding
-gets updated, maximum number of micro-TLBs are increased and the
-driver is adjusted to match on the new DT binding.
-
-Changes since last version include:
-- Patch #1 (DT binding patch) updated with more Acked-by tags
-- Patch #2 (micro-TLB patch) updated with high I/O register range support
-
-If possible I would like to fast-track merge of patch #1 to fix DT interface.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7743.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- Developed on top of renesas-drivers-2017-01-10-v4.10-rc3 with locally reverted
- "[PATCH 0/3] iommu/ipmmu-vmsa: Initial r8a7796 support"
-
- More detailed patch stack dependency is v4.10-rc3 + iommu/next and:
- [PATCH v6 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V6
- [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
-
-Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 
- drivers/iommu/ipmmu-vmsa.c                                     |   19 +++++++---
- 2 files changed, 15 insertions(+), 5 deletions(-)
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 216cb1f37f87..ca0cda28a3eb 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -102,17 +102,17 @@
+ 			#power-domain-cells = <0>;
+ 		};
+ 
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a7743-rst";
++			reg = <0 0xe6160000 0 0x100>;
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7743-sysc";
+ 			reg = <0 0xe6180000 0 0x200>;
+ 			#power-domain-cells = <1>;
+ 		};
+ 
+-		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a7743-rst";
+-			reg = <0 0xe6160000 0 0x100>;
+-		};
+-
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7743",
+ 				     "renesas,rcar-dmac";
+-- 
+2.7.0.rc3.207.g0ac5344
