@@ -1,41 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:37770 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753331AbdADKPP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940175AbdAFLTH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 05:15:15 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] spi: rspi: Remove useless memory allocation failure message
-Date: Wed,  4 Jan 2017 11:15:07 +0100
-Message-Id: <1483524908-32497-1-git-send-email-geert+renesas@glider.be>
+        Fri, 6 Jan 2017 06:19:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/25] ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for iic nodes
+Date: Fri,  6 Jan 2017 12:18:31 +0100
+Message-Id: <40a99dbb99b1a50c11b95578d7300e5756e7662f.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Printing an error on memory allocation failure is unnecessary.
+Use recently added R-Car Gen 2 fallback binding for iic nodes in
+DT for r8a7794 SoC.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7794 and the
+fallback binding for R-Car Gen 2.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-rspi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 48b0d2162ae62da3..2af58a72d702bf17 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1227,10 +1227,8 @@ static int rspi_probe(struct platform_device *pdev)
- 	const struct spi_ops *ops;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 89f8f98cb115..86042e64972a 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -683,7 +683,8 @@
+ 	};
  
- 	master = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
--	if (master == NULL) {
--		dev_err(&pdev->dev, "spi_alloc_master error.\n");
-+	if (master == NULL)
- 		return -ENOMEM;
--	}
+ 	i2c6: i2c@e6500000 {
+-		compatible = "renesas,iic-r8a7794", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7794", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_IIC0>;
+@@ -697,7 +698,8 @@
+ 	};
  
- 	of_id = of_match_device(rspi_of_match, &pdev->dev);
- 	if (of_id) {
+ 	i2c7: i2c@e6510000 {
+-		compatible = "renesas,iic-r8a7794", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7794", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_IIC1>;
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
