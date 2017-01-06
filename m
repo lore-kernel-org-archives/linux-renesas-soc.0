@@ -1,158 +1,97 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 17/20] drm: bridge: dw-hdmi: Define and use macros for PHY register addresses
-Date: Tue, 17 Jan 2017 10:29:07 +0200
-Message-Id: <20170117082910.27023-18-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940132AbdAFLSH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 06:18:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/16] arm64: dts: r8a7796: Add all MSIOF nodes
+Date: Fri,  6 Jan 2017 12:17:43 +0100
+Message-Id: <80fab06e258da76232356d8a0b390d4bc25e6917.1483700694.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the hardcoded register address numerical values with macros to
-clarify the code.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This change has been tested by comparing the assembly code before and
-after the change.
+Add the device nodes for all MSIOF SPI controllers.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 35 ++++++++++++---------
- drivers/gpu/drm/bridge/dw-hdmi.h | 66 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 86 insertions(+), 15 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 54 ++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index ef4f2f96ed2c..6e605fd910ef 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -997,21 +997,26 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
- 		    HDMI_PHY_I2CM_SLAVE_ADDR);
- 	hdmi_phy_test_clear(hdmi, 0);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 28ba59a00cd8..4bf8e14956fe 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -373,6 +373,60 @@
+ 			status = "disabled";
+ 		};
  
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce, 0x06);
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp, 0x15);
--
--	/* CURRCTRL */
--	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0], 0x10);
--
--	hdmi_phy_i2c_write(hdmi, 0x0000, 0x13);  /* PLLPHBYCTRL */
--	hdmi_phy_i2c_write(hdmi, 0x0006, 0x17);
--
--	hdmi_phy_i2c_write(hdmi, phy_config->term, 0x19);  /* TXTERM */
--	hdmi_phy_i2c_write(hdmi, phy_config->sym_ctr, 0x09); /* CKSYMTXCTRL */
--	hdmi_phy_i2c_write(hdmi, phy_config->vlev_ctr, 0x0E); /* VLEVCTRL */
--
--	/* REMOVE CLK TERM */
--	hdmi_phy_i2c_write(hdmi, 0x8000, 0x05);  /* CKCALCTRL */
-+	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce,
-+			   HDMI_3D_TX_PHY_CPCE_CTRL);
-+	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp,
-+			   HDMI_3D_TX_PHY_GMPCTRL);
-+	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0],
-+			   HDMI_3D_TX_PHY_CURRCTRL);
++		msiof0: spi@e6e90000 {
++			compatible = "renesas,msiof-r8a7796";
++			reg = <0 0xe6e90000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 211>;
++			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
++			       <&dmac2 0x41>, <&dmac2 0x40>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+	hdmi_phy_i2c_write(hdmi, 0, HDMI_3D_TX_PHY_PLLPHBYCTRL);
-+	hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_MSM_CTRL_CKO_SEL_FB_CLK,
-+			   HDMI_3D_TX_PHY_MSM_CTRL);
++		msiof1: spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a7796";
++			reg = <0 0xe6ea0000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 210>;
++			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
++			       <&dmac2 0x43>, <&dmac2 0x42>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+	hdmi_phy_i2c_write(hdmi, phy_config->term, HDMI_3D_TX_PHY_TXTERM);
-+	hdmi_phy_i2c_write(hdmi, phy_config->sym_ctr,
-+			   HDMI_3D_TX_PHY_CKSYMTXCTRL);
-+	hdmi_phy_i2c_write(hdmi, phy_config->vlev_ctr,
-+			   HDMI_3D_TX_PHY_VLEVCTRL);
++		msiof2: spi@e6c00000 {
++			compatible = "renesas,msiof-r8a7796";
++			reg = <0 0xe6c00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 209>;
++			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+	/* Override and disable clock termination. */
-+	hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_CKCALCTRL_OVERRIDE,
-+			   HDMI_3D_TX_PHY_CKCALCTRL);
- 
- 	dw_hdmi_phy_enable_powerdown(hdmi, false);
- 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
-index a4fd64a203c9..f3c149c88d71 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.h
-@@ -1085,4 +1085,70 @@ enum {
- 	HDMI_I2CM_CTLINT_ARB_MASK = 0x4,
- };
- 
-+/*
-+ * HDMI 3D TX PHY registers
-+ */
-+#define HDMI_3D_TX_PHY_PWRCTRL			0x00
-+#define HDMI_3D_TX_PHY_SERDIVCTRL		0x01
-+#define HDMI_3D_TX_PHY_SERCKCTRL		0x02
-+#define HDMI_3D_TX_PHY_SERCKKILLCTRL		0x03
-+#define HDMI_3D_TX_PHY_TXRESCTRL		0x04
-+#define HDMI_3D_TX_PHY_CKCALCTRL		0x05
-+#define HDMI_3D_TX_PHY_CPCE_CTRL		0x06
-+#define HDMI_3D_TX_PHY_TXCLKMEASCTRL		0x07
-+#define HDMI_3D_TX_PHY_TXMEASCTRL		0x08
-+#define HDMI_3D_TX_PHY_CKSYMTXCTRL		0x09
-+#define HDMI_3D_TX_PHY_CMPSEQCTRL		0x0a
-+#define HDMI_3D_TX_PHY_CMPPWRCTRL		0x0b
-+#define HDMI_3D_TX_PHY_CMPMODECTRL		0x0c
-+#define HDMI_3D_TX_PHY_MEASCTRL			0x0d
-+#define HDMI_3D_TX_PHY_VLEVCTRL			0x0e
-+#define HDMI_3D_TX_PHY_D2ACTRL			0x0f
-+#define HDMI_3D_TX_PHY_CURRCTRL			0x10
-+#define HDMI_3D_TX_PHY_DRVANACTRL		0x11
-+#define HDMI_3D_TX_PHY_PLLMEASCTRL		0x12
-+#define HDMI_3D_TX_PHY_PLLPHBYCTRL		0x13
-+#define HDMI_3D_TX_PHY_GRP_CTRL			0x14
-+#define HDMI_3D_TX_PHY_GMPCTRL			0x15
-+#define HDMI_3D_TX_PHY_MPLLMEASCTRL		0x16
-+#define HDMI_3D_TX_PHY_MSM_CTRL			0x17
-+#define HDMI_3D_TX_PHY_SCRPB_STATUS		0x18
-+#define HDMI_3D_TX_PHY_TXTERM			0x19
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL		0x1a
-+#define HDMI_3D_TX_PHY_PATTERNGEN		0x1b
-+#define HDMI_3D_TX_PHY_SDCAP_MODE		0x1c
-+#define HDMI_3D_TX_PHY_SCOPEMODE		0x1d
-+#define HDMI_3D_TX_PHY_DIGTXMODE		0x1e
-+#define HDMI_3D_TX_PHY_STR_STATUS		0x1f
-+#define HDMI_3D_TX_PHY_SCOPECNT0		0x20
-+#define HDMI_3D_TX_PHY_SCOPECNT1		0x21
-+#define HDMI_3D_TX_PHY_SCOPECNT2		0x22
-+#define HDMI_3D_TX_PHY_SCOPECNTCLK		0x23
-+#define HDMI_3D_TX_PHY_SCOPESAMPLE		0x24
-+#define HDMI_3D_TX_PHY_SCOPECNTMSB01		0x25
-+#define HDMI_3D_TX_PHY_SCOPECNTMSB2CK		0x26
++		msiof3: spi@e6c10000 {
++			compatible = "renesas,msiof-r8a7796";
++			reg = <0 0xe6c10000 0 0x0064>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+/* HDMI_3D_TX_PHY_CKCALCTRL values */
-+#define HDMI_3D_TX_PHY_CKCALCTRL_OVERRIDE		BIT(15)
-+
-+/* HDMI_3D_TX_PHY_MSM_CTRL values */
-+#define HDMI_3D_TX_PHY_MSM_CTRL_MPLL_PH_SEL_CK		BIT(13)
-+#define HDMI_3D_TX_PHY_MSM_CTRL_CKO_SEL_CLK_REF_MPLL	(0 << 1)
-+#define HDMI_3D_TX_PHY_MSM_CTRL_CKO_SEL_OFF		(1 << 1)
-+#define HDMI_3D_TX_PHY_MSM_CTRL_CKO_SEL_PCLK		(2 << 1)
-+#define HDMI_3D_TX_PHY_MSM_CTRL_CKO_SEL_FB_CLK		(3 << 1)
-+#define HDMI_3D_TX_PHY_MSM_CTRL_SCOPE_CK_SEL		BIT(0)
-+
-+/* HDMI_3D_TX_PHY_PTRPT_ENBL values */
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_OVERRIDE		BIT(15)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_PG_SKIP_BIT2		BIT(8)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_PG_SKIP_BIT1		BIT(7)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_PG_SKIP_BIT0		BIT(6)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_CK_REF_ENB		BIT(5)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_RCAL_ENB		BIT(4)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_TX_CLK_ALIGN_ENB	BIT(3)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_TX_READY		BIT(2)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_CKO_WORD_ENB		BIT(1)
-+#define HDMI_3D_TX_PHY_PTRPT_ENBL_REFCLK_ENB		BIT(0)
-+
- #endif /* __DW_HDMI_H__ */
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7796",
+ 				     "renesas,rcar-dmac";
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
