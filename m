@@ -1,54 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34098 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756764AbdADMK7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940172AbdAFLTD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 07:10:59 -0500
-Received: by mail-lf0-f44.google.com with SMTP id d16so11839181lfb.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jan 2017 04:10:59 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3] sh_eth: no need for *else* after *goto*
-Date: Wed, 04 Jan 2017 15:10:50 +0300
-Message-ID: <2432748.6uHGRc6GHQ@wasted.cogentembedded.com>
-In-Reply-To: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
-References: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 6 Jan 2017 06:19:03 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/25] ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for iic nodes
+Date: Fri,  6 Jan 2017 12:18:30 +0100
+Message-Id: <21b3f9862943acd6ec92ad02d36ffdfe353e6b66.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Well, checkpatch.pl complains about *else* after *return* and *break* but
-not after *goto*... and it probably should have complained about the code
-in sh_eth_error().  Win couple LoCs by removing that *else*. :-)
+Use recently added R-Car Gen 2 fallback binding for iic nodes in
+DT for r8a7793 SoC.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7793 and the
+fallback binding for R-Car Gen 2.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Index: renesas/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- renesas.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ renesas/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1542,13 +1542,11 @@ static void sh_eth_error(struct net_devi
- 			ndev->stats.tx_carrier_errors++;
- 		if (felic_stat & ECSR_LCHNG) {
- 			/* Link Changed */
--			if (mdp->cd->no_psr || mdp->no_ether_link) {
-+			if (mdp->cd->no_psr || mdp->no_ether_link)
- 				goto ignore_link;
--			} else {
--				link_stat = (sh_eth_read(ndev, PSR));
--				if (mdp->ether_link_active_low)
--					link_stat = ~link_stat;
--			}
-+			link_stat = sh_eth_read(ndev, PSR);
-+			if (mdp->ether_link_active_low)
-+				link_stat = ~link_stat;
- 			if (!(link_stat & PHY_ST_LINK)) {
- 				sh_eth_rcv_snd_disable(ndev);
- 			} else {
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 4d271ad8bf52..bf64e2420fb5 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -485,7 +485,8 @@
+ 		/* doesn't need pinmux */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
+@@ -499,7 +500,8 @@
+ 	i2c7: i2c@e6500000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
+@@ -513,7 +515,8 @@
+ 	i2c8: i2c@e6510000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
+-- 
+2.7.0.rc3.207.g0ac5344
