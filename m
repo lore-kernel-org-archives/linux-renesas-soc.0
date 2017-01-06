@@ -1,73 +1,66 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Zach Brown <zach.brown@ni.com>,
-        Volodymyr Bendiuga <volodymyr.bendiuga@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        =?UTF-8?q?Magnus=20=C3=96berg?= <magnus.oberg@westermo.se>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36397 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161380AbdAFK1H (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 05:27:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170103230639.19660-12-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-12-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jan 2017 11:27:05 +0100
+Message-ID: <CAMuHMdVz9FCjTOBExbA3J32xiS03enUtCXwouHfDwM4r2o-ehw@mail.gmail.com>
+Subject: Re: [PATCH 11/19] sh: Don't set the sh-sci platform data REIE bit
+ when not implemented
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/3] net: phy: leds: Fix truncated LED trigger names
-Date: Wed, 25 Jan 2017 11:39:50 +0100
-Message-Id: <1485340790-10785-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485340790-10785-1-git-send-email-geert+renesas@glider.be>
-References: <1485340790-10785-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 4567d686f5c6d955 ("phy: increase size of MII_BUS_ID_SIZE and
-bus_id") increased the size of MII bus IDs, but forgot to update the
-private definition in <linux/phy_led_triggers.h>.
-This may cause:
-  1. Truncation of LED trigger names,
-  2. Duplicate LED trigger names,
-  3. Failures registering LED triggers,
-  4. Crashes due to bad error handling in the LED trigger failure path.
+Hi Laurent,
 
-To fix this, and prevent the definitions going out of sync again in the
-future, let the PHY LED trigger code use the existing MII_BUS_ID_SIZE
-definition.
+On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> According to the datasheets, the sh7760 SIM and sh7723 SCIFA instances
+> don't implement the REIE bit. Don't set it in platform data.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Example:
-  - Before I had triggers "ee700000.etherne:01:100Mbps" and
-    "ee700000.etherne:01:10Mbps",
-  - After the increase of MII_BUS_ID_SIZE, both became
-    "ee700000.ethernet-ffffffff:01:" => FAIL,
-  - Now, the triggers are "ee700000.ethernet-ffffffff:01:100Mbps" and
-    "ee700000.ethernet-ffffffff:01:10Mbps", which are unique again.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: 4567d686f5c6d955 ("phy: increase size of MII_BUS_ID_SIZE and bus_id")
-Fixes: 2e0bc452f4721520 ("net: phy: leds: add support for led triggers on phy link state change")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Drop moving the include of <linux/phy_led_triggers.h>, as
-    <linux/phy.h> no longer includes it,
-  - #include <linux/phy.h> from <linux/phy_led_triggers.h>.
----
- include/linux/phy_led_triggers.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> ---
+>  arch/sh/kernel/cpu/sh4/setup-sh7760.c  | 1 -
+>  arch/sh/kernel/cpu/sh4a/setup-sh7723.c | 3 ---
+>  2 files changed, 4 deletions(-)
+>
+> diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
+> index 6dbcbf1621aa..e51fe1734e13 100644
+> --- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
+> +++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
+> @@ -200,7 +200,6 @@ static struct platform_device scif2_device = {
+>  };
+>
+>  static struct plat_sci_port scif3_platform_data = {
+> -       .scscr          = SCSCR_REIE,
 
-diff --git a/include/linux/phy_led_triggers.h b/include/linux/phy_led_triggers.h
-index a2daea0a37d2ae14..b37b05bfd1a6dd8a 100644
---- a/include/linux/phy_led_triggers.h
-+++ b/include/linux/phy_led_triggers.h
-@@ -18,11 +18,11 @@
- #ifdef CONFIG_LED_TRIGGER_PHY
- 
- #include <linux/leds.h>
-+#include <linux/phy.h>
- 
- #define PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE	10
--#define PHY_MII_BUS_ID_SIZE	(20 - 3)
- 
--#define PHY_LINK_LED_TRIGGER_NAME_SIZE (PHY_MII_BUS_ID_SIZE + \
-+#define PHY_LINK_LED_TRIGGER_NAME_SIZE (MII_BUS_ID_SIZE + \
- 				       FIELD_SIZEOF(struct mdio_device, addr)+\
- 				       PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE)
- 
--- 
-1.9.1
+Note that this bit does have a function (WAIT_IE --- Enables wait error
+interrupt (SIMERI) requests), so this may impact behavior.
+
+>         /*
+>          * This is actually a SIM card module serial port, based on an SCI with
+>          * additional registers. The sh-sci driver doesn't support the SIM port
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
