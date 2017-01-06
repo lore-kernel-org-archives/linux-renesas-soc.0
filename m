@@ -1,37 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:44380 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968689AbdADRkB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940162AbdAFLSv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 12:40:01 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Fri, 6 Jan 2017 06:18:51 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RESEND 1/2] arm64: dts: r8a7795: enable HS200 for eMMC
-Date: Wed,  4 Jan 2017 18:39:53 +0100
-Message-Id: <20170104173954.3135-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170104173954.3135-1-wsa+renesas@sang-engineering.com>
-References: <20170104173954.3135-1-wsa+renesas@sang-engineering.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/25] ARM: dts: r8a7791: Use renesas,rcar-gen2-usb-phy fallback binding
+Date: Fri,  6 Jan 2017 12:18:19 +0100
+Message-Id: <c39a6e76db7e1bc87b95f3dae7f7e4405f2854eb.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
- 1 file changed, 1 insertion(+)
+A fallback binding for the Renesas R-Car Gen2 PHY driver was
+added by commit 7777cb8ba08d ("phy: rcar-gen2: add fallback binding").
+This patch makes use of this binding in the DT for the r8a7791 SoC.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index bcaf4008d32d00..b68514041fc4f6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -452,6 +452,7 @@
- 	vmmc-supply = <&reg_3p3v>;
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
-+	mmc-hs200-1_8v;
- 	non-removable;
- 	status = "okay";
- };
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 87214668d70f..a5c596a15120 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -934,7 +934,8 @@
+ 	};
+ 
+ 	usbphy: usb-phy@e6590100 {
+-		compatible = "renesas,usb-phy-r8a7791";
++		compatible = "renesas,usb-phy-r8a7791",
++			     "renesas,rcar-gen2-usb-phy";
+ 		reg = <0 0xe6590100 0 0x100>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-2.10.2
+2.7.0.rc3.207.g0ac5344
