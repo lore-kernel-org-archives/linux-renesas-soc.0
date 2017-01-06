@@ -1,82 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53993 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935676AbdAKJ5b (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34333 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752222AbdAFVDe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 04:57:31 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 0/7] Renesas RZ PFC and GPIO driver
-Date: Wed, 11 Jan 2017 10:57:06 +0100
-Message-Id: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 6 Jan 2017 16:03:34 -0500
+Received: by mail-lf0-f45.google.com with SMTP id v186so6855171lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Jan 2017 13:02:55 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/2] sh_eth: get rid of 'sh_eth_cpu_data::shift_rd0'
+Date: Sat, 07 Jan 2017 00:02:52 +0300
+Message-ID: <2242796.vvdcWWhAz4@wasted.cogentembedded.com>
+In-Reply-To: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
+References: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   these patches are the result of a squash and forward porting of Magnus'
-PFC and GPIO driver from
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tree
-genmai-gpio-and-pfc branch to kernel v4.10
+After checking all  the available manuals,  I have enough information to
+conclude  that the 'shift_rd0' flag is only relevant  for the Ether cores
+supporting so called "intelligent checksum" (and hence having CSMR) which
+is indicated  by the 'hw_crc' flag.  Since  all the relevant SoCs now have
+both these flags set, we can  at last  get  rid of the former flag...
 
-The PFC and GPIO driver have been forward ported to v4.10-rc1 with minor
-fixes and applied on top of renesas-driver master branch.
-
-As I cannot locally verify most of the peripherals functionalities enabled
-by the creation of PFC and GPIO driver for RZ SoC series, testing performed
-by patches original authors has to be trusted.
-
-Some possible fixes and functional expansion for the PFC driver will follow in
-an RFC series to be applied on top of this one.
-
-PATCH v2:
-whatever the future of this series will be, either we're going to drop it
-completely in favour of a new per-pin driver for the RZ series or not, I have
-closed review comments from Geert asking to break down dts and dtsi
-modifications in more patches (as it originally was)
-
-Thanks
-   j
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
+ drivers/net/ethernet/renesas/sh_eth.c |    5 +----
+ drivers/net/ethernet/renesas/sh_eth.h |    1 -
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-v1 -> v2:
-    - split node addition in r7s72100.dtsi and r7s72100-genami.dts in 2 patches
-    - break down addition of peripheral nodes in  r7s72100-genami.dts in 4
-      patches
-    - drop GPIO aliases in .dtsi file
-
----
-
-Geert Uytterhoeven (1):
-  arm: dts: r7s72100-genmai: Add pinctrl for RSPI
-
-Magnus Damm (5):
-  pinctrl: sh-pfc: Add r7s72100 PFC driver
-  gpio: gpio-rz: GPIO driver for Renesas RZ series
-  arm: dts: r7s72100: GPIO and PFC device nodes
-  arm: dts: r7s72100-genmai: SCIF2 PINCTRL configuration
-  arm: dts: r7s72100-genmai: LED1 and LED2 support
-
-Simon Horman (1):
-  arm: dts: r7s72100-genmai:Add ethernet PFC node
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
- arch/arm/boot/dts/r7s72100-genmai.dts              |  50 ++
- arch/arm/boot/dts/r7s72100.dtsi                    | 138 ++++++
- drivers/gpio/Kconfig                               |   6 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-rz.c                             | 212 +++++++++
- drivers/pinctrl/sh-pfc/Kconfig                     |   5 +
- drivers/pinctrl/sh-pfc/Makefile                    |   1 +
- drivers/pinctrl/sh-pfc/core.c                      |   6 +
- drivers/pinctrl/sh-pfc/pfc-r7s72100.c              | 529 +++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   9 +-
- 11 files changed, 955 insertions(+), 3 deletions(-)
- create mode 100644 drivers/gpio/gpio-rz.c
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r7s72100.c
-
--- 
-2.7.4
+Index: net/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net/drivers/net/ethernet/renesas/sh_eth.c
+@@ -537,7 +537,6 @@ static struct sh_eth_cpu_data r7s72100_d
+ 	.no_ade		= 1,
+ 	.hw_crc		= 1,
+ 	.tsu		= 1,
+-	.shift_rd0	= 1,
+ };
+ 
+ static void sh_eth_chip_reset_r8a7740(struct net_device *ndev)
+@@ -577,7 +576,6 @@ static struct sh_eth_cpu_data r8a7740_da
+ 	.hw_crc		= 1,
+ 	.tsu		= 1,
+ 	.select_mii	= 1,
+-	.shift_rd0	= 1,
+ };
+ 
+ /* There is CPU dependent code */
+@@ -820,7 +818,6 @@ static struct sh_eth_cpu_data sh7734_dat
+ 	.tsu		= 1,
+ 	.hw_crc		= 1,
+ 	.select_mii	= 1,
+-	.shift_rd0	= 1,
+ };
+ 
+ /* SH7763 */
+@@ -1421,7 +1418,7 @@ static int sh_eth_rx(struct net_device *
+ 		 * the RFS bits are from bit 25 to bit 16. So, the
+ 		 * driver needs right shifting by 16.
+ 		 */
+-		if (mdp->cd->shift_rd0)
++		if (mdp->cd->hw_crc)
+ 			desc_status >>= 16;
+ 
+ 		skb = mdp->rx_skbuff[entry];
+Index: net/drivers/net/ethernet/renesas/sh_eth.h
+===================================================================
+--- net.orig/drivers/net/ethernet/renesas/sh_eth.h
++++ net/drivers/net/ethernet/renesas/sh_eth.h
+@@ -490,7 +490,6 @@ struct sh_eth_cpu_data {
+ 	unsigned no_ade:1;	/* E-DMAC DO NOT have ADE bit in EESR */
+ 	unsigned hw_crc:1;	/* E-DMAC have CSMR */
+ 	unsigned select_mii:1;	/* EtherC have RMII_MII (MII select register) */
+-	unsigned shift_rd0:1;	/* shift Rx descriptor word 0 right by 16 */
+ 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
+ 	unsigned rtrate:1;	/* EtherC has RTRATE register */
+ };
