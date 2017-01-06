@@ -1,131 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54557 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754704AbdAFMW2 (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35856 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755511AbdAFLAH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 07:22:28 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Fri, 6 Jan 2017 06:00:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170103230639.19660-20-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com> <20170103230639.19660-20-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jan 2017 12:00:05 +0100
+Message-ID: <CAMuHMdVgTMb56mogTSCA0ePCMoy4SCW-5qKCasZYDPU3TJRsKQ@mail.gmail.com>
+Subject: Re: [PATCH 19/19] serial: sh-sci: Compute the regshift value for SCI ports
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v1.1 19/19] serial: sh-sci: Compute the regshift value for SCI ports
-Date: Fri,  6 Jan 2017 14:21:29 +0200
-Message-Id: <20170106122129.8554-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <CAMuHMdVgTMb56mogTSCA0ePCMoy4SCW-5qKCasZYDPU3TJRsKQ@mail.gmail.com>
-References: <CAMuHMdVgTMb56mogTSCA0ePCMoy4SCW-5qKCasZYDPU3TJRsKQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SCI instances found in SH SoCs have different spacing between registers
-depending on the SoC. The platform data contains a regshift field that
-tells the driver by how many bits to shift the register offset to
-compute its address. We can compute the regshift value automatically
-based on the memory resource size, there's no need to pass the value
-through platform data.
+Hi Laurent,
 
-Fix the sh7750 SCI and sh7760 SIM port memory resources length to ensure
-proper computation of the regshift value.
+On Wed, Jan 4, 2017 at 12:06 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> SCI instances found in SH SoCs have different spacing between registers
+> depending on the SoC. The platform data contains a regshift field that
+> tells the driver by how many bits to shift the register offset to
+> compute its address. We can compute the regshift value automatically
+> based on the memory resource size, there's no need to pass the value
+> through platform data.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/tty/serial/sh-sci.c | 25 +++++++++++++++----------
+>  include/linux/serial_sci.h  |  1 -
+>  2 files changed, 15 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 5fc2606fc525..fbffe89b493f 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -187,19 +187,18 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
+>         },
+>
+>         /*
+> -        * Common definitions for legacy IrDA ports, dependent on
+> -        * regshift value.
+> +        * Common definitions for legacy IrDA ports.
+>          */
+>         [SCIx_IRDA_REGTYPE] = {
+>                 .regs = {
+>                         [SCSMR]         = { 0x00,  8 },
+> -                       [SCBRR]         = { 0x01,  8 },
+> -                       [SCSCR]         = { 0x02,  8 },
+> -                       [SCxTDR]        = { 0x03,  8 },
+> -                       [SCxSR]         = { 0x04,  8 },
+> -                       [SCxRDR]        = { 0x05,  8 },
+> -                       [SCFCR]         = { 0x06,  8 },
+> -                       [SCFDR]         = { 0x07, 16 },
+> +                       [SCBRR]         = { 0x02,  8 },
+> +                       [SCSCR]         = { 0x04,  8 },
+> +                       [SCxTDR]        = { 0x06,  8 },
+> +                       [SCxSR]         = { 0x08, 16 },
+> +                       [SCxRDR]        = { 0x0a,  8 },
+> +                       [SCFCR]         = { 0x0c,  8 },
+> +                       [SCFDR]         = { 0x0e, 16 },
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 -
- arch/sh/kernel/cpu/sh4/setup-sh7750.c |  3 +--
- arch/sh/kernel/cpu/sh4/setup-sh7760.c | 10 ++++++++--
- drivers/tty/serial/sh-sci.c           |  8 +++++++-
- include/linux/serial_sci.h            |  1 -
- 5 files changed, 16 insertions(+), 7 deletions(-)
+This hunk is not documented, and belongs in "[PATCH 08/19] sh: sh3: sh770x:
+Fix platform data for the IRDA serial port" to avoid breaking bisection.
 
-This combines the previous 09/19 and 19/19 patches, with the IRDA hunk split
-off.
+The rest looks OK.
 
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-index 592cd9ab30c4..59a88611df55 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-@@ -111,7 +111,6 @@ static struct platform_device rtc_device = {
- static struct plat_sci_port scif0_platform_data = {
- 	.type		= PORT_SCI,
- 	.ops		= &sh770x_sci_port_ops,
--	.regshift	= 1,
- };
- 
- static struct resource scif0_resources[] = {
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7750.c b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-index d98a55416306..57d30689204d 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-@@ -39,11 +39,10 @@ static struct platform_device rtc_device = {
- 
- static struct plat_sci_port sci_platform_data = {
- 	.type		= PORT_SCI,
--	.regshift	= 2,
- };
- 
- static struct resource sci_resources[] = {
--	DEFINE_RES_MEM(0xffe00000, 0x100),
-+	DEFINE_RES_MEM(0xffe00000, 0x20),
- 	DEFINE_RES_IRQ(evt2irq(0x4e0)),
- };
- 
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-index 0c0cdfc69dcc..e51fe1734e13 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-@@ -200,12 +200,18 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
-+	/*
-+	 * This is actually a SIM card module serial port, based on an SCI with
-+	 * additional registers. The sh-sci driver doesn't support the SIM port
-+	 * type, declare it as a SCI. Don't declare the additional registers in
-+	 * the memory resource or the driver will compute an incorrect regshift
-+	 * value.
-+	 */
- 	.type		= PORT_SCI,
--	.regshift	= 2,
- };
- 
- static struct resource scif3_resources[] = {
--	DEFINE_RES_MEM(0xfe480000, 0x100),
-+	DEFINE_RES_MEM(0xfe480000, 0x10),
- 	DEFINE_RES_IRQ(evt2irq(0xc00)),
- 	DEFINE_RES_IRQ(evt2irq(0xc20)),
- 	DEFINE_RES_IRQ(evt2irq(0xc40)),
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 9999a27449fa..50fffa1f5a33 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2572,9 +2572,15 @@ static int sci_init_single(struct platform_device *dev,
- 
- 	port->type		= p->type;
- 	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
--	port->regshift		= p->regshift;
- 	port->fifosize		= sci_port->params->fifosize;
- 
-+	if (port->type == PORT_SCI) {
-+		if (sci_port->reg_size >= 0x20)
-+			port->regshift = 2;
-+		else
-+			port->regshift = 1;
-+	}
-+
- 	/*
- 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
- 	 * for the multi-IRQ ports, which is where we are primarily
-diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
-index f9a4526f4ec5..e598eaef3962 100644
---- a/include/linux/serial_sci.h
-+++ b/include/linux/serial_sci.h
-@@ -56,7 +56,6 @@ struct plat_sci_port {
- 	/*
- 	 * Platform overrides if necessary, defaults otherwise.
- 	 */
--	unsigned char	regshift;
- 	unsigned char	regtype;
- 
- 	struct plat_sci_port_ops	*ops;
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
