@@ -1,92 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940170AbdAFLTA (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54819 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752276AbdAFOmu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/25] ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for i2c nodes
-Date: Fri,  6 Jan 2017 12:18:26 +0100
-Message-Id: <b3bb35a862007712aa277bfa94bdf80be67772da.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Fri, 6 Jan 2017 09:42:50 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jithin T Raj <jithin.t@tataelxsi.co.in>
+Cc: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "laurent.pinchart+renesas@ideasonboard.com"
+        <laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: About VSPD
+Date: Fri, 06 Jan 2017 16:42:54 +0200
+Message-ID: <2306529.eAzpfA7p5A@avalon>
+In-Reply-To: <HK2PR04MB122088542BF30F00286A7C30D8630@HK2PR04MB1220.apcprd04.prod.outlook.com>
+References: <HK2PR04MB122088542BF30F00286A7C30D8630@HK2PR04MB1220.apcprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for i2c nodes in
-DT for r8a7793 SoC.
+Hello Jithin,
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7793 and the
-fallback binding for R-Car Gen 2.
+On Friday 06 Jan 2017 07:15:27 Jithin T Raj wrote:
+> hello Laurent and all,
+> 
+> Can anybody give me an insight to VSPD .Recently I am going through
+> the term VSPD..Is it associated with Display Unit ? ..It will be a help if
+> someone share some links about VSPD..I am a beginner in both kernel and
+> RCar families..
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+The VSP is a memory-to-memory image processor than can perform operations such 
+as format conversion, scaling, blending, ... There are multiple VSP instances 
+on R-Car Gen2 and Gen3 SoCs, whose number and features depend on the 
+particular SoC. The VSPD is a VSP type designed for display operation that can 
+feed its output directly to the display in addition to writing it to memory 
+like all other VSPs. On R-Car Gen3 SoCs usage of the VSPD for display is 
+mandatory, so the VSPD is handled automatically by the DU driver and isn't 
+visible to userspace. On R-Car Gen2 SocS usage of the VSPD for display os 
+optional, so the VSPD is exposed to userspace through the V4L2 API. Connecting 
+the VSPD output directly to the display on R-Car Gen2 currently requires out-
+of-tree patches (see 
+http://comments.gmane.org/gmane.comp.video.dri.devel/127526).
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 2fb527ca0b15..4d271ad8bf52 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -411,7 +411,7 @@
- 	i2c0: i2c@e6508000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6508000 0 0x40>;
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C0>;
-@@ -423,7 +423,7 @@
- 	i2c1: i2c@e6518000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6518000 0 0x40>;
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C1>;
-@@ -435,7 +435,7 @@
- 	i2c2: i2c@e6530000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6530000 0 0x40>;
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C2>;
-@@ -447,7 +447,7 @@
- 	i2c3: i2c@e6540000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6540000 0 0x40>;
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C3>;
-@@ -459,7 +459,7 @@
- 	i2c4: i2c@e6520000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6520000 0 0x40>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C4>;
-@@ -472,7 +472,7 @@
- 		/* doesn't need pinmux */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7793";
-+		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6528000 0 0x40>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_I2C5>;
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
