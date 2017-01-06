@@ -11,8 +11,8 @@ Cc: linux-arm-kernel@lists.infradead.org,
         artemi.ivanov@cogentembedded.com,
         Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 Subject: [PATCH] arm64: do not set dma masks that device connection can't handle
-Date: Fri,  6 Jan 2017 17:45:11 +0300
-Message-Id: <1483713911-2079-1-git-send-email-nikita.yoush@cogentembedded.com>
+Date: Fri,  6 Jan 2017 17:38:35 +0300
+Message-Id: <1483713515-1945-1-git-send-email-nikita.yoush@cogentembedded.com>
 In-Reply-To: <9a03c05d-ad4c-0547-d1fe-01edb8b082d6@cogentembedded.com>
 References: <9a03c05d-ad4c-0547-d1fe-01edb8b082d6@cogentembedded.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -32,13 +32,10 @@ Arnd Bergmann <arnd@arndb.de>, extended with coherent mask hadnling.
 Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 CC: Arnd Bergmann <arnd@arndb.de>
 ---
-
-... now with initially missed change in arch_setup_dma_ops() ...
-
  arch/arm64/Kconfig              |  3 +++
  arch/arm64/include/asm/device.h |  1 +
- arch/arm64/mm/dma-mapping.c     | 52 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 56 insertions(+)
+ arch/arm64/mm/dma-mapping.c     | 40 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
 
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
 index 1117421..afb2c08 100644
@@ -67,7 +64,7 @@ index 243ef25..a57e7bb 100644
  
  struct pdev_archdata {
 diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 290a84f..09c7900 100644
+index 290a84f..be3632e 100644
 --- a/arch/arm64/mm/dma-mapping.c
 +++ b/arch/arm64/mm/dma-mapping.c
 @@ -352,6 +352,31 @@ static int __swiotlb_dma_supported(struct device *hwdev, u64 mask)
@@ -126,24 +123,5 @@ index 290a84f..09c7900 100644
  static int __init atomic_pool_init(void)
  {
  	pgprot_t prot = __pgprot(PROT_NORMAL_NC);
-@@ -957,6 +997,18 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 	if (!dev->archdata.dma_ops)
- 		dev->archdata.dma_ops = &swiotlb_dma_ops;
- 
-+	/*
-+	 * we don't yet support buses that have a non-zero mapping.
-+	 *  Let's hope we won't need it
-+	 */
-+	WARN_ON(dma_base != 0);
-+
-+	/*
-+	 * Whatever the parent bus can set. A device must not set
-+	 * a DMA mask larger than this.
-+	 */
-+	dev->archdata.parent_dma_mask = size;
-+
- 	dev->archdata.dma_coherent = coherent;
- 	__iommu_setup_dma_ops(dev, dma_base, size, iommu);
- }
 -- 
 2.1.4
