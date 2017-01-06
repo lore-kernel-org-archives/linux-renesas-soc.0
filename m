@@ -1,62 +1,68 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1483071089-8362-3-git-send-email-cw00.choi@samsung.com>
-References: <CGME20161230041136epcas5p4719845a9e04914e91dd6dac1a5d257ef@epcas5p4.samsung.com>
- <1483071089-8362-1-git-send-email-cw00.choi@samsung.com> <1483071089-8362-3-git-send-email-cw00.choi@samsung.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 5 Jan 2017 14:42:15 +0800
-Message-ID: <CAGb2v64BCKWFP595M0Z+ysLwsRMp05jahFzywx+-QDfhPwTjhg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] phy: sun4i-usb: Replace the deprecated extcon API
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        chanwoo@kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940167AbdAFLS5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 06:18:57 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/25] ARM: dts: gose: Add da9063 PMIC device node for system restart
+Date: Fri,  6 Jan 2017 12:18:17 +0100
+Message-Id: <c20839a36132462496f939b0d13afee009c9a547.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 30, 2016 at 12:11 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch replaces the deprecated extcon API as following:
-> - extcon_set_cable_state_() -> extcon_set_state_sync()
->
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Enable i2c6, and add a device node for the da9063 PMIC, with subnodes
+for rtc and wdt.  Regulator support is not yet included.
 
-> ---
->  drivers/phy/phy-sun4i-usb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/phy/phy-sun4i-usb.c b/drivers/phy/phy-sun4i-usb.c
-> index bf28a0fdd569..eae171e18043 100644
-> --- a/drivers/phy/phy-sun4i-usb.c
-> +++ b/drivers/phy/phy-sun4i-usb.c
-> @@ -534,7 +534,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
->         mutex_unlock(&phy0->mutex);
->
->         if (id_notify) {
-> -               extcon_set_cable_state_(data->extcon, EXTCON_USB_HOST,
-> +               extcon_set_state_sync(data->extcon, EXTCON_USB_HOST,
->                                         !id_det);
->                 /* When leaving host mode force end the session here */
->                 if (force_session_end && id_det == 1) {
-> @@ -547,7 +547,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
->         }
->
->         if (vbus_notify)
-> -               extcon_set_cable_state_(data->extcon, EXTCON_USB, vbus_det);
-> +               extcon_set_state_sync(data->extcon, EXTCON_USB, vbus_det);
->
->         if (sun4i_usb_phy0_poll(data))
->                 queue_delayed_work(system_wq, &data->detect, POLL_TIME);
-> --
-> 1.9.1
->
+This allows the system to be restarted when the watchdog timer times
+out, or when a system restart is requested.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index dc311eba4444..92fff07c5e2b 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -538,6 +538,27 @@
+ 	};
+ };
+ 
++&i2c6 {
++	status = "okay";
++	clock-frequency = <100000>;
++
++	pmic@58 {
++		compatible = "dlg,da9063";
++		reg = <0x58>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++
++		rtc {
++			compatible = "dlg,da9063-rtc";
++		};
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
++};
++
+ &rcar_sound {
+ 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.0.rc3.207.g0ac5344
