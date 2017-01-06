@@ -1,35 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pu1apc01on0106.outbound.protection.outlook.com ([104.47.126.106]:47360
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753838AbdAFHPu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940174AbdAFLTF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 02:15:50 -0500
-From: Jithin T Raj <jithin.t@tataelxsi.co.in>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-CC: "laurent.pinchart+renesas@ideasonboard.com"
-        <laurent.pinchart+renesas@ideasonboard.com>
-Subject: About VSPD
-Date: Fri, 6 Jan 2017 07:15:27 +0000
-Message-ID: <HK2PR04MB122088542BF30F00286A7C30D8630@HK2PR04MB1220.apcprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Fri, 6 Jan 2017 06:19:05 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/25] ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for iic nodes
+Date: Fri,  6 Jan 2017 12:18:29 +0100
+Message-Id: <8d76bf8a6a6b3201b309faa623842ba3ec426b7a.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-hello Laurent and all,
+Use recently added R-Car Gen 2 fallback binding for iic nodes in
+DT for r8a7791 SoC.
 
-=A0 =A0 =A0 =A0 Can anybody give me an insight to VSPD .Recently I am going=
- through the term VSPD..Is it associated with Display Unit ? ..It will be a=
- help if someone share some links about VSPD..I am a beginner in both kerne=
-l and RCar families..Thanks in advance
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7791 and the
+fallback binding for R-Car Gen 2.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-  Best Regards,
- Jithin T Raj
-=20
-=20
-      =
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index b61700aa862e..55872fc8fa4c 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -518,7 +518,8 @@
+ 		/* doesn't need pinmux */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7791", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7791", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_IICDVFS>;
+@@ -532,7 +533,8 @@
+ 	i2c7: i2c@e6500000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7791", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7791", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_IIC0>;
+@@ -546,7 +548,8 @@
+ 	i2c8: i2c@e6510000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,iic-r8a7791", "renesas,rmobile-iic";
++		compatible = "renesas,iic-r8a7791", "renesas,rcar-gen2-iic",
++			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_IIC1>;
+-- 
+2.7.0.rc3.207.g0ac5344
