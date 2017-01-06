@@ -1,48 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:52281 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938135AbdAIPfP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940168AbdAFLS6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 10:35:15 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-pm@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 5/6] sh_eth: enable wake-on-lan for sh7734
-Date: Mon,  9 Jan 2017 16:34:08 +0100
-Message-Id: <20170109153409.13956-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 6 Jan 2017 06:18:58 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/25] ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for i2c nodes
+Date: Fri,  6 Jan 2017 12:18:25 +0100
+Message-Id: <cfcb93b33f35879cfe06add3859fd869e3d1c9e2.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is based on public datasheet for sh7734 which shows it has the
-same behavior and registers for WoL as other versions of sh_eth.
+Use recently added R-Car Gen 2 fallback binding for i2c nodes in
+DT for r8a7792 SoC.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7792 and the
+fallback binding for R-Car Gen 2.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7792.dtsi | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 67cb6b3793ca..5292022fe6b1 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -819,6 +819,7 @@ static struct sh_eth_cpu_data sh7734_data = {
- 	.hw_crc		= 1,
- 	.select_mii	= 1,
- 	.shift_rd0	= 1,
-+	.magic		= 1,
- };
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 6ced3c1ec377..59d31d433244 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -498,7 +498,8 @@
  
- /* SH7763 */
+ 		/* I2C doesn't need pinmux */
+ 		i2c0: i2c@e6508000 {
+-			compatible = "renesas,i2c-r8a7792";
++			compatible = "renesas,i2c-r8a7792",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6508000 0 0x40>;
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp9_clks R8A7792_CLK_I2C0>;
+@@ -510,7 +511,8 @@
+ 		};
+ 
+ 		i2c1: i2c@e6518000 {
+-			compatible = "renesas,i2c-r8a7792";
++			compatible = "renesas,i2c-r8a7792",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6518000 0 0x40>;
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp9_clks R8A7792_CLK_I2C1>;
+@@ -522,7 +524,8 @@
+ 		};
+ 
+ 		i2c2: i2c@e6530000 {
+-			compatible = "renesas,i2c-r8a7792";
++			compatible = "renesas,i2c-r8a7792",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6530000 0 0x40>;
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp9_clks R8A7792_CLK_I2C2>;
+@@ -534,7 +537,8 @@
+ 		};
+ 
+ 		i2c3: i2c@e6540000 {
+-			compatible = "renesas,i2c-r8a7792";
++			compatible = "renesas,i2c-r8a7792",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6540000 0 0x40>;
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp9_clks R8A7792_CLK_I2C3>;
+@@ -546,7 +550,8 @@
+ 		};
+ 
+ 		i2c4: i2c@e6520000 {
+-			compatible = "renesas,i2c-r8a7792";
++			compatible = "renesas,i2c-r8a7792",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6520000 0 0x40>;
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp9_clks R8A7792_CLK_I2C4>;
+@@ -558,7 +563,8 @@
+ 		};
+ 
+ 		i2c5: i2c@e6528000 {
+-			compatible = "renesas,i2c-r8a7792";
++			compatible = "renesas,i2c-r8a7792",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6528000 0 0x40>;
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&mstp9_clks R8A7792_CLK_I2C5>;
 -- 
-2.11.0
+2.7.0.rc3.207.g0ac5344
