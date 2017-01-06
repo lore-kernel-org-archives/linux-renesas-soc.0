@@ -1,42 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940150AbdAFLSc (ORCPT
+        with ESMTP id S940163AbdAFLSw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:32 -0500
+        Fri, 6 Jan 2017 06:18:52 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/4] ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
-Date: Fri,  6 Jan 2017 12:18:12 +0100
-Message-Id: <e37278d83e348eb53029452e65892780359b6bea.1483701293.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483701293.git.horms+renesas@verge.net.au>
-References: <cover.1483701293.git.horms+renesas@verge.net.au>
+Subject: [PATCH 13/25] ARM: dts: r8a7778: Use R-Car Gen 1 fallback binding for i2c nodes
+Date: Fri,  6 Jan 2017 12:18:22 +0100
+Message-Id: <eb6f2adfa5ad2b3494d9c751b1e1a21356ad7b62.1483700969.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
+References: <cover.1483700969.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
+Use recently added R-Car Gen 1 fallback binding for i2c nodes in
+DT for r8a7778 SoC.
+
+This has no run-time effect for the current driver as the initialisation
+sequence is the same for the SoC-specific binding for r8a7778 and the
+fallback binding for R-Car Gen 1.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7778.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index b01a43851294..f084a0a928b8 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -87,6 +87,8 @@ CONFIG_ARCH_EMEV2=y
- CONFIG_ARCH_R7S72100=y
- CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
-+CONFIG_ARCH_R8A7743=y
-+CONFIG_ARCH_R8A7745=y
- CONFIG_ARCH_R8A7778=y
- CONFIG_ARCH_R8A7779=y
- CONFIG_ARCH_R8A7790=y
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index b0c9674fad17..1e93c94a9eac 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -150,7 +150,7 @@
+ 	i2c0: i2c@ffc70000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7778";
++		compatible = "renesas,i2c-r8a7778", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc70000 0x1000>;
+ 		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_I2C0>;
+@@ -161,7 +161,7 @@
+ 	i2c1: i2c@ffc71000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7778";
++		compatible = "renesas,i2c-r8a7778", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc71000 0x1000>;
+ 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_I2C1>;
+@@ -172,7 +172,7 @@
+ 	i2c2: i2c@ffc72000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7778";
++		compatible = "renesas,i2c-r8a7778", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc72000 0x1000>;
+ 		interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_I2C2>;
+@@ -183,7 +183,7 @@
+ 	i2c3: i2c@ffc73000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "renesas,i2c-r8a7778";
++		compatible = "renesas,i2c-r8a7778", "renesas,rcar-gen1-i2c";
+ 		reg = <0xffc73000 0x1000>;
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_I2C3>;
 -- 
 2.7.0.rc3.207.g0ac5344
