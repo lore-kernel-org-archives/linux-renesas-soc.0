@@ -1,179 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:38271 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751035AbdAPMNL (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:49898 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936792AbdAFJYD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 07:13:11 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v3 4/8] arm: dts: r7s72100: GPIO and PFC device nodes
-Date: Mon, 16 Jan 2017 13:12:48 +0100
-Message-Id: <1484568772-18137-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 6 Jan 2017 04:24:03 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: busybox@busybox.net
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC busybox] watchdog: add pretimeout parameter
+Date: Fri,  6 Jan 2017 10:23:53 +0100
+Message-Id: <20170106092353.1998-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+Linux Watchdog API defined pretimeout for some time now, but recently
+support for it significantly increased, e.g. by implementing the
+pretimeout framework and adding that feature to the softdog. So, add
+support for pretimeout in the watchdog applet.
 
-Add support for r7s72100 PFC and GPIO device nodes port0 -> port11
-and jtagport0.
-
-Signed-off-by: Magnus Damm <damm@opensource.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 136 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 136 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 3dd427d..4af7f01 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -359,6 +359,142 @@
- 			<0xe8202000 0x1000>;
- 	};
+This is an RFC because I am not sure if this needs to be guarded with #ifdef
+WDIOC_SETPRETIMEOUT so it will be only compiled when available? Nonetheless,
+this code works nicely with busybox 1.24.2. I assume the final patch should
+be based on 1.26.x?
+
+ miscutils/watchdog.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/watchdog.c b/watchdog.c
+index d3a76ed..fae3f98 100644
+--- a/miscutils/watchdog.c
++++ b/miscutils/watchdog.c
+@@ -10,11 +10,12 @@
+  */
  
-+	pfc: pfc@fcfe3300 {
-+		compatible = "renesas,pfc-r7s72100";
-+		reg = <0xfcfe3400 0x300>, /* PMC, PFC, PFCE */
-+		      <0xfcfe3a00 0x100>, /* PFCAE */
-+		      <0xfcfe7000 0x300>, /* PIBC, PBDC, PIPC */
-+		      <0xfcfe7b40 0x04>, /* JPMC */
-+		      <0xfcfe7b90 0x04>, /* JPMCSR */
-+		      <0xfcfe7f00 0x04>; /* JPIBC */
-+	};
-+
-+	port0: gpio@fcfe3000 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3200 0x2>; /* PPR0 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 0 6>;
-+	};
-+
-+	port1: gpio@fcfe3004 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3004 0x2>, /* P1 */
-+		      <0xfcfe3204 0x2>, /* PPR1 */
-+		      <0xfcfe3304 0x2>; /* PM1 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 16 16>;
-+	};
-+
-+	port2: gpio@fcfe3008 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3008 0x2>, /* P2 */
-+		      <0xfcfe3208 0x2>, /* PPR2 */
-+		      <0xfcfe3308 0x2>; /* PM2 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 32 16>;
-+	};
-+
-+	port3: gpio@fcfe300c {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe300c 0x2>, /* P3 */
-+		      <0xfcfe320c 0x2>, /* PPR3 */
-+		      <0xfcfe330c 0x2>; /* PM3 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 48 16>;
-+	};
-+
-+	port4: gpio@fcfe3010 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3010 0x2>, /* P4 */
-+		      <0xfcfe3210 0x2>, /* PPR4 */
-+		      <0xfcfe3310 0x2>; /* PM4 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 64 16>;
-+	};
-+
-+	port5: gpio@fcfe3014 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3014 0x2>, /* P5 */
-+		      <0xfcfe3214 0x2>, /* PPR5 */
-+		      <0xfcfe3314 0x2>; /* PM5 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 80 11>;
-+	};
-+
-+	port6: gpio@fcfe3018 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3018 0x2>, /* P6 */
-+		      <0xfcfe3218 0x2>, /* PPR6 */
-+		      <0xfcfe3318 0x2>; /* PM6 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 96 16>;
-+	};
-+
-+	port7: gpio@fcfe301c {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe301c 0x2>, /* P7 */
-+		      <0xfcfe321c 0x2>, /* PPR7 */
-+		      <0xfcfe331c 0x2>; /* PM7 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 112 16>;
-+	};
-+
-+	port8: gpio@fcfe3020 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3020 0x2>, /* P8 */
-+		      <0xfcfe3220 0x2>, /* PPR8 */
-+		      <0xfcfe3320 0x2>; /* PM8 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 128 16>;
-+	};
-+
-+	port9: gpio@fcfe3024 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3024 0x2>, /* P9 */
-+		      <0xfcfe3224 0x2>, /* PPR9 */
-+		      <0xfcfe3324 0x2>; /* PM9 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 144 8>;
-+	};
-+
-+	port10: gpio@fcfe3028 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe3028 0x2>, /* P10 */
-+		      <0xfcfe3228 0x2>, /* PPR10 */
-+		      <0xfcfe3328 0x2>; /* PM10 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 160 16>;
-+	};
-+
-+	port11: gpio@fcfe302c {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe302c 0x2>, /* P11 */
-+		      <0xfcfe322c 0x2>, /* PPR11 */
-+		      <0xfcfe332c 0x2>; /* PM11 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 176 16>;
-+	};
-+
-+	jtagport0: gpio@fcfe7b20 {
-+		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
-+		reg = <0xfcfe7b20 0x2>; /* JPPR0 */
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		gpio-ranges = <&pfc 0 192 2>;
-+	};
-+
- 	i2c0: i2c@fcfee000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ //usage:#define watchdog_trivial_usage
+-//usage:       "[-t N[ms]] [-T N[ms]] [-F] DEV"
++//usage:       "[-t N[ms]] [-T N[ms]] [-P N[ms]] [-F] DEV"
+ //usage:#define watchdog_full_usage "\n\n"
+ //usage:       "Periodically write to watchdog device DEV\n"
+ //usage:     "\n	-T N	Reboot after N seconds if not reset (default 60)"
+ //usage:     "\n	-t N	Reset every N seconds (default 30)"
++//usage:     "\n	-P N	Warn N seconds before reboot (default 0)"
+ //usage:     "\n	-F	Run in foreground"
+ //usage:     "\n"
+ //usage:     "\nUse 500ms to specify period in milliseconds"
+@@ -26,6 +27,7 @@
+ #define OPT_FOREGROUND  (1 << 0)
+ #define OPT_STIMER      (1 << 1)
+ #define OPT_HTIMER      (1 << 2)
++#define OPT_PTIMER      (1 << 3)
+ 
+ static void watchdog_shutdown(int sig UNUSED_PARAM)
+ {
+@@ -50,11 +52,13 @@ int watchdog_main(int argc, char **argv)
+ 	unsigned opts;
+ 	unsigned stimer_duration; /* how often to restart */
+ 	unsigned htimer_duration = 60000; /* reboots after N ms if not restarted */
++	unsigned ptimer_duration; /* pre-timeout notification N ms before reboot */
+ 	char *st_arg;
+ 	char *ht_arg;
++	char *pt_arg;
+ 
+ 	opt_complementary = "=1"; /* must have exactly 1 argument */
+-	opts = getopt32(argv, "Ft:T:", &st_arg, &ht_arg);
++	opts = getopt32(argv, "Ft:T:P:", &st_arg, &ht_arg, &pt_arg);
+ 
+ 	/* We need to daemonize *before* opening the watchdog as many drivers
+ 	 * will only allow one process at a time to do so.  Since daemonizing
+@@ -88,6 +92,10 @@ int watchdog_main(int argc, char **argv)
+ 	}
+ # endif
+ 	ioctl_or_warn(3, WDIOC_SETTIMEOUT, &htimer_duration);
++	if (opts & OPT_PTIMER) {
++		ptimer_duration = xatou_sfx(pt_arg, suffixes) / 1000;
++		ioctl_or_warn(3, WDIOC_SETPRETIMEOUT, &ptimer_duration);
++	}
+ #endif
+ 
+ #if 0
 -- 
-2.7.4
+2.10.2
