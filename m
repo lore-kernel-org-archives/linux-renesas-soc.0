@@ -1,97 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940132AbdAFLSH (ORCPT
+        with ESMTP id S940145AbdAFLS0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:07 -0500
+        Fri, 6 Jan 2017 06:18:26 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/16] arm64: dts: r8a7796: Add all MSIOF nodes
-Date: Fri,  6 Jan 2017 12:17:43 +0100
-Message-Id: <80fab06e258da76232356d8a0b390d4bc25e6917.1483700694.git.horms+renesas@verge.net.au>
+Subject: [PATCH 16/16] arm64: dts: r8a7795: Add PWM support
+Date: Fri,  6 Jan 2017 12:17:58 +0100
+Message-Id: <b2b9443beee5017ebdb3f2be9ef472c73d260481.1483700694.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
 References: <cover.1483700694.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Add the device nodes for all MSIOF SPI controllers.
+Add the 7 PWM channels to the r8a7795 device tree, in the disabled
+state.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 54 ++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 63 ++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 28ba59a00cd8..4bf8e14956fe 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -373,6 +373,60 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 3fe7e0af5989..972e379c0596 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -894,6 +894,69 @@
  			status = "disabled";
  		};
  
-+		msiof0: spi@e6e90000 {
-+			compatible = "renesas,msiof-r8a7796";
-+			reg = <0 0xe6e90000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 211>;
-+			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
-+			       <&dmac2 0x41>, <&dmac2 0x40>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++		pwm0: pwm@e6e30000 {
++			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
++			reg = <0 0xe6e30000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#pwm-cells = <2>;
 +			status = "disabled";
 +		};
 +
-+		msiof1: spi@e6ea0000 {
-+			compatible = "renesas,msiof-r8a7796";
-+			reg = <0 0xe6ea0000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 210>;
-+			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
-+			       <&dmac2 0x43>, <&dmac2 0x42>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++		pwm1: pwm@e6e31000 {
++			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
++			reg = <0 0xe6e31000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#pwm-cells = <2>;
 +			status = "disabled";
 +		};
 +
-+		msiof2: spi@e6c00000 {
-+			compatible = "renesas,msiof-r8a7796";
-+			reg = <0 0xe6c00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 209>;
-+			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++		pwm2: pwm@e6e32000 {
++			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
++			reg = <0 0xe6e32000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#pwm-cells = <2>;
 +			status = "disabled";
 +		};
 +
-+		msiof3: spi@e6c10000 {
-+			compatible = "renesas,msiof-r8a7796";
-+			reg = <0 0xe6c10000 0 0x0064>;
-+			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++		pwm3: pwm@e6e33000 {
++			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
++			reg = <0 0xe6e33000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#pwm-cells = <2>;
 +			status = "disabled";
 +		};
 +
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7796",
- 				     "renesas,rcar-dmac";
++		pwm4: pwm@e6e34000 {
++			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
++			reg = <0 0xe6e34000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm5: pwm@e6e35000 {
++			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
++			reg = <0 0xe6e35000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm6: pwm@e6e36000 {
++			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
++			reg = <0 0xe6e36000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
+ 		rcar_sound: sound@ec500000 {
+ 			/*
+ 			 * #sound-dai-cells is required
 -- 
 2.7.0.rc3.207.g0ac5344
