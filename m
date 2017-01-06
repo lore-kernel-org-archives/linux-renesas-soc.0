@@ -1,41 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-hk2apc01on0108.outbound.protection.outlook.com ([104.47.124.108]:45079
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030752AbdAFGvl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940149AbdAFLSb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 01:51:41 -0500
-From: Jithin T Raj <jithin.t@tataelxsi.co.in>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Karl Auer <kauer@biplane.com.au>,
-        Simon Horman <horms@verge.net.au>
-Subject: Writing data to Video buffer
-Date: Fri, 6 Jan 2017 06:16:11 +0000
-Message-ID: <HK2PR04MB1220D10B662C4A4C1C4CC351D8630@HK2PR04MB1220.apcprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Fri, 6 Jan 2017 06:18:31 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/4] ARM: shmobile: defconfig: Enable r8a774[35] SoCs
+Date: Fri,  6 Jan 2017 12:18:11 +0100
+Message-Id: <d234e29dae04b224a63e39bc29938fa77819b3f1.1483701293.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1483701293.git.horms+renesas@verge.net.au>
+References: <cover.1483701293.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi =A0all,
+Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
 
-=A0 =A0 =A0 =A0 I have an RCAR E2 Board with me which runs smoothly under l=
-inux 4.8 ..Now I want to make display output from HDMI as flipped 180 degre=
-e ..Through which area that I have to focus to do so.here I pointed only an=
- example only. I am thinking to tap the video buffer/framebuffer to customi=
-ze the output..Is there any other way =A0to control individual display outp=
-ut from kernel source...?
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/configs/shmobile_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-hopping for your suggestions=A0
-
-    =20
-=20
- Best Regards,
- Jithin T Raj
-=20
-=20
-      =
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index b66e17aec058..760688aa5c79 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -14,6 +14,8 @@ CONFIG_ARCH_EMEV2=y
+ CONFIG_ARCH_R7S72100=y
+ CONFIG_ARCH_R8A73A4=y
+ CONFIG_ARCH_R8A7740=y
++CONFIG_ARCH_R8A7743=y
++CONFIG_ARCH_R8A7745=y
+ CONFIG_ARCH_R8A7778=y
+ CONFIG_ARCH_R8A7779=y
+ CONFIG_ARCH_R8A7790=y
+-- 
+2.7.0.rc3.207.g0ac5344
