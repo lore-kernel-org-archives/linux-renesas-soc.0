@@ -1,68 +1,148 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 10 Jan 2017 11:51:33 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        artemi.ivanov@cogentembedded.com, robin.murphy@arm.com,
-        fkan@apm.com
-Subject: Re: [PATCH v2] arm64: do not set dma masks that device connection
- can't handle
-Message-ID: <20170110115132.GD21598@arm.com>
-References: <1483947002-16410-1-git-send-email-nikita.yoush@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1483947002-16410-1-git-send-email-nikita.yoush@cogentembedded.com>
+        artemi.ivanov@cogentembedded.com,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH v2] arm64: do not set dma masks that device connection can't handle
+Date: Mon,  9 Jan 2017 10:30:02 +0300
+Message-Id: <1483947002-16410-1-git-send-email-nikita.yoush@cogentembedded.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 09, 2017 at 10:30:02AM +0300, Nikita Yushchenko wrote:
-> It is possible that device is capable of 64-bit DMA addresses, and
-> device driver tries to set wide DMA mask, but bridge or bus used to
-> connect device to the system can't handle wide addresses.
-> 
-> With swiotlb, memory above 4G still can be used by drivers for streaming
-> DMA, but *dev->mask and dev->dma_coherent_mask must still keep values
-> that hardware handles physically.
-> 
-> This patch enforces that. Based on original version by
-> Arnd Bergmann <arnd@arndb.de>, extended with coherent mask hadnling.
-> 
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> CC: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Changes since v1:
-> - fixed issues noted by Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->   - save mask, not size
->   - remove doube empty line
-> 
->  arch/arm64/Kconfig              |  3 +++
->  arch/arm64/include/asm/device.h |  1 +
->  arch/arm64/mm/dma-mapping.c     | 51 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 55 insertions(+)
+It is possible that device is capable of 64-bit DMA addresses, and
+device driver tries to set wide DMA mask, but bridge or bus used to
+connect device to the system can't handle wide addresses.
 
-I still don't think this patch is general enough. The problem you're seeing
-with swiotlb seems to be exactly the same problem reported by Feng Kan over
-at:
+With swiotlb, memory above 4G still can be used by drivers for streaming
+DMA, but *dev->mask and dev->dma_coherent_mask must still keep values
+that hardware handles physically.
 
-  http://lkml.kernel.org/r/CAL85gmA_SSCwM80TKdkZqEe+S1beWzDEvdki1kpkmUTDRmSP7g@mail.gmail.com
+This patch enforces that. Based on original version by
+Arnd Bergmann <arnd@arndb.de>, extended with coherent mask hadnling.
 
-[read on; it was initially thought to be a hardware erratum, but it's
- actually the inability to restrict the DMA mask of the endpoint that's
- the problem]
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+CC: Arnd Bergmann <arnd@arndb.de>
+---
+Changes since v1:
+- fixed issues noted by Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+  - save mask, not size
+  - remove doube empty line
 
-The point here is that an IOMMU doesn't solve your issue, and the
-IOMMU-backed DMA ops need the same treatment. In light of that, it really
-feels to me like the DMA masks should be restricted in of_dma_configure
-so that the parent mask is taken into account there, rather than hook
-into each set of DMA ops to intercept set_dma_mask. We'd still need to
-do something to stop dma_set_mask widening the mask if it was restricted
-by of_dma_configure, but I think Robin (cc'd) was playing with that.
+ arch/arm64/Kconfig              |  3 +++
+ arch/arm64/include/asm/device.h |  1 +
+ arch/arm64/mm/dma-mapping.c     | 51 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 55 insertions(+)
 
-Will
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 1117421..afb2c08 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -216,6 +216,9 @@ config NEED_DMA_MAP_STATE
+ config NEED_SG_DMA_LENGTH
+ 	def_bool y
+ 
++config ARCH_HAS_DMA_SET_COHERENT_MASK
++	def_bool y
++
+ config SMP
+ 	def_bool y
+ 
+diff --git a/arch/arm64/include/asm/device.h b/arch/arm64/include/asm/device.h
+index 243ef25..a57e7bb 100644
+--- a/arch/arm64/include/asm/device.h
++++ b/arch/arm64/include/asm/device.h
+@@ -22,6 +22,7 @@ struct dev_archdata {
+ 	void *iommu;			/* private IOMMU data */
+ #endif
+ 	bool dma_coherent;
++	u64 parent_dma_mask;
+ };
+ 
+ struct pdev_archdata {
+diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+index e040827..5ab15ce 100644
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@ -352,6 +352,30 @@ static int __swiotlb_dma_supported(struct device *hwdev, u64 mask)
+ 	return 1;
+ }
+ 
++static int __swiotlb_set_dma_mask(struct device *dev, u64 mask)
++{
++	/* device is not DMA capable */
++	if (!dev->dma_mask)
++		return -EIO;
++
++	/* mask is below swiotlb bounce buffer, so fail */
++	if (!swiotlb_dma_supported(dev, mask))
++		return -EIO;
++
++	/*
++	 * because of the swiotlb, we can return success for
++	 * larger masks, but need to ensure that bounce buffers
++	 * are used above parent_dma_mask, so set that as
++	 * the effective mask.
++	 */
++	if (mask > dev->archdata.parent_dma_mask)
++		mask = dev->archdata.parent_dma_mask;
++
++	*dev->dma_mask = mask;
++
++	return 0;
++}
++
+ static struct dma_map_ops swiotlb_dma_ops = {
+ 	.alloc = __dma_alloc,
+ 	.free = __dma_free,
+@@ -367,8 +391,23 @@ static struct dma_map_ops swiotlb_dma_ops = {
+ 	.sync_sg_for_device = __swiotlb_sync_sg_for_device,
+ 	.dma_supported = __swiotlb_dma_supported,
+ 	.mapping_error = swiotlb_dma_mapping_error,
++	.set_dma_mask = __swiotlb_set_dma_mask,
+ };
+ 
++int dma_set_coherent_mask(struct device *dev, u64 mask)
++{
++	if (!dma_supported(dev, mask))
++		return -EIO;
++
++	if (get_dma_ops(dev) == &swiotlb_dma_ops &&
++	    mask > dev->archdata.parent_dma_mask)
++		mask = dev->archdata.parent_dma_mask;
++
++	dev->coherent_dma_mask = mask;
++	return 0;
++}
++EXPORT_SYMBOL(dma_set_coherent_mask);
++
+ static int __init atomic_pool_init(void)
+ {
+ 	pgprot_t prot = __pgprot(PROT_NORMAL_NC);
+@@ -958,6 +997,18 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+ 	if (!dev->archdata.dma_ops)
+ 		dev->archdata.dma_ops = &swiotlb_dma_ops;
+ 
++	/*
++	 * we don't yet support buses that have a non-zero mapping.
++	 *  Let's hope we won't need it
++	 */
++	WARN_ON(dma_base != 0);
++
++	/*
++	 * Whatever the parent bus can set. A device must not set
++	 * a DMA mask larger than this.
++	 */
++	dev->archdata.parent_dma_mask = size - 1;
++
+ 	dev->archdata.dma_coherent = coherent;
+ 	__iommu_setup_dma_ops(dev, dma_base, size, iommu);
+ }
+-- 
+2.1.4
