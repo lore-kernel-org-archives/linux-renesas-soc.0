@@ -1,92 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940171AbdAFLTC (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:33374 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031965AbdAIVsc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:02 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/25] ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for i2c nodes
-Date: Fri,  6 Jan 2017 12:18:27 +0100
-Message-Id: <5e6173897c03f13366edefca98dd4712d3ddb0d4.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Mon, 9 Jan 2017 16:48:32 -0500
+Received: by mail-lf0-f50.google.com with SMTP id k86so103563356lfi.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Jan 2017 13:48:32 -0800 (PST)
+Subject: Re: [PATCHv3 0/6] sh_eth: add wake-on-lan support via magic packet
+To: David Miller <davem@redhat.com>,
+        niklas.soderlund+renesas@ragnatech.se
+References: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170109.155542.1563572267512721426.davem@redhat.com>
+Cc: horms+renesas@verge.net.au, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        linux-pm@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <a957f04f-0784-fa39-b7b0-8b8bd68c2a30@cogentembedded.com>
+Date: Tue, 10 Jan 2017 00:48:28 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170109.155542.1563572267512721426.davem@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for i2c nodes in
-DT for r8a7794 SoC.
+On 01/09/2017 11:55 PM, David Miller wrote:
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7794 and the
-fallback binding for R-Car Gen 2.
+>> This series adds support for Wake-on-Lan using Magic Packet for a few
+>> models of the sh_eth driver. Patch 1/6 fix a naming error, patch 2/6
+>> adds generic support to control and support WoL while patches 3/6 - 6/6
+>> enable different models.
+>>
+>> Based ontop of net-next master.
+>  ...
+>
+> Series applied, thanks.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+    That was too quick for me... I hadn't even started looking into the main 
+patch yet. :-/
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 9692bfd82b1d..89f8f98cb115 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -611,7 +611,7 @@
- 
- 	/* The memory map in the User's Manual maps the cores to bus numbers */
- 	i2c0: i2c@e6508000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6508000 0 0x40>;
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C0>;
-@@ -623,7 +623,7 @@
- 	};
- 
- 	i2c1: i2c@e6518000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6518000 0 0x40>;
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C1>;
-@@ -635,7 +635,7 @@
- 	};
- 
- 	i2c2: i2c@e6530000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6530000 0 0x40>;
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C2>;
-@@ -647,7 +647,7 @@
- 	};
- 
- 	i2c3: i2c@e6540000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6540000 0 0x40>;
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C3>;
-@@ -659,7 +659,7 @@
- 	};
- 
- 	i2c4: i2c@e6520000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6520000 0 0x40>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C4>;
-@@ -671,7 +671,7 @@
- 	};
- 
- 	i2c5: i2c@e6528000 {
--		compatible = "renesas,i2c-r8a7794";
-+		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6528000 0 0x40>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C5>;
--- 
-2.7.0.rc3.207.g0ac5344
+MBR, Sergei
