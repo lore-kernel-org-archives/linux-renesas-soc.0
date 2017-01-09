@@ -1,82 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:38842 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S939732AbdAFIit (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:52269 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938034AbdAIPfN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 03:38:49 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] mmc: host: tmio: drop superfluous exit path
-Date: Fri,  6 Jan 2017 09:38:33 +0100
-Message-Id: <20170106083833.22137-1-wsa+renesas@sang-engineering.com>
+        Mon, 9 Jan 2017 10:35:13 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-pm@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 4/6] sh_eth: enable wake-on-lan for r8a7740/armadillo
+Date: Mon,  9 Jan 2017 16:34:07 +0100
+Message-Id: <20170109153409.13956-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The probe exit path on error does nothing since commit 94b110aff8679b
-("mmc: tmio: add tmio_mmc_host_alloc/free()"), so we can bail out
-immediately.
+Geert Uytterhoeven reported WoL worked on his Armadillo board.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index d0d1743b1c002b..2e2df63ce92658 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -1151,7 +1151,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index afaf8785ed72..67cb6b3793ca 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -577,6 +577,7 @@ static struct sh_eth_cpu_data r8a7740_data = {
+ 	.tsu		= 1,
+ 	.select_mii	= 1,
+ 	.shift_rd0	= 1,
++	.magic		= 1,
+ };
  
- 	ret = mmc_of_parse(mmc);
- 	if (ret < 0)
--		goto host_free;
-+		return ret;
- 
- 	_host->pdata = pdata;
- 	platform_set_drvdata(pdev, mmc);
-@@ -1161,14 +1161,12 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 
- 	ret = tmio_mmc_init_ocr(_host);
- 	if (ret < 0)
--		goto host_free;
-+		return ret;
- 
- 	_host->ctl = devm_ioremap(&pdev->dev,
- 				  res_ctl->start, resource_size(res_ctl));
--	if (!_host->ctl) {
--		ret = -ENOMEM;
--		goto host_free;
--	}
-+	if (!_host->ctl)
-+		return -ENOMEM;
- 
- 	tmio_mmc_ops.card_busy = _host->card_busy;
- 	tmio_mmc_ops.start_signal_voltage_switch = _host->start_signal_voltage_switch;
-@@ -1206,10 +1204,8 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	 * Check the sanity of mmc->f_min to prevent tmio_mmc_set_clock() from
- 	 * looping forever...
- 	 */
--	if (mmc->f_min == 0) {
--		ret = -EINVAL;
--		goto host_free;
--	}
-+	if (mmc->f_min == 0)
-+		return -EINVAL;
- 
- 	/*
- 	 * While using internal tmio hardware logic for card detection, we need
-@@ -1274,10 +1270,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	}
- 
- 	return 0;
--
--host_free:
--
--	return ret;
- }
- EXPORT_SYMBOL(tmio_mmc_host_probe);
- 
+ /* There is CPU dependent code */
 -- 
 2.11.0
