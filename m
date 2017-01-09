@@ -1,42 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49714 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751350AbdASJY1 (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36808 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763361AbdAITch (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 04:24:27 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stuvart S <lovelinuxdeeply@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: About Rcar Du
-Date: Thu, 19 Jan 2017 11:15:08 +0200
-Message-ID: <3684631.gUSRQtF07Z@avalon>
-In-Reply-To: <CAAMGra4__ZZWocyP=Yyhgz=8Xb_aDyuEKAn_3+X54Wp0oKwmAQ@mail.gmail.com>
-References: <CAAMGra4__ZZWocyP=Yyhgz=8Xb_aDyuEKAn_3+X54Wp0oKwmAQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 9 Jan 2017 14:32:37 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 0/3] pinctrl: sh-pfc: r7s72100: Add IO mode selection
+Date: Mon,  9 Jan 2017 20:32:23 +0100
+Message-Id: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Stuvart,
+Hello,
+   sending this RFC series out as a follow up of
+"[PATCH 0/3] Renesas RZ PFC and GPIO driver" patch series.
 
-On Thursday 19 Jan 2017 08:24:38 Stuvart S wrote:
-> Hi Laurent and all,
->     I would like to ask a very basic question here .. I have an Rcar E2
-> board with me..Linux 4.8 version kernel is running perfectly on this
-> board.. Now I am getting videos on HDMI output.. I would like to modify
-> this video by tapping from du unit and rescale that video .. I found that
-> many du output source code are there in driver/gpu/drm/rcar-du ..I dont
-> know which of these that I have to edit.. Am I able to take video/ image
-> data from du? I am a newbi in this field ..
+This RFC patches extend the RZ series PFC driver to support selection of pins
+IO mode.
 
-The DU doesn't have any scaler, you will need to use an external scaler, such 
-as the one included in the VSP (using OpenGL for scaling is also an option if 
-you have support for the GPU). No kernel modification is needed for this, the 
-DU and VSP are both supported in mainline with a DRM/KMS and V4L2 driver 
-respectively.
+[1/3] extends the existing register settings to set all configured peripherals
+groups in direct I/O mode, with input buffer and bi-direction control disabled.
+As I have not been able to extensively test the functionalities enabled by
+the original driver version, I cannot tell if this is a proper bug-fix, but
+according to HW manual, there are few use cases for non-direct IO mode and none
+of them is currently part of PFC enabled groups.
+
+As reported by [2/3] commit message, the original driver did not allowed
+selection of IO mode though PIPC, PIBC, PBDC and PM registers.
+While this has not apparently been an issue for the peripherals enabled by the
+above mentioned patch series, the ability to select a different IO mode is
+required for some peripherals, according to v3.14 Renesas' BSP
+(https://github.com/renesas-rz/linux-3.14/)
+Unfortunately, extending the existing PFC driver to allow this, results in a
+un-desired multiplication of possible function selector marks.
+
+The last patch enables LVDS, which is a use case for selection of a non-direct
+I/O mode.
+Chris, as you have plans to work on LVDS enablement for Renesas' BSP, if you
+have any time to test this settings and provide some feedback I would really
+appreciate that :)
+
+Thanks
+   j
+
+Jacopo Mondi (3):
+  pinctrl: sh-pfc: r7s72100: Enable DIO mode
+  pinctrl: sh-pfc: r7s72100: IO mode selection
+  pinctrl: sh-pfc: r7s72100: Add LVDS pin group
+
+ drivers/pinctrl/sh-pfc/pfc-r7s72100.c | 137 +++++++++++++++++++++++++++++-----
+ 1 file changed, 118 insertions(+), 19 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
