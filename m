@@ -1,68 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940172AbdAFLTD (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41452 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763466AbdAITch (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:03 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/25] ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for iic nodes
-Date: Fri,  6 Jan 2017 12:18:30 +0100
-Message-Id: <21b3f9862943acd6ec92ad02d36ffdfe353e6b66.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Mon, 9 Jan 2017 14:32:37 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 1/3] pinctrl: sh-pfc: r7s72100: Enable DIO mode
+Date: Mon,  9 Jan 2017 20:32:24 +0100
+Message-Id: <1483990346-26998-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for iic nodes in
-DT for r8a7793 SoC.
+When selecting alternative function for one pin, set the PIPCn.PIPCnm
+bit to 1 to enable direct IO mode control (the alternative function
+decides the pin direction) and disable input buffer and bidirection
+control functionalities (PIBCn.PIBCnm = 0 and PBDCn.PDBCnm = 0) intially
+enabled when configuring the pin in PORT mode
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7793 and the
-fallback binding for R-Car Gen 2.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r7s72100.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 4d271ad8bf52..bf64e2420fb5 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -485,7 +485,8 @@
- 		/* doesn't need pinmux */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
-+		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
- 		reg = <0 0xe60b0000 0 0x425>;
- 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
-@@ -499,7 +500,8 @@
- 	i2c7: i2c@e6500000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
-+		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
-@@ -513,7 +515,8 @@
- 	i2c8: i2c@e6510000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
-+		compatible = "renesas,iic-r8a7793", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+index 72e1dff..8c0ae13 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+@@ -58,9 +58,12 @@ enum {
+ 	PINMUX_DATA(name##_DATA, name##_PMC_0,		\
+ 		    name##_PIBC_1, name##_PBDC_1)
+ 
+-#define _P_FN(n, fn, pfcae, pfce, pfc)					\
++#define _P_FN(n, fn, pfcae, pfce, pfc)			\
+ 	PINMUX_DATA(n##_MARK_FN##fn, n##_PMC_1,		\
+-		    n##_PFCAE_##pfcae, n##_PFCE_##pfce, n##_PFC_##pfc)
++		    n##_PFCAE_##pfcae,			\
++		    n##_PFCE_##pfce,			\
++		    n##_PFC_##pfc,			\
++		    n##_PIPC_1, n##_PIBC_0, n##_PBDC_0)
+ 
+ #define _P_MARK_FN1(bank, pin, name, sfx, cfg) _P_FN(name, 1, 0, 0, 0)
+ #define _P_MARK_FN2(bank, pin, name, sfx, cfg) _P_FN(name, 2, 0, 0, 1)
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
