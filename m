@@ -1,59 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36821 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751513AbdAWQE2 (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:50210 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940688AbdAIUlO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 11:04:28 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 0/7] Renesas *SCIF* RX FIFO support
-Date: Mon, 23 Jan 2017 17:04:11 +0100
-Message-Id: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 9 Jan 2017 15:41:14 -0500
+Date: Mon, 09 Jan 2017 15:41:13 -0500 (EST)
+Message-Id: <20170109.154113.2146756234032501412.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] sh_eth: "intgelligent checksum" related cleanups
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
+References: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Sat, 07 Jan 2017 00:01:40 +0300
 
-This series implements support for using RX FIFO thresholds higher than one
-in PIO mode on SCIF, HSCIF, SCIFA and SCIFB serial ports.
+>    Here's a set of 2 patches against DaveM's 'net.git' repo, as they are based
+> on a couple patches merged there recently; however, the patches are destined
+> for 'net-next.git' (once 'net.git' gets merged there next time). I'm cleaning
+> up the "intelligent checksum" related code (however, the driver only disables
+> this feature for now, theres's no proper offload supprt yet).
 
-This revision addresses the issues found by Geert and Sergei in their
-reviews, see below for details.
-
-Setting the RX trigger on SH77xx-style ports is still not handled correctly,
-mostly because we don't have any hardware to test against. I have changed
-the trigger default for these ports to 1 to avoid regressions.
-
-CU
-Uli
-
-
-Changes since v1:
-- clarify HS trigger register enum
-- simplify DR bit handling
-- if() cascade -> switch()
-- disable RX trigger for SH77xx-style ports
-- clean up on failure to create sysfs attribute
-- r8a7796 DT: add control pins, rtscts flag
-
-
-Ulrich Hecht (7):
-  serial: sh-sci: add FIFO trigger bits
-  serial: sh-sci: consider DR (data ready) bit adequately
-  serial: sh-sci: implement FIFO threshold register setting
-  serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
-  serial: sh-sci: SCIFA/B RX FIFO software timeout
-  serial: sh-sci: make RX FIFO parameters tunable via sysfs
-  arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  14 ++
- drivers/tty/serial/sh-sci.c                        | 259 ++++++++++++++++++---
- drivers/tty/serial/sh-sci.h                        |   8 +-
- 3 files changed, 248 insertions(+), 33 deletions(-)
-
--- 
-2.7.4
+Series applied to net-next, thanks.
