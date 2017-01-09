@@ -1,74 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940164AbdAFLSy (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34291 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758171AbdAIKWc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:54 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 9 Jan 2017 05:22:32 -0500
+Received: by mail-io0-f195.google.com with SMTP id c80so6170910iod.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Jan 2017 02:22:32 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <ad5805f3aa07c6eb6ef2578ee9b5f8ca9b0c28f2.1483700694.git.horms+renesas@verge.net.au>
+References: <cover.1483700694.git.horms+renesas@verge.net.au> <ad5805f3aa07c6eb6ef2578ee9b5f8ca9b0c28f2.1483700694.git.horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Jan 2017 11:22:31 +0100
+Message-ID: <CAMuHMdVnbRTDg1O4OGmJuDm9zbB4DzMmw+qM0rj611=tOQkgCA@mail.gmail.com>
+Subject: Re: [PATCH 08/16] arm64: dts: r8a7795: add sound MIX support
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/25] ARM: dts: r8a7779: Use R-Car Gen 1 fallback binding for i2c nodes
-Date: Fri,  6 Jan 2017 12:18:21 +0100
-Message-Id: <137d27f10f638781d5487b44302c2a2ee5d12655.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 1 fallback binding for i2c nodes in
-DT for r8a7779 SoC.
+On Fri, Jan 6, 2017 at 12:17 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> This patch adds MIX (= Mixer) support.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 7 +++++++
+>  2 files changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> index 82a269a4f10d..7a8986edcdc0 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> @@ -413,6 +413,7 @@
+>                  <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+>                  <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+>                  <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+> +                <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7779 and the
-fallback binding for R-Car Gen 1.
+As the board-specific DTS file completely overrides the clocks list property,
+this same change must be made to r8a7795-h3ulcb.dts.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7779.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+>                  <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+>                  <&audio_clk_a>, <&cs2000>,
+>                  <&audio_clk_c>,
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> index e09f5b7b874a..7e21491c6510 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -920,6 +920,7 @@
+>                                  <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+>                                  <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+>                                  <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+> +                                <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+>                                  <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+>                                  <&audio_clk_a>, <&audio_clk_b>,
+>                                  <&audio_clk_c>,
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 55a7c1e37c57..f47a0edc26d4 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -173,7 +173,7 @@
- 	i2c0: i2c@ffc70000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7779";
-+		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
- 		reg = <0xffc70000 0x1000>;
- 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
-@@ -184,7 +184,7 @@
- 	i2c1: i2c@ffc71000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7779";
-+		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
- 		reg = <0xffc71000 0x1000>;
- 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
-@@ -195,7 +195,7 @@
- 	i2c2: i2c@ffc72000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7779";
-+		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
- 		reg = <0xffc72000 0x1000>;
- 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
-@@ -206,7 +206,7 @@
- 	i2c3: i2c@ffc73000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "renesas,i2c-r8a7779";
-+		compatible = "renesas,i2c-r8a7779", "renesas,rcar-gen1-i2c";
- 		reg = <0xffc73000 0x1000>;
- 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
