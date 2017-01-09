@@ -1,59 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49375 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1754472AbdASUPo (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:52242 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937989AbdAIPfM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 15:15:44 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 1/3] mmc: host: tmio: refactor calls to sdio irq
-Date: Thu, 19 Jan 2017 21:07:16 +0100
-Message-Id: <20170119200718.8115-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
-References: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
+        Mon, 9 Jan 2017 10:35:12 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-pm@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 1/6] sh_eth: use correct name for ECMR_MPDE bit
+Date: Mon,  9 Jan 2017 16:34:04 +0100
+Message-Id: <20170109153409.13956-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-tmio_mmc_sdio_irq() is not used as a seperate irq handler anymore, so we
-can make it similar to the other irq helper functions, namely:
+This bit was wrongly named due to a typo, Sergei checked the SH7734/63
+manuals and this bit should be named MPDE.
 
-* only give the host as argument function which is what it really needs
-* prefix function name with __
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index a140848049ed81..6ab43892c132a9 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -756,9 +756,8 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	return false;
- }
- 
--static void tmio_mmc_sdio_irq(int irq, void *devid)
-+static void __tmio_mmc_sdio_irq(struct tmio_mmc_host *host)
- {
--	struct tmio_mmc_host *host = devid;
- 	struct mmc_host *mmc = host->mmc;
- 	struct tmio_mmc_data *pdata = host->pdata;
- 	unsigned int ireg, status;
-@@ -799,7 +798,7 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
- 	if (__tmio_mmc_sdcard_irq(host, ireg, status))
- 		return IRQ_HANDLED;
- 
--	tmio_mmc_sdio_irq(irq, devid);
-+	__tmio_mmc_sdio_irq(host);
- 
- 	return IRQ_HANDLED;
- }
+diff --git a/drivers/net/ethernet/renesas/sh_eth.h b/drivers/net/ethernet/renesas/sh_eth.h
+index 9eec1e185adf..11798d5c4a1d 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.h
++++ b/drivers/net/ethernet/renesas/sh_eth.h
+@@ -339,7 +339,7 @@ enum FELIC_MODE_BIT {
+ 	ECMR_DPAD = 0x00200000, ECMR_RZPF = 0x00100000,
+ 	ECMR_ZPF = 0x00080000, ECMR_PFR = 0x00040000, ECMR_RXF = 0x00020000,
+ 	ECMR_TXF = 0x00010000, ECMR_MCT = 0x00002000, ECMR_PRCEF = 0x00001000,
+-	ECMR_PMDE = 0x00000200, ECMR_RE = 0x00000040, ECMR_TE = 0x00000020,
++	ECMR_MPDE = 0x00000200, ECMR_RE = 0x00000040, ECMR_TE = 0x00000020,
+ 	ECMR_RTM = 0x00000010, ECMR_ILB = 0x00000008, ECMR_ELB = 0x00000004,
+ 	ECMR_DM = 0x00000002, ECMR_PRM = 0x00000001,
+ };
 -- 
 2.11.0
