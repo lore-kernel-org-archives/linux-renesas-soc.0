@@ -1,54 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48023 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751035AbdAPMNN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 07:13:13 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v3 5/8] arm: dts: r7s72100-genmai: SCIF2 PINCTRL configuration
-Date: Mon, 16 Jan 2017 13:12:49 +0100
-Message-Id: <1484568772-18137-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Christoph Baumann <cbaumann@visteon.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] serial: sh-sci: Fix early deassertion of dedicated RTS
+Date: Mon, 09 Jan 2017 13:57:40 +0200
+Message-ID: <164893846.trXPIhPmcX@avalon>
+In-Reply-To: <CAMuHMdXfmjqQV6ms-Q21WaQUbEeKNyt5DZ89nV8rifWf-7Ypfg@mail.gmail.com>
+References: <1480682111-9299-1-git-send-email-geert+renesas@glider.be> <8834208.BLCpAM3tlx@avalon> <CAMuHMdXfmjqQV6ms-Q21WaQUbEeKNyt5DZ89nV8rifWf-7Ypfg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+Hi Geert,
 
-Configure the r7s72100 PINCTRL hardware and select pin function
-for the SCIF2 serial console.
+On Monday 09 Jan 2017 10:53:55 Geert Uytterhoeven wrote:
+> On Fri, Jan 6, 2017 at 1:30 PM, Laurent Pinchart wrote:
+> > On Friday 02 Dec 2016 13:35:10 Geert Uytterhoeven wrote:
+> >> If a UART has dedicated RTS/CTS pins, there are some issues:
+> >> 1. When changing hardware control flow, the new AUTORTS state is not
+> >>    immediately reflected in the hardware, but only when RTS is raised.
+> >>    However, the serial core doesn't call .set_mctrl() after
+> >>    .set_termios(), hence AUTORTS may only become effective when the port
+> >>    is closed, and reopened later.
+> >>    Note that this problem does not happen when manually using stty to
+> >>    change CRTSCTS, as AUTORTS will work fine on next open.
+> >> 
+> >> 2. When hardware control flow is disabled (or AUTORTS is not yet
+> >>    effective), changing any serial port configuration deasserts RTS, as
+> >>    .set_termios() calls sci_init_pins().
+> > 
+> > Isn't this still a problem with this patch applied ? Calling
+> > sci_set_mctrl() should reconfigure the pins properly, but won't there be
+> > a short window during which the configuration will be wrong ?
+> 
+> You mean in between the calls to sci_init_pins() and sci_set_mctrl()?
 
-Signed-off-by: Magnus Damm <damm@opensource.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+That's what I mean, yes.
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 118a8e2..336716b 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -59,6 +59,16 @@
- 	};
- };
- 
-+&pfc {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
-+
-+	scif2_pins: serial2 {
-+		groups = "scif2_txd_p3_0", "scif2_rxd_p3_2";
-+		function = "scif2";
-+	};
-+};
-+
- &scif2 {
- 	status = "okay";
- };
+> I don't think _de_asserting RTS for a few microseconds matters much, would
+> it? Asserting RTS wrongly would be worse.
+
+It's not the end of the world, but as you're trying to fix this issue, maybe 
+it would be a good time to refactor the code properly and fix the core problem 
+(.set_termios() calling sci_init_pins()) rather than working around it :-)
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
