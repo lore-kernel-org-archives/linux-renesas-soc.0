@@ -1,60 +1,215 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34234 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753870AbdA0GVs (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36471 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763467AbdAITci (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 01:21:48 -0500
-Received: by mail-pg0-f67.google.com with SMTP id 3so6483725pgj.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 22:20:34 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
-Date: Fri, 27 Jan 2017 15:14:16 +0900
-Message-Id: <148549765644.22203.4025544332917256731.sendpatchset@little-apple>
-In-Reply-To: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
-References: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
-Subject: [PATCH/RFC v2 1/4] iommu/of: Skip IOMMU devices disabled in DT
+        Mon, 9 Jan 2017 14:32:38 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 2/3] pinctrl: sh-pfc: r7s72100: IO mode selection
+Date: Mon,  9 Jan 2017 20:32:25 +0100
+Message-Id: <1483990346-26998-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+In r7s72100 SoC a pin can be configured in 3 different modes:
+* DIO: direct IO
+* SWI: software input mode
+* SWO: software output mode
 
-Extend the shared IOMMU code to skip over ->xlate() in case the
-IOMMU device pointed to by a slave device has been disabled in DT.
+The r7s72100 pincontrol driver defaulted all modes to software input
+(PIPC = 0, PIBC = 1, PBDC = 1).
+This was wrong for most pins, which requires their pins input/output
+mode to be determined by the selected alternate function.
 
-Difficult to trigger in case a single IOMMU device is used, however
-when multiple IOMMUs are used and some of them are disabled in DT
-then this patch makes sure that ->xlate() only gets invoked for the
-enabled ones.
+Add to the alternate function configuration register values the correct
+PIPC, PIBC, PM and PBDC values, to be configured accordingly to the
+desired IO mode.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+This new feature will be used when adding to PFC peripherals that needs
+software I/O control, such as LVDS
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
+ drivers/pinctrl/sh-pfc/pfc-r7s72100.c | 124 +++++++++++++++++++++++++++-------
+ 1 file changed, 101 insertions(+), 23 deletions(-)
 
- I used to keep this as a local check in the xlate() callback
- for the not-yet-merged-upstream R-Car Gen3 IPMMU driver stack.
-
- Since honoring DT disabled devices probably makes sense for most users
- it seems like a good plan to try to push it into the common subsystem level.
-
- Thanks to Geert for suggesting this ages ago.
-
- Developed on top of renesas-drivers-2017-01-24-v4.10-rc5 which
- includes a recent version of iommu/next.
-
- drivers/iommu/of_iommu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 0001/drivers/iommu/of_iommu.c
-+++ work/drivers/iommu/of_iommu.c	2017-01-27 13:19:22.540607110 +0900
-@@ -159,7 +159,7 @@ const struct iommu_ops *of_iommu_configu
- 		np = iommu_spec.np;
- 		ops = of_iommu_get_ops(np);
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+index 8c0ae13..e67b0d1 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+@@ -34,6 +34,7 @@ enum {
+ 	PINMUX_DATA_END,
  
--		if (!ops || !ops->of_xlate ||
-+		if (!ops || !ops->of_xlate || !of_device_is_available(np) ||
- 		    iommu_fwspec_init(dev, &np->fwnode, ops) ||
- 		    ops->of_xlate(dev, &iommu_spec))
- 			goto err_put_node;
+ 	PINMUX_FUNCTION_BEGIN,
++	GP_ALL(PM_0), GP_ALL(PM_1),
+ 	GP_ALL(PMC_0), GP_ALL(PMC_1),
+ 	GP_ALL(PFC_0), GP_ALL(PFC_1),
+ 	GP_ALL(PFCE_0), GP_ALL(PFCE_1),
+@@ -44,8 +45,15 @@ enum {
+ 	PINMUX_FUNCTION_END,
+ 
+ 	PINMUX_MARK_BEGIN,
+-	GP_ALL(MARK_FN1), GP_ALL(MARK_FN2), GP_ALL(MARK_FN3), GP_ALL(MARK_FN4),
+-	GP_ALL(MARK_FN5), GP_ALL(MARK_FN6), GP_ALL(MARK_FN7), GP_ALL(MARK_FN8),
++	GP_ALL(MARK_FN1_DIO), GP_ALL(MARK_FN2_DIO), GP_ALL(MARK_FN3_DIO),
++	GP_ALL(MARK_FN4_DIO), GP_ALL(MARK_FN5_DIO), GP_ALL(MARK_FN6_DIO),
++	GP_ALL(MARK_FN7_DIO), GP_ALL(MARK_FN8_DIO),
++	GP_ALL(MARK_FN1_SWI), GP_ALL(MARK_FN2_SWI), GP_ALL(MARK_FN3_SWI),
++	GP_ALL(MARK_FN4_SWI), GP_ALL(MARK_FN5_SWI), GP_ALL(MARK_FN6_SWI),
++	GP_ALL(MARK_FN7_SWI), GP_ALL(MARK_FN8_SWI),
++	GP_ALL(MARK_FN1_SWO), GP_ALL(MARK_FN2_SWO), GP_ALL(MARK_FN3_SWO),
++	GP_ALL(MARK_FN4_SWO), GP_ALL(MARK_FN5_SWO), GP_ALL(MARK_FN6_SWO),
++	GP_ALL(MARK_FN7_SWO), GP_ALL(MARK_FN8_SWO),
+ 	PINMUX_MARK_END,
+ };
+ 
+@@ -58,28 +66,87 @@ enum {
+ 	PINMUX_DATA(name##_DATA, name##_PMC_0,		\
+ 		    name##_PIBC_1, name##_PBDC_1)
+ 
+-#define _P_FN(n, fn, pfcae, pfce, pfc)			\
+-	PINMUX_DATA(n##_MARK_FN##fn, n##_PMC_1,		\
+-		    n##_PFCAE_##pfcae,			\
+-		    n##_PFCE_##pfce,			\
+-		    n##_PFC_##pfc,			\
+-		    n##_PIPC_1, n##_PIBC_0, n##_PBDC_0)
+-
+-#define _P_MARK_FN1(bank, pin, name, sfx, cfg) _P_FN(name, 1, 0, 0, 0)
+-#define _P_MARK_FN2(bank, pin, name, sfx, cfg) _P_FN(name, 2, 0, 0, 1)
+-#define _P_MARK_FN3(bank, pin, name, sfx, cfg) _P_FN(name, 3, 0, 1, 0)
+-#define _P_MARK_FN4(bank, pin, name, sfx, cfg) _P_FN(name, 4, 0, 1, 1)
+-#define _P_MARK_FN5(bank, pin, name, sfx, cfg) _P_FN(name, 5, 1, 0, 0)
+-#define _P_MARK_FN6(bank, pin, name, sfx, cfg) _P_FN(name, 6, 1, 0, 1)
+-#define _P_MARK_FN7(bank, pin, name, sfx, cfg) _P_FN(name, 7, 1, 1, 0)
+-#define _P_MARK_FN8(bank, pin, name, sfx, cfg) _P_FN(name, 8, 1, 1, 1)
++/*
++ * @n: pin name GP_n_m
++ * @fn: alternative function number
++ * @pfcae @pfce @pfc: select alternative function
++ * @pipc: I/O mode selector (direct I/O or software I/O)
++ * @pm: software I/O mode direction selector (do not set in DIO mode)
++ * @pibc: input buffer enable
++ * @pbdc: bidirection control (do not set in SWI mode)
++ */
++
++#define _P_FN_DIO(n, fn, pfcae, pfce, pfc)			\
++	PINMUX_DATA(n##_MARK_FN##fn##_DIO,			\
++		    n##_PMC_1,					\
++		    n##_PFCAE_##pfcae,				\
++		    n##_PFCE_##pfce,				\
++		    n##_PFC_##pfc,				\
++		    n##_PIPC_1,					\
++		    n##_PIBC_0,					\
++		    n##_PBDC_0)
++
++#define _P_FN_SWI(n, fn, pfcae, pfce, pfc)			\
++	PINMUX_DATA(n##_MARK_FN##fn##_SWI,			\
++		    n##_PMC_1,					\
++		    n##_PFCAE_##pfcae,				\
++		    n##_PFCE_##pfce,				\
++		    n##_PFC_##pfc,				\
++		    n##_PIPC_0,					\
++		    n##_PM_1,					\
++		    n##_PIBC_1)
++
++#define _P_FN_SWO(n, fn, pfcae, pfce, pfc)			\
++	PINMUX_DATA(n##_MARK_FN##fn##_SWI,			\
++		    n##_PMC_1,					\
++		    n##_PFCAE_##pfcae,				\
++		    n##_PFCE_##pfce,				\
++		    n##_PFC_##pfc,				\
++		    n##_PIPC_0,					\
++		    n##_PM_0,					\
++		    n##_PIBC_0,					\
++		    n##_PBDC_0)
++
++/* alternate function configuration with direct I/O mode */
++#define _P_MARK_FN1_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 1, 0, 0, 0)
++#define _P_MARK_FN2_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 2, 0, 0, 1)
++#define _P_MARK_FN3_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 3, 0, 1, 0)
++#define _P_MARK_FN4_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 4, 0, 1, 1)
++#define _P_MARK_FN5_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 5, 1, 0, 0)
++#define _P_MARK_FN6_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 6, 1, 0, 1)
++#define _P_MARK_FN7_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 7, 1, 1, 0)
++#define _P_MARK_FN8_DIO(bank, pin, name, sfx, cfg) _P_FN_DIO(name, 8, 1, 1, 1)
++
++/* alternate function configuration with software input mode */
++#define _P_MARK_FN1_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 1, 0, 0, 0)
++#define _P_MARK_FN2_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 2, 0, 0, 1)
++#define _P_MARK_FN3_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 3, 0, 1, 0)
++#define _P_MARK_FN4_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 4, 0, 1, 1)
++#define _P_MARK_FN5_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 5, 1, 0, 0)
++#define _P_MARK_FN6_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 6, 1, 0, 1)
++#define _P_MARK_FN7_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 7, 1, 1, 0)
++#define _P_MARK_FN8_SWI(bank, pin, name, sfx, cfg) _P_FN_SWI(name, 8, 1, 1, 1)
++
++/* alternate function configuration with software output mode */
++#define _P_MARK_FN1_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 1, 0, 0, 0)
++#define _P_MARK_FN2_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 2, 0, 0, 1)
++#define _P_MARK_FN3_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 3, 0, 1, 0)
++#define _P_MARK_FN4_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 4, 0, 1, 1)
++#define _P_MARK_FN5_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 5, 1, 0, 0)
++#define _P_MARK_FN6_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 6, 1, 0, 1)
++#define _P_MARK_FN7_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 7, 1, 1, 0)
++#define _P_MARK_FN8_SWO(bank, pin, name, sfx, cfg) _P_FN_SWO(name, 8, 1, 1, 1)
+ 
+ static const u16 pinmux_data[] = {
+ 	_P_ALL(_P_DATA), /* PINMUX_DATA(P_M_N_DATA, P_M_N_PMC_0)... */
+-	_P_ALL(_P_MARK_FN1), _P_ALL(_P_MARK_FN2),
+-	_P_ALL(_P_MARK_FN3), _P_ALL(_P_MARK_FN4),
+-	_P_ALL(_P_MARK_FN5), _P_ALL(_P_MARK_FN6),
+-	_P_ALL(_P_MARK_FN7), _P_ALL(_P_MARK_FN8),
++	_P_ALL(_P_MARK_FN1_DIO), _P_ALL(_P_MARK_FN1_SWI), _P_ALL(_P_MARK_FN1_SWO),
++	_P_ALL(_P_MARK_FN2_DIO), _P_ALL(_P_MARK_FN2_SWI), _P_ALL(_P_MARK_FN2_SWO),
++	_P_ALL(_P_MARK_FN3_DIO), _P_ALL(_P_MARK_FN3_SWI), _P_ALL(_P_MARK_FN3_SWO),
++	_P_ALL(_P_MARK_FN4_DIO), _P_ALL(_P_MARK_FN4_SWI), _P_ALL(_P_MARK_FN4_SWO),
++	_P_ALL(_P_MARK_FN5_DIO), _P_ALL(_P_MARK_FN5_SWI), _P_ALL(_P_MARK_FN5_SWO),
++	_P_ALL(_P_MARK_FN6_DIO), _P_ALL(_P_MARK_FN6_SWI), _P_ALL(_P_MARK_FN6_SWO),
++	_P_ALL(_P_MARK_FN7_DIO), _P_ALL(_P_MARK_FN7_SWI), _P_ALL(_P_MARK_FN7_SWO),
++	_P_ALL(_P_MARK_FN8_DIO), _P_ALL(_P_MARK_FN8_SWI), _P_ALL(_P_MARK_FN8_SWO),
+ };
+ 
+ static struct sh_pfc_pin pinmux_pins[] = {
+@@ -91,14 +158,24 @@ static struct sh_pfc_pin pinmux_pins[] = {
+ #define __RZ_STR(pfx, hw, bank, pin, sfx)		\
+ 	pfx##_##hw##_p##bank##_##pin####sfx
+ 
+-#define RZ_PIN_AND_MUX(pfx, hw, bank, pin, fn)				\
++
++#define _RZ_PIN_AND_MUX(pfx, hw, bank, pin, fn, iomode)			\
+ static const unsigned int __RZ_STR(pfx, hw, bank, pin, _pins)[] = {	\
+ 	RZ_PORT_PIN(bank, pin),						\
+ };									\
+ static const unsigned int __RZ_STR(pfx, hw, bank, pin, _mux)[] = {	\
+-	GP_##bank##_##pin##_MARK_FN##fn,					\
++	GP_##bank##_##pin##_MARK_FN##fn##_##iomode,			\
+ };
+ 
++#define RZ_PIN_AND_MUX(pfx, hw, bank, pin, fn)				\
++	_RZ_PIN_AND_MUX(pfx, hw, bank, pin, fn, DIO)
++
++#define RZ_PIN_AND_MUX_SWI(pfx, hw, bank, pin, fn)			\
++	_RZ_PIN_AND_MUX(pfx, hw, bank, pin, fn, SWI)
++
++#define RZ_PIN_AND_MUX_SWO(pfx, hw, bank, pin, fn)			\
++	_RZ_PIN_AND_MUX(pfx, hw, bank, pin, fn, SWO)
++
+ #define RZ_PMX_GROUP(pfx, hw, bank, pin, fn) \
+ 	SH_PFC_PIN_GROUP(pfx##_##hw##_p##bank##_##pin),
+ 
+@@ -496,6 +573,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	}
+ 
+ #define PFC_REGS(idx)						\
++	PFC_REG(idx, PM, (0xfcfe3000 + (idx * 4))),		\
+ 	PFC_REG(idx, PMC, (0xfcfe3400 + (idx * 4))),		\
+ 	PFC_REG(idx, PFC, (0xfcfe3500 + (idx * 4))),		\
+ 	PFC_REG(idx, PFCE, (0xfcfe3600 + (idx * 4))),		\
+-- 
+2.7.4
