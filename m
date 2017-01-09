@@ -1,44 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940160AbdAFLSt (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:52261 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938010AbdAIPfN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:49 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/25] ARM: dts: sh73a0: Use SoC-specific compat string for mmcif
-Date: Fri,  6 Jan 2017 12:18:16 +0100
-Message-Id: <5ff43b37ce967ffbcc4a93c76a9b270e441a72e6.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Mon, 9 Jan 2017 10:35:13 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-pm@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 3/6] sh_eth: enable wake-on-lan for R-Car Gen2 devices
+Date: Mon,  9 Jan 2017 16:34:06 +0100
+Message-Id: <20170109153409.13956-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the SoC-specific compat string for mmcif in DT for the sh73a0 SoC.
-This is in keeping with the use of compat strings for mmcif for other
-Renesas ARM based SoCs.
+Tested on Gen2 r8a7791/Koelsch.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/sh73a0.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
-index e1267590b575..6b01ab354e88 100644
---- a/arch/arm/boot/dts/sh73a0.dtsi
-+++ b/arch/arm/boot/dts/sh73a0.dtsi
-@@ -263,7 +263,7 @@
- 	};
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index 542c92b57b35..afaf8785ed72 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -623,8 +623,9 @@ static struct sh_eth_cpu_data r8a779x_data = {
  
- 	mmcif: mmc@e6bd0000 {
--		compatible = "renesas,sh-mmcif";
-+		compatible = "renesas,mmcif-sh73a0", "renesas,sh-mmcif";
- 		reg = <0xe6bd0000 0x100>;
- 		interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH
- 			      GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
+ 	.register_type	= SH_ETH_REG_FAST_RCAR,
+ 
+-	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
+-	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
++	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD | ECSR_MPD,
++	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP |
++			  ECSIPR_MPDIP,
+ 	.eesipr_value	= 0x01ff009f,
+ 
+ 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
+@@ -639,6 +640,7 @@ static struct sh_eth_cpu_data r8a779x_data = {
+ 	.tpauser	= 1,
+ 	.hw_swap	= 1,
+ 	.rmiimode	= 1,
++	.magic		= 1,
+ };
+ #endif /* CONFIG_OF */
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
