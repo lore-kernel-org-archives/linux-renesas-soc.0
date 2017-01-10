@@ -1,57 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46857 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751392AbdAMJvE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 04:51:04 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, marek.vasut@gmail.com, geert@linux-m68k.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 2/2] dt-bindings: iio: document MAX11100 ADC
-Date: Fri, 13 Jan 2017 10:50:38 +0100
-Message-Id: <1484301038-16386-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1484301038-16386-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1484301038-16386-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Content-transfer-encoding: 8BIT
+Message-id: <587498D4.4010207@samsung.com>
+Date: Tue, 10 Jan 2017 17:18:28 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        chanwoo@kernel.org
+Subject: Re: [PATCH v2 0/6] usb: Replace the deprecated extcon API
+In-reply-to: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+References: <CGME20161230040816epcas5p4616cb93324a5d60bc2a763817e34e37d@epcas5p4.samsung.com>
+ <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Maxim MAX11100 single-channel
-ADC
+Hi Felipe,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../devicetree/bindings/iio/adc/max11100.txt          | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/max11100.txt
+These patches have already acked-by tag from you.
+Could you please apply them if there is additional comment?
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/max11100.txt b/Documentation/devicetree/bindings/iio/adc/max11100.txt
-new file mode 100644
-index 0000000..ad0bc31
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/max11100.txt
-@@ -0,0 +1,19 @@
-+* Maxim max11100 Analog to Digital Converter (ADC)
-+
-+Required properties:
-+  - compatible: Should be "maxim,max11100"
-+  - reg: the adc unit address
-+  - vref-supply: phandle to the regulator that provides reference voltage
-+
-+Optional properties:
-+  - spi-max-frequency: SPI maximum frequency
-+
-+Example:
-+
-+max11100: adc@0 {
-+        compatible = "maxim,max11100";
-+        reg = <0>;
-+        vref-supply = <&adc0_vref>;
-+        spi-max-frequency = <240000>;
-+};
-+
+On 2016년 12월 30일 13:08, Chanwoo Choi wrote:
+> This patches just replace the deprecated extcon API without any change
+> of extcon operation and use the resource-managed function for
+> extcon_register_notifier().
+> 
+> The new extcon API instead of deprecated API.
+> - extcon_set_cable_state_() -> extcon_set_state_sync();
+> - extcon_get_cable_state_() -> extcon_get_state();
+> 
+> Changes from v1:
+> - Rebase these patches based on v4.10-rc1.
+> - Add acked-by tag from usb maintainer and reviewer.
+> - Drop the phy/power-supply/chipidea patches.
+> 
+> Chanwoo Choi (6):
+>   usb: dwc3: omap: Replace the extcon API
+>   usb: phy: msm: Replace the extcon API
+>   usb: phy: omap-otg: Replace the extcon API
+>   usb: phy: qcom-8x16-usb: Replace the extcon API
+>   usb: phy: tahvo: Replace the deprecated extcon API
+>   usb: renesas_usbhs: Replace the deprecated extcon API
+> 
+>  drivers/usb/dwc3/dwc3-omap.c        | 20 +++++++-------------
+>  drivers/usb/phy/phy-msm-usb.c       | 33 +++++++++++----------------------
+>  drivers/usb/phy/phy-omap-otg.c      | 24 ++++++------------------
+>  drivers/usb/phy/phy-qcom-8x16-usb.c | 13 ++++---------
+>  drivers/usb/phy/phy-tahvo.c         | 10 +++++-----
+>  drivers/usb/renesas_usbhs/common.c  |  2 +-
+>  6 files changed, 34 insertions(+), 68 deletions(-)
+> 
+
+
 -- 
-2.7.4
+Best Regards,
+Chanwoo Choi
+S/W Center, Samsung Electronics
