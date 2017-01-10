@@ -1,136 +1,38 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 15/20] drm: bridge: dw-hdmi: Handle overflow workaround based on device version
-Date: Tue, 17 Jan 2017 10:29:05 +0200
-Message-Id: <20170117082910.27023-16-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Jan 2017 11:09:16 +0100
+Message-ID: <CAMuHMdXte2UAp59xhoepD7NcGW3tU-ibLHtyXKHAbJY4qrzgZA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] R-Car DU: Fix IOMMU operation when connected to VSP
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the device version queried at runtime instead of the device type
-provided through platform data to handle the overflow workaround. This
-will make support of other SoCs integrating the same HDMI TX controller
-version easier.
+Hi Laurent,
 
-Among the supported platforms only i.MX6DL and i.MX6Q have been
-identified as needing the workaround. Disabling it on Rockchip RK3288
-(which integrates a v2.00a controller) didn't produce any error or
-artifact.
+On Fri, Aug 19, 2016 at 10:39 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> This patch series fixes the rcar-du-drm driver to support VSP plane sources
+> with an IOMMU. It is available for convenience at
+>
+>         git://linuxtv.org/pinchartl/media.git iommu/devel/du
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 46 ++++++++++++++++++++++++++++------------
- 1 file changed, 33 insertions(+), 13 deletions(-)
+Dropped from renesas-drivers, as this branch is based on a very old tree
+(v4.8-rc2), and many (but not all!) commits have found their way upstream.
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 730a7558d4d4..f4faa14213e5 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -117,8 +117,10 @@ struct dw_hdmi {
- 	struct drm_connector connector;
- 	struct drm_bridge bridge;
- 
--	struct platform_device *audio;
- 	enum dw_hdmi_devtype dev_type;
-+	unsigned int version;
-+
-+	struct platform_device *audio;
- 	struct device *dev;
- 	struct clk *isfr_clk;
- 	struct clk *iahb_clk;
-@@ -1323,19 +1325,38 @@ static void hdmi_enable_audio_clk(struct dw_hdmi *hdmi)
- /* Workaround to clear the overflow condition */
- static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- {
--	int count;
-+	unsigned int count;
-+	unsigned int i;
- 	u8 val;
- 
--	/* TMDS software reset */
--	hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ, HDMI_MC_SWRSTZ);
-+	/*
-+	 * Under some circumstances the Frame Composer arithmetic unit can miss
-+	 * an FC register write due to being busy processing the previous one.
-+	 * The issue can be worked around by issuing a TMDS software reset and
-+	 * then write one of the FC registers several times.
-+	 *
-+	 * The number of iterations matters and depends on the HDMI TX revision
-+	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
-+	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
-+	 * 4 and 1 iterations respectively.
-+	 */
- 
--	val = hdmi_readb(hdmi, HDMI_FC_INVIDCONF);
--	if (hdmi->dev_type == IMX6DL_HDMI) {
--		hdmi_writeb(hdmi, val, HDMI_FC_INVIDCONF);
-+	switch (hdmi->version) {
-+	case 0x130a:
-+		count = 4;
-+		break;
-+	case 0x131a:
-+		count = 1;
-+		break;
-+	default:
- 		return;
- 	}
- 
--	for (count = 0; count < 4; count++)
-+	/* TMDS software reset */
-+	hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ, HDMI_MC_SWRSTZ);
-+
-+	val = hdmi_readb(hdmi, HDMI_FC_INVIDCONF);
-+	for (i = 0; i < count; i++)
- 		hdmi_writeb(hdmi, val, HDMI_FC_INVIDCONF);
- }
- 
-@@ -1832,7 +1853,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	int irq;
- 	int ret;
- 	u32 val = 1;
--	u16 version;
- 	u8 prod_id0;
- 	u8 prod_id1;
- 	u8 config0;
-@@ -1917,21 +1937,21 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	}
- 
- 	/* Product and revision IDs */
--	version = (hdmi_readb(hdmi, HDMI_DESIGN_ID) << 8)
--		| (hdmi_readb(hdmi, HDMI_REVISION_ID) << 0);
-+	hdmi->version = (hdmi_readb(hdmi, HDMI_DESIGN_ID) << 8)
-+		      | (hdmi_readb(hdmi, HDMI_REVISION_ID) << 0);
- 	prod_id0 = hdmi_readb(hdmi, HDMI_PRODUCT_ID0);
- 	prod_id1 = hdmi_readb(hdmi, HDMI_PRODUCT_ID1);
- 
- 	if (prod_id0 != HDMI_PRODUCT_ID0_HDMI_TX ||
- 	    (prod_id1 & ~HDMI_PRODUCT_ID1_HDCP) != HDMI_PRODUCT_ID1_HDMI_TX) {
- 		dev_err(dev, "Unsupported HDMI controller (%04x:%02x:%02x)\n",
--			version, prod_id0, prod_id1);
-+			hdmi->version, prod_id0, prod_id1);
- 		ret = -ENODEV;
- 		goto err_iahb;
- 	}
- 
- 	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP\n",
--		 version >> 12, version & 0xfff,
-+		 hdmi->version >> 12, hdmi->version & 0xfff,
- 		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without");
- 
- 	initialize_hdmi_ih_mutes(hdmi);
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
