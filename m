@@ -1,38 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:36763 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751803AbdAYVd6 (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36773 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S942620AbdAJDdO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 16:33:58 -0500
-Received: by mail-lf0-f52.google.com with SMTP id z134so136035418lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 13:33:58 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
-        jani.nikula@linux.intel.com, seanpaul@chromium.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] Enable R8A7790/1 DU VSPD compositor
-Date: Thu, 26 Jan 2017 00:33:55 +0300
-Message-ID: <1542778.dcWpka5Jpx@wasted.cogentembedded.com>
+        Mon, 9 Jan 2017 22:33:14 -0500
+Received: by mail-lf0-f66.google.com with SMTP id j75so13455003lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Jan 2017 19:33:13 -0800 (PST)
+Date: Mon, 9 Jan 2017 19:13:20 -0800
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Defconfig Updates for v4.11
+Message-ID: <20170110031320.GE22261@localhost>
+References: <cover.1483701293.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1483701293.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Fri, Jan 06, 2017 at 12:18:10PM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC defconfig updates for v4.11.
+> 
+> 
+> The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+> 
+>   Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-defconfig-for-v4.11
+> 
+> for you to fetch changes up to e37278d83e348eb53029452e65892780359b6bea:
+> 
+>   ARM: multi_v7_defconfig: Enable r8a774[35] SoCs (2017-01-03 10:44:04 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Defconfig Updates for v4.11
+> 
+> Enable:
+> * Recently added Enable r8a774[35] SoCs
+> * CMA for DMA to allow use of VIN with large frame sizes
+> * CONFIG_VIDEO_ADV7604 to allow use of HDMI input
 
-   Here's the set of 3 patches against the 'drm-next' branch of David Airlie's
-'linux.git' repo. This is a port of Laurent's DRM/DU live source patches to the
-recent kernel, see [1] for the version 2 of the patchset (including a Laurent's
-big blurb :-)). For the patch #3 to work one absolutely needs the VSP1 patch
-[2] to be applied, else the kernel will just hang...
+Merged into next/defconfig. Thanks.
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2015-March/079319.html.
-[2] https://patchwork.kernel.org/patch/9473265/
 
-[1/3] drm: Add live source object
-[2/3] drm: Connect live source to framebuffers
-[3/3] drm: rcar-du: Add VSP1 live source support
-
-MBR, Sergei
+-Olof
