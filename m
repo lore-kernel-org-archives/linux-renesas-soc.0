@@ -1,56 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34755 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751653AbdAJJg4 (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36247 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbdAJSBl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 04:36:56 -0500
-Received: by mail-io0-f194.google.com with SMTP id c80so9365888iod.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Jan 2017 01:36:56 -0800 (PST)
+        Tue, 10 Jan 2017 13:01:41 -0500
+Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20161228000045.4540-1-marek.vasut@gmail.com>
+ <2015482.2Xx0FSfo4q@avalon> <a94799ce-0030-ee4b-3d07-b3c190d79ba5@gmail.com>
+ <7398143.JfNZUDgVyk@avalon> <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
+ <20170110002327.GI17126@codeaurora.org>
+ <71b654d2-e24e-f09b-ca61-03dd7a27a24b@gmail.com>
+ <20170110004427.GO17126@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <c96d1de3-07cf-f78f-618e-e0e16f9d80c8@gmail.com>
+Date: Tue, 10 Jan 2017 18:42:25 +0100
 MIME-Version: 1.0
-In-Reply-To: <CAO3366yTp0NpXRCahyjbiVGT=aScUStcZ+PCskwgdmd_AKGb7Q@mail.gmail.com>
-References: <1477491249-2976-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <20161031114625.GB1435@katana> <CAO3366yTp0NpXRCahyjbiVGT=aScUStcZ+PCskwgdmd_AKGb7Q@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Jan 2017 10:36:55 +0100
-Message-ID: <CAMuHMdVgCiei1jm0Wi80eVN8W16rzyierL+M4EW_Yk18r_Q+Ew@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] r8a7796 I2C integration
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170110004427.GO17126@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
-
-On Thu, Nov 3, 2016 at 5:06 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> On Mon, Oct 31, 2016 at 12:46 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+On 01/10/2017 01:44 AM, Stephen Boyd wrote:
+> On 01/10, Marek Vasut wrote:
+>> On 01/10/2017 01:23 AM, Stephen Boyd wrote:
+>>> On 01/05, Marek Vasut wrote:
+>>>> On 01/05/2017 03:13 PM, Laurent Pinchart wrote:
+>>>>> Hi Marek,
+>>>>
+>>>> Hi!
+>>>>
+>>>> [...]
+>>>>
+>>>>>>>>> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
+>>>>>>>>> +                                        unsigned long parent_rate)
+>>>>>>>>> +{
+>>>>>>>>> +       struct vc5_driver_data *vc5 =
+>>>>>>>>> +               container_of(hw, struct vc5_driver_data, clk_mux);
+>>>>>>>>> +       unsigned long idiv;
+>>>>>>>>> +       u8 div;
+>>>>>>>>> +
+>>>>>>>>> +       /* FIXME: Needs locking ? */
+>>>>>>>
+>>>>>>> Let's fix it then :-)
+>>>>>>
+>>>>>> I would like to get feedback on this one, does it ?
+>>>>>
+>>>>> That's a question for Mike or Stephen I believe.
+>>>>
+>>>> OK
+>>>
+>>> What's the question?
 >>
->>> This revision is based on renesas-devel-20161024-v4.9-rc2.  It adds the
->>> Reviewed-bys and the entries for SYS-DMAC2 in the applicable I2C nodes.  I
->>> have also made sure it works with 64-bit memory enabled.
->>
->> I'd like to test, but: can you tell me which branches are needed to test
->> DMA? Or is there a complete branch available somewhere? Or could you
->> update the branch of this feature which is pulled in by renesas-drivers?
->
-> Thank you. Please check branch r8a7796-dmac-v2 at
-> https://github.com/uli/kernel.git, that should contain everything you
-> need.
+>> Whether or not I need a lock around the code in vc5_mux_recalc_rate(),
+>> since I am also tweaking the predivider bits there to assure the
+>> (downstream) PLL supplied from the mux always gets clock in range it can
+>> handle. This tweaking is mostly inspired by clk-si5351.c driver.
+> 
+> Don't rely on locking in the core for register locking within a
+> device. That makes a dependency headache if we want to rework the
+> locking scheme in the core, which we want to do eventually.
+> 
+> Also, please don't cause side effects during recalc_rate(). The
+> callback is meant to calculate the rate of the clock, not adjust
+> hardware based on what arguments are passed to it.
 
-Dropped from renesas-drivers, as this branch is based on a very old tree
-(v4.9-rc2), and many (not all!) commits have found their way upstream.
+Got it and fixed. I'll send V3 now.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Best regards,
+Marek Vasut
