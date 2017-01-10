@@ -1,10 +1,8 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 10 Jan 2017 15:48:39 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Arnd Bergmann <arnd@linaro.org>
-Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Christoph Hellwig <hch@lst.de>,
+From: Arnd Bergmann <arnd@linaro.org>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Christoph Hellwig <hch@lst.de>,
         linux-arm-kernel@lists.infradead.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -16,33 +14,48 @@ Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
         Sagi Grimberg <sagi@grimberg.me>,
         linux-nvme@lists.infradead.org
 Subject: Re: NVMe vs DMA addressing limitations
-Message-ID: <20170110144839.GB27156@lst.de>
-References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com> <20170110070719.GA17208@lst.de> <c4fd007c-3f07-fc2a-8cbb-7152f578609d@cogentembedded.com> <4137257.d2v87kqLLv@wuerfel>
+Date: Tue, 10 Jan 2017 12:01:05 +0100
+Message-ID: <4137257.d2v87kqLLv@wuerfel>
+In-Reply-To: <c4fd007c-3f07-fc2a-8cbb-7152f578609d@cogentembedded.com>
+References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com> <20170110070719.GA17208@lst.de> <c4fd007c-3f07-fc2a-8cbb-7152f578609d@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4137257.d2v87kqLLv@wuerfel>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 10, 2017 at 12:01:05PM +0100, Arnd Bergmann wrote:
-> Another workaround me might need is to limit amount of concurrent DMA
-> in the NVMe driver based on some platform quirk. The way that NVMe works,
-> it can have very large amounts of data that is concurrently mapped into
-> the device.
+On Tuesday, January 10, 2017 10:31:47 AM CET Nikita Yushchenko wrote:
+> Christoph, thanks for clear input.
+> 
+> Arnd, I think that given this discussion, best short-term solution is
+> indeed the patch I've submitted yesterday. That is, your version +
+> coherent mask support.  With that, set_dma_mask(DMA_BIT_MASK(64)) will
+> succeed and hardware with work with swiotlb.
 
-That's not really just NVMe - other storage and network controllers also
-can DMA map giant amounts of memory.  There are a couple aspects to it:
+Ok, good.
 
- - dma coherent memoery - right now NVMe doesn't use too much of it,
-   but upcoming low-end NVMe controllers will soon start to require
-   fairl large amounts of it for the host memory buffer feature that
-   allows for DRAM-less controller designs.  As an interesting quirk
-   that is memory only used by the PCIe devices, and never accessed
-   by the Linux host at all.
+> Possible next step is to teach swiotlb to dynamically allocate bounce
+> buffers within entire arm64's ZONE_DMA.
 
- - size vs number of the dynamic mapping.  We probably want the dma_ops
-   specify a maximum mapping size for a given device.  As long as we
-   can make progress with a few mappings swiotlb / the iommu can just
-   fail mapping and the driver will propagate that to the block layer
-   that throttles I/O.
+That seems reasonable, yes. We probably have to do both, as there are
+cases where a device has dma_mask smaller than ZONE_DMA but the swiotlb
+bounce area is low enough to work anyway.
+
+Another workaround me might need is to limit amount of concurrent DMA
+in the NVMe driver based on some platform quirk. The way that NVMe works,
+it can have very large amounts of data that is concurrently mapped into
+the device. SWIOTLB is one case where this currently fails, but another
+example would be old PowerPC servers that have a 256MB window of virtual
+I/O addresses per VM guest in their IOMMU. Those will likely fail the same
+way that your does.
+
+> Also there is some hope that R-Car *can* iommu-translate addresses that
+> PCIe module issues to system bus.  Although previous attempts to make
+> that working failed. Additional research is needed here.
+
+Does this IOMMU support remapping data within a virtual machine? I believe
+there are some that only do one of the two -- either you can have guest
+machines with DMA access to their low memory, or you can remap data on
+the fly in the host.
+
+	Arnd
