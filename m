@@ -1,46 +1,39 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f194.google.com ([209.85.210.194]:36598 "EHLO
-        mail-wj0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751351AbdAWQEf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 11:04:35 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 2/7] serial: sh-sci: consider DR (data ready) bit adequately
-Date: Mon, 23 Jan 2017 17:04:13 +0100
-Message-Id: <1485187458-8195-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1479154658-28558-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1479154658-28558-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Jan 2017 11:01:35 +0100
+Message-ID: <CAMuHMdV7L_jfysxFMRE+chXv5sJSro9qba3SqSD+ASKbTENY1Q@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] VSP Writeback prototype
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To allow operation with a higher RX FIFO interrupt threshold in PIO
-mode, it is necessary to consider the DR bit ("FIFO not full, but no
-data received for 1.5 frames") as an indicator that data can be read.
-Otherwise the driver will let data rot in the FIFO until the threshold
-is reached.
+On Mon, Nov 14, 2016 at 9:17 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> The following changes since commit 8bc55e5947b58dee3c8b126d7c303991ae0db130:
+>
+>   tty: serial_core: Fix serial console crash on port shutdown (2016-10-25 13:53:49 +0200)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/writeback/v2
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/sh-sci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Dropped from renesas-drivers, as this branch is based on a very old tree
+(v4.9-rc2), and many (but not all!) commits have found their way upstream.
 
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 2c45e79..9323735 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -151,7 +151,7 @@ enum {
- #define SCCKS_XIN	BIT(14)	/* SC_CLK uses bus clock (1) or SCIF_CLK (0) */
- 
- #define SCxSR_TEND(port)	(((port)->type == PORT_SCI) ? SCI_TEND   : SCIF_TEND)
--#define SCxSR_RDxF(port)	(((port)->type == PORT_SCI) ? SCI_RDRF   : SCIF_RDF)
-+#define SCxSR_RDxF(port)	(((port)->type == PORT_SCI) ? SCI_RDRF   : SCIF_DR | SCIF_RDF)
- #define SCxSR_TDxE(port)	(((port)->type == PORT_SCI) ? SCI_TDRE   : SCIF_TDFE)
- #define SCxSR_FER(port)		(((port)->type == PORT_SCI) ? SCI_FER    : SCIF_FER)
- #define SCxSR_PER(port)		(((port)->type == PORT_SCI) ? SCI_PER    : SCIF_PER)
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
