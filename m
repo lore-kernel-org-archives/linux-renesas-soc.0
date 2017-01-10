@@ -1,39 +1,53 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34096 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S942615AbdAJDd3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 9 Jan 2017 22:33:29 -0500
+Received: by mail-lf0-f67.google.com with SMTP id q89so7369292lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Jan 2017 19:33:29 -0800 (PST)
+Date: Mon, 9 Jan 2017 19:18:32 -0800
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.11
+Message-ID: <20170110031832.GH22261@localhost>
+References: <cover.1483701101.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1479154658-28558-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1479154658-28558-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Jan 2017 11:01:35 +0100
-Message-ID: <CAMuHMdV7L_jfysxFMRE+chXv5sJSro9qba3SqSD+ASKbTENY1Q@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] VSP Writeback prototype
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1483701101.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Nov 14, 2016 at 9:17 PM, Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> The following changes since commit 8bc55e5947b58dee3c8b126d7c303991ae0db130:
->
->   tty: serial_core: Fix serial console crash on port shutdown (2016-10-25 13:53:49 +0200)
->
+On Fri, Jan 06, 2017 at 12:18:48PM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC updates for v4.11.
+> 
+> 
+> The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+> 
+>   Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+> 
 > are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/writeback/v2
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.11
+> 
+> for you to fetch changes up to 70def3e53694a65c5583fb5f411491a5074bab18:
+> 
+>   ARM: shmobile: rcar-gen2: Remove unused rcar_gen2_read_mode_pins() (2017-01-03 10:50:45 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Updates for v4.11
+> 
+> * Allow booting secondary CPU cores in debug mode
 
-Dropped from renesas-drivers, as this branch is based on a very old tree
-(v4.9-rc2), and many (but not all!) commits have found their way upstream.
+Merged, thanks.
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-Olof
