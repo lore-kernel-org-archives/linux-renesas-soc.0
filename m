@@ -1,59 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:55823 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763361AbdAITcI (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34983 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760475AbdAJO7h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 14:32:08 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 0/3] Renesas RZ PFC and GPIO driver
-Date: Mon,  9 Jan 2017 20:31:55 +0100
-Message-Id: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 10 Jan 2017 09:59:37 -0500
+MIME-Version: 1.0
+In-Reply-To: <1483990318-26927-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org> <1483990318-26927-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Jan 2017 15:59:36 +0100
+Message-ID: <CAMuHMdXdtuhZR3F1XEL0V9f1h04t4mJRfM3uBLNbtJhO0bF0YA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: Add r7s72100 PFC driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   these patches are the result of a squash and forward porting of Magnus'
-PFC and GPIO driver from
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tree
-genmai-gpio-and-pfc branch to kernel v4.10
+Hi Jacopo,
 
-The PFC and GPIO driver have been forward ported to v4.10-rc1 with minor
-fixes and applied on top of renesas-driver master branch.
+On Mon, Jan 9, 2017 at 8:31 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> From: Magnus Damm <damm@opensource.se>
+>
+> Squash commits in Geert's renesas-driver/genmai-gpio-and-pfc branch that
+> add support for r7s72100 PFC.
+> This squash combines commits for Magnus' original driver and minor fixes
+> to forward-port it to a more recent kernel (v4.10)
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-As I cannot locally verify most of the peripherals functionalities enabled
-by the creation of PFC and GPIO driver for RZ SoC series, testing performed
-by patches original authors has to be trusted.
+> --- a/drivers/pinctrl/sh-pfc/core.c
+> +++ b/drivers/pinctrl/sh-pfc/core.c
+> @@ -473,6 +473,12 @@ static const struct of_device_id sh_pfc_of_table[] = {
+>                 .data = &emev2_pinmux_info,
+>         },
+>  #endif
+> +#ifdef CONFIG_PINCTRL_PFC_R7S72100
+> +       {
+> +               .compatible = "renesas,pfc-r7s72100",
+> +               .data = &r7s72100_pinmux_info,
+> +       },
+> +#endif
+>  #ifdef CONFIG_PINCTRL_PFC_R8A73A4
+>         {
+>                 .compatible = "renesas,pfc-r8a73a4",
+> @@ -626,6 +632,9 @@ static int sh_pfc_probe(struct platform_device *pdev)
+>  }
+>
+>  static const struct platform_device_id sh_pfc_id_table[] = {
+> +#ifdef CONFIG_PINCTRL_PFC_R7S72100
+> +       { "pfc-r7s72100", (kernel_ulong_t)&r7s72100_pinmux_info },
+> +#endif
 
-Some possible fixes and functional expansion for the PFC driver will follow in
-an RFC series to be applied on top of this one.
+The above chunk should be removed, as now r7s72100 always uses DT.
 
-Thanks
-   j
+>  #ifdef CONFIG_PINCTRL_PFC_SH7203
+>         { "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
+>  #endif
 
+Gr{oetje,eeting}s,
 
-Magnus Damm (3):
-  pinctrl: sh-pfc: Add r7s72100 PFC driver
-  gpio: gpio-rz: GPIO driver for Renesas RZ series
-  arm: dts: r7s72100: Add peripherals nodes
+                        Geert
 
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
- arch/arm/boot/dts/r7s72100-genmai.dts              |  51 ++
- arch/arm/boot/dts/r7s72100.dtsi                    | 151 ++++++
- drivers/gpio/Kconfig                               |   6 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-rz.c                             | 212 +++++++++
- drivers/pinctrl/sh-pfc/Kconfig                     |   5 +
- drivers/pinctrl/sh-pfc/Makefile                    |   1 +
- drivers/pinctrl/sh-pfc/core.c                      |   9 +
- drivers/pinctrl/sh-pfc/pfc-r7s72100.c              | 529 +++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   9 +-
- 11 files changed, 972 insertions(+), 3 deletions(-)
- create mode 100644 drivers/gpio/gpio-rz.c
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
