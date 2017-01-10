@@ -1,64 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32867 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751718AbdAJA3O (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:37004 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752287AbdAJAX3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 19:29:14 -0500
-Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20161228000045.4540-1-marek.vasut@gmail.com>
- <2015482.2Xx0FSfo4q@avalon> <a94799ce-0030-ee4b-3d07-b3c190d79ba5@gmail.com>
- <7398143.JfNZUDgVyk@avalon> <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
- <20170110002327.GI17126@codeaurora.org>
+        Mon, 9 Jan 2017 19:23:29 -0500
+Date: Mon, 9 Jan 2017 16:23:27 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Vasut <marek.vasut@gmail.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <71b654d2-e24e-f09b-ca61-03dd7a27a24b@gmail.com>
-Date: Tue, 10 Jan 2017 01:29:10 +0100
+Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
+Message-ID: <20170110002327.GI17126@codeaurora.org>
+References: <20161228000045.4540-1-marek.vasut@gmail.com>
+ <2015482.2Xx0FSfo4q@avalon>
+ <a94799ce-0030-ee4b-3d07-b3c190d79ba5@gmail.com>
+ <7398143.JfNZUDgVyk@avalon>
+ <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170110002327.GI17126@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/10/2017 01:23 AM, Stephen Boyd wrote:
-> On 01/05, Marek Vasut wrote:
->> On 01/05/2017 03:13 PM, Laurent Pinchart wrote:
->>> Hi Marek,
->>
->> Hi!
->>
->> [...]
->>
->>>>>>> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
->>>>>>> +                                        unsigned long parent_rate)
->>>>>>> +{
->>>>>>> +       struct vc5_driver_data *vc5 =
->>>>>>> +               container_of(hw, struct vc5_driver_data, clk_mux);
->>>>>>> +       unsigned long idiv;
->>>>>>> +       u8 div;
->>>>>>> +
->>>>>>> +       /* FIXME: Needs locking ? */
->>>>>
->>>>> Let's fix it then :-)
->>>>
->>>> I would like to get feedback on this one, does it ?
->>>
->>> That's a question for Mike or Stephen I believe.
->>
->> OK
+On 01/05, Marek Vasut wrote:
+> On 01/05/2017 03:13 PM, Laurent Pinchart wrote:
+> > Hi Marek,
 > 
-> What's the question?
+> Hi!
+> 
+> [...]
+> 
+> >>>>> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
+> >>>>> +                                        unsigned long parent_rate)
+> >>>>> +{
+> >>>>> +       struct vc5_driver_data *vc5 =
+> >>>>> +               container_of(hw, struct vc5_driver_data, clk_mux);
+> >>>>> +       unsigned long idiv;
+> >>>>> +       u8 div;
+> >>>>> +
+> >>>>> +       /* FIXME: Needs locking ? */
+> >>>
+> >>> Let's fix it then :-)
+> >>
+> >> I would like to get feedback on this one, does it ?
+> > 
+> > That's a question for Mike or Stephen I believe.
+> 
+> OK
 
-Whether or not I need a lock around the code in vc5_mux_recalc_rate(),
-since I am also tweaking the predivider bits there to assure the
-(downstream) PLL supplied from the mux always gets clock in range it can
-handle. This tweaking is mostly inspired by clk-si5351.c driver.
+What's the question?
 
 -- 
-Best regards,
-Marek Vasut
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
