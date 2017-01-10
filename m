@@ -1,77 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967563AbdAKOnm (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33368 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934917AbdAJKQj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:42 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 10/18] serial: sh-sci: Fix register offsets for the IRDA serial port
-Date: Wed, 11 Jan 2017 16:43:32 +0200
-Message-Id: <20170111144340.29074-11-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 10 Jan 2017 05:16:39 -0500
+MIME-Version: 1.0
+In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Jan 2017 11:16:37 +0100
+Message-ID: <CAMuHMdV42qhaWuW9AqxwHwabcbvx8-HBGZBYOu54CcRVFO3RuQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] thermal: add driver for R-Car Gen3
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Even though most of its registers are 8-bit wide, the IRDA has two
-16-bit registers that make it a 16-bit peripheral and not a 8-bit
-peripheral with addresses shifted by one. Fix the registers offset in
-the driver and the platform data regshift value.
+Hi Wolfram,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 -
- drivers/tty/serial/sh-sci.c           | 17 ++++++++---------
- 2 files changed, 8 insertions(+), 10 deletions(-)
+On Thu, Dec 1, 2016 at 11:04 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Here is the next series for adding thermal support to Renesas R-Car Gen3 SoCs.
+> All changes from last revision went into patch 2/4, so please check the
+> changelog there. This series has again been tested on Salvator-X boards with
+> H3 and M3-W SoCs. The updated branch can be found here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/thermal-on-4.10-next
 
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-index e1e54258b822..592cd9ab30c4 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-@@ -157,7 +157,6 @@ static struct platform_device scif1_device = {
- static struct plat_sci_port scif2_platform_data = {
- 	.type		= PORT_IRDA,
- 	.ops		= &sh770x_sci_port_ops,
--	.regshift	= 1,
- };
- 
- static struct resource scif2_resources[] = {
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 8c58c43fc85d..56ad899973d6 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -193,18 +193,17 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	},
- 
- 	/*
--	 * Common definitions for legacy IrDA ports, dependent on
--	 * regshift value.
-+	 * Common definitions for legacy IrDA ports.
- 	 */
- 	[SCIx_IRDA_REGTYPE] = {
- 		[SCSMR]		= { 0x00,  8 },
--		[SCBRR]		= { 0x01,  8 },
--		[SCSCR]		= { 0x02,  8 },
--		[SCxTDR]	= { 0x03,  8 },
--		[SCxSR]		= { 0x04,  8 },
--		[SCxRDR]	= { 0x05,  8 },
--		[SCFCR]		= { 0x06,  8 },
--		[SCFDR]		= { 0x07, 16 },
-+		[SCBRR]		= { 0x02,  8 },
-+		[SCSCR]		= { 0x04,  8 },
-+		[SCxTDR]	= { 0x06,  8 },
-+		[SCxSR]		= { 0x08, 16 },
-+		[SCxRDR]	= { 0x0a,  8 },
-+		[SCFCR]		= { 0x0c,  8 },
-+		[SCFDR]		= { 0x0e, 16 },
- 		[SCTFDR]	= sci_reg_invalid,
- 		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= sci_reg_invalid,
--- 
-Regards,
+Dropped from renesas-drivers, as Niklas provided a branch with the
+reworked version.
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
