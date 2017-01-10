@@ -1,8 +1,8 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Arnd Bergmann <arnd@linaro.org>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Christoph Hellwig <hch@lst.de>,
+To: Christoph Hellwig <hch@lst.de>
+Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
         linux-arm-kernel@lists.infradead.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -14,48 +14,33 @@ Cc: Christoph Hellwig <hch@lst.de>,
         Sagi Grimberg <sagi@grimberg.me>,
         linux-nvme@lists.infradead.org
 Subject: Re: NVMe vs DMA addressing limitations
-Date: Tue, 10 Jan 2017 12:01:05 +0100
-Message-ID: <4137257.d2v87kqLLv@wuerfel>
-In-Reply-To: <c4fd007c-3f07-fc2a-8cbb-7152f578609d@cogentembedded.com>
-References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com> <20170110070719.GA17208@lst.de> <c4fd007c-3f07-fc2a-8cbb-7152f578609d@cogentembedded.com>
+Date: Tue, 10 Jan 2017 11:54:26 +0100
+Message-ID: <1967203.EWsxCL11oI@wuerfel>
+In-Reply-To: <20170110070719.GA17208@lst.de>
+References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com> <e084dbad-29ab-25bd-5e17-da0fcd92f7ac@cogentembedded.com> <20170110070719.GA17208@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tuesday, January 10, 2017 10:31:47 AM CET Nikita Yushchenko wrote:
-> Christoph, thanks for clear input.
+On Tuesday, January 10, 2017 8:07:20 AM CET Christoph Hellwig wrote:
+> On Tue, Jan 10, 2017 at 09:47:21AM +0300, Nikita Yushchenko wrote:
+> > I'm now working with HW that:
+> > - is now way "low end" or "obsolete", it has 4G of RAM and 8 CPU cores,
+> > and is being manufactured and developed,
+> > - has 75% of it's RAM located beyond first 4G of address space,
+> > - can't physically handle incoming PCIe transactions addressed to memory
+> > beyond 4G.
 > 
-> Arnd, I think that given this discussion, best short-term solution is
-> indeed the patch I've submitted yesterday. That is, your version +
-> coherent mask support.  With that, set_dma_mask(DMA_BIT_MASK(64)) will
-> succeed and hardware with work with swiotlb.
+> It might not be low end or obselete, but it's absolutely braindead.
+> Your I/O performance will suffer badly for the life of the platform
+> because someone tries to save 2 cents, and there is not much we can do
+> about it.
 
-Ok, good.
-
-> Possible next step is to teach swiotlb to dynamically allocate bounce
-> buffers within entire arm64's ZONE_DMA.
-
-That seems reasonable, yes. We probably have to do both, as there are
-cases where a device has dma_mask smaller than ZONE_DMA but the swiotlb
-bounce area is low enough to work anyway.
-
-Another workaround me might need is to limit amount of concurrent DMA
-in the NVMe driver based on some platform quirk. The way that NVMe works,
-it can have very large amounts of data that is concurrently mapped into
-the device. SWIOTLB is one case where this currently fails, but another
-example would be old PowerPC servers that have a 256MB window of virtual
-I/O addresses per VM guest in their IOMMU. Those will likely fail the same
-way that your does.
-
-> Also there is some hope that R-Car *can* iommu-translate addresses that
-> PCIe module issues to system bus.  Although previous attempts to make
-> that working failed. Additional research is needed here.
-
-Does this IOMMU support remapping data within a virtual machine? I believe
-there are some that only do one of the two -- either you can have guest
-machines with DMA access to their low memory, or you can remap data on
-the fly in the host.
+Unfortunately it is a common problem for arm64 chips that were designed
+by taking a 32-bit SoC and replacing the CPU core. The swiotlb is the
+right workaround for this, and I think we all agree that we should
+just make it work correctly.
 
 	Arnd
