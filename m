@@ -1,40 +1,184 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:33700 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbdAPQ54 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967555AbdAKOni (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 11:57:56 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Wed, 11 Jan 2017 09:43:38 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a7795: Add missing power-domains property for sata
-Date: Mon, 16 Jan 2017 17:57:53 +0100
-Message-Id: <1484585873-30075-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 05/18] sh: sh726[49]: Don't set sh-sci pdata scscr TOIE bit
+Date: Wed, 11 Jan 2017 16:43:27 +0200
+Message-Id: <20170111144340.29074-6-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This went unnoticed as the sata_rcar driver doesn't support Runtime PM
-yet, but manages module clocks manually.
+The SCIF ports on sh7264 and sh7269 don't support the TOIE bit according
+to the datasheets.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/sh/kernel/cpu/sh2a/setup-sh7264.c | 16 ++++++++--------
+ arch/sh/kernel/cpu/sh2a/setup-sh7269.c | 16 ++++++++--------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 972e379c05967c32..026a16ac41b422a1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1148,6 +1148,7 @@
- 			reg = <0 0xee300000 0 0x1fff>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 815>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
+index f111c20177ea..aebaa7a4da46 100644
+--- a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
++++ b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
+@@ -227,7 +227,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7264", vectors, groups,
  
+ static struct plat_sci_port scif0_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -252,7 +252,7 @@ static struct platform_device scif0_device = {
+ 
+ static struct plat_sci_port scif1_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -277,7 +277,7 @@ static struct platform_device scif1_device = {
+ 
+ static struct plat_sci_port scif2_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -302,7 +302,7 @@ static struct platform_device scif2_device = {
+ 
+ static struct plat_sci_port scif3_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -327,7 +327,7 @@ static struct platform_device scif3_device = {
+ 
+ static struct plat_sci_port scif4_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -352,7 +352,7 @@ static struct platform_device scif4_device = {
+ 
+ static struct plat_sci_port scif5_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -377,7 +377,7 @@ static struct platform_device scif5_device = {
+ 
+ static struct plat_sci_port scif6_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -402,7 +402,7 @@ static struct platform_device scif6_device = {
+ 
+ static struct plat_sci_port scif7_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
+index b3445e59841a..6d7ac07b4e54 100644
+--- a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
++++ b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
+@@ -249,7 +249,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7269", vectors, groups,
+ 
+ static struct plat_sci_port scif0_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -274,7 +274,7 @@ static struct platform_device scif0_device = {
+ 
+ static struct plat_sci_port scif1_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -299,7 +299,7 @@ static struct platform_device scif1_device = {
+ 
+ static struct plat_sci_port scif2_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -324,7 +324,7 @@ static struct platform_device scif2_device = {
+ 
+ static struct plat_sci_port scif3_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -349,7 +349,7 @@ static struct platform_device scif3_device = {
+ 
+ static struct plat_sci_port scif4_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -374,7 +374,7 @@ static struct platform_device scif4_device = {
+ 
+ static struct plat_sci_port scif5_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -399,7 +399,7 @@ static struct platform_device scif5_device = {
+ 
+ static struct plat_sci_port scif6_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
+@@ -424,7 +424,7 @@ static struct platform_device scif6_device = {
+ 
+ static struct plat_sci_port scif7_platform_data = {
+ 	.flags		= UPF_BOOT_AUTOCONF,
+-	.scscr		= SCSCR_REIE | SCSCR_TOIE,
++	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
+ };
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
