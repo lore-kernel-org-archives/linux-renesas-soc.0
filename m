@@ -1,16 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:35849 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750886AbdALLRS (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:49486 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758931AbdAKReg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 06:17:18 -0500
-Received: by mail-lf0-f51.google.com with SMTP id z134so7157859lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Jan 2017 03:17:17 -0800 (PST)
-Date: Thu, 12 Jan 2017 12:17:11 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wed, 11 Jan 2017 12:34:36 -0500
+Date: Wed, 11 Jan 2017 18:34:32 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
@@ -19,7 +16,7 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Ai Kyuse <ai.kyuse.uw@renesas.com>
 Subject: Re: [PATCH v8 6/6] mmc: sh_mobile_sdhi: Add tuning support
-Message-ID: <20170112111711.GF25542@bigcity.dyn.berto.se>
+Message-ID: <20170111173432.GB1486@katana>
 References: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
  <1478182564-18762-7-git-send-email-horms+renesas@verge.net.au>
  <20170110210848.GA25542@bigcity.dyn.berto.se>
@@ -28,30 +25,45 @@ References: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
  <20170111150521.GA1486@katana>
  <20170111155723.GE25542@bigcity.dyn.berto.se>
  <CAMuHMdV5pY+nRC8yd4iVmEJAZkcBgWC2-wDr6UgpmxZSsoPHcA@mail.gmail.com>
- <20170111173432.GB1486@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="8GpibOaaTibBMecb"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170111173432.GB1486@katana>
+In-Reply-To: <CAMuHMdV5pY+nRC8yd4iVmEJAZkcBgWC2-wDr6UgpmxZSsoPHcA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2017-01-11 18:34:32 +0100, Wolfram Sang wrote:
-> 
-> > I also have a koelsch, so no need to take one on a plane ;-)
-> 
-> I thought yours was so heavily hooked up that it was a bit cumbersome to
-> bring it somewhere. Happy to be wrong here :)
-> 
 
-To be super clear, Geert you can bring your Koelsch and Wolfram you only 
-want to do testing on one Koelsch board and not as many as you can get 
-your hands on?
+--8GpibOaaTibBMecb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If so I be happy to leave my board at home and not have to take it on 
-the plane, please confirm so there are no misunderstandings :-)
 
--- 
-Regards,
-Niklas S�derlund
+> I also have a koelsch, so no need to take one on a plane ;-)
+
+I thought yours was so heavily hooked up that it was a bit cumbersome to
+bring it somewhere. Happy to be wrong here :)
+
+
+--8GpibOaaTibBMecb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYdmynAAoJEBQN5MwUoCm2ZjYP/3Wa8ppTSacnfoZyGvqDIMrn
+xaW+pv5PKI4of/OVkhExIx3T3sxbrGdjG2XADDChzNjD1CCJYDYGcsTF8Q7La9G2
+4EXFcLpBuPKhxOXuqvQBflG8zVCIxcu/ZI3/bDSGYOA4v7TEQLPRU0LXONCThnOa
+V6M9uuvX2oPvuMt+Q9lhvtnpvRZ6b8+6B8hPTkqu/rxcQEGY3zhnmUBb3TyJR/66
+bF8K1KzZZ51uoxDoA2qAzzElEWRBFM8IC16MIw78oifTaTuqo/AfzuOwRk1OS7Oc
+gzk6D1vtXl+caQwvb6lPmRTeiP2z5x15N+nXH1VzO7475duZLvVdSVxut1RYGP1S
+snQFyojjBCEoHws3HIn3nV/qNxVEYu9imhytaJoDcXh7LsOyqQ0RpNRJzZclwg7D
+dXENx7WjnVAKvv97fRGFuPC1HogQs+2WB2EcPOe50FCdk5hNppekCyCshtLE5dD/
+6COp+CWNyfZo4aM4OOtPfWcOpAQqvqklvgwSKQFS9F9gZMgcIkDzbyX6pHKzoB4Q
+15zV4tl1Dc+qBlezeD14qNlWrvfMdHe1TS114aw/FI9u4XDuWZG9eSMGlXeJKe3T
+dsohKzQcd7ERO4IYH991HaGgktSQEzK4Oxosg660F/i1D9lQ4EXHnKG6BnHcquYZ
+FmQNl8CZqOF8NkwiKMP7
+=zATh
+-----END PGP SIGNATURE-----
+
+--8GpibOaaTibBMecb--
