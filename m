@@ -1,84 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:34333 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752222AbdAFVDe (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35722 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932300AbdAKMbv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 16:03:34 -0500
-Received: by mail-lf0-f45.google.com with SMTP id v186so6855171lfa.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Jan 2017 13:02:55 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] sh_eth: get rid of 'sh_eth_cpu_data::shift_rd0'
-Date: Sat, 07 Jan 2017 00:02:52 +0300
-Message-ID: <2242796.vvdcWWhAz4@wasted.cogentembedded.com>
-In-Reply-To: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
-References: <2397522.NNiHGddh8y@wasted.cogentembedded.com>
+        Wed, 11 Jan 2017 07:31:51 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170106115235.3919-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <CAMuHMdVzm4D=Pdd6PoGzXUoO8Va4g1Y5KncaRS19PnSeGUn9Gw@mail.gmail.com>
+ <20170106115235.3919-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Jan 2017 13:31:49 +0100
+Message-ID: <CAMuHMdXfucrNPx7fLODROHTpbTuhpK+GzkLC-SGs_SSmZeMiyA@mail.gmail.com>
+Subject: Re: [PATCH v1.1 08/19] serial: sh-sci: Fix register offsets for the
+ IRDA serial port
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-After checking all  the available manuals,  I have enough information to
-conclude  that the 'shift_rd0' flag is only relevant  for the Ether cores
-supporting so called "intelligent checksum" (and hence having CSMR) which
-is indicated  by the 'hw_crc' flag.  Since  all the relevant SoCs now have
-both these flags set, we can  at last  get  rid of the former flag...
+Hi Laurent,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Jan 6, 2017 at 12:52 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Even though most of its registers are 8-bit wide, the IRDA has two
+> 16-bit registers that make it a 16-bit peripheral and not a 8-bit
+> peripheral with addresses shifted by one. Fix the registers offset in
+> the driver and the platform data regshift value.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
----
- drivers/net/ethernet/renesas/sh_eth.c |    5 +----
- drivers/net/ethernet/renesas/sh_eth.h |    1 -
- 2 files changed, 1 insertion(+), 5 deletions(-)
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -193,18 +193,17 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
+>         },
+>
+>         /*
+> -        * Common definitions for legacy IrDA ports, dependent on
+> -        * regshift value.
+> +        * Common definitions for legacy IrDA ports.
+>          */
+>         [SCIx_IRDA_REGTYPE] = {
+>                 [SCSMR]         = { 0x00,  8 },
+> -               [SCBRR]         = { 0x01,  8 },
+> -               [SCSCR]         = { 0x02,  8 },
+> -               [SCxTDR]        = { 0x03,  8 },
+> -               [SCxSR]         = { 0x04,  8 },
+> -               [SCxRDR]        = { 0x05,  8 },
+> -               [SCFCR]         = { 0x06,  8 },
+> -               [SCFDR]         = { 0x07, 16 },
+> +               [SCBRR]         = { 0x02,  8 },
+> +               [SCSCR]         = { 0x04,  8 },
+> +               [SCxTDR]        = { 0x06,  8 },
+> +               [SCxSR]         = { 0x08,  8 },
 
-Index: net/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net/drivers/net/ethernet/renesas/sh_eth.c
-@@ -537,7 +537,6 @@ static struct sh_eth_cpu_data r7s72100_d
- 	.no_ade		= 1,
- 	.hw_crc		= 1,
- 	.tsu		= 1,
--	.shift_rd0	= 1,
- };
- 
- static void sh_eth_chip_reset_r8a7740(struct net_device *ndev)
-@@ -577,7 +576,6 @@ static struct sh_eth_cpu_data r8a7740_da
- 	.hw_crc		= 1,
- 	.tsu		= 1,
- 	.select_mii	= 1,
--	.shift_rd0	= 1,
- };
- 
- /* There is CPU dependent code */
-@@ -820,7 +818,6 @@ static struct sh_eth_cpu_data sh7734_dat
- 	.tsu		= 1,
- 	.hw_crc		= 1,
- 	.select_mii	= 1,
--	.shift_rd0	= 1,
- };
- 
- /* SH7763 */
-@@ -1421,7 +1418,7 @@ static int sh_eth_rx(struct net_device *
- 		 * the RFS bits are from bit 25 to bit 16. So, the
- 		 * driver needs right shifting by 16.
- 		 */
--		if (mdp->cd->shift_rd0)
-+		if (mdp->cd->hw_crc)
- 			desc_status >>= 16;
- 
- 		skb = mdp->rx_skbuff[entry];
-Index: net/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net/drivers/net/ethernet/renesas/sh_eth.h
-@@ -490,7 +490,6 @@ struct sh_eth_cpu_data {
- 	unsigned no_ade:1;	/* E-DMAC DO NOT have ADE bit in EESR */
- 	unsigned hw_crc:1;	/* E-DMAC have CSMR */
- 	unsigned select_mii:1;	/* EtherC have RMII_MII (MII select register) */
--	unsigned shift_rd0:1;	/* shift Rx descriptor word 0 right by 16 */
- 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
- 	unsigned rtrate:1;	/* EtherC has RTRATE register */
- };
+SCSCR is a 16-bit register. You did have that correct in v1 of patch 19.
+
+If you fix that:
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> +               [SCxRDR]        = { 0x0a,  8 },
+> +               [SCFCR]         = { 0x0c,  8 },
+> +               [SCFDR]         = { 0x0e, 16 },
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
