@@ -1,57 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46556 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751054AbdAPMNS (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967569AbdAKOn5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 07:13:18 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v3 8/8] arm: dts: r7s72100-genmai: Add pinctrl for RSPI
-Date: Mon, 16 Jan 2017 13:12:52 +0100
-Message-Id: <1484568772-18137-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 11 Jan 2017 09:43:57 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 18/18] serial: sh-sci: Compute the regshift value for SCI ports
+Date: Wed, 11 Jan 2017 16:43:40 +0200
+Message-Id: <20170111144340.29074-19-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+SCI instances found in SH SoCs have different spacing between registers
+depending on the SoC. The platform data contains a regshift field that
+tells the driver by how many bits to shift the register offset to
+compute its address. We can compute the regshift value automatically
+based on the memory resource size, there's no need to pass the value
+through platform data.
 
-Add pinctrl for the existing rspi4 node on Genmai.
+Fix the sh7750 SCI and sh7760 SIM port memory resources length to ensure
+proper computation of the regshift value.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 -
+ arch/sh/kernel/cpu/sh4/setup-sh7750.c |  3 +--
+ arch/sh/kernel/cpu/sh4/setup-sh7760.c | 10 ++++++++--
+ drivers/tty/serial/sh-sci.c           |  8 +++++++-
+ include/linux/serial_sci.h            |  1 -
+ 5 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index b36c84f..01c08e0 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -71,7 +71,7 @@
+diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+index 592cd9ab30c4..59a88611df55 100644
+--- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
++++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+@@ -111,7 +111,6 @@ static struct platform_device rtc_device = {
+ static struct plat_sci_port scif0_platform_data = {
+ 	.type		= PORT_SCI,
+ 	.ops		= &sh770x_sci_port_ops,
+-	.regshift	= 1,
  };
  
- &pfc {
--	pinctrl-0 = <&ethernet_pins &scif2_pins>;
-+	pinctrl-0 = <&ethernet_pins &rspi4_pins &scif2_pins>;
- 	pinctrl-names = "default";
+ static struct resource scif0_resources[] = {
+diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7750.c b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
+index d98a55416306..57d30689204d 100644
+--- a/arch/sh/kernel/cpu/sh4/setup-sh7750.c
++++ b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
+@@ -39,11 +39,10 @@ static struct platform_device rtc_device = {
  
- 	ethernet_pins: ethernet {
-@@ -97,6 +97,12 @@
- 		function = "ethernet";
- 	};
+ static struct plat_sci_port sci_platform_data = {
+ 	.type		= PORT_SCI,
+-	.regshift	= 2,
+ };
  
-+	rspi4_pins: spi4 {
-+		groups = "rspi4_rspck_p4_0", "rspi4_ssl0_p4_1",
-+			 "rspi4_mosi_p4_2", "rspi4_miso_p4_3";
-+		function = "rspi4";
-+	};
+ static struct resource sci_resources[] = {
+-	DEFINE_RES_MEM(0xffe00000, 0x100),
++	DEFINE_RES_MEM(0xffe00000, 0x20),
+ 	DEFINE_RES_IRQ(evt2irq(0x4e0)),
+ };
+ 
+diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
+index 0c0cdfc69dcc..e51fe1734e13 100644
+--- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
++++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
+@@ -200,12 +200,18 @@ static struct platform_device scif2_device = {
+ };
+ 
+ static struct plat_sci_port scif3_platform_data = {
++	/*
++	 * This is actually a SIM card module serial port, based on an SCI with
++	 * additional registers. The sh-sci driver doesn't support the SIM port
++	 * type, declare it as a SCI. Don't declare the additional registers in
++	 * the memory resource or the driver will compute an incorrect regshift
++	 * value.
++	 */
+ 	.type		= PORT_SCI,
+-	.regshift	= 2,
+ };
+ 
+ static struct resource scif3_resources[] = {
+-	DEFINE_RES_MEM(0xfe480000, 0x100),
++	DEFINE_RES_MEM(0xfe480000, 0x10),
+ 	DEFINE_RES_IRQ(evt2irq(0xc00)),
+ 	DEFINE_RES_IRQ(evt2irq(0xc20)),
+ 	DEFINE_RES_IRQ(evt2irq(0xc40)),
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 7906255b097c..fbffe89b493f 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2572,9 +2572,15 @@ static int sci_init_single(struct platform_device *dev,
+ 
+ 	port->type		= p->type;
+ 	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
+-	port->regshift		= p->regshift;
+ 	port->fifosize		= sci_port->params->fifosize;
+ 
++	if (port->type == PORT_SCI) {
++		if (sci_port->reg_size >= 0x20)
++			port->regshift = 2;
++		else
++			port->regshift = 1;
++	}
 +
- 	scif2_pins: serial2 {
- 		groups = "scif2_txd_p3_0", "scif2_rxd_p3_2";
- 		function = "scif2";
+ 	/*
+ 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
+ 	 * for the multi-IRQ ports, which is where we are primarily
+diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
+index f9a4526f4ec5..e598eaef3962 100644
+--- a/include/linux/serial_sci.h
++++ b/include/linux/serial_sci.h
+@@ -56,7 +56,6 @@ struct plat_sci_port {
+ 	/*
+ 	 * Platform overrides if necessary, defaults otherwise.
+ 	 */
+-	unsigned char	regshift;
+ 	unsigned char	regtype;
+ 
+ 	struct plat_sci_port_ops	*ops;
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
