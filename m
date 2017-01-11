@@ -1,50 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753079AbdAZKLY (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937277AbdAKOne (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 05:11:24 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Wed, 11 Jan 2017 09:43:34 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/7] ARM: dts: rskrza1: add ostm DT support
-Date: Thu, 26 Jan 2017 11:11:08 +0100
-Message-Id: <37dfe2afc5618d42d3214a61ed017ce4bbc12254.1485425227.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
-References: <cover.1485425227.git.horms+renesas@verge.net.au>
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 02/18] serial: sh-sci: Don't rely on platform data flags when not needed
+Date: Wed, 11 Jan 2017 16:43:24 +0200
+Message-Id: <20170111144340.29074-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+The UPF_BOOT_AUTOCONF platform data flag is set by all platforms,
+hardcode it.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+The UPF_IOREMAP flag is set by a single SH platform and thus needs to be
+kept. However, for ARM platforms, we can base the decision on whether an
+OF node is present and bypass the platform data flags completely.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/tty/serial/sh-sci.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index dd4418195ca6..02b59c5b3c53 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -61,6 +61,14 @@
- 	status = "okay";
- };
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 1e573611719e..8c58c43fc85d 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2453,7 +2453,7 @@ static int sci_remap_port(struct uart_port *port)
+ 	if (port->membase)
+ 		return 0;
  
-+&ostm0 {
-+	status = "okay";
-+};
-+
-+&ostm1 {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	status = "okay";
- };
+-	if (port->flags & UPF_IOREMAP) {
++	if (port->dev->of_node || (port->flags & UPF_IOREMAP)) {
+ 		port->membase = ioremap_nocache(port->mapbase, sport->reg_size);
+ 		if (unlikely(!port->membase)) {
+ 			dev_err(port->dev, "can't remap port#%d\n", port->line);
+@@ -2475,7 +2475,7 @@ static void sci_release_port(struct uart_port *port)
+ {
+ 	struct sci_port *sport = to_sci_port(port);
+ 
+-	if (port->flags & UPF_IOREMAP) {
++	if (port->dev->of_node || (port->flags & UPF_IOREMAP)) {
+ 		iounmap(port->membase);
+ 		port->membase = NULL;
+ 	}
+@@ -2731,7 +2731,7 @@ static int sci_init_single(struct platform_device *dev,
+ 	}
+ 
+ 	port->type		= p->type;
+-	port->flags		= UPF_FIXED_PORT | p->flags;
++	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
+ 	port->regshift		= p->regshift;
+ 
+ 	/*
+@@ -2993,7 +2993,6 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
+ 
+ 	*dev_id = id;
+ 
+-	p->flags = UPF_IOREMAP | UPF_BOOT_AUTOCONF;
+ 	p->type = SCI_OF_TYPE(match->data);
+ 	p->regtype = SCI_OF_REGTYPE(match->data);
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
