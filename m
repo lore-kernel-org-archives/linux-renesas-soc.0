@@ -1,50 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752968AbdAZKLV (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59172 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758857AbdAKQdW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 05:11:21 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/7] ARM: dts: r8a7745: Link ARM GIC to clock and clock domain
-Date: Thu, 26 Jan 2017 11:11:05 +0100
-Message-Id: <db017f399639f68827edc954205803272ef20b24.1485425227.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
-References: <cover.1485425227.git.horms+renesas@verge.net.au>
+        Wed, 11 Jan 2017 11:33:22 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5923 and 5P49V5933
+Date: Wed, 11 Jan 2017 18:33:35 +0200
+Message-ID: <3509171.4UDVg95MWF@avalon>
+In-Reply-To: <20170111161603.18905-1-marek.vasut@gmail.com>
+References: <20170111161603.18905-1-marek.vasut@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Marek,
 
-Link the ARM GIC to the INTC-SYS module clock, and add it to the SYSC
-"always-on" PM Domain, so it can be power managed using that clock.
+Thank you for the patch.
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
+On Wednesday 11 Jan 2017 17:16:02 Marek Vasut wrote:
+> Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
+> These are I2C clock generators with optional clock source from
+> either XTal or dedicated clock generator and, depending on the
+> model, two or more clock outputs.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 2f60c3cb9117..a81dcc82e2ea 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -60,6 +60,9 @@
- 			      <0 0xf1006000 0 0x2000>;
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
- 						 IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
- 		};
- 
- 		irqc: interrupt-controller@e61c0000 {
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.txt  | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt new file mode
+> 100644
+> index 000000000000..82ebed9a8a15
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> @@ -0,0 +1,43 @@
+> +Binding for IDT VersaClock5 programmable i2c clock generator.
+> +
+> +The IDT VersaClock5 are programmable i2c clock generators providing
+> +from 3 to 12 output clocks.
+> +
+> +==I2C device node==
+> +
+> +Required properties:
+> +- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
+> +- reg:		i2c device address, shall be 0x68 or 0x6a.
+> +- #clock-cells:	from common clock binding; shall be set to 1.
+> +- clocks:	from common clock binding; list of parent clock handles,
+> +		- 5p49v5923: (required) either or both of XTAL or CLKIN
+> +					reference clock.
+> +		- 5p49v5933: (optional) property not present (internal
+> +					Xtal used) or CLKIN reference
+> +					clock.
+> +- clock-names:	from common clock binding; clock input names, can be
+> +		- 5p49v5923: (required) either or both of "xin", "clkin".
+> +		- 5p49v5933: (optional) property not present or "clkin".
+> +
+> +==Example==
+> +
+> +/* 25MHz reference crystal */
+> +ref25: ref25m {
+> +	compatible = "fixed-clock";
+> +	#clock-cells = <0>;
+> +	clock-frequency = <25000000>;
+> +};
+> +
+> +i2c-master-node {
+> +
+> +	/* IDT 5P49V5923 i2c clock generator */
+> +	vc5: clock-generator@6a {
+> +		compatible = "idt,5p49v5923";
+> +		reg = <0x6a>;
+> +		#clock-cells = <1>;
+> +
+> +		/* Connect XIN input to 25MHz reference */
+> +		clocks = <&ref25m>;
+> +		clock-names = "xin";
+> +	};
+> +};
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
