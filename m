@@ -1,74 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937277AbdAKOne (ORCPT
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:43416 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750864AbdAKUhC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:34 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Wed, 11 Jan 2017 15:37:02 -0500
+Date: Wed, 11 Jan 2017 21:31:45 +0100
+From: Greg KH <greg@kroah.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 02/18] serial: sh-sci: Don't rely on platform data flags when not needed
-Date: Wed, 11 Jan 2017 16:43:24 +0200
-Message-Id: <20170111144340.29074-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH 00/19] sh-sci: Platform data simplification
+Message-ID: <20170111203145.GA18261@kroah.com>
+References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdU1EqrSXrBsgej0r1TqUYn2QQd3v5RqxOs73iG3YeSG0g@mail.gmail.com>
+ <20170111104330.GA26128@kroah.com>
+ <5841958.hiJOh53K3Y@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5841958.hiJOh53K3Y@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The UPF_BOOT_AUTOCONF platform data flag is set by all platforms,
-hardcode it.
+On Wed, Jan 11, 2017 at 01:06:04PM +0200, Laurent Pinchart wrote:
+> Hi Greg,
+> 
+> On Wednesday 11 Jan 2017 11:43:30 Greg KH wrote:
+> > On Wed, Jan 11, 2017 at 11:38:15AM +0100, Geert Uytterhoeven wrote:
+> > > On Wed, Jan 11, 2017 at 9:04 AM, Greg KH <greg@kroah.com> wrote:
+> > >> On Wed, Jan 04, 2017 at 01:06:20AM +0200, Laurent Pinchart wrote:
+> > >>> Most of the patches in this series have been sitting in my development
+> > >>> tree for three years now. While rebasing all my development branches I
+> > >>> decided it was time to send them out in case they're considered
+> > >>> useful. I've then thrown a few additional patches in to move the
+> > >>> driver further in the right direction (or at least the direction I
+> > >>> consider right).
+> > >>> 
+> > >>> The idea behind this series is to move towards removal of the sh-sci
+> > >>> platform data. This won't be possible until SH platforms move to DT
+> > >>> (and I won't hold my breath), but we can get rid of most of the
+> > >>> platform data fields already and cleanup the sh-sci driver at the same
+> > >>> time.
+> > >> 
+> > >> I've merged patches 1, 2, 12, 13, 14, 15, 16, 17, and 18 in my tty tree.
+> > >> 
+> > >> If I should take any others there as well, please let me know.
+> > >
+> > > As reported by the kbuild test robot, patch 17 ("serial: sh-sci: Remove
+> > > manual break debouncing") depends on patch 7 ("sh: Don't set sh-sci
+> > > port_reg").
+> > 
+> > Ugh, ok, I can't take all of these.
+> > 
+> > What do you all suggest?
+> 
+> There are two patches still missing acks from Geert. I'll repost the whole 
+> series when he will be done with reviewing them, and you could take it all in 
+> your tree. The arch/sh/ parts won't conflict, they only touch Renesas platform 
+> code that nobody has modified for a long time.
 
-The UPF_IOREMAP flag is set by a single SH platform and thus needs to be
-kept. However, for ARM platforms, we can base the decision on whether an
-OF node is present and bypass the platform data flags completely.
+Ok, I'll drop these and then take your new series after the acks.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+thanks,
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 1e573611719e..8c58c43fc85d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2453,7 +2453,7 @@ static int sci_remap_port(struct uart_port *port)
- 	if (port->membase)
- 		return 0;
- 
--	if (port->flags & UPF_IOREMAP) {
-+	if (port->dev->of_node || (port->flags & UPF_IOREMAP)) {
- 		port->membase = ioremap_nocache(port->mapbase, sport->reg_size);
- 		if (unlikely(!port->membase)) {
- 			dev_err(port->dev, "can't remap port#%d\n", port->line);
-@@ -2475,7 +2475,7 @@ static void sci_release_port(struct uart_port *port)
- {
- 	struct sci_port *sport = to_sci_port(port);
- 
--	if (port->flags & UPF_IOREMAP) {
-+	if (port->dev->of_node || (port->flags & UPF_IOREMAP)) {
- 		iounmap(port->membase);
- 		port->membase = NULL;
- 	}
-@@ -2731,7 +2731,7 @@ static int sci_init_single(struct platform_device *dev,
- 	}
- 
- 	port->type		= p->type;
--	port->flags		= UPF_FIXED_PORT | p->flags;
-+	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
- 	port->regshift		= p->regshift;
- 
- 	/*
-@@ -2993,7 +2993,6 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
- 
- 	*dev_id = id;
- 
--	p->flags = UPF_IOREMAP | UPF_BOOT_AUTOCONF;
- 	p->type = SCI_OF_TYPE(match->data);
- 	p->regtype = SCI_OF_REGTYPE(match->data);
- 
--- 
-Regards,
-
-Laurent Pinchart
+greg k-h
