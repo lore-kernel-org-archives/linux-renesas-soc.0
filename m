@@ -1,59 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36808 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763361AbdAITch (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 14:32:37 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 0/3] pinctrl: sh-pfc: r7s72100: Add IO mode selection
-Date: Mon,  9 Jan 2017 20:32:23 +0100
-Message-Id: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Bjorn Helgaas <bhelgaas@google.com>, fkan@apm.com,
+        linux-kernel@vger.kernel.org,
+        Artemi Ivanov <artemi.ivanov@cogentembedded.com>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH 0/2] arm64: fix handling of DMA masks wider than bus supports
+Date: Wed, 11 Jan 2017 21:31:50 +0300
+Message-Id: <1484159512-28515-1-git-send-email-nikita.yoush@cogentembedded.com>
+In-Reply-To: <dca35acf-1adf-aa85-7a0b-d0c6ec702fa1@arm.com>
+References: <dca35acf-1adf-aa85-7a0b-d0c6ec702fa1@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   sending this RFC series out as a follow up of
-"[PATCH 0/3] Renesas RZ PFC and GPIO driver" patch series.
+> I reckon the easiest way forward would be to pass in some flag to
+> arch_setup_dma_ops to indicate whether it's an explicitly-configured
+> range or not - then simply initialising parent_dma_mask to ~0 for the
+> default case *should* keep things working as before.
 
-This RFC patches extend the RZ series PFC driver to support selection of pins
-IO mode.
+Tried to do that.
 
-[1/3] extends the existing register settings to set all configured peripherals
-groups in direct I/O mode, with input buffer and bi-direction control disabled.
-As I have not been able to extensively test the functionalities enabled by
-the original driver version, I cannot tell if this is a proper bug-fix, but
-according to HW manual, there are few use cases for non-direct IO mode and none
-of them is currently part of PFC enabled groups.
+---
 
-As reported by [2/3] commit message, the original driver did not allowed
-selection of IO mode though PIPC, PIBC, PBDC and PM registers.
-While this has not apparently been an issue for the peripherals enabled by the
-above mentioned patch series, the ability to select a different IO mode is
-required for some peripherals, according to v3.14 Renesas' BSP
-(https://github.com/renesas-rz/linux-3.14/)
-Unfortunately, extending the existing PFC driver to allow this, results in a
-un-desired multiplication of possible function selector marks.
+Nikita Yushchenko (2):
+  dma-mapping: let arch know origin of dma range passed to arch_setup_dma_ops()
+  arm64: avoid increasing DMA masks above what hardware supports
 
-The last patch enables LVDS, which is a use case for selection of a non-direct
-I/O mode.
-Chris, as you have plans to work on LVDS enablement for Renesas' BSP, if you
-have any time to test this settings and provide some feedback I would really
-appreciate that :)
-
-Thanks
-   j
-
-Jacopo Mondi (3):
-  pinctrl: sh-pfc: r7s72100: Enable DIO mode
-  pinctrl: sh-pfc: r7s72100: IO mode selection
-  pinctrl: sh-pfc: r7s72100: Add LVDS pin group
-
- drivers/pinctrl/sh-pfc/pfc-r7s72100.c | 137 +++++++++++++++++++++++++++++-----
- 1 file changed, 118 insertions(+), 19 deletions(-)
+ arch/arm/include/asm/dma-mapping.h             |  1 +
+ arch/arm/mm/dma-mapping.c                      |  3 +-
+ arch/arm64/Kconfig                             |  3 ++
+ arch/arm64/include/asm/device.h                |  1 +
+ arch/arm64/include/asm/dma-mapping.h           |  6 +++-
+ arch/arm64/mm/dma-mapping.c                    | 43 +++++++++++++++++++++++++-
+ arch/mips/include/asm/dma-mapping.h            |  3 +-
+ drivers/acpi/scan.c                            |  2 +-
+ drivers/iommu/rockchip-iommu.c                 |  2 +-
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |  2 +-
+ drivers/of/device.c                            |  5 ++-
+ drivers/staging/fsl-mc/bus/fsl-mc-bus.c        |  2 +-
+ 12 files changed, 64 insertions(+), 9 deletions(-)
 
 -- 
-2.7.4
+2.1.4
