@@ -1,54 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940138AbdAFLSP (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53993 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935676AbdAKJ5b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:15 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/16] arm64: dts: r8a7795: Use Gen 3 fallback compat string for PCIE
-Date: Fri,  6 Jan 2017 12:17:51 +0100
-Message-Id: <fb04f4b8bd7ecf337a8cbebe176e0bbdd954ba31.1483700694.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
-References: <cover.1483700694.git.horms+renesas@verge.net.au>
+        Wed, 11 Jan 2017 04:57:31 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v2 0/7] Renesas RZ PFC and GPIO driver
+Date: Wed, 11 Jan 2017 10:57:06 +0100
+Message-Id: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added en 3 fallback compat string for PCIE
-in r8a7795 DT.
+Hello,
+   these patches are the result of a squash and forward porting of Magnus'
+PFC and GPIO driver from
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tree
+genmai-gpio-and-pfc branch to kernel v4.10
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The PFC and GPIO driver have been forward ported to v4.10-rc1 with minor
+fixes and applied on top of renesas-driver master branch.
+
+As I cannot locally verify most of the peripherals functionalities enabled
+by the creation of PFC and GPIO driver for RZ SoC series, testing performed
+by patches original authors has to be trusted.
+
+Some possible fixes and functional expansion for the PFC driver will follow in
+an RFC series to be applied on top of this one.
+
+PATCH v2:
+whatever the future of this series will be, either we're going to drop it
+completely in favour of a new per-pin driver for the RZ series or not, I have
+closed review comments from Geert asking to break down dts and dtsi
+modifications in more patches (as it originally was)
+
+Thanks
+   j
+
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7e21491c6510..91a797b18c11 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1279,7 +1279,8 @@
- 		};
- 
- 		pciec0: pcie@fe000000 {
--			compatible = "renesas,pcie-r8a7795";
-+			compatible = "renesas,pcie-r8a7795",
-+				     "renesas,pcie-rcar-gen3";
- 			reg = <0 0xfe000000 0 0x80000>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
-@@ -1304,7 +1305,8 @@
- 		};
- 
- 		pciec1: pcie@ee800000 {
--			compatible = "renesas,pcie-r8a7795";
-+			compatible = "renesas,pcie-r8a7795",
-+				     "renesas,pcie-rcar-gen3";
- 			reg = <0 0xee800000 0 0x80000>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
+v1 -> v2:
+    - split node addition in r7s72100.dtsi and r7s72100-genami.dts in 2 patches
+    - break down addition of peripheral nodes in  r7s72100-genami.dts in 4
+      patches
+    - drop GPIO aliases in .dtsi file
+
+---
+
+Geert Uytterhoeven (1):
+  arm: dts: r7s72100-genmai: Add pinctrl for RSPI
+
+Magnus Damm (5):
+  pinctrl: sh-pfc: Add r7s72100 PFC driver
+  gpio: gpio-rz: GPIO driver for Renesas RZ series
+  arm: dts: r7s72100: GPIO and PFC device nodes
+  arm: dts: r7s72100-genmai: SCIF2 PINCTRL configuration
+  arm: dts: r7s72100-genmai: LED1 and LED2 support
+
+Simon Horman (1):
+  arm: dts: r7s72100-genmai:Add ethernet PFC node
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
+ arch/arm/boot/dts/r7s72100-genmai.dts              |  50 ++
+ arch/arm/boot/dts/r7s72100.dtsi                    | 138 ++++++
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-rz.c                             | 212 +++++++++
+ drivers/pinctrl/sh-pfc/Kconfig                     |   5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |   1 +
+ drivers/pinctrl/sh-pfc/core.c                      |   6 +
+ drivers/pinctrl/sh-pfc/pfc-r7s72100.c              | 529 +++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   9 +-
+ 11 files changed, 955 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/gpio/gpio-rz.c
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
