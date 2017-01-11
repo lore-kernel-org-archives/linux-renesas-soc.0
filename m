@@ -1,88 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33717 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbdAKQQf (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967481AbdAKOn4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 11:16:35 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5923 and 5P49V5933
-Date: Wed, 11 Jan 2017 17:16:02 +0100
-Message-Id: <20170111161603.18905-1-marek.vasut@gmail.com>
+        Wed, 11 Jan 2017 09:43:56 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 17/18] serial: sh-sci: Remove unused platform data capabilities field
+Date: Wed, 11 Jan 2017 16:43:39 +0200
+Message-Id: <20170111144340.29074-18-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
-These are I2C clock generators with optional clock source from
-either XTal or dedicated clock generator and, depending on the
-model, two or more clock outputs.
+The field isn't set by any platform but is only used internally in the
+driver to hold data parsed from DT. Move it to the sci_port structure.
 
-Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/clock/idt,versaclock5.txt  | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+ drivers/tty/serial/sh-sci.c | 11 +++++++----
+ include/linux/serial_sci.h  |  6 ------
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-new file mode 100644
-index 000000000000..82ebed9a8a15
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -0,0 +1,43 @@
-+Binding for IDT VersaClock5 programmable i2c clock generator.
-+
-+The IDT VersaClock5 are programmable i2c clock generators providing
-+from 3 to 12 output clocks.
-+
-+==I2C device node==
-+
-+Required properties:
-+- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
-+- reg:		i2c device address, shall be 0x68 or 0x6a.
-+- #clock-cells:	from common clock binding; shall be set to 1.
-+- clocks:	from common clock binding; list of parent clock handles,
-+		- 5p49v5923: (required) either or both of XTAL or CLKIN
-+					reference clock.
-+		- 5p49v5933: (optional) property not present (internal
-+					Xtal used) or CLKIN reference
-+					clock.
-+- clock-names:	from common clock binding; clock input names, can be
-+		- 5p49v5923: (required) either or both of "xin", "clkin".
-+		- 5p49v5933: (optional) property not present or "clkin".
-+
-+==Example==
-+
-+/* 25MHz reference crystal */
-+ref25: ref25m {
-+	compatible = "fixed-clock";
-+	#clock-cells = <0>;
-+	clock-frequency = <25000000>;
-+};
-+
-+i2c-master-node {
-+
-+	/* IDT 5P49V5923 i2c clock generator */
-+	vc5: clock-generator@6a {
-+		compatible = "idt,5p49v5923";
-+		reg = <0x6a>;
-+		#clock-cells = <1>;
-+
-+		/* Connect XIN input to 25MHz reference */
-+		clocks = <&ref25m>;
-+		clock-names = "xin";
-+	};
-+};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index d2de169326d8..7906255b097c 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -149,6 +149,7 @@ struct sci_port {
+ 	unsigned int			rx_timeout;
+ #endif
+ 
++	bool has_rtscts;
+ 	bool autorts;
+ };
+ 
+@@ -680,7 +681,7 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ 
+ 		/* Enable RXD and TXD pin functions */
+ 		ctrl &= ~(SCPCR_RXDC | SCPCR_TXDC);
+-		if (to_sci_port(port)->cfg->capabilities & SCIx_HAVE_RTSCTS) {
++		if (to_sci_port(port)->has_rtscts) {
+ 			/* RTS# is output, driven 1 */
+ 			ctrl |= SCPCR_RTSC;
+ 			serial_port_out(port, SCPDR,
+@@ -1736,7 +1737,7 @@ static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
+ 
+ 	mctrl_gpio_set(s->gpios, mctrl);
+ 
+-	if (!(s->cfg->capabilities & SCIx_HAVE_RTSCTS))
++	if (!s->has_rtscts)
+ 		return;
+ 
+ 	if (!(mctrl & TIOCM_RTS)) {
+@@ -2807,6 +2808,7 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const struct of_device_id *match;
+ 	struct plat_sci_port *p;
++	struct sci_port *sp;
+ 	int id;
+ 
+ 	if (!IS_ENABLED(CONFIG_OF) || !np)
+@@ -2827,13 +2829,14 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
+ 		return NULL;
+ 	}
+ 
++	sp = &sci_ports[id];
+ 	*dev_id = id;
+ 
+ 	p->type = SCI_OF_TYPE(match->data);
+ 	p->regtype = SCI_OF_REGTYPE(match->data);
+ 
+ 	if (of_find_property(np, "uart-has-rtscts", NULL))
+-		p->capabilities |= SCIx_HAVE_RTSCTS;
++		sp->has_rtscts = true;
+ 
+ 	return p;
+ }
+@@ -2861,7 +2864,7 @@ static int sci_probe_single(struct platform_device *dev,
+ 	if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS)
+ 		return PTR_ERR(sciport->gpios);
+ 
+-	if (p->capabilities & SCIx_HAVE_RTSCTS) {
++	if (sciport->has_rtscts) {
+ 		if (!IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
+ 							UART_GPIO_CTS)) ||
+ 		    !IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
+diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
+index b4419931bf4c..f9a4526f4ec5 100644
+--- a/include/linux/serial_sci.h
++++ b/include/linux/serial_sci.h
+@@ -44,17 +44,11 @@ struct plat_sci_port_ops {
+ };
+ 
+ /*
+- * Port-specific capabilities
+- */
+-#define SCIx_HAVE_RTSCTS	BIT(0)
+-
+-/*
+  * Platform device specific platform_data struct
+  */
+ struct plat_sci_port {
+ 	unsigned int	type;			/* SCI / SCIF / IRDA / HSCIF */
+ 	upf_t		flags;			/* UPF_* flags */
+-	unsigned long	capabilities;		/* Port features/capabilities */
+ 
+ 	unsigned int	sampling_rate;
+ 	unsigned int	scscr;			/* SCSCR initialization */
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
