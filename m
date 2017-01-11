@@ -1,48 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59316 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:55720 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754769AbdA0JOo (ORCPT
+        with ESMTP id S935858AbdAKK7W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:14:44 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 11 Jan 2017 05:59:22 -0500
+Date: Wed, 11 Jan 2017 11:59:15 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/9] arm64: dts: h3ulcb: follow sound CTU/MIX supports
-Date: Fri, 27 Jan 2017 10:14:23 +0100
-Message-Id: <b1980ff0c335eedbba10ea99a2a9feebb79642f8.1485508214.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1485508214.git.horms+renesas@verge.net.au>
-References: <cover.1485508214.git.horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH 3/3] arm: dts: r7s72100: Add peripherals nodes
+Message-ID: <20170111105914.GA3440@verge.net.au>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <2351875.0S8UmoVGa8@avalon>
+ <20170111103316.GD12030@verge.net.au>
+ <29704472.dtXBxvUO6T@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29704472.dtXBxvUO6T@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Wed, Jan 11, 2017 at 12:55:23PM +0200, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Wednesday 11 Jan 2017 11:33:17 Simon Horman wrote:
+> > On Tue, Jan 10, 2017 at 09:58:19PM +0200, Laurent Pinchart wrote:
+> > > On Tuesday 10 Jan 2017 16:07:01 Geert Uytterhoeven wrote:
+> > >> On Mon, Jan 9, 2017 at 8:31 PM, Jacopo Mondi wrote:
+> > >>> From: Magnus Damm <damm@opensource.se>
+> > >>> 
+> > >>> This is a squash of several commits, adding peripherals groups
+> > >>> configuration to r7s72100 device tree, and enabling some of them on
+> > >>> Genmai evaluation board
+> > >>> 
+> > >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > >> 
+> > >> Thanks for the rework!
+> > >> 
+> > >>>  arch/arm/boot/dts/r7s72100-genmai.dts |  51 ++++++++++++
+> > >>>  arch/arm/boot/dts/r7s72100.dtsi       | 151 ++++++++++++++++++++++++++
+> > >> 
+> > >> This path should be split in multiple parts:
+> > >>   - Add the pfc node to r7s72100.dtsi,
+> > >>   - Add the gpio nodes to r7s72100.dtsi,
+> > >>   - 4 patches for r7s72100-genmai.dts, adding support for LEDs, SCIF,
+> > >>     Ethernet, and SPI.
+> > > 
+> > > I can agree about the .dtsi/.dts split, but isn't this going a bit
+> > > overboard ?
+> >
+> > I would like the split so that different patches touch different files
+> > to be made.
+> 
+> That's usually what I do, at least when it comes to device tree files. When 
+> reworking core code in a subsystem patches often have to touch multiple files, 
+> but that's different.
+> 
+> > I am willing to be flexible regarding adding more than one IP block in a
+> > single patch if the patches would otherwise be very small and unlikely to
+> > lead to breakage.
+> 
+> Splitting the GPIO and PFC nodes in two patches would be fine with me, but 
+> given that they're tightly related, I think it makes more sense to keep them 
+> in one patch in this particular case.
+> 
+> > From my PoV a key motivation for splitting things up is to make it easier
+> > to selectively revert or backport individual features. I personally don't
+> > have much cause to do either on a fine-grained basis of late. So I'm happy
+> > to consider being more flexible with regards to patch granularity.
+> 
+> I usually try to split addition of unrelated IP cores in multiple patches. On 
+> the other hand, when adding multiple IP cores in one series, they often end up 
+> one next to the other in the source, creating conflicts if you try to backport 
+> selectively. I don't think that's ideal either.
+> 
+> In this particular case, the changes to arch/arm/boot/dts/r7s72100-genmai.dts 
+> are twofold :
+> 
+> - add a GPIO LEDs node
+> - configure pinctrl for the ethernet, spi and scif devices
+> 
+> We could split that in two patches, but I probably wouldn't split the
+> last one in three patches.
 
-commit 5bcd74e8a30d9259 ("arm64: dts: r8a7795: add sound MIX support")
-commit 5be5ee41d011f26b ("arm64: dts: r8a7795: add sound CTU support")
-added MIX/CTU support, and it updated clocks on SoC level.
-Thus, h3ulcb should be updated
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 6ffb0517421a..553d8968c0cf 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -277,6 +277,8 @@
- 		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
- 		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
- 		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
-+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
- 		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
- 		 <&audio_clk_a>, <&cs2000>,
- 		 <&audio_clk_c>,
--- 
-2.7.0.rc3.207.g0ac5344
+I agree that makes sense.
