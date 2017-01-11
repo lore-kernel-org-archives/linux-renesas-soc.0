@@ -1,63 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940180AbdAFLTM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967563AbdAKOnm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:12 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Wed, 11 Jan 2017 09:43:42 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/5] ARM: shmobile: apmu: Add more register documentation
-Date: Fri,  6 Jan 2017 12:18:56 +0100
-Message-Id: <460d4117a4714f3e9ae600974df03632139728ec.1483701101.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483701101.git.horms+renesas@verge.net.au>
-References: <cover.1483701101.git.horms+renesas@verge.net.au>
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 10/18] serial: sh-sci: Fix register offsets for the IRDA serial port
+Date: Wed, 11 Jan 2017 16:43:32 +0200
+Message-Id: <20170111144340.29074-11-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Even though most of its registers are 8-bit wide, the IRDA has two
+16-bit registers that make it a 16-bit peripheral and not a 8-bit
+peripheral with addresses shifted by one. Fix the registers offset in
+the driver and the platform data regshift value.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/platsmp-apmu.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 -
+ drivers/tty/serial/sh-sci.c           | 17 ++++++++---------
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 0c6bb458b7a4..933f9b902405 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -31,9 +31,15 @@ static struct {
- 	int bit;
- } apmu_cpus[NR_CPUS];
+diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+index e1e54258b822..592cd9ab30c4 100644
+--- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
++++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+@@ -157,7 +157,6 @@ static struct platform_device scif1_device = {
+ static struct plat_sci_port scif2_platform_data = {
+ 	.type		= PORT_IRDA,
+ 	.ops		= &sh770x_sci_port_ops,
+-	.regshift	= 1,
+ };
  
--#define WUPCR_OFFS 0x10
--#define PSTR_OFFS 0x40
--#define CPUNCR_OFFS(n) (0x100 + (0x10 * (n)))
-+#define WUPCR_OFFS	 0x10		/* Wake Up Control Register */
-+#define PSTR_OFFS	 0x40		/* Power Status Register */
-+#define CPUNCR_OFFS(n)	(0x100 + (0x10 * (n)))
-+					/* CPUn Power Status Control Register */
-+
-+/* Power Status Register */
-+#define CPUNST(r, n)	(((r) >> (n * 4)) & 3)	/* CPUn Status Bit */
-+#define CPUST_RUN	0		/* Run Mode */
-+#define CPUST_STANDBY	3		/* CoreStandby Mode */
+ static struct resource scif2_resources[] = {
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 8c58c43fc85d..56ad899973d6 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -193,18 +193,17 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
+ 	},
  
- static int __maybe_unused apmu_power_on(void __iomem *p, int bit)
- {
-@@ -59,7 +65,7 @@ static int __maybe_unused apmu_power_off_poll(void __iomem *p, int bit)
- 	int k;
- 
- 	for (k = 0; k < 1000; k++) {
--		if (((readl_relaxed(p + PSTR_OFFS) >> (bit * 4)) & 0x03) == 3)
-+		if (CPUNST(readl_relaxed(p + PSTR_OFFS), bit) == CPUST_STANDBY)
- 			return 1;
- 
- 		mdelay(1);
+ 	/*
+-	 * Common definitions for legacy IrDA ports, dependent on
+-	 * regshift value.
++	 * Common definitions for legacy IrDA ports.
+ 	 */
+ 	[SCIx_IRDA_REGTYPE] = {
+ 		[SCSMR]		= { 0x00,  8 },
+-		[SCBRR]		= { 0x01,  8 },
+-		[SCSCR]		= { 0x02,  8 },
+-		[SCxTDR]	= { 0x03,  8 },
+-		[SCxSR]		= { 0x04,  8 },
+-		[SCxRDR]	= { 0x05,  8 },
+-		[SCFCR]		= { 0x06,  8 },
+-		[SCFDR]		= { 0x07, 16 },
++		[SCBRR]		= { 0x02,  8 },
++		[SCSCR]		= { 0x04,  8 },
++		[SCxTDR]	= { 0x06,  8 },
++		[SCxSR]		= { 0x08, 16 },
++		[SCxRDR]	= { 0x0a,  8 },
++		[SCFCR]		= { 0x0c,  8 },
++		[SCFDR]		= { 0x0e, 16 },
+ 		[SCTFDR]	= sci_reg_invalid,
+ 		[SCRFDR]	= sci_reg_invalid,
+ 		[SCSPTR]	= sci_reg_invalid,
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
