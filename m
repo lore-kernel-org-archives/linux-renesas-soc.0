@@ -1,65 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:35388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751480AbdAKSyn (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49825 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936200AbdAKJ6c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 13:54:43 -0500
-Date: Wed, 11 Jan 2017 12:54:39 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 pci/next] PCI: rcar: Add compatible string for r8a7796
-Message-ID: <20170111185439.GH14532@bhelgaas-glaptop.roam.corp.google.com>
-References: <1482259026-7180-1-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1482259026-7180-1-git-send-email-ykaneko0929@gmail.com>
+        Wed, 11 Jan 2017 04:58:32 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v2 7/7] arm: dts: r7s72100-genmai: Add pinctrl for RSPI
+Date: Wed, 11 Jan 2017 10:57:13 +0100
+Message-Id: <1484128633-22683-8-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 21, 2016 at 03:37:06AM +0900, Yoshihiro Kaneko wrote:
-> From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-> 
-> This patch adds support for r8a7796.
-> 
-> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Applied to pci/host-rcar for v4.11 with acks from Simon and Rob, thanks!
+Add pinctrl for the existing rspi4 node on Genmai.
 
-> ---
-> 
-> This patch is based on the next branch of the pci tree.
-> 
-> v2 [Yoshihiro Kaneko]
-> * As suggested by Geert Uytterhoeven
->   Dropped the update of the driver.
-> 
->  Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> index eee518d..34712d6 100644
-> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> @@ -6,6 +6,7 @@ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
->  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
->  	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
->  	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
-> +	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
->  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
->  	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
->  
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5:
+  - Rebased, kept pinctrl only (RSPI nodes have been split off and
+    integrated before)
+v4:
+  - No changes
+v3:
+  - No changes
+v2:
+  - Use generic "codec" instead of specific "wm8978" node name.
+---
+ arch/arm/boot/dts/r7s72100-genmai.dts | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index d003be0..8c0ff9f 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -71,7 +71,7 @@
+ };
+ 
+ &pfc {
+-	pinctrl-0 = <&ethernet_pins &scif2_pins>;
++	pinctrl-0 = <&ethernet_pins &rspi4_pins &scif2_pins>;
+ 	pinctrl-names = "default";
+ 
+ 	ethernet_pins: ethernet {
+@@ -97,6 +97,12 @@
+ 		renesas,function = "ethernet";
+ 	};
+ 
++	rspi4_pins: spi4 {
++		renesas,groups = "rspi4_rspck_p4_0", "rspi4_ssl0_p4_1",
++				 "rspi4_mosi_p4_2", "rspi4_miso_p4_3";
++		renesas,function = "rspi4";
++	};
++
+ 	scif2_pins: serial2 {
+ 		renesas,groups = "scif2_txd_p3_0", "scif2_rxd_p3_2";
+ 		renesas,function = "scif2";
+-- 
+2.7.4
