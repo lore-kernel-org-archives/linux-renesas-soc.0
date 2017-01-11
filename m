@@ -1,235 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58686 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967564AbdAKOnp (ORCPT
+        with ESMTP id S935259AbdAKOnc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:45 -0500
+        Wed, 11 Jan 2017 09:43:32 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 11/18] serial: sh-sci: Remove initialization of zero fields in sci_port_params
-Date: Wed, 11 Jan 2017 16:43:33 +0200
-Message-Id: <20170111144340.29074-12-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 01/18] serial: sh-sci: Set the SCSCR TE and RE bits in the driver
+Date: Wed, 11 Jan 2017 16:43:23 +0200
+Message-Id: <20170111144340.29074-2-laurent.pinchart+renesas@ideasonboard.com>
 In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The compiler zeros uninitialized fields, don't zero them manually.
+The Transmit Enable and Receive Enable bits are set in the scscr field
+of all instances of the sh-sci platform data. Set them in the driver
+directly to prepare for their removal from platform data.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/tty/serial/sh-sci.c | 94 ---------------------------------------------
- 1 file changed, 94 deletions(-)
+ drivers/tty/serial/sh-sci.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 56ad899973d6..b99664046263 100644
+index 91e7dddbf72c..1e573611719e 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -160,14 +160,7 @@ struct plat_sci_reg {
- 	u8 offset, size;
- };
+@@ -2341,7 +2341,8 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		serial_port_out(port, SCFCR, ctrl);
+ 	}
  
--/* Helper for invalidating specific entries of an inherited map. */
--#define sci_reg_invalid	{ .offset = 0, .size = 0 }
--
- static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
--	[SCIx_PROBE_REGTYPE] = {
--		[0 ... SCIx_NR_REGS - 1] = sci_reg_invalid,
--	},
--
- 	/*
- 	 * Common SCI definitions, dependent on the port's regshift
- 	 * value.
-@@ -179,17 +172,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxTDR]	= { 0x03,  8 },
- 		[SCxSR]		= { 0x04,  8 },
- 		[SCxRDR]	= { 0x05,  8 },
--		[SCFCR]		= sci_reg_invalid,
--		[SCFDR]		= sci_reg_invalid,
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
+-	scr_val |= s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0);
++	scr_val |= SCSCR_RE | SCSCR_TE |
++		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
+ 	dev_dbg(port->dev, "SCSCR 0x%x\n", scr_val);
+ 	serial_port_out(port, SCSCR, scr_val);
+ 	if ((srr + 1 == 5) &&
+@@ -2791,7 +2792,8 @@ static void serial_console_write(struct console *co, const char *s,
  
- 	/*
-@@ -204,15 +186,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x0a,  8 },
- 		[SCFCR]		= { 0x0c,  8 },
- 		[SCFDR]		= { 0x0e, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
+ 	/* first save SCSCR then disable interrupts, keep clock source */
+ 	ctrl = serial_port_in(port, SCSCR);
+-	ctrl_temp = (sci_port->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0)) |
++	ctrl_temp = SCSCR_RE | SCSCR_TE |
++		    (sci_port->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0)) |
+ 		    (ctrl & (SCSCR_CKE1 | SCSCR_CKE0));
+ 	serial_port_out(port, SCSCR, ctrl_temp);
  
- 	/*
-@@ -227,15 +200,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x24,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
- 		[SCPCR]		= { 0x30, 16 },
- 		[SCPDR]		= { 0x34, 16 },
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
+@@ -2994,7 +2996,6 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
+ 	p->flags = UPF_IOREMAP | UPF_BOOT_AUTOCONF;
+ 	p->type = SCI_OF_TYPE(match->data);
+ 	p->regtype = SCI_OF_REGTYPE(match->data);
+-	p->scscr = SCSCR_RE | SCSCR_TE;
  
- 	/*
-@@ -249,16 +215,10 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxSR]		= { 0x14, 16 },
- 		[SCxRDR]	= { 0x60,  8 },
- 		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= sci_reg_invalid,
- 		[SCTFDR]	= { 0x38, 16 },
- 		[SCRFDR]	= { 0x3c, 16 },
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
- 		[SCPCR]		= { 0x30, 16 },
- 		[SCPDR]		= { 0x34, 16 },
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
+ 	if (of_find_property(np, "uart-has-rtscts", NULL))
+ 		p->capabilities |= SCIx_HAVE_RTSCTS;
+@@ -3162,9 +3163,9 @@ static int __init early_console_setup(struct earlycon_device *device,
+ 	sci_ports[0].cfg = &port_cfg;
+ 	sci_ports[0].cfg->type = type;
+ 	sci_probe_regmap(sci_ports[0].cfg);
+-	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR) |
+-			 SCSCR_RE | SCSCR_TE;
+-	sci_serial_out(&sci_ports[0].port, SCSCR, port_cfg.scscr);
++	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR);
++	sci_serial_out(&sci_ports[0].port, SCSCR,
++		       SCSCR_RE | SCSCR_TE | port_cfg.scscr);
  
- 	/*
-@@ -274,15 +234,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -297,15 +250,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x0a,  8 },
- 		[SCFCR]		= { 0x0c,  8 },
- 		[SCFDR]		= { 0x0e, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -320,15 +264,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -344,13 +281,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
- 		[SCDL]		= { 0x30, 16 },
- 		[SCCKS]		= { 0x34, 16 },
- 	},
-@@ -367,13 +299,9 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
- 		[HSSRR]		= { 0x40, 16 },
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
- 		[SCDL]		= { 0x30, 16 },
- 		[SCCKS]		= { 0x34, 16 },
- 	},
-@@ -391,15 +319,7 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -419,11 +339,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCRFDR]	= { 0x20, 16 },
- 		[SCSPTR]	= { 0x24, 16 },
- 		[SCLSR]		= { 0x28, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -439,15 +354,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x24,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- };
- 
+ 	device->con->write = serial_console_write;
+ 	return 0;
 -- 
 Regards,
 
