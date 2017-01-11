@@ -1,86 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940183AbdAFLTQ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937971AbdAKOnl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:16 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Wed, 11 Jan 2017 09:43:41 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/5] ARM: shmobile: apmu: Add debug resource reset for secondary CPU boot
-Date: Fri,  6 Jan 2017 12:18:57 +0100
-Message-Id: <10f778a97845e8b10af8878af99c9cfe6c31baf9.1483701101.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483701101.git.horms+renesas@verge.net.au>
-References: <cover.1483701101.git.horms+renesas@verge.net.au>
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 08/18] sh: Don't set the sh-sci platform data scscr CKE0 bit
+Date: Wed, 11 Jan 2017 16:43:30 +0200
+Message-Id: <20170111144340.29074-9-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The bit is only set by platforms that also set the CKE1 but, in which
+case its value is ignored by the device. Don't set it, this simplifies
+platform data and only leaves the CKE1 bit to be handled.
 
-In debug mode (MD21=1), reset requests derived from power-shutoff to the
-AP-system CPU cores must be enabled before the AP-system CPU cores
-resume from power-shutoff for the first time. Else resume may fail,
-causing the system to hang during boot.
-
-As setting these bits is a no-op in normal mode, there's no need to
-check the actual state of MD21 first.
-
-Inspired by CPU-specific patches in the BSP by Hisashi Nakamura
-<hisashi.nakamura.ak@renesas.com>.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/platsmp-apmu.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/sh/kernel/cpu/sh3/setup-sh7705.c | 2 +-
+ arch/sh/kernel/cpu/sh3/setup-sh7710.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 933f9b902405..7e4ca6788be5 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -35,12 +35,18 @@ static struct {
- #define PSTR_OFFS	 0x40		/* Power Status Register */
- #define CPUNCR_OFFS(n)	(0x100 + (0x10 * (n)))
- 					/* CPUn Power Status Control Register */
-+#define DBGRCR_OFFS	0x180		/* Debug Resource Reset Control Reg. */
+diff --git a/arch/sh/kernel/cpu/sh3/setup-sh7705.c b/arch/sh/kernel/cpu/sh3/setup-sh7705.c
+index a60edd8f3db7..f6e392e0d27e 100644
+--- a/arch/sh/kernel/cpu/sh3/setup-sh7705.c
++++ b/arch/sh/kernel/cpu/sh3/setup-sh7705.c
+@@ -70,7 +70,7 @@ static DECLARE_INTC_DESC(intc_desc, "sh7705", vectors, NULL,
+ 			 NULL, prio_registers, NULL);
  
- /* Power Status Register */
- #define CPUNST(r, n)	(((r) >> (n * 4)) & 3)	/* CPUn Status Bit */
- #define CPUST_RUN	0		/* Run Mode */
- #define CPUST_STANDBY	3		/* CoreStandby Mode */
+ static struct plat_sci_port scif0_platform_data = {
+-	.scscr		= SCSCR_CKE1 | SCSCR_CKE0,
++	.scscr		= SCSCR_CKE1,
+ 	.type		= PORT_SCIF,
+ 	.ops		= &sh770x_sci_port_ops,
+ 	.regtype	= SCIx_SH7705_SCIF_REGTYPE,
+diff --git a/arch/sh/kernel/cpu/sh3/setup-sh7710.c b/arch/sh/kernel/cpu/sh3/setup-sh7710.c
+index ac2a0aabcec5..ea52410b430d 100644
+--- a/arch/sh/kernel/cpu/sh3/setup-sh7710.c
++++ b/arch/sh/kernel/cpu/sh3/setup-sh7710.c
+@@ -98,7 +98,7 @@ static struct platform_device rtc_device = {
+ };
  
-+/* Debug Resource Reset Control Register */
-+#define DBGCPUREN	BIT(24)		/* CPU Other Reset Request Enable */
-+#define DBGCPUNREN(n)	BIT((n) + 20)	/* CPUn Reset Request Enable */
-+#define DBGCPUPREN	BIT(19)		/* CPU Peripheral Reset Req. Enable */
-+
- static int __maybe_unused apmu_power_on(void __iomem *p, int bit)
- {
- 	/* request power on */
-@@ -84,6 +90,8 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
- #ifdef CONFIG_SMP
- static void apmu_init_cpu(struct resource *res, int cpu, int bit)
- {
-+	u32 x;
-+
- 	if ((cpu >= ARRAY_SIZE(apmu_cpus)) || apmu_cpus[cpu].iomem)
- 		return;
+ static struct plat_sci_port scif0_platform_data = {
+-	.scscr		= SCSCR_REIE | SCSCR_CKE1 | SCSCR_CKE0,
++	.scscr		= SCSCR_REIE | SCSCR_CKE1,
+ 	.type		= PORT_SCIF,
+ };
  
-@@ -91,6 +99,11 @@ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
- 	apmu_cpus[cpu].bit = bit;
+@@ -118,7 +118,7 @@ static struct platform_device scif0_device = {
+ };
  
- 	pr_debug("apmu ioremap %d %d %pr\n", cpu, bit, res);
-+
-+	/* Setup for debug mode */
-+	x = readl(apmu_cpus[cpu].iomem + DBGRCR_OFFS);
-+	x |= DBGCPUREN | DBGCPUNREN(bit) | DBGCPUPREN;
-+	writel(x, apmu_cpus[cpu].iomem + DBGRCR_OFFS);
- }
+ static struct plat_sci_port scif1_platform_data = {
+-	.scscr		= SCSCR_REIE | SCSCR_CKE1 | SCSCR_CKE0,
++	.scscr		= SCSCR_REIE | SCSCR_CKE1,
+ 	.type		= PORT_SCIF,
+ };
  
- static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
