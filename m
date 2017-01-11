@@ -1,425 +1,76 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59075 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964978AbdACXGz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 18:06:55 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 13/19] serial: sh-sci: Replace regmap array with port parameters
-Date: Wed,  4 Jan 2017 01:06:33 +0200
-Message-Id: <20170103230639.19660-14-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 11 Jan 2017 10:31:06 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
+Message-ID: <20170111183106.GY2630@atomide.com>
+References: <20161227172003.6517-1-tony@atomide.com>
+ <20161227172003.6517-2-tony@atomide.com>
+ <CAMuHMdVLbNXx23-wgLHcvktyHxWf6t75ggU3rM5A-DhtU9hn5w@mail.gmail.com>
+ <20170110153045.GS2630@atomide.com>
+ <20170110191908.GV2630@atomide.com>
+ <CACRpkdaJmEcqMST30NRdtcLpEg5LhiAxOYsNDDUvYEYFjUBiHA@mail.gmail.com>
+ <20170111162808.GW2630@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170111162808.GW2630@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Turn the regmap two-dimensional array to an array of port parameters and
-store a pointer to the port parameters in the sci_port structure. This
-will allow handling additional port type dependent parameters.
+* Tony Lindgren <tony@atomide.com> [170111 08:29]:
+> * Linus Walleij <linus.walleij@linaro.org> [170111 07:34]:
+> > On Tue, Jan 10, 2017 at 8:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > 
+> > > Below is an experimental fix to intorduce pinctrl_start() that I've
+> > > tested with pinctrl-single. Then we should probably make all pin controller
+> > > drivers call pinctrl_start() to properly fix the issue of struct pinctrl_dev
+> > > handle not being initialized before driver functions are called.
+> > 
+> > Hm I guess that could work, but can we keep pinctrl_register() with the old
+> > semantics and add a separate pinctrl_register_and_defer()
+> > for those who just wanna start it later by a separate call?
+> > 
+> > Then we don't need any special flags.
+> 
+> OK I'll take a look.
+> 
+> > > Or do you guys have any better ideas?
+> > 
+> > Not really. So you mean revert the previous patch and apply something
+> > like this instead?
+> 
+> Let me first take a look to see if we can fix it by making drivers using
+> GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS register with
+> pinctrl_register_and_defer(). I'll post a patch for that today.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/tty/serial/sh-sci.c | 278 ++++++++++++++++++++++++--------------------
- 1 file changed, 155 insertions(+), 123 deletions(-)
+Yeah we can fix this by reverting the late_init parts of the earlier
+attempt and introducing a new pinctrl_register_and_init() for controllers
+to use:
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 3da00f432c73..be86f78a5c02 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -101,10 +101,19 @@ enum SCI_CLKS {
- 	for ((_sr) = max_sr(_port); (_sr) >= min_sr(_port); (_sr)--)	\
- 		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
- 
-+struct plat_sci_reg {
-+	u8 offset, size;
-+};
-+
-+struct sci_port_params {
-+	const struct plat_sci_reg regs[SCIx_NR_REGS];
-+};
-+
- struct sci_port {
- 	struct uart_port	port;
- 
- 	/* Platform configuration */
-+	const struct sci_port_params *params;
- 	struct plat_sci_port	*cfg;
- 	unsigned int		overrun_reg;
- 	unsigned int		overrun_mask;
-@@ -156,22 +165,20 @@ to_sci_port(struct uart_port *uart)
- 	return container_of(uart, struct sci_port, port);
- }
- 
--struct plat_sci_reg {
--	u8 offset, size;
--};
--
--static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
-+static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 	/*
- 	 * Common SCI definitions, dependent on the port's regshift
- 	 * value.
- 	 */
- 	[SCIx_SCI_REGTYPE] = {
--		[SCSMR]		= { 0x00,  8 },
--		[SCBRR]		= { 0x01,  8 },
--		[SCSCR]		= { 0x02,  8 },
--		[SCxTDR]	= { 0x03,  8 },
--		[SCxSR]		= { 0x04,  8 },
--		[SCxRDR]	= { 0x05,  8 },
-+		.regs = {
-+			[SCSMR]		= { 0x00,  8 },
-+			[SCBRR]		= { 0x01,  8 },
-+			[SCSCR]		= { 0x02,  8 },
-+			[SCxTDR]	= { 0x03,  8 },
-+			[SCxSR]		= { 0x04,  8 },
-+			[SCxRDR]	= { 0x05,  8 },
-+		},
- 	},
- 
- 	/*
-@@ -179,47 +186,53 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	 * regshift value.
- 	 */
- 	[SCIx_IRDA_REGTYPE] = {
--		[SCSMR]		= { 0x00,  8 },
--		[SCBRR]		= { 0x01,  8 },
--		[SCSCR]		= { 0x02,  8 },
--		[SCxTDR]	= { 0x03,  8 },
--		[SCxSR]		= { 0x04,  8 },
--		[SCxRDR]	= { 0x05,  8 },
--		[SCFCR]		= { 0x06,  8 },
--		[SCFDR]		= { 0x07, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00,  8 },
-+			[SCBRR]		= { 0x01,  8 },
-+			[SCSCR]		= { 0x02,  8 },
-+			[SCxTDR]	= { 0x03,  8 },
-+			[SCxSR]		= { 0x04,  8 },
-+			[SCxRDR]	= { 0x05,  8 },
-+			[SCFCR]		= { 0x06,  8 },
-+			[SCFDR]		= { 0x07, 16 },
-+		},
- 	},
- 
- 	/*
- 	 * Common SCIFA definitions.
- 	 */
- 	[SCIx_SCIFA_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x20,  8 },
--		[SCxSR]		= { 0x14, 16 },
--		[SCxRDR]	= { 0x24,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
--		[SCPCR]		= { 0x30, 16 },
--		[SCPDR]		= { 0x34, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x20,  8 },
-+			[SCxSR]		= { 0x14, 16 },
-+			[SCxRDR]	= { 0x24,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+			[SCPCR]		= { 0x30, 16 },
-+			[SCPDR]		= { 0x34, 16 },
-+		},
- 	},
- 
- 	/*
- 	 * Common SCIFB definitions.
- 	 */
- 	[SCIx_SCIFB_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x40,  8 },
--		[SCxSR]		= { 0x14, 16 },
--		[SCxRDR]	= { 0x60,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCTFDR]	= { 0x38, 16 },
--		[SCRFDR]	= { 0x3c, 16 },
--		[SCPCR]		= { 0x30, 16 },
--		[SCPDR]		= { 0x34, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x40,  8 },
-+			[SCxSR]		= { 0x14, 16 },
-+			[SCxRDR]	= { 0x60,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCTFDR]	= { 0x38, 16 },
-+			[SCRFDR]	= { 0x3c, 16 },
-+			[SCPCR]		= { 0x30, 16 },
-+			[SCPDR]		= { 0x34, 16 },
-+		},
- 	},
- 
- 	/*
-@@ -227,46 +240,52 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	 * count registers.
- 	 */
- 	[SCIx_SH2_SCIF_FIFODATA_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x0c,  8 },
--		[SCxSR]		= { 0x10, 16 },
--		[SCxRDR]	= { 0x14,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
--		[SCSPTR]	= { 0x20, 16 },
--		[SCLSR]		= { 0x24, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x0c,  8 },
-+			[SCxSR]		= { 0x10, 16 },
-+			[SCxRDR]	= { 0x14,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+			[SCSPTR]	= { 0x20, 16 },
-+			[SCLSR]		= { 0x24, 16 },
-+		},
- 	},
- 
- 	/*
- 	 * Common SH-3 SCIF definitions.
- 	 */
- 	[SCIx_SH3_SCIF_REGTYPE] = {
--		[SCSMR]		= { 0x00,  8 },
--		[SCBRR]		= { 0x02,  8 },
--		[SCSCR]		= { 0x04,  8 },
--		[SCxTDR]	= { 0x06,  8 },
--		[SCxSR]		= { 0x08, 16 },
--		[SCxRDR]	= { 0x0a,  8 },
--		[SCFCR]		= { 0x0c,  8 },
--		[SCFDR]		= { 0x0e, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00,  8 },
-+			[SCBRR]		= { 0x02,  8 },
-+			[SCSCR]		= { 0x04,  8 },
-+			[SCxTDR]	= { 0x06,  8 },
-+			[SCxSR]		= { 0x08, 16 },
-+			[SCxRDR]	= { 0x0a,  8 },
-+			[SCFCR]		= { 0x0c,  8 },
-+			[SCFDR]		= { 0x0e, 16 },
-+		},
- 	},
- 
- 	/*
- 	 * Common SH-4(A) SCIF(B) definitions.
- 	 */
- 	[SCIx_SH4_SCIF_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x0c,  8 },
--		[SCxSR]		= { 0x10, 16 },
--		[SCxRDR]	= { 0x14,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
--		[SCSPTR]	= { 0x20, 16 },
--		[SCLSR]		= { 0x24, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x0c,  8 },
-+			[SCxSR]		= { 0x10, 16 },
-+			[SCxRDR]	= { 0x14,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+			[SCSPTR]	= { 0x20, 16 },
-+			[SCLSR]		= { 0x24, 16 },
-+		},
- 	},
- 
- 	/*
-@@ -274,37 +293,41 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	 * External Clock (BRG).
- 	 */
- 	[SCIx_SH4_SCIF_BRG_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x0c,  8 },
--		[SCxSR]		= { 0x10, 16 },
--		[SCxRDR]	= { 0x14,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
--		[SCSPTR]	= { 0x20, 16 },
--		[SCLSR]		= { 0x24, 16 },
--		[SCDL]		= { 0x30, 16 },
--		[SCCKS]		= { 0x34, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x0c,  8 },
-+			[SCxSR]		= { 0x10, 16 },
-+			[SCxRDR]	= { 0x14,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+			[SCSPTR]	= { 0x20, 16 },
-+			[SCLSR]		= { 0x24, 16 },
-+			[SCDL]		= { 0x30, 16 },
-+			[SCCKS]		= { 0x34, 16 },
-+		},
- 	},
- 
- 	/*
- 	 * Common HSCIF definitions.
- 	 */
- 	[SCIx_HSCIF_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x0c,  8 },
--		[SCxSR]		= { 0x10, 16 },
--		[SCxRDR]	= { 0x14,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
--		[SCSPTR]	= { 0x20, 16 },
--		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= { 0x40, 16 },
--		[SCDL]		= { 0x30, 16 },
--		[SCCKS]		= { 0x34, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x0c,  8 },
-+			[SCxSR]		= { 0x10, 16 },
-+			[SCxRDR]	= { 0x14,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+			[SCSPTR]	= { 0x20, 16 },
-+			[SCLSR]		= { 0x24, 16 },
-+			[HSSRR]		= { 0x40, 16 },
-+			[SCDL]		= { 0x30, 16 },
-+			[SCCKS]		= { 0x34, 16 },
-+		},
- 	},
- 
- 	/*
-@@ -312,15 +335,17 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	 * register.
- 	 */
- 	[SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x0c,  8 },
--		[SCxSR]		= { 0x10, 16 },
--		[SCxRDR]	= { 0x14,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
--		[SCLSR]		= { 0x24, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x0c,  8 },
-+			[SCxSR]		= { 0x10, 16 },
-+			[SCxRDR]	= { 0x14,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+			[SCLSR]		= { 0x24, 16 },
-+		},
- 	},
- 
- 	/*
-@@ -328,18 +353,20 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	 * count registers.
- 	 */
- 	[SCIx_SH4_SCIF_FIFODATA_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x0c,  8 },
--		[SCxSR]		= { 0x10, 16 },
--		[SCxRDR]	= { 0x14,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= { 0x1c, 16 },	/* aliased to SCFDR */
--		[SCRFDR]	= { 0x20, 16 },
--		[SCSPTR]	= { 0x24, 16 },
--		[SCLSR]		= { 0x28, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x0c,  8 },
-+			[SCxSR]		= { 0x10, 16 },
-+			[SCxRDR]	= { 0x14,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+			[SCTFDR]	= { 0x1c, 16 },	/* aliased to SCFDR */
-+			[SCRFDR]	= { 0x20, 16 },
-+			[SCSPTR]	= { 0x24, 16 },
-+			[SCLSR]		= { 0x28, 16 },
-+		},
- 	},
- 
- 	/*
-@@ -347,18 +374,20 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	 * registers.
- 	 */
- 	[SCIx_SH7705_SCIF_REGTYPE] = {
--		[SCSMR]		= { 0x00, 16 },
--		[SCBRR]		= { 0x04,  8 },
--		[SCSCR]		= { 0x08, 16 },
--		[SCxTDR]	= { 0x20,  8 },
--		[SCxSR]		= { 0x14, 16 },
--		[SCxRDR]	= { 0x24,  8 },
--		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= { 0x1c, 16 },
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x04,  8 },
-+			[SCSCR]		= { 0x08, 16 },
-+			[SCxTDR]	= { 0x20,  8 },
-+			[SCxSR]		= { 0x14, 16 },
-+			[SCxRDR]	= { 0x24,  8 },
-+			[SCFCR]		= { 0x18, 16 },
-+			[SCFDR]		= { 0x1c, 16 },
-+		},
- 	},
- };
- 
--#define sci_getreg(up, offset)		(sci_regmap[to_sci_port(up)->cfg->regtype] + offset)
-+#define sci_getreg(up, offset)		(&to_sci_port(up)->params->regs[offset])
- 
- /*
-  * The "offset" here is rather misleading, in that it refers to an enum
-@@ -2556,6 +2585,8 @@ static int sci_init_single(struct platform_device *dev,
- 			return ret;
- 	}
- 
-+	sci_port->params = &sci_port_params[p->regtype];
-+
- 	switch (p->type) {
- 	case PORT_SCIFB:
- 		port->fifosize = 256;
-@@ -3068,6 +3099,7 @@ static int __init early_console_setup(struct earlycon_device *device,
- 	sci_ports[0].cfg = &port_cfg;
- 	sci_ports[0].cfg->type = type;
- 	sci_probe_regmap(sci_ports[0].cfg);
-+	sci_ports[0].params = &sci_port_params[sci_ports[0].cfg->regtype];
- 	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR);
- 	sci_serial_out(&sci_ports[0].port, SCSCR,
- 		       SCSCR_RE | SCSCR_TE | port_cfg.scscr);
--- 
+extern int pinctrl_register_and_init(struct pinctrl_desc *pctldesc,
+				     struct device *dev, void *driver_data,
+				     struct pinctrl_dev **pctldev);
+
+> Then maybe for v4.12 we can attempt to move all pin controller drivers
+> to using it so we can fix the problem for good.
+
+And that will also make converting existing drivers to use it later on
+trivial.
+
+Will post a patch shortly after some more testing.
+
 Regards,
 
-Laurent Pinchart
+Tony
