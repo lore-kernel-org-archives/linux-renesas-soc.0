@@ -1,71 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:46426 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751741AbdAKURf (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:45134 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754713AbdAKRvl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 15:17:35 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: jacopo mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Wed, 11 Jan 2017 12:51:41 -0500
+Subject: Re: [PATCH 0/3] Renesas RZ PFC and GPIO driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <7332833.bE664ByKOm@avalon> <10eda4a0-55de-4716-b92f-17dcf599af34@jmondi.org>
+ <1928005.z8ulDpGmNF@avalon>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
         "geert+renesas@glider.be" <geert+renesas@glider.be>,
         "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: RE: [PATCH 0/3] Renesas RZ PFC and GPIO driver
-Date: Wed, 11 Jan 2017 20:17:30 +0000
-Message-ID: <SG2PR06MB1165A22C577C408E37C7FDB78A660@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
- <7332833.bE664ByKOm@avalon> <10eda4a0-55de-4716-b92f-17dcf599af34@jmondi.org>
- <1928005.z8ulDpGmNF@avalon> <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
-In-Reply-To: <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: jacopo mondi <jacopo@jmondi.org>
+Message-ID: <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
+Date: Wed, 11 Jan 2017 18:51:35 +0100
 MIME-Version: 1.0
+In-Reply-To: <1928005.z8ulDpGmNF@avalon>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo and Laurent,
+Hi Laurent,
 
-On Wednesday, January 11, 2017, jacopo mondi wrote:
-> A big difference from what pinctrl-single does and what the table-based
-> approach does is that it creates groups, pins and functions at run-time,
-> parsing the dts...
+On 11/01/2017 17:31, Laurent Pinchart wrote:
+> Hi Jacopo,
 
-See, this makes me think that this will chew up even more system memory.
+[snip]
 
-The thing about the RZ/A1 series is that it has internal RAM and we use
-that along with XIP_KERNEL in order to build systems that do not require
-external RAM.
-So in the end, even if we can get sh-pfc to functionally work for RZ/A1,
-it would be pretty sad if the device driver that uses the most system
-memory is one that is really only used at boot time just to change some
-pin configurations.
+>>
+>> I was wondering if that should not be be turned into something more
+>> similar to the pinctrl-single defined ABI. In that case it would look
+>> like this (please excuse the pseduo-dts syntax here)
+>>
+>>   	scif2_pins: serial2 {
+>> 		renesas,pin = <3, 2, MUX_MODE4, PIN_CONFIG_OPTIONS,
+>> 			       3, 0, MUX_MODE6, PIN_CONFIG_OPTIONS>
+>
+> This should just be "pin", not "renesas,pin".
+>
+>> 	};
+>
+> Yes, I believe that should be done, especially given that the datasheet for
+> the SoC is public. For other SoCs the current PFC driver model exposes the
+> information needed to configure pin muxing even if you can't access the
+> datasheet, which is an option that I'd hate losing.
+>
 
+Just to point out that this proposed change won't affect the existing 
+R-Car devices, but would apply to RZ/A-like devices currently not 
+supported and which may appear in future (and according to Chris, to 
+some old SH ones which no one wants to touch ;P )
 
-> As a final note: maybe we need to decide what to do with this series,
-> people is spending time reviewing it, and I've just sent v2 out. If we
-> want to go in a different direction, we should stop here :)
+I'm thinking about something like
 
-Personally, for the RZ/A series, I don't see the sh-pfc driver as a long
-term solution. If people need something in the kernel today to general
-testing, that's one thing. But if someone starts laying out a board
-with any differences from the Renesas reference design, they might be
-in for a rude awaking when trying to put together a BSP for their board.
+drivers/pinctrl/sh-pfc/ (which would be better re-named as rcar-pfc)
+drivers/pinctrl/rz-pfc/
 
+But that's a big change that may upset some people here :)
 
-If people really want this sh-pcf based driver upstreamed, I will try
-to do some testing on my boards to make sure it at least does what it
-is supposed to do. (wait for V3 patch set???)
+>> I'm under the impression that pinctrl-single would almost do, if not for
+>> the write function bit, that for OMAP platform results in a write to a
+>> single register, while (for RZ/A at least) we have to spread it on a
+>> bunch of different registers.
+>
+> That's correct, but a pinctrl-single-like driver could be implemented
+> relatively easily without all the data tables. We might still need some data
+> if we want to validate DT entries though, for instance to store the valid pin
+> config and/or options for each pin.
+>
 
-Even so, I still plan on mocking up a new driver with the ideas from
-this discussion (create a renesas-pfc.c) as a long term solution for
-the RZ/A series. Whether that new driver architecture is worth upstreaming
-or not, I guess we'll have to wait and see.
+A big difference from what pinctrl-single does and what the table-based 
+approach does is that it creates groups, pins and functions at run-time, 
+parsing the dts...
+There's indeed quite some code there for doing this, but it does not 
+perform any validation of what the dts describes.
+Maybe we can skip all that part (parsing and run-time generation of 
+groups, pins and function) using tables, and adopt a pin-oriented ABI 
+that would allow us to specify in the dts the function and the per-pin 
+configuration that would look more natural for this kind of devices.
 
-Cheers
+As a final note: maybe we need to decide what to do with this series, 
+people is spending time reviewing it, and I've just sent v2 out. If we 
+want to go in a different direction, we should stop here :)
 
-Chris
+Thanks
+    j
