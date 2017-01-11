@@ -1,6 +1,6 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 11 Jan 2017 10:31:06 -0800
+Date: Wed, 11 Jan 2017 08:28:08 -0800
 From: Tony Lindgren <tony@atomide.com>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -14,62 +14,47 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
-Message-ID: <20170111183106.GY2630@atomide.com>
+Message-ID: <20170111162808.GW2630@atomide.com>
 References: <20161227172003.6517-1-tony@atomide.com>
  <20161227172003.6517-2-tony@atomide.com>
  <CAMuHMdVLbNXx23-wgLHcvktyHxWf6t75ggU3rM5A-DhtU9hn5w@mail.gmail.com>
  <20170110153045.GS2630@atomide.com>
  <20170110191908.GV2630@atomide.com>
  <CACRpkdaJmEcqMST30NRdtcLpEg5LhiAxOYsNDDUvYEYFjUBiHA@mail.gmail.com>
- <20170111162808.GW2630@atomide.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170111162808.GW2630@atomide.com>
+In-Reply-To: <CACRpkdaJmEcqMST30NRdtcLpEg5LhiAxOYsNDDUvYEYFjUBiHA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-* Tony Lindgren <tony@atomide.com> [170111 08:29]:
-> * Linus Walleij <linus.walleij@linaro.org> [170111 07:34]:
-> > On Tue, Jan 10, 2017 at 8:19 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > 
-> > > Below is an experimental fix to intorduce pinctrl_start() that I've
-> > > tested with pinctrl-single. Then we should probably make all pin controller
-> > > drivers call pinctrl_start() to properly fix the issue of struct pinctrl_dev
-> > > handle not being initialized before driver functions are called.
-> > 
-> > Hm I guess that could work, but can we keep pinctrl_register() with the old
-> > semantics and add a separate pinctrl_register_and_defer()
-> > for those who just wanna start it later by a separate call?
-> > 
-> > Then we don't need any special flags.
+* Linus Walleij <linus.walleij@linaro.org> [170111 07:34]:
+> On Tue, Jan 10, 2017 at 8:19 PM, Tony Lindgren <tony@atomide.com> wrote:
 > 
-> OK I'll take a look.
+> > Below is an experimental fix to intorduce pinctrl_start() that I've
+> > tested with pinctrl-single. Then we should probably make all pin controller
+> > drivers call pinctrl_start() to properly fix the issue of struct pinctrl_dev
+> > handle not being initialized before driver functions are called.
 > 
-> > > Or do you guys have any better ideas?
-> > 
-> > Not really. So you mean revert the previous patch and apply something
-> > like this instead?
+> Hm I guess that could work, but can we keep pinctrl_register() with the old
+> semantics and add a separate pinctrl_register_and_defer()
+> for those who just wanna start it later by a separate call?
 > 
-> Let me first take a look to see if we can fix it by making drivers using
-> GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS register with
-> pinctrl_register_and_defer(). I'll post a patch for that today.
+> Then we don't need any special flags.
 
-Yeah we can fix this by reverting the late_init parts of the earlier
-attempt and introducing a new pinctrl_register_and_init() for controllers
-to use:
+OK I'll take a look.
 
-extern int pinctrl_register_and_init(struct pinctrl_desc *pctldesc,
-				     struct device *dev, void *driver_data,
-				     struct pinctrl_dev **pctldev);
+> > Or do you guys have any better ideas?
+> 
+> Not really. So you mean revert the previous patch and apply something
+> like this instead?
 
-> Then maybe for v4.12 we can attempt to move all pin controller drivers
-> to using it so we can fix the problem for good.
+Let me first take a look to see if we can fix it by making drivers using
+GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS register with
+pinctrl_register_and_defer(). I'll post a patch for that today.
 
-And that will also make converting existing drivers to use it later on
-trivial.
-
-Will post a patch shortly after some more testing.
+Then maybe for v4.12 we can attempt to move all pin controller drivers
+to using it so we can fix the problem for good.
 
 Regards,
 
