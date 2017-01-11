@@ -1,233 +1,177 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967569AbdAKOnr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 11 Jan 2017 09:43:47 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 8/8] ARM: dts: r8a7745: Add reset control properties
-Date: Fri, 20 Jan 2017 15:08:26 +0100
-Message-Id: <1484921306-9967-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 13/18] serial: sh-sci: Constify platform data
+Date: Wed, 11 Jan 2017 16:43:35 +0200
+Message-Id: <20170111144340.29074-14-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add properties to describe the reset topology for on-SoC devices:
-  - Add the "#reset-cells" property to the CPG/MSSR device node,
-  - Add resets and reset-names properties to the various device nodes.
+The driver modifies platform data for internal purpose only. Fix that
+and make the platform data structure const.
 
-This allows to reset SoC devices using the Reset Controller API.
-
-Note that all resets added match the corresponding module clocks.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/tty/serial/sh-sci.c | 97 +++++++++++++++++++++++----------------------
+ 1 file changed, 49 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index a81dcc82e2eadd09..ac62c14af764dd1a 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -63,6 +63,7 @@
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
- 		};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index ca68a7d562ea..4a54fd5909ed 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -114,7 +114,7 @@ struct sci_port {
  
- 		irqc: interrupt-controller@e61c0000 {
-@@ -82,6 +83,7 @@
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 407>;
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
- 		};
+ 	/* Platform configuration */
+ 	const struct sci_port_params *params;
+-	struct plat_sci_port	*cfg;
++	const struct plat_sci_port *cfg;
+ 	unsigned int		overrun_reg;
+ 	unsigned int		overrun_mask;
+ 	unsigned int		error_mask;
+@@ -420,41 +420,6 @@ static void sci_serial_out(struct uart_port *p, int offset, int value)
+ 		WARN(1, "Invalid register access\n");
+ }
  
- 		timer {
-@@ -103,6 +105,7 @@
- 			clock-names = "extal", "usb_extal";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
+-static int sci_probe_regmap(struct plat_sci_port *cfg)
+-{
+-	switch (cfg->type) {
+-	case PORT_SCI:
+-		cfg->regtype = SCIx_SCI_REGTYPE;
+-		break;
+-	case PORT_IRDA:
+-		cfg->regtype = SCIx_IRDA_REGTYPE;
+-		break;
+-	case PORT_SCIFA:
+-		cfg->regtype = SCIx_SCIFA_REGTYPE;
+-		break;
+-	case PORT_SCIFB:
+-		cfg->regtype = SCIx_SCIFB_REGTYPE;
+-		break;
+-	case PORT_SCIF:
+-		/*
+-		 * The SH-4 is a bit of a misnomer here, although that's
+-		 * where this particular port layout originated. This
+-		 * configuration (or some slight variation thereof)
+-		 * remains the dominant model for all SCIFs.
+-		 */
+-		cfg->regtype = SCIx_SH4_SCIF_REGTYPE;
+-		break;
+-	case PORT_HSCIF:
+-		cfg->regtype = SCIx_HSCIF_REGTYPE;
+-		break;
+-	default:
+-		pr_err("Can't probe register map for given port\n");
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+ static void sci_port_enable(struct sci_port *sci_port)
+ {
+ 	unsigned int i;
+@@ -2539,9 +2504,50 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
+ 	return 0;
+ }
  
- 		prr: chipid@ff000044 {
-@@ -149,6 +152,7 @@
- 			clocks = <&cpg CPG_MOD 219>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -181,6 +185,7 @@
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -196,6 +201,7 @@
- 			       <&dmac1 0x21>, <&dmac1 0x22>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
- 			status = "disabled";
- 		};
++static const struct sci_port_params *
++sci_probe_regmap(const struct plat_sci_port *cfg)
++{
++	unsigned int regtype;
++
++	if (cfg->regtype != SCIx_PROBE_REGTYPE)
++		return &sci_port_params[cfg->regtype];
++
++	switch (cfg->type) {
++	case PORT_SCI:
++		regtype = SCIx_SCI_REGTYPE;
++		break;
++	case PORT_IRDA:
++		regtype = SCIx_IRDA_REGTYPE;
++		break;
++	case PORT_SCIFA:
++		regtype = SCIx_SCIFA_REGTYPE;
++		break;
++	case PORT_SCIFB:
++		regtype = SCIx_SCIFB_REGTYPE;
++		break;
++	case PORT_SCIF:
++		/*
++		 * The SH-4 is a bit of a misnomer here, although that's
++		 * where this particular port layout originated. This
++		 * configuration (or some slight variation thereof)
++		 * remains the dominant model for all SCIFs.
++		 */
++		regtype = SCIx_SH4_SCIF_REGTYPE;
++		break;
++	case PORT_HSCIF:
++		regtype = SCIx_HSCIF_REGTYPE;
++		break;
++	default:
++		pr_err("Can't probe register map for given port\n");
++		return NULL;
++	}
++
++	return &sci_port_params[regtype];
++}
++
+ static int sci_init_single(struct platform_device *dev,
+ 			   struct sci_port *sci_port, unsigned int index,
+-			   struct plat_sci_port *p, bool early)
++			   const struct plat_sci_port *p, bool early)
+ {
+ 	struct uart_port *port = &sci_port->port;
+ 	const struct resource *res;
+@@ -2578,13 +2584,9 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->irqs[3] = sci_port->irqs[0];
+ 	}
  
-@@ -210,6 +216,7 @@
- 			       <&dmac1 0x25>, <&dmac1 0x26>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
+-	if (p->regtype == SCIx_PROBE_REGTYPE) {
+-		ret = sci_probe_regmap(p);
+-		if (unlikely(ret))
+-			return ret;
+-	}
+-
+-	sci_port->params = &sci_port_params[p->regtype];
++	sci_port->params = sci_probe_regmap(p);
++	if (unlikely(sci_port->params == NULL))
++		return -EINVAL;
  
-@@ -224,6 +231,7 @@
- 			       <&dmac1 0x27>, <&dmac1 0x28>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
- 			status = "disabled";
- 		};
+ 	switch (p->type) {
+ 	case PORT_SCIFB:
+@@ -2804,7 +2806,7 @@ static char early_serial_buf[32];
  
-@@ -238,6 +246,7 @@
- 			       <&dmac1 0x1b>, <&dmac1 0x1c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 1106>;
- 			status = "disabled";
- 		};
+ static int sci_probe_earlyprintk(struct platform_device *pdev)
+ {
+-	struct plat_sci_port *cfg = dev_get_platdata(&pdev->dev);
++	const struct plat_sci_port *cfg = dev_get_platdata(&pdev->dev);
  
-@@ -252,6 +261,7 @@
- 			       <&dmac1 0x1f>, <&dmac1 0x20>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 1107>;
- 			status = "disabled";
- 		};
- 
-@@ -266,6 +276,7 @@
- 			       <&dmac1 0x23>, <&dmac1 0x24>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 1108>;
- 			status = "disabled";
- 		};
- 
-@@ -280,6 +291,7 @@
- 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
- 			status = "disabled";
- 		};
- 
-@@ -294,6 +306,7 @@
- 			       <&dmac1 0x19>, <&dmac1 0x1a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
- 			status = "disabled";
- 		};
- 
-@@ -308,6 +321,7 @@
- 			       <&dmac1 0x1d>, <&dmac1 0x1e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 216>;
- 			status = "disabled";
- 		};
- 
-@@ -323,6 +337,7 @@
- 			       <&dmac1 0x29>, <&dmac1 0x2a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 721>;
- 			status = "disabled";
- 		};
- 
-@@ -338,6 +353,7 @@
- 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 720>;
- 			status = "disabled";
- 		};
- 
-@@ -353,6 +369,7 @@
- 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 719>;
- 			status = "disabled";
- 		};
- 
-@@ -368,6 +385,7 @@
- 			       <&dmac1 0x2f>, <&dmac1 0x30>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 718>;
- 			status = "disabled";
- 		};
- 
-@@ -383,6 +401,7 @@
- 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 715>;
- 			status = "disabled";
- 		};
- 
-@@ -398,6 +417,7 @@
- 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
- 			status = "disabled";
- 		};
- 
-@@ -413,6 +433,7 @@
- 			       <&dmac1 0x39>, <&dmac1 0x3a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
- 			status = "disabled";
- 		};
- 
-@@ -428,6 +449,7 @@
- 			       <&dmac1 0x4d>, <&dmac1 0x4e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
- 			status = "disabled";
- 		};
- 
-@@ -443,6 +465,7 @@
- 			       <&dmac1 0x3b>, <&dmac1 0x3c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
- 			status = "disabled";
- 		};
- 
-@@ -452,6 +475,7 @@
- 			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 813>;
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 813>;
- 			phy-mode = "rmii";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+ 	if (early_serial_console.data)
+ 		return -EEXIST;
+@@ -3095,10 +3097,9 @@ static int __init early_console_setup(struct earlycon_device *device,
+ 	device->port.serial_out	= sci_serial_out;
+ 	device->port.type = type;
+ 	memcpy(&sci_ports[0].port, &device->port, sizeof(struct uart_port));
++	port_cfg.type = type;
+ 	sci_ports[0].cfg = &port_cfg;
+-	sci_ports[0].cfg->type = type;
+-	sci_probe_regmap(sci_ports[0].cfg);
+-	sci_ports[0].params = &sci_port_params[sci_ports[0].cfg->regtype];
++	sci_ports[0].params = sci_probe_regmap(&port_cfg);
+ 	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR);
+ 	sci_serial_out(&sci_ports[0].port, SCSCR,
+ 		       SCSCR_RE | SCSCR_TE | port_cfg.scscr);
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
