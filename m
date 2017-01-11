@@ -1,75 +1,51 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 14/20] drm: bridge: dw-hdmi: Detect AHB audio DMA using correct register
-Date: Tue, 17 Jan 2017 10:29:04 +0200
-Message-Id: <20170117082910.27023-15-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:33056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753535AbdAKSmS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 11 Jan 2017 13:42:18 -0500
+Date: Wed, 11 Jan 2017 12:42:12 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Subject: Re: [PATCH pci/next] PCI: rcar: return ENODEV code when PCIe card
+ does not insert
+Message-ID: <20170111184212.GF14532@bhelgaas-glaptop.roam.corp.google.com>
+References: <1481889004-26124-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1481889004-26124-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bit 0 in CONFIG1_ID tells whether the IP core uses an AHB slave
-interface for control. The correct way to identify AHB audio DMA support
-is through bit 1 in CONFIG3_ID.
+On Fri, Dec 16, 2016 at 12:50:04PM +0100, Simon Horman wrote:
+> From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+> 
+> R-Car PCIe does not support hotplug so it is appropriate to
+> treat the absence of a PCIe card as an ENODEV error.
+> 
+> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+> [simon: updated changelog]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 6 +++---
- drivers/gpu/drm/bridge/dw-hdmi.h | 4 ++++
- 2 files changed, 7 insertions(+), 3 deletions(-)
+Applied to pci/host-rcar for v4.11 with the following changelog (I updated
+the summary line):
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 1809247745b8..730a7558d4d4 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1836,7 +1836,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	u8 prod_id0;
- 	u8 prod_id1;
- 	u8 config0;
--	u8 config1;
-+	u8 config3;
- 
- 	hdmi = devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
- 	if (!hdmi)
-@@ -1988,9 +1988,9 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	pdevinfo.id = PLATFORM_DEVID_AUTO;
- 
- 	config0 = hdmi_readb(hdmi, HDMI_CONFIG0_ID);
--	config1 = hdmi_readb(hdmi, HDMI_CONFIG1_ID);
-+	config3 = hdmi_readb(hdmi, HDMI_CONFIG3_ID);
- 
--	if (config1 & HDMI_CONFIG1_AHB) {
-+	if (config3 & HDMI_CONFIG3_AHBAUDDMA) {
- 		struct dw_hdmi_audio_data audio;
- 
- 		audio.phys = iores->start;
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
-index 91d7fabbd6e5..a4fd64a203c9 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.h
-@@ -559,6 +559,10 @@ enum {
- /* CONFIG1_ID field values */
- 	HDMI_CONFIG1_AHB = 0x01,
- 
-+/* CONFIG3_ID field values */
-+	HDMI_CONFIG3_AHBAUDDMA = 0x02,
-+	HDMI_CONFIG3_GPAUD = 0x01,
-+
- /* IH_FC_INT2 field values */
- 	HDMI_IH_FC_INT2_OVERFLOW_MASK = 0x03,
- 	HDMI_IH_FC_INT2_LOW_PRIORITY_OVERFLOW = 0x02,
--- 
-Regards,
+commit e94888d23736cec51ba851f6e798d0eeb9ef5f41
+Author: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Date:   Fri Dec 16 12:50:04 2016 +0100
 
-Laurent Pinchart
+    PCI: rcar: Return -ENODEV from host bridge probe when no card present
+    
+    R-Car PCIe does not support hotplug so it is appropriate to treat the
+    absence of a PCIe card as an -ENODEV error.
+    
+    Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+    [simon: updated changelog]
+    Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
