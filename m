@@ -1,26 +1,26 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 12 Jan 2017 15:35:03 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Subject: Re: [PATCH] arm64: Add support for DMA_ATTR_SKIP_CPU_SYNC attribute
+ to swiotlb
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <1484129477-24121-1-git-send-email-geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] arm64: Add support for DMA_ATTR_SKIP_CPU_SYNC attribute
- to swiotlb
-Message-ID: <20170112153503.GD13843@arm.com>
-References: <1484129477-24121-1-git-send-email-geert+renesas@glider.be>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5f4cda9e-9f23-afe1-b191-fbed208b04d0@arm.com>
+Date: Wed, 11 Jan 2017 14:24:34 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1484129477-24121-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 11, 2017 at 11:11:17AM +0100, Geert Uytterhoeven wrote:
+On 11/01/17 10:11, Geert Uytterhoeven wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
 > This patch adds support for DMA_ATTR_SKIP_CPU_SYNC attribute for
@@ -45,10 +45,61 @@ On Wed, Jan 11, 2017 at 11:11:17AM +0100, Geert Uytterhoeven wrote:
 > 
 > Presumably it was an oversight that the existing swiotlb based
 > implementation didn't have support for DMA_ATTR_SKIP_CPU_SYNC yet?
+
+Less an oversight, more that nobody's wanted to use it until now ;)
+
+Personally I'd prefer flag tests to be "!(x)" rather than "(x) == 0",
+but the latter is already in place, so I'll leave the final word on
+style/consistency nitpicks to Catalin and Will.
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
 > ---
 >  arch/arm64/mm/dma-mapping.c | 12 ++++++++----
 >  1 file changed, 8 insertions(+), 4 deletions(-)
-
-Thanks. Applied for 4.11, with Robin's Reviewed-by.
-
-Will
+> 
+> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+> index e04082700bb16c35..1d7d5d2881db7c19 100644
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+> @@ -211,7 +211,8 @@ static dma_addr_t __swiotlb_map_page(struct device *dev, struct page *page,
+>  	dma_addr_t dev_addr;
+>  
+>  	dev_addr = swiotlb_map_page(dev, page, offset, size, dir, attrs);
+> -	if (!is_device_dma_coherent(dev))
+> +	if (!is_device_dma_coherent(dev) &&
+> +	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
+>  		__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
+>  
+>  	return dev_addr;
+> @@ -222,7 +223,8 @@ static void __swiotlb_unmap_page(struct device *dev, dma_addr_t dev_addr,
+>  				 size_t size, enum dma_data_direction dir,
+>  				 unsigned long attrs)
+>  {
+> -	if (!is_device_dma_coherent(dev))
+> +	if (!is_device_dma_coherent(dev) &&
+> +	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
+>  		__dma_unmap_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
+>  	swiotlb_unmap_page(dev, dev_addr, size, dir, attrs);
+>  }
+> @@ -235,7 +237,8 @@ static int __swiotlb_map_sg_attrs(struct device *dev, struct scatterlist *sgl,
+>  	int i, ret;
+>  
+>  	ret = swiotlb_map_sg_attrs(dev, sgl, nelems, dir, attrs);
+> -	if (!is_device_dma_coherent(dev))
+> +	if (!is_device_dma_coherent(dev) &&
+> +	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
+>  		for_each_sg(sgl, sg, ret, i)
+>  			__dma_map_area(phys_to_virt(dma_to_phys(dev, sg->dma_address)),
+>  				       sg->length, dir);
+> @@ -251,7 +254,8 @@ static void __swiotlb_unmap_sg_attrs(struct device *dev,
+>  	struct scatterlist *sg;
+>  	int i;
+>  
+> -	if (!is_device_dma_coherent(dev))
+> +	if (!is_device_dma_coherent(dev) &&
+> +	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
+>  		for_each_sg(sgl, sg, nelems, i)
+>  			__dma_unmap_area(phys_to_virt(dma_to_phys(dev, sg->dma_address)),
+>  					 sg->length, dir);
+> 
