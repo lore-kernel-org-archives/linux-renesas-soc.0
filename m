@@ -1,12 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57448 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752768AbdAKLWP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55344 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760755AbdAKKfd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 06:22:15 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+        Wed, 11 Jan 2017 05:35:33 -0500
+Date: Wed, 11 Jan 2017 11:35:23 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: jacopo mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
         "geert+renesas@glider.be" <geert+renesas@glider.be>,
@@ -15,88 +17,44 @@ Cc: Chris Brandt <Chris.Brandt@renesas.com>,
         <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 Subject: Re: [PATCH 0/3] Renesas RZ PFC and GPIO driver
-Date: Wed, 11 Jan 2017 13:22:26 +0200
-Message-ID: <7332833.bE664ByKOm@avalon>
-In-Reply-To: <06e9c953-df81-08f1-a817-730301778e06@jmondi.org>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org> <2671694.94z5NEauGX@avalon> <06e9c953-df81-08f1-a817-730301778e06@jmondi.org>
+Message-ID: <20170111103522.GE12030@verge.net.au>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1923903.Gi7z59W6W3@avalon>
+ <SG2PR06MB1165EBCB06C5D473CBAC2F218A640@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <2671694.94z5NEauGX@avalon>
+ <06e9c953-df81-08f1-a817-730301778e06@jmondi.org>
+ <SG2PR06MB1165993554BE4B9A6D9D3EBC8A660@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165993554BE4B9A6D9D3EBC8A660@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
-
-On Tuesday 10 Jan 2017 23:32:27 jacopo mondi wrote:
-> On 10/01/2017 02:28, Laurent Pinchart wrote:
-> > On Monday 09 Jan 2017 23:53:39 Chris Brandt wrote:
-> >> On Monday, January 09, 2017, Laurent Pinchart wrote:
-> >>> Both the existing RZ/A model and the pinctrl model are in my opinion
-> >>> improvements over the RZ/G and R-Car models. I don't care much about
-> >>> whether pinctrl-single can be used, but we really need hardware
-> >>> architectures that don't require those huge data tables.
-> >> 
-> >> I can definitely agree to that.
-> >> 
-> >>> It's more complex than that. Both the pin-based and group-based models
-> >>> have their pros and cons, and the pinctrl API is some kind of mix that
-> >>> allows both options.
-> >> 
-> >> Here is my general question: Which of these 2 approaches are better?
-> >> 
-> >> A) In the DT, the user ask "enable Ethernet please" and magic happens in
-> >>    the pfc driver.
-> >> 
-> >> B) In the DT, the user looks up the correct pin/function assignments in
-> >>    the SoC Hardware Manual and manually spells out what they need.
-> >> 
-> >> R-Car looks more like A. I've been using a driver that looks more like B.
-> >> 
-> >> For most drivers (USB, MMC, SDHI, etc..,), I'm happy when 'magic happens'
-> >> and I don't really have to open a HW manual at all.
-> >> But, for something like setting up the PFC when someone gets a shiny new
-> >> board, making people actually open a HW manual seems acceptable to me.
-> > 
-> > From a user point of view, option A looks better to me. However, it has
-> > two drawbacks:
-> > 
-> > - Through deciding what pin groups we make available we create a DT ABI
-> > that will make it difficult to fix mistakes in case the groups are not
-> > fine-grained enough.
-> > 
-> > - The data tables in C code are large, and we end up compiling many of
-> > them in multi-platform kernel, significantly increasing the kernel size.
-> > 
-> > I would thus favour option B.
+On Wed, Jan 11, 2017 at 12:46:31AM +0000, Chris Brandt wrote:
+> Hi Jacopo,
 > 
-> That would be saner, I agree.
+> On Tuesday, January 10, 2017, Jacopo Mondi wrote:
+> > So, I guess what direction to take depends on whether or not we're going
+> > to see more hardware with a per-pin configuration that would benefit from
+> > this new rz-pfc driver (it seems so) and if this justify splitting sh-pfc
+> > in two, a group-based one for R-Car devices (and all devices there
+> > already) and a new pin-based one.
 > 
-> And a much saner way of doing this would be, in my understanding, not
-> using the group-based sh-pfc drivers used for R-Car and back it up with
-> a pin-based equivalent, where to hook drivers for each specific hardware.
-
-We can't really do that for the existing SoCs as the concept of groups is 
-present in the hardware. Not only do we need to select per-pin functions, but 
-there are also register bits that perform pin muxing for whole groups. If this 
-changes in future generations of the SoCs we then could do away with the data 
-tables, but for now we're stuck with them.
-
-> Looks like pinmux-single, yes, but that driver bets on the ability to
-> set pin functions and configurations with a write to a single register
-> while, at least for RZ/A, the same is scattered among several registers
-> (I may be wrong on the single register requirement for pinctrl-single
-> though)
+> Well, since I'm the one with the "renesas.com" email address, I'll try to
+> see if I can figure out if the R-Car PFC can be changed to something else for
+> R-Car Gen4. Same goes for RZ/G. Sometimes the chip designers just keep doing
+> the same thing over and over again because they don't get any feedback from
+> the SW guys.
 > 
-> So, I guess what direction to take depends on whether or not we're going
-> to see more hardware with a per-pin configuration that would benefit
-> from this new rz-pfc driver (it seems so) and if this justify splitting
-> sh-pfc in two, a group-based one for R-Car devices (and all devices
-> there already) and a new pin-based one.
 > 
-> Or maybe we can tie pin-based configuration in sh-pfc and it's me not
-> seeing how to do that.
+> > Or maybe we can tie pin-based configuration in sh-pfc and it's me not
+> > seeing how to do that.
+> 
+> At some point....we do need to leave the "sh-" name behind as I don't really
+> see much of a future for SH4 devices. Using something like pinctrl-renesas
+> is probably a better name. Although, anyone who's watched the semiconductor
+> business over the years knows that names never stay the same. (sigh)
 
--- 
-Regards,
-
-Laurent Pinchart
+FWIW I agree "renesas-" makes more sense than "sh-" for all Renesas ARM
+based SoCs.
