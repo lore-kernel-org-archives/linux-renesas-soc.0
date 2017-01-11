@@ -1,1066 +1,755 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58693 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967557AbdAKOni (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:46684 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935676AbdAKJ6c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:38 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/18] sh: Don't set the sh-sci pdata UPF_BOOT_AUTOCONF flags
-Date: Wed, 11 Jan 2017 16:43:28 +0200
-Message-Id: <20170111144340.29074-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 11 Jan 2017 04:58:32 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v2 1/7] pinctrl: sh-pfc: Add r7s72100 PFC driver
+Date: Wed, 11 Jan 2017 10:57:07 +0100
+Message-Id: <1484128633-22683-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The flag is set by the driver internally, don't set it in platform data.
+From: Magnus Damm <damm@opensource.se>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Squash commits in Geert's renesas-driver/genmai-gpio-and-pfc branch that
+add support for r7s72100 PFC.
+This squash combines commits for Magnus' original driver and minor fixes
+to forward-port it to a more recent kernel (v4.10)
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+-----------------------------------------------------------------------
+
+pinctrl: sh-pfc: Rework _GP_GPIO, introduce _GP_GPIO32
+
+Rework _GP_GPIO to take banksize as argument, introduce
+_GP_GPIO32 for SoCs with 32-bit GPIO banks.
+
+Signed-off-by: Magnus Damm <damm@opensource.se>
+
+pinctrl: sh-pfc: r7s72100 base support
+
+Add r7s72100 PINCTRL support via sh-pfc V2. At this point the code
+provides enough support to allow use together with the gpio-rz
+driver. Incremental per-device patches will in the future be
+submitted on top of this base patch to allow PINCTRL enablement
+for each individual device.
+
+Signed-off-by: Magnus Damm <damm@opensource.se>
+
+pinctrl: sh-pfc: r7s72100 single pin macros
+
+Introduce macros that allow description of one pin per line.
+Compared to the other ways of doing this, using this style
+we can compresses the description of each pin from 9 to 1 line.
+
+Signed-off-by: Magnus Damm <damm@opensource.se>
+
+pinctrl: sh-pfc: r7s72100 SCIF support
+
+Add support for SCIF functions SCK, TXD, RXD, CTS and RTS to the
+r7s72100 PINCTRL code. There are two possible pins that can be used
+for TXD (Port 3 Pin 0 Function 6 and Port 3 Pin 1 Function 4) and
+because of that are pins broken out into separate functions.
+
+Signed-off-by: Magnus Damm <damm@opensource.se>
+
+[REBASED] pinctrl: sh-pfc: r7s72100 binding docs
+
+Add compatible string for r7s72100.
+
+Signed-off-by: Magnus Damm <damm@opensource.se>
+
+pinctrl: r7s72100: add riic groups
+
+Tested RIIC2 on a genmai board. Other riic groups are untested but seem
+trivial enough to be added.
+
+Signed-off-by: Wolfram Sang <wsa@sang-engineering.com>
+Acked-by: Magnus Damm <damm@opensource.se>
+
+[PATCH] HACK: make magnus new driver work
+
+On Wed, Dec 18, 2013 at 10:31:57PM +0100, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa@sang-engineering.com>
+>
+> Tested RIIC2 on a genmai board. Other riic groups are untested but seem
+> trivial enough to be added.
+>
+> Signed-off-by: Wolfram Sang <wsa@sang-engineering.com>
+> Acked-by: Magnus Damm <damm@opensource.se>
+> ---
+>
+> V2: keep sorting alphabetical
+>
+> Note: With the current PFC driver as posted by Magnus, it needs another patch
+> to work. Yet, I think this is a seperate PFC issue which needs to be sorted out
+> seperately and shouldn't affect these declarations. I'll add the needed patch
+> as a response to this mail.
+
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH] HACK: make magnus new driver work
+
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+
+pinctl: sh-pfc: r7s72100: Ethernet support
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+[WIP] eth pfc comments from Laurent
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+pinctrl: sh-pfc: r7s72100: Add RSPI support
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+pinctrl: sh-pfc: Port to v4.10-rc1
+
+Port of Magnus' driver from v3.18 to v4.10-rc1
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/sh/kernel/cpu/sh2/setup-sh7619.c  |  3 ---
- arch/sh/kernel/cpu/sh2a/setup-mxg.c    |  1 -
- arch/sh/kernel/cpu/sh2a/setup-sh7201.c |  8 --------
- arch/sh/kernel/cpu/sh2a/setup-sh7203.c |  4 ----
- arch/sh/kernel/cpu/sh2a/setup-sh7206.c |  4 ----
- arch/sh/kernel/cpu/sh2a/setup-sh7264.c |  8 --------
- arch/sh/kernel/cpu/sh2a/setup-sh7269.c |  8 --------
- arch/sh/kernel/cpu/sh3/setup-sh7705.c  |  2 --
- arch/sh/kernel/cpu/sh3/setup-sh770x.c  |  3 ---
- arch/sh/kernel/cpu/sh3/setup-sh7710.c  |  2 --
- arch/sh/kernel/cpu/sh3/setup-sh7720.c  |  2 --
- arch/sh/kernel/cpu/sh4/setup-sh4-202.c |  1 -
- arch/sh/kernel/cpu/sh4/setup-sh7750.c  |  2 --
- arch/sh/kernel/cpu/sh4/setup-sh7760.c  |  4 ----
- arch/sh/kernel/cpu/sh4a/setup-sh7343.c |  4 ----
- arch/sh/kernel/cpu/sh4a/setup-sh7366.c |  1 -
- arch/sh/kernel/cpu/sh4a/setup-sh7722.c |  3 ---
- arch/sh/kernel/cpu/sh4a/setup-sh7723.c |  6 ------
- arch/sh/kernel/cpu/sh4a/setup-sh7724.c |  6 ------
- arch/sh/kernel/cpu/sh4a/setup-sh7734.c |  6 ------
- arch/sh/kernel/cpu/sh4a/setup-sh7757.c |  3 ---
- arch/sh/kernel/cpu/sh4a/setup-sh7763.c |  3 ---
- arch/sh/kernel/cpu/sh4a/setup-sh7770.c | 10 ----------
- arch/sh/kernel/cpu/sh4a/setup-sh7780.c |  2 --
- arch/sh/kernel/cpu/sh4a/setup-sh7785.c |  6 ------
- arch/sh/kernel/cpu/sh4a/setup-sh7786.c |  6 ------
- arch/sh/kernel/cpu/sh4a/setup-shx3.c   |  3 ---
- arch/sh/kernel/cpu/sh5/setup-sh5.c     |  2 +-
- 28 files changed, 1 insertion(+), 112 deletions(-)
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |   5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |   1 +
+ drivers/pinctrl/sh-pfc/core.c                      |   6 +
+ drivers/pinctrl/sh-pfc/pfc-r7s72100.c              | 529 +++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   9 +-
+ 6 files changed, 548 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r7s72100.c
 
-diff --git a/arch/sh/kernel/cpu/sh2/setup-sh7619.c b/arch/sh/kernel/cpu/sh2/setup-sh7619.c
-index f8a77bdad0a6..95796ad00fbe 100644
---- a/arch/sh/kernel/cpu/sh2/setup-sh7619.c
-+++ b/arch/sh/kernel/cpu/sh2/setup-sh7619.c
-@@ -61,7 +61,6 @@ static DECLARE_INTC_DESC(intc_desc, "sh7619", vectors, NULL,
- 			 NULL, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -82,7 +81,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -103,7 +101,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-mxg.c b/arch/sh/kernel/cpu/sh2a/setup-mxg.c
-index fc6f0677888d..060fdd369f09 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-mxg.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-mxg.c
-@@ -129,7 +129,6 @@ static struct platform_device mtu2_device = {
- };
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7201.c b/arch/sh/kernel/cpu/sh2a/setup-sh7201.c
-index 5b5a67082207..c1301f68d3cd 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7201.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7201.c
-@@ -178,7 +178,6 @@ static DECLARE_INTC_DESC(intc_desc, "sh7201", vectors, groups,
- 			 mask_registers, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -199,7 +198,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -220,7 +218,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -241,7 +238,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -262,7 +258,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -283,7 +278,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -304,7 +298,6 @@ static struct platform_device scif5_device = {
- };
- 
- static struct plat_sci_port scif6_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -325,7 +318,6 @@ static struct platform_device scif6_device = {
- };
- 
- static struct plat_sci_port scif7_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7203.c b/arch/sh/kernel/cpu/sh2a/setup-sh7203.c
-index 146a7d9a20fd..32ec732e28e5 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7203.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7203.c
-@@ -174,7 +174,6 @@ static DECLARE_INTC_DESC(intc_desc, "sh7203", vectors, groups,
- 			 mask_registers, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -196,7 +195,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -218,7 +216,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -240,7 +237,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7206.c b/arch/sh/kernel/cpu/sh2a/setup-sh7206.c
-index c540fb8c9e09..8d8d354851ce 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7206.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7206.c
-@@ -134,7 +134,6 @@ static DECLARE_INTC_DESC(intc_desc, "sh7206", vectors, groups,
- 			 mask_registers, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -155,7 +154,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -176,7 +174,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -197,7 +194,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-index aebaa7a4da46..ab71eab690fd 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7264.c
-@@ -226,7 +226,6 @@ static DECLARE_INTC_DESC(intc_desc, "sh7264", vectors, groups,
- 			 mask_registers, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -251,7 +250,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -276,7 +274,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -301,7 +298,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -326,7 +322,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -351,7 +346,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -376,7 +370,6 @@ static struct platform_device scif5_device = {
- };
- 
- static struct plat_sci_port scif6_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -401,7 +394,6 @@ static struct platform_device scif6_device = {
- };
- 
- static struct plat_sci_port scif7_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-index 6d7ac07b4e54..c7e81b20967c 100644
---- a/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-+++ b/arch/sh/kernel/cpu/sh2a/setup-sh7269.c
-@@ -248,7 +248,6 @@ static DECLARE_INTC_DESC(intc_desc, "sh7269", vectors, groups,
- 			 mask_registers, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -273,7 +272,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -298,7 +296,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -323,7 +320,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -348,7 +344,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -373,7 +368,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -398,7 +392,6 @@ static struct platform_device scif5_device = {
- };
- 
- static struct plat_sci_port scif6_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-@@ -423,7 +416,6 @@ static struct platform_device scif6_device = {
- };
- 
- static struct plat_sci_port scif7_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh7705.c b/arch/sh/kernel/cpu/sh3/setup-sh7705.c
-index 4f7b4f9b7d02..a60edd8f3db7 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh7705.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh7705.c
-@@ -70,7 +70,6 @@ static DECLARE_INTC_DESC(intc_desc, "sh7705", vectors, NULL,
- 			 NULL, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_CKE1 | SCSCR_CKE0,
- 	.type		= PORT_SCIF,
- 	.ops		= &sh770x_sci_port_ops,
-@@ -93,7 +92,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_SCIF,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regtype	= SCIx_SH7705_SCIF_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-index 06682ae414e2..e64fe24d860c 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-@@ -110,7 +110,6 @@ static struct platform_device rtc_device = {
- 
- static struct plat_sci_port scif0_platform_data = {
- 	.port_reg	= 0xa4000136,
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_SCI,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regshift	= 1,
-@@ -134,7 +133,6 @@ static struct platform_device scif0_device = {
-     defined(CONFIG_CPU_SUBTYPE_SH7707) || \
-     defined(CONFIG_CPU_SUBTYPE_SH7709)
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_SCIF,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regtype	= SCIx_SH3_SCIF_REGTYPE,
-@@ -159,7 +157,6 @@ static struct platform_device scif1_device = {
-     defined(CONFIG_CPU_SUBTYPE_SH7709)
- static struct plat_sci_port scif2_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_IRDA,
- 	.ops		= &sh770x_sci_port_ops,
- 	.regshift	= 1,
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh7710.c b/arch/sh/kernel/cpu/sh3/setup-sh7710.c
-index 6347f9625ed1..ac2a0aabcec5 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh7710.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh7710.c
-@@ -98,7 +98,6 @@ static struct platform_device rtc_device = {
- };
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1 | SCSCR_CKE0,
- 	.type		= PORT_SCIF,
- };
-@@ -119,7 +118,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1 | SCSCR_CKE0,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh7720.c b/arch/sh/kernel/cpu/sh3/setup-sh7720.c
-index d35400c76db7..bf34b4e2e9ef 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh7720.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh7720.c
-@@ -52,7 +52,6 @@ static struct platform_device rtc_device = {
- };
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_SCIF,
- 	.ops		= &sh7720_sci_port_ops,
- 	.regtype	= SCIx_SH7705_SCIF_REGTYPE,
-@@ -74,7 +73,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_SCIF,
- 	.ops		= &sh7720_sci_port_ops,
- 	.regtype	= SCIx_SH7705_SCIF_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh4-202.c b/arch/sh/kernel/cpu/sh4/setup-sh4-202.c
-index fa5f8e7b8150..2623f820d510 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh4-202.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh4-202.c
-@@ -17,7 +17,6 @@
- #include <linux/io.h>
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7750.c b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-index 9baabdaa214e..f693f122a286 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-@@ -39,7 +39,6 @@ static struct platform_device rtc_device = {
- 
- static struct plat_sci_port sci_platform_data = {
- 	.port_reg	= 0xffe0001C,
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_SCI,
- 	.regshift	= 2,
- };
-@@ -60,7 +59,6 @@ static struct platform_device sci_device = {
- };
- 
- static struct plat_sci_port scif_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-index c94a8f746013..641b85865a63 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-@@ -128,7 +128,6 @@ static DECLARE_INTC_DESC(intc_desc_irq, "sh7760-irq", vectors_irq, groups,
- 			 mask_registers, prio_registers, NULL);
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -153,7 +152,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.type		= PORT_SCIF,
- 	.scscr		= SCSCR_REIE,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -178,7 +176,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -203,7 +200,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCI,
- 	.regshift	= 2,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7343.c b/arch/sh/kernel/cpu/sh4a/setup-sh7343.c
-index 9de7dc2f3c24..5788073a7c30 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7343.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7343.c
-@@ -18,7 +18,6 @@
- 
- /* Serial */
- static struct plat_sci_port scif0_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_CKE1,
- 	.type           = PORT_SCIF,
- };
-@@ -39,7 +38,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_CKE1,
- 	.type           = PORT_SCIF,
- };
-@@ -60,7 +58,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_CKE1,
- 	.type           = PORT_SCIF,
- };
-@@ -81,7 +78,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_CKE1,
- 	.type           = PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7366.c b/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
-index d9a8f242e148..3fc1a3ab634e 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
-@@ -21,7 +21,6 @@
- 
- static struct plat_sci_port scif0_platform_data = {
- 	.port_reg	= 0xa405013e,
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7722.c b/arch/sh/kernel/cpu/sh4a/setup-sh7722.c
-index 7d41261c5f67..6b3a26e61abb 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7722.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7722.c
-@@ -179,7 +179,6 @@ struct platform_device dma_device = {
- 
- /* Serial */
- static struct plat_sci_port scif0_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.ops		= &sh7722_sci_port_ops,
-@@ -202,7 +201,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.ops		= &sh7722_sci_port_ops,
-@@ -225,7 +223,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.ops		= &sh7722_sci_port_ops,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-index 610571f174ee..9f47ec950af8 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
-@@ -24,7 +24,6 @@
- /* Serial */
- static struct plat_sci_port scif0_platform_data = {
- 	.port_reg	= 0xa4050160,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -47,7 +46,6 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -70,7 +68,6 @@ static struct platform_device scif1_device = {
- 
- static struct plat_sci_port scif2_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -92,7 +89,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.port_reg	= SCIx_NOT_SUPPORTED,
- 	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
-@@ -116,7 +112,6 @@ static struct platform_device scif3_device = {
- 
- static struct plat_sci_port scif4_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
-@@ -139,7 +134,6 @@ static struct platform_device scif4_device = {
- 
- static struct plat_sci_port scif5_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7724.c b/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
-index 478a61f73b47..3ce55884c787 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
-@@ -291,7 +291,6 @@ static struct platform_device dma1_device = {
- /* Serial */
- static struct plat_sci_port scif0_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -314,7 +313,6 @@ static struct platform_device scif0_device = {
- 
- static struct plat_sci_port scif1_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -337,7 +335,6 @@ static struct platform_device scif1_device = {
- 
- static struct plat_sci_port scif2_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
-@@ -360,7 +357,6 @@ static struct platform_device scif2_device = {
- 
- static struct plat_sci_port scif3_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
-@@ -382,7 +378,6 @@ static struct platform_device scif3_device = {
- 
- static struct plat_sci_port scif4_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
-@@ -404,7 +399,6 @@ static struct platform_device scif4_device = {
- 
- static struct plat_sci_port scif5_platform_data = {
- 	.port_reg	= SCIx_NOT_SUPPORTED,
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.sampling_rate	= 8,
- 	.type           = PORT_SCIFA,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7734.c b/arch/sh/kernel/cpu/sh4a/setup-sh7734.c
-index 51910a8d8df4..8c0c9da6b5b3 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7734.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7734.c
-@@ -25,7 +25,6 @@
- 
- /* SCIF */
- static struct plat_sci_port scif0_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr          = SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype        = SCIx_SH4_SCIF_BRG_REGTYPE,
-@@ -47,7 +46,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr          = SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype        = SCIx_SH4_SCIF_BRG_REGTYPE,
-@@ -69,7 +67,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr          = SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype        = SCIx_SH4_SCIF_BRG_REGTYPE,
-@@ -91,7 +88,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr          = SCSCR_REIE | SCSCR_TOIE,
- 	.type           = PORT_SCIF,
- 	.regtype        = SCIx_SH4_SCIF_BRG_REGTYPE,
-@@ -113,7 +109,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr          = SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype        = SCIx_SH4_SCIF_BRG_REGTYPE,
-@@ -135,7 +130,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.flags          = UPF_BOOT_AUTOCONF,
- 	.scscr          = SCSCR_REIE,
- 	.type           = PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_BRG_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7757.c b/arch/sh/kernel/cpu/sh4a/setup-sh7757.c
-index b44061cb8540..a46a19b49e08 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7757.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7757.c
-@@ -24,7 +24,6 @@
- #include <cpu/sh7757.h>
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -45,7 +44,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -66,7 +64,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7763.c b/arch/sh/kernel/cpu/sh4a/setup-sh7763.c
-index 428c16526dcb..40e6cda914d3 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7763.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7763.c
-@@ -19,7 +19,6 @@
- #include <linux/usb/ohci_pdriver.h>
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -41,7 +40,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -63,7 +61,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7770.c b/arch/sh/kernel/cpu/sh4a/setup-sh7770.c
-index b2d3206e2704..82e3bdf2e1b6 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7770.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7770.c
-@@ -16,7 +16,6 @@
- #include <linux/io.h>
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -37,7 +36,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -58,7 +56,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -79,7 +76,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -100,7 +96,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -121,7 +116,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -142,7 +136,6 @@ static struct platform_device scif5_device = {
- };
- 
- static struct plat_sci_port scif6_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -163,7 +156,6 @@ static struct platform_device scif6_device = {
- };
- 
- static struct plat_sci_port scif7_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -184,7 +176,6 @@ static struct platform_device scif7_device = {
- };
- 
- static struct plat_sci_port scif8_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-@@ -205,7 +196,6 @@ static struct platform_device scif8_device = {
- };
- 
- static struct plat_sci_port scif9_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_TOIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7780.c b/arch/sh/kernel/cpu/sh4a/setup-sh7780.c
-index 59282f760ca9..d90ff67a4633 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7780.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7780.c
-@@ -18,7 +18,6 @@
- #include <cpu/dma-register.h>
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -40,7 +39,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7785.c b/arch/sh/kernel/cpu/sh4a/setup-sh7785.c
-index 22893c0f1662..b0d6f82f2d71 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7785.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7785.c
-@@ -20,7 +20,6 @@
- #include <cpu/dma-register.h>
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -42,7 +41,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -64,7 +62,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -86,7 +83,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -108,7 +104,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -130,7 +125,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7786.c b/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
-index 32525e13aa26..17aac38a6e90 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
-@@ -28,7 +28,6 @@
- #include <asm/mmzone.h>
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -56,7 +55,6 @@ static struct platform_device scif0_device = {
-  * The rest of these all have multiplexed IRQs
-  */
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -87,7 +85,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -109,7 +106,6 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -131,7 +127,6 @@ static struct platform_device scif3_device = {
- };
- 
- static struct plat_sci_port scif4_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-@@ -153,7 +148,6 @@ static struct platform_device scif4_device = {
- };
- 
- static struct plat_sci_port scif5_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE | SCSCR_CKE1,
- 	.type		= PORT_SCIF,
- 	.regtype	= SCIx_SH4_SCIF_FIFODATA_REGTYPE,
-diff --git a/arch/sh/kernel/cpu/sh4a/setup-shx3.c b/arch/sh/kernel/cpu/sh4a/setup-shx3.c
-index 5495d6693086..ee14d92d840f 100644
---- a/arch/sh/kernel/cpu/sh4a/setup-shx3.c
-+++ b/arch/sh/kernel/cpu/sh4a/setup-shx3.c
-@@ -28,7 +28,6 @@
-  * all rather than adding infrastructure to hack around it.
-  */
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -52,7 +51,6 @@ static struct platform_device scif0_device = {
- };
- 
- static struct plat_sci_port scif1_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-@@ -76,7 +74,6 @@ static struct platform_device scif1_device = {
- };
- 
- static struct plat_sci_port scif2_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
-diff --git a/arch/sh/kernel/cpu/sh5/setup-sh5.c b/arch/sh/kernel/cpu/sh5/setup-sh5.c
-index 5ce34bfd0b4e..084a9cc99175 100644
---- a/arch/sh/kernel/cpu/sh5/setup-sh5.c
-+++ b/arch/sh/kernel/cpu/sh5/setup-sh5.c
-@@ -17,7 +17,7 @@
- #include <asm/addrspace.h>
- 
- static struct plat_sci_port scif0_platform_data = {
--	.flags		= UPF_BOOT_AUTOCONF | UPF_IOREMAP,
-+	.flags		= UPF_IOREMAP,
- 	.scscr		= SCSCR_REIE,
- 	.type		= PORT_SCIF,
- };
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+index 13df949..bd6629b 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+@@ -11,6 +11,7 @@ Required Properties:
+ 
+   - compatible: should be one of the following.
+     - "renesas,pfc-emev2": for EMEV2 (EMMA Mobile EV2) compatible pin-controller.
++    - "renesas,pfc-r7s72100": for R7S72100 (RZ/A1H) compatible pin-controller.
+     - "renesas,pfc-r8a73a4": for R8A73A4 (R-Mobile APE6) compatible pin-controller.
+     - "renesas,pfc-r8a7740": for R8A7740 (R-Mobile A1) compatible pin-controller.
+     - "renesas,pfc-r8a7778": for R8A7778 (R-Mobile M1) compatible pin-controller.
+diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
+index 07eca54..e4ccae2 100644
+--- a/drivers/pinctrl/sh-pfc/Kconfig
++++ b/drivers/pinctrl/sh-pfc/Kconfig
+@@ -24,6 +24,11 @@ config PINCTRL_PFC_EMEV2
+ 	depends on ARCH_EMEV2
+ 	select PINCTRL_SH_PFC
+ 
++config PINCTRL_PFC_R7S72100
++	def_bool y
++	depends on ARCH_R7S72100
++	select PINCTRL_SH_PFC
++
+ config PINCTRL_PFC_R8A73A4
+ 	def_bool y
+ 	depends on ARCH_R8A73A4
+diff --git a/drivers/pinctrl/sh-pfc/Makefile b/drivers/pinctrl/sh-pfc/Makefile
+index 2dda8c6..b953392 100644
+--- a/drivers/pinctrl/sh-pfc/Makefile
++++ b/drivers/pinctrl/sh-pfc/Makefile
+@@ -1,6 +1,7 @@
+ obj-$(CONFIG_PINCTRL_SH_PFC)	+= core.o pinctrl.o
+ obj-$(CONFIG_PINCTRL_SH_PFC_GPIO)	+= gpio.o
+ obj-$(CONFIG_PINCTRL_PFC_EMEV2)	+= pfc-emev2.o
++obj-$(CONFIG_PINCTRL_PFC_R7S72100)	+= pfc-r7s72100.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A73A4)	+= pfc-r8a73a4.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7740)	+= pfc-r8a7740.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7778)	+= pfc-r8a7778.o
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index cf80ce1..c0d74e1 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -473,6 +473,12 @@ static const struct of_device_id sh_pfc_of_table[] = {
+ 		.data = &emev2_pinmux_info,
+ 	},
+ #endif
++#ifdef CONFIG_PINCTRL_PFC_R7S72100
++	{
++		.compatible = "renesas,pfc-r7s72100",
++		.data = &r7s72100_pinmux_info,
++	},
++#endif
+ #ifdef CONFIG_PINCTRL_PFC_R8A73A4
+ 	{
+ 		.compatible = "renesas,pfc-r8a73a4",
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+new file mode 100644
+index 0000000..72e1dff
+--- /dev/null
++++ b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+@@ -0,0 +1,529 @@
++/*
++ * R7S72100 processor support
++ *
++ * Copyright (C) 2013  Renesas Electronics Corporation
++ * Copyright (C) 2013  Magnus Damm
++ * Copyright (C) 2012  Renesas Solutions Corp.
++ * Copyright (C) 2012  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; version 2 of the
++ * License.
++ */
++
++#include <linux/kernel.h>
++
++#include "core.h"
++#include "sh_pfc.h"
++
++#define CPU_ALL_PORT(fn, sfx)						\
++	PORT_GP_16(0, fn, sfx), PORT_GP_16(1, fn, sfx),			\
++	PORT_GP_16(2, fn, sfx), PORT_GP_16(3, fn, sfx),			\
++	PORT_GP_16(4, fn, sfx), PORT_GP_16(5, fn, sfx),			\
++	PORT_GP_16(6, fn, sfx), PORT_GP_16(7, fn, sfx),			\
++	PORT_GP_16(8, fn, sfx), PORT_GP_16(9, fn, sfx),			\
++	PORT_GP_16(10, fn, sfx), PORT_GP_16(11, fn, sfx),			\
++	PORT_GP_16(12, fn, sfx)
++
++enum {
++	PINMUX_RESERVED = 0,
++
++	PINMUX_DATA_BEGIN,
++	GP_ALL(DATA),
++	PINMUX_DATA_END,
++
++	PINMUX_FUNCTION_BEGIN,
++	GP_ALL(PMC_0), GP_ALL(PMC_1),
++	GP_ALL(PFC_0), GP_ALL(PFC_1),
++	GP_ALL(PFCE_0), GP_ALL(PFCE_1),
++	GP_ALL(PFCAE_0), GP_ALL(PFCAE_1),
++	GP_ALL(PIBC_0), GP_ALL(PIBC_1),
++	GP_ALL(PBDC_0), GP_ALL(PBDC_1),
++	GP_ALL(PIPC_0), GP_ALL(PIPC_1),
++	PINMUX_FUNCTION_END,
++
++	PINMUX_MARK_BEGIN,
++	GP_ALL(MARK_FN1), GP_ALL(MARK_FN2), GP_ALL(MARK_FN3), GP_ALL(MARK_FN4),
++	GP_ALL(MARK_FN5), GP_ALL(MARK_FN6), GP_ALL(MARK_FN7), GP_ALL(MARK_FN8),
++	PINMUX_MARK_END,
++};
++
++#define _P_ALL(n) CPU_ALL_PORT(n, unused)
++
++#define _P_GPIO(bank, _pin, _name, sfx, cfg) \
++	_GP_GPIO(16, bank, _pin, _name, sfx, cfg)
++
++#define _P_DATA(bank, pin, name, sfx, cfg)					\
++	PINMUX_DATA(name##_DATA, name##_PMC_0,		\
++		    name##_PIBC_1, name##_PBDC_1)
++
++#define _P_FN(n, fn, pfcae, pfce, pfc)					\
++	PINMUX_DATA(n##_MARK_FN##fn, n##_PMC_1,		\
++		    n##_PFCAE_##pfcae, n##_PFCE_##pfce, n##_PFC_##pfc)
++
++#define _P_MARK_FN1(bank, pin, name, sfx, cfg) _P_FN(name, 1, 0, 0, 0)
++#define _P_MARK_FN2(bank, pin, name, sfx, cfg) _P_FN(name, 2, 0, 0, 1)
++#define _P_MARK_FN3(bank, pin, name, sfx, cfg) _P_FN(name, 3, 0, 1, 0)
++#define _P_MARK_FN4(bank, pin, name, sfx, cfg) _P_FN(name, 4, 0, 1, 1)
++#define _P_MARK_FN5(bank, pin, name, sfx, cfg) _P_FN(name, 5, 1, 0, 0)
++#define _P_MARK_FN6(bank, pin, name, sfx, cfg) _P_FN(name, 6, 1, 0, 1)
++#define _P_MARK_FN7(bank, pin, name, sfx, cfg) _P_FN(name, 7, 1, 1, 0)
++#define _P_MARK_FN8(bank, pin, name, sfx, cfg) _P_FN(name, 8, 1, 1, 1)
++
++static const u16 pinmux_data[] = {
++	_P_ALL(_P_DATA), /* PINMUX_DATA(P_M_N_DATA, P_M_N_PMC_0)... */
++	_P_ALL(_P_MARK_FN1), _P_ALL(_P_MARK_FN2),
++	_P_ALL(_P_MARK_FN3), _P_ALL(_P_MARK_FN4),
++	_P_ALL(_P_MARK_FN5), _P_ALL(_P_MARK_FN6),
++	_P_ALL(_P_MARK_FN7), _P_ALL(_P_MARK_FN8),
++};
++
++static struct sh_pfc_pin pinmux_pins[] = {
++	_P_ALL(_P_GPIO),
++};
++
++#define RZ_PORT_PIN(bank, pin) (((bank) * 16) + (pin))
++
++#define __RZ_STR(pfx, hw, bank, pin, sfx)		\
++	pfx##_##hw##_p##bank##_##pin####sfx
++
++#define RZ_PIN_AND_MUX(pfx, hw, bank, pin, fn)				\
++static const unsigned int __RZ_STR(pfx, hw, bank, pin, _pins)[] = {	\
++	RZ_PORT_PIN(bank, pin),						\
++};									\
++static const unsigned int __RZ_STR(pfx, hw, bank, pin, _mux)[] = {	\
++	GP_##bank##_##pin##_MARK_FN##fn,					\
++};
++
++#define RZ_PMX_GROUP(pfx, hw, bank, pin, fn) \
++	SH_PFC_PIN_GROUP(pfx##_##hw##_p##bank##_##pin),
++
++#define __RZ_GROUPS(x) #x
++
++#define RZ_GROUPS(pfx, hw, bank, pin, fn) \
++	__RZ_GROUPS(pfx##_##hw##_p##bank##_##pin),
++
++#define RIIC0(fn)			\
++	fn(riic0, scl, 1, 0, 1)		\
++	fn(riic0, sda, 1, 1, 1)
++
++#define RIIC1(fn)			\
++	fn(riic1, scl, 1, 2, 1)		\
++	fn(riic1, sda, 1, 3, 1)
++
++#define RIIC2(fn)			\
++	fn(riic2, scl, 1, 4, 1)		\
++	fn(riic2, sda, 1, 5, 1)
++
++#define RIIC3(fn)			\
++	fn(riic3, scl, 1, 6, 1)		\
++	fn(riic3, sda, 1, 7, 1)
++
++RIIC0(RZ_PIN_AND_MUX)
++RIIC1(RZ_PIN_AND_MUX)
++RIIC2(RZ_PIN_AND_MUX)
++RIIC3(RZ_PIN_AND_MUX)
++
++#define RSPI0(fn)			\
++	fn(rspi0, rspck,  2, 12, 2)	\
++	fn(rspi0, ssl0,   2, 13, 2)	\
++	fn(rspi0, mosi,   2, 14, 2)	\
++	fn(rspi0, miso,   2, 15, 2)	\
++	fn(rspi0, rspck,  7, 15, 2)	\
++	fn(rspi0, ssl0,   8,  0, 2)	\
++	fn(rspi0, mosi,   8,  1, 2)	\
++	fn(rspi0, miso,   8,  2, 2)	\
++	fn(rspi0, rspck, 10, 12, 4)	\
++	fn(rspi0, ssl0,  10, 13, 4)	\
++	fn(rspi0, mosi,  10, 14, 4)	\
++	fn(rspi0, miso,  10, 15, 4)	\
++
++#define RSPI1(fn)			\
++	fn(rspi1, rspck,  4,  4, 2)	\
++	fn(rspi1, ssl0,   4,  5, 2)	\
++	fn(rspi1, mosi,   4,  6, 2)	\
++	fn(rspi1, miso,   4,  7, 2)	\
++	fn(rspi1, rspck,  6,  4, 7)	\
++	fn(rspi1, ssl0,   6,  5, 7)	\
++	fn(rspi1, mosi,   6,  6, 7)	\
++	fn(rspi1, miso,   6,  7, 7)	\
++	fn(rspi1, rspck, 11, 12, 2)	\
++	fn(rspi1, ssl0,  11, 13, 2)	\
++	fn(rspi1, mosi,  11, 14, 2)	\
++	fn(rspi1, miso,  11, 15, 2)	\
++
++#define RSPI2(fn)			\
++	fn(rspi2, rspck,  8,  3, 3)	\
++	fn(rspi2, ssl0,   8,  4, 3)	\
++	fn(rspi2, mosi,   8,  5, 3)	\
++	fn(rspi2, miso,   8,  6, 3)	\
++	fn(rspi2, rspck,  8, 14, 5)	\
++	fn(rspi2, ssl0,   8, 15, 5)	\
++	fn(rspi2, mosi,   9,  0, 5)	\
++	fn(rspi2, miso,   9,  1, 5)	\
++
++#define RSPI3(fn)			\
++	fn(rspi3, rspck,  3,  0, 8)	\
++	fn(rspi3, ssl0,   3,  1, 8)	\
++	fn(rspi3, mosi,   3,  2, 8)	\
++	fn(rspi3, miso,   3,  3, 8)	\
++	fn(rspi3, rspck,  5,  0, 8)	\
++	fn(rspi3, ssl0,   5,  1, 8)	\
++	fn(rspi3, mosi,   5,  2, 8)	\
++	fn(rspi3, miso,   5,  3, 8)	\
++
++#define RSPI4(fn)			\
++	fn(rspi4, rspck,  2,  8, 8)	\
++	fn(rspi4, ssl0,   2,  9, 8)	\
++	fn(rspi4, mosi,   2, 10, 8)	\
++	fn(rspi4, miso,   2, 11, 8)	\
++	fn(rspi4, rspck,  4,  0, 7)	\
++	fn(rspi4, ssl0,   4,  1, 7)	\
++	fn(rspi4, mosi,   4,  2, 7)	\
++	fn(rspi4, miso,   4,  3, 7)	\
++
++RSPI0(RZ_PIN_AND_MUX)
++RSPI1(RZ_PIN_AND_MUX)
++RSPI2(RZ_PIN_AND_MUX)
++RSPI3(RZ_PIN_AND_MUX)
++RSPI4(RZ_PIN_AND_MUX)
++
++#define SCIF0(fn)			\
++	fn(scif0, clk, 2, 13, 6)	\
++	fn(scif0, txd, 2, 14, 6)	\
++	fn(scif0, rxd, 2, 15, 6)	\
++	fn(scif0, clk, 4, 8, 7)		\
++	fn(scif0, txd, 4, 9, 7)		\
++	fn(scif0, rxd, 4, 10, 7)	\
++	fn(scif0, clk, 6, 8, 5)		\
++	fn(scif0, txd, 6, 9, 5)		\
++	fn(scif0, rxd, 6, 10, 5)
++
++#define SCIF1(fn)			\
++	fn(scif1, cts, 2, 3, 6)		\
++	fn(scif1, clk, 2, 4, 6)		\
++	fn(scif1, txd, 2, 5, 6)		\
++	fn(scif1, rxd, 2, 6, 6)		\
++	fn(scif1, rts, 2, 7, 6)		\
++	fn(scif1, clk, 4, 11, 7)	\
++	fn(scif1, txd, 4, 12, 7)	\
++	fn(scif1, rxd, 4, 13, 7)	\
++	fn(scif1, clk, 6, 11, 5)	\
++	fn(scif1, txd, 6, 12, 5)	\
++	fn(scif1, rxd, 6, 13, 5)	\
++	fn(scif1, clk, 9, 2, 4)		\
++	fn(scif1, txd, 9, 3, 4)		\
++	fn(scif1, rxd, 9, 4, 4)		\
++	fn(scif1, cts, 9, 5, 4)		\
++	fn(scif1, rts, 9, 6, 4)
++
++#define SCIF2(fn)			\
++	fn(scif2, clk, 3, 0, 4)		\
++	fn(scif2, txd, 3, 1, 4)		\
++	fn(scif2, rxd, 3, 2, 4)		\
++	fn(scif2, txd, 3, 0, 6)		\
++	fn(scif2, clk, 4, 1, 5)		\
++	fn(scif2, txd, 4, 2, 5)		\
++	fn(scif2, rxd, 4, 3, 5)		\
++	fn(scif2, txd, 4, 14, 7)	\
++	fn(scif2, rxd, 4, 15, 7)	\
++	fn(scif2, txd, 6, 2, 7)		\
++	fn(scif2, rxd, 6, 3, 7)		\
++	fn(scif2, clk, 8, 3, 7)		\
++	fn(scif2, rxd, 8, 4, 7)		\
++	fn(scif2, txd, 8, 6, 7)
++
++#define SCIF3(fn)			\
++	fn(scif3, clk, 3, 4, 7)		\
++	fn(scif3, txd, 3, 5, 7)		\
++	fn(scif3, rxd, 3, 6, 7)		\
++	fn(scif3, clk, 5, 2, 5)		\
++	fn(scif3, txd, 5, 3, 5)		\
++	fn(scif3, rxd, 5, 4, 5)		\
++	fn(scif3, rxd, 6, 0, 7)		\
++	fn(scif3, txd, 6, 1, 7)		\
++	fn(scif3, txd, 8, 8, 7)		\
++	fn(scif3, rxd, 8, 9, 7)
++
++#define SCIF4(fn)			\
++	fn(scif4, txd, 5, 0, 5)		\
++	fn(scif4, rxd, 5, 1, 5)		\
++	fn(scif4, clk, 7, 0, 4)		\
++	fn(scif4, txd, 7, 1, 4)		\
++	fn(scif4, rxd, 7, 2, 4)		\
++	fn(scif4, txd, 8, 14, 7)	\
++	fn(scif4, rxd, 8, 15, 7)
++
++#define SCIF5(fn)			\
++	fn(scif5, cts, 6, 3, 5)		\
++	fn(scif5, rts, 6, 4, 5)		\
++	fn(scif5, clk, 6, 5, 5)		\
++	fn(scif5, txd, 6, 6, 5)		\
++	fn(scif5, rxd, 6, 7, 5)		\
++	fn(scif5, cts, 7, 15, 4)	\
++	fn(scif5, clk, 8, 0, 4)		\
++	fn(scif5, txd, 8, 1, 4)		\
++	fn(scif5, rxd, 8, 2, 4)		\
++	fn(scif5, rts, 8, 3, 4)		\
++	fn(scif5, rxd, 8, 11, 5)	\
++	fn(scif5, clk, 8, 12, 5)	\
++	fn(scif5, txd, 8, 13, 5)	\
++	fn(scif5, cts, 11, 7, 3)	\
++	fn(scif5, rts, 11, 8, 3)	\
++	fn(scif5, clk, 11, 9, 3)	\
++	fn(scif5, txd, 11, 10, 3)	\
++	fn(scif5, rxd, 11, 11, 3)
++
++#define SCIF6(fn)			\
++	fn(scif6, txd, 5, 6, 5)		\
++	fn(scif6, rxd, 5, 7, 5)		\
++	fn(scif6, clk, 6, 13, 4)	\
++	fn(scif6, txd, 6, 14, 4)	\
++	fn(scif6, rxd, 6, 15, 4)	\
++	fn(scif6, clk, 11, 0, 4)	\
++	fn(scif6, txd, 11, 1, 4)	\
++	fn(scif6, rxd, 11, 2, 4)
++
++#define SCIF7(fn)			\
++	fn(scif7, clk, 7, 3, 4)		\
++	fn(scif7, txd, 7, 4, 4)		\
++	fn(scif7, rxd, 7, 5, 4)		\
++	fn(scif7, cts, 7, 6, 4)		\
++	fn(scif7, rts, 7, 7, 4)
++
++SCIF0(RZ_PIN_AND_MUX)
++SCIF1(RZ_PIN_AND_MUX)
++SCIF2(RZ_PIN_AND_MUX)
++SCIF3(RZ_PIN_AND_MUX)
++SCIF4(RZ_PIN_AND_MUX)
++SCIF5(RZ_PIN_AND_MUX)
++SCIF6(RZ_PIN_AND_MUX)
++SCIF7(RZ_PIN_AND_MUX)
++
++#define ETHERNET(fn)			\
++	fn(ethernet, col,    1,  3, 3)		\
++	fn(ethernet, col,    1, 14, 4)		\
++	fn(ethernet, int,    1, 15, 1)		\
++	fn(ethernet, txclk,  2,  0, 2)		\
++	fn(ethernet, txer,   2,  1, 2)		\
++	fn(ethernet, txen,   2,  2, 2)		\
++	fn(ethernet, txcrs,  2,  3, 2)		\
++	fn(ethernet, txd0,   2,  4, 2)		\
++	fn(ethernet, txd1,   2,  5, 2)		\
++	fn(ethernet, txd2,   2,  6, 2)		\
++	fn(ethernet, txd3,   2,  7, 2)		\
++	fn(ethernet, rxd0,   2,  8, 2)		\
++	fn(ethernet, rxd1,   2,  9, 2)		\
++	fn(ethernet, rxd2,   2, 10, 2)		\
++	fn(ethernet, rxd3,   2, 11, 2)		\
++	fn(ethernet, txclk,  3,  0, 2)		\
++	fn(ethernet, txer,   3,  1, 2)		\
++	fn(ethernet, txen,   3,  2, 2)		\
++	fn(ethernet, mdio,   3,  3, 2)		\
++	fn(ethernet, rxclk,  3,  4, 2)		\
++	fn(ethernet, rxer,   3,  5, 2)		\
++	fn(ethernet, rxdv,   3,  6, 2)		\
++	fn(ethernet, mdc,    5,  9, 2)		\
++	fn(ethernet, mdc,    7,  0, 3)		\
++	fn(ethernet, txclk,  7,  1, 3)		\
++	fn(ethernet, txer,   7,  2, 3)		\
++	fn(ethernet, txen,   7,  3, 3)		\
++	fn(ethernet, txd0,   7,  4, 3)		\
++	fn(ethernet, txd1,   7,  5, 3)		\
++	fn(ethernet, txd2,   7,  6, 3)		\
++	fn(ethernet, txd3,   7,  7, 3)		\
++	fn(ethernet, rxd0,   7,  9, 3)		\
++	fn(ethernet, rxd1,   7, 10, 3)		\
++	fn(ethernet, rxd2,   7, 11, 2)		\
++	fn(ethernet, rxd3,   7, 12, 3)		\
++	fn(ethernet, mdio,   7, 13, 3)		\
++	fn(ethernet, crs,    7, 14, 3)		\
++	fn(ethernet, rxclk,  7, 15, 3)		\
++	fn(ethernet, rxer,   8,  0, 3)		\
++	fn(ethernet, rxd,    8,  1, 3)		\
++	fn(ethernet, col,    8,  7, 5)		\
++	fn(ethernet, txclk, 10,  0, 4)		\
++	fn(ethernet, txer,  10,  1, 4)		\
++	fn(ethernet, txen,  10,  2, 4)		\
++	fn(ethernet, crs,   10,  3, 4)		\
++	fn(ethernet, txd0,  10,  4, 4)		\
++	fn(ethernet, txd1,  10,  5, 4)		\
++	fn(ethernet, txd2,  10,  6, 4)		\
++	fn(ethernet, txd3,  10,  7, 4)		\
++	fn(ethernet, txd0,  10,  8, 4)		\
++	fn(ethernet, txd1,  10,  9, 4)		\
++	fn(ethernet, txd2,  10, 10, 4)		\
++	fn(ethernet, txd3,  10, 11, 4)		\
++
++ETHERNET(RZ_PIN_AND_MUX)
++
++static const struct sh_pfc_pin_group pinmux_groups[] = {
++	RIIC0(RZ_PMX_GROUP)
++	RIIC1(RZ_PMX_GROUP)
++	RIIC2(RZ_PMX_GROUP)
++	RIIC3(RZ_PMX_GROUP)
++	RSPI0(RZ_PMX_GROUP)
++	RSPI1(RZ_PMX_GROUP)
++	RSPI2(RZ_PMX_GROUP)
++	RSPI3(RZ_PMX_GROUP)
++	RSPI4(RZ_PMX_GROUP)
++	SCIF0(RZ_PMX_GROUP)
++	SCIF1(RZ_PMX_GROUP)
++	SCIF2(RZ_PMX_GROUP)
++	SCIF3(RZ_PMX_GROUP)
++	SCIF4(RZ_PMX_GROUP)
++	SCIF5(RZ_PMX_GROUP)
++	SCIF6(RZ_PMX_GROUP)
++	SCIF7(RZ_PMX_GROUP)
++	ETHERNET(RZ_PMX_GROUP)
++};
++
++static const char * const riic0_groups[] = {
++	RIIC0(RZ_GROUPS)
++};
++
++static const char * const riic1_groups[] = {
++	RIIC1(RZ_GROUPS)
++};
++
++static const char * const riic2_groups[] = {
++	RIIC2(RZ_GROUPS)
++};
++
++static const char * const riic3_groups[] = {
++	RIIC3(RZ_GROUPS)
++};
++
++static const char * const rspi0_groups[] = {
++	RSPI0(RZ_GROUPS)
++};
++
++static const char * const rspi1_groups[] = {
++	RSPI1(RZ_GROUPS)
++};
++
++static const char * const rspi2_groups[] = {
++	RSPI2(RZ_GROUPS)
++};
++
++static const char * const rspi3_groups[] = {
++	RSPI3(RZ_GROUPS)
++};
++
++static const char * const rspi4_groups[] = {
++	RSPI4(RZ_GROUPS)
++};
++
++static const char * const scif0_groups[] = {
++	SCIF0(RZ_GROUPS)
++};
++
++static const char * const scif1_groups[] = {
++	SCIF1(RZ_GROUPS)
++};
++
++static const char * const scif2_groups[] = {
++	SCIF2(RZ_GROUPS)
++};
++
++static const char * const scif3_groups[] = {
++	SCIF3(RZ_GROUPS)
++};
++
++static const char * const scif4_groups[] = {
++	SCIF4(RZ_GROUPS)
++};
++
++static const char * const scif5_groups[] = {
++	SCIF5(RZ_GROUPS)
++};
++
++static const char * const scif6_groups[] = {
++	SCIF6(RZ_GROUPS)
++};
++
++static const char * const scif7_groups[] = {
++	SCIF7(RZ_GROUPS)
++};
++
++static const char * const ethernet_groups[] = {
++	ETHERNET(RZ_GROUPS)
++};
++
++static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(riic0),
++	SH_PFC_FUNCTION(riic1),
++	SH_PFC_FUNCTION(riic2),
++	SH_PFC_FUNCTION(riic3),
++	SH_PFC_FUNCTION(rspi0),
++	SH_PFC_FUNCTION(rspi1),
++	SH_PFC_FUNCTION(rspi2),
++	SH_PFC_FUNCTION(rspi3),
++	SH_PFC_FUNCTION(rspi4),
++	SH_PFC_FUNCTION(scif0),
++	SH_PFC_FUNCTION(scif1),
++	SH_PFC_FUNCTION(scif2),
++	SH_PFC_FUNCTION(scif3),
++	SH_PFC_FUNCTION(scif4),
++	SH_PFC_FUNCTION(scif5),
++	SH_PFC_FUNCTION(scif6),
++	SH_PFC_FUNCTION(scif7),
++	SH_PFC_FUNCTION(ethernet),
++};
++
++#define PFC_REG(idx, name, reg)						\
++	{ PINMUX_CFG_REG(__stringify(name), reg, 16, 1) {		\
++		GP_##idx##_15_##name##_0, GP_##idx##_15_##name##_1,	\
++		GP_##idx##_14_##name##_0, GP_##idx##_14_##name##_1,	\
++		GP_##idx##_13_##name##_0, GP_##idx##_13_##name##_1,	\
++		GP_##idx##_12_##name##_0, GP_##idx##_12_##name##_1,	\
++		GP_##idx##_11_##name##_0, GP_##idx##_11_##name##_1,	\
++		GP_##idx##_10_##name##_0, GP_##idx##_10_##name##_1,	\
++		GP_##idx##_9_##name##_0, GP_##idx##_9_##name##_1,		\
++		GP_##idx##_8_##name##_0, GP_##idx##_8_##name##_1,		\
++		GP_##idx##_7_##name##_0, GP_##idx##_7_##name##_1,		\
++		GP_##idx##_6_##name##_0, GP_##idx##_6_##name##_1,		\
++		GP_##idx##_5_##name##_0, GP_##idx##_5_##name##_1,		\
++		GP_##idx##_4_##name##_0, GP_##idx##_4_##name##_1,		\
++		GP_##idx##_3_##name##_0, GP_##idx##_3_##name##_1,		\
++		GP_##idx##_2_##name##_0, GP_##idx##_2_##name##_1,		\
++		GP_##idx##_1_##name##_0, GP_##idx##_1_##name##_1,		\
++		GP_##idx##_0_##name##_0, GP_##idx##_0_##name##_1 }	\
++	}
++
++#define PFC_REGS(idx)						\
++	PFC_REG(idx, PMC, (0xfcfe3400 + (idx * 4))),		\
++	PFC_REG(idx, PFC, (0xfcfe3500 + (idx * 4))),		\
++	PFC_REG(idx, PFCE, (0xfcfe3600 + (idx * 4))),		\
++	PFC_REG(idx, PFCAE, (0xfcfe3a00 + (idx * 4))),		\
++	PFC_REG(idx, PIBC, (0xfcfe7000 + (idx * 4))),		\
++	PFC_REG(idx, PBDC, (0xfcfe7100 + (idx * 4))),		\
++	PFC_REG(idx, PIPC, (0xfcfe7200 + (idx * 4)))
++
++static struct pinmux_cfg_reg pinmux_config_regs[] = {
++	PFC_REGS(0), PFC_REGS(1), PFC_REGS(2), PFC_REGS(3),
++	PFC_REGS(4), PFC_REGS(5), PFC_REGS(6), PFC_REGS(7),
++	PFC_REGS(8), PFC_REGS(9), PFC_REGS(10), PFC_REGS(11),
++	PFC_REG(12, PMC, 0xfcfe7b40),
++	PFC_REG(12, PIBC, 0xfcfe7f00),
++	{ },
++};
++
++const struct sh_pfc_soc_info r7s72100_pinmux_info = {
++	.name = "r7s72100_pfc",
++
++	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
++
++	.pins = pinmux_pins,
++	.nr_pins = ARRAY_SIZE(pinmux_pins),
++	.groups = pinmux_groups,
++	.nr_groups = ARRAY_SIZE(pinmux_groups),
++	.functions = pinmux_functions,
++	.nr_functions = ARRAY_SIZE(pinmux_functions),
++
++	.cfg_regs = pinmux_config_regs,
++
++	.pinmux_data = pinmux_data,
++	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
++};
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index e42cc7a..95a07c9 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -257,6 +257,7 @@ struct sh_pfc_soc_info {
+ };
+ 
+ extern const struct sh_pfc_soc_info emev2_pinmux_info;
++extern const struct sh_pfc_soc_info r7s72100_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a7778_pinmux_info;
+@@ -484,14 +485,16 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ #define GP_ALL(str)			CPU_ALL_PORT(_GP_ALL, str)
+ 
+ /* PINMUX_GPIO_GP_ALL - Expand to a list of sh_pfc_pin entries */
+-#define _GP_GPIO(bank, _pin, _name, sfx, cfg)				\
++#define _GP_GPIO(banksize, bank, _pin, _name, sfx, cfg)				\
+ 	{								\
+-		.pin = (bank * 32) + _pin,				\
++		.pin = (bank * banksize) + _pin,			\
+ 		.name = __stringify(_name),				\
+ 		.enum_id = _name##_DATA,				\
+ 		.configs = cfg,						\
+ 	}
+-#define PINMUX_GPIO_GP_ALL()		CPU_ALL_PORT(_GP_GPIO, unused)
++#define _GP_GPIO32(bank, _pin, _name, sfx, cfg)\
++  _GP_GPIO(32, bank, _pin, _name, sfx, cfg)
++#define PINMUX_GPIO_GP_ALL()		CPU_ALL_PORT(_GP_GPIO32, unused)
+ 
+ /* PINMUX_DATA_GP_ALL -  Expand to a list of name_DATA, name_FN marks */
+ #define _GP_DATA(bank, pin, name, sfx, cfg)	PINMUX_DATA(name##_DATA, name##_FN)
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
