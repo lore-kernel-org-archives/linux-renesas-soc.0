@@ -1,69 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:49486 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758931AbdAKReg (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:35046 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763450AbdAKP51 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 12:34:36 -0500
-Date: Wed, 11 Jan 2017 18:34:32 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Wed, 11 Jan 2017 10:57:27 -0500
+Received: by mail-lf0-f50.google.com with SMTP id m78so118402607lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Jan 2017 07:57:26 -0800 (PST)
+Date: Wed, 11 Jan 2017 16:57:23 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Ai Kyuse <ai.kyuse.uw@renesas.com>
 Subject: Re: [PATCH v8 6/6] mmc: sh_mobile_sdhi: Add tuning support
-Message-ID: <20170111173432.GB1486@katana>
+Message-ID: <20170111155723.GE25542@bigcity.dyn.berto.se>
 References: <1478182564-18762-1-git-send-email-horms+renesas@verge.net.au>
  <1478182564-18762-7-git-send-email-horms+renesas@verge.net.au>
  <20170110210848.GA25542@bigcity.dyn.berto.se>
  <20170110223043.GA2710@katana>
  <20170111083541.GB25542@bigcity.dyn.berto.se>
  <20170111150521.GA1486@katana>
- <20170111155723.GE25542@bigcity.dyn.berto.se>
- <CAMuHMdV5pY+nRC8yd4iVmEJAZkcBgWC2-wDr6UgpmxZSsoPHcA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="8GpibOaaTibBMecb"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdV5pY+nRC8yd4iVmEJAZkcBgWC2-wDr6UgpmxZSsoPHcA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170111150521.GA1486@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---8GpibOaaTibBMecb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 2017-01-11 16:05:21 +0100, Wolfram Sang wrote:
+> Hi Niklas,
+> 
+> > I'm doing my tests on Koelsch so I'm afraid setting the TDSEL in 
+> > pfc-r8a7795.c won't do much ;-) Nevertheless I tried to mimic the patch 
+> > for Koelsch but found the documentation lacking and where unable to do 
+> > so. That is I found a TDSEL register but no documentation of its 
+> > content.
+> 
+> Sorry, that slipped through. Actually, I sent a patch for H2:
+> 
+> https://patchwork.kernel.org/patch/9434323/
+> 
+> I wanted to do some TDSEL testing on other Gen2 boards in Brussels,
+> provided that people could bring some. So, if you could bring that
+> Koelsch board, that would be really helpful.
+
+Sure, can you or someone else bring a power source? I plan to not check 
+luggage so everything to conserve space helps :-)
+
+> 
+> I assume that you created a similar patch to the above for Koelsch and
+> the issue still remained? :(
+
+Yes I did with the help from Geert, I have now also tried your patch.  
+Unfortunately the result is the same and the warning is printed. I hope 
+to be able to spend more time later this week with the tuning patch to 
+try and figure this out.
+
+> 
+> Regards,
+> 
+>    Wolfram
+> 
 
 
-> I also have a koelsch, so no need to take one on a plane ;-)
 
-I thought yours was so heavily hooked up that it was a bit cumbersome to
-bring it somewhere. Happy to be wrong here :)
-
-
---8GpibOaaTibBMecb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYdmynAAoJEBQN5MwUoCm2ZjYP/3Wa8ppTSacnfoZyGvqDIMrn
-xaW+pv5PKI4of/OVkhExIx3T3sxbrGdjG2XADDChzNjD1CCJYDYGcsTF8Q7La9G2
-4EXFcLpBuPKhxOXuqvQBflG8zVCIxcu/ZI3/bDSGYOA4v7TEQLPRU0LXONCThnOa
-V6M9uuvX2oPvuMt+Q9lhvtnpvRZ6b8+6B8hPTkqu/rxcQEGY3zhnmUBb3TyJR/66
-bF8K1KzZZ51uoxDoA2qAzzElEWRBFM8IC16MIw78oifTaTuqo/AfzuOwRk1OS7Oc
-gzk6D1vtXl+caQwvb6lPmRTeiP2z5x15N+nXH1VzO7475duZLvVdSVxut1RYGP1S
-snQFyojjBCEoHws3HIn3nV/qNxVEYu9imhytaJoDcXh7LsOyqQ0RpNRJzZclwg7D
-dXENx7WjnVAKvv97fRGFuPC1HogQs+2WB2EcPOe50FCdk5hNppekCyCshtLE5dD/
-6COp+CWNyfZo4aM4OOtPfWcOpAQqvqklvgwSKQFS9F9gZMgcIkDzbyX6pHKzoB4Q
-15zV4tl1Dc+qBlezeD14qNlWrvfMdHe1TS114aw/FI9u4XDuWZG9eSMGlXeJKe3T
-dsohKzQcd7ERO4IYH991HaGgktSQEzK4Oxosg660F/i1D9lQ4EXHnKG6BnHcquYZ
-FmQNl8CZqOF8NkwiKMP7
-=zATh
------END PGP SIGNATURE-----
-
---8GpibOaaTibBMecb--
+-- 
+Regards,
+Niklas S�derlund
