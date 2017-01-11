@@ -1,89 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:48228 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751573AbdAYJo6 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967557AbdAKOnm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 04:44:58 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Wed, 11 Jan 2017 09:43:42 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/4] clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
-Date: Wed, 25 Jan 2017 10:15:02 +0100
-Message-Id: <1485335703-27184-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
-References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 09/18] sh: Don't set the sh-sci platform data REIE bit when not implemented
+Date: Wed, 11 Jan 2017 16:43:31 +0200
+Message-Id: <20170111144340.29074-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The spinlock is used to protect Read-Modify-Write register accesses,
-which won't be limited to SMSTPCR register accesses.
+According to the datasheets, the sh7760 SIM and sh7723 SCIFA instances
+don't implement the REIE bit. Don't set it in platform data.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - Add Acked-by.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/sh/kernel/cpu/sh4/setup-sh7760.c  | 1 -
+ arch/sh/kernel/cpu/sh4a/setup-sh7723.c | 3 ---
+ 2 files changed, 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index eb8534e5ebf3007d..f1161a585c57e433 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -98,7 +98,7 @@
-  *
-  * @dev: CPG/MSSR device
-  * @base: CPG/MSSR register block base address
-- * @mstp_lock: protects writes to SMSTPCR
-+ * @rmw_lock: protects RMW register accesses
-  * @clks: Array containing all Core and Module Clocks
-  * @num_core_clks: Number of Core Clocks in clks[]
-  * @num_mod_clks: Number of Module Clocks in clks[]
-@@ -107,7 +107,7 @@
- struct cpg_mssr_priv {
- 	struct device *dev;
- 	void __iomem *base;
--	spinlock_t mstp_lock;
-+	spinlock_t rmw_lock;
+diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
+index 641b85865a63..0c0cdfc69dcc 100644
+--- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
++++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
+@@ -200,7 +200,6 @@ static struct platform_device scif2_device = {
+ };
  
- 	struct clk **clks;
- 	unsigned int num_core_clks;
-@@ -144,7 +144,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ static struct plat_sci_port scif3_platform_data = {
+-	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCI,
+ 	.regshift	= 2,
+ };
+diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
+index 6c5cb234aa33..1c1b3c469831 100644
+--- a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
++++ b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
+@@ -86,7 +86,6 @@ static struct platform_device scif2_device = {
+ };
  
- 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
- 		enable ? "ON" : "OFF");
--	spin_lock_irqsave(&priv->mstp_lock, flags);
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
+ static struct plat_sci_port scif3_platform_data = {
+-	.scscr		= SCSCR_REIE,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+ };
+@@ -107,7 +106,6 @@ static struct platform_device scif3_device = {
+ };
  
- 	value = readl(priv->base + SMSTPCR(reg));
- 	if (enable)
-@@ -153,7 +153,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		value |= bitmask;
- 	writel(value, priv->base + SMSTPCR(reg));
+ static struct plat_sci_port scif4_platform_data = {
+-	.scscr		= SCSCR_REIE,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+ };
+@@ -128,7 +126,6 @@ static struct platform_device scif4_device = {
+ };
  
--	spin_unlock_irqrestore(&priv->mstp_lock, flags);
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
- 
- 	if (!enable)
- 		return 0;
-@@ -550,7 +550,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->dev = dev;
--	spin_lock_init(&priv->mstp_lock);
-+	spin_lock_init(&priv->rmw_lock);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->base = devm_ioremap_resource(dev, res);
+ static struct plat_sci_port scif5_platform_data = {
+-	.scscr		= SCSCR_REIE,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+ };
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
