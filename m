@@ -1,59 +1,192 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Felipe Balbi <balbi@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 1/6] usb: dwc3: omap: Replace the extcon API
-In-Reply-To: <1483070895-8213-2-git-send-email-cw00.choi@samsung.com>
-References: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com> <CGME20161230040816epcas5p4c76ef8f364678a34e2a0ff67b0119ef9@epcas5p4.samsung.com> <1483070895-8213-2-git-send-email-cw00.choi@samsung.com>
-Date: Mon, 16 Jan 2017 12:31:33 +0200
-Message-ID: <8760lfnvne.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936888AbdAKOnk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 11 Jan 2017 09:43:40 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 07/18] sh: Don't set sh-sci port_reg
+Date: Wed, 11 Jan 2017 16:43:29 +0200
+Message-Id: <20170111144340.29074-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+The driver considers all negative or zero values of the port_reg field
+as invalid. The four platforms that set the field to a register address
+all use an address higher than 0x7fffffff, which is thus considered by
+the driver as invalid. The feature is thus never used, remove it.
 
+The feature could be implemented properly in the future using the
+pinctrl and GPIO APIs if desired.
 
-Hi,
+While at it, don't set the field to SCIx_NOT_SUPPORTED (-1) either,
+leaving it unset leads to the same result. This will allow removing the
+SCIx_NOT_SUPPORTED macro.
 
-Chanwoo Choi <cw00.choi@samsung.com> writes:
-> This patch uses the resource-managed extcon API for extcon_register_notif=
-ier()
-> and replaces the deprecated extcon API as following:
-> - extcon_get_cable_state_() -> extcon_get_state()
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/sh/kernel/cpu/sh3/setup-sh770x.c  | 2 --
+ arch/sh/kernel/cpu/sh4/setup-sh7750.c  | 1 -
+ arch/sh/kernel/cpu/sh4a/setup-sh7366.c | 1 -
+ arch/sh/kernel/cpu/sh4a/setup-sh7723.c | 6 ------
+ arch/sh/kernel/cpu/sh4a/setup-sh7724.c | 6 ------
+ 5 files changed, 16 deletions(-)
 
-doesn't apply to testing/next. Please rebase
+diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+index e64fe24d860c..e1e54258b822 100644
+--- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
++++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
+@@ -109,7 +109,6 @@ static struct platform_device rtc_device = {
+ };
+ 
+ static struct plat_sci_port scif0_platform_data = {
+-	.port_reg	= 0xa4000136,
+ 	.type		= PORT_SCI,
+ 	.ops		= &sh770x_sci_port_ops,
+ 	.regshift	= 1,
+@@ -156,7 +155,6 @@ static struct platform_device scif1_device = {
+ #if defined(CONFIG_CPU_SUBTYPE_SH7707) || \
+     defined(CONFIG_CPU_SUBTYPE_SH7709)
+ static struct plat_sci_port scif2_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.type		= PORT_IRDA,
+ 	.ops		= &sh770x_sci_port_ops,
+ 	.regshift	= 1,
+diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7750.c b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
+index f693f122a286..d98a55416306 100644
+--- a/arch/sh/kernel/cpu/sh4/setup-sh7750.c
++++ b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
+@@ -38,7 +38,6 @@ static struct platform_device rtc_device = {
+ };
+ 
+ static struct plat_sci_port sci_platform_data = {
+-	.port_reg	= 0xffe0001C,
+ 	.type		= PORT_SCI,
+ 	.regshift	= 2,
+ };
+diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7366.c b/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
+index 3fc1a3ab634e..646918713d9a 100644
+--- a/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
++++ b/arch/sh/kernel/cpu/sh4a/setup-sh7366.c
+@@ -20,7 +20,6 @@
+ #include <asm/clock.h>
+ 
+ static struct plat_sci_port scif0_platform_data = {
+-	.port_reg	= 0xa405013e,
+ 	.scscr		= SCSCR_REIE,
+ 	.type		= PORT_SCIF,
+ };
+diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
+index 9f47ec950af8..6c5cb234aa33 100644
+--- a/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
++++ b/arch/sh/kernel/cpu/sh4a/setup-sh7723.c
+@@ -23,7 +23,6 @@
+ 
+ /* Serial */
+ static struct plat_sci_port scif0_platform_data = {
+-	.port_reg	= 0xa4050160,
+ 	.scscr		= SCSCR_REIE,
+ 	.type           = PORT_SCIF,
+ 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
+@@ -45,7 +44,6 @@ static struct platform_device scif0_device = {
+ };
+ 
+ static struct plat_sci_port scif1_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.type           = PORT_SCIF,
+ 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
+@@ -67,7 +65,6 @@ static struct platform_device scif1_device = {
+ };
+ 
+ static struct plat_sci_port scif2_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.type           = PORT_SCIF,
+ 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
+@@ -89,7 +86,6 @@ static struct platform_device scif2_device = {
+ };
+ 
+ static struct plat_sci_port scif3_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+@@ -111,7 +107,6 @@ static struct platform_device scif3_device = {
+ };
+ 
+ static struct plat_sci_port scif4_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+@@ -133,7 +128,6 @@ static struct platform_device scif4_device = {
+ };
+ 
+ static struct plat_sci_port scif5_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7724.c b/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
+index 3ce55884c787..c20258b18775 100644
+--- a/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
++++ b/arch/sh/kernel/cpu/sh4a/setup-sh7724.c
+@@ -290,7 +290,6 @@ static struct platform_device dma1_device = {
+ 
+ /* Serial */
+ static struct plat_sci_port scif0_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.type           = PORT_SCIF,
+ 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
+@@ -312,7 +311,6 @@ static struct platform_device scif0_device = {
+ };
+ 
+ static struct plat_sci_port scif1_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.type           = PORT_SCIF,
+ 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
+@@ -334,7 +332,6 @@ static struct platform_device scif1_device = {
+ };
+ 
+ static struct plat_sci_port scif2_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.scscr		= SCSCR_REIE,
+ 	.type           = PORT_SCIF,
+ 	.regtype	= SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE,
+@@ -356,7 +353,6 @@ static struct platform_device scif2_device = {
+ };
+ 
+ static struct plat_sci_port scif3_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+ };
+@@ -377,7 +373,6 @@ static struct platform_device scif3_device = {
+ };
+ 
+ static struct plat_sci_port scif4_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+ };
+@@ -398,7 +393,6 @@ static struct platform_device scif4_device = {
+ };
+ 
+ static struct plat_sci_port scif5_platform_data = {
+-	.port_reg	= SCIx_NOT_SUPPORTED,
+ 	.sampling_rate	= 8,
+ 	.type           = PORT_SCIFA,
+ };
+-- 
+Regards,
 
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlh8oQUACgkQzL64meEa
-mQbK1Q/9Glg/GViUfE0246K9RrHhso+Adn0yWOia/AZmKAE5AxVLpviYtYd/2AMZ
-ZnBMSJXEv6D7ifPh4ddU3I9/s9UGhh97r8K9t5Y5KlTJchIaMKPXaace3FtxIsz2
-vFtvKL42LT6MTlJdztaLK+N3+IrLx7yNPmh7gIK+ukE89gQntYVrfTclJOPleCQv
-oYL/rXXNaXRSoANtqHwBwY/+iLmCVbVFO3oV8+BTnFvBGc4TPQrdYUzP61/Dwsnm
-BehezXcCqevZLYSFvUNob7pK/CtW/jT/gUA8pyIj/44KNWzhtRb0AUQ97xcRD9jy
-5Xl1nx7V5mmNG1YSKAesogT7qKKtu0vOYSJoqMRxrbdEh9kHS5nIw+3sQo/LguOT
-yVUDb7C77z1MJ5eWncN/TIXwUp4XnB2JGi/eAk1L8ubdM7iUOW15WZc0IHLB2YVk
-fcR/syelh17CpC8jZDb8XWlHEUvKKs3YGfeTkqy+uY+FXV9V5PvVVcMm3tSdkdZB
-CDVHJZCLJl29U9gZJO+uahaRZOtNi2RtX9PSc3wdFJH1KCiTMgJLXIcpnXTi5Sz7
-C260a9lQosmkq+0oLNnsRrMQJaL6augdKb1obKeyZ9oEd+S/ivhgtfKbb93mQu94
-cc554u3AEg2mPECD+RDycWyVIdWhV7EnMUXomcbPmjUmwPr/y/w=
-=IkTX
------END PGP SIGNATURE-----
---=-=-=--
+Laurent Pinchart
