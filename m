@@ -1,49 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35215 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751075AbdALHgM (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:22573 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750730AbdALEQb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 02:36:12 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170112041452.14136-1-chris.brandt@renesas.com>
-References: <20170112041452.14136-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jan 2017 08:36:10 +0100
-Message-ID: <CAMuHMdW2Gx+t2uQUmYkQQoD7tB5us+CFXXpU1J3OW2Lzbsv77Q@mail.gmail.com>
-Subject: Re: [PATCH v3] mmc: sh_mmcif: Document r7s72100 DT bindings
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wed, 11 Jan 2017 23:16:31 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3] mmc: sh_mmcif: Document r7s72100 DT bindings
+Date: Wed, 11 Jan 2017 23:14:52 -0500
+Message-Id: <20170112041452.14136-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-On Thu, Jan 12, 2017 at 5:14 AM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
->
-> ---
-> v3:
-> * added list of how many interrupts each SOC has
-> v2:
-> * added interrupt description
+---
+v3:
+* added list of how many interrupts each SOC has
+v2:
+* added interrupt description
+---
+ Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks or the update!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+index e4ba92aa..c32dc5a 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
++++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+@@ -8,6 +8,7 @@ Required properties:
+ 
+ - compatible: should be "renesas,mmcif-<soctype>", "renesas,sh-mmcif" as a
+   fallback. Examples with <soctype> are:
++	- "renesas,mmcif-r7s72100" for the MMCIF found in r7s72100 SoCs
+ 	- "renesas,mmcif-r8a73a4" for the MMCIF found in r8a73a4 SoCs
+ 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
+ 	- "renesas,mmcif-r8a7778" for the MMCIF found in r8a7778 SoCs
+@@ -17,6 +18,13 @@ Required properties:
+ 	- "renesas,mmcif-r8a7794" for the MMCIF found in r8a7794 SoCs
+ 	- "renesas,mmcif-sh73a0" for the MMCIF found in sh73a0 SoCs
+ 
++- interrupts: Some SoCs have only 1 shared interrupt, while others have either
++  2 or 3 individual interrupts (error, int, card detect). Below is the number
++  of interrupts for each SoC:
++    1: r8a73a4, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
++    2: r8a7740, sh73a0
++    3: r7s72100
++
+ - clocks: reference to the functional clock
+ 
+ - dmas: reference to the DMA channels, one per channel name listed in the
+-- 
+2.10.1
