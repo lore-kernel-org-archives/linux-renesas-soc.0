@@ -1,74 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from slow1-d.mail.gandi.net ([217.70.178.86]:58045 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750860AbdALTZ3 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:20617 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750730AbdALOjT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 14:25:29 -0500
-Subject: Re: [PATCH 2/3] gpio: gpio-rz: GPIO driver for Renesas RZ series
-To: Chris Brandt <Chris.Brandt@renesas.com>,
+        Thu, 12 Jan 2017 09:39:19 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
- <1483990318-26927-3-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdbMVu1pe9fYf+DRsnm7Uy_S3T+TONs5qKYWXOLfLDJzwQ@mail.gmail.com>
- <a837aa4e-4f77-b29f-2032-c4005f984261@jmondi.org>
- <SG2PR06MB11655053AB845CD1BD8B61FE8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+CC: Magnus Damm <magnus.damm@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-From: jacopo mondi <jacopo@jmondi.org>
-Message-ID: <446d1be5-03f5-41ac-2b3e-8061a3b6ceec@jmondi.org>
-Date: Thu, 12 Jan 2017 20:13:35 +0100
+Subject: RE: [PATCH 2/3] gpio: gpio-rz: GPIO driver for Renesas RZ series
+Date: Thu, 12 Jan 2017 14:39:13 +0000
+Message-ID: <SG2PR06MB11655053AB845CD1BD8B61FE8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1483990318-26927-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdbMVu1pe9fYf+DRsnm7Uy_S3T+TONs5qKYWXOLfLDJzwQ@mail.gmail.com>
+ <a837aa4e-4f77-b29f-2032-c4005f984261@jmondi.org>
+In-Reply-To: <a837aa4e-4f77-b29f-2032-c4005f984261@jmondi.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11655053AB845CD1BD8B61FE8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On 12/01/2017 15:39, Chris Brandt wrote:
-> Hi Jacopo,
->
-> On Thursday, January 12, 2017, jacopo mondi wrote:
->> To read the pin direction I would need to add one more register to the
->> "reg" property range provided in the DTS.
->> This is of course doable, but I would have two questions here:
->> - why did you chose to use PMSR register instead of reading/writing
->> directly to PM? Am I missing something?
->
->
-> I guess you can still use the PMSR register to get the current direction
-> of the I/O pin. According to the HW manual:
->
-> "When reading, the higher 16 bits are read as 0000H. The lower 16 bits
->  are read as the value of the PMn register."
->
-
-Oh! That's weird I don't have that statement in my manual (public 
-version R01UH0403EJ0060 Rev.0.60)
-
-The only description for PMSR I have is:
-
-"This register provides an alternative method for writing data to the 
-PMn register.
-The higher 16 bits of the PMSRn register specify whether data can be 
-written to the PMn.PMnm bit specified by the
-lower 16 bits of the PMSRn register."
-
-So I assumed it was one direction only
-
->
-> While the PMSR register is a cool idea of having a special register that
-> can change a single port pin direction without doing a read-modify-write
-> by the CPU, it doesn't seem to be a standard option in Renesas SoCs (well,
-> except for the older NEC V850 parts where this PFC HW came from).
-> So a more traditional method of just using the Pmn register seems to be
-> more compatible across Renesas SoCs.
->
->
-> Chris
->
+SGkgSmFjb3BvLA0KDQpPbiBUaHVyc2RheSwgSmFudWFyeSAxMiwgMjAxNywgamFjb3BvIG1vbmRp
+IHdyb3RlOg0KPiBUbyByZWFkIHRoZSBwaW4gZGlyZWN0aW9uIEkgd291bGQgbmVlZCB0byBhZGQg
+b25lIG1vcmUgcmVnaXN0ZXIgdG8gdGhlDQo+ICJyZWciIHByb3BlcnR5IHJhbmdlIHByb3ZpZGVk
+IGluIHRoZSBEVFMuDQo+IFRoaXMgaXMgb2YgY291cnNlIGRvYWJsZSwgYnV0IEkgd291bGQgaGF2
+ZSB0d28gcXVlc3Rpb25zIGhlcmU6DQo+IC0gd2h5IGRpZCB5b3UgY2hvc2UgdG8gdXNlIFBNU1Ig
+cmVnaXN0ZXIgaW5zdGVhZCBvZiByZWFkaW5nL3dyaXRpbmcNCj4gZGlyZWN0bHkgdG8gUE0/IEFt
+IEkgbWlzc2luZyBzb21ldGhpbmc/DQoNCg0KSSBndWVzcyB5b3UgY2FuIHN0aWxsIHVzZSB0aGUg
+UE1TUiByZWdpc3RlciB0byBnZXQgdGhlIGN1cnJlbnQgZGlyZWN0aW9uDQpvZiB0aGUgSS9PIHBp
+bi4gQWNjb3JkaW5nIHRvIHRoZSBIVyBtYW51YWw6DQoNCiJXaGVuIHJlYWRpbmcsIHRoZSBoaWdo
+ZXIgMTYgYml0cyBhcmUgcmVhZCBhcyAwMDAwSC4gVGhlIGxvd2VyIDE2IGJpdHMNCiBhcmUgcmVh
+ZCBhcyB0aGUgdmFsdWUgb2YgdGhlIFBNbiByZWdpc3Rlci4iDQoNCg0KV2hpbGUgdGhlIFBNU1Ig
+cmVnaXN0ZXIgaXMgYSBjb29sIGlkZWEgb2YgaGF2aW5nIGEgc3BlY2lhbCByZWdpc3RlciB0aGF0
+DQpjYW4gY2hhbmdlIGEgc2luZ2xlIHBvcnQgcGluIGRpcmVjdGlvbiB3aXRob3V0IGRvaW5nIGEg
+cmVhZC1tb2RpZnktd3JpdGUNCmJ5IHRoZSBDUFUsIGl0IGRvZXNuJ3Qgc2VlbSB0byBiZSBhIHN0
+YW5kYXJkIG9wdGlvbiBpbiBSZW5lc2FzIFNvQ3MgKHdlbGwsDQpleGNlcHQgZm9yIHRoZSBvbGRl
+ciBORUMgVjg1MCBwYXJ0cyB3aGVyZSB0aGlzIFBGQyBIVyBjYW1lIGZyb20pLg0KU28gYSBtb3Jl
+IHRyYWRpdGlvbmFsIG1ldGhvZCBvZiBqdXN0IHVzaW5nIHRoZSBQbW4gcmVnaXN0ZXIgc2VlbXMg
+dG8gYmUNCm1vcmUgY29tcGF0aWJsZSBhY3Jvc3MgUmVuZXNhcyBTb0NzLg0KDQoNCkNocmlzDQoN
+Cg==
