@@ -1,75 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38988 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936831AbdADShf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 13:37:35 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <1483524908-32497-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1cOqRD-00023C-NF@debutante>
-Date: Wed, 04 Jan 2017 18:37:27 +0000
-Subject: Applied "spi: rspi: Remove useless memory allocation failure message" to the spi tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 12 Jan 2017 07:48:35 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Gary Bisson <gary.bisson@boundarydevices.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: core: Fix regression caused by delayed work for
+ hogs
+Message-ID: <20170112154834.GD2630@atomide.com>
+References: <20170111221334.26194-1-tony@atomide.com>
+ <CAMuHMdXGaDoBbNGkS8oYRiNUNbtUNand6qkNY-s4QNSt5Fj0ZQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXGaDoBbNGkS8oYRiNUNbtUNand6qkNY-s4QNSt5Fj0ZQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+* Geert Uytterhoeven <geert@linux-m68k.org> [170112 00:44]:
+> Hi Tony,
+> 
+> On Wed, Jan 11, 2017 at 11:13 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > Commit df61b366af26 ("pinctrl: core: Use delayed work for hogs") caused a
+> > regression at least with sh-pfc that is also a GPIO controller as
+> > noted by Geert Uytterhoeven <geert@linux-m68k.org>.
+> >
+> > As the original pinctrl_register() has issues calling pin controller
+> > driver functions early before the controller has finished registering,
+> > we can't just revert commit df61b366af26. That would break the drivers
+> > using GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS.
+> >
+> > So let's fix the issue with the following steps as a single patch:
+> >
+> > 1. Revert the late_init parts of commit df61b366af26.
+> >
+> >    The late_init clearly won't work and we have to just give up
+> >    on fixing pinctrl_register() for GENERIC_PINCTRL_GROUPS and
+> >    GENERIC_PINMUX_FUNCTIONS.
+> >
+> > 2. Split pinctrl_register() into two parts
+> >
+> >    By splitting pinctrl_register() into pinctrl_init_controller()
+> >    and pinctrl_create_and_start() we have better control over when
+> >    it's safe to call pinctrl_create().
+> >
+> > 3. Introduce a new pinctrl_register_and_init() function
+> >
+> >    As suggested by Linus Walleij <linus.walleij@linaro.org>, we
+> >    can just introduce a new function for the controllers that need
+> >    pinctrl_create() called later.
+> >
+> > 4. Convert the four known problem cases to use new function
+> >
+> >    Let's convert pinctrl-imx, pinctrl-single, sh-pfc and ti-iodelay
+> >    to use the new function to fix the issues. The rest of the drivers
+> >    can be converted later. Let's also update Documentation/pinctrl.txt
+> >    accordingly because of the known issues with pinctrl_register().
+> >
+> > Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
+> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Cc: Gary Bisson <gary.bisson@boundarydevices.com>
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> 
+> Thanks, this fixes r8a7740/armadillo.
+> 
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   spi: rspi: Remove useless memory allocation failure message
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+OK thanks for testing, good to hear it works for you.
 
 Thanks,
-Mark
 
->From ffcfae3823751c72b615b57f700e563667002d09 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 4 Jan 2017 11:15:07 +0100
-Subject: [PATCH] spi: rspi: Remove useless memory allocation failure message
-
-Printing an error on memory allocation failure is unnecessary.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-rspi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 9daf50031737..58b7e68013f3 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1227,10 +1227,8 @@ static int rspi_probe(struct platform_device *pdev)
- 	const struct spi_ops *ops;
- 
- 	master = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
--	if (master == NULL) {
--		dev_err(&pdev->dev, "spi_alloc_master error.\n");
-+	if (master == NULL)
- 		return -ENOMEM;
--	}
- 
- 	of_id = of_match_device(rspi_of_match, &pdev->dev);
- 	if (of_id) {
--- 
-2.11.0
+Tony
