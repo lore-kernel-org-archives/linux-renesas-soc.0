@@ -1,34 +1,64 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35050 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750895AbdALU0T (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 12 Jan 2017 15:26:19 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170112181149.29035-1-chris.brandt@renesas.com>
+References: <20170112181149.29035-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jan 2017 20:57:50 +0100
+Message-ID: <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-Date: Thu, 12 Jan 2017 20:34:26 +0000
-Message-ID: <SG2PR06MB1165F25FA9498C3AAD03D7698A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170112181149.29035-1-chris.brandt@renesas.com>
- <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKYW51YXJ5IDEyLCAyMDE3LCBHZWVydCBVeXR0ZXJo
-b2V2ZW4gd3JvdGU6DQo+IFRoaXMgaXMgc3RyYW5nZS4gVGhlcmUgYXJlIHR3byBTREhJIGNoYW5u
-ZWxzLCBidXQgdGhlIFNUQkNSMTINCj4gZG9jdW1lbnRhdGlvbiAoYWxsIHZlcnNpb25zIHVwIHRv
-IHJldi4gMy4wMCkgc2F5cyB0aGUgcmVnaXN0ZXIgaGFzIE1TVFANCj4gYml0cyBmb3IgZm91ciBT
-RCBob3N0IGludGVyZmFjZXM/DQo+IA0KPiBDYW4geW91IHBsZWFzZSBlbmxpZ2h0ZW4gbWU/IFRo
-YW5rcyENCg0KWWEsIEkgc2F3IHRoYXQuIFRoZXJlIGFyZSAyIGJpdHMgcGVyIFNESEkgY2hhbm5l
-bC4gSSBkaWQgY2hlY2sgYW5kIGp1c3QNCmVuYWJsaW5nIHRoZSBvbmUgd29ya3MgZmluZS4NCg0K
-SG9uZXN0bHksIEknbSBub3Qgc3VyZSB3aHkgdGhlcmUgYXJlIHR3byBjbG9jayBlbmFibGVzLg0K
-DQpJJ2xsIGdvIGJhY2sgYW5kIGFzayB0aGUgZGVzaWduIHRlYW0gaWYgdGhleSBjYW4gdGVsbCBt
-ZSB3aHkgdGhlcmUgYXJlIDIuDQoNCkFzIEkgc2FpZCwgSSBqdXN0IHJlLXRlc3RlZCBhbmQgaXQg
-d29ya3MgZmluZSwgYnV0IHlvdSBjYW4gaG9sZCBvZmYgb24gdGhlDQpwYXRjaCBpZiB5b3Ugd2Fu
-dCB1bnRpbCBJIGNvbWUgdXAgd2l0aCBhIHJlYWwgZXhwbGFuYXRpb24uDQoNCg0KQ2hyaXMNCg==
+Hi Chris,
+
+On Thu, Jan 12, 2017 at 7:11 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Now that all the clocks in the boot loader are disabled before booting
+> the kernel, and the mstp driver has been fixed for RZ/A1, here is a typo
+> that was missed during original testing.
+>
+> Fixes: 7c8522b7047c ("ARM: dts: r7s72100: add sdhi clock to device tree")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  include/dt-bindings/clock/r7s72100-clock.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+> index 29e01ed..318ab14 100644
+> --- a/include/dt-bindings/clock/r7s72100-clock.h
+> +++ b/include/dt-bindings/clock/r7s72100-clock.h
+> @@ -46,6 +46,6 @@
+>
+>  /* MSTP12 */
+>  #define R7S72100_CLK_SDHI0     3
+> -#define R7S72100_CLK_SDHI1     2
+> +#define R7S72100_CLK_SDHI1     1
+
+This is strange. There are two SDHI channels, but the STBCR12 documentation
+(all versions up to rev. 3.00) says the register has MSTP bits for four SD
+host interfaces?
+
+Can you please enlighten me? Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
