@@ -1,48 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57934 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751146AbdAMIf3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 03:35:29 -0500
-Date: Fri, 13 Jan 2017 09:35:22 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-Message-ID: <20170113083522.GD2269@verge.net.au>
+Subject: RE: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
+Date: Thu, 12 Jan 2017 20:34:26 +0000
+Message-ID: <SG2PR06MB1165F25FA9498C3AAD03D7698A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170112181149.29035-1-chris.brandt@renesas.com>
  <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
- <SG2PR06MB1165F25FA9498C3AAD03D7698A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165F25FA9498C3AAD03D7698A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 12, 2017 at 08:34:26PM +0000, Chris Brandt wrote:
-> Hi Geert,
-> 
-> On Thursday, January 12, 2017, Geert Uytterhoeven wrote:
-> > This is strange. There are two SDHI channels, but the STBCR12
-> > documentation (all versions up to rev. 3.00) says the register has MSTP
-> > bits for four SD host interfaces?
-> > 
-> > Can you please enlighten me? Thanks!
-> 
-> Ya, I saw that. There are 2 bits per SDHI channel. I did check and just
-> enabling the one works fine.
-> 
-> Honestly, I'm not sure why there are two clock enables.
-> 
-> I'll go back and ask the design team if they can tell me why there are 2.
-> 
-> As I said, I just re-tested and it works fine, but you can hold off on the
-> patch if you want until I come up with a real explanation.
-
-I'd prefer to hold off on this for now.
+SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKYW51YXJ5IDEyLCAyMDE3LCBHZWVydCBVeXR0ZXJo
+b2V2ZW4gd3JvdGU6DQo+IFRoaXMgaXMgc3RyYW5nZS4gVGhlcmUgYXJlIHR3byBTREhJIGNoYW5u
+ZWxzLCBidXQgdGhlIFNUQkNSMTINCj4gZG9jdW1lbnRhdGlvbiAoYWxsIHZlcnNpb25zIHVwIHRv
+IHJldi4gMy4wMCkgc2F5cyB0aGUgcmVnaXN0ZXIgaGFzIE1TVFANCj4gYml0cyBmb3IgZm91ciBT
+RCBob3N0IGludGVyZmFjZXM/DQo+IA0KPiBDYW4geW91IHBsZWFzZSBlbmxpZ2h0ZW4gbWU/IFRo
+YW5rcyENCg0KWWEsIEkgc2F3IHRoYXQuIFRoZXJlIGFyZSAyIGJpdHMgcGVyIFNESEkgY2hhbm5l
+bC4gSSBkaWQgY2hlY2sgYW5kIGp1c3QNCmVuYWJsaW5nIHRoZSBvbmUgd29ya3MgZmluZS4NCg0K
+SG9uZXN0bHksIEknbSBub3Qgc3VyZSB3aHkgdGhlcmUgYXJlIHR3byBjbG9jayBlbmFibGVzLg0K
+DQpJJ2xsIGdvIGJhY2sgYW5kIGFzayB0aGUgZGVzaWduIHRlYW0gaWYgdGhleSBjYW4gdGVsbCBt
+ZSB3aHkgdGhlcmUgYXJlIDIuDQoNCkFzIEkgc2FpZCwgSSBqdXN0IHJlLXRlc3RlZCBhbmQgaXQg
+d29ya3MgZmluZSwgYnV0IHlvdSBjYW4gaG9sZCBvZmYgb24gdGhlDQpwYXRjaCBpZiB5b3Ugd2Fu
+dCB1bnRpbCBJIGNvbWUgdXAgd2l0aCBhIHJlYWwgZXhwbGFuYXRpb24uDQoNCg0KQ2hyaXMNCg==
