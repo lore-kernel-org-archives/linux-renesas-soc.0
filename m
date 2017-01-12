@@ -1,60 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45734 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbdALPrE (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:50718 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbdALPb6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 10:47:04 -0500
-Date: Thu, 12 Jan 2017 16:46:47 +0100
-From: Simon Horman <horms@verge.net.au>
-To: David Miller <davem@davemloft.net>
+        Thu, 12 Jan 2017 10:31:58 -0500
+Date: Thu, 12 Jan 2017 10:21:02 -0500 (EST)
+Message-Id: <20170112.102102.2249793963798495642.davem@davemloft.net>
+To: horms+renesas@verge.net.au
 Cc: sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH/RFC net] ravb: do not use zero-length alighment DMA
  request
-Message-ID: <20170112154647.GA2329@verge.net.au>
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1484229217-25585-1-git-send-email-horms+renesas@verge.net.au>
 References: <1484229217-25585-1-git-send-email-horms+renesas@verge.net.au>
- <20170112.102102.2249793963798495642.davem@davemloft.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170112.102102.2249793963798495642.davem@davemloft.net>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 12, 2017 at 10:21:02AM -0500, David Miller wrote:
-> From: Simon Horman <horms+renesas@verge.net.au>
-> Date: Thu, 12 Jan 2017 14:53:37 +0100
-> 
-> > diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> > index 92d7692c840d..3b4d2504285e 100644
-> > --- a/drivers/net/ethernet/renesas/ravb_main.c
-> > +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> > @@ -1508,6 +1508,8 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-> >  	buffer = PTR_ALIGN(priv->tx_align[q], DPTR_ALIGN) +
-> >  		 entry / NUM_TX_DESC * DPTR_ALIGN;
-> >  	len = PTR_ALIGN(skb->data, DPTR_ALIGN) - skb->data;
-> > +	if (len == 0)
-> > +		len = skb->len > 4 ? 4 : skb->len;
-> >  	memcpy(buffer, skb->data, len);
-> >  	dma_addr = dma_map_single(ndev->dev.parent, buffer, len, DMA_TO_DEVICE);
-> >  	if (dma_mapping_error(ndev->dev.parent, dma_addr))
-> 
-> Assume len ends up being skb->len, then the second DMA mapping will be
-> made of zero length.
-> 
-> This code needs a bit of TLC.
+From: Simon Horman <horms+renesas@verge.net.au>
+Date: Thu, 12 Jan 2017 14:53:37 +0100
 
-Thanks, I realised that after sending this patch.
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 92d7692c840d..3b4d2504285e 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -1508,6 +1508,8 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+>  	buffer = PTR_ALIGN(priv->tx_align[q], DPTR_ALIGN) +
+>  		 entry / NUM_TX_DESC * DPTR_ALIGN;
+>  	len = PTR_ALIGN(skb->data, DPTR_ALIGN) - skb->data;
+> +	if (len == 0)
+> +		len = skb->len > 4 ? 4 : skb->len;
+>  	memcpy(buffer, skb->data, len);
+>  	dma_addr = dma_map_single(ndev->dev.parent, buffer, len, DMA_TO_DEVICE);
+>  	if (dma_mapping_error(ndev->dev.parent, dma_addr))
 
-What I now see is that a few lines further up there is:
+Assume len ends up being skb->len, then the second DMA mapping will be
+made of zero length.
 
-	 if (skb_put_padto(skb, ETH_ZLEN))
-		goto drop;
-
-	where ETH_ZLEN is 60.
-
-So I don't think we need to worry about skb->len being less than 60 and
-this patch can be simplified to:
-
-	if (len == 0)
-		len = 4;
+This code needs a bit of TLC.
