@@ -1,36 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:50562 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbdALPWX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43188 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbdALMuK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 10:22:23 -0500
-Date: Thu, 12 Jan 2017 10:22:21 -0500 (EST)
-Message-Id: <20170112.102221.792387985152329675.davem@davemloft.net>
-To: horms+renesas@verge.net.au
-Cc: sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH net] ravb: Remove Rx overflow log messages
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20170112122106.GA32727@verge.net.au>
-References: <20170112122106.GA32727@verge.net.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 12 Jan 2017 07:50:10 -0500
+Date: Thu, 12 Jan 2017 13:21:06 +0100
+From: Simon Horman <horms+renesas@verge.net.au>
+To: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH net] ravb: Remove Rx overflow log messages
+Message-ID: <20170112122106.GA32727@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
-Date: Thu, 12 Jan 2017 13:21:06 +0100
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> 
-> Remove Rx overflow log messages as in an environment where logging results
-> in network traffic logging may cause further overflows.
-> 
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> [simon: reworked changelog]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Remove Rx overflow log messages as in an environment where logging results
+in network traffic logging may cause further overflows.
 
-Applied, thanks.
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+[simon: reworked changelog]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+Changes since RFC:
+* Added Ack from Sergei
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 92d7692c840d..5e5ad978eab9 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -926,14 +926,10 @@ static int ravb_poll(struct napi_struct *napi, int budget)
+ 	/* Receive error message handling */
+ 	priv->rx_over_errors =  priv->stats[RAVB_BE].rx_over_errors;
+ 	priv->rx_over_errors += priv->stats[RAVB_NC].rx_over_errors;
+-	if (priv->rx_over_errors != ndev->stats.rx_over_errors) {
++	if (priv->rx_over_errors != ndev->stats.rx_over_errors)
+ 		ndev->stats.rx_over_errors = priv->rx_over_errors;
+-		netif_err(priv, rx_err, ndev, "Receive Descriptor Empty\n");
+-	}
+-	if (priv->rx_fifo_errors != ndev->stats.rx_fifo_errors) {
++	if (priv->rx_fifo_errors != ndev->stats.rx_fifo_errors)
+ 		ndev->stats.rx_fifo_errors = priv->rx_fifo_errors;
+-		netif_err(priv, rx_err, ndev, "Receive FIFO Overflow\n");
+-	}
+ out:
+ 	return budget - quota;
+ }
+-- 
+2.7.0.rc3.207.g0ac5344
