@@ -1,210 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35880 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750843AbdA2MOg (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:44667 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750780AbdALTBt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 29 Jan 2017 07:14:36 -0500
-Received: by mail-lf0-f44.google.com with SMTP id z134so182271389lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 29 Jan 2017 04:13:51 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 3/3] sh_eth: stop using bare numbers for EESIPR values
-Date: Sun, 29 Jan 2017 15:13:48 +0300
-Message-ID: <2886811.qRflv4VLBT@wasted.cogentembedded.com>
-In-Reply-To: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
-References: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 12 Jan 2017 14:01:49 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 2/3] ARM: dts: r7s72100: add ostm to device tree
+Date: Thu, 12 Jan 2017 14:01:07 -0500
+Message-Id: <20170112190108.2856-3-chris.brandt@renesas.com>
+In-Reply-To: <20170112190108.2856-1-chris.brandt@renesas.com>
+References: <20170112190108.2856-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now  that we  have almost all EESIPR bits declared (and those  that are
-still not are most probably reserved anyway) we can at last replace the
-bare  numbers used for 'sh_eth_cpu_data::eesipr_value' initializers with
-the bit names ORed together...
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
-Changes in version 2:
-- added the missing bits to the SH77{34|63} EESIPR values;
-- added Geert's tag.
+ arch/arm/boot/dts/r7s72100.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- drivers/net/ethernet/renesas/sh_eth.c |   91 +++++++++++++++++++++++++++++-----
- 1 file changed, 80 insertions(+), 11 deletions(-)
-
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -518,7 +518,14 @@ static struct sh_eth_cpu_data r7s72100_d
- 
- 	.ecsr_value	= ECSR_ICD,
- 	.ecsipr_value	= ECSIPR_ICDIP,
--	.eesipr_value	= 0xe77f009f,
-+	.eesipr_value	= EESIPR_TWB1IP | EESIPR_TWBIP | EESIPR_TC1IP |
-+			  EESIPR_TABTIP | EESIPR_RABTIP | EESIPR_RFCOFIP |
-+			  EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  EESIPR_RMAFIP | EESIPR_RRFIP |
-+			  EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -556,7 +563,14 @@ static struct sh_eth_cpu_data r8a7740_da
- 
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  0x0000f000 | EESIPR_CNDIP | EESIPR_DLCIP |
-+			  EESIPR_CDIP | EESIPR_TROIP | EESIPR_RMAFIP |
-+			  EESIPR_CEEFIP | EESIPR_CELFIP |
-+			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -603,7 +617,12 @@ static struct sh_eth_cpu_data r8a777x_da
- 
- 	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
- 	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
--	.eesipr_value	= 0x01ff009f,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ADEIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  EESIPR_RMAFIP | EESIPR_RRFIP |
-+			  EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
-@@ -626,7 +645,12 @@ static struct sh_eth_cpu_data r8a779x_da
- 	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP |
- 			  ECSIPR_MPDIP,
--	.eesipr_value	= 0x01ff009f,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ADEIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  EESIPR_RMAFIP | EESIPR_RRFIP |
-+			  EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
-@@ -667,7 +691,12 @@ static struct sh_eth_cpu_data sh7724_dat
- 
- 	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
- 	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
--	.eesipr_value	= 0x01ff009f,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ADEIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  EESIPR_RMAFIP | EESIPR_RRFIP |
-+			  EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
-@@ -702,7 +731,14 @@ static struct sh_eth_cpu_data sh7757_dat
- 
- 	.register_type	= SH_ETH_REG_FAST_SH4,
- 
--	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  0x0000f000 | EESIPR_CNDIP | EESIPR_DLCIP |
-+			  EESIPR_CDIP | EESIPR_TROIP | EESIPR_RMAFIP |
-+			  EESIPR_CEEFIP | EESIPR_CELFIP |
-+			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
-@@ -769,7 +805,14 @@ static struct sh_eth_cpu_data sh7757_dat
- 
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  0x0000f000 | EESIPR_CNDIP | EESIPR_DLCIP |
-+			  EESIPR_CDIP | EESIPR_TROIP | EESIPR_RMAFIP |
-+			  EESIPR_CEEFIP | EESIPR_CELFIP |
-+			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -800,7 +843,13 @@ static struct sh_eth_cpu_data sh7734_dat
- 
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003f07ff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  EESIPR_DLCIP | EESIPR_CDIP | EESIPR_TROIP |
-+			  EESIPR_RMAFIP | EESIPR_CEEFIP | EESIPR_CELFIP |
-+			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -830,7 +879,13 @@ static struct sh_eth_cpu_data sh7763_dat
- 
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003f07ff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  EESIPR_DLCIP | EESIPR_CDIP | EESIPR_TROIP |
-+			  EESIPR_RMAFIP | EESIPR_CEEFIP | EESIPR_CELFIP |
-+			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -851,7 +906,14 @@ static struct sh_eth_cpu_data sh7763_dat
- static struct sh_eth_cpu_data sh7619_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
--	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  0x0000f000 | EESIPR_CNDIP | EESIPR_DLCIP |
-+			  EESIPR_CDIP | EESIPR_TROIP | EESIPR_RMAFIP |
-+			  EESIPR_CEEFIP | EESIPR_CELFIP |
-+			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 
- 	.apr		= 1,
- 	.mpr		= 1,
-@@ -862,7 +924,14 @@ static struct sh_eth_cpu_data sh7619_dat
- static struct sh_eth_cpu_data sh771x_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
--	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  0x0000f000 | EESIPR_CNDIP | EESIPR_DLCIP |
-+			  EESIPR_CDIP | EESIPR_TROIP | EESIPR_RMAFIP |
-+			  EESIPR_CEEFIP | EESIPR_CELFIP |
-+			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
- 	.tsu		= 1,
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index d5946df..247bbe0 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -505,4 +505,15 @@
+ 		cap-sdio-irq;
+ 		status = "disabled";
+ 	};
++
++	ostm: ostm@fcfec000 {
++		compatible = "renesas,ostm-r7s72100", "renesas,ostm";
++		reg = <0xfcfec000 0x30>,
++		      <0xfcfec400 0x30>;
++		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING
++			      GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
++
++		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>, <&mstp5_clks R7S72100_CLK_OSTM1>;
++		status = "disabled";
++	};
  };
- 
+-- 
+2.10.1
