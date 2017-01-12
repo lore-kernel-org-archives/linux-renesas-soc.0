@@ -1,37 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:34999 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750981AbdALNcQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43472 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbdALNS1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 08:32:16 -0500
+        Thu, 12 Jan 2017 08:18:27 -0500
+Date: Thu, 12 Jan 2017 14:18:21 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Miller <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH/RFC v2 net-next] ravb: unmap descriptors when freeing
  rings
-To: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <20170112131821.GA16060@verge.net.au>
 References: <1483613000-537-1-git-send-email-horms+renesas@verge.net.au>
  <6fcec500-bed6-ffa3-2887-d45b34703682@cogentembedded.com>
  <20170112091116.GC7724@verge.net.au>
-CC: David Miller <davem@davemloft.net>,
-        Magnus Damm <magnus.damm@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-From: Lino Sanfilippo <lsanfil@marvell.com>
-Message-ID: <d840eddd-f6a3-fe8c-dbaa-242c117b5274@marvell.com>
-Date: Thu, 12 Jan 2017 14:23:48 +0100
+ <3e1d4324-4288-8d65-56fd-8c3e7283020b@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20170112091116.GC7724@verge.net.au>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e1d4324-4288-8d65-56fd-8c3e7283020b@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Thu, Jan 12, 2017 at 03:03:05PM +0300, Sergei Shtylyov wrote:
+> On 01/12/2017 12:11 PM, Simon Horman wrote:
 
-On 12.01.2017 10:11, Simon Horman wrote:
+...
 
->>> +
->>> +	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
+> >>   Here, it stop once an untransmitted buffer is encountered...
+> >
+> >Yes, I see that now.
+> >
+> >I wonder if we should:
+> >
+> >a) paramatise ravb_tx_free() so it may either clear all transmitted buffers
+> >   (current behaviour) or all buffers (new behaviour).
+> >b) provide a different version of this loop in ravb_ring_free()
+> >
+> >What are your thoughts?
+> 
+>    I'm voting for (b).
 
-BTW: How can this work correctly when cur_tx wraps and dirty_tx is greater?
+Ok, something like this?
 
-Regards,
-Lino
+@@ -215,6 +225,30 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+ 	}
+ 
+ 	if (priv->tx_ring[q]) {
++		for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
++			struct ravb_tx_desc *desc;
++			int entry;
++
++			entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
++						     NUM_TX_DESC);
++			desc = &priv->tx_ring[q][entry];
++
++			/* Free the original skb. */
++			if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
++				u32 size = le16_to_cpu(desc->ds_tagl) & TX_DS;
++
++				dma_unmap_single(ndev->dev.parent,
++						 le32_to_cpu(desc->dptr),
++						 size, DMA_TO_DEVICE);
++				/* Last packet descriptor? */
++				if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
++					entry /= NUM_TX_DESC;
++					dev_kfree_skb_any(priv->tx_skb[q][entry]);
++					priv->tx_skb[q][entry] = NULL;
++				}
++			}
++		}
++
+ 		ring_size = sizeof(struct ravb_tx_desc) *
+ 			    (priv->num_tx_ring[q] * NUM_TX_DESC + 1);
+ 		dma_free_coherent(ndev->dev.parent, ring_size, priv->tx_ring[q],
