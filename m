@@ -1,76 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54506 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938330AbdAFLwi (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:36788 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751551AbdALMz7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:52:38 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v1.1 08/19] serial: sh-sci: Fix register offsets for the IRDA serial port
-Date: Fri,  6 Jan 2017 13:52:35 +0200
-Message-Id: <20170106115235.3919-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <CAMuHMdVzm4D=Pdd6PoGzXUoO8Va4g1Y5KncaRS19PnSeGUn9Gw@mail.gmail.com>
-References: <CAMuHMdVzm4D=Pdd6PoGzXUoO8Va4g1Y5KncaRS19PnSeGUn9Gw@mail.gmail.com>
+        Thu, 12 Jan 2017 07:55:59 -0500
+Received: by mail-lf0-f44.google.com with SMTP id z134so8759701lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Jan 2017 04:55:58 -0800 (PST)
+Subject: Re: [PATCHv3 2/6] sh_eth: add generic wake-on-lan support via magic
+ packet
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20170109153409.13956-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170109153409.13956-3-niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-pm@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <4842b7e9-70a6-03ff-3ca0-36fbd1dcf4a3@cogentembedded.com>
+Date: Thu, 12 Jan 2017 15:55:54 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170109153409.13956-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Even though most of its registers are 8-bit wide, the IRDA has two
-16-bit registers that make it a 16-bit peripheral and not a 8-bit
-peripheral with addresses shifted by one. Fix the registers offset in
-the driver and the platform data regshift value.
+Hello!
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 -
- drivers/tty/serial/sh-sci.c           | 17 ++++++++---------
- 2 files changed, 8 insertions(+), 10 deletions(-)
+On 01/09/2017 06:34 PM, Niklas Söderlund wrote:
 
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-index e1e54258b822..592cd9ab30c4 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-@@ -157,7 +157,6 @@ static struct platform_device scif1_device = {
- static struct plat_sci_port scif2_platform_data = {
- 	.type		= PORT_IRDA,
- 	.ops		= &sh770x_sci_port_ops,
--	.regshift	= 1,
- };
- 
- static struct resource scif2_resources[] = {
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 8c58c43fc85d..1eb91ba43b2e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -193,18 +193,17 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 	},
- 
- 	/*
--	 * Common definitions for legacy IrDA ports, dependent on
--	 * regshift value.
-+	 * Common definitions for legacy IrDA ports.
- 	 */
- 	[SCIx_IRDA_REGTYPE] = {
- 		[SCSMR]		= { 0x00,  8 },
--		[SCBRR]		= { 0x01,  8 },
--		[SCSCR]		= { 0x02,  8 },
--		[SCxTDR]	= { 0x03,  8 },
--		[SCxSR]		= { 0x04,  8 },
--		[SCxRDR]	= { 0x05,  8 },
--		[SCFCR]		= { 0x06,  8 },
--		[SCFDR]		= { 0x07, 16 },
-+		[SCBRR]		= { 0x02,  8 },
-+		[SCSCR]		= { 0x04,  8 },
-+		[SCxTDR]	= { 0x06,  8 },
-+		[SCxSR]		= { 0x08,  8 },
-+		[SCxRDR]	= { 0x0a,  8 },
-+		[SCFCR]		= { 0x0c,  8 },
-+		[SCFDR]		= { 0x0e, 16 },
- 		[SCTFDR]	= sci_reg_invalid,
- 		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= sci_reg_invalid,
--- 
-Regards,
+> Add generic functionality to support Wake-on-LAN using MagicPacket which
+> are supported by at least a few versions of sh_eth. Only add
+> functionality for WoL, no specific sh_eth versions are marked to support
+> WoL yet.
+>
+> WoL is enabled in the suspend callback by setting MagicPacket detection
+> and disabling all interrupts expect MagicPacket. In the resume path the
+> driver needs to reset the hardware to rearm the WoL logic, this prevents
+> the driver from simply restoring the registers and to take advantage of
+> that sh_eth was not suspended to reduce resume time. To reset the
+> hardware the driver closes and reopens the device just like it would do
+> in a normal suspend/resume scenario without WoL enabled, but it both
+> closes and opens the device in the resume callback since the device
+> needs to be open for WoL to work.
+>
+> One quirk needed for WoL is that the module clock needs to be prevented
+> from being switched off by Runtime PM. To keep the clock alive the
+> suspend callback need to call clk_enable() directly to increase the
+> usage count of the clock. Then when Runtime PM decreases the clock usage
+> count it won't reach 0 and be switched off.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/net/ethernet/renesas/sh_eth.c | 114 +++++++++++++++++++++++++++++++---
+>  drivers/net/ethernet/renesas/sh_eth.h |   3 +
+>  2 files changed, 109 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index 8a784dce45fa..542c92b57b35 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -1552,6 +1552,8 @@ static void sh_eth_emac_interrupt(struct net_device *ndev)
+>  			sh_eth_rcv_snd_enable(ndev);
+>  		}
+>  	}
+> +	if (felic_stat & ECSR_MPD)
+> +		pm_wakeup_event(&mdp->pdev->dev, 0);
 
-Laurent Pinchart
+    Hum, seeing a corner case: if we're ignoring the link interrupt (and it 
+does occur along with ECSR.MPD, we'll return and miss this check. It would 
+have been preferable to add this code above the ECSR.LCHNG handler...
+
+[...]
+> @@ -3150,15 +3189,67 @@ static int sh_eth_drv_remove(struct platform_device *pdev)
+>
+>  #ifdef CONFIG_PM
+>  #ifdef CONFIG_PM_SLEEP
+> +static int sh_eth_wol_setup(struct net_device *ndev)
+> +{
+> +	struct sh_eth_private *mdp = netdev_priv(ndev);
+> +
+> +	/* Only allow ECI interrupts */
+> +	synchronize_irq(ndev->irq);
+> +	napi_disable(&mdp->napi);
+> +	sh_eth_write(ndev, DMAC_M_ECI, EESIPR);
+> +
+> +	/* Enable MagicPacket */
+> +	sh_eth_modify(ndev, ECMR, 0, ECMR_MPDE);
+
+    I'd prefer sh_eth_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE) to be 
+consistent with my other code...
+
+[...]
+
+MBR, Sergei
