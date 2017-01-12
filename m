@@ -1,47 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:5951 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750750AbdALTrr (ORCPT
+Received: from slow1-d.mail.gandi.net ([217.70.178.86]:58045 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750860AbdALTZ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 14:47:47 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: jacopo mondi <jacopo@jmondi.org>,
+        Thu, 12 Jan 2017 14:25:29 -0500
+Subject: Re: [PATCH 2/3] gpio: gpio-rz: GPIO driver for Renesas RZ series
+To: Chris Brandt <Chris.Brandt@renesas.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-CC: Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: RE: [PATCH 2/3] gpio: gpio-rz: GPIO driver for Renesas RZ series
-Date: Thu, 12 Jan 2017 19:45:22 +0000
-Message-ID: <SG2PR06MB1165FC63EBDDC982C816C9CC8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
  <1483990318-26927-3-git-send-email-jacopo+renesas@jmondi.org>
  <CACRpkdbMVu1pe9fYf+DRsnm7Uy_S3T+TONs5qKYWXOLfLDJzwQ@mail.gmail.com>
  <a837aa4e-4f77-b29f-2032-c4005f984261@jmondi.org>
  <SG2PR06MB11655053AB845CD1BD8B61FE8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <446d1be5-03f5-41ac-2b3e-8061a3b6ceec@jmondi.org>
-In-Reply-To: <446d1be5-03f5-41ac-2b3e-8061a3b6ceec@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: jacopo mondi <jacopo@jmondi.org>
+Message-ID: <446d1be5-03f5-41ac-2b3e-8061a3b6ceec@jmondi.org>
+Date: Thu, 12 Jan 2017 20:13:35 +0100
 MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11655053AB845CD1BD8B61FE8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgSmFjb3BvLA0KDQpPbiBUaHVyc2RheSwgSmFudWFyeSAxMiwgMjAxNywgamFjb3BvIG1vbmRp
-IHdyb3RlOg0KPiBPaCEgVGhhdCdzIHdlaXJkIEkgZG9uJ3QgaGF2ZSB0aGF0IHN0YXRlbWVudCBp
-biBteSBtYW51YWwgKHB1YmxpYyB2ZXJzaW9uDQo+IFIwMVVIMDQwM0VKMDA2MCBSZXYuMC42MCkN
-Cg0KSWYgeW91IGdvIHRvIHd3dy5yZW5lc2FzLmNvbSBhbmQgc2VhcmNoIGZvciAiUlovQTFIIFVz
-ZXIgTWFudWFsIiwgeW91IHdpbGwNCnNlZSB0aGF0IGEgbmV3IHZlcnNpb24gMy4wIG1hbnVhbCB3
-YXMgcmVjZW50bHkgcG9zdGVkLiBUaGlzIG5ldyB2ZXJzaW9uIGNvbnRhaW5zDQptYW55IG5ldyBk
-ZXNjcmlwdGlvbnMgYW5kIHByZWNhdXRpb25zLiBJdCBhbHNvIG5vdyBpbmNsdWRlcyB0aGUgU0RI
-SSBjaGFwdGVyDQp3aGljaCBwcmV2aW91c2x5IHdhcyBhbHdheXMgb21pdHRlZCBiZWNhdXNlIG9m
-IGxlZ2FsIHJlYXNvbnMuDQoNClRoZXJlIGlzIGEgc2VwYXJhdGUgbWFudWFsIGZvciB0aGUgUlov
-QTFMLiBUaGUgcGVyaXBoZXJhbHMgYXJlIGFsbCB0aGUgc2FtZSwNCmJ1dCB0aGUgZnVuY3Rpb24g
-cGlub3V0cyBhcmUgZGlmZmVyZW50IGJlY2F1c2UgdGhlIHBhY2thZ2VzIGFyZSBzbWFsbGVyLiBI
-ZW5jZSwNCmFsbCB0aGUgZXhpc3RpbmcgdXBzdHJlYW0gZHJpdmVycyBmb3IgUlovQTFIIHdvcmsg
-ZmluZSBmb3IgUlovQTFNIGFuZCBSWi9BMUwNCndpdGhvdXQgbW9kaWZpY2F0aW9uLi4uZXhjZXB0
-IHRoZSBwaW5zIGNvbWVzIG91dCBvbiBkaWZmZXJlbnQgcG9ydHMuLi5hbmQNCnRoZSBzaC1wZmMg
-ZHJpdmVyIHdvbid0IHdvcmsgd2VsbCBpbiB0aGlzIHNpdHVhdGlvbi4NCg0KDQpDaHJpcw0K
+Hi Chris,
+
+On 12/01/2017 15:39, Chris Brandt wrote:
+> Hi Jacopo,
+>
+> On Thursday, January 12, 2017, jacopo mondi wrote:
+>> To read the pin direction I would need to add one more register to the
+>> "reg" property range provided in the DTS.
+>> This is of course doable, but I would have two questions here:
+>> - why did you chose to use PMSR register instead of reading/writing
+>> directly to PM? Am I missing something?
+>
+>
+> I guess you can still use the PMSR register to get the current direction
+> of the I/O pin. According to the HW manual:
+>
+> "When reading, the higher 16 bits are read as 0000H. The lower 16 bits
+>  are read as the value of the PMn register."
+>
+
+Oh! That's weird I don't have that statement in my manual (public 
+version R01UH0403EJ0060 Rev.0.60)
+
+The only description for PMSR I have is:
+
+"This register provides an alternative method for writing data to the 
+PMn register.
+The higher 16 bits of the PMSRn register specify whether data can be 
+written to the PMn.PMnm bit specified by the
+lower 16 bits of the PMSRn register."
+
+So I assumed it was one direction only
+
+>
+> While the PMSR register is a cool idea of having a special register that
+> can change a single port pin direction without doing a read-modify-write
+> by the CPU, it doesn't seem to be a standard option in Renesas SoCs (well,
+> except for the older NEC V850 parts where this PFC HW came from).
+> So a more traditional method of just using the Pmn register seems to be
+> more compatible across Renesas SoCs.
+>
+>
+> Chris
+>
