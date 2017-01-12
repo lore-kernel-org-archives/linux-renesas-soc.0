@@ -1,98 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940168AbdAFLS6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:58 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/25] ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for i2c nodes
-Date: Fri,  6 Jan 2017 12:18:25 +0100
-Message-Id: <cfcb93b33f35879cfe06add3859fd869e3d1c9e2.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 12 Jan 2017 15:35:03 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] arm64: Add support for DMA_ATTR_SKIP_CPU_SYNC attribute
+ to swiotlb
+Message-ID: <20170112153503.GD13843@arm.com>
+References: <1484129477-24121-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1484129477-24121-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for i2c nodes in
-DT for r8a7792 SoC.
+On Wed, Jan 11, 2017 at 11:11:17AM +0100, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch adds support for DMA_ATTR_SKIP_CPU_SYNC attribute for
+> dma_{un}map_{page,sg} functions family to swiotlb.
+> 
+> DMA_ATTR_SKIP_CPU_SYNC allows platform code to skip synchronization of
+> the CPU cache for the given buffer assuming that it has been already
+> transferred to 'device' domain.
+> 
+> Ported from IOMMU .{un}map_{sg,page} ops.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Add Acked-by.
+> 
+> Support for DMA_ATTR_SKIP_CPU_SYNC was included when porting the IOMMU
+> ops from arm to arm64 in commit 13b8629f651164d7 ("arm64: Add IOMMU
+> dma_ops").
+> 
+> Presumably it was an oversight that the existing swiotlb based
+> implementation didn't have support for DMA_ATTR_SKIP_CPU_SYNC yet?
+> ---
+>  arch/arm64/mm/dma-mapping.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7792 and the
-fallback binding for R-Car Gen 2.
+Thanks. Applied for 4.11, with Robin's Reviewed-by.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7792.dtsi | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 6ced3c1ec377..59d31d433244 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -498,7 +498,8 @@
- 
- 		/* I2C doesn't need pinmux */
- 		i2c0: i2c@e6508000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6508000 0 0x40>;
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C0>;
-@@ -510,7 +511,8 @@
- 		};
- 
- 		i2c1: i2c@e6518000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6518000 0 0x40>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C1>;
-@@ -522,7 +524,8 @@
- 		};
- 
- 		i2c2: i2c@e6530000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6530000 0 0x40>;
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C2>;
-@@ -534,7 +537,8 @@
- 		};
- 
- 		i2c3: i2c@e6540000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6540000 0 0x40>;
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C3>;
-@@ -546,7 +550,8 @@
- 		};
- 
- 		i2c4: i2c@e6520000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6520000 0 0x40>;
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C4>;
-@@ -558,7 +563,8 @@
- 		};
- 
- 		i2c5: i2c@e6528000 {
--			compatible = "renesas,i2c-r8a7792";
-+			compatible = "renesas,i2c-r8a7792",
-+				     "renesas,rcar-gen2-i2c";
- 			reg = <0 0xe6528000 0 0x40>;
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp9_clks R8A7792_CLK_I2C5>;
--- 
-2.7.0.rc3.207.g0ac5344
+Will
