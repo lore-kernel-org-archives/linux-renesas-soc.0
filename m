@@ -1,64 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35050 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750895AbdALU0T (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 15:26:19 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170112181149.29035-1-chris.brandt@renesas.com>
-References: <20170112181149.29035-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jan 2017 20:57:50 +0100
-Message-ID: <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
+Date: Thu, 12 Jan 2017 13:11:49 -0500
+Message-Id: <20170112181149.29035-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
+Now that all the clocks in the boot loader are disabled before booting
+the kernel, and the mstp driver has been fixed for RZ/A1, here is a typo
+that was missed during original testing.
 
-On Thu, Jan 12, 2017 at 7:11 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Now that all the clocks in the boot loader are disabled before booting
-> the kernel, and the mstp driver has been fixed for RZ/A1, here is a typo
-> that was missed during original testing.
->
-> Fixes: 7c8522b7047c ("ARM: dts: r7s72100: add sdhi clock to device tree")
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
->  include/dt-bindings/clock/r7s72100-clock.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-> index 29e01ed..318ab14 100644
-> --- a/include/dt-bindings/clock/r7s72100-clock.h
-> +++ b/include/dt-bindings/clock/r7s72100-clock.h
-> @@ -46,6 +46,6 @@
->
->  /* MSTP12 */
->  #define R7S72100_CLK_SDHI0     3
-> -#define R7S72100_CLK_SDHI1     2
-> +#define R7S72100_CLK_SDHI1     1
+Fixes: 7c8522b7047c ("ARM: dts: r7s72100: add sdhi clock to device tree")
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ include/dt-bindings/clock/r7s72100-clock.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is strange. There are two SDHI channels, but the STBCR12 documentation
-(all versions up to rev. 3.00) says the register has MSTP bits for four SD
-host interfaces?
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index 29e01ed..318ab14 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -46,6 +46,6 @@
+ 
+ /* MSTP12 */
+ #define R7S72100_CLK_SDHI0	3
+-#define R7S72100_CLK_SDHI1	2
++#define R7S72100_CLK_SDHI1	1
+ 
+ #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
+-- 
+2.10.1
 
-Can you please enlighten me? Thanks!
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
