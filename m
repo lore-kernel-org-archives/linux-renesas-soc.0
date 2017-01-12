@@ -1,78 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:46254 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750777AbdALNnQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 08:43:16 -0500
-Subject: Re: [PATCH 1/2] dma-mapping: let arch know origin of dma range passed
- to arch_setup_dma_ops()
-To: Arnd Bergmann <arnd@arndb.de>
-References: <dca35acf-1adf-aa85-7a0b-d0c6ec702fa1@arm.com>
- <764334db-3400-58c6-cc4b-3f7ce66daa27@cogentembedded.com>
- <20170112121623.GH1771@arm.com> <3273119.LjYLKcrNcz@wuerfel>
-Cc: Will Deacon <will.deacon@arm.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Bjorn Helgaas <bhelgaas@google.com>, fkan@apm.com,
         linux-kernel@vger.kernel.org,
         Artemi Ivanov <artemi.ivanov@cogentembedded.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f3fcd74b-7264-7ff2-4f70-7bf4235302de@arm.com>
-Date: Thu, 12 Jan 2017 13:43:13 +0000
+Subject: Re: [PATCH 1/2] dma-mapping: let arch know origin of dma range passed to arch_setup_dma_ops()
+Date: Thu, 12 Jan 2017 14:28:03 +0100
+Message-ID: <3013606.q8hexDUEqF@wuerfel>
+In-Reply-To: <7d7dc402-e527-c581-0b1c-37713759db31@cogentembedded.com>
+References: <dca35acf-1adf-aa85-7a0b-d0c6ec702fa1@arm.com> <764334db-3400-58c6-cc4b-3f7ce66daa27@cogentembedded.com> <7d7dc402-e527-c581-0b1c-37713759db31@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <3273119.LjYLKcrNcz@wuerfel>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/01/17 13:25, Arnd Bergmann wrote:
-> On Thursday, January 12, 2017 12:16:24 PM CET Will Deacon wrote:
->> On Thu, Jan 12, 2017 at 08:52:51AM +0300, Nikita Yushchenko wrote:
->>>>> diff --git a/drivers/staging/fsl-mc/bus/fsl-mc-bus.c b/drivers/staging/fsl-mc/bus/fsl-mc-bus.c
->>>>> index 5ac373c..480b644 100644
->>>>> --- a/drivers/staging/fsl-mc/bus/fsl-mc-bus.c
->>>>> +++ b/drivers/staging/fsl-mc/bus/fsl-mc-bus.c
->>>>> @@ -540,7 +540,7 @@ int fsl_mc_device_add(struct dprc_obj_desc *obj_desc,
->>>>>  
->>>>>    /* Objects are coherent, unless 'no shareability' flag set. */
->>>>>    if (!(obj_desc->flags & DPRC_OBJ_FLAG_NO_MEM_SHAREABILITY))
->>>>> -          arch_setup_dma_ops(&mc_dev->dev, 0, 0, NULL, true);
->>>>> +          arch_setup_dma_ops(&mc_dev->dev, 0, 0, false, NULL, true);
->>>>>  
->>>>>    /*
->>>>>     * The device-specific probe callback will get invoked by device_add()
->>>>
->>>> Why are these actually calling arch_setup_dma_ops() here in the first
->>>> place? Are these all devices that are DMA masters without an OF node?
->>>
->>> I don't know, but that's a different topic. This patch just adds
->>> argument and sets it to false everywhere but in the location when range
->>> should be definitely enforced.
->>
->> I also wouldn't lose any sleep over a staging driver.
+On Thursday, January 12, 2017 9:33:32 AM CET Nikita Yushchenko wrote:
+> >> Hmm, I think when the dma-ranges are missing, we should either enforce
+> >> a 32-bit mask, or disallow DMA completely. It's probably too late for
+> >> the latter, I wish we had done this earlier in order to force everyone
+> >> on ARM64 to have a valid dma-ranges property for any DMA master.
+> > 
+> > This can be done over time.
+> > 
+> > However the very idea of this version of patch is - keep working pieces
+> > as-is, thus for now setting enforce_range to false in case of no defined
+> > dma-ranges is intentional.
 > 
-> I think this is in the process of being moved out of staging, and
-> my question was about the other two as well:
-
-The fsl-mc is actually a sort-of-bus-controller probing and configuring
-its (directly DMA-capable) child devices, so is in fact legitimate here.
-
-> drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-
-That one is completely bogus, and should just go away.
-
-> drivers/iommu/rockchip-iommu.c
-
-That one is part of some ugly trickery involving creating a fake device
-to represent multiple separate IOMMU devices. The driver could probably
-be reworked to not need it (the Exynos IOMMU handles a similar situation
-without such tricks), but it's non-trivial.
-
-Robin.
-
+> What we can do is - check bus width (as it is defined in DT) and set
+> enforce_range to true if bus is 32-bit
 > 
-> 	Arnd
+> > What I should re-check is - does rcar dtsi set dma-ranges, and add it if
+> > it does not.
 > 
+> It does not, will have to add.
+> 
+> In DT bus is defined as 64-bit. But looks like physically it is 32-bit.
+> Maybe DT needs fixing.
+
+I think we always assumed that the lack of a dma-ranges property
+implied a 32-bit width, as that is the safe fallback as well as the
+most common case.
+
+AFAICT, this means you are actually fine on rcar, and all other
+platforms will keep working as we enforce it, but might get slowed
+down if they relied on the unintended behavior of allowing 64-bit
+DMA.
+
+	Arnd
