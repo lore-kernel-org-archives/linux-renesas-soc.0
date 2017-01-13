@@ -1,90 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:53861 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750750AbdANDao (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 22:30:44 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170112185952.2780-2-chris.brandt@renesas.com>
+References: <20170112185952.2780-1-chris.brandt@renesas.com> <20170112185952.2780-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Jan 2017 09:34:29 +0100
+Message-ID: <CAMuHMdX_hx2M8Q4y7gptJvad4cbb+M54DZVCmbhunKuk4esbGA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: document renesas-ostm timer
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/2] dt-bindings: document renesas-ostm timer
-Date: Sat, 14 Jan 2017 03:30:36 +0000
-Message-ID: <SG2PR06MB1165BA49D82D9C0835DC0FB38A7B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170112185952.2780-1-chris.brandt@renesas.com>
- <20170112185952.2780-2-chris.brandt@renesas.com>
- <CAMuHMdX_hx2M8Q4y7gptJvad4cbb+M54DZVCmbhunKuk4esbGA@mail.gmail.com>
-In-Reply-To: <CAMuHMdX_hx2M8Q4y7gptJvad4cbb+M54DZVCmbhunKuk4esbGA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXZpZXcuDQoNCg0KT24gRnJpZGF5LCBK
-YW51YXJ5IDEzLCAyMDE3LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gK1RoZSBPU1RN
-IGNvbWVzIHdpdGggMiBpbmRlcGVuZGVudCBjaGFubmVscy4NCj4gPiArV2Ugd2lsbCB1c2UgdGhl
-IGZpcnN0IGNoYW5uZWwgKE9TVE0wKSBhcyBhIGZyZWUgcnVubmluZyBjbG9ja3NvdXJjZQ0KPiA+
-ICthbmQgdGhlIHNlY29uZCBjaGFubmVsIChPU1RNMSkgYXMgYSBpbnRlcnJ1cHQgZHJpdmVuIGNs
-b2NrIGV2ZW50Lg0KPiA+ICsNCj4gPiArQWRkaXRpb25hbGx5IHdlIHdpbGwgdXNlIHRoZSBjbG9j
-a3NvdXJjZSBjaGFubmVsIChPVFNNMCkgZm9yIHRoZQ0KPiA+ICtzeXN0ZW0gc2NoZWR1bGUgdGlt
-ZXIgc2NoZWRfY2xvY2soKS4NCj4gDQo+IFRoZSBhYm92ZSB0d28gc2VudGVuY2VzIGFyZSBzb2Z0
-d2FyZSBwb2xpY3ksIG5vdCBoYXJkd2FyZSBkZXNjcmlwdGlvbi4NCj4gSGVuY2UgdGhleSBkbyBu
-b3QgYmVsb25nIGluIHRoZSBEVCBiaW5kaW5ncyBkb2N1bWVudC4NCj4gWW91IGNhbiBtb3ZlIHRo
-ZW0gdG8gdGhlIGNvbW1pdCBkZXNjcmlwdGlvbiwgdGhvdWdoLg0KDQpPSy4NCg0KDQo+ID4gK1Jl
-cXVpcmVkIFByb3BlcnRpZXM6DQo+ID4gKw0KPiA+ICsgIC0gY29tcGF0aWJsZTogbXVzdCBiZSBv
-bmUgb3IgbW9yZSBvZiB0aGUgZm9sbG93aW5nOg0KPiA+ICsgICAgLSAicmVuZXNhcyxvc3RtLXI3
-czcyMTAwIiBmb3IgdGhlIHI3czcyMTAwIE9TVE0NCj4gDQo+IFBsZWFzZSB1c2UgInJlbmVzYXMs
-cjdzNzIxMDAtb3N0bSIgaW5zdGVhZCwgdG8gbWF0Y2ggY3VycmVudCBwcmFjdGljZXMuDQoNCklm
-IEkgbG9vayBhdCB0aGUgY3VycmVudCByN3M3MjEwMC5kdHNpOg0KDQpjb21wYXRpYmxlID0gInJl
-bmVzYXMscjdzNzIxMDAtY3BnLWNsb2NrcyIsICJyZW5lc2FzLHJ6LWNwZy1jbG9ja3MiOw0KY29t
-cGF0aWJsZSA9ICJyZW5lc2FzLHI3czcyMTAwLW1zdHAtY2xvY2tzIiwgInJlbmVzYXMsY3BnLW1z
-dHAtY2xvY2tzIjsNCmNvbXBhdGlibGUgPSAicmVuZXNhcyxzY2lmLXI3czcyMTAwIiwgInJlbmVz
-YXMsc2NpZiI7DQpjb21wYXRpYmxlID0gInJlbmVzYXMscnNwaS1yN3M3MjEwMCIsICJyZW5lc2Fz
-LHJzcGktcnoiOw0KY29tcGF0aWJsZSA9ICJyZW5lc2FzLHJpaWMtcjdzNzIxMDAiLCAicmVuZXNh
-cyxyaWljLXJ6IjsNCmNvbXBhdGlibGUgPSAicmVuZXNhcyxtdHUyLXI3czcyMTAwIiwgInJlbmVz
-YXMsbXR1MiI7DQpjb21wYXRpYmxlID0gInJlbmVzYXMsbW1jaWYtcjdzNzIxMDAiLCAicmVuZXNh
-cyxzaC1tbWNpZiI7DQpjb21wYXRpYmxlID0gInJlbmVzYXMsc2RoaS1yN3M3MjEwMCI7DQoNCklz
-ICJyZW5lc2FzLHh4eC1yN3M3MjEwIiB0aGUgb2xkIHdheSwgYW5kICJyZW5lc2FzLHI3czcyMTAw
-LXh4eCIgaXMgdGhlIG5ldyB3YXk/Pw0KDQoNCg0KPiA+ICsgIC0gcmVnOiBiYXNlIGFkZHJlc3Mg
-YW5kIGxlbmd0aCBvZiB0aGUgcmVnaXN0ZXJzIGJsb2NrIGZvciBlYWNoIHRpbWVyDQo+IGNoYW5u
-ZWwuDQo+ID4gKyAgICBUaGVyZSBzaG91bGQgYmUgMiBzZXRzIG9mIGFkZHJlc3Nlcywgb25lIGZv
-ciBlYWNoIGNoYW5uZWwuDQo+ID4gKw0KPiA+ICsgIC0gaW50ZXJydXB0czogaW50ZXJydXB0IHNw
-ZWNpZmllcnMgZm9yIHRoZSB0aW1lcnMuIFRoZXJlIHNob3VsZCBiZSAyDQo+ID4gKyAgICBpbnRl
-cnVwdHMsIG9uZSBmb3IgZWFjaCBjaGFubmVsLg0KPiA+ICsNCj4gPiArICAtIGNsb2NrczogYSBs
-aXN0IG9mIHBoYW5kbGUgKyBjbG9jay1zcGVjaWZpZXIgcGFpcnMsIG9uZSBmb3IgZWFjaA0KPiBl
-bnRyeQ0KPiA+ICsgICAgY2hhbm5lbC4gVGhlcmUgc2hvdWxkIGJlIDIgc2V0cywgb25lIGZvciBl
-YWNoIGNoYW5uZWwuDQo+IA0KPiBBcmUgdGhlIGNoYW5uZWxzIHRydWx5IGluZGVwZW5kZW50PyBJ
-ZiB5ZXMsIEkgdGhpbmsgaXQncyBiZXR0ZXIgdG8gaGF2ZQ0KPiB0d28gc2VwYXJhdGUgZGV2aWNl
-IG5vZGVzLCBvbmUgZm9yIGVhY2ggY2hhbm5lbC4NCj4gRWFjaCBjaGFubmVsIGhhcyBpdHMgb3du
-IG1vZHVsZSBjbG9jaywgc28gdXNpbmcgc2VwYXJhdGUgZGV2aWNlcyBtZWFucw0KPiBSdW50aW1l
-IFBNIGNhbiBtYW5hZ2UgYm90aCBjaGFubmVscyB0aHJvdWdoIHRoZWlyIG1vZHVsZSBjbG9ja3Mg
-YXMgc29vbiBhcw0KPiB5b3UgYWRkIGEgInBvd2VyLWRvbWFpbnMiIHByb3BlcnR5IHBvaW50aW5n
-IHRvIHRoZSBjbG9jayBkb21haW4gY29udHJvbGxlci4NCg0KDQpZZXMsIHRlY2huaWNhbGx5IHRo
-ZXkgYXJlIGluZGVwZW5kZW50IGNoYW5uZWxzLg0KVGhlIHdheSB0aGUgZHJpdmVyIGlzIGN1cnJl
-bnRseSB3cml0dGVuLCAxIGluc3RhbmNlIG9mIHRoZSBkcml2ZXIgdXNlcyAyIGNoYW5uZWxzDQpm
-b3IgZGlmZmVyZW50IHRoaW5ncy4gQ2gwIHdpbGwgYmUgc2V0IHVwIGFzIGEgJ2Nsb2Nrc291cmNl
-JywgYW5kIGNoMSB3aWxsIGJlIHNldCB1cA0KYXMgYSAnY2xvY2sgZXZlbnQnLg0KDQpBcyBpbjoN
-Cg0Kc3RhdGljIGludCBfX2luaXQgb3N0bV90aW1lcl9pbml0KHN0cnVjdCBvc3RtX2RldmljZSAq
-b3N0bSkNCnsNCglpbnQgcmV0ID0gMDsNCg0KCS8qIG9zdG0wIHdpbGwgYmUgY2xvY2sgc291cmNl
-ICovDQoJcmV0ID0gb3N0bV9pbml0X2Nsa3NyYyhvc3RtKTsNCglpZiAocmV0KQ0KCQlnb3RvIGVy
-cjsNCg0KCS8qIHVzZSBvc3RtMCBhcyBzeXN0ZW0gc2NoZWR1bGluZyBjbG9jayAqLw0KCXJldCA9
-IG9zdG1faW5pdF9zY2hlZF9jbG9jaygmb3N0bS0+Y2xrc3JjKTsNCglpZiAocmV0KQ0KCQlnb3Rv
-IGVycjsNCg0KCS8qIG9zdG0xIHdpbGwgYmUgY2xvY2sgZXZlbnQgKi8NCglyZXQgPSBvc3RtX2lu
-aXRfY2xrZXZ0KG9zdG0pOw0KZXJyOg0KCXJldHVybiByZXQ7DQp9DQoNCg0KDQpEbyB5b3UgdGhp
-bmsgaXQgd291bGQgYmUgYmV0dGVyIGlmIGEgZHJpdmVyIGluc3RhbmNlIG9ubHkgZG9lcyAxIHRo
-aW5nOiBFaXRoZXINCidjbG9ja3NvdXJjZScgb3IgJ2Nsb2NrIGV2ZW50Jz8/DQpUaGVuLCBJIHdv
-dWxkIG1ha2UgMiBvc3RtIG5vZGVzIGFuZCBwYXNzIGluIHRoZSBtb2RlIEkgd291bGQgbGlrZSBp
-dCBvcGVyYXRlIGluPw0KDQpGb3IgZXhhbXBsZToNCg0KJm9zdG0wIHsNCgltb2RlID0gImNsb2Nr
-c291cmNlIjsNCglzdGF0dXMgPSAib2theSI7DQp9Ow0KDQomb3N0bTEgew0KCW1vZGUgPSAiY2xv
-Y2stZXZlbnQiOw0KCXN0YXR1cyA9ICJva2F5IjsNCn07DQoNCg0KDQpUaGFuayB5b3UsDQpDaHJp
-cw0K
+Hi Chris,
+
+On Thu, Jan 12, 2017 at 7:59 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  .../devicetree/bindings/timer/renesas,ostm.txt     | 36 ++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
+>
+> diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+> new file mode 100644
+> index 0000000..46e1f27
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+> @@ -0,0 +1,36 @@
+> +* Renesas OS Timer (OSTM)
+> +
+> +The OSTM comes with 2 independent channels.
+> +We will use the first channel (OSTM0) as a free running clocksource and the
+> +second channel (OSTM1) as a interrupt driven clock event.
+> +
+> +Additionally we will use the clocksource channel (OTSM0) for the system
+> +schedule timer sched_clock().
+
+The above two sentences are software policy, not hardware description.
+Hence they do not belong in the DT bindings document.
+You can move them to the commit description, though.
+
+> +
+> +Required Properties:
+> +
+> +  - compatible: must be one or more of the following:
+> +    - "renesas,ostm-r7s72100" for the r7s72100 OSTM
+
+Please use "renesas,r7s72100-ostm" instead, to match current practices.
+
+> +    - "renesas,ostm" for any OSTM
+> +      This is a fallback for the above renesas,ostm-* entries
+> +
+> +  - reg: base address and length of the registers block for each timer channel.
+> +    There should be 2 sets of addresses, one for each channel.
+> +
+> +  - interrupts: interrupt specifiers for the timers. There should be 2
+> +    interupts, one for each channel.
+> +
+> +  - clocks: a list of phandle + clock-specifier pairs, one for each entry
+> +    channel. There should be 2 sets, one for each channel.
+
+Are the channels truly independent? If yes, I think it's better to have two
+separate device nodes, one for each channel.
+Each channel has its own module clock, so using separate devices means
+Runtime PM can manage both channels through their module clocks as soon as
+you add a "power-domains" property pointing to the clock domain controller.
+
+> +Example: R7S72100 (RZ/A1H) OSTM node
+> +
+> +       ostm: ostm@fcfec000 {
+> +               compatible = "renesas,ostm-r7s72100", "renesas,ostm";
+> +               reg = <0xfcfec000 0x30>,
+> +                     <0xfcfec400 0x30>;
+> +               interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING
+> +                             GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
+> +
+> +               clocks = <&mstp5_clks R7S72100_CLK_OSTM0>, <&mstp5_clks R7S72100_CLK_OSTM1>;
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
