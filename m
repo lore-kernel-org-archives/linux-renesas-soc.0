@@ -1,56 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:43822 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751181AbdAMIjw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57950 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbdAMIhZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 03:39:52 -0500
-Date: Fri, 13 Jan 2017 09:39:28 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms@verge.net.au>
+        Fri, 13 Jan 2017 03:37:25 -0500
+Date: Fri, 13 Jan 2017 09:37:19 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH RESEND 0/2] arm64: gen3: enable eMMC HS200 in DT
-Message-ID: <20170113083928.GD1446@katana>
+Message-ID: <20170113083719.GE2269@verge.net.au>
 References: <20170104173954.3135-1-wsa+renesas@sang-engineering.com>
  <20170112224353.GB1490@katana>
- <20170113083719.GE2269@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sgneBHv3152wZ8jf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170113083719.GE2269@verge.net.au>
+In-Reply-To: <20170112224353.GB1490@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Thu, Jan 12, 2017 at 11:43:53PM +0100, Wolfram Sang wrote:
+> On Wed, Jan 04, 2017 at 06:39:52PM +0100, Wolfram Sang wrote:
+> > Simon,
+> > 
+> > as Ulf picked up the driver patches for HS200 support, it is now safe to pick
+> > up the DTS patches, I'd say? I rebased them to the dt-for-4.11 branch.
+> > 
+> > All the best,
+> > 
+> >    Wolfram
+> > 
+> > 
+> > Wolfram Sang (2):
+> >   arm64: dts: r8a7795: enable HS200 for eMMC
+> >   arm64: dts: r8a7796: enable HS200 for eMMC
+> > 
+> >  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
+> >  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 1 +
+> >  2 files changed, 2 insertions(+)
+> 
+> Ping :)
 
---sgneBHv3152wZ8jf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-> Sorry for missing these.
-> I have queued them up for v4.11.
-
-Thank you!
-
-
---sgneBHv3152wZ8jf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYeJI/AAoJEBQN5MwUoCm2t2kP/RjmqenImH03BhezggxN5obF
-phsO8dQx9ndl6NzSt/Vi/WSARzNj3TEmca1ibzc5KtE5Z+bZIS6k4YP4tWwmoarx
-j5Tlr26VUn54r6b6KpVlf542gmlPd/utL5V+1i3+31oqx/FEAqkTSTH/4FWjj3kw
-z52EAjOxqrKVEVQgY+KPHQ/BD3P0aAh9id4tiKUMXvp+5Bjm5jcMXHdLTBp/1arG
-8GDTjlDXCkun9aZB/0Muqexj1/qJvSFpLWAsDNjWl/TAfYtrW0nDt5Xfgws6R7vz
-SEvn+Us++ZjqlkIlGnVQVeq1aND5d+M2aladei3HwOnU0f1jS8uhxxyBxLdjA5R7
-XSFz0VB9bymlfj7OXDxgfhbNzEOIZTjgvn1F5XKP9W+B9vtj2KSDvs3u1Q3xpVBo
-EJadGGumuyO8qckPDIVUjgJ9gZggvbgm6KRa7I2FHsN3LSORwf69Acdx1MdWK85t
-80kQZDQwPGVYSsBnMMLzn5DtvP8b1g41duVyQSsUzTnZa/76X/0foSX81wx9SOU8
-aYEXXJGetpXJZOzfMN01SJjs3IQ5fxi1s0sUI6twEBYMQwuHiKRxCmPkXOa6wxIJ
-+1KrnVqZTJ24Knrh2TBFrxAvTV2fvfxjvUFwfv4keQBJ1N911o3ESyBwtCKWIWHY
-TqQjvKrTL+VfITSuRby9
-=0M/f
------END PGP SIGNATURE-----
-
---sgneBHv3152wZ8jf--
+Sorry for missing these.
+I have queued them up for v4.11.
