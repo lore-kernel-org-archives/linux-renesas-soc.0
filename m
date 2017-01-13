@@ -1,84 +1,47 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11659339E4A08373D3626BB28A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
+Date: Fri, 13 Jan 2017 17:56:59 +0000
+Message-ID: <SG2PR06MB11659339E4A08373D3626BB28A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170112181149.29035-1-chris.brandt@renesas.com>
  <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
  <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
  <CAMuHMdVkTS21UnZA9OyEZ=mR5+GtAEbiLwpe=uKB_O6deXBPyw@mail.gmail.com>
  <SG2PR06MB1165D0D67AD68A12030C961D8A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdUVnUS-iOM8cbXNP7jMLNFb5+hgnMp3edkCzpbEpAePzw@mail.gmail.com> <SG2PR06MB11659339E4A08373D3626BB28A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Jan 2017 11:36:41 +0100
-Message-ID: <CAMuHMdX=cNuBSMqvPKYa7J5g7T4dSfHhSjcGdmuOPw_as=6RQQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8
+ <CAMuHMdUVnUS-iOM8cbXNP7jMLNFb5+hgnMp3edkCzpbEpAePzw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUVnUS-iOM8cbXNP7jMLNFb5+hgnMp3edkCzpbEpAePzw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-CC Woflram
-
-On Fri, Jan 13, 2017 at 6:56 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Friday, January 13, 2017, Geert Uytterhoeven wrote:
->> > In sh_mobile_sdhi.c, can we change sh_mobile_sdhi_probe() so that if
->> > there are 2 clocks specified (in DT or platform data), it
->> > automatically enables the 2nd clock (forever) and just uses the 1st
->> clock as the on/off clock?
->>
->> Of course the driver can handle the second interrupt, if you update the
->> binding, and add support code for that...
->
-> Of course my idea is that I would only have to update the bindings for
-> RZ/A1...not any other device.
->
-> My only question is, today sh_mobile_sdhi.c uses this:
->
->    priv->clk = devm_clk_get(&pdev->dev, NULL);
->
-> to get the clock. But if there is a 2nd clock...how do I know the
-> string id name to look to replace NULL with??
-
-That should be specified in the bindings. "NULL" will get you the first clock.
-
-> Or...for the RZ/A1 dtsi, should I just give the 2 clocks names:
->
->                 clocks = <&mstp12_clks R7S72100_CLK_SDHI00,
->                                 &mstp12_clks R7S72100_CLK_SDHI01>;
->                 clock-names = "core", "cd";
-
-Something like that.
-If devm_clk_get(&pdev->dev, "core") fails, you can assume a single clock
-and retry with NULL.
-
-> and then in the code do:
->
->         struct *cd_clk;
->         cd_clk = devm_clk_get(&pdev->dev, "cd");
->         if (cd_clk) {
->                 clk_prepare_enable(cd_clk);
->         }
->
->   (this simple 1-line fix patch is getting a lot more complicated)
-
-Disclaimer: I don't know how/if the SDHI core manages clocks, and may
-interfere. Adding Wolfram.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgSmFudWFyeSAxMywgMjAxNywgR2VlcnQgVXl0dGVyaG9l
+dmVuIHdyb3RlOg0KPiA+IEluIHNoX21vYmlsZV9zZGhpLmMsIGNhbiB3ZSBjaGFuZ2Ugc2hfbW9i
+aWxlX3NkaGlfcHJvYmUoKSBzbyB0aGF0IGlmDQo+ID4gdGhlcmUgYXJlIDIgY2xvY2tzIHNwZWNp
+ZmllZCAoaW4gRFQgb3IgcGxhdGZvcm0gZGF0YSksIGl0DQo+ID4gYXV0b21hdGljYWxseSBlbmFi
+bGVzIHRoZSAybmQgY2xvY2sgKGZvcmV2ZXIpIGFuZCBqdXN0IHVzZXMgdGhlIDFzdA0KPiBjbG9j
+ayBhcyB0aGUgb24vb2ZmIGNsb2NrPw0KPiANCj4gT2YgY291cnNlIHRoZSBkcml2ZXIgY2FuIGhh
+bmRsZSB0aGUgc2Vjb25kIGludGVycnVwdCwgaWYgeW91IHVwZGF0ZSB0aGUNCj4gYmluZGluZywg
+YW5kIGFkZCBzdXBwb3J0IGNvZGUgZm9yIHRoYXQuLi4NCg0KT2YgY291cnNlIG15IGlkZWEgaXMg
+dGhhdCBJIHdvdWxkIG9ubHkgaGF2ZSB0byB1cGRhdGUgdGhlIGJpbmRpbmdzIGZvcg0KUlovQTEu
+Li5ub3QgYW55IG90aGVyIGRldmljZS4NCg0KTXkgb25seSBxdWVzdGlvbiBpcywgdG9kYXkgc2hf
+bW9iaWxlX3NkaGkuYyB1c2VzIHRoaXM6DQoNCiAgIHByaXYtPmNsayA9IGRldm1fY2xrX2dldCgm
+cGRldi0+ZGV2LCBOVUxMKTsNCg0KdG8gZ2V0IHRoZSBjbG9jay4gQnV0IGlmIHRoZXJlIGlzIGEg
+Mm5kIGNsb2NrLi4uaG93IGRvIEkga25vdyB0aGUNCnN0cmluZyBpZCBuYW1lIHRvIGxvb2sgdG8g
+cmVwbGFjZSBOVUxMIHdpdGg/Pw0KDQoNCk9yLi4uZm9yIHRoZSBSWi9BMSBkdHNpLCBzaG91bGQg
+SSBqdXN0IGdpdmUgdGhlIDIgY2xvY2tzIG5hbWVzOg0KDQoJCWNsb2NrcyA9IDwmbXN0cDEyX2Ns
+a3MgUjdTNzIxMDBfQ0xLX1NESEkwMCwNCgkJCQkmbXN0cDEyX2Nsa3MgUjdTNzIxMDBfQ0xLX1NE
+SEkwMT47DQoJCWNsb2NrLW5hbWVzID0gImNvcmUiLCAiY2QiOw0KDQoNCmFuZCB0aGVuIGluIHRo
+ZSBjb2RlIGRvOg0KDQoJc3RydWN0ICpjZF9jbGs7DQoJY2RfY2xrID0gZGV2bV9jbGtfZ2V0KCZw
+ZGV2LT5kZXYsICJjZCIpOw0KCWlmIChjZF9jbGspIHsNCgkJY2xrX3ByZXBhcmVfZW5hYmxlKGNk
+X2Nsayk7DQoJfQ0KDQoNCg0KICAodGhpcyBzaW1wbGUgMS1saW5lIGZpeCBwYXRjaCBpcyBnZXR0
+aW5nIGEgbG90IG1vcmUgY29tcGxpY2F0ZWQpDQoNCg0KVGhhbmtzLA0KQ2hyaXMNCg==
