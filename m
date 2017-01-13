@@ -1,47 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45215 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753106AbdAZIws (ORCPT
+Received: from mga09.intel.com ([134.134.136.24]:52456 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751475AbdAMMYk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 03:52:48 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 5/5] arm64: dts: r8a7795-salvator-x: Enable I2C for DVFS device
-Date: Thu, 26 Jan 2017 09:52:30 +0100
-Message-Id: <1485420750-12701-6-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1485420750-12701-1-git-send-email-horms+renesas@verge.net.au>
-References: <1485420750-12701-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 13 Jan 2017 07:24:40 -0500
+Date: Fri, 13 Jan 2017 17:54:43 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] dmaengine: rcar-dmac: unmap slave resource when channel
+ is freed
+Message-ID: <20170113122443.GS3573@localhost>
+References: <20170111143931.9611-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170111143931.9611-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+On Wed, Jan 11, 2017 at 03:39:31PM +0100, Niklas S�derlund wrote:
+> The slave mapping should be removed together with other channel
+> resources when the channel is freed. If it's not unmapped it will hang
+> around forever after the channel is freed.
 
-This patch enables I2C for DVFS device for for Salvator-X board on
-R8A7795 SoC.
+Applied, thanks
 
-Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 51ef8bbaa33e..ff8bb5bd675f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -486,6 +486,10 @@
- 	clock-frequency = <22579200>;
- };
- 
-+&i2c_dvfs {
-+	status = "okay";
-+};
-+
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
 -- 
-2.7.0.rc3.207.g0ac5344
+~Vinod
