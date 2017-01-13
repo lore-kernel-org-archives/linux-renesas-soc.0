@@ -1,90 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:35715 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbdAPUmd (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33608 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751365AbdAMMBl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 15:42:33 -0500
-Received: by mail-lf0-f50.google.com with SMTP id n124so23689546lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Jan 2017 12:42:11 -0800 (PST)
+        Fri, 13 Jan 2017 07:01:41 -0500
+Date: Fri, 13 Jan 2017 13:01:35 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Miller <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH/RFC v2 net-next] ravb: unmap descriptors when freeing
  rings
-To: Simon Horman <horms@verge.net.au>
+Message-ID: <20170113120133.GA31006@verge.net.au>
 References: <1483613000-537-1-git-send-email-horms+renesas@verge.net.au>
  <6fcec500-bed6-ffa3-2887-d45b34703682@cogentembedded.com>
  <20170112091116.GC7724@verge.net.au>
  <3e1d4324-4288-8d65-56fd-8c3e7283020b@cogentembedded.com>
  <20170112131821.GA16060@verge.net.au>
-Cc: David Miller <davem@davemloft.net>,
-        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8ab10450-5fe3-bc33-6c66-6f3ea861f561@cogentembedded.com>
-Date: Mon, 16 Jan 2017 23:41:51 +0300
+ <dc41bc36-8239-39d7-def1-a60603e3890a@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20170112131821.GA16060@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc41bc36-8239-39d7-def1-a60603e3890a@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Thu, Jan 12, 2017 at 07:33:51PM +0300, Sergei Shtylyov wrote:
+> On 01/12/2017 04:18 PM, Simon Horman wrote:
+> 
+> >...
+> >
+> >>>>  Here, it stop once an untransmitted buffer is encountered...
+> >>>
+> >>>Yes, I see that now.
+> >>>
+> >>>I wonder if we should:
+> >>>
+> >>>a) paramatise ravb_tx_free() so it may either clear all transmitted buffers
+> >>>  (current behaviour) or all buffers (new behaviour).
+> >>>b) provide a different version of this loop in ravb_ring_free()
+> >>>
+> >>>What are your thoughts?
+> >>
+> >>   I'm voting for (b).
+> >
+> >Ok, something like this?
+> >
+> >@@ -215,6 +225,30 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+> > 	}
+> >
+> > 	if (priv->tx_ring[q]) {
+> >+		for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
+> 
+>    You're still copying the loop logic from ravb_tx_free() while we (I
+> think) need a simple loop over all the descriptor ring.
 
-On 01/12/2017 04:18 PM, Simon Horman wrote:
+I thought the above may be better as it seems to me that only descriptors
+in the range described above could need to be freed. But simpler may be
+better. And I also noticed several other problems with the code I posted
+yesterday afternoon.
 
-> ...
+How about something like this?
 
->>>>   Here, it stop once an untransmitted buffer is encountered...
->>>
->>> Yes, I see that now.
->>>
->>> I wonder if we should:
->>>
->>> a) paramatise ravb_tx_free() so it may either clear all transmitted buffers
->>>   (current behaviour) or all buffers (new behaviour).
->>> b) provide a different version of this loop in ravb_ring_free()
->>>
->>> What are your thoughts?
->>
->>    I'm voting for (b).
-
-    After looking at this issue for another time, I'll vote for (a). Sorry for 
-back-and-forth on this matter -- I somehow thought we could do a better job by 
-scanning all the TX ring...
-
-> Ok, something like this?
->
-> @@ -215,6 +225,30 @@ static void ravb_ring_free(struct net_device *ndev, int q)
->  	}
->
->  	if (priv->tx_ring[q]) {
-> +		for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
-> +			struct ravb_tx_desc *desc;
-> +			int entry;
-> +
-> +			entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
-> +						     NUM_TX_DESC);
-> +			desc = &priv->tx_ring[q][entry];
-> +
-> +			/* Free the original skb. */
-> +			if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
-> +				u32 size = le16_to_cpu(desc->ds_tagl) & TX_DS;
-> +
-> +				dma_unmap_single(ndev->dev.parent,
-> +						 le32_to_cpu(desc->dptr),
-> +						 size, DMA_TO_DEVICE);
-> +				/* Last packet descriptor? */
-> +				if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
-> +					entry /= NUM_TX_DESC;
-> +					dev_kfree_skb_any(priv->tx_skb[q][entry]);
-> +					priv->tx_skb[q][entry] = NULL;
-> +				}
-> +			}
-> +		}
-> +
-
-    This is only different from ravb_tx_free() by not stopping on unfinished 
-descriptor, so we must be good with adding an extra param to it...
-
-[...]
-
-MBR, Sergei
+@@ -215,6 +225,17 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+ 	}
+ 
+ 	if (priv->tx_ring[q]) {
++		for (i = 0; i < priv->num_tx_ring[q] * NUM_TX_DESC; i++) {
++			struct ravb_tx_desc *desc = &priv->tx_ring[q][i];
++
++			if (desc->die_dt != DT_EEMPTY) {
++				u32 size = le16_to_cpu(desc->ds_tagl) & TX_DS;
++
++				dma_unmap_single(ndev->dev.parent,
++						 le32_to_cpu(desc->dptr),
++						 size, DMA_TO_DEVICE);
++			}
++		}
+ 		ring_size = sizeof(struct ravb_tx_desc) *
+ 			    (priv->num_tx_ring[q] * NUM_TX_DESC + 1);
+ 		dma_free_coherent(ndev->dev.parent, ring_size, priv->tx_ring[q],
