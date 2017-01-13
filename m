@@ -1,104 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36111 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751841AbdAMPK4 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:10459 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751482AbdAMOpi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 10:10:56 -0500
-MIME-Version: 1.0
-In-Reply-To: <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
-References: <20170112181149.29035-1-chris.brandt@renesas.com>
- <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com> <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Jan 2017 16:10:54 +0100
-Message-ID: <CAMuHMdVkTS21UnZA9OyEZ=mR5+GtAEbiLwpe=uKB_O6deXBPyw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Fri, 13 Jan 2017 09:45:38 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
+Date: Fri, 13 Jan 2017 14:44:49 +0000
+Message-ID: <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
+References: <20170112181149.29035-1-chris.brandt@renesas.com>
+ <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Fri, Jan 13, 2017 at 3:44 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Thursday, January 12, 2017, Geert Uytterhoeven wrote:
->> This is strange. There are two SDHI channels, but the STBCR12
->> documentation (all versions up to rev. 3.00) says the register has MSTP
->> bits for four SD host interfaces?
->>
->> Can you please enlighten me? Thanks!
->
-> If you look in the rev 3.00 manual for RZ/A1H, in section
-> "50.3.2 Card Detect/Write Protect", it says:
->
-> * Power-Down mode at Card removal
->   SD Host Interface module is halted by the MSTP123 bit to MSTP120 bit in Standby Control Register 12
->   (STBCR12). If these bits of each channel in STBCR12 are set to 10, low power consumption is achieved at Card
->   removal. See section 55, Power-Down Modes
->
->
-> So, there are 2 clock sources for each SDHI channel, and the setting
-> Options are:
->   SD Host Interface 0 Module Stop
->   00: SD Host Interface 0 Module runs.
->   01: Setting prohibited.
->   10: Only card detect block in SD Host Interface 0 Module runs.
->   11: Clock supply to SD Host Interface 0 Module is halted
-
-So typically you want to use 10 when idle, and 00 when active.
-
-> Previously I've been running with '00' because I was turning EVERYTHING on
-> in u-boot.
-> Yesterday, I tested with just '10' and things seem to work OK
-> for me.
->
-> Since the sh_mobile_sdhi/tmio driver only allows for 1 clock per channel,
-> '10' is my only choice for the DT.
->
-> However, looking at a previous BSP for RZ/A1, the driver
-> arch/arm/mach-shmobile/clock-r7s72100.c had this:
->
->
-> static struct clk mstp_clks[MSTP_NR] = {
->         [MSTP123] = SH_CLK_MSTP8(&peripheral1_clk, STBCR12, 3, 0), /* SDHI00 */
->         [MSTP122] = SH_CLK_MSTP8(&peripheral1_clk, STBCR12, 2,
->                         CLK_ENABLE_ON_INIT),                       /* SDHI01 */
->         [MSTP121] = SH_CLK_MSTP8(&peripheral1_clk, STBCR12, 1, 0), /* SDHI10 */
->         [MSTP120] = SH_CLK_MSTP8(&peripheral1_clk, STBCR12, 0,
->                 CLK_ENABLE_ON_INIT),                               /* SDHI11 */
->
->
-> But...that would make me think on boot it would be set to '01' (setting prohibited).
-
-Yeah, running with enabled SDHI core and disabled card detect sounds silly.
-
-> I'm going to try and find if "setting prohibited" really just means:
-> "you can set it this way...but nothing is really going to work unless you
-> enable the other clock".
->
-> If that is the case, is there a DT equivalent to "CLK_ENABLE_ON_INIT" that
-> I can do for MSTP120(SDHI11) and MSTP120(SDHI01) so they are both cleared
-> on boot???
-
-No there isn't. That's another reason why a full-fledged clock driver with
-tables in C is a better idea than trying to describe all clocks in DT.
-The new CPG/MSSR based driver (renesas-cpg-mssr.c) supports "critical
-module clocks" through CLK_ENABLE_HAND_OFF. Unfortunately that flag hasn't
-made it upstream, so I really should convert the driver to use the new
-CLK_IS_CRITICAL instead...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKYW51YXJ5IDEyLCAyMDE3LCBHZWVydCBVeXR0ZXJo
+b2V2ZW4gd3JvdGU6DQo+IFRoaXMgaXMgc3RyYW5nZS4gVGhlcmUgYXJlIHR3byBTREhJIGNoYW5u
+ZWxzLCBidXQgdGhlIFNUQkNSMTINCj4gZG9jdW1lbnRhdGlvbiAoYWxsIHZlcnNpb25zIHVwIHRv
+IHJldi4gMy4wMCkgc2F5cyB0aGUgcmVnaXN0ZXIgaGFzIE1TVFANCj4gYml0cyBmb3IgZm91ciBT
+RCBob3N0IGludGVyZmFjZXM/DQo+IA0KPiBDYW4geW91IHBsZWFzZSBlbmxpZ2h0ZW4gbWU/IFRo
+YW5rcyENCg0KSWYgeW91IGxvb2sgaW4gdGhlIHJldiAzLjAwIG1hbnVhbCBmb3IgUlovQTFILCBp
+biBzZWN0aW9uDQoiNTAuMy4yIENhcmQgRGV0ZWN0L1dyaXRlIFByb3RlY3QiLCBpdCBzYXlzOg0K
+DQoNCiogUG93ZXItRG93biBtb2RlIGF0IENhcmQgcmVtb3ZhbA0KICBTRCBIb3N0IEludGVyZmFj
+ZSBtb2R1bGUgaXMgaGFsdGVkIGJ5IHRoZSBNU1RQMTIzIGJpdCB0byBNU1RQMTIwIGJpdCBpbiBT
+dGFuZGJ5IENvbnRyb2wgUmVnaXN0ZXIgMTINCiAgKFNUQkNSMTIpLiBJZiB0aGVzZSBiaXRzIG9m
+IGVhY2ggY2hhbm5lbCBpbiBTVEJDUjEyIGFyZSBzZXQgdG8gMTAsIGxvdyBwb3dlciBjb25zdW1w
+dGlvbiBpcyBhY2hpZXZlZCBhdCBDYXJkDQogIHJlbW92YWwuIFNlZSBzZWN0aW9uIDU1LCBQb3dl
+ci1Eb3duIE1vZGVzDQoNCg0KU28sIHRoZXJlIGFyZSAyIGNsb2NrIHNvdXJjZXMgZm9yIGVhY2gg
+U0RISSBjaGFubmVsLCBhbmQgdGhlIHNldHRpbmcNCk9wdGlvbnMgYXJlOg0KICBTRCBIb3N0IElu
+dGVyZmFjZSAwIE1vZHVsZSBTdG9wDQogIDAwOiBTRCBIb3N0IEludGVyZmFjZSAwIE1vZHVsZSBy
+dW5zLg0KICAwMTogU2V0dGluZyBwcm9oaWJpdGVkLg0KICAxMDogT25seSBjYXJkIGRldGVjdCBi
+bG9jayBpbiBTRCBIb3N0IEludGVyZmFjZSAwIE1vZHVsZSBydW5zLg0KICAxMTogQ2xvY2sgc3Vw
+cGx5IHRvIFNEIEhvc3QgSW50ZXJmYWNlIDAgTW9kdWxlIGlzIGhhbHRlZA0KDQpQcmV2aW91c2x5
+IEkndmUgYmVlbiBydW5uaW5nIHdpdGggJzAwJyBiZWNhdXNlIEkgd2FzIHR1cm5pbmcgRVZFUllU
+SElORyBvbg0KaW4gdS1ib290Lg0KWWVzdGVyZGF5LCBJIHRlc3RlZCB3aXRoIGp1c3QgJzEwJyBh
+bmQgdGhpbmdzIHNlZW0gdG8gd29yayBPSw0KZm9yIG1lLg0KDQpTaW5jZSB0aGUgc2hfbW9iaWxl
+X3NkaGkvdG1pbyBkcml2ZXIgb25seSBhbGxvd3MgZm9yIDEgY2xvY2sgcGVyIGNoYW5uZWwsDQon
+MTAnIGlzIG15IG9ubHkgY2hvaWNlIGZvciB0aGUgRFQuDQoNCkhvd2V2ZXIsIGxvb2tpbmcgYXQg
+YSBwcmV2aW91cyBCU1AgZm9yIFJaL0ExLCB0aGUgZHJpdmVyIA0KYXJjaC9hcm0vbWFjaC1zaG1v
+YmlsZS9jbG9jay1yN3M3MjEwMC5jIGhhZCB0aGlzOg0KDQoNCnN0YXRpYyBzdHJ1Y3QgY2xrIG1z
+dHBfY2xrc1tNU1RQX05SXSA9IHsNCiAgICAgICAgW01TVFAxMjNdID0gU0hfQ0xLX01TVFA4KCZw
+ZXJpcGhlcmFsMV9jbGssIFNUQkNSMTIsIDMsIDApLCAvKiBTREhJMDAgKi8NCiAgICAgICAgW01T
+VFAxMjJdID0gU0hfQ0xLX01TVFA4KCZwZXJpcGhlcmFsMV9jbGssIFNUQkNSMTIsIDIsDQogICAg
+ICAgICAgICAgICAgICAgICAgICBDTEtfRU5BQkxFX09OX0lOSVQpLCAgICAgICAgICAgICAgICAg
+ICAgICAgLyogU0RISTAxICovDQogICAgICAgIFtNU1RQMTIxXSA9IFNIX0NMS19NU1RQOCgmcGVy
+aXBoZXJhbDFfY2xrLCBTVEJDUjEyLCAxLCAwKSwgLyogU0RISTEwICovDQogICAgICAgIFtNU1RQ
+MTIwXSA9IFNIX0NMS19NU1RQOCgmcGVyaXBoZXJhbDFfY2xrLCBTVEJDUjEyLCAwLA0KICAgICAg
+ICAgICAgICAgIENMS19FTkFCTEVfT05fSU5JVCksICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIC8qIFNESEkxMSAqLw0KDQoNCkJ1dC4uLnRoYXQgd291bGQgbWFrZSBtZSB0aGluayBvbiBi
+b290IGl0IHdvdWxkIGJlIHNldCB0byAnMDEnIChzZXR0aW5nIHByb2hpYml0ZWQpLg0KDQoNCkkn
+bSBnb2luZyB0byB0cnkgYW5kIGZpbmQgaWYgInNldHRpbmcgcHJvaGliaXRlZCIgcmVhbGx5IGp1
+c3QgbWVhbnM6DQoieW91IGNhbiBzZXQgaXQgdGhpcyB3YXkuLi5idXQgbm90aGluZyBpcyByZWFs
+bHkgZ29pbmcgdG8gd29yayB1bmxlc3MgeW91DQplbmFibGUgdGhlIG90aGVyIGNsb2NrIi4NCg0K
+SWYgdGhhdCBpcyB0aGUgY2FzZSwgaXMgdGhlcmUgYSBEVCBlcXVpdmFsZW50IHRvICJDTEtfRU5B
+QkxFX09OX0lOSVQiIHRoYXQNCkkgY2FuIGRvIGZvciBNU1RQMTIwKFNESEkxMSkgYW5kIE1TVFAx
+MjAoU0RISTAxKSBzbyB0aGV5IGFyZSBib3RoIGNsZWFyZWQNCm9uIGJvb3Q/Pz8NCg0KDQpUaGFu
+a3MsDQpDaHJpcw0K
