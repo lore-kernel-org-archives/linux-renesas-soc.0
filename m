@@ -1,69 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10459 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751482AbdAMOpi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57934 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751146AbdAMIf3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 09:45:38 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
+        Fri, 13 Jan 2017 03:35:29 -0500
+Date: Fri, 13 Jan 2017 09:35:22 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-Date: Fri, 13 Jan 2017 14:44:49 +0000
-Message-ID: <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
+Message-ID: <20170113083522.GD2269@verge.net.au>
 References: <20170112181149.29035-1-chris.brandt@renesas.com>
  <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <SG2PR06MB1165F25FA9498C3AAD03D7698A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165F25FA9498C3AAD03D7698A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKYW51YXJ5IDEyLCAyMDE3LCBHZWVydCBVeXR0ZXJo
-b2V2ZW4gd3JvdGU6DQo+IFRoaXMgaXMgc3RyYW5nZS4gVGhlcmUgYXJlIHR3byBTREhJIGNoYW5u
-ZWxzLCBidXQgdGhlIFNUQkNSMTINCj4gZG9jdW1lbnRhdGlvbiAoYWxsIHZlcnNpb25zIHVwIHRv
-IHJldi4gMy4wMCkgc2F5cyB0aGUgcmVnaXN0ZXIgaGFzIE1TVFANCj4gYml0cyBmb3IgZm91ciBT
-RCBob3N0IGludGVyZmFjZXM/DQo+IA0KPiBDYW4geW91IHBsZWFzZSBlbmxpZ2h0ZW4gbWU/IFRo
-YW5rcyENCg0KSWYgeW91IGxvb2sgaW4gdGhlIHJldiAzLjAwIG1hbnVhbCBmb3IgUlovQTFILCBp
-biBzZWN0aW9uDQoiNTAuMy4yIENhcmQgRGV0ZWN0L1dyaXRlIFByb3RlY3QiLCBpdCBzYXlzOg0K
-DQoNCiogUG93ZXItRG93biBtb2RlIGF0IENhcmQgcmVtb3ZhbA0KICBTRCBIb3N0IEludGVyZmFj
-ZSBtb2R1bGUgaXMgaGFsdGVkIGJ5IHRoZSBNU1RQMTIzIGJpdCB0byBNU1RQMTIwIGJpdCBpbiBT
-dGFuZGJ5IENvbnRyb2wgUmVnaXN0ZXIgMTINCiAgKFNUQkNSMTIpLiBJZiB0aGVzZSBiaXRzIG9m
-IGVhY2ggY2hhbm5lbCBpbiBTVEJDUjEyIGFyZSBzZXQgdG8gMTAsIGxvdyBwb3dlciBjb25zdW1w
-dGlvbiBpcyBhY2hpZXZlZCBhdCBDYXJkDQogIHJlbW92YWwuIFNlZSBzZWN0aW9uIDU1LCBQb3dl
-ci1Eb3duIE1vZGVzDQoNCg0KU28sIHRoZXJlIGFyZSAyIGNsb2NrIHNvdXJjZXMgZm9yIGVhY2gg
-U0RISSBjaGFubmVsLCBhbmQgdGhlIHNldHRpbmcNCk9wdGlvbnMgYXJlOg0KICBTRCBIb3N0IElu
-dGVyZmFjZSAwIE1vZHVsZSBTdG9wDQogIDAwOiBTRCBIb3N0IEludGVyZmFjZSAwIE1vZHVsZSBy
-dW5zLg0KICAwMTogU2V0dGluZyBwcm9oaWJpdGVkLg0KICAxMDogT25seSBjYXJkIGRldGVjdCBi
-bG9jayBpbiBTRCBIb3N0IEludGVyZmFjZSAwIE1vZHVsZSBydW5zLg0KICAxMTogQ2xvY2sgc3Vw
-cGx5IHRvIFNEIEhvc3QgSW50ZXJmYWNlIDAgTW9kdWxlIGlzIGhhbHRlZA0KDQpQcmV2aW91c2x5
-IEkndmUgYmVlbiBydW5uaW5nIHdpdGggJzAwJyBiZWNhdXNlIEkgd2FzIHR1cm5pbmcgRVZFUllU
-SElORyBvbg0KaW4gdS1ib290Lg0KWWVzdGVyZGF5LCBJIHRlc3RlZCB3aXRoIGp1c3QgJzEwJyBh
-bmQgdGhpbmdzIHNlZW0gdG8gd29yayBPSw0KZm9yIG1lLg0KDQpTaW5jZSB0aGUgc2hfbW9iaWxl
-X3NkaGkvdG1pbyBkcml2ZXIgb25seSBhbGxvd3MgZm9yIDEgY2xvY2sgcGVyIGNoYW5uZWwsDQon
-MTAnIGlzIG15IG9ubHkgY2hvaWNlIGZvciB0aGUgRFQuDQoNCkhvd2V2ZXIsIGxvb2tpbmcgYXQg
-YSBwcmV2aW91cyBCU1AgZm9yIFJaL0ExLCB0aGUgZHJpdmVyIA0KYXJjaC9hcm0vbWFjaC1zaG1v
-YmlsZS9jbG9jay1yN3M3MjEwMC5jIGhhZCB0aGlzOg0KDQoNCnN0YXRpYyBzdHJ1Y3QgY2xrIG1z
-dHBfY2xrc1tNU1RQX05SXSA9IHsNCiAgICAgICAgW01TVFAxMjNdID0gU0hfQ0xLX01TVFA4KCZw
-ZXJpcGhlcmFsMV9jbGssIFNUQkNSMTIsIDMsIDApLCAvKiBTREhJMDAgKi8NCiAgICAgICAgW01T
-VFAxMjJdID0gU0hfQ0xLX01TVFA4KCZwZXJpcGhlcmFsMV9jbGssIFNUQkNSMTIsIDIsDQogICAg
-ICAgICAgICAgICAgICAgICAgICBDTEtfRU5BQkxFX09OX0lOSVQpLCAgICAgICAgICAgICAgICAg
-ICAgICAgLyogU0RISTAxICovDQogICAgICAgIFtNU1RQMTIxXSA9IFNIX0NMS19NU1RQOCgmcGVy
-aXBoZXJhbDFfY2xrLCBTVEJDUjEyLCAxLCAwKSwgLyogU0RISTEwICovDQogICAgICAgIFtNU1RQ
-MTIwXSA9IFNIX0NMS19NU1RQOCgmcGVyaXBoZXJhbDFfY2xrLCBTVEJDUjEyLCAwLA0KICAgICAg
-ICAgICAgICAgIENMS19FTkFCTEVfT05fSU5JVCksICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIC8qIFNESEkxMSAqLw0KDQoNCkJ1dC4uLnRoYXQgd291bGQgbWFrZSBtZSB0aGluayBvbiBi
-b290IGl0IHdvdWxkIGJlIHNldCB0byAnMDEnIChzZXR0aW5nIHByb2hpYml0ZWQpLg0KDQoNCkkn
-bSBnb2luZyB0byB0cnkgYW5kIGZpbmQgaWYgInNldHRpbmcgcHJvaGliaXRlZCIgcmVhbGx5IGp1
-c3QgbWVhbnM6DQoieW91IGNhbiBzZXQgaXQgdGhpcyB3YXkuLi5idXQgbm90aGluZyBpcyByZWFs
-bHkgZ29pbmcgdG8gd29yayB1bmxlc3MgeW91DQplbmFibGUgdGhlIG90aGVyIGNsb2NrIi4NCg0K
-SWYgdGhhdCBpcyB0aGUgY2FzZSwgaXMgdGhlcmUgYSBEVCBlcXVpdmFsZW50IHRvICJDTEtfRU5B
-QkxFX09OX0lOSVQiIHRoYXQNCkkgY2FuIGRvIGZvciBNU1RQMTIwKFNESEkxMSkgYW5kIE1TVFAx
-MjAoU0RISTAxKSBzbyB0aGV5IGFyZSBib3RoIGNsZWFyZWQNCm9uIGJvb3Q/Pz8NCg0KDQpUaGFu
-a3MsDQpDaHJpcw0K
+On Thu, Jan 12, 2017 at 08:34:26PM +0000, Chris Brandt wrote:
+> Hi Geert,
+> 
+> On Thursday, January 12, 2017, Geert Uytterhoeven wrote:
+> > This is strange. There are two SDHI channels, but the STBCR12
+> > documentation (all versions up to rev. 3.00) says the register has MSTP
+> > bits for four SD host interfaces?
+> > 
+> > Can you please enlighten me? Thanks!
+> 
+> Ya, I saw that. There are 2 bits per SDHI channel. I did check and just
+> enabling the one works fine.
+> 
+> Honestly, I'm not sure why there are two clock enables.
+> 
+> I'll go back and ask the design team if they can tell me why there are 2.
+> 
+> As I said, I just re-tested and it works fine, but you can hold off on the
+> patch if you want until I come up with a real explanation.
+
+I'd prefer to hold off on this for now.
