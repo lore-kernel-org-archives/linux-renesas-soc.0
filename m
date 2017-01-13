@@ -1,44 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:32903 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762401AbdADV3g (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:30052 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751482AbdAMOut (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 16:29:36 -0500
-Received: by mail-lf0-f44.google.com with SMTP id k86so23444659lfi.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jan 2017 13:29:35 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] sh_eth: R8A7740 supports packet shecksumming
-Date: Thu, 05 Jan 2017 00:29:32 +0300
-Message-ID: <1871204.P0zXJRoIfd@wasted.cogentembedded.com>
+        Fri, 13 Jan 2017 09:50:49 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 3/3] ARM: dts: rskrza1: add ostm DT support
+Date: Fri, 13 Jan 2017 14:50:38 +0000
+Message-ID: <PS1PR06MB1162BA1C7B9A38C5CBA329268A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
+References: <20170112190108.2856-1-chris.brandt@renesas.com>
+ <20170112190108.2856-4-chris.brandt@renesas.com>
+ <CAMuHMdWNd=TqqWAv3NhEF5R8JRQ362EJ3LirHpqBLgQK3w30oA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWNd=TqqWAv3NhEF5R8JRQ362EJ3LirHpqBLgQK3w30oA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R8A7740 GEther controller supports the packet checksum offloading
-but the 'hw_crc' (bad name, I'll fix it) flag isn't set in the R8A7740
-data,  thus CSMR isn't cleared...
-
-Fixes: 73a0d907301e ("net: sh_eth: add support R8A7740")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-This patch is against DaveM's 'net.git' repo plus the fixes sent recently...
-
- drivers/net/ethernet/renesas/sh_eth.c |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: net/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net/drivers/net/ethernet/renesas/sh_eth.c
-@@ -574,6 +574,7 @@ static struct sh_eth_cpu_data r8a7740_da
- 	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
-+	.hw_crc		= 1,
- 	.tsu		= 1,
- 	.select_mii	= 1,
- 	.shift_rd0	= 1,
+SGkgR2VlcnQgYW5kIFNlcmdlaSwNCg0KT24gRnJpZGF5LCBKYW51YXJ5IDEzLCAyMDE3LCBHZWVy
+dCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+IE9uIFRodSwgSmFuIDEyLCAyMDE3IGF0IDg6MDEgUE0s
+IENocmlzIEJyYW5kdCA8Y2hyaXMuYnJhbmR0QHJlbmVzYXMuY29tPg0KPiB3cm90ZToNCj4gPiAt
+LS0gYS9hcmNoL2FybS9ib290L2R0cy9yN3M3MjEwMC5kdHNpDQo+ID4gKysrIGIvYXJjaC9hcm0v
+Ym9vdC9kdHMvcjdzNzIxMDAuZHRzaQ0KPiA+IEBAIC01MTMsNyArNTEzLDggQEANCj4gPiAgICAg
+ICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDEwMiBJUlFfVFlQRV9FREdFX1JJU0lO
+Rw0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdJQ19TUEkgMTAzIElSUV9UWVBF
+X0VER0VfUklTSU5HPjsNCj4gPg0KPiA+IC0gICAgICAgICAgICAgICBjbG9ja3MgPSA8Jm1zdHA1
+X2Nsa3MgUjdTNzIxMDBfQ0xLX09TVE0wPiwgPCZtc3RwNV9jbGtzDQo+IFI3UzcyMTAwX0NMS19P
+U1RNMT47DQo+ID4gKyAgICAgICAgICAgICAgIGNsb2NrcyA9IDwmbXN0cDVfY2xrcyBSN1M3MjEw
+MF9DTEtfT1NUTTA+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICA8Jm1zdHA1X2Nsa3Mg
+UjdTNzIxMDBfQ0xLX09TVE0xPjsNCj4gDQo+IEkgdGhpbmsgdGhpcyBjaGFuZ2Ugc2hvdWxkIGJl
+IGZvbGRlZCBpbnRvICJbUEFUQ0ggMi8zXSBBUk06IGR0czogcjdzNzIxMDA6DQo+IGFkZCBvc3Rt
+IHRvIGRldmljZSB0cmVlIiA7LSkNCg0KT29wcywgSSB0aGluayBJIGdvdCB0aGluZ3MgYSBsaXR0
+bGUgc2NyZXdlZCB1cCB3aGVuIGdpdCByZWJhc2luZyBhbmQNCnJlb3JkZXJpbmcgYW5kIHN1Y2gu
+DQoNClRoYW5rcyBmb3IgdGhlIHJldmlldyENCg0KQ2hyaXMNCg==
