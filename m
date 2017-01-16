@@ -1,86 +1,84 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:48636 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbdAPLk0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 06:40:26 -0500
-Date: Mon, 16 Jan 2017 12:40:23 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <Chris.Brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11659339E4A08373D3626BB28A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170112181149.29035-1-chris.brandt@renesas.com>
+ <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
+ <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
+ <CAMuHMdVkTS21UnZA9OyEZ=mR5+GtAEbiLwpe=uKB_O6deXBPyw@mail.gmail.com>
+ <SG2PR06MB1165D0D67AD68A12030C961D8A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdUVnUS-iOM8cbXNP7jMLNFb5+hgnMp3edkCzpbEpAePzw@mail.gmail.com> <SG2PR06MB11659339E4A08373D3626BB28A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Jan 2017 11:36:41 +0100
+Message-ID: <CAMuHMdX=cNuBSMqvPKYa7J5g7T4dSfHhSjcGdmuOPw_as=6RQQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-Message-ID: <20170116114023.GA3029@katana>
-References: <20170112181149.29035-1-chris.brandt@renesas.com>
- <CAMuHMdUz6nb-STMQK39hDqwHRt4R5t+Lndj150Lkg7prN=HQZQ@mail.gmail.com>
- <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
- <CAMuHMdVkTS21UnZA9OyEZ=mR5+GtAEbiLwpe=uKB_O6deXBPyw@mail.gmail.com>
- <SG2PR06MB1165D0D67AD68A12030C961D8A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdUVnUS-iOM8cbXNP7jMLNFb5+hgnMp3edkCzpbEpAePzw@mail.gmail.com>
- <SG2PR06MB11659339E4A08373D3626BB28A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdX=cNuBSMqvPKYa7J5g7T4dSfHhSjcGdmuOPw_as=6RQQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX=cNuBSMqvPKYa7J5g7T4dSfHhSjcGdmuOPw_as=6RQQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Chris,
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CC Woflram
 
+On Fri, Jan 13, 2017 at 6:56 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Friday, January 13, 2017, Geert Uytterhoeven wrote:
+>> > In sh_mobile_sdhi.c, can we change sh_mobile_sdhi_probe() so that if
+>> > there are 2 clocks specified (in DT or platform data), it
+>> > automatically enables the 2nd clock (forever) and just uses the 1st
+>> clock as the on/off clock?
+>>
+>> Of course the driver can handle the second interrupt, if you update the
+>> binding, and add support code for that...
+>
+> Of course my idea is that I would only have to update the bindings for
+> RZ/A1...not any other device.
+>
+> My only question is, today sh_mobile_sdhi.c uses this:
+>
+>    priv->clk = devm_clk_get(&pdev->dev, NULL);
+>
+> to get the clock. But if there is a 2nd clock...how do I know the
+> string id name to look to replace NULL with??
 
-> > and then in the code do:
-> >
-> >         struct *cd_clk;
-> >         cd_clk =3D devm_clk_get(&pdev->dev, "cd");
-> >         if (cd_clk) {
-> >                 clk_prepare_enable(cd_clk);
-> >         }
-> >
-> >   (this simple 1-line fix patch is getting a lot more complicated)
->=20
-> Disclaimer: I don't know how/if the SDHI core manages clocks, and may
-> interfere. Adding Wolfram.
+That should be specified in the bindings. "NULL" will get you the first clock.
 
-Thanks for the heads up.
+> Or...for the RZ/A1 dtsi, should I just give the 2 clocks names:
+>
+>                 clocks = <&mstp12_clks R7S72100_CLK_SDHI00,
+>                                 &mstp12_clks R7S72100_CLK_SDHI01>;
+>                 clock-names = "core", "cd";
 
-We have special callbacks for en-/disabling clocks:
-sh_mobile_sdhi_clk_enable() and sh_mobile_sdhi_clk_disable().
+Something like that.
+If devm_clk_get(&pdev->dev, "core") fails, you can assume a single clock
+and retry with NULL.
 
-I think those functions should get the above if-blocks (without curly
-braces) to ensure we always have consistent 00 or 11 settings.
+> and then in the code do:
+>
+>         struct *cd_clk;
+>         cd_clk = devm_clk_get(&pdev->dev, "cd");
+>         if (cd_clk) {
+>                 clk_prepare_enable(cd_clk);
+>         }
+>
+>   (this simple 1-line fix patch is getting a lot more complicated)
 
+Disclaimer: I don't know how/if the SDHI core manages clocks, and may
+interfere. Adding Wolfram.
 
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+                        Geert
 
-iQIcBAEBAgAGBQJYfLEnAAoJEBQN5MwUoCm2YbYP/0KDZ+Fxf9rOxb9hK9sUwLK6
-EPMelGAgQ37zRHHNtWT/BMYVQTZ01kr0jumYMaF4Di2DVDWAwRBOKGyZOrDXFErL
-LOujJFTnx3/hJjHu7eTTe8yPL2pYuqmzPOOPkmsqvbhVry6P/mBdsd1gcd9a1Pa1
-3ByKNghHsm8OXRw+3zN9FvZ/sFKTCh7XU8/uc9siWH1Se1tpTK5nvwRSQDrZ3Mkc
-vZMcIzmZRm9o2eFZjX8D6sdZkpNOGGB7JJrGxF29KnlHTGPXlCpXAwSKDFd93LkD
-LiSvZtYMzXqwUld3Wve0swrzlGwd/wFLM9OLTIYJ+WkNW/63ikt647vgU/8F5Xg7
-bbdmtn+i2nN+RoUTfSE0QiqoFc17qWuANouis8P/3zk6OAbl/hwNKpG4fGVfMoCt
-xvXM9bK8usapxoZ1Kic3MpoxuvVz16T0FBXZB4KNR452CTGyDzVq8kXd2UKPX59a
-UHHfq4JSYhLmQ32p0NPAqstsZzQIRRNFRIky0JvLgHkR/nGPetT558lIEeIp0MJV
-d+ywY+5Yfxdy99BVumHgUbA4DdBHYoq+X+k+XJOM8W43FrP+3Mc45/UfGCcCv5cr
-rZJ3/9tCCppdKbGmILGOw7V1LWY7bIzygR7qFdoZrkhbrL8EX0wwQwFY40fsHTrW
-oT69PsWmYcpgFGKn8P5b
-=5fuE
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---SUOF0GtieIMvvwua--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
