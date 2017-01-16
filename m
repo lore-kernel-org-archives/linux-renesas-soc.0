@@ -1,58 +1,179 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940177AbdAFLTJ (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:38271 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751035AbdAPMNL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:09 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 24/25] ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for msiof nodes
-Date: Fri,  6 Jan 2017 12:18:33 +0100
-Message-Id: <50a15093c6f1bf5f89b9954075b27b52c0322beb.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Mon, 16 Jan 2017 07:13:11 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v3 4/8] arm: dts: r7s72100: GPIO and PFC device nodes
+Date: Mon, 16 Jan 2017 13:12:48 +0100
+Message-Id: <1484568772-18137-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 2 fallback binding for msiof nodes in
-DT for r8a7792 SoC.
+From: Magnus Damm <damm@opensource.se>
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7792 and the
-fallback binding for R-Car Gen 2.
+Add support for r7s72100 PFC and GPIO device nodes port0 -> port11
+and jtagport0.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm@opensource.se>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r7s72100.dtsi | 136 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 136 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 59d31d433244..135e06920e2d 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -591,7 +591,8 @@
- 		};
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 3dd427d..4af7f01 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -359,6 +359,142 @@
+ 			<0xe8202000 0x1000>;
+ 	};
  
- 		msiof0: spi@e6e20000 {
--			compatible = "renesas,msiof-r8a7792";
-+			compatible = "renesas,msiof-r8a7792",
-+				     "renesas,rcar-gen2-msiof";
- 			reg = <0 0xe6e20000 0 0x0064>;
- 			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp0_clks R8A7792_CLK_MSIOF0>;
-@@ -605,7 +606,8 @@
- 		};
- 
- 		msiof1: spi@e6e10000 {
--			compatible = "renesas,msiof-r8a7792";
-+			compatible = "renesas,msiof-r8a7792",
-+				     "renesas,rcar-gen2-msiof";
- 			reg = <0 0xe6e10000 0 0x0064>;
- 			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&mstp2_clks R8A7792_CLK_MSIOF1>;
++	pfc: pfc@fcfe3300 {
++		compatible = "renesas,pfc-r7s72100";
++		reg = <0xfcfe3400 0x300>, /* PMC, PFC, PFCE */
++		      <0xfcfe3a00 0x100>, /* PFCAE */
++		      <0xfcfe7000 0x300>, /* PIBC, PBDC, PIPC */
++		      <0xfcfe7b40 0x04>, /* JPMC */
++		      <0xfcfe7b90 0x04>, /* JPMCSR */
++		      <0xfcfe7f00 0x04>; /* JPIBC */
++	};
++
++	port0: gpio@fcfe3000 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3200 0x2>; /* PPR0 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 0 6>;
++	};
++
++	port1: gpio@fcfe3004 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3004 0x2>, /* P1 */
++		      <0xfcfe3204 0x2>, /* PPR1 */
++		      <0xfcfe3304 0x2>; /* PM1 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 16 16>;
++	};
++
++	port2: gpio@fcfe3008 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3008 0x2>, /* P2 */
++		      <0xfcfe3208 0x2>, /* PPR2 */
++		      <0xfcfe3308 0x2>; /* PM2 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 32 16>;
++	};
++
++	port3: gpio@fcfe300c {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe300c 0x2>, /* P3 */
++		      <0xfcfe320c 0x2>, /* PPR3 */
++		      <0xfcfe330c 0x2>; /* PM3 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 48 16>;
++	};
++
++	port4: gpio@fcfe3010 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3010 0x2>, /* P4 */
++		      <0xfcfe3210 0x2>, /* PPR4 */
++		      <0xfcfe3310 0x2>; /* PM4 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 64 16>;
++	};
++
++	port5: gpio@fcfe3014 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3014 0x2>, /* P5 */
++		      <0xfcfe3214 0x2>, /* PPR5 */
++		      <0xfcfe3314 0x2>; /* PM5 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 80 11>;
++	};
++
++	port6: gpio@fcfe3018 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3018 0x2>, /* P6 */
++		      <0xfcfe3218 0x2>, /* PPR6 */
++		      <0xfcfe3318 0x2>; /* PM6 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 96 16>;
++	};
++
++	port7: gpio@fcfe301c {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe301c 0x2>, /* P7 */
++		      <0xfcfe321c 0x2>, /* PPR7 */
++		      <0xfcfe331c 0x2>; /* PM7 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 112 16>;
++	};
++
++	port8: gpio@fcfe3020 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3020 0x2>, /* P8 */
++		      <0xfcfe3220 0x2>, /* PPR8 */
++		      <0xfcfe3320 0x2>; /* PM8 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 128 16>;
++	};
++
++	port9: gpio@fcfe3024 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3024 0x2>, /* P9 */
++		      <0xfcfe3224 0x2>, /* PPR9 */
++		      <0xfcfe3324 0x2>; /* PM9 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 144 8>;
++	};
++
++	port10: gpio@fcfe3028 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe3028 0x2>, /* P10 */
++		      <0xfcfe3228 0x2>, /* PPR10 */
++		      <0xfcfe3328 0x2>; /* PM10 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 160 16>;
++	};
++
++	port11: gpio@fcfe302c {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe302c 0x2>, /* P11 */
++		      <0xfcfe322c 0x2>, /* PPR11 */
++		      <0xfcfe332c 0x2>; /* PM11 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 176 16>;
++	};
++
++	jtagport0: gpio@fcfe7b20 {
++		compatible = "renesas,gpio-r7s72100", "renesas,gpio-rz";
++		reg = <0xfcfe7b20 0x2>; /* JPPR0 */
++		#gpio-cells = <2>;
++		gpio-controller;
++		gpio-ranges = <&pfc 0 192 2>;
++	};
++
+ 	i2c0: i2c@fcfee000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
