@@ -1,66 +1,63 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document reset control support
-Date: Wed, 25 Jan 2017 10:15:00 +0100
-Message-Id: <1485335703-27184-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
-References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH v2 2/2] phy: sun4i-usb: Replace the deprecated extcon API
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+        <maxime.ripard@free-electrons.com>, <wens@csie.org>
+References: <1483071089-8362-1-git-send-email-cw00.choi@samsung.com>
+ <CGME20161230041136epcas5p4719845a9e04914e91dd6dac1a5d257ef@epcas5p4.samsung.com>
+ <1483071089-8362-3-git-send-email-cw00.choi@samsung.com>
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <chanwoo@kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <587C8DC5.5040001@ti.com>
+Date: Mon, 16 Jan 2017 14:39:25 +0530
+MIME-Version: 1.0
+In-Reply-To: <1483071089-8362-3-git-send-email-cw00.choi@samsung.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document properties needed to use the Reset Control feature of the
-Renesas Clock Pulse Generator / Module Standby and Software Reset
-module.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Change oneline summary to refer to dt-bindings.
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index c469194129536332..f4f944d813081857 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -42,6 +42,10 @@ Required Properties:
- 	Domain bindings in
- 	Documentation/devicetree/bindings/power/power_domain.txt.
- 
-+  - #reset-cells: Must be 1
-+      - The single reset specifier cell must be the module number, as defined
-+	in the datasheet.
-+
- 
- Examples
- --------
-@@ -55,6 +59,7 @@ Examples
- 		clock-names = "extal", "extalr";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
- 	};
- 
- 
-@@ -69,5 +74,6 @@ Examples
- 		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg>;
-+		resets = <&cpg 310>;
- 		status = "disabled";
- 	};
--- 
-1.9.1
+On Friday 30 December 2016 09:41 AM, Chanwoo Choi wrote:
+> This patch replaces the deprecated extcon API as following:
+> - extcon_set_cable_state_() -> extcon_set_state_sync()
+> 
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+merged both the patches in this series.
+
+Thanks
+Kishon
+> ---
+>  drivers/phy/phy-sun4i-usb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-sun4i-usb.c b/drivers/phy/phy-sun4i-usb.c
+> index bf28a0fdd569..eae171e18043 100644
+> --- a/drivers/phy/phy-sun4i-usb.c
+> +++ b/drivers/phy/phy-sun4i-usb.c
+> @@ -534,7 +534,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
+>  	mutex_unlock(&phy0->mutex);
+>  
+>  	if (id_notify) {
+> -		extcon_set_cable_state_(data->extcon, EXTCON_USB_HOST,
+> +		extcon_set_state_sync(data->extcon, EXTCON_USB_HOST,
+>  					!id_det);
+>  		/* When leaving host mode force end the session here */
+>  		if (force_session_end && id_det == 1) {
+> @@ -547,7 +547,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
+>  	}
+>  
+>  	if (vbus_notify)
+> -		extcon_set_cable_state_(data->extcon, EXTCON_USB, vbus_det);
+> +		extcon_set_state_sync(data->extcon, EXTCON_USB, vbus_det);
+>  
+>  	if (sun4i_usb_phy0_poll(data))
+>  		queue_delayed_work(system_wq, &data->detect, POLL_TIME);
+> 
