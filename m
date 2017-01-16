@@ -1,48 +1,69 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 06/20] drm: bridge: dw-hdmi: Don't forward HPD events to DRM core before attach
-Date: Tue, 17 Jan 2017 10:28:56 +0200
-Message-Id: <20170117082910.27023-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42985 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbdAPMNQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 16 Jan 2017 07:13:16 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v3 7/8] arm: dts: r7s72100-genmai:Add ethernet PFC node
+Date: Mon, 16 Jan 2017 13:12:51 +0100
+Message-Id: <1484568772-18137-8-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hotplug events should only be forwarded to the DRM core by the interrupt
-handler when the bridge has been attached, otherwise the DRM device
-pointer will be NULL, resulting in a crash.
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+Squash Simon's original commit with his fixup of sh_eth pin names
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r7s72100-genmai.dts | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index ef10bb866b2f..488dc1a9204f 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1805,7 +1805,8 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- 	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
- 		dev_dbg(hdmi->dev, "EVENT=%s\n",
- 			phy_int_pol & HDMI_PHY_HPD ? "plugin" : "plugout");
--		drm_helper_hpd_irq_event(hdmi->bridge.dev);
-+		if (hdmi->bridge.dev)
-+			drm_helper_hpd_irq_event(hdmi->bridge.dev);
- 	}
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 10f1d8b..b36c84f 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -71,9 +71,32 @@
+ };
  
- 	hdmi_writeb(hdmi, intr_stat, HDMI_IH_PHY_STAT0);
+ &pfc {
+-	pinctrl-0 = <&scif2_pins>;
++	pinctrl-0 = <&ethernet_pins &scif2_pins>;
+ 	pinctrl-names = "default";
+ 
++	ethernet_pins: ethernet {
++		groups = "ethernet_rxdv_p3_6",
++			 "ethernet_rxer_p3_5",
++			 "ethernet_rxclk_p3_4",
++			 "ethernet_mdio_p3_3",
++			 "ethernet_rxd3_p2_11",
++			 "ethernet_rxd2_p2_10",
++			 "ethernet_rxd1_p2_9",
++			 "ethernet_rxd0_p2_8",
++			 "ethernet_txd3_p2_7",
++			 "ethernet_txd2_p2_6",
++			 "ethernet_txd1_p2_5",
++			 "ethernet_txd0_p2_4",
++			 "ethernet_txcrs_p2_3",
++			 "ethernet_txen_p2_2",
++			 "ethernet_txer_p2_1",
++			 "ethernet_txclk_p2_0",
++			 "ethernet_mdc_p5_9",
++			 "ethernet_col_p1_14",
++			 "ethernet_int_p1_15";
++		function = "ethernet";
++	};
++
+ 	scif2_pins: serial2 {
+ 		groups = "scif2_txd_p3_0", "scif2_rxd_p3_2";
+ 		function = "scif2";
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
