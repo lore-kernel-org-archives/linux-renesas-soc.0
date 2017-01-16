@@ -1,53 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40319 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750886AbdALIml (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33627 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbdAPMNP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 03:42:41 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC net] ravb: Remove Rx overflow log messages
-Date: Thu, 12 Jan 2017 09:41:10 +0100
-Message-Id: <1484210470-3095-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 16 Jan 2017 07:13:15 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, chris.brandt@renesas.com,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v3 6/8] arm: dts: r7s72100-genmai: LED1 and LED2 support
+Date: Mon, 16 Jan 2017 13:12:50 +0100
+Message-Id: <1484568772-18137-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+From: Magnus Damm <damm@opensource.se>
 
-Remove Rx overflow log messages as in an environment where logging results
-in network traffic logging may cause further overflows.
+Add support for Genmai board LED1 and LED2 via gpio-leds.
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[simon: reworked changelog]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r7s72100-genmai.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 92d7692c840d..5e5ad978eab9 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -926,14 +926,10 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- 	/* Receive error message handling */
- 	priv->rx_over_errors =  priv->stats[RAVB_BE].rx_over_errors;
- 	priv->rx_over_errors += priv->stats[RAVB_NC].rx_over_errors;
--	if (priv->rx_over_errors != ndev->stats.rx_over_errors) {
-+	if (priv->rx_over_errors != ndev->stats.rx_over_errors)
- 		ndev->stats.rx_over_errors = priv->rx_over_errors;
--		netif_err(priv, rx_err, ndev, "Receive Descriptor Empty\n");
--	}
--	if (priv->rx_fifo_errors != ndev->stats.rx_fifo_errors) {
-+	if (priv->rx_fifo_errors != ndev->stats.rx_fifo_errors)
- 		ndev->stats.rx_fifo_errors = priv->rx_fifo_errors;
--		netif_err(priv, rx_err, ndev, "Receive FIFO Overflow\n");
--	}
- out:
- 	return budget - quota;
- }
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 336716b..10f1d8b 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Genmai";
+@@ -34,6 +35,16 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++		led1 {
++			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
++		};
++		led2 {
++			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &extal_clk {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
