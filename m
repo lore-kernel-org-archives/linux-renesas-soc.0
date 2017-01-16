@@ -1,52 +1,153 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:44633 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750770AbdAQEQr (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36789 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbdAPKaV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 23:16:47 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+        Mon, 16 Jan 2017 05:30:21 -0500
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165BA49D82D9C0835DC0FB38A7B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170112185952.2780-1-chris.brandt@renesas.com>
+ <20170112185952.2780-2-chris.brandt@renesas.com> <CAMuHMdX_hx2M8Q4y7gptJvad4cbb+M54DZVCmbhunKuk4esbGA@mail.gmail.com>
+ <SG2PR06MB1165BA49D82D9C0835DC0FB38A7B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Jan 2017 11:30:19 +0100
+Message-ID: <CAMuHMdVC2BV6=jT1CZ+X92=_th-cEc0=hsiyRYxU5qMLoMVPMw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: document renesas-ostm timer
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/2] dt-bindings: document renesas-ostm timer
-Date: Tue, 17 Jan 2017 04:16:09 +0000
-Message-ID: <SG2PR06MB1165ECDD4D1395835B2804408A7C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170112185952.2780-1-chris.brandt@renesas.com>
- <20170112185952.2780-2-chris.brandt@renesas.com>
- <CAMuHMdX_hx2M8Q4y7gptJvad4cbb+M54DZVCmbhunKuk4esbGA@mail.gmail.com>
- <SG2PR06MB1165BA49D82D9C0835DC0FB38A7B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdVC2BV6=jT1CZ+X92=_th-cEc0=hsiyRYxU5qMLoMVPMw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVC2BV6=jT1CZ+X92=_th-cEc0=hsiyRYxU5qMLoMVPMw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgSmFudWFyeSAxNiwgMjAxNywgR2VlcnQgVXl0dGVyaG9l
-dmVuIHdyb3RlOg0KPiA+IERvIHlvdSB0aGluayBpdCB3b3VsZCBiZSBiZXR0ZXIgaWYgYSBkcml2
-ZXIgaW5zdGFuY2Ugb25seSBkb2VzIDENCj4gPiB0aGluZzogRWl0aGVyICdjbG9ja3NvdXJjZScg
-b3IgJ2Nsb2NrIGV2ZW50Jz8/DQo+ID4gVGhlbiwgSSB3b3VsZCBtYWtlIDIgb3N0bSBub2RlcyBh
-bmQgcGFzcyBpbiB0aGUgbW9kZSBJIHdvdWxkIGxpa2UgaXQNCj4gb3BlcmF0ZSBpbj8NCj4gPg0K
-PiA+IEZvciBleGFtcGxlOg0KPiA+DQo+ID4gJm9zdG0wIHsNCj4gPiAgICAgICAgIG1vZGUgPSAi
-Y2xvY2tzb3VyY2UiOw0KPiA+ICAgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+IH07DQo+ID4N
-Cj4gPiAmb3N0bTEgew0KPiA+ICAgICAgICAgbW9kZSA9ICJjbG9jay1ldmVudCI7DQo+ID4gICAg
-ICAgICBzdGF0dXMgPSAib2theSI7DQo+ID4gfTsNCj4gDQo+IEFnYWluLCB0aGF0J3Mgc29mdHdh
-cmUgcG9saWN5LCBub3QgaGFyZHdhcmUgZGVzY3JpcHRpb24uDQo+IA0KPiBBcyB0aGV5J3JlIGlu
-ZGVwZW5kZW50IGNoYW5uZWxzLCBpdCBkb2Vzbid0IG1hdHRlciB3aGljaCBvbmUgaXMgdXNlZCBm
-b3INCj4gd2hpY2ggZnVuY3Rpb24sIHJpZ2h0Pw0KDQpDb3JyZWN0Lg0KDQoNCj4gWW91IGNvdWxk
-IHVzZSB0aGUgZmlyc3QgcHJvYmVkIGNoYW5uZWwgZm9yIHRoZSBtb3N0IGltcG9ydGFudCBmdW5j
-dGlvbg0KPiAoY2xvY2tzb3VyY2U/KSwgYW5kIHRoZSBzZWNvbmQgb25lIGZvciB0aGUgb3RoZXIg
-ZnVuY3Rpb24gKGNsb2NrZXZlbnQpLg0KPiBTbyB0aGVyZSdzIG5vIG5lZWQgZm9yIHNwZWNpZnlp
-bmcgdGhpcyBpbiBEVC4NCj4gDQo+IERvZXMgdGhhdCBtYWtlIHNlbnNlPw0KDQpUaGF0IHdvcmtz
-IGZvciBtZS4gSSdsbCBtb2RpZnkgdGhlIGRyaXZlciBhbmQgcmV0ZXN0LiBUaGFua3MgZm9yIHRo
-ZSBpZGVhIQ0KDQoNCkNocmlzDQo=
+Hi Chris,
+
+On Sat, Jan 14, 2017 at 4:30 AM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Friday, January 13, 2017, Geert Uytterhoeven wrote:
+>> > +The OSTM comes with 2 independent channels.
+>> > +We will use the first channel (OSTM0) as a free running clocksource
+>> > +and the second channel (OSTM1) as a interrupt driven clock event.
+>> > +
+>> > +Additionally we will use the clocksource channel (OTSM0) for the
+>> > +system schedule timer sched_clock().
+>>
+>> The above two sentences are software policy, not hardware description.
+>> Hence they do not belong in the DT bindings document.
+>> You can move them to the commit description, though.
+>
+> OK.
+>
+>> > +Required Properties:
+>> > +
+>> > +  - compatible: must be one or more of the following:
+>> > +    - "renesas,ostm-r7s72100" for the r7s72100 OSTM
+>>
+>> Please use "renesas,r7s72100-ostm" instead, to match current practices.
+>
+> If I look at the current r7s72100.dtsi:
+>
+> compatible = "renesas,r7s72100-cpg-clocks", "renesas,rz-cpg-clocks";
+> compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+> compatible = "renesas,scif-r7s72100", "renesas,scif";
+> compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
+> compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
+> compatible = "renesas,mtu2-r7s72100", "renesas,mtu2";
+> compatible = "renesas,mmcif-r7s72100", "renesas,sh-mmcif";
+> compatible = "renesas,sdhi-r7s72100";
+>
+> Is "renesas,xxx-r7s7210" the old way, and "renesas,r7s72100-xxx" is the new way??
+
+Yes, we settled on "<vendor>,<family|soc>-<device>", per request of the
+DT maintainers.
+
+>> > +  - reg: base address and length of the registers block for each timer
+>> channel.
+>> > +    There should be 2 sets of addresses, one for each channel.
+>> > +
+>> > +  - interrupts: interrupt specifiers for the timers. There should be 2
+>> > +    interupts, one for each channel.
+>> > +
+>> > +  - clocks: a list of phandle + clock-specifier pairs, one for each
+>> entry
+>> > +    channel. There should be 2 sets, one for each channel.
+>>
+>> Are the channels truly independent? If yes, I think it's better to have
+>> two separate device nodes, one for each channel.
+>> Each channel has its own module clock, so using separate devices means
+>> Runtime PM can manage both channels through their module clocks as soon as
+>> you add a "power-domains" property pointing to the clock domain controller.
+>
+> Yes, technically they are independent channels.
+> The way the driver is currently written, 1 instance of the driver uses 2 channels
+> for different things. Ch0 will be set up as a 'clocksource', and ch1 will be set up
+> as a 'clock event'.
+>
+> As in:
+>
+> static int __init ostm_timer_init(struct ostm_device *ostm)
+> {
+>         int ret = 0;
+>
+>         /* ostm0 will be clock source */
+>         ret = ostm_init_clksrc(ostm);
+>         if (ret)
+>                 goto err;
+>
+>         /* use ostm0 as system scheduling clock */
+>         ret = ostm_init_sched_clock(&ostm->clksrc);
+>         if (ret)
+>                 goto err;
+>
+>         /* ostm1 will be clock event */
+>         ret = ostm_init_clkevt(ostm);
+> err:
+>         return ret;
+> }
+>
+>
+>
+> Do you think it would be better if a driver instance only does 1 thing: Either
+> 'clocksource' or 'clock event'??
+> Then, I would make 2 ostm nodes and pass in the mode I would like it operate in?
+>
+> For example:
+>
+> &ostm0 {
+>         mode = "clocksource";
+>         status = "okay";
+> };
+>
+> &ostm1 {
+>         mode = "clock-event";
+>         status = "okay";
+> };
+
+Again, that's software policy, not hardware description.
+
+As they're independent channels, it doesn't matter which one is used for
+which function, right?
+
+You could use the first probed channel for the most important function
+(clocksource?), and the second one for the other function (clockevent).
+So there's no need for specifying this in DT.
+
+Does that make sense?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
