@@ -1,149 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:34644 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933206AbdAJOA7 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:34349 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750947AbdAQVDq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 09:00:59 -0500
-Received: by mail-lf0-f48.google.com with SMTP id v186so61751535lfa.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Jan 2017 06:00:58 -0800 (PST)
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>, fkan@apm.com,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] arm64: avoid increasing DMA masks above what hardware supports
-Date: Tue, 10 Jan 2017 17:00:44 +0300
-Message-Id: <1484056844-9567-1-git-send-email-nikita.yoush@cogentembedded.com>
-In-Reply-To: <11daacde-5399-039f-80a3-01d7bd13e9e8@arm.com>
-References: <11daacde-5399-039f-80a3-01d7bd13e9e8@arm.com>
+        Tue, 17 Jan 2017 16:03:46 -0500
+Date: Tue, 17 Jan 2017 22:03:44 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, marek.vasut@gmail.com, geert@linux-m68k.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: iio: document MAX11100 ADC
+Message-ID: <20170117210343.7n27uo6w37tei453@ninjato>
+References: <1484301038-16386-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1484301038-16386-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1484301038-16386-3-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There are cases when device supports wide DMA addresses wider than
-device's connection supports.
+On Fri, Jan 13, 2017 at 10:50:38AM +0100, Jacopo Mondi wrote:
+> Add device tree bindings documentation for Maxim MAX11100 single-channel
+> ADC
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-In this case driver sets DMA mask based on knowledge of device
-capabilities. That must succeed to allow drivers to initialize.
-
-However, swiotlb or iommu still need knowledge about actual device
-capabilities. To avoid breakage, actual mask must not be set wider than
-device connection allows.
-
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-CC: Arnd Bergmann <arnd@arndb.de>
-CC: Robin Murphy <robin.murphy@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/Kconfig                   |  3 +++
- arch/arm64/include/asm/device.h      |  1 +
- arch/arm64/include/asm/dma-mapping.h |  3 +++
- arch/arm64/mm/dma-mapping.c          | 43 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 50 insertions(+)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 1117421..afb2c08 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -216,6 +216,9 @@ config NEED_DMA_MAP_STATE
- config NEED_SG_DMA_LENGTH
- 	def_bool y
- 
-+config ARCH_HAS_DMA_SET_COHERENT_MASK
-+	def_bool y
-+
- config SMP
- 	def_bool y
- 
-diff --git a/arch/arm64/include/asm/device.h b/arch/arm64/include/asm/device.h
-index 243ef25..a57e7bb 100644
---- a/arch/arm64/include/asm/device.h
-+++ b/arch/arm64/include/asm/device.h
-@@ -22,6 +22,7 @@ struct dev_archdata {
- 	void *iommu;			/* private IOMMU data */
- #endif
- 	bool dma_coherent;
-+	u64 parent_dma_mask;
- };
- 
- struct pdev_archdata {
-diff --git a/arch/arm64/include/asm/dma-mapping.h b/arch/arm64/include/asm/dma-mapping.h
-index ccea82c..eab36d2 100644
---- a/arch/arm64/include/asm/dma-mapping.h
-+++ b/arch/arm64/include/asm/dma-mapping.h
-@@ -51,6 +51,9 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 			const struct iommu_ops *iommu, bool coherent);
- #define arch_setup_dma_ops	arch_setup_dma_ops
- 
-+#define HAVE_ARCH_DMA_SET_MASK 1
-+extern int dma_set_mask(struct device *dev, u64 dma_mask);
-+
- #ifdef CONFIG_IOMMU_DMA
- void arch_teardown_dma_ops(struct device *dev);
- #define arch_teardown_dma_ops	arch_teardown_dma_ops
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index e040827..7b1bb87 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -203,6 +203,37 @@ static void __dma_free(struct device *dev, size_t size,
- 	__dma_free_coherent(dev, size, swiotlb_addr, dma_handle, attrs);
- }
- 
-+int dma_set_mask(struct device *dev, u64 dma_mask)
-+{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	if (mask > dev->archdata.parent_dma_mask)
-+		mask = dev->archdata.parent_dma_mask;
-+
-+	if (ops->set_dma_mask)
-+		return ops->set_dma_mask(dev, mask);
-+
-+	if (!dev->dma_mask || !dma_supported(dev, mask))
-+		return -EIO;
-+
-+	*dev->dma_mask = mask;
-+	return 0;
-+}
-+EXPORT_SYMBOL(dma_set_mask);
-+
-+int dma_set_coherent_mask(struct device *dev, u64 mask)
-+{
-+	if (mask > dev->archdata.parent_dma_mask)
-+		mask = dev->archdata.parent_dma_mask;
-+
-+	if (!dma_supported(dev, mask))
-+		return -EIO;
-+
-+	dev->coherent_dma_mask = mask;
-+	return 0;
-+}
-+EXPORT_SYMBOL(dma_set_coherent_mask);
-+
- static dma_addr_t __swiotlb_map_page(struct device *dev, struct page *page,
- 				     unsigned long offset, size_t size,
- 				     enum dma_data_direction dir,
-@@ -958,6 +989,18 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 	if (!dev->archdata.dma_ops)
- 		dev->archdata.dma_ops = &swiotlb_dma_ops;
- 
-+	/*
-+	 * we don't yet support buses that have a non-zero mapping.
-+	 *  Let's hope we won't need it
-+	 */
-+	WARN_ON(dma_base != 0);
-+
-+	/*
-+	 * Whatever the parent bus can set. A device must not set
-+	 * a DMA mask larger than this.
-+	 */
-+	dev->archdata.parent_dma_mask = size - 1;
-+
- 	dev->archdata.dma_coherent = coherent;
- 	__iommu_setup_dma_ops(dev, dma_base, size, iommu);
- }
--- 
-2.1.4
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
