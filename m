@@ -1,60 +1,109 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8BIT
-Message-id: <587498D4.4010207@samsung.com>
-Date: Tue, 10 Jan 2017 17:18:28 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        chanwoo@kernel.org
-Subject: Re: [PATCH v2 0/6] usb: Replace the deprecated extcon API
-In-reply-to: <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
-References: <CGME20161230040816epcas5p4616cb93324a5d60bc2a763817e34e37d@epcas5p4.samsung.com>
- <1483070895-8213-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 13/20] drm: bridge: dw-hdmi: Reject invalid product IDs
+Date: Tue, 17 Jan 2017 10:29:03 +0200
+Message-Id: <20170117082910.27023-14-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Felipe,
+The DWC HDMI TX can be recognized by the two product identification
+registers. If the registers don't read as expect the IP will be very
+different than what the driver has been designed for, or will be
+misconfigured in a way that makes it non-operational (invalid memory
+address, incorrect clocks, ...). We should reject this situation with an
+error.
 
-These patches have already acked-by tag from you.
-Could you please apply them if there is additional comment?
+While this isn't critical for proper operation with supported IPs at the
+moment, the driver will soon gain automatic device-specific handling
+based on runtime device identification. This change makes it easier to
+implement that without having to default to a random guess in case the
+device can't be identified.
 
-On 2016년 12월 30일 13:08, Chanwoo Choi wrote:
-> This patches just replace the deprecated extcon API without any change
-> of extcon operation and use the resource-managed function for
-> extcon_register_notifier().
-> 
-> The new extcon API instead of deprecated API.
-> - extcon_set_cable_state_() -> extcon_set_state_sync();
-> - extcon_get_cable_state_() -> extcon_get_state();
-> 
-> Changes from v1:
-> - Rebase these patches based on v4.10-rc1.
-> - Add acked-by tag from usb maintainer and reviewer.
-> - Drop the phy/power-supply/chipidea patches.
-> 
-> Chanwoo Choi (6):
->   usb: dwc3: omap: Replace the extcon API
->   usb: phy: msm: Replace the extcon API
->   usb: phy: omap-otg: Replace the extcon API
->   usb: phy: qcom-8x16-usb: Replace the extcon API
->   usb: phy: tahvo: Replace the deprecated extcon API
->   usb: renesas_usbhs: Replace the deprecated extcon API
-> 
->  drivers/usb/dwc3/dwc3-omap.c        | 20 +++++++-------------
->  drivers/usb/phy/phy-msm-usb.c       | 33 +++++++++++----------------------
->  drivers/usb/phy/phy-omap-otg.c      | 24 ++++++------------------
->  drivers/usb/phy/phy-qcom-8x16-usb.c | 13 ++++---------
->  drivers/usb/phy/phy-tahvo.c         | 10 +++++-----
->  drivers/usb/renesas_usbhs/common.c  |  2 +-
->  6 files changed, 34 insertions(+), 68 deletions(-)
-> 
+While at it print a readable version number in the device identification
+message instead of raw register values.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 25 +++++++++++++++++++------
+ drivers/gpu/drm/bridge/dw-hdmi.h |  8 ++++++++
+ 2 files changed, 27 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 06c252f560ad..1809247745b8 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1832,6 +1832,9 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	int irq;
+ 	int ret;
+ 	u32 val = 1;
++	u16 version;
++	u8 prod_id0;
++	u8 prod_id1;
+ 	u8 config0;
+ 	u8 config1;
+ 
+@@ -1914,12 +1917,22 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	/* Product and revision IDs */
+-	dev_info(dev,
+-		 "Detected HDMI controller 0x%x:0x%x:0x%x:0x%x\n",
+-		 hdmi_readb(hdmi, HDMI_DESIGN_ID),
+-		 hdmi_readb(hdmi, HDMI_REVISION_ID),
+-		 hdmi_readb(hdmi, HDMI_PRODUCT_ID0),
+-		 hdmi_readb(hdmi, HDMI_PRODUCT_ID1));
++	version = (hdmi_readb(hdmi, HDMI_DESIGN_ID) << 8)
++		| (hdmi_readb(hdmi, HDMI_REVISION_ID) << 0);
++	prod_id0 = hdmi_readb(hdmi, HDMI_PRODUCT_ID0);
++	prod_id1 = hdmi_readb(hdmi, HDMI_PRODUCT_ID1);
++
++	if (prod_id0 != HDMI_PRODUCT_ID0_HDMI_TX ||
++	    (prod_id1 & ~HDMI_PRODUCT_ID1_HDCP) != HDMI_PRODUCT_ID1_HDMI_TX) {
++		dev_err(dev, "Unsupported HDMI controller (%04x:%02x:%02x)\n",
++			version, prod_id0, prod_id1);
++		ret = -ENODEV;
++		goto err_iahb;
++	}
++
++	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP\n",
++		 version >> 12, version & 0xfff,
++		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without");
+ 
+ 	initialize_hdmi_ih_mutes(hdmi);
+ 
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
+index 08235aef2fa3..91d7fabbd6e5 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.h
++++ b/drivers/gpu/drm/bridge/dw-hdmi.h
+@@ -545,6 +545,14 @@
+ #define HDMI_I2CM_FS_SCL_LCNT_0_ADDR            0x7E12
+ 
+ enum {
++/* PRODUCT_ID0 field values */
++	HDMI_PRODUCT_ID0_HDMI_TX = 0xa0,
++
++/* PRODUCT_ID1 field values */
++	HDMI_PRODUCT_ID1_HDCP = 0xc0,
++	HDMI_PRODUCT_ID1_HDMI_RX = 0x02,
++	HDMI_PRODUCT_ID1_HDMI_TX = 0x01,
++
+ /* CONFIG0_ID field values */
+ 	HDMI_CONFIG0_I2S = 0x10,
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-S/W Center, Samsung Electronics
+Regards,
+
+Laurent Pinchart
