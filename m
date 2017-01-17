@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:63842 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751030AbdAQOsQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 17 Jan 2017 09:48:16 -0500
 From: Chris Brandt <Chris.Brandt@renesas.com>
 To: Wolfram Sang <wsa@the-dreams.de>,
         Geert Uytterhoeven <geert@linux-m68k.org>
@@ -10,8 +15,8 @@ CC: Simon Horman <horms+renesas@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
 Subject: RE: [PATCH] ARM: dts: r7s72100: fix sdhi clock define
-Date: Tue, 17 Jan 2017 18:42:52 +0000
-Message-ID: <SG2PR06MB11653D8853CB565A629B782E8A7C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Date: Tue, 17 Jan 2017 14:48:10 +0000
+Message-ID: <SG2PR06MB1165BF7E1FD64C27620977678A7C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <PS1PR06MB116243F531726538252C2BAE8A780@PS1PR06MB1162.apcprd06.prod.outlook.com>
  <CAMuHMdVkTS21UnZA9OyEZ=mR5+GtAEbiLwpe=uKB_O6deXBPyw@mail.gmail.com>
  <SG2PR06MB1165D0D67AD68A12030C961D8A780@SG2PR06MB1165.apcprd06.prod.outlook.com>
@@ -28,7 +33,7 @@ Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Wolfram,
@@ -43,19 +48,17 @@ s
 > main clock must be running. So, en-/disable functions are all about
 > suspend/resume and bind/unbind. (Huh, looks like the unbind part is
 > missing, though. Need to look closer).
+>=20
+> My take is: either we implement the power saving and handle the cd clock
+> seperately. Or we ignore the power saving for now and handle both clocks
+> as virtually one, i.e. en-/disable them at the same time.
+>=20
+> Doesn't make sense?
 
-I just did an unbind on my system:
+I'll go with "ignore the power saving for now and handle both clocks
+as virtually one".
 
-$ echo e804e800.sd > /sys/bus/platform/drivers/sh_mobile_sdhi/unbind
+I'll go give it a try and see how it works.
 
-
-Looks like sh_mobile_sdhi_remove() is called, but sh_mobile_sdhi_clk_disabl=
-e()
-is not.
-
-So, should sh_mobile_sdhi_remove() be changed to call sh_mobile_sdhi_clk_di=
-sable()?
-
-
+Thanks,
 Chris
-
