@@ -1,49 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 4 Jan 2017 18:00:02 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        David Vrabel <david.vrabel@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] swiotlb: Add swiotlb=noforce debug option
-Message-ID: <20170104180002.GE31066@e104818-lin.cambridge.arm.com>
-References: <1481894922-28828-1-git-send-email-geert+renesas@glider.be>
- <1481894922-28828-4-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1481894922-28828-4-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:57608 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbdAQMts (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 17 Jan 2017 07:49:48 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] arm64: dts: r8a7796: Link ARM GIC to clock and clock domain
+Date: Tue, 17 Jan 2017 13:49:20 +0100
+Message-Id: <1484657360-13101-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
+References: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 16, 2016 at 02:28:42PM +0100, Geert Uytterhoeven wrote:
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 21e2d88637050b7a..24fb691b2da5f78d 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3811,10 +3811,11 @@
->  			it if 0 is given (See Documentation/cgroup-v1/memory.txt)
->  
->  	swiotlb=	[ARM,IA-64,PPC,MIPS,X86]
-> -			Format: { <int> | force }
-> +			Format: { <int> | force | noforce }
->  			<int> -- Number of I/O TLB slabs
->  			force -- force using of bounce buffers even if they
->  			         wouldn't be automatically used by the kernel
-> +			noforce -- Never use bounce buffers (for debugging)
+Link the ARM GIC to the INTC-AP module clock, and add it to the SYSC
+"always-on" PM Domain, so it can be power managed using that clock.
 
-Nitpick (bikeshedding, feel free to ignore): "noforce" looks to me like
-the current default behaviour if swiotlb= argument is passed. I would
-have preferred "never" or "disable" instead, it has a clearer intent.
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index eb446d9666213720..6591c76613687b40 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -101,6 +101,9 @@
+ 			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+ 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		timer {
 -- 
-Catalin
+1.9.1
