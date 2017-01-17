@@ -1,91 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:43352 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbdAQMts (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 17 Jan 2017 07:49:48 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: Add support for DMA_ATTR_SKIP_CPU_SYNC attribute to swiotlb
-Date: Wed, 11 Jan 2017 11:11:17 +0100
-Message-Id: <1484129477-24121-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 1/4] ARM: dts: r8a7743: Link ARM GIC to clock and clock domain
+Date: Tue, 17 Jan 2017 13:49:17 +0100
+Message-Id: <1484657360-13101-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
+References: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Link the ARM GIC to the INTC-SYS module clock, and add it to the SYSC
+"always-on" PM Domain, so it can be power managed using that clock.
 
-This patch adds support for DMA_ATTR_SKIP_CPU_SYNC attribute for
-dma_{un}map_{page,sg} functions family to swiotlb.
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
 
-DMA_ATTR_SKIP_CPU_SYNC allows platform code to skip synchronization of
-the CPU cache for the given buffer assuming that it has been already
-transferred to 'device' domain.
-
-Ported from IOMMU .{un}map_{sg,page} ops.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - Add Acked-by.
+ arch/arm/boot/dts/r8a7743.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Support for DMA_ATTR_SKIP_CPU_SYNC was included when porting the IOMMU
-ops from arm to arm64 in commit 13b8629f651164d7 ("arm64: Add IOMMU
-dma_ops").
-
-Presumably it was an oversight that the existing swiotlb based
-implementation didn't have support for DMA_ATTR_SKIP_CPU_SYNC yet?
----
- arch/arm64/mm/dma-mapping.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index e04082700bb16c35..1d7d5d2881db7c19 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -211,7 +211,8 @@ static dma_addr_t __swiotlb_map_page(struct device *dev, struct page *page,
- 	dma_addr_t dev_addr;
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 0956125597fdf835..40d2cdede7022ff6 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -60,6 +60,9 @@
+ 			      <0 0xf1006000 0 0x2000>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
+ 						 IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+ 		};
  
- 	dev_addr = swiotlb_map_page(dev, page, offset, size, dir, attrs);
--	if (!is_device_dma_coherent(dev))
-+	if (!is_device_dma_coherent(dev) &&
-+	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
- 		__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
- 
- 	return dev_addr;
-@@ -222,7 +223,8 @@ static void __swiotlb_unmap_page(struct device *dev, dma_addr_t dev_addr,
- 				 size_t size, enum dma_data_direction dir,
- 				 unsigned long attrs)
- {
--	if (!is_device_dma_coherent(dev))
-+	if (!is_device_dma_coherent(dev) &&
-+	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
- 		__dma_unmap_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
- 	swiotlb_unmap_page(dev, dev_addr, size, dir, attrs);
- }
-@@ -235,7 +237,8 @@ static int __swiotlb_map_sg_attrs(struct device *dev, struct scatterlist *sgl,
- 	int i, ret;
- 
- 	ret = swiotlb_map_sg_attrs(dev, sgl, nelems, dir, attrs);
--	if (!is_device_dma_coherent(dev))
-+	if (!is_device_dma_coherent(dev) &&
-+	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
- 		for_each_sg(sgl, sg, ret, i)
- 			__dma_map_area(phys_to_virt(dma_to_phys(dev, sg->dma_address)),
- 				       sg->length, dir);
-@@ -251,7 +254,8 @@ static void __swiotlb_unmap_sg_attrs(struct device *dev,
- 	struct scatterlist *sg;
- 	int i;
- 
--	if (!is_device_dma_coherent(dev))
-+	if (!is_device_dma_coherent(dev) &&
-+	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
- 		for_each_sg(sgl, sg, nelems, i)
- 			__dma_unmap_area(phys_to_virt(dma_to_phys(dev, sg->dma_address)),
- 					 sg->length, dir);
+ 		irqc: interrupt-controller@e61c0000 {
 -- 
 1.9.1
