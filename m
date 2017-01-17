@@ -1,65 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751193AbdAaUUH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 15:20:07 -0500
-Subject: [PATCH 1 0/4] PCI: Use of_device_get_match_data() to simplify probe
-From: Bjorn Helgaas <bhelgaas@google.com>
-To: linux-pci@vger.kernel.org
-Cc: Scott Branden <sbranden@broadcom.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        Minghuan Lian <minghuan.Lian@freescale.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Mingkai Hu <mingkai.hu@freescale.com>,
-        Roy Zang <tie-fei.zang@freescale.com>,
-        Shailendra Verma <shailendra.v@samsung.com>
-Date: Tue, 31 Jan 2017 14:19:51 -0600
-Message-ID: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 11/20] drm: bridge: dw-hdmi: Remove PHY configuration resolution parameter
+Date: Tue, 17 Jan 2017 10:29:01 +0200
+Message-Id: <20170117082910.27023-12-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This turned into much ado about nothing, but Shailendra's hisi patch
-prompted similar cleanups in other drivers.  It's a minor simplification,
-but I think worth doing consistently across drivers.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Basically this is Geert's observation that when the driver probe function
-is called only as a result of matching something in <match_table>, a
-subsequent of_match_device(<match_table>, dev) call should never fail.
+The current code hard codes the call of hdmi_phy_configure() to be 8bpp
+and provides extraneous error checking to verify that this hardcoded
+value is correct. Simplify the implementation by removing the argument.
 
-Therefore, instead of this:
-
-  struct of_device_id *match;
-
-  match = of_match_device(<match_table>, dev);
-  ... = match->data;
-
-we can do this:
-
-  ... = of_device_get_match_data(dev);
-
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 27 +++++----------------------
+ 1 file changed, 5 insertions(+), 22 deletions(-)
 
-Bjorn Helgaas (3):
-      PCI: iproc: Use of_device_get_match_data() to simplify probe
-      PCI: layerscape: Use of_device_get_match_data() to simplify probe
-      PCI: rcar: Use of_device_get_match_data() to simplify probe
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 107fea49c4c6..b4fb0bd78910 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -930,31 +930,14 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+ 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+ }
+ 
+-static int hdmi_phy_configure(struct dw_hdmi *hdmi,
+-			      unsigned char res, int cscon)
++static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+ {
+-	unsigned res_idx;
+ 	u8 val, msec;
+ 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+ 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
+ 
+-	switch (res) {
+-	case 0:	/* color resolution 0 is 8 bit colour depth */
+-	case 8:
+-		res_idx = DW_HDMI_RES_8;
+-		break;
+-	case 10:
+-		res_idx = DW_HDMI_RES_10;
+-		break;
+-	case 12:
+-		res_idx = DW_HDMI_RES_12;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+ 	/* PLL/MPLL Cfg - always match on final entry */
+ 	for (; mpll_config->mpixelclock != ~0UL; mpll_config++)
+ 		if (hdmi->hdmi_data.video_mode.mpixelclock <=
+@@ -1004,11 +987,11 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi,
+ 		    HDMI_PHY_I2CM_SLAVE_ADDR);
+ 	hdmi_phy_test_clear(hdmi, 0);
+ 
+-	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].cpce, 0x06);
+-	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].gmp, 0x15);
++	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce, 0x06);
++	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp, 0x15);
+ 
+ 	/* CURRCTRL */
+-	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[res_idx], 0x10);
++	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0], 0x10);
+ 
+ 	hdmi_phy_i2c_write(hdmi, 0x0000, 0x13);  /* PLLPHBYCTRL */
+ 	hdmi_phy_i2c_write(hdmi, 0x0006, 0x17);
+@@ -1068,7 +1051,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ 		dw_hdmi_phy_enable_powerdown(hdmi, true);
+ 
+ 		/* Enable CSC */
+-		ret = hdmi_phy_configure(hdmi, 8, cscon);
++		ret = hdmi_phy_configure(hdmi, cscon);
+ 		if (ret)
+ 			return ret;
+ 	}
+-- 
+Regards,
 
-Shailendra Verma (1):
-      PCI: hisi: Use of_device_get_match_data() to simplify probe
-
-
- drivers/pci/host/pci-layerscape.c      |    7 +------
- drivers/pci/host/pcie-hisi.c           |    8 +++-----
- drivers/pci/host/pcie-iproc-platform.c |    7 +------
- drivers/pci/host/pcie-rcar.c           |    7 +------
- 4 files changed, 6 insertions(+), 23 deletions(-)
+Laurent Pinchart
