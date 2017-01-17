@@ -1,38 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46923 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbdASRK2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 12:10:28 -0500
-Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-To: 1480630452-10958-1-git-send-email-jacopo@jmondi.org,
-        linux-gpio@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <9dc61041-65fb-79cc-6396-0274cab288c7@gmail.com>
-From: jacopo mondi <jacopo@jmondi.org>
-Message-ID: <8517494d-4465-2d17-10ad-c3e54bb25a3c@jmondi.org>
-Date: Thu, 19 Jan 2017 18:10:22 +0100
-MIME-Version: 1.0
-In-Reply-To: <9dc61041-65fb-79cc-6396-0274cab288c7@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 04/20] drm: bridge: dw-hdmi: Embed drm_bridge in struct dw_hdmi
+Date: Tue, 17 Jan 2017 10:28:54 +0200
+Message-Id: <20170117082910.27023-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
+The drm_bridge instance is always needed, there's no point in allocating
+it separately.
 
-On 19/01/2017 17:06, Marek Vasut wrote:
-> Please add my
->
-> Tested-by: Marek Vasut <marek.vasut@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-Thanks!
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 5f8044a7d602..2c85b6c07a80 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -116,7 +116,7 @@ struct dw_hdmi_i2c {
+ struct dw_hdmi {
+ 	struct drm_connector connector;
+ 	struct drm_encoder *encoder;
+-	struct drm_bridge *bridge;
++	struct drm_bridge bridge;
+ 
+ 	struct platform_device *audio;
+ 	enum dw_hdmi_devtype dev_type;
+@@ -1806,7 +1806,7 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+ 	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
+ 		dev_dbg(hdmi->dev, "EVENT=%s\n",
+ 			phy_int_pol & HDMI_PHY_HPD ? "plugin" : "plugout");
+-		drm_helper_hpd_irq_event(hdmi->bridge->dev);
++		drm_helper_hpd_irq_event(hdmi->bridge.dev);
+ 	}
+ 
+ 	hdmi_writeb(hdmi, intr_stat, HDMI_IH_PHY_STAT0);
+@@ -1819,16 +1819,9 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+ static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
+ {
+ 	struct drm_encoder *encoder = hdmi->encoder;
+-	struct drm_bridge *bridge;
++	struct drm_bridge *bridge = &hdmi->bridge;
+ 	int ret;
+ 
+-	bridge = devm_kzalloc(drm->dev, sizeof(*bridge), GFP_KERNEL);
+-	if (!bridge) {
+-		DRM_ERROR("Failed to allocate drm bridge\n");
+-		return -ENOMEM;
+-	}
+-
+-	hdmi->bridge = bridge;
+ 	bridge->driver_private = hdmi;
+ 	bridge->funcs = &dw_hdmi_bridge_funcs;
+ 	ret = drm_bridge_attach(encoder, bridge, NULL);
+-- 
+Regards,
 
-Sending to renesas-soc list as well as, if I'm not wrong, PFC patches go 
-through Geert's tree
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Laurent Pinchart
