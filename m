@@ -1,108 +1,101 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940139AbdAFLSR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:17 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/16] arm64: dts: r8a7795: Use R-Car Gen 3 fallback binding for i2c nodes
-Date: Fri,  6 Jan 2017 12:17:52 +0100
-Message-Id: <d8ebefc9ace7c9810fd433e6ff18559e7c2f228a.1483700694.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
-References: <cover.1483700694.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 09/20] drm: bridge: dw-hdmi: Create connector in the bridge attach operation
+Date: Tue, 17 Jan 2017 10:28:59 +0200
+Message-Id: <20170117082910.27023-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added R-Car Gen 3 fallback binding for i2c nodes in
-DT for r8a7795 SoC.
+The DRM device is not guaranteed by the bridge API to be available
+before the attach callback. The driver performs properly at the moment
+as it doesn't use the drm_bridge_add() registration method. As this will
+be changed later, move connector creation to attach time to ensure
+compatibility with the API.
 
-This has no run-time effect for the current driver as the initialisation
-sequence is the same for the SoC-specific binding for r8a7795 and the
-fallback binding for R-Car Gen 3.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 91a797b18c11..3fe7e0af5989 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -792,7 +792,8 @@
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6500000 0 0x40>;
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 931>;
-@@ -806,7 +807,8 @@
- 		i2c1: i2c@e6508000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6508000 0 0x40>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 930>;
-@@ -820,7 +822,8 @@
- 		i2c2: i2c@e6510000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe6510000 0 0x40>;
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 929>;
-@@ -834,7 +837,8 @@
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d0000 0 0x40>;
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 928>;
-@@ -848,7 +852,8 @@
- 		i2c4: i2c@e66d8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d8000 0 0x40>;
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 927>;
-@@ -862,7 +867,8 @@
- 		i2c5: i2c@e66e0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e0000 0 0x40>;
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 919>;
-@@ -876,7 +882,8 @@
- 		i2c6: i2c@e66e8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,i2c-r8a7795";
-+			compatible = "renesas,i2c-r8a7795",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66e8000 0 0x40>;
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 918>;
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 92ce9e532603..88cd40adb977 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1667,6 +1667,25 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
+ 	.best_encoder = drm_atomic_helper_best_encoder,
+ };
+ 
++static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++	struct drm_encoder *encoder = bridge->encoder;
++	struct drm_connector *connector = &hdmi->connector;
++
++	connector->interlace_allowed = 1;
++	connector->polled = DRM_CONNECTOR_POLL_HPD;
++
++	drm_connector_helper_add(connector, &dw_hdmi_connector_helper_funcs);
++
++	drm_connector_init(bridge->dev, connector, &dw_hdmi_connector_funcs,
++			   DRM_MODE_CONNECTOR_HDMIA);
++
++	drm_mode_connector_attach_encoder(connector, encoder);
++
++	return 0;
++}
++
+ static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
+ 				    struct drm_display_mode *orig_mode,
+ 				    struct drm_display_mode *mode)
+@@ -1704,6 +1723,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+ }
+ 
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
++	.attach = dw_hdmi_bridge_attach,
+ 	.enable = dw_hdmi_bridge_enable,
+ 	.disable = dw_hdmi_bridge_disable,
+ 	.mode_set = dw_hdmi_bridge_mode_set,
+@@ -1829,17 +1849,6 @@ static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+ 		return -EINVAL;
+ 	}
+ 
+-	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
+-
+-	drm_connector_helper_add(&hdmi->connector,
+-				 &dw_hdmi_connector_helper_funcs);
+-
+-	drm_connector_init(encoder->dev, &hdmi->connector,
+-			   &dw_hdmi_connector_funcs,
+-			   DRM_MODE_CONNECTOR_HDMIA);
+-
+-	drm_mode_connector_attach_encoder(&hdmi->connector, encoder);
+-
+ 	return 0;
+ }
+ 
+@@ -1862,8 +1871,6 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 	if (!hdmi)
+ 		return -ENOMEM;
+ 
+-	hdmi->connector.interlace_allowed = 1;
+-
+ 	hdmi->plat_data = plat_data;
+ 	hdmi->dev = dev;
+ 	hdmi->dev_type = plat_data->dev_type;
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
