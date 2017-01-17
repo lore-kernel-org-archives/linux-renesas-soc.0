@@ -1,50 +1,234 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>, fkan@apm.com,
-        linux-kernel@vger.kernel.org,
-        Artemi Ivanov <artemi.ivanov@cogentembedded.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH 0/2] arm64: fix handling of DMA masks wider than bus supports
-Date: Wed, 11 Jan 2017 21:31:50 +0300
-Message-Id: <1484159512-28515-1-git-send-email-nikita.yoush@cogentembedded.com>
-In-Reply-To: <dca35acf-1adf-aa85-7a0b-d0c6ec702fa1@arm.com>
-References: <dca35acf-1adf-aa85-7a0b-d0c6ec702fa1@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 10/20] drm: bridge: dw-hdmi: Implement DRM bridge registration
+Date: Tue, 17 Jan 2017 10:29:00 +0200
+Message-Id: <20170117082910.27023-11-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-> I reckon the easiest way forward would be to pass in some flag to
-> arch_setup_dma_ops to indicate whether it's an explicitly-configured
-> range or not - then simply initialising parent_dma_mask to ~0 for the
-> default case *should* keep things working as before.
+As an option for drivers not based on the component framework, register
+the bridge with the DRM core with the DRM bridge API. Existing drivers
+based on dw_hdmi_bind() and dw_hdmi_unbind() are not affected as those
+functions are preserved with their current behaviour.
 
-Tried to do that.
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 112 ++++++++++++++++++++++++++++-----------
+ include/drm/bridge/dw_hdmi.h     |   3 ++
+ 2 files changed, 83 insertions(+), 32 deletions(-)
 
-Nikita Yushchenko (2):
-  dma-mapping: let arch know origin of dma range passed to arch_setup_dma_ops()
-  arm64: avoid increasing DMA masks above what hardware supports
-
- arch/arm/include/asm/dma-mapping.h             |  1 +
- arch/arm/mm/dma-mapping.c                      |  3 +-
- arch/arm64/Kconfig                             |  3 ++
- arch/arm64/include/asm/device.h                |  1 +
- arch/arm64/include/asm/dma-mapping.h           |  6 +++-
- arch/arm64/mm/dma-mapping.c                    | 43 +++++++++++++++++++++++++-
- arch/mips/include/asm/dma-mapping.h            |  3 +-
- drivers/acpi/scan.c                            |  2 +-
- drivers/iommu/rockchip-iommu.c                 |  2 +-
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |  2 +-
- drivers/of/device.c                            |  5 ++-
- drivers/staging/fsl-mc/bus/fsl-mc-bus.c        |  2 +-
- 12 files changed, 64 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 88cd40adb977..107fea49c4c6 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1836,24 +1836,9 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+-{
+-	struct drm_bridge *bridge = &hdmi->bridge;
+-	int ret;
+-
+-	bridge->driver_private = hdmi;
+-	bridge->funcs = &dw_hdmi_bridge_funcs;
+-	ret = drm_bridge_attach(encoder, bridge, NULL);
+-	if (ret) {
+-		DRM_ERROR("Failed to initialize bridge with drm\n");
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+-		 const struct dw_hdmi_plat_data *plat_data)
++static struct dw_hdmi *
++__dw_hdmi_probe(struct platform_device *pdev,
++		const struct dw_hdmi_plat_data *plat_data)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+@@ -1869,7 +1854,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 
+ 	hdmi = devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
+ 	if (!hdmi)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	hdmi->plat_data = plat_data;
+ 	hdmi->dev = dev;
+@@ -1896,7 +1881,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		break;
+ 	default:
+ 		dev_err(dev, "reg-io-width must be 1 or 4\n");
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
+@@ -1905,7 +1890,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		of_node_put(ddc_node);
+ 		if (!hdmi->ddc) {
+ 			dev_dbg(hdmi->dev, "failed to read ddc node\n");
+-			return -EPROBE_DEFER;
++			return ERR_PTR(-EPROBE_DEFER);
+ 		}
+ 
+ 	} else {
+@@ -1956,8 +1941,10 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 	initialize_hdmi_ih_mutes(hdmi);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
++	if (irq < 0) {
++		ret = irq;
+ 		goto err_iahb;
++	}
+ 
+ 	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
+ 					dw_hdmi_irq, IRQF_SHARED,
+@@ -1988,11 +1975,11 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 	hdmi_writeb(hdmi, HDMI_IH_PHY_STAT0_HPD | HDMI_IH_PHY_STAT0_RX_SENSE,
+ 		    HDMI_IH_PHY_STAT0);
+ 
+-	ret = dw_hdmi_fb_registered(hdmi);
+-	if (ret)
+-		goto err_iahb;
++	hdmi->bridge.driver_private = hdmi;
++	hdmi->bridge.funcs = &dw_hdmi_bridge_funcs;
++	hdmi->bridge.of_node = pdev->dev.of_node;
+ 
+-	ret = dw_hdmi_register(encoder, hdmi);
++	ret = dw_hdmi_fb_registered(hdmi);
+ 	if (ret)
+ 		goto err_iahb;
+ 
+@@ -2041,7 +2028,7 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 
+ 	platform_set_drvdata(pdev, hdmi);
+ 
+-	return 0;
++	return hdmi;
+ 
+ err_iahb:
+ 	if (hdmi->i2c) {
+@@ -2055,14 +2042,11 @@ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ err_res:
+ 	i2c_put_adapter(hdmi->ddc);
+ 
+-	return ret;
++	return ERR_PTR(ret);
+ }
+-EXPORT_SYMBOL_GPL(dw_hdmi_bind);
+ 
+-void dw_hdmi_unbind(struct device *dev)
++static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
+ {
+-	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
+-
+ 	if (hdmi->audio && !IS_ERR(hdmi->audio))
+ 		platform_device_unregister(hdmi->audio);
+ 
+@@ -2077,6 +2061,70 @@ void dw_hdmi_unbind(struct device *dev)
+ 	else
+ 		i2c_put_adapter(hdmi->ddc);
+ }
++
++/* -----------------------------------------------------------------------------
++ * Probe/remove API, used from platforms based on the DRM bridge API.
++ */
++int dw_hdmi_probe(struct platform_device *pdev,
++		  const struct dw_hdmi_plat_data *plat_data)
++{
++	struct dw_hdmi *hdmi;
++	int ret;
++
++	hdmi = __dw_hdmi_probe(pdev, plat_data);
++	if (IS_ERR(hdmi))
++		return PTR_ERR(hdmi);
++
++	ret = drm_bridge_add(&hdmi->bridge);
++	if (ret < 0) {
++		__dw_hdmi_remove(hdmi);
++		return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dw_hdmi_probe);
++
++void dw_hdmi_remove(struct platform_device *pdev)
++{
++	struct dw_hdmi *hdmi = platform_get_drvdata(pdev);
++
++	drm_bridge_remove(&hdmi->bridge);
++
++	__dw_hdmi_remove(hdmi);
++}
++EXPORT_SYMBOL_GPL(dw_hdmi_remove);
++
++/* -----------------------------------------------------------------------------
++ * Bind/unbind API, used from platforms based on the component framework.
++ */
++int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
++		 const struct dw_hdmi_plat_data *plat_data)
++{
++	struct dw_hdmi *hdmi;
++	int ret;
++
++	hdmi = __dw_hdmi_probe(pdev, plat_data);
++	if (IS_ERR(hdmi))
++		return PTR_ERR(hdmi);
++
++	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL);
++	if (ret) {
++		dw_hdmi_remove(pdev);
++		DRM_ERROR("Failed to initialize bridge with drm\n");
++		return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dw_hdmi_bind);
++
++void dw_hdmi_unbind(struct device *dev)
++{
++	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
++
++	__dw_hdmi_remove(hdmi);
++}
+ EXPORT_SYMBOL_GPL(dw_hdmi_unbind);
+ 
+ MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 94ff6edd070b..3bb22a849830 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -56,6 +56,9 @@ struct dw_hdmi_plat_data {
+ 					   struct drm_display_mode *mode);
+ };
+ 
++int dw_hdmi_probe(struct platform_device *pdev,
++		  const struct dw_hdmi_plat_data *plat_data);
++void dw_hdmi_remove(struct platform_device *pdev);
+ void dw_hdmi_unbind(struct device *dev);
+ int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		 const struct dw_hdmi_plat_data *plat_data);
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
