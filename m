@@ -1,47 +1,124 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:57608 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbdAQMts (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 07:49:48 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] arm64: dts: r8a7796: Link ARM GIC to clock and clock domain
-Date: Tue, 17 Jan 2017 13:49:20 +0100
-Message-Id: <1484657360-13101-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
-References: <1484657360-13101-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 08/20] drm: bridge: dw-hdmi: Reorder functions to prepare for next commit
+Date: Tue, 17 Jan 2017 10:28:58 +0200
+Message-Id: <20170117082910.27023-9-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Link the ARM GIC to the INTC-AP module clock, and add it to the SYSC
-"always-on" PM Domain, so it can be power managed using that clock.
+The next commit will reference structures and functions in a way that
+currently requires forward declarations. Reorder the functions to avoid
+that. No functional change to the code is performed.
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 72 ++++++++++++++++++++--------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index eb446d9666213720..6591c76613687b40 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -101,6 +101,9 @@
- 			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
- 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 		};
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 563cbec47da6..92ce9e532603 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1575,42 +1575,6 @@ static void dw_hdmi_update_phy_mask(struct dw_hdmi *hdmi)
+ 		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
+ }
  
- 		timer {
+-static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
+-				    struct drm_display_mode *orig_mode,
+-				    struct drm_display_mode *mode)
+-{
+-	struct dw_hdmi *hdmi = bridge->driver_private;
+-
+-	mutex_lock(&hdmi->mutex);
+-
+-	/* Store the display mode for plugin/DKMS poweron events */
+-	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
+-
+-	mutex_unlock(&hdmi->mutex);
+-}
+-
+-static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
+-{
+-	struct dw_hdmi *hdmi = bridge->driver_private;
+-
+-	mutex_lock(&hdmi->mutex);
+-	hdmi->disabled = true;
+-	dw_hdmi_update_power(hdmi);
+-	dw_hdmi_update_phy_mask(hdmi);
+-	mutex_unlock(&hdmi->mutex);
+-}
+-
+-static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+-{
+-	struct dw_hdmi *hdmi = bridge->driver_private;
+-
+-	mutex_lock(&hdmi->mutex);
+-	hdmi->disabled = false;
+-	dw_hdmi_update_power(hdmi);
+-	dw_hdmi_update_phy_mask(hdmi);
+-	mutex_unlock(&hdmi->mutex);
+-}
+-
+ static enum drm_connector_status
+ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+ {
+@@ -1703,6 +1667,42 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
+ 	.best_encoder = drm_atomic_helper_best_encoder,
+ };
+ 
++static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
++				    struct drm_display_mode *orig_mode,
++				    struct drm_display_mode *mode)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++
++	mutex_lock(&hdmi->mutex);
++
++	/* Store the display mode for plugin/DKMS poweron events */
++	memcpy(&hdmi->previous_mode, mode, sizeof(hdmi->previous_mode));
++
++	mutex_unlock(&hdmi->mutex);
++}
++
++static void dw_hdmi_bridge_disable(struct drm_bridge *bridge)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++
++	mutex_lock(&hdmi->mutex);
++	hdmi->disabled = true;
++	dw_hdmi_update_power(hdmi);
++	dw_hdmi_update_phy_mask(hdmi);
++	mutex_unlock(&hdmi->mutex);
++}
++
++static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++
++	mutex_lock(&hdmi->mutex);
++	hdmi->disabled = false;
++	dw_hdmi_update_power(hdmi);
++	dw_hdmi_update_phy_mask(hdmi);
++	mutex_unlock(&hdmi->mutex);
++}
++
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+ 	.enable = dw_hdmi_bridge_enable,
+ 	.disable = dw_hdmi_bridge_disable,
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
