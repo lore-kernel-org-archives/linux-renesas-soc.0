@@ -1,95 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59075 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761722AbdACXHE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 18:07:04 -0500
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 19/19] serial: sh-sci: Compute the regshift value for SCI ports
-Date: Wed,  4 Jan 2017 01:06:39 +0200
-Message-Id: <20170103230639.19660-20-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 01/20] drm: bridge: dw-hdmi: Merge __hdmi_phy_i2c_write and hdmi_phy_i2c_write
+Date: Tue, 17 Jan 2017 10:28:51 +0200
+Message-Id: <20170117082910.27023-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SCI instances found in SH SoCs have different spacing between registers
-depending on the SoC. The platform data contains a regshift field that
-tells the driver by how many bits to shift the register offset to
-compute its address. We can compute the regshift value automatically
-based on the memory resource size, there's no need to pass the value
-through platform data.
+The latter is just an int wrapper around the former void function that
+unconditionally returns 0. As the return value is never checked, merge
+the two functions into one.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/tty/serial/sh-sci.c | 25 +++++++++++++++----------
- include/linux/serial_sci.h  |  1 -
- 2 files changed, 15 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 5fc2606fc525..fbffe89b493f 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -187,19 +187,18 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 	},
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index f5009ae39b89..a6685502571e 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -868,7 +868,7 @@ static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
+ 	return true;
+ }
  
- 	/*
--	 * Common definitions for legacy IrDA ports, dependent on
--	 * regshift value.
-+	 * Common definitions for legacy IrDA ports.
- 	 */
- 	[SCIx_IRDA_REGTYPE] = {
- 		.regs = {
- 			[SCSMR]		= { 0x00,  8 },
--			[SCBRR]		= { 0x01,  8 },
--			[SCSCR]		= { 0x02,  8 },
--			[SCxTDR]	= { 0x03,  8 },
--			[SCxSR]		= { 0x04,  8 },
--			[SCxRDR]	= { 0x05,  8 },
--			[SCFCR]		= { 0x06,  8 },
--			[SCFDR]		= { 0x07, 16 },
-+			[SCBRR]		= { 0x02,  8 },
-+			[SCSCR]		= { 0x04,  8 },
-+			[SCxTDR]	= { 0x06,  8 },
-+			[SCxSR]		= { 0x08, 16 },
-+			[SCxRDR]	= { 0x0a,  8 },
-+			[SCFCR]		= { 0x0c,  8 },
-+			[SCFDR]		= { 0x0e, 16 },
- 		},
- 		.fifosize = 1,
- 		.overrun_reg = SCxSR,
-@@ -2573,9 +2572,15 @@ static int sci_init_single(struct platform_device *dev,
+-static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
++static void hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+ 				 unsigned char addr)
+ {
+ 	hdmi_writeb(hdmi, 0xFF, HDMI_IH_I2CMPHY_STAT0);
+@@ -882,13 +882,6 @@ static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+ 	hdmi_phy_wait_i2c_done(hdmi, 1000);
+ }
  
- 	port->type		= p->type;
- 	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
--	port->regshift		= p->regshift;
- 	port->fifosize		= sci_port->params->fifosize;
- 
-+	if (port->type == PORT_SCI) {
-+		if (sci_port->reg_size >= 0x20)
-+			port->regshift = 2;
-+		else
-+			port->regshift = 1;
-+	}
-+
- 	/*
- 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
- 	 * for the multi-IRQ ports, which is where we are primarily
-diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
-index f9a4526f4ec5..e598eaef3962 100644
---- a/include/linux/serial_sci.h
-+++ b/include/linux/serial_sci.h
-@@ -56,7 +56,6 @@ struct plat_sci_port {
- 	/*
- 	 * Platform overrides if necessary, defaults otherwise.
- 	 */
--	unsigned char	regshift;
- 	unsigned char	regtype;
- 
- 	struct plat_sci_port_ops	*ops;
+-static int hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+-			      unsigned char addr)
+-{
+-	__hdmi_phy_i2c_write(hdmi, data, addr);
+-	return 0;
+-}
+-
+ static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
+ {
+ 	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
 -- 
 Regards,
 
