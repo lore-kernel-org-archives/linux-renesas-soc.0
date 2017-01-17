@@ -1,81 +1,81 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/8] clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
-Date: Fri, 20 Jan 2017 15:08:21 +0100
-Message-Id: <1484921306-9967-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 12/20] drm: bridge: dw-hdmi: Rename CONF0 SPARECTRL bit to SVSRET
+Date: Tue, 17 Jan 2017 10:29:02 +0200
+Message-Id: <20170117082910.27023-13-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The spinlock is used to protect Read-Modify-Write register accesses,
-which won't be limited to SMSTPCR register accesses.
+The bit is documented in a Rockchip BSP as
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ #define m_SVSRET_SIG		(1 << 5) /* depend on PHY_MHL_COMB0=1 */
+
+This is confirmed by a Renesas platform, which uses a 2.0 DWC HDMI TX as
+the RK3288. Rename the bit accordingly.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 8 ++++----
+ drivers/gpu/drm/bridge/dw-hdmi.h | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index eb8534e5ebf3007d..f1161a585c57e433 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -98,7 +98,7 @@
-  *
-  * @dev: CPG/MSSR device
-  * @base: CPG/MSSR register block base address
-- * @mstp_lock: protects writes to SMSTPCR
-+ * @rmw_lock: protects RMW register accesses
-  * @clks: Array containing all Core and Module Clocks
-  * @num_core_clks: Number of Core Clocks in clks[]
-  * @num_mod_clks: Number of Module Clocks in clks[]
-@@ -107,7 +107,7 @@
- struct cpg_mssr_priv {
- 	struct device *dev;
- 	void __iomem *base;
--	spinlock_t mstp_lock;
-+	spinlock_t rmw_lock;
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index b4fb0bd78910..06c252f560ad 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -895,11 +895,11 @@ static void dw_hdmi_phy_enable_tmds(struct dw_hdmi *hdmi, u8 enable)
+ 			 HDMI_PHY_CONF0_ENTMDS_MASK);
+ }
  
- 	struct clk **clks;
- 	unsigned int num_core_clks;
-@@ -144,7 +144,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+-static void dw_hdmi_phy_enable_spare(struct dw_hdmi *hdmi, u8 enable)
++static void dw_hdmi_phy_enable_svsret(struct dw_hdmi *hdmi, u8 enable)
+ {
+ 	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
+-			 HDMI_PHY_CONF0_SPARECTRL_OFFSET,
+-			 HDMI_PHY_CONF0_SPARECTRL_MASK);
++			 HDMI_PHY_CONF0_SVSRET_OFFSET,
++			 HDMI_PHY_CONF0_SVSRET_MASK);
+ }
  
- 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
- 		enable ? "ON" : "OFF");
--	spin_lock_irqsave(&priv->mstp_lock, flags);
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
+ static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
+@@ -1014,7 +1014,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+ 	dw_hdmi_phy_gen2_pddq(hdmi, 0);
  
- 	value = readl(priv->base + SMSTPCR(reg));
- 	if (enable)
-@@ -153,7 +153,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		value |= bitmask;
- 	writel(value, priv->base + SMSTPCR(reg));
+ 	if (hdmi->dev_type == RK3288_HDMI)
+-		dw_hdmi_phy_enable_spare(hdmi, 1);
++		dw_hdmi_phy_enable_svsret(hdmi, 1);
  
--	spin_unlock_irqrestore(&priv->mstp_lock, flags);
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
- 
- 	if (!enable)
- 		return 0;
-@@ -550,7 +550,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->dev = dev;
--	spin_lock_init(&priv->mstp_lock);
-+	spin_lock_init(&priv->rmw_lock);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->base = devm_ioremap_resource(dev, res);
+ 	/*Wait for PHY PLL lock */
+ 	msec = 5;
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
+index 55135bbd0c16..08235aef2fa3 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.h
++++ b/drivers/gpu/drm/bridge/dw-hdmi.h
+@@ -847,8 +847,8 @@ enum {
+ 	HDMI_PHY_CONF0_PDZ_OFFSET = 7,
+ 	HDMI_PHY_CONF0_ENTMDS_MASK = 0x40,
+ 	HDMI_PHY_CONF0_ENTMDS_OFFSET = 6,
+-	HDMI_PHY_CONF0_SPARECTRL_MASK = 0x20,
+-	HDMI_PHY_CONF0_SPARECTRL_OFFSET = 5,
++	HDMI_PHY_CONF0_SVSRET_MASK = 0x20,
++	HDMI_PHY_CONF0_SVSRET_OFFSET = 5,
+ 	HDMI_PHY_CONF0_GEN2_PDDQ_MASK = 0x10,
+ 	HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET = 4,
+ 	HDMI_PHY_CONF0_GEN2_TXPWRON_MASK = 0x8,
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
