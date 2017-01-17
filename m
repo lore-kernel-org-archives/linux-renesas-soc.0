@@ -1,61 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:8659 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750760AbdALTBq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 14:01:46 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 3/3] ARM: dts: rskrza1: add ostm DT support
-Date: Thu, 12 Jan 2017 14:01:08 -0500
-Message-Id: <20170112190108.2856-4-chris.brandt@renesas.com>
-In-Reply-To: <20170112190108.2856-1-chris.brandt@renesas.com>
-References: <20170112190108.2856-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 03/20] drm: bridge: dw-hdmi: Remove unused function parameter
+Date: Tue, 17 Jan 2017 10:28:53 +0200
+Message-Id: <20170117082910.27023-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
- arch/arm/boot/dts/r7s72100.dtsi        | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index dd44181..e7b6afa 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -61,6 +61,10 @@
- 	status = "okay";
- };
+The 'prep' parameter passed to hdmi_phy_configure() is useless. It is
+hardcoded as 0, and if set, simply prevents the configure function from
+executing.
+
+Remove it.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index f86894622070..5f8044a7d602 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -931,7 +931,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+ 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+ }
  
-+&ostm {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 247bbe0..974c084 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -513,7 +513,8 @@
- 		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING
- 			      GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
+-static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
++static int hdmi_phy_configure(struct dw_hdmi *hdmi,
+ 			      unsigned char res, int cscon)
+ {
+ 	unsigned res_idx;
+@@ -941,9 +941,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, unsigned char prep,
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
  
--		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>, <&mstp5_clks R7S72100_CLK_OSTM1>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>,
-+			 <&mstp5_clks R7S72100_CLK_OSTM1>;
- 		status = "disabled";
- 	};
- };
+-	if (prep)
+-		return -EINVAL;
+-
+ 	switch (res) {
+ 	case 0:	/* color resolution 0 is 8 bit colour depth */
+ 	case 8:
+@@ -1072,7 +1069,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ 		dw_hdmi_phy_enable_powerdown(hdmi, true);
+ 
+ 		/* Enable CSC */
+-		ret = hdmi_phy_configure(hdmi, 0, 8, cscon);
++		ret = hdmi_phy_configure(hdmi, 8, cscon);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
-2.10.1
+Regards,
+
+Laurent Pinchart
