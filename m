@@ -1,181 +1,180 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35290 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751299AbdAVTS0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Jan 2017 14:18:26 -0500
-Received: by mail-lf0-f44.google.com with SMTP id n124so83300411lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Jan 2017 11:18:25 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] sh_eth: rename EESIPR bits
-Date: Sun, 22 Jan 2017 22:18:21 +0300
-Message-ID: <6851530.HAKW22qnWH@wasted.cogentembedded.com>
-In-Reply-To: <1636105.gp4aQxGd5K@wasted.cogentembedded.com>
-References: <1636105.gp4aQxGd5K@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 07/20] drm: bridge: dw-hdmi: Move IRQ and IO resource allocation to common code
+Date: Tue, 17 Jan 2017 10:28:57 +0200
+Message-Id: <20170117082910.27023-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the  commit  b0ca2a21f769 ("sh_eth: Add support of SH7763 to sh_eth")
-the *enum* declaring the EESIPR bits (interrupt mask) went out of sync with
-the *enum* declaring the EESR bits (interrupt status) WRT  bit naming  and
-formatting. I'd like to restore the consistency by using EESIPR as the bit
-name prefix, renaming the *enum* to EESIPR_BIT, and (finally) renaming the
-bits according to the available  Renesas SH77{34|63} manuals...
+There's no need to duplicate identical code in multiple drivers (two at
+the moment, one more to come soon). Move it to the dw-hdmi core where it
+can be shared. If resource allocation ever becomes device-specific later
+we'll always have the option of splitting it out again.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+While it at pass the platform device to the bind function to avoid
+having to cast struct device to struct platform_device.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |   22 ++++++++++----------
- drivers/net/ethernet/renesas/sh_eth.h |   36 +++++++++++++++++++++-------------
- 2 files changed, 34 insertions(+), 24 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c            | 13 ++++++++++---
+ drivers/gpu/drm/imx/dw_hdmi-imx.c           | 12 +-----------
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 12 +-----------
+ include/drm/bridge/dw_hdmi.h                |  3 +--
+ 4 files changed, 13 insertions(+), 27 deletions(-)
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -556,7 +556,7 @@ static struct sh_eth_cpu_data r8a7740_da
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 488dc1a9204f..563cbec47da6 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1843,14 +1843,16 @@ static int dw_hdmi_register(struct drm_encoder *encoder, struct dw_hdmi *hdmi)
+ 	return 0;
+ }
  
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
+-int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+-		 struct resource *iores, int irq,
++int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		 const struct dw_hdmi_plat_data *plat_data)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct platform_device_info pdevinfo;
+ 	struct device_node *ddc_node;
+ 	struct dw_hdmi *hdmi;
++	struct resource *iores;
++	int irq;
+ 	int ret;
+ 	u32 val = 1;
+ 	u8 config0;
+@@ -1903,6 +1905,7 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 		dev_dbg(hdmi->dev, "no ddc property found\n");
+ 	}
  
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -702,7 +702,7 @@ static struct sh_eth_cpu_data sh7757_dat
++	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	hdmi->regs = devm_ioremap_resource(dev, iores);
+ 	if (IS_ERR(hdmi->regs)) {
+ 		ret = PTR_ERR(hdmi->regs);
+@@ -1945,6 +1948,10 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
  
- 	.register_type	= SH_ETH_REG_FAST_SH4,
+ 	initialize_hdmi_ih_mutes(hdmi);
  
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0)
++		goto err_iahb;
++
+ 	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
+ 					dw_hdmi_irq, IRQF_SHARED,
+ 					dev_name(dev), hdmi);
+@@ -2025,7 +2032,7 @@ int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 	if (hdmi->i2c)
+ 		dw_hdmi_i2c_init(hdmi);
  
- 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
-@@ -769,7 +769,7 @@ static struct sh_eth_cpu_data sh7757_dat
+-	dev_set_drvdata(dev, hdmi);
++	platform_set_drvdata(pdev, hdmi);
  
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
+ 	return 0;
  
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -800,7 +800,7 @@ static struct sh_eth_cpu_data sh7734_dat
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index f79665801543..f645275e6e63 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -207,8 +207,6 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	struct drm_device *drm = data;
+ 	struct drm_encoder *encoder;
+ 	struct imx_hdmi *hdmi;
+-	struct resource *iores;
+-	int irq;
+ 	int ret;
  
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003f07ff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003f07ff,
+ 	if (!pdev->dev.of_node)
+@@ -223,14 +221,6 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	hdmi->dev = &pdev->dev;
+ 	encoder = &hdmi->encoder;
  
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -830,7 +830,7 @@ static struct sh_eth_cpu_data sh7763_dat
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
+-
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iores)
+-		return -ENXIO;
+-
+ 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+ 	/*
+ 	 * If we failed to find the CRTC(s) which this encoder is
+@@ -249,7 +239,7 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_imx_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
  
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003f07ff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003f07ff,
+-	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(pdev, encoder, plat_data);
  
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -851,7 +851,7 @@ static struct sh_eth_cpu_data sh7763_dat
- static struct sh_eth_cpu_data sh7619_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index e8fb5c56b224..a6d4a0236e8f 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -257,8 +257,6 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	struct drm_device *drm = data;
+ 	struct drm_encoder *encoder;
+ 	struct rockchip_hdmi *hdmi;
+-	struct resource *iores;
+-	int irq;
+ 	int ret;
  
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
+ 	if (!pdev->dev.of_node)
+@@ -273,14 +271,6 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	hdmi->dev = &pdev->dev;
+ 	encoder = &hdmi->encoder;
  
- 	.apr		= 1,
- 	.mpr		= 1,
-@@ -862,7 +862,7 @@ static struct sh_eth_cpu_data sh7619_dat
- static struct sh_eth_cpu_data sh771x_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
+-
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iores)
+-		return -ENXIO;
+-
+ 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+ 	/*
+ 	 * If we failed to find the CRTC(s) which this encoder is
+@@ -301,7 +291,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_rockchip_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
  
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
- 	.tsu		= 1,
+-	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(pdev, encoder, plat_data);
+ 
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 11edda631a9d..94ff6edd070b 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -57,8 +57,7 @@ struct dw_hdmi_plat_data {
  };
  
-@@ -1547,10 +1547,10 @@ static void sh_eth_emac_interrupt(struct
- 			sh_eth_rcv_snd_disable(ndev);
- 		} else {
- 			/* Link Up */
--			sh_eth_modify(ndev, EESIPR, DMAC_M_ECI, 0);
-+			sh_eth_modify(ndev, EESIPR, EESIPR_ECIIP, 0);
- 			/* clear int */
- 			sh_eth_modify(ndev, ECSR, 0, 0);
--			sh_eth_modify(ndev, EESIPR, DMAC_M_ECI, DMAC_M_ECI);
-+			sh_eth_modify(ndev, EESIPR, EESIPR_ECIIP, EESIPR_ECIIP);
- 			/* enable tx and rx */
- 			sh_eth_rcv_snd_enable(ndev);
- 		}
-@@ -1652,7 +1652,7 @@ static irqreturn_t sh_eth_interrupt(int
- 	 * bit...
- 	 */
- 	intr_enable = sh_eth_read(ndev, EESIPR);
--	intr_status &= intr_enable | DMAC_M_ECI;
-+	intr_status &= intr_enable | EESIPR_ECIIP;
- 	if (intr_status & (EESR_RX_CHECK | cd->tx_check | EESR_ECI |
- 			   cd->eesr_err_check))
- 		ret = IRQ_HANDLED;
-@@ -3199,7 +3199,7 @@ static int sh_eth_wol_setup(struct net_d
- 	/* Only allow ECI interrupts */
- 	synchronize_irq(ndev->irq);
- 	napi_disable(&mdp->napi);
--	sh_eth_write(ndev, DMAC_M_ECI, EESIPR);
-+	sh_eth_write(ndev, EESIPR_ECIIP, EESIPR);
+ void dw_hdmi_unbind(struct device *dev);
+-int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+-		 struct resource *iores, int irq,
++int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+ 		 const struct dw_hdmi_plat_data *plat_data);
  
- 	/* Enable MagicPacket */
- 	sh_eth_modify(ndev, ECMR, 0, ECMR_MPDE);
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -268,19 +268,29 @@ enum EESR_BIT {
- 				 EESR_TFE | EESR_TDE)
- 
- /* EESIPR */
--enum DMAC_IM_BIT {
--	DMAC_M_TWB = 0x40000000, DMAC_M_TABT = 0x04000000,
--	DMAC_M_RABT = 0x02000000,
--	DMAC_M_RFRMER = 0x01000000, DMAC_M_ADF = 0x00800000,
--	DMAC_M_ECI = 0x00400000, DMAC_M_FTC = 0x00200000,
--	DMAC_M_TDE = 0x00100000, DMAC_M_TFE = 0x00080000,
--	DMAC_M_FRC = 0x00040000, DMAC_M_RDE = 0x00020000,
--	DMAC_M_RFE = 0x00010000, DMAC_M_TINT4 = 0x00000800,
--	DMAC_M_TINT3 = 0x00000400, DMAC_M_TINT2 = 0x00000200,
--	DMAC_M_TINT1 = 0x00000100, DMAC_M_RINT8 = 0x00000080,
--	DMAC_M_RINT5 = 0x00000010, DMAC_M_RINT4 = 0x00000008,
--	DMAC_M_RINT3 = 0x00000004, DMAC_M_RINT2 = 0x00000002,
--	DMAC_M_RINT1 = 0x00000001,
-+enum EESIPR_BIT {
-+	EESIPR_TWBIP	= 0x40000000,
-+	EESIPR_TABTIP	= 0x04000000,
-+	EESIPR_RABTIP	= 0x02000000,
-+	EESIPR_RFCOFIP	= 0x01000000,
-+	EESIPR_ADEIP	= 0x00800000,
-+	EESIPR_ECIIP	= 0x00400000,
-+	EESIPR_FTCIP	= 0x00200000,
-+	EESIPR_TDEIP	= 0x00100000,
-+	EESIPR_TFUFIP	= 0x00080000,
-+	EESIPR_FRIP	= 0x00040000,
-+	EESIPR_RDEIP	= 0x00020000,
-+	EESIPR_RFOFIP	= 0x00010000,
-+	EESIPR_CNDIP	= 0x00000800,
-+	EESIPR_DLCIP	= 0x00000400,
-+	EESIPR_CDIP	= 0x00000200,
-+	EESIPR_TROIP	= 0x00000100,
-+	EESIPR_RMAFIP	= 0x00000080,
-+	EESIPR_RRFIP	= 0x00000010,
-+	EESIPR_RTLFIP	= 0x00000008,
-+	EESIPR_RTSFIP	= 0x00000004,
-+	EESIPR_PREIP	= 0x00000002,
-+	EESIPR_CERFIP	= 0x00000001,
- };
- 
- /* Receive descriptor 0 bits */
+ void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+-- 
+Regards,
+
+Laurent Pinchart
