@@ -1,97 +1,134 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:43912 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751035AbdAPMNG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 07:13:06 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v3 0/8] Renesas RZ PFC and GPIO driver
-Date: Mon, 16 Jan 2017 13:12:44 +0100
-Message-Id: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 02/20] drm: bridge: dw-hdmi: Remove unneeded arguments to bind/unbind functions
+Date: Tue, 17 Jan 2017 10:28:52 +0200
+Message-Id: <20170117082910.27023-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello
-   here it is v3 of PFC and GPIO driver for Renesas RZ SoC Series.
+The master argument isn't used. The data argument, a void pointer, is
+used by the bind function only where it's cast to a drm_device pointer,
+which can easily be obtained from the encoder argument instead. Remove
+them.
 
-I'll premit that this series goes in the "pin-based PFC HW in group-based PFC
-software" direction, and that, after some discussions on v1, it is
-not clear yet if this is desirable for RZ series or we may want to explore
-other solutions.
-
-Compared to v2 I have fixed Linus' remarks on GPIO driver, and made it to use
-a "more standard" set of registers among other RZ SoC to drive gpio pins
-(thanks Chris for pointing this out).
-Other bits in the driver changed, but that's mostly cosmetic stuff.
-
-I have applied on top of PFC patch one of the patches I sent as RFC
-(pinctrl: sh-pfc: r7s72100: Add IO mode selection) to set previously ignored
-PIPC, PIBC and PBDC register to let the alternate function decide the pin's
-I/O mode.
-
-Other minor fixes applied to dts and dtsi.
-Changes to the GPIO driver have required dtsi to change accordingly, in order
-to provide memory regions for the newly used registers.
-
-As per the previous submission, I can only test accessing an i2c-gpio eeprom,
-so everyone interested (and with an actual test board on the desk) may want to
-test and possibly provide feedbacks.
-
-Thanks
-   j
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
+ drivers/gpu/drm/bridge/dw-hdmi.c            | 8 +++-----
+ drivers/gpu/drm/imx/dw_hdmi-imx.c           | 4 ++--
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 4 ++--
+ include/drm/bridge/dw_hdmi.h                | 5 ++---
+ 4 files changed, 9 insertions(+), 12 deletions(-)
 
-v1 -> v2:
-    - split node addition in r7s72100.dtsi and r7s72100-genami.dts in 2 patches
-    - break down addition of peripheral nodes in  r7s72100-genami.dts in 4
-      patches
-    - drop GPIO aliases in .dtsi file
-
-v2 -> v3:
-    - Add IO mode selection patch on top of PFC driver
-    - Reworked commit messages that looked ugly in PFC and GPIO driver
-    - Reworked GPIO driver to include Linus review comments and change the
-      set of registers used to set pin's direction/value
-    - Changed dtsi to make PFC and GPIO iomem regions not overlap
-    - Drop "renesas" prefix from "groups" and "function" attributes as
-      suggested by Geert.
----
-
-Geert Uytterhoeven (1):
-  arm: dts: r7s72100-genmai: Add pinctrl for RSPI
-
-Jacopo Mondi (1):
-  pinctrl: sh-pfc: r7s72100: Configure I/O mode
-
-Magnus Damm (5):
-  pinctrl: sh-pfc: Add r7s72100 PFC driver
-  gpio: gpio-rz: GPIO driver for Renesas RZ series
-  arm: dts: r7s72100: GPIO and PFC device nodes
-  arm: dts: r7s72100-genmai: SCIF2 PINCTRL configuration
-  arm: dts: r7s72100-genmai: LED1 and LED2 support
-
-Simon Horman (1):
-  arm: dts: r7s72100-genmai:Add ethernet PFC node
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
- arch/arm/boot/dts/r7s72100-genmai.dts              |  50 ++
- arch/arm/boot/dts/r7s72100.dtsi                    | 136 ++++++
- drivers/gpio/Kconfig                               |   6 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-rz.c                             | 211 ++++++++
- drivers/pinctrl/sh-pfc/Kconfig                     |   5 +
- drivers/pinctrl/sh-pfc/Makefile                    |   1 +
- drivers/pinctrl/sh-pfc/core.c                      |   6 +
- drivers/pinctrl/sh-pfc/pfc-r7s72100.c              | 532 +++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   9 +-
- 11 files changed, 955 insertions(+), 3 deletions(-)
- create mode 100644 drivers/gpio/gpio-rz.c
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r7s72100.c
-
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index a6685502571e..f86894622070 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1854,12 +1854,10 @@ static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
+ 	return 0;
+ }
+ 
+-int dw_hdmi_bind(struct device *dev, struct device *master,
+-		 void *data, struct drm_encoder *encoder,
++int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 		 struct resource *iores, int irq,
+ 		 const struct dw_hdmi_plat_data *plat_data)
+ {
+-	struct drm_device *drm = data;
+ 	struct device_node *np = dev->of_node;
+ 	struct platform_device_info pdevinfo;
+ 	struct device_node *ddc_node;
+@@ -1992,7 +1990,7 @@ int dw_hdmi_bind(struct device *dev, struct device *master,
+ 	if (ret)
+ 		goto err_iahb;
+ 
+-	ret = dw_hdmi_register(drm, hdmi);
++	ret = dw_hdmi_register(encoder->dev, hdmi);
+ 	if (ret)
+ 		goto err_iahb;
+ 
+@@ -2059,7 +2057,7 @@ int dw_hdmi_bind(struct device *dev, struct device *master,
+ }
+ EXPORT_SYMBOL_GPL(dw_hdmi_bind);
+ 
+-void dw_hdmi_unbind(struct device *dev, struct device *master, void *data)
++void dw_hdmi_unbind(struct device *dev)
+ {
+ 	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
+ 
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index 359cd2765552..f79665801543 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -249,7 +249,7 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_imx_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+-	ret = dw_hdmi_bind(dev, master, data, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
+ 
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+@@ -264,7 +264,7 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
+ static void dw_hdmi_imx_unbind(struct device *dev, struct device *master,
+ 			       void *data)
+ {
+-	return dw_hdmi_unbind(dev, master, data);
++	return dw_hdmi_unbind(dev);
+ }
+ 
+ static const struct component_ops dw_hdmi_imx_ops = {
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index 0665fb915579..e8fb5c56b224 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -301,7 +301,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ 	drm_encoder_init(drm, encoder, &dw_hdmi_rockchip_encoder_funcs,
+ 			 DRM_MODE_ENCODER_TMDS, NULL);
+ 
+-	ret = dw_hdmi_bind(dev, master, data, encoder, iores, irq, plat_data);
++	ret = dw_hdmi_bind(dev, encoder, iores, irq, plat_data);
+ 
+ 	/*
+ 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
+@@ -316,7 +316,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
+ static void dw_hdmi_rockchip_unbind(struct device *dev, struct device *master,
+ 				    void *data)
+ {
+-	return dw_hdmi_unbind(dev, master, data);
++	return dw_hdmi_unbind(dev);
+ }
+ 
+ static const struct component_ops dw_hdmi_rockchip_ops = {
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index bae79f3c4d28..11edda631a9d 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -56,9 +56,8 @@ struct dw_hdmi_plat_data {
+ 					   struct drm_display_mode *mode);
+ };
+ 
+-void dw_hdmi_unbind(struct device *dev, struct device *master, void *data);
+-int dw_hdmi_bind(struct device *dev, struct device *master,
+-		 void *data, struct drm_encoder *encoder,
++void dw_hdmi_unbind(struct device *dev);
++int dw_hdmi_bind(struct device *dev, struct drm_encoder *encoder,
+ 		 struct resource *iores, int irq,
+ 		 const struct dw_hdmi_plat_data *plat_data);
+ 
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
