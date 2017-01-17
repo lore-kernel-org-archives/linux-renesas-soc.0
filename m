@@ -1,44 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36473 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751510AbdARIgk (ORCPT
+Received: from sauhun.de ([89.238.76.85]:34191 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751381AbdAQUe3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 03:36:40 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170117202601.3742-1-wsa@the-dreams.de>
-References: <20170117202601.3742-1-wsa@the-dreams.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 18 Jan 2017 09:29:18 +0100
-Message-ID: <CAMuHMdVU5jARZSC_EMaqPo9BAz+PG_OPevuF9VTzAVJPoF2UsQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: host: tmio: disable clocks when unbinding
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 17 Jan 2017 15:34:29 -0500
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Brandt <chris.brandt@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] mmc: host: tmio: disable clocks when unbinding
+Date: Tue, 17 Jan 2017 21:26:01 +0100
+Message-Id: <20170117202601.3742-1-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 17, 2017 at 9:26 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Create a helper function to disable clocks and use it in remove(), too.
-> Now, clk_summary in debugfs reports the clocks as disabled and
-> unprepared after unbinding.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Create a helper function to disable clocks and use it in remove(), too.
+Now, clk_summary in debugfs reports the clocks as disabled and
+unprepared after unbinding.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index ddba7b833f2c52..db3bde716b3eed 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -947,6 +947,12 @@ static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
+ 	return host->clk_enable(host);
+ }
+ 
++static void tmio_mmc_clk_disable(struct tmio_mmc_host *host)
++{
++	if (host->clk_disable)
++		host->clk_disable(host);
++}
++
+ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
+ {
+ 	struct mmc_host *mmc = host->mmc;
+@@ -1332,6 +1338,8 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
+ 
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++
++	tmio_mmc_clk_disable(host);
+ }
+ EXPORT_SYMBOL(tmio_mmc_host_remove);
+ 
+@@ -1346,8 +1354,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ 	if (host->clk_cache)
+ 		tmio_mmc_clk_stop(host);
+ 
+-	if (host->clk_disable)
+-		host->clk_disable(host);
++	tmio_mmc_clk_disable(host);
+ 
+ 	return 0;
+ }
+-- 
+2.11.0
