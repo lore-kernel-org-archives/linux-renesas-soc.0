@@ -1,52 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45210 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753106AbdAZIwl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 03:52:41 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 0/5] arm64: dts: r8a779[56]: salvator-x: Add I2C for DVFS device support
-Date: Thu, 26 Jan 2017 09:52:25 +0100
-Message-Id: <1485420750-12701-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v3 14/20] drm: bridge: dw-hdmi: Detect AHB audio DMA using correct register
+Date: Tue, 17 Jan 2017 10:29:04 +0200
+Message-Id: <20170117082910.27023-15-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Bit 0 in CONFIG1_ID tells whether the IP core uses an AHB slave
+interface for control. The correct way to identify AHB audio DMA support
+is through bit 1 in CONFIG3_ID.
 
-this series enables I2C for DVFS  on the salvator-x board for the
-r8a7795 and r8a7796 SoCs.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 6 +++---
+ drivers/gpu/drm/bridge/dw-hdmi.h | 4 ++++
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-Base:
-* This series is based on renesas-next-20170126-v4.10-rc2
-
-Dependencies:
-* This series has a run-time dependency on
-  "[PATCH 0/2] clk: renesas: r8a7795/r8a7796: Add IIC-DVFS clock"
-* This series has a check patch dependency on
-  "[PATCH i2c/for-next] i2c: sh_mobile: document support for r8a7796 (R-Car M3-W)"
-* This series should be safe to apply independently of the above dependencies
-
-
-Dien Pham (2):
-  arm64: dts: r8a7796: Add I2C for DVFS device node
-  arm64: dts: r8a7796: salvator-x: Add I2C for DVFS device support
-
-Keita Kobayashi (2):
-  arm64: dts: r8a7795: Add I2C for DVFS core to dtsi
-  arm64: dts: r8a7795-salvator-x: Enable I2C for DVFS device
-
-Simon Horman (1):
-  arm64: defconfig: Enable SH Mobile I2C controller
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  4 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 14 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  4 ++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 14 ++++++++++++++
- arch/arm64/configs/defconfig                       |  1 +
- 5 files changed, 37 insertions(+)
-
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 1809247745b8..730a7558d4d4 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1836,7 +1836,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	u8 prod_id0;
+ 	u8 prod_id1;
+ 	u8 config0;
+-	u8 config1;
++	u8 config3;
+ 
+ 	hdmi = devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
+ 	if (!hdmi)
+@@ -1988,9 +1988,9 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	pdevinfo.id = PLATFORM_DEVID_AUTO;
+ 
+ 	config0 = hdmi_readb(hdmi, HDMI_CONFIG0_ID);
+-	config1 = hdmi_readb(hdmi, HDMI_CONFIG1_ID);
++	config3 = hdmi_readb(hdmi, HDMI_CONFIG3_ID);
+ 
+-	if (config1 & HDMI_CONFIG1_AHB) {
++	if (config3 & HDMI_CONFIG3_AHBAUDDMA) {
+ 		struct dw_hdmi_audio_data audio;
+ 
+ 		audio.phys = iores->start;
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
+index 91d7fabbd6e5..a4fd64a203c9 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.h
++++ b/drivers/gpu/drm/bridge/dw-hdmi.h
+@@ -559,6 +559,10 @@ enum {
+ /* CONFIG1_ID field values */
+ 	HDMI_CONFIG1_AHB = 0x01,
+ 
++/* CONFIG3_ID field values */
++	HDMI_CONFIG3_AHBAUDDMA = 0x02,
++	HDMI_CONFIG3_GPAUD = 0x01,
++
+ /* IH_FC_INT2 field values */
+ 	HDMI_IH_FC_INT2_OVERFLOW_MASK = 0x03,
+ 	HDMI_IH_FC_INT2_LOW_PRIORITY_OVERFLOW = 0x02,
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
