@@ -1,54 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:34176 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751383AbdAQUeZ (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:24581 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750991AbdAQUAQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 15:34:25 -0500
-Date: Tue, 17 Jan 2017 21:33:40 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Tue, 17 Jan 2017 15:00:16 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Message-ID: <20170117203340.dx6k4zof2omcbz4y@ninjato>
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+Date: Tue, 17 Jan 2017 14:59:39 -0500
+Message-Id: <20170117195940.25092-3-chris.brandt@renesas.com>
+In-Reply-To: <20170117195940.25092-1-chris.brandt@renesas.com>
 References: <20170117195940.25092-1-chris.brandt@renesas.com>
- <20170117195940.25092-3-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20170117195940.25092-3-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 17, 2017 at 02:59:39PM -0500, Chris Brandt wrote:
-> In the case of a single clock source, you don't need names. However,
-> if the controller has 2 clock sources, you need to name them correctly
-> so the driver can find the 2nd one.
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
->  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> index a1650ed..258b98c 100644
-> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> @@ -25,8 +25,29 @@ Required properties:
->  		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
->  		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
->  
-> +- clocks: Most controllers only have 1 clock source per cahnnel. However, some
+In the case of a single clock source, you don't need names. However,
+if the controller has 2 clock sources, you need to name them correctly
+so the driver can find the 2nd one.
 
-channel.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-> +	  have 2. If 2 clocks are specified, you must name them as "core" and
-
-Maybe "However, some have a second clock dedicated to card detection."?
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index a1650ed..258b98c 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -25,8 +25,29 @@ Required properties:
+ 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+ 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
+ 
++- clocks: Most controllers only have 1 clock source per cahnnel. However, some
++	  have 2. If 2 clocks are specified, you must name them as "core" and
++	  "carddetect". If the controller only has 1 clock, naming is not
++	  required.
++
+ Optional properties:
+ - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
+ - pinctrl-names: should be "default", "state_uhs"
+ - pinctrl-0: should contain default/high speed pin ctrl
+ - pinctrl-1: should contain uhs mode pin ctrl
++
++Example showing 2 clocks:
++	sdhi0: sd@e804e000 {
++		compatible = "renesas,sdhi-r7s72100";
++		reg = <0xe804e000 0x100>;
++		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
++			 <&mstp12_clks R7S72100_CLK_SDHI01>;
++		clock-names = "core", "carddetect";
++		cap-sd-highspeed;
++		cap-sdio-irq;
++		status = "disabled";
++	};
+-- 
+2.10.1
