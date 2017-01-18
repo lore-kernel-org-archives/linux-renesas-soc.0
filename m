@@ -1,12 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55733 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45584 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752915AbdASXsw (ORCPT
+        with ESMTP id S1750884AbdARXEx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 18:48:52 -0500
+        Wed, 18 Jan 2017 18:04:53 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: DongCV <cv-dong@jinso.co.jp>
-Cc: Wolfram Sang <wsa@sang-engineering.com>,
+Cc: Stefan Agner <stefan@agner.ch>,
+        Wolfram Sang <wsa@sang-engineering.com>,
         duclm <lm-duc@jinso.co.jp>,
         Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -21,10 +22,10 @@ Cc: Wolfram Sang <wsa@sang-engineering.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         na-hoan@jinso.co.jp
 Subject: Re: The failure summary report of GEN2 for linux stable v4.10-rc2
-Date: Fri, 20 Jan 2017 01:49:11 +0200
-Message-ID: <5001200.M7izD2cjP9@avalon>
-In-Reply-To: <8a056d37-3de9-30ac-74bc-e1393d1b193a@jinso.co.jp>
-References: <1484558970996626000058af@nat.cybozu.com> <1988000.69YelQnMiB@avalon> <8a056d37-3de9-30ac-74bc-e1393d1b193a@jinso.co.jp>
+Date: Thu, 19 Jan 2017 00:47:39 +0200
+Message-ID: <1818037.5e1RZkk1rE@avalon>
+In-Reply-To: <6c2aea65-951c-1ce4-7339-47023fdb7f13@jinso.co.jp>
+References: <1484558970996626000058af@nat.cybozu.com> <d7f4a948-37a2-e912-6e25-5690ad8ecef9@jinso.co.jp> <6c2aea65-951c-1ce4-7339-47023fdb7f13@jinso.co.jp>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -33,48 +34,26 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Dear Dong,
 
-On Thursday 19 Jan 2017 18:14:45 DongCV wrote:
-> Dear Mr Laurent
+On Wednesday 18 Jan 2017 15:53:55 DongCV wrote:
+> Hi Laurent,
 > 
-> I apologize for the misunderstanding.
+> I found the patch which I think it is the cause of the issues "Does not
+> support 640x480 resolution &
+> Does not support 16-bit color for numbers," that I have reported.
+> The commit name is '865afb1 drm/fb-helper: reject any changes to the fbdev'
+> If I reverted this patch and retested it on H2 board, the issue will be
+> gone!.
 
-No worries, I should have been more precise.
+I confirm your analysis. However, I think this isn't a new issue. Before the 
+aforementioned patch, running
 
-> I've retested the HDMI output on Lager(H2) with v4.10-rc2.
-> 
-> The results:
-> 
-> Enabled CMA:
-> 
-> The HDMI cable unplugged: Could not recognize the display.
-> The HDMI cable plugged: Recognized the display-> test fail.
-> 
-> The VGA cable unplugged: Recognized the display-> test ok.
-> The VGA cable plugged: Recognized the display-> test ok.
-> 
-> 
-> Disabled CMA: The same to the case of enabled CMA.
-> 
-> I attach the test procedures and test tool, test result.
-> Please have a look at it.
+# fbset -xres 640 -yres 480 -laced 0
+# fbset -depth 16 -rgba 5,6,5,0
 
-I've followed the same test procedure:
-
-- Check out kernel v4.10-rc2
-- Compile the kernel with the CONFIG_CMA_ENABLE.txt you have provided
-- Disconnect the VGA and HDMI cables
-- Turn the power on to the Lager board, let it boot
-- Plug the HDMI cable
-- Run 'bmap /dev/fb0 hdmi.bmp' with the hdmi.bmp file you have provided
-
-The output on the display is fine, identical to your 'VGA_Image.jpg' picture.
-
-At this point I believe the key difference between our setups is the HDMI 
-monitor. Could you please send me the output of
-
-modetest -M rcar-du
-
-with the HDMI cable plugged ?
+didn't produce any error, but didn't either resize the display to 640x480 or 
+changed the pixel format. With the patch applied, the commands are rejected as 
+they should be, as they wouldn't produce the expected results. The new 
+behaviour is thus in my opinion correct.
 
 -- 
 Regards,
