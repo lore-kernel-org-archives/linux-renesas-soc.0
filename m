@@ -1,100 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33061 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750951AbdAWQEh (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:24249 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751676AbdARR1W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 11:04:37 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 3/7] serial: sh-sci: implement FIFO threshold register setting
-Date: Mon, 23 Jan 2017 17:04:14 +0100
-Message-Id: <1485187458-8195-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 18 Jan 2017 12:27:22 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 3/3] ARM: dts: r7s72100: update sdhi clock bindings
+Date: Wed, 18 Jan 2017 12:25:02 -0500
+Message-Id: <20170118172502.13876-4-chris.brandt@renesas.com>
+In-Reply-To: <20170118172502.13876-1-chris.brandt@renesas.com>
+References: <20170118172502.13876-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sets the closest match for a desired RX trigger level.
+The SDHI controller in the RZ/A1 has 2 clock sources per channel and both
+need to be enabled/disabled for proper operation. This fixes the fact that
+the define for R7S72100_CLK_SDHI1 was not correct to begin with (typo), and
+that all 4 clock sources need to be defined an used.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/tty/serial/sh-sci.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+v2:
+* add missing clock sources instead of just fixing typo
+* changed clock name from "carddetect" to "cd"
+---
+ arch/arm/boot/dts/r7s72100.dtsi            | 17 ++++++++++++-----
+ include/dt-bindings/clock/r7s72100-clock.h |  6 ++++--
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 3a9c001..39734cc 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1102,6 +1102,65 @@ static int sci_handle_breaks(struct uart_port *port)
- 	return copied;
- }
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 3dd427d..9d0b8d0 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -153,9 +153,12 @@
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe0444 4>;
+-			clocks = <&p1_clk>, <&p1_clk>;
+-			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
+-			clock-output-names = "sdhi1", "sdhi0";
++			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
++			clock-indices = <
++				R7S72100_CLK_SDHI00 R7S72100_CLK_SDHI01
++				R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
++			>;
++			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
+ 		};
+ 	};
  
-+static int scif_set_rtrg(struct uart_port *port, int rx_trig)
-+{
-+	unsigned int bits;
-+
-+	if (rx_trig < 1)
-+		rx_trig = 1;
-+	if (rx_trig >= port->fifosize)
-+		rx_trig = port->fifosize;
-+
-+	/* HSCIF can be set to an arbitrary level. */
-+	if (sci_getreg(port, HSRTRGR)->size) {
-+		serial_port_out(port, HSRTRGR, rx_trig);
-+		return rx_trig;
-+	}
-+
-+	switch (port->type) {
-+	case PORT_SCIF:
-+		if (rx_trig < 4) {
-+			bits = 0;
-+			rx_trig = 1;
-+		} else if (rx_trig < 8) {
-+			bits = SCFCR_RTRG0;
-+			rx_trig = 4;
-+		} else if (rx_trig < 14) {
-+			bits = SCFCR_RTRG1;
-+			rx_trig = 8;
-+		} else {
-+			bits = SCFCR_RTRG0 | SCFCR_RTRG1;
-+			rx_trig = 14;
-+		}
-+		break;
-+	case PORT_SCIFA:
-+	case PORT_SCIFB:
-+		if (rx_trig < 16) {
-+			bits = 0;
-+			rx_trig = 1;
-+		} else if (rx_trig < 32) {
-+			bits = SCFCR_RTRG0;
-+			rx_trig = 16;
-+		} else if (rx_trig < 48) {
-+			bits = SCFCR_RTRG1;
-+			rx_trig = 32;
-+		} else {
-+			bits = SCFCR_RTRG0 | SCFCR_RTRG1;
-+			rx_trig = 48;
-+		}
-+		break;
-+	default:
-+		WARN(1, "unknown FIFO configuration");
-+		return 1;
-+	}
-+
-+	serial_port_out(port, SCFCR,
-+		(serial_port_in(port, SCFCR) &
-+		~(SCFCR_RTRG1 | SCFCR_RTRG0)) | bits);
-+
-+	return rx_trig;
-+}
-+
- #ifdef CONFIG_SERIAL_SH_SCI_DMA
- static void sci_dma_tx_complete(void *arg)
- {
+@@ -478,7 +481,9 @@
+ 			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
++			 <&mstp12_clks R7S72100_CLK_SDHI01>;
++		clock-names = "core", "cd";
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
+@@ -491,7 +496,9 @@
+ 			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
++			 <&mstp12_clks R7S72100_CLK_SDHI11>;
++		clock-names = "core", "cd";
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index 29e01ed..f2d8428 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -45,7 +45,9 @@
+ #define R7S72100_CLK_SPI4	3
+ 
+ /* MSTP12 */
+-#define R7S72100_CLK_SDHI0	3
+-#define R7S72100_CLK_SDHI1	2
++#define R7S72100_CLK_SDHI00	3
++#define R7S72100_CLK_SDHI01	2
++#define R7S72100_CLK_SDHI10	1
++#define R7S72100_CLK_SDHI11	0
+ 
+ #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
 -- 
-2.7.4
+2.10.1
