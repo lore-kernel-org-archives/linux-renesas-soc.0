@@ -1,66 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:60844 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754212AbdASTCe (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:15666 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752568AbdARRcQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 14:02:34 -0500
-Date: Thu, 19 Jan 2017 20:02:01 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wed, 18 Jan 2017 12:32:16 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
-Message-ID: <20170119190201.GA1439@katana>
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
+Date: Wed, 18 Jan 2017 12:25:00 -0500
+Message-Id: <20170118172502.13876-2-chris.brandt@renesas.com>
+In-Reply-To: <20170118172502.13876-1-chris.brandt@renesas.com>
 References: <20170118172502.13876-1-chris.brandt@renesas.com>
- <20170118172502.13876-2-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
-Content-Disposition: inline
-In-Reply-To: <20170118172502.13876-2-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Some controllers have 2 clock sources instead of 1, so they both need
+to be turned on/off.
 
---lrZ03NoBR/3+SXJZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+v2:
+* changed clk2 to clk_cd
+* disable clk if clk_cd enable fails
+* changed clock name from "carddetect" to "cd"
+---
+ drivers/mmc/host/sh_mobile_sdhi.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-On Wed, Jan 18, 2017 at 12:25:00PM -0500, Chris Brandt wrote:
-> Some controllers have 2 clock sources instead of 1, so they both need
-> to be turned on/off.
->=20
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---lrZ03NoBR/3+SXJZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYgQ0oAAoJEBQN5MwUoCm2tiYP/RmVLx2GIb/TYqoAS49/3e4O
-hVe2tKZ/BWZiYnkSRdwy2vUFf9O63hEqG3kt02bNB5nPGLyZE2u5mtq6xJngTxxV
-w8q9mL2URBYqeUIlifi1H9xG+HzodWbn0X6VZpiNHR0qeYvkVdwhA0jHYexA5T2m
-0W5iqiJKdFn4CVde/HAAZBYt2Kpiy5qgv3VsVL0q3ojJJRwHe7jzHuZcHUp/Oetf
-vDAgtb6ru2Umq/na7uRQZMQ7qrgqeYTblP5pEGAByXxMzoz6xVkUkzSWvQM9ODeg
-SLL5Qjr2RlAdzrhwKrbLG3vKJNQYo8uTgy0/XL/2aZ7igbxFhL5RK2qs7ZfgiT6z
-xTXti5V5jv8s0Vifdd38z5vOTydosC7GJG0e1gGApyRdYwPen7aGEJA8W8gwuF8l
-n6QeanDuR/abu2WS7S2wE0gO6UToEv/NwjX+bODIulIF3H5TYJ9XqgBsT6EV+mQK
-7IXejX1Rhtny8+cUPns7I8bOoOxRmOP9NjH0FTFxJqociJgz+V0FTr2n532PHR/i
-zExKJve2V6dD+9j0ecX1H2Opfpq7tB8oe+H23VpmDQEOdaNIRKiHuNuycJDquQqM
-Gxanyy+mcM2j5nOoA8GOwAy/CZN+RqQFEUni3esyle/DUDkI8O4CyPskstrCWIA7
-HGDPA7CyMNNaU/wI/XHN
-=wk1o
------END PGP SIGNATURE-----
-
---lrZ03NoBR/3+SXJZ--
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 59db14b..a3f995e 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -143,6 +143,7 @@ MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
+ 
+ struct sh_mobile_sdhi {
+ 	struct clk *clk;
++	struct clk *clk_cd;
+ 	struct tmio_mmc_data mmc_data;
+ 	struct tmio_mmc_dma dma_priv;
+ 	struct pinctrl *pinctrl;
+@@ -190,6 +191,12 @@ static int sh_mobile_sdhi_clk_enable(struct tmio_mmc_host *host)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = clk_prepare_enable(priv->clk_cd);
++	if (ret < 0) {
++		clk_disable_unprepare(priv->clk);
++		return ret;
++	}
++
+ 	/*
+ 	 * The clock driver may not know what maximum frequency
+ 	 * actually works, so it should be set with the max-frequency
+@@ -255,6 +262,8 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
+ 	struct sh_mobile_sdhi *priv = host_to_priv(host);
+ 
+ 	clk_disable_unprepare(priv->clk);
++	if (priv->clk_cd)
++		clk_disable_unprepare(priv->clk_cd);
+ }
+ 
+ static int sh_mobile_sdhi_card_busy(struct mmc_host *mmc)
+@@ -572,6 +581,10 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		goto eprobe;
+ 	}
+ 
++	priv->clk_cd = devm_clk_get(&pdev->dev, "cd");
++	if (IS_ERR(priv->clk_cd))
++		priv->clk_cd = NULL;
++
+ 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
+ 	if (!IS_ERR(priv->pinctrl)) {
+ 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
+-- 
+2.10.1
