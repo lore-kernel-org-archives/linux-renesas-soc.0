@@ -1,39 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:28257 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751312AbdARR1W (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36473 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751510AbdARIgk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 12:27:22 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: RE: [PATCH] mmc: host: tmio: disable clocks when unbinding
-Date: Wed, 18 Jan 2017 17:20:33 +0000
-Message-ID: <SG2PR06MB11655E5CF25211A3AE7329FC8A7F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170117202601.3742-1-wsa@the-dreams.de>
-In-Reply-To: <20170117202601.3742-1-wsa@the-dreams.de>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 18 Jan 2017 03:36:40 -0500
 MIME-Version: 1.0
+In-Reply-To: <20170117202601.3742-1-wsa@the-dreams.de>
+References: <20170117202601.3742-1-wsa@the-dreams.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Jan 2017 09:29:18 +0100
+Message-ID: <CAMuHMdVU5jARZSC_EMaqPo9BAz+PG_OPevuF9VTzAVJPoF2UsQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: host: tmio: disable clocks when unbinding
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
-
-On Tuesday, January 17, 2017, Wolfram Sang wrote:
+On Tue, Jan 17, 2017 at 9:26 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
+>
 > Create a helper function to disable clocks and use it in remove(), too.
-> Now, clk_summary in debugfs reports the clocks as disabled and unprepared
-> after unbinding.
+> Now, clk_summary in debugfs reports the clocks as disabled and
+> unprepared after unbinding.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Just tried it, now sh_mobile_sdhi_clk_disable() is called when unbinding.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
-Chris
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
