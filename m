@@ -1,73 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:64937 "EHLO
+Received: from relmlor1.renesas.com ([210.160.252.171]:28501 "EHLO
         relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752593AbdARRcQ (ORCPT
+        by vger.kernel.org with ESMTP id S1751625AbdARPNl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 12:32:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wed, 18 Jan 2017 10:13:41 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Date: Wed, 18 Jan 2017 12:25:01 -0500
-Message-Id: <20170118172502.13876-3-chris.brandt@renesas.com>
-In-Reply-To: <20170118172502.13876-1-chris.brandt@renesas.com>
-References: <20170118172502.13876-1-chris.brandt@renesas.com>
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+Date: Wed, 18 Jan 2017 15:11:11 +0000
+Message-ID: <SG2PR06MB1165807455A0482AB711F7398A7F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170117195940.25092-1-chris.brandt@renesas.com>
+ <20170117195940.25092-3-chris.brandt@renesas.com>
+ <CAMuHMdVqgrfPVCz68z9vqX_5GhKVbF-FndraTk40UrBdMMKwYw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVqgrfPVCz68z9vqX_5GhKVbF-FndraTk40UrBdMMKwYw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of a single clock source, you don't need names. However,
-if the controller has 2 clock sources, you need to name them correctly
-so the driver can find the 2nd one.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* fix spelling and change wording
-* changed clock name from "carddetect" to "cd"
----
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index a1650ed..90370cd 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -25,8 +25,29 @@ Required properties:
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
- 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
- 
-+- clocks: Most controllers only have 1 clock source per channel. However, some
-+	  have a second clock dedicated to card detection. If 2 clocks are
-+	  specified, you must name them as "core" and "cd". If the controller
-+	  only has 1 clock, naming is not required.
-+
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
- - pinctrl-names: should be "default", "state_uhs"
- - pinctrl-0: should contain default/high speed pin ctrl
- - pinctrl-1: should contain uhs mode pin ctrl
-+
-+Example showing 2 clocks:
-+	sdhi0: sd@e804e000 {
-+		compatible = "renesas,sdhi-r7s72100";
-+		reg = <0xe804e000 0x100>;
-+		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
-+			 <&mstp12_clks R7S72100_CLK_SDHI01>;
-+		clock-names = "core", "cd";
-+		cap-sd-highspeed;
-+		cap-sdio-irq;
-+		status = "disabled";
-+	};
--- 
-2.10.1
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgSmFudWFyeSAxOCwgMjAxNywgR2VlcnQgVXl0dGVy
+aG9ldmVuIHdyb3RlOg0KPiA+ICstIGNsb2NrczogTW9zdCBjb250cm9sbGVycyBvbmx5IGhhdmUg
+MSBjbG9jayBzb3VyY2UgcGVyIGNhaG5uZWwuDQo+IEhvd2V2ZXIsIHNvbWUNCj4gPiArICAgICAg
+ICAgaGF2ZSAyLiBJZiAyIGNsb2NrcyBhcmUgc3BlY2lmaWVkLCB5b3UgbXVzdCBuYW1lIHRoZW0g
+YXMNCj4gImNvcmUiIGFuZA0KPiA+ICsgICAgICAgICAiY2FyZGRldGVjdCIuIElmIHRoZSBjb250
+cm9sbGVyIG9ubHkgaGFzIDEgY2xvY2ssIG5hbWluZyBpcw0KPiA+ICtub3QNCj4gDQo+IFBlcmhh
+cHMgdGhpcyBjbG9jayBzaG91bGQganVzdCBiZSBjYWxsZWQgImNkIiwgYXMgdGhhdCdzIGFscmVh
+ZHkgYW4NCj4gZXN0YWJsaXNoZWQgYWJicmV2aWF0aW9uIGZvciBjYXJkIGRldGVjdCBpbiBNTUMg
+RFQgYmluZGluZ3M/DQoNCg0KT0ssIEknbGwgY2hhbmdlIGl0Lg0KDQpUaGFua3MsDQpDaHJpcw0K
+DQo=
