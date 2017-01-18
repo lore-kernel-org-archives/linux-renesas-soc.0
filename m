@@ -1,62 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:11262 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751750AbdARO67 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 09:58:59 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170117195940.25092-3-chris.brandt@renesas.com>
+References: <20170117195940.25092-1-chris.brandt@renesas.com> <20170117195940.25092-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Jan 2017 09:44:49 +0100
+Message-ID: <CAMuHMdVqgrfPVCz68z9vqX_5GhKVbF-FndraTk40UrBdMMKwYw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Date: Wed, 18 Jan 2017 14:58:53 +0000
-Message-ID: <SG2PR06MB1165AD95913FB62D971BCC358A7F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170117195940.25092-1-chris.brandt@renesas.com>
- <20170117195940.25092-3-chris.brandt@renesas.com>
- <20170117203340.dx6k4zof2omcbz4y@ninjato>
-In-Reply-To: <20170117203340.dx6k4zof2omcbz4y@ninjato>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+Hi Chris,
 
-On Tuesday, January 17, 2017, Wolfram Sang wrote:
-> > +- clocks: Most controllers only have 1 clock source per cahnnel.
-> > +However, some
->=20
-> channel.
->=20
-> > +	  have 2. If 2 clocks are specified, you must name them as "core"
-> > +and
->=20
-> Maybe "However, some have a second clock dedicated to card detection."?
+On Tue, Jan 17, 2017 at 8:59 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> In the case of a single clock source, you don't need names. However,
+> if the controller has 2 clock sources, you need to name them correctly
+> so the driver can find the 2nd one.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index a1650ed..258b98c 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -25,8 +25,29 @@ Required properties:
+>                 "renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+>                 "renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
+>
+> +- clocks: Most controllers only have 1 clock source per cahnnel. However, some
+> +         have 2. If 2 clocks are specified, you must name them as "core" and
+> +         "carddetect". If the controller only has 1 clock, naming is not
 
+Perhaps this clock should just be called "cd", as that's already an
+established abbreviation for card detect in MMC DT bindings?
 
-Thank you for fixing my crappy spelling and grammar ;)
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I'm glad C code uses 'if' and 'else' instead of=20
-
-	contemplate (x>y)
-		X=3D1;
-	alternatively
-		y=3D1;
-
-
-  ...then I'd be screwed!
-
-
-Chris
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
