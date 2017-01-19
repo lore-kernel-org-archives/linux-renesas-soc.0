@@ -1,67 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:56051 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750753AbdALTBq (ORCPT
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:36243 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751510AbdASV0J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 14:01:46 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/3] ARM: dts: r7s72100: add ostm clock to device tree
-Date: Thu, 12 Jan 2017 14:01:06 -0500
-Message-Id: <20170112190108.2856-2-chris.brandt@renesas.com>
-In-Reply-To: <20170112190108.2856-1-chris.brandt@renesas.com>
-References: <20170112190108.2856-1-chris.brandt@renesas.com>
+        Thu, 19 Jan 2017 16:26:09 -0500
+Received: by mail-wm0-f51.google.com with SMTP id c85so11867753wmi.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Jan 2017 13:26:08 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20170117202601.3742-1-wsa@the-dreams.de>
+References: <20170117202601.3742-1-wsa@the-dreams.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 19 Jan 2017 22:19:57 +0100
+Message-ID: <CAPDyKFob1cN_yRdFd846UpX5CQ2a-Cv=93KJ41GAJY2AeRidjQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: host: tmio: disable clocks when unbinding
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100.dtsi            | 9 +++++++++
- include/dt-bindings/clock/r7s72100-clock.h | 4 ++++
- 2 files changed, 13 insertions(+)
+On 17 January 2017 at 21:26, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Create a helper function to disable clocks and use it in remove(), too.
+> Now, clk_summary in debugfs reports the clocks as disabled and
+> unprepared after unbinding.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 3dd427d..d5946df 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -108,6 +108,15 @@
- 			clock-output-names = "scif0", "scif1", "scif2", "scif3", "scif4", "scif5", "scif6", "scif7";
- 		};
- 
-+		mstp5_clks: mstp5_clks@fcfe0428 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0428 4>;
-+			clocks = <&p0_clk>, <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_OSTM0 R7S72100_CLK_OSTM1>;
-+			clock-output-names = "ostm0", "ostm1";
-+		};
-+
- 		mstp7_clks: mstp7_clks@fcfe0430 {
- 			#clock-cells = <1>;
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index 29e01ed..ce09915 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -25,6 +25,10 @@
- #define R7S72100_CLK_SCIF6	1
- #define R7S72100_CLK_SCIF7	0
- 
-+/* MSTP5 */
-+#define R7S72100_CLK_OSTM0	1
-+#define R7S72100_CLK_OSTM1	0
-+
- /* MSTP7 */
- #define R7S72100_CLK_ETHER	4
- 
--- 
-2.10.1
+Thanks, applied for next!
+
+Kind regards
+Uffe
+
+> ---
+>  drivers/mmc/host/tmio_mmc_pio.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+> index ddba7b833f2c52..db3bde716b3eed 100644
+> --- a/drivers/mmc/host/tmio_mmc_pio.c
+> +++ b/drivers/mmc/host/tmio_mmc_pio.c
+> @@ -947,6 +947,12 @@ static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
+>         return host->clk_enable(host);
+>  }
+>
+> +static void tmio_mmc_clk_disable(struct tmio_mmc_host *host)
+> +{
+> +       if (host->clk_disable)
+> +               host->clk_disable(host);
+> +}
+> +
+>  static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
+>  {
+>         struct mmc_host *mmc = host->mmc;
+> @@ -1332,6 +1338,8 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
+>
+>         pm_runtime_put_sync(&pdev->dev);
+>         pm_runtime_disable(&pdev->dev);
+> +
+> +       tmio_mmc_clk_disable(host);
+>  }
+>  EXPORT_SYMBOL(tmio_mmc_host_remove);
+>
+> @@ -1346,8 +1354,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+>         if (host->clk_cache)
+>                 tmio_mmc_clk_stop(host);
+>
+> -       if (host->clk_disable)
+> -               host->clk_disable(host);
+> +       tmio_mmc_clk_disable(host);
+>
+>         return 0;
+>  }
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
