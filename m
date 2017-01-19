@@ -1,81 +1,38 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 12/20] drm: bridge: dw-hdmi: Rename CONF0 SPARECTRL bit to SVSRET
-Date: Tue, 17 Jan 2017 10:29:02 +0200
-Message-Id: <20170117082910.27023-13-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46923 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbdASRK2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 19 Jan 2017 12:10:28 -0500
+Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+To: 1480630452-10958-1-git-send-email-jacopo@jmondi.org,
+        linux-gpio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <9dc61041-65fb-79cc-6396-0274cab288c7@gmail.com>
+From: jacopo mondi <jacopo@jmondi.org>
+Message-ID: <8517494d-4465-2d17-10ad-c3e54bb25a3c@jmondi.org>
+Date: Thu, 19 Jan 2017 18:10:22 +0100
+MIME-Version: 1.0
+In-Reply-To: <9dc61041-65fb-79cc-6396-0274cab288c7@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The bit is documented in a Rockchip BSP as
+Hi Marek,
 
- #define m_SVSRET_SIG		(1 << 5) /* depend on PHY_MHL_COMB0=1 */
+On 19/01/2017 17:06, Marek Vasut wrote:
+> Please add my
+>
+> Tested-by: Marek Vasut <marek.vasut@gmail.com>
 
-This is confirmed by a Renesas platform, which uses a 2.0 DWC HDMI TX as
-the RK3288. Rename the bit accordingly.
+Thanks!
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 8 ++++----
- drivers/gpu/drm/bridge/dw-hdmi.h | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+Sending to renesas-soc list as well as, if I'm not wrong, PFC patches go 
+through Geert's tree
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index b4fb0bd78910..06c252f560ad 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -895,11 +895,11 @@ static void dw_hdmi_phy_enable_tmds(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_ENTMDS_MASK);
- }
- 
--static void dw_hdmi_phy_enable_spare(struct dw_hdmi *hdmi, u8 enable)
-+static void dw_hdmi_phy_enable_svsret(struct dw_hdmi *hdmi, u8 enable)
- {
- 	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
--			 HDMI_PHY_CONF0_SPARECTRL_OFFSET,
--			 HDMI_PHY_CONF0_SPARECTRL_MASK);
-+			 HDMI_PHY_CONF0_SVSRET_OFFSET,
-+			 HDMI_PHY_CONF0_SVSRET_MASK);
- }
- 
- static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
-@@ -1014,7 +1014,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
- 	dw_hdmi_phy_gen2_pddq(hdmi, 0);
- 
- 	if (hdmi->dev_type == RK3288_HDMI)
--		dw_hdmi_phy_enable_spare(hdmi, 1);
-+		dw_hdmi_phy_enable_svsret(hdmi, 1);
- 
- 	/*Wait for PHY PLL lock */
- 	msec = 5;
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/dw-hdmi.h
-index 55135bbd0c16..08235aef2fa3 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.h
-@@ -847,8 +847,8 @@ enum {
- 	HDMI_PHY_CONF0_PDZ_OFFSET = 7,
- 	HDMI_PHY_CONF0_ENTMDS_MASK = 0x40,
- 	HDMI_PHY_CONF0_ENTMDS_OFFSET = 6,
--	HDMI_PHY_CONF0_SPARECTRL_MASK = 0x20,
--	HDMI_PHY_CONF0_SPARECTRL_OFFSET = 5,
-+	HDMI_PHY_CONF0_SVSRET_MASK = 0x20,
-+	HDMI_PHY_CONF0_SVSRET_OFFSET = 5,
- 	HDMI_PHY_CONF0_GEN2_PDDQ_MASK = 0x10,
- 	HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET = 4,
- 	HDMI_PHY_CONF0_GEN2_TXPWRON_MASK = 0x8,
--- 
-Regards,
-
-Laurent Pinchart
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
