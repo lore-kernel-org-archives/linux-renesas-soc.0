@@ -1,79 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48317 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763466AbdAITcj (ORCPT
+Received: from sauhun.de ([89.238.76.85]:49373 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1754461AbdASUPo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 14:32:39 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 3/3] pinctrl: sh-pfc: r7s72100: Add LVDS pin group
-Date: Mon,  9 Jan 2017 20:32:26 +0100
-Message-Id: <1483990346-26998-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 19 Jan 2017 15:15:44 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 3/3] mmc: tmio: discard obsolete SDIO irqs before enabling irqs
+Date: Thu, 19 Jan 2017 21:07:18 +0100
+Message-Id: <20170119200718.8115-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
+References: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The LVDS pin group has to be configured in software driven output
-mode
+Before enabling SDIO irqs, clear the status bit, so we discard old and
+stale interrupts. Needed to get two wireless cards working. Use the
+newly introduced macro in all places.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r7s72100.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
-index e67b0d1..b531de3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
-@@ -438,6 +438,18 @@ SCIF7(RZ_PIN_AND_MUX)
+Change since RFC: use #define for SETBITS_MASK
+
+ drivers/mmc/host/tmio_mmc.h     |  2 ++
+ drivers/mmc/host/tmio_mmc_pio.c | 13 +++++++++++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 931d67a059adf0..efe6e6ae9d3d71 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -90,6 +90,8 @@
+ #define TMIO_SDIO_STAT_EXWT	0x8000
+ #define TMIO_SDIO_MASK_ALL	0xc007
  
- ETHERNET(RZ_PIN_AND_MUX)
- 
-+#define LVDS(fn)				\
-+	fn(lvds, clkoutp, 5, 0, 1)		\
-+	fn(lvds, clkoutm, 5, 1, 1)		\
-+	fn(lvds, out2p, 5, 2, 1)		\
-+	fn(lvds, out2m, 5, 3, 1)		\
-+	fn(lvds, out1p, 5, 4, 1)		\
-+	fn(lvds, out2m, 5, 5, 1)		\
-+	fn(lvds, out0p, 5, 6, 1)		\
-+	fn(lvds, out0m, 5, 7, 1)
++#define TMIO_SDIO_SETBITS_MASK	0x0006
 +
-+LVDS(RZ_PIN_AND_MUX_SWO)
+ /* Define some IRQ masks */
+ /* This is the mask used at reset by the chip */
+ #define TMIO_MASK_ALL           0x837f031d
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index f21e6a1b1a9206..cb3c4103de156b 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -180,12 +180,21 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 
+ 	if (enable && !host->sdio_irq_enabled) {
++		u16 sdio_status;
 +
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	RIIC0(RZ_PMX_GROUP)
- 	RIIC1(RZ_PMX_GROUP)
-@@ -457,6 +469,7 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SCIF6(RZ_PMX_GROUP)
- 	SCIF7(RZ_PMX_GROUP)
- 	ETHERNET(RZ_PMX_GROUP)
-+	LVDS(RZ_PMX_GROUP)
- };
+ 		/* Keep device active while SDIO irq is enabled */
+ 		pm_runtime_get_sync(mmc_dev(mmc));
+-		host->sdio_irq_enabled = true;
  
- static const char * const riic0_groups[] = {
-@@ -531,6 +544,10 @@ static const char * const ethernet_groups[] = {
- 	ETHERNET(RZ_GROUPS)
- };
- 
-+static const char * const lvds_groups[] = {
-+	LVDS(RZ_GROUPS)
-+};
++		host->sdio_irq_enabled = true;
+ 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL &
+ 					~TMIO_SDIO_STAT_IOIRQ;
 +
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(riic0),
- 	SH_PFC_FUNCTION(riic1),
-@@ -550,6 +567,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif6),
- 	SH_PFC_FUNCTION(scif7),
- 	SH_PFC_FUNCTION(ethernet),
-+	SH_PFC_FUNCTION(lvds),
- };
++		/* Clear obsolete interrupts before enabling */
++		sdio_status = sd_ctrl_read16(host, CTL_SDIO_STATUS) & ~TMIO_SDIO_MASK_ALL;
++		if (host->pdata->flags & TMIO_MMC_SDIO_STATUS_SETBITS)
++			sdio_status |= TMIO_SDIO_SETBITS_MASK;
++		sd_ctrl_write16(host, CTL_SDIO_STATUS, sdio_status);
++
+ 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
+ 	} else if (!enable && host->sdio_irq_enabled) {
+ 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+@@ -771,7 +780,7 @@ static void __tmio_mmc_sdio_irq(struct tmio_mmc_host *host)
  
- #define PFC_REG(idx, name, reg)						\
+ 	sdio_status = status & ~TMIO_SDIO_MASK_ALL;
+ 	if (pdata->flags & TMIO_MMC_SDIO_STATUS_SETBITS)
+-		sdio_status |= 6;
++		sdio_status |= TMIO_SDIO_SETBITS_MASK;
+ 
+ 	sd_ctrl_write16(host, CTL_SDIO_STATUS, sdio_status);
+ 
 -- 
-2.7.4
+2.11.0
