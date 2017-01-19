@@ -1,60 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:56811 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752204AbdATVWX (ORCPT
+Received: from sauhun.de ([89.238.76.85]:49375 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1754472AbdASUPo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 16:22:23 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/3] ARM: dts: r7s72100: add ostm to device tree
-Date: Fri, 20 Jan 2017 16:20:54 -0500
-Message-Id: <20170120212055.4157-3-chris.brandt@renesas.com>
-In-Reply-To: <20170120212055.4157-1-chris.brandt@renesas.com>
-References: <20170120212055.4157-1-chris.brandt@renesas.com>
+        Thu, 19 Jan 2017 15:15:44 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 1/3] mmc: host: tmio: refactor calls to sdio irq
+Date: Thu, 19 Jan 2017 21:07:16 +0100
+Message-Id: <20170119200718.8115-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
+References: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* wrap clock lines to avoid 80 char max
-* split into 2 separate channel nodes
----
- arch/arm/boot/dts/r7s72100.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+tmio_mmc_sdio_irq() is not used as a seperate irq handler anymore, so we
+can make it similar to the other irq helper functions, namely:
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index d5946df..47b2165 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -505,4 +505,20 @@
- 		cap-sdio-irq;
- 		status = "disabled";
- 	};
-+
-+	ostm0: ostm@fcfec000 {
-+		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+		reg = <0xfcfec000 0x30>;
-+		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
-+		status = "disabled";
-+	};
-+
-+	ostm1: ostm@fcfec400 {
-+		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+		reg = <0xfcfec400 0x30>;
-+		interrupts = <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM1>;
-+		status = "disabled";
-+	};
- };
+* only give the host as argument function which is what it really needs
+* prefix function name with __
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index a140848049ed81..6ab43892c132a9 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -756,9 +756,8 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
+ 	return false;
+ }
+ 
+-static void tmio_mmc_sdio_irq(int irq, void *devid)
++static void __tmio_mmc_sdio_irq(struct tmio_mmc_host *host)
+ {
+-	struct tmio_mmc_host *host = devid;
+ 	struct mmc_host *mmc = host->mmc;
+ 	struct tmio_mmc_data *pdata = host->pdata;
+ 	unsigned int ireg, status;
+@@ -799,7 +798,7 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
+ 	if (__tmio_mmc_sdcard_irq(host, ireg, status))
+ 		return IRQ_HANDLED;
+ 
+-	tmio_mmc_sdio_irq(irq, devid);
++	__tmio_mmc_sdio_irq(host);
+ 
+ 	return IRQ_HANDLED;
+ }
 -- 
-2.10.1
+2.11.0
