@@ -1,62 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940181AbdAFLTN (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35273 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751203AbdASJtC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:19:13 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 19 Jan 2017 04:49:02 -0500
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdZ2bQH0EfSUzxV4uojfbKbnoU7A8n6P+AsufNGh=0bwug@mail.gmail.com>
+References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1484568772-18137-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdaghtD3DUEECVAy=MLHx=KX-Ty=AJva2=MPyFQMTGMOLg@mail.gmail.com>
+ <CAMuHMdWeSa5noMMnxg_87rNUmtJ0W3x=vZmF0qPNZBEDUq3L7g@mail.gmail.com>
+ <CACRpkdYLrojYdgcKe=Eh2vQ5O+WJBuiUt2_kXyY0qJ35fR1jEQ@mail.gmail.com>
+ <CAMuHMdXvzG5gDhY3zhtd1db1jnj1Kd=wxvAU8ZwYYUKwPcXqqw@mail.gmail.com> <CACRpkdZ2bQH0EfSUzxV4uojfbKbnoU7A8n6P+AsufNGh=0bwug@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Jan 2017 10:48:46 +0100
+Message-ID: <CAMuHMdXy6kAxJzjR08EG4ARiVu-DZe13PA7=GW1hXoKsZTn=BA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] gpio: gpio-rz: GPIO driver for Renesas RZ series
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/5] ARM: shmobile: apmu: Allow booting secondary CPU cores in debug mode
-Date: Fri,  6 Jan 2017 12:18:58 +0100
-Message-Id: <d03c8f78d03af2a46127537dd1daa67164e53c09.1483701101.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483701101.git.horms+renesas@verge.net.au>
-References: <cover.1483701101.git.horms+renesas@verge.net.au>
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Linus,
 
-Now debug resource reset is handled properly, allow booting secondary
-CPU cores when hardware debug mode is enabled (MD21=1) on SoCs using the
-"renesas,apmu" enable method.
+On Thu, Jan 19, 2017 at 10:38 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Jan 19, 2017 at 10:36 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Thu, Jan 19, 2017 at 10:27 AM, Linus Walleij
+>> <linus.walleij@linaro.org> wrote:
+>>> On Wed, Jan 18, 2017 at 3:06 PM, Geert Uytterhoeven
+>>> <geert@linux-m68k.org> wrote:
+>>>> On Wed, Jan 18, 2017 at 2:58 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>>>>> +       gpio_chip->request = rz_gpio_request;
+>>>>>> +       gpio_chip->free = rz_gpio_free;
+>>>>>> +       gpio_chip->label = dev_name(&pdev->dev);
+>>>>>> +       gpio_chip->parent = &pdev->dev;
+>>>>>> +       gpio_chip->owner = THIS_MODULE;
+>>>>>> +       gpio_chip->base = -1;
+>>>>>> +       gpio_chip->ngpio = ret == 0 ? args.args[2] : RZ_GPIOS_PER_PORT;
+>>>>>
+>>>>> bgpio_init() will have already set this up to 16 (RZ_GPIOS_PER_PORT)
+>>>>> as we pass width 2 bytes.
+>>>>
+>>>> Note that some banks have less than 16 GPIOs, cfr. the last value of the
+>>>> gpio-ranges tuple being less than 16.
+>>>
+>>> Aha OK then it is fine to override this default value calculate from
+>>> the register size.
+>>>
+>>> But for that case we should use the standard DT property
+>>> ngpios described in
+>>> Documentation/devicetree/bindings/gpio/gpio.txt
+>>> It is for exactly this purpose.
+>>
+>> IC.
+>>
+>> Note that gpio-rcar uses the same method, switching to "ngpios" would
+>> break backwards compatibility.
+>
+> Can we support both?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+Yes we can, I guess.
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 7e4ca6788be5..e19266844e16 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -216,21 +216,9 @@ static void __init shmobile_smp_apmu_prepare_cpus_dt(unsigned int max_cpus)
- 	rcar_gen2_pm_init();
- }
- 
--static int shmobile_smp_apmu_boot_secondary_md21(unsigned int cpu,
--						 struct task_struct *idle)
--{
--	/* Error out when hardware debug mode is enabled */
--	if (rcar_gen2_read_mode_pins() & BIT(21)) {
--		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
--		return -ENOTSUPP;
--	}
--
--	return shmobile_smp_apmu_boot_secondary(cpu, idle);
--}
--
- static struct smp_operations apmu_smp_ops __initdata = {
- 	.smp_prepare_cpus	= shmobile_smp_apmu_prepare_cpus_dt,
--	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary_md21,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
- #ifdef CONFIG_HOTPLUG_CPU
- 	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
- 	.cpu_die		= shmobile_smp_apmu_cpu_die,
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
