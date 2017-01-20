@@ -1,56 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:47356 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S970579AbdAELuT (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:41804 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752203AbdATVWW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 06:50:19 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC 3/3] mmc: tmio: discard obsolete SDIO irqs before enabling irqs
-Date: Thu,  5 Jan 2017 12:43:26 +0100
-Message-Id: <20170105114326.12426-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170105114326.12426-1-wsa+renesas@sang-engineering.com>
-References: <20170105114326.12426-1-wsa+renesas@sang-engineering.com>
+        Fri, 20 Jan 2017 16:22:22 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 1/3] ARM: dts: r7s72100: add ostm clock to device tree
+Date: Fri, 20 Jan 2017 16:20:53 -0500
+Message-Id: <20170120212055.4157-2-chris.brandt@renesas.com>
+In-Reply-To: <20170120212055.4157-1-chris.brandt@renesas.com>
+References: <20170120212055.4157-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Before enabling SDIO irqs, clear the status bit, so we discard old and
-stale interrupts. Needed to get two wireless cards working.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r7s72100.dtsi            | 9 +++++++++
+ include/dt-bindings/clock/r7s72100-clock.h | 4 ++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index d6033620a45c12..ebe3e12f0083dd 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -134,12 +134,21 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 3dd427d..d5946df 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -108,6 +108,15 @@
+ 			clock-output-names = "scif0", "scif1", "scif2", "scif3", "scif4", "scif5", "scif6", "scif7";
+ 		};
  
- 	if (enable && !host->sdio_irq_enabled) {
-+		u16 sdio_status;
++		mstp5_clks: mstp5_clks@fcfe0428 {
++			#clock-cells = <1>;
++			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0xfcfe0428 4>;
++			clocks = <&p0_clk>, <&p0_clk>;
++			clock-indices = <R7S72100_CLK_OSTM0 R7S72100_CLK_OSTM1>;
++			clock-output-names = "ostm0", "ostm1";
++		};
 +
- 		/* Keep device active while SDIO irq is enabled */
- 		pm_runtime_get_sync(mmc_dev(mmc));
--		host->sdio_irq_enabled = true;
+ 		mstp7_clks: mstp7_clks@fcfe0430 {
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index 29e01ed..ce09915 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -25,6 +25,10 @@
+ #define R7S72100_CLK_SCIF6	1
+ #define R7S72100_CLK_SCIF7	0
  
-+		host->sdio_irq_enabled = true;
- 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL &
- 					~TMIO_SDIO_STAT_IOIRQ;
++/* MSTP5 */
++#define R7S72100_CLK_OSTM0	1
++#define R7S72100_CLK_OSTM1	0
 +
-+		/* Clear obsolete interrupts before enabling */
-+		sdio_status = sd_ctrl_read16(host, CTL_SDIO_STATUS) & ~TMIO_SDIO_MASK_ALL;
-+		if (host->pdata->flags & TMIO_MMC_SDIO_STATUS_SETBITS)
-+			sdio_status |= 6;
-+		sd_ctrl_write16(host, CTL_SDIO_STATUS, sdio_status);
-+
- 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
- 	} else if (!enable && host->sdio_irq_enabled) {
- 		host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+ /* MSTP7 */
+ #define R7S72100_CLK_ETHER	4
+ 
 -- 
-2.11.0
+2.10.1
