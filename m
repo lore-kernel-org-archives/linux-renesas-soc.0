@@ -1,94 +1,103 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33078 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750951AbdAWQEj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 11:04:39 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 4/7] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
-Date: Mon, 23 Jan 2017 17:04:15 +0100
-Message-Id: <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1484898012-15234-1-git-send-email-arvind.yadav.cs@gmail.com>
+References: <1484898012-15234-1-git-send-email-arvind.yadav.cs@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Jan 2017 09:14:31 +0100
+Message-ID: <CAMuHMdVmweX49ztfz3xqGL-oYipk_amuCix-yn-XNMgBL5Tkrg@mail.gmail.com>
+Subject: Re: [PATCH v1] soc: renesas: rcar-sysc:- Prevent resource leake and
+ NULL-pointer error
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/sh-sci.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Hi Arvind,
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 39734cc..c7e2d0d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -141,6 +141,7 @@ struct sci_port {
- 	struct timer_list		rx_timer;
- 	unsigned int			rx_timeout;
- #endif
-+	int				rx_trigger;
- 
- 	bool autorts;
- };
-@@ -2197,6 +2198,7 @@ static void sci_reset(struct uart_port *port)
- {
- 	const struct plat_sci_reg *reg;
- 	unsigned int status;
-+	struct sci_port *s = to_sci_port(port);
- 
- 	if (serial_port_in(port, SCSCR) & SCSCR_TE) {
- 		do {
-@@ -2218,6 +2220,9 @@ static void sci_reset(struct uart_port *port)
- 		status &= ~(SCLSR_TO | SCLSR_ORER);
- 		serial_port_out(port, SCLSR, status);
- 	}
-+
-+	if (s->rx_trigger > 1)
-+		scif_set_rtrg(port, s->rx_trigger);
- }
- 
- static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
-@@ -2728,6 +2733,7 @@ static int sci_init_single(struct platform_device *dev,
- 		sci_port->overrun_reg = SCLSR;
- 		sci_port->overrun_mask = SCLSR_ORER;
- 		sci_port->sampling_rate_mask = SCI_SR_RANGE(8, 32);
-+		sci_port->rx_trigger = 64;
- 		break;
- 	case PORT_SCIFA:
- 		port->fifosize = 64;
-@@ -2736,15 +2742,19 @@ static int sci_init_single(struct platform_device *dev,
- 		sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
- 		break;
- 	case PORT_SCIF:
--		port->fifosize = 16;
- 		if (p->regtype == SCIx_SH7705_SCIF_REGTYPE) {
-+			port->fifosize = 64;
- 			sci_port->overrun_reg = SCxSR;
- 			sci_port->overrun_mask = SCIFA_ORER;
- 			sci_port->sampling_rate_mask = SCI_SR(16);
-+			/* RX triggering not implemented for this IP */
-+			sci_port->rx_trigger = 1;
- 		} else {
-+			port->fifosize = 16;
- 			sci_port->overrun_reg = SCLSR;
- 			sci_port->overrun_mask = SCLSR_ORER;
- 			sci_port->sampling_rate_mask = SCI_SR(32);
-+			sci_port->rx_trigger = 8;
- 		}
- 		break;
- 	default:
-@@ -2752,6 +2762,7 @@ static int sci_init_single(struct platform_device *dev,
- 		sci_port->overrun_reg = SCxSR;
- 		sci_port->overrun_mask = SCI_ORER;
- 		sci_port->sampling_rate_mask = SCI_SR(32);
-+		sci_port->rx_trigger = 1;
- 		break;
- 	}
- 
--- 
-2.7.4
+On Fri, Jan 20, 2017 at 8:40 AM, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+> If rcar_sysc_pd_init will fail, Handle ERROR properly.
+>  -Release memory
+>  -Unmap I/O memory from kernel address space.
+>
+> In rcar_sysc_init, If ioremap_nocache will fail. It will return NULL.
+> Kernel can run into a NULL-pointer dereference.
+
+Note that if any of these fail, the system won't boot anyway.
+I deliberately didn't do these releases because of various reasons...
+
+> ---
+>  drivers/soc/renesas/rcar-sysc.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+> index 225c35c..17df921 100644
+> --- a/drivers/soc/renesas/rcar-sysc.c
+> +++ b/drivers/soc/renesas/rcar-sysc.c
+> @@ -349,7 +349,7 @@ static int __init rcar_sysc_pd_init(void)
+>         domains = kzalloc(sizeof(*domains), GFP_KERNEL);
+>         if (!domains) {
+>                 error = -ENOMEM;
+> -               goto out_put;
+> +               goto out_iounmap;
+
+Calling iounmap(base) after this point will make the pointer saved in
+rcar_sysc_base invalid, leading to a crash when the platform code in
+arm/mach-shmobile/smp-* calls any of the rcar_sysc_power_*()
+functions.
+
+>         }
+>
+>         domains->onecell_data.domains = domains->domains;
+> @@ -380,7 +380,7 @@ static int __init rcar_sysc_pd_init(void)
+>                 pd = kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
+>                 if (!pd) {
+>                         error = -ENOMEM;
+> -                       goto out_put;
+> +                       goto out_kfree;
+
+In theory, you could indeed free the memory pointed to by domains.
+Don't know if it's worth the hassle.
+You cannot free pd though, as it's been registered with the PM domain
+subsystem.
+
+>                 }
+>
+>                 strcpy(pd->name, area->name);
+> @@ -400,6 +400,10 @@ static int __init rcar_sysc_pd_init(void)
+>
+>         error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
+>
+> +out_kfree:
+> +       kfree(domains);
+> +out_iounmap:
+> +       iounmap(base);
+>  out_put:
+>         of_node_put(np);
+>         return error;
+> @@ -414,6 +418,8 @@ void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+>                 return;
+>
+>         rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
+> +       if (!rcar_sysc_base)
+> +               return;
+>
+>         /*
+>          * Mask all interrupt sources to prevent the CPU from receiving them.
+> --
+> 1.9.1
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
