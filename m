@@ -1,63 +1,44 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 23 Jan 2017 20:40:38 +0900
-Message-Id: <148517163800.13306.4525529383838653751.sendpatchset@little-apple>
-In-Reply-To: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
-References: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
-Subject: [PATCH v2 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:39088 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbdATXAJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 18:00:09 -0500
+Date: Fri, 20 Jan 2017 15:00:07 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: renesas: cpg-mssr: Migrate to CLK_IS_CRITICAL
+Message-ID: <20170120230007.GD8009@codeaurora.org>
+References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+ <1484657190-12838-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1484657190-12838-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 01/17, Geert Uytterhoeven wrote:
+> When the Renesas CPG/MSSR driver was introduced, it was anticipated that
+> critical clocks would be handled through a new CLK_ENABLE_HAND_OFF flag
+> soon.  However, CLK_ENABLE_HAND_OFF never made it upstream.
+> 
+> Instead, commit 32b9b10961860860 ("clk: Allow clocks to be marked as
+> CRITICAL") introduced CLK_IS_CRITICAL, a flag with slightly differing
+> semantics.  Still, it can be used to prevent e.g. the GIC module clock
+> from being turned off, until the GIC-400 driver has full support for
+> Runtime PM.
+> 
+> Hence migrate the Renesas CPG/MSSR driver from CLK_ENABLE_HAND_OFF to
+> CLK_IS_CRITICAL.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Support the r8a7796 IPMMU by sharing feature flags between
-r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
-up the updated compat string.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Changes since V1:
- - None
-
- drivers/iommu/ipmmu-vmsa.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
---- 0031/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:19:40.210607110 +0900
-@@ -1074,7 +1074,7 @@ static const struct ipmmu_features ipmmu
- 	.twobit_imttbcr_sl0 = false,
- };
- 
--static const struct ipmmu_features ipmmu_features_r8a7795 = {
-+static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.use_ns_alias_offset = false,
- 	.has_cache_leaf_nodes = true,
- 	.has_eight_ctx = true,
-@@ -1088,7 +1088,10 @@ static const struct of_device_id ipmmu_o
- 		.data = &ipmmu_features_default,
- 	}, {
- 		.compatible = "renesas,ipmmu-r8a7795",
--		.data = &ipmmu_features_r8a7795,
-+		.data = &ipmmu_features_rcar_gen3,
-+	}, {
-+		.compatible = "renesas,ipmmu-r8a7796",
-+		.data = &ipmmu_features_rcar_gen3,
- 	}, {
- 		/* Terminator */
- 	},
-@@ -1268,6 +1271,8 @@ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "r
- 		 ipmmu_vmsa_iommu_of_setup);
- IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
- 		 ipmmu_vmsa_iommu_of_setup);
-+IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
-+		 ipmmu_vmsa_iommu_of_setup);
- #endif
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
