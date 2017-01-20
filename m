@@ -1,15 +1,12 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1165B5BF4296DB866F3D418B8A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170118172502.13876-1-chris.brandt@renesas.com>
- <20170118172502.13876-3-chris.brandt@renesas.com> <CAPDyKFq9psGMnKUx+SM_QGt6OKoMHgNFop6ANagtLOLwsMTT8w@mail.gmail.com>
- <SG2PR06MB1165B5BF4296DB866F3D418B8A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 20 Jan 2017 18:12:28 +0100
-Message-ID: <CAPDyKFqCa_evsr3a_xHNy2joodgP9xiOQ1jdD0=nY-cGTWd_Hg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:57303 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752479AbdATQFv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 11:05:51 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -17,49 +14,53 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Subject: RE: [PATCH v3 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+Date: Fri, 20 Jan 2017 16:05:45 +0000
+Message-ID: <SG2PR06MB1165B5BF4296DB866F3D418B8A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170118172502.13876-1-chris.brandt@renesas.com>
+ <20170118172502.13876-3-chris.brandt@renesas.com>
+ <CAPDyKFq9psGMnKUx+SM_QGt6OKoMHgNFop6ANagtLOLwsMTT8w@mail.gmail.com>
+In-Reply-To: <CAPDyKFq9psGMnKUx+SM_QGt6OKoMHgNFop6ANagtLOLwsMTT8w@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 20 January 2017 at 17:05, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> Hello Ulf,
->
-> Friday, January 20, 2017, Ulf Hansson wrote:
->> > +- clocks: Most controllers only have 1 clock source per channel.
->> However, some
->> > +         have a second clock dedicated to card detection. If 2 clocks
->> are
->> > +         specified, you must name them as "core" and "cd". If the
->> controller
->> > +         only has 1 clock, naming is not required.
->>
->> Could you please elaborate a bit on the card detection clock?
->>
->> I guess that there is some kind of internal card detection logic (native
->> card detect) in the SDHI IP, which requires a separate clock for it to
->> work? Perhaps you can state that somehow?
->
->
-> The reality is that the chip guys cut up the standard SDHI IP to add a
-> 'cool new feature', but all I want to do is put it back the way it was.
->
-> NOTE: The design guys like to reuse IP blocks from previous designs that they
-> know worked and didn't have bugs. So, there is a good chance you will see this
-> change in future RZ/A devices (or even other future Renesas SoC devices).
-> To remove an unwanted feature adds additional design risk of breaking
-> something else....and given the cost of redoing silicon mask layers...no
-> engineer wants that mistake on their hands.
-
-So, one should be aware of that runtime PM support in these case is
-going to be suboptimal.
-For example, when using this native card detect, you will need to keep
-the controller runtime PM resumed as the be able to keep the clock on
-and to be able to fetch the irq. Wasting power.
-
-Most SoC vendors are therefore using a GPIO card detect instead,
-although I assume you already knew that. :-)
-
-[...]
-
-Kind regards
-Uffe
+SGVsbG8gVWxmLA0KDQpGcmlkYXksIEphbnVhcnkgMjAsIDIwMTcsIFVsZiBIYW5zc29uIHdyb3Rl
+Og0KPiA+ICstIGNsb2NrczogTW9zdCBjb250cm9sbGVycyBvbmx5IGhhdmUgMSBjbG9jayBzb3Vy
+Y2UgcGVyIGNoYW5uZWwuDQo+IEhvd2V2ZXIsIHNvbWUNCj4gPiArICAgICAgICAgaGF2ZSBhIHNl
+Y29uZCBjbG9jayBkZWRpY2F0ZWQgdG8gY2FyZCBkZXRlY3Rpb24uIElmIDIgY2xvY2tzDQo+IGFy
+ZQ0KPiA+ICsgICAgICAgICBzcGVjaWZpZWQsIHlvdSBtdXN0IG5hbWUgdGhlbSBhcyAiY29yZSIg
+YW5kICJjZCIuIElmIHRoZQ0KPiBjb250cm9sbGVyDQo+ID4gKyAgICAgICAgIG9ubHkgaGFzIDEg
+Y2xvY2ssIG5hbWluZyBpcyBub3QgcmVxdWlyZWQuDQo+IA0KPiBDb3VsZCB5b3UgcGxlYXNlIGVs
+YWJvcmF0ZSBhIGJpdCBvbiB0aGUgY2FyZCBkZXRlY3Rpb24gY2xvY2s/DQo+IA0KPiBJIGd1ZXNz
+IHRoYXQgdGhlcmUgaXMgc29tZSBraW5kIG9mIGludGVybmFsIGNhcmQgZGV0ZWN0aW9uIGxvZ2lj
+IChuYXRpdmUNCj4gY2FyZCBkZXRlY3QpIGluIHRoZSBTREhJIElQLCB3aGljaCByZXF1aXJlcyBh
+IHNlcGFyYXRlIGNsb2NrIGZvciBpdCB0bw0KPiB3b3JrPyBQZXJoYXBzIHlvdSBjYW4gc3RhdGUg
+dGhhdCBzb21laG93Pw0KDQoNClRoZSByZWFsaXR5IGlzIHRoYXQgdGhlIGNoaXAgZ3V5cyBjdXQg
+dXAgdGhlIHN0YW5kYXJkIFNESEkgSVAgdG8gYWRkIGENCidjb29sIG5ldyBmZWF0dXJlJywgYnV0
+IGFsbCBJIHdhbnQgdG8gZG8gaXMgcHV0IGl0IGJhY2sgdGhlIHdheSBpdCB3YXMuDQoNCk5PVEU6
+IFRoZSBkZXNpZ24gZ3V5cyBsaWtlIHRvIHJldXNlIElQIGJsb2NrcyBmcm9tIHByZXZpb3VzIGRl
+c2lnbnMgdGhhdCB0aGV5DQprbm93IHdvcmtlZCBhbmQgZGlkbid0IGhhdmUgYnVncy4gU28sIHRo
+ZXJlIGlzIGEgZ29vZCBjaGFuY2UgeW91IHdpbGwgc2VlIHRoaXMNCmNoYW5nZSBpbiBmdXR1cmUg
+UlovQSBkZXZpY2VzIChvciBldmVuIG90aGVyIGZ1dHVyZSBSZW5lc2FzIFNvQyBkZXZpY2VzKS4N
+ClRvIHJlbW92ZSBhbiB1bndhbnRlZCBmZWF0dXJlIGFkZHMgYWRkaXRpb25hbCBkZXNpZ24gcmlz
+ayBvZiBicmVha2luZw0Kc29tZXRoaW5nIGVsc2UuLi4uYW5kIGdpdmVuIHRoZSBjb3N0IG9mIHJl
+ZG9pbmcgc2lsaWNvbiBtYXNrIGxheWVycy4uLm5vDQplbmdpbmVlciB3YW50cyB0aGF0IG1pc3Rh
+a2Ugb24gdGhlaXIgaGFuZHMuDQoNCg0KDQo+ID4gK0V4YW1wbGUgc2hvd2luZyAyIGNsb2NrczoN
+Cj4gPiArICAgICAgIHNkaGkwOiBzZEBlODA0ZTAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgIGNv
+bXBhdGlibGUgPSAicmVuZXNhcyxzZGhpLXI3czcyMTAwIjsNCj4gPiArICAgICAgICAgICAgICAg
+cmVnID0gPDB4ZTgwNGUwMDAgMHgxMDA+Ow0KPiA+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHRz
+ID0gPEdJQ19TUEkgMjcwIElSUV9UWVBFX0xFVkVMX0hJR0gNCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBHSUNfU1BJIDI3MSBJUlFfVFlQRV9MRVZFTF9ISUdIDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgR0lDX1NQSSAyNzIgSVJRX1RZUEVfTEVWRUxfSElHSD47
+DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBjbG9ja3MgPSA8Jm1zdHAxMl9jbGtzIFI3Uzcy
+MTAwX0NMS19TREhJMDA+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICA8Jm1zdHAxMl9j
+bGtzIFI3UzcyMTAwX0NMS19TREhJMDE+Ow0KPiA+ICsgICAgICAgICAgICAgICBjbG9jay1uYW1l
+cyA9ICJjb3JlIiwgImNkIjsNCj4gPiArICAgICAgICAgICAgICAgY2FwLXNkLWhpZ2hzcGVlZDsN
+Cj4gPiArICAgICAgICAgICAgICAgY2FwLXNkaW8taXJxOw0KPiA+ICsgICAgICAgICAgICAgICBz
+dGF0dXMgPSAiZGlzYWJsZWQiOw0KPiANCj4gVGhlIGxhc3QgbGluZSBzZWVtcyBhIGJpdCBvZGQg
+dG8gaW5jbHVkZSBpbiBhbiBleGFtcGxlLg0KDQpZb3UncmUgcmlnaHQuIEknbGwgdGFrZSB0aGF0
+IG91dC4NCg0KVGhhbmtzLA0KQ2hyaXMNCg==
