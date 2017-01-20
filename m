@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:16334 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753116AbdATToL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 14:44:11 -0500
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -9,12 +14,12 @@ To: Ulf Hansson <ulf.hansson@linaro.org>,
 Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v5 3/3] ARM: dts: r7s72100: update sdhi clock bindings
-Date: Fri, 20 Jan 2017 22:06:04 -0500
-Message-Id: <20170121030604.7672-4-chris.brandt@renesas.com>
-In-Reply-To: <20170121030604.7672-1-chris.brandt@renesas.com>
-References: <20170121030604.7672-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v4 3/3] ARM: dts: r7s72100: update sdhi clock bindings
+Date: Fri, 20 Jan 2017 14:43:32 -0500
+Message-Id: <20170120194332.1683-4-chris.brandt@renesas.com>
+In-Reply-To: <20170120194332.1683-1-chris.brandt@renesas.com>
+References: <20170120194332.1683-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The SDHI controller in the RZ/A1 has 2 clock sources per channel and both
@@ -93,5 +98,3 @@ index 29e01ed..f2d8428 100644
  #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
 -- 
 2.10.1
-
-
