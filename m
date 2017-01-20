@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:24067 "EHLO
+Received: from relmlor1.renesas.com ([210.160.252.171]:8381 "EHLO
         relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752638AbdAUDGn (ORCPT
+        by vger.kernel.org with ESMTP id S1753014AbdATToH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 22:06:43 -0500
+        Fri, 20 Jan 2017 14:44:07 -0500
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -14,9 +14,9 @@ To: Ulf Hansson <ulf.hansson@linaro.org>,
 Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v5 0/3] mmc: sh_mobile_sdhi: fix missing r7s72100 clocks
-Date: Fri, 20 Jan 2017 22:06:01 -0500
-Message-Id: <20170121030604.7672-1-chris.brandt@renesas.com>
+Subject: [PATCH v4 0/3] mmc: sh_mobile_sdhi: fix missing r7s72100 clocks
+Date: Fri, 20 Jan 2017 14:43:29 -0500
+Message-Id: <20170120194332.1683-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -30,24 +30,21 @@ just 1, and does so for the RZ/A1 r7s72100.
 This patch has been tested on an RZ/A1 RSK board. Card detect works
 fine as well as bind/unbind.
 
-v5:
-* Take implementation details out of DT documentation and put into
-  the driver code.
-
 v4:
 * No code changes, only text udpates to explain why there are 2 clocks
   and why we need to treat them as 1 clock.
+
 
 Chris Brandt (3):
   mmc: sh_mobile_sdhi: add support for 2 clocks
   mmc: sh_mobile_sdhi: explain clock bindings
   ARM: dts: r7s72100: update sdhi clock bindings
 
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 24 ++++++++++++++++++++++
- arch/arm/boot/dts/r7s72100.dtsi                    | 17 ++++++++++-----
- drivers/mmc/host/sh_mobile_sdhi.c                  | 24 ++++++++++++++++++++++
- include/dt-bindings/clock/r7s72100-clock.h         |  6 ++++--
- 4 files changed, 64 insertions(+), 7 deletions(-)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 28 ++++++++++++++++++++++
+ arch/arm/boot/dts/r7s72100.dtsi                    | 17 +++++++++----
+ drivers/mmc/host/sh_mobile_sdhi.c                  | 13 ++++++++++
+ include/dt-bindings/clock/r7s72100-clock.h         |  6 +++--
+ 4 files changed, 57 insertions(+), 7 deletions(-)
 
 -- 
 2.10.1
