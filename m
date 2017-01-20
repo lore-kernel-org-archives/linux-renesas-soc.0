@@ -1,93 +1,108 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Zach Brown <zach.brown@ni.com>,
-        Volodymyr Bendiuga <volodymyr.bendiuga@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        =?UTF-8?q?Magnus=20=C3=96berg?= <magnus.oberg@westermo.se>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] net: phy: leds: Fix truncated LED trigger names and crashes
-Date: Wed, 25 Jan 2017 11:39:47 +0100
-Message-Id: <1485340790-10785-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:54135 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1752069AbdATL1H (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 06:27:07 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Eduardo Valentin <edubezval@gmail.com>
+Subject: [PATCH v7 2/2] arm64: dts: r8a7796: Add R-Car Gen3 thermal support
+Date: Fri, 20 Jan 2017 12:26:43 +0100
+Message-Id: <20170120112643.2282-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170120112643.2282-1-wsa+renesas@sang-engineering.com>
+References: <20170120112643.2282-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi David,
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-I started seeing crashes during s2ram and poweroff on all my ARM boards,
-like:
-
-    Unable to handle kernel NULL pointer dereference at virtual address 00000000
-    ...
-    [<c04116d4>] (__list_del_entry_valid) from [<c05e8948>] (led_trigger_unregister+0x34/0xcc)
-    [<c05e8948>] (led_trigger_unregister) from [<c05336c4>] (phy_led_triggers_unregister+0x28/0x34)
-    [<c05336c4>] (phy_led_triggers_unregister) from [<c0531d44>] (phy_detach+0x30/0x74)
-    [<c0531d44>] (phy_detach) from [<c0538bdc>] (sh_eth_close+0x64/0x9c)
-    [<c0538bdc>] (sh_eth_close) from [<c04d4ce0>] (dpm_run_callback+0x48/0xc8)
-
-or:
-
-    list_del corruption. prev->next should be dede6540, but was 2e323931
-    ------------[ cut here ]------------
-    kernel BUG at lib/list_debug.c:52!
-    ...
-    [<c02f6d70>] (__list_del_entry_valid) from [<c0425168>] (led_trigger_unregister+0x34/0xcc)
-    [<c0425168>] (led_trigger_unregister) from [<c03a05a0>] (phy_led_triggers_unregister+0x28/0x34)
-    [<c03a05a0>] (phy_led_triggers_unregister) from [<c039ec04>] (phy_detach+0x30/0x74)
-    [<c039ec04>] (phy_detach) from [<c03a4fc0>] (sh_eth_close+0x6c/0xa4)
-    [<c03a4fc0>] (sh_eth_close) from [<c0483234>] (__dev_close_many+0xac/0xd0)
-
-As the only clue was a kernel message like
-
-    sh-eth ee700000.ethernet eth0: No phy led trigger registered for speed(100)
-
-I had to bisected this, leading to commit 4567d686f5c6d955 ("phy:
-increase size of MII_BUS_ID_SIZE and bus_id").  Reverting that commit
-fixed the issue.
-
-More investigation revealed the crashes are due to the combination of
-two things:
-  - Truncated LED trigger names, leading to duplicate names, and
-    registration failures,
-  - Bad error handling in case of registration failures.
-
-Both are fixed by this patch series.
-
-Changes compared to v1:
-  - Add Reviewed-by,
-  - New patch "net: phy: leds: Break dependency of phy.h on
-    phy_led_triggers.h",
-  - Drop moving the include of <linux/phy_led_triggers.h>, as
-    <linux/phy.h> no longer includes it,
-  - #include <linux/phy.h> from <linux/phy_led_triggers.h>.
-
-Thanks!
-
-Geert Uytterhoeven (3):
-  net: phy: leds: Clear phy_num_led_triggers on failure to avoid crash
-  net: phy: leds: Break dependency of phy.h on phy_led_triggers.h
-  net: phy: leds: Fix truncated LED trigger names
-
- drivers/net/phy/phy.c              | 1 +
- drivers/net/phy/phy_led_triggers.c | 9 +++++++--
- include/linux/phy.h                | 1 -
- include/linux/phy_led_triggers.h   | 4 ++--
- 4 files changed, 10 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index eb446d96662137..67aa0e4fde77b4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -680,5 +680,63 @@
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a7796-thermal";
++			reg = <0 0xe6198000 0 0x68>,
++			      <0 0xe61a0000 0 0x5c>,
++			      <0 0xe61a8000 0 0x5c>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
++
++		thermal-zones {
++			sensor_thermal1: sensor-thermal1 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 0>;
++
++				trips {
++					sensor1_crit: sensor1-crit {
++						temperature = <120000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal2: sensor-thermal2 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 1>;
++
++				trips {
++					sensor2_crit: sensor2-crit {
++						temperature = <120000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++
++			sensor_thermal3: sensor-thermal3 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 2>;
++
++				trips {
++					sensor3_crit: sensor3-crit {
++						temperature = <120000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
++		};
+ 	};
+ };
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
