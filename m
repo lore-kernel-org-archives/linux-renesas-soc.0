@@ -1,101 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34333 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753948AbdA0GVt (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34088 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753018AbdATR6B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 01:21:49 -0500
-Received: by mail-pg0-f67.google.com with SMTP id 3so6484548pgj.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 22:20:54 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
-Date: Fri, 27 Jan 2017 15:14:36 +0900
-Message-Id: <148549767671.22203.10735883809069203556.sendpatchset@little-apple>
-In-Reply-To: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
-References: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
-Subject: [PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Check devices in xlate()
+        Fri, 20 Jan 2017 12:58:01 -0500
+Subject: Re: [PATCH V5] iio: adc: Add Renesas GyroADC driver
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+References: <20170115001437.30478-1-marek.vasut@gmail.com>
+ <d91d43b8-1e78-ca8a-9848-ff664e588559@kernel.org>
+ <0e0398c2-a858-efe8-230f-c454145ec7bc@gmail.com>
+ <EE493617-D579-4439-B64C-337F887BB7BD@kernel.org>
+ <17180a96-784b-883b-a4b5-11a3f6a42b98@gmail.com>
+ <621bcd44-f717-e5bd-4799-9c4000e8fa36@kernel.org>
+ <d6a03da4-cf9e-58b4-f541-83094534a33c@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <7bc9838c-d98e-7ae9-9038-1a92a473ea8a@gmail.com>
+Date: Fri, 20 Jan 2017 18:57:04 +0100
+MIME-Version: 1.0
+In-Reply-To: <d6a03da4-cf9e-58b4-f541-83094534a33c@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 01/15/2017 09:21 PM, Marek Vasut wrote:
+> On 01/15/2017 08:53 PM, Jonathan Cameron wrote:
+>> On 15/01/17 17:06, Marek Vasut wrote:
+>>> On 01/15/2017 05:28 PM, Jonathan Cameron wrote:
+>>>>
+>>>>
+>>>> On 15 January 2017 15:47:31 GMT+00:00, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>>> On 01/15/2017 03:05 PM, Jonathan Cameron wrote:
+>>>>>> On 15/01/17 00:14, Marek Vasut wrote:
+>>>>>>> Add IIO driver for the Renesas RCar GyroADC block. This block is a
+>>>>>>> simple 4/8-channel ADC which samples 12/15/24 bits of data every
+>>>>>>> cycle from all channels.
+>>>>>>>
+>>>>>>> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+>>>>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>>>>>>> Cc: Jonathan Cameron <jic23@kernel.org>
+>>>>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>>>> One question about the name attribute and what it gives you. Looks
+>>>>> like another
+>>>>>> case of what Lars has been pointing out this morning.
+>>>>>>
+>>>>>> We had a load of these sneak in.  Changing them would break userspace
+>>>>> code
+>>>>>> so we can't fix them, but that attribute ought to give you something
+>>>>>> related to the part number.
+>>>>>>
+>>>>>> Here it might even be cute to give an indication of what is connected
+>>>>>> to it as part of the name.
+>>>>>
+>>>>> You can extract that information from the of_node, so I don't think
+>>>>> that
+>>>>> is a good idea, it'd only bring in duplication:
+>>>>>
+>>>>> ~ # cat /sys/bus/iio/devices/iio\:device0/of_node/adc@*/compatible
+>>>>> maxim,max11100
+>>>>>
+>>>> Fair enough
+>>>>>> J
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>>> +	ret = rcar_gyroadc_parse_subdevs(indio_dev);
+>>>>>>> +	if (ret)
+>>>>>>> +		return ret;
+>>>>>>> +
+>>>>>>> +	ret = rcar_gyroadc_init_supplies(indio_dev);
+>>>>>>> +	if (ret)
+>>>>>>> +		return ret;
+>>>>>>> +
+>>>>>>> +	priv->model = (enum rcar_gyroadc_model)of_id->data;
+>>>>>>> +
+>>>>>>> +	platform_set_drvdata(pdev, indio_dev);
+>>>>>>> +
+>>>>>>> +	indio_dev->name = dev_name(dev);
+>>>>>> What do you then get when you read /sys/bus/iio/iio\:deviceX/name?
+>>>>>
+>>>>> e6e54000.adc
+>>>>>
+>>>>>> Should be something like the part number, rather than the id of the
+>>>>>> parent device (I'm not 100% sure what that even is in this case!)
+>>>>>
+>>>>> You mean like "rcar-gyroadc" ? That works for me, sure.
+>>>> Yes, that will do nicely.
+>>>
+>>>
+>>> Done and V6 is out.
+>>>
+>> Cool. I'm going to let this sit for a few days at least.  It's
+>> unusual enough that I want to give it a bit more time on the list.
+> 
+> Good, thanks :-)
+> 
+So can we get V6 in please ?
 
-Rework the IPMMU code to validate devices in ->xlate() instead of
-accepting all devices in xlate() and instead validating devices
-in ->add_device(). This makes it possible for the IPMMU device
-driver to reject slave devices based on software policy.
-
-Once a slave device is rejected by the ->xlate() callback the shared
-function of_iommu_configure() will fail as well which in turn disables
-per-device IOMMU handing in the arch-specific mapping code by not
-passing any IOMMU callbacks to arch_setup_dma_ops().
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- TODO: Make sure this does not break R-Car Gen2 support
-
- drivers/iommu/ipmmu-vmsa.c |   27 +++++++--------------------
- 1 file changed, 7 insertions(+), 20 deletions(-)
-
---- 0007/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-01-27 13:11:35.970607110 +0900
-@@ -1007,16 +1007,14 @@ static int ipmmu_add_device_dma(struct d
- 	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
- 	struct iommu_group *group;
- 
--	/* only accept devices with iommus property */
--	if (of_count_phandle_with_args(dev->of_node, "iommus",
--				       "#iommu-cells") < 0)
-+	/* The device needs to be verified in xlate() */
-+	if (!archdata)
- 		return -ENODEV;
- 
- 	group = iommu_group_get_for_dev(dev);
- 	if (IS_ERR(group))
- 		return PTR_ERR(group);
- 
--	archdata = dev->archdata.iommu;
- 	spin_lock(&ipmmu_slave_devices_lock);
- 	list_add(&archdata->list, &ipmmu_slave_devices);
- 	spin_unlock(&ipmmu_slave_devices_lock);
-@@ -1034,24 +1032,13 @@ static void ipmmu_remove_device_dma(stru
- 	iommu_group_remove_device(dev);
- }
- 
--static struct iommu_group *ipmmu_device_group_dma(struct device *dev)
--{
--	struct iommu_group *group;
--	int ret;
--
--	ret = ipmmu_init_platform_device(dev);
--	if (!ret)
--		group = ipmmu_find_group(dev);
--	else
--		group = ERR_PTR(ret);
--
--	return group;
--}
--
- static int ipmmu_of_xlate_dma(struct device *dev,
- 			      struct of_phandle_args *spec)
- {
--	return 0;
-+	/* For now only tested on R-Car Gen3 with ARM64 arch init order
-+	 * TODO: Test R-Car Gen2 with ARM32 arch init order
-+	 */
-+	return ipmmu_init_platform_device(dev);
- }
- 
- static const struct iommu_ops ipmmu_ops = {
-@@ -1065,7 +1052,7 @@ static const struct iommu_ops ipmmu_ops
- 	.iova_to_phys = ipmmu_iova_to_phys,
- 	.add_device = ipmmu_add_device_dma,
- 	.remove_device = ipmmu_remove_device_dma,
--	.device_group = ipmmu_device_group_dma,
-+	.device_group = ipmmu_find_group,
- 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
- 	.of_xlate = ipmmu_of_xlate_dma,
- };
+-- 
+Best regards,
+Marek Vasut
