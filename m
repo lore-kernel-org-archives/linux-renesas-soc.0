@@ -1,83 +1,65 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Date: Fri, 20 Jan 2017 14:43:31 -0500
-Message-Id: <20170120194332.1683-3-chris.brandt@renesas.com>
-In-Reply-To: <20170120194332.1683-1-chris.brandt@renesas.com>
-References: <20170120194332.1683-1-chris.brandt@renesas.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+Date: Fri, 20 Jan 2017 18:51:57 +0000
+Message-ID: <SG2PR06MB11658D687A148E596A835B688A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170118172502.13876-1-chris.brandt@renesas.com>
+ <20170118172502.13876-3-chris.brandt@renesas.com>
+ <CAPDyKFq9psGMnKUx+SM_QGt6OKoMHgNFop6ANagtLOLwsMTT8w@mail.gmail.com>
+ <SG2PR06MB1165B5BF4296DB866F3D418B8A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAPDyKFqCa_evsr3a_xHNy2joodgP9xiOQ1jdD0=nY-cGTWd_Hg@mail.gmail.com>
+In-Reply-To: <CAPDyKFqCa_evsr3a_xHNy2joodgP9xiOQ1jdD0=nY-cGTWd_Hg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of a single clock source, you don't need names. However,
-if the controller has 2 clock sources, you need to name them correctly
-so the driver can find the 2nd one. The 2nd clock is for the internal
-card detect logic and must be enabled/disabled along with the main
-core clock.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v3:
-* add more clarification about why there are sometimes 2 clocks
-  and what you should do with them.
-* remove 'status = "disabled"' from example
-v2:
-* fix spelling and change wording
-* changed clock name from "carddetect" to "cd"
----
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index a1650ed..9033c6a 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -25,8 +25,36 @@ Required properties:
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
- 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
- 
-+- clocks: Most controllers only have 1 clock source per channel. However, on
-+	  some variations of this controller, the internal card detection
-+	  logic that exists in this controller is sectioned off to be run by a
-+	  separate second clock source to allow the main core clock to be turned
-+	  off to save power. Unfortunately, the existing driver architecture
-+	  does not support such a separation of clocks.
-+	  Additionally, it is prohibited to supply a clock to the core but not
-+	  to the card detect circuit. That leaves you with if separate clocks
-+	  are presented, you must treat them both as 1.
-+	  If 2 clocks are specified by the hardware, you must name them as
-+	  "core" and "cd".
-+	  If the controller only has 1 clock, naming is not required.
-+
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
- - pinctrl-names: should be "default", "state_uhs"
- - pinctrl-0: should contain default/high speed pin ctrl
- - pinctrl-1: should contain uhs mode pin ctrl
-+
-+Example showing 2 clocks:
-+	sdhi0: sd@e804e000 {
-+		compatible = "renesas,sdhi-r7s72100";
-+		reg = <0xe804e000 0x100>;
-+		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
-+			 <&mstp12_clks R7S72100_CLK_SDHI01>;
-+		clock-names = "core", "cd";
-+		cap-sd-highspeed;
-+		cap-sdio-irq;
-+	};
--- 
-2.10.1
-
-
+SGVsbG8gVWZmZSwNCg0KT24gRnJpZGF5LCBKYW51YXJ5IDIwLCAyMDE3LCBVbGYgSGFuc3NvbiB3
+cm90ZToNCj4gPiBUaGUgcmVhbGl0eSBpcyB0aGF0IHRoZSBjaGlwIGd1eXMgY3V0IHVwIHRoZSBz
+dGFuZGFyZCBTREhJIElQIHRvIGFkZCBhDQo+ID4gJ2Nvb2wgbmV3IGZlYXR1cmUnLCBidXQgYWxs
+IEkgd2FudCB0byBkbyBpcyBwdXQgaXQgYmFjayB0aGUgd2F5IGl0IHdhcy4NCj4gPg0KPiA+IE5P
+VEU6IFRoZSBkZXNpZ24gZ3V5cyBsaWtlIHRvIHJldXNlIElQIGJsb2NrcyBmcm9tIHByZXZpb3Vz
+IGRlc2lnbnMNCj4gPiB0aGF0IHRoZXkga25vdyB3b3JrZWQgYW5kIGRpZG4ndCBoYXZlIGJ1Z3Mu
+IFNvLCB0aGVyZSBpcyBhIGdvb2QgY2hhbmNlDQo+ID4geW91IHdpbGwgc2VlIHRoaXMgY2hhbmdl
+IGluIGZ1dHVyZSBSWi9BIGRldmljZXMgKG9yIGV2ZW4gb3RoZXIgZnV0dXJlDQo+IFJlbmVzYXMg
+U29DIGRldmljZXMpLg0KPiA+IFRvIHJlbW92ZSBhbiB1bndhbnRlZCBmZWF0dXJlIGFkZHMgYWRk
+aXRpb25hbCBkZXNpZ24gcmlzayBvZiBicmVha2luZw0KPiA+IHNvbWV0aGluZyBlbHNlLi4uLmFu
+ZCBnaXZlbiB0aGUgY29zdCBvZiByZWRvaW5nIHNpbGljb24gbWFzaw0KPiA+IGxheWVycy4uLm5v
+IGVuZ2luZWVyIHdhbnRzIHRoYXQgbWlzdGFrZSBvbiB0aGVpciBoYW5kcy4NCj4gDQo+IFNvLCBv
+bmUgc2hvdWxkIGJlIGF3YXJlIG9mIHRoYXQgcnVudGltZSBQTSBzdXBwb3J0IGluIHRoZXNlIGNh
+c2UgaXMgZ29pbmcNCj4gdG8gYmUgc3Vib3B0aW1hbC4NCj4gRm9yIGV4YW1wbGUsIHdoZW4gdXNp
+bmcgdGhpcyBuYXRpdmUgY2FyZCBkZXRlY3QsIHlvdSB3aWxsIG5lZWQgdG8ga2VlcCB0aGUNCj4g
+Y29udHJvbGxlciBydW50aW1lIFBNIHJlc3VtZWQgYXMgdGhlIGJlIGFibGUgdG8ga2VlcCB0aGUg
+Y2xvY2sgb24gYW5kIHRvDQo+IGJlIGFibGUgdG8gZmV0Y2ggdGhlIGlycS4gV2FzdGluZyBwb3dl
+ci4NCg0KDQpXb2xmcmFtIGFscmVhZHkgcG9pbnRlZCB0aGF0IG91dCBpbiBhIHJlcGx5IHRvIEdl
+ZXJ0Og0KDQpPbiBUdWVzZGF5LCBKYW51YXJ5IDE3LCAyMDE3LCBXb2xmcmFtIFNhbmcgd3JvdGU6
+DQo+ID4gSWYgd2UgaGFuZGxlIHRoZW0gYXMgb25lLCB3b24ndCB3ZSBtaXNzIGNhcmQgZGV0ZWN0
+IGV2ZW50cyBkdWUgdG8gdGhlDQo+ID4gY2FyZCBkZXRlY3QgY2xvY2sgYmVpbmcgZGlzYWJsZWQg
+d2hpbGUgU0RISSBpcyBpZGxlPw0KPiANCj4gWW91IG1lYW4gdGhpcz8NCj4gDQo+IDEyMDggICAg
+ICAgICAvKg0KPiAxMjA5ICAgICAgICAgICogV2hpbGUgdXNpbmcgaW50ZXJuYWwgdG1pbyBoYXJk
+d2FyZSBsb2dpYyBmb3IgY2FyZA0KPiBkZXRlY3Rpb24sIHdlIG5lZWQNCj4gMTIxMCAgICAgICAg
+ICAqIHRvIGVuc3VyZSBpdCBzdGF5cyBwb3dlcmVkIGZvciBpdCB0byB3b3JrLg0KPiAxMjExICAg
+ICAgICAgICovDQo+IDEyMTIgICAgICAgICBpZiAoX2hvc3QtPm5hdGl2ZV9ob3RwbHVnKQ0KPiAx
+MjEzICAgICAgICAgICAgICAgICBwbV9ydW50aW1lX2dldF9ub3Jlc3VtZSgmcGRldi0+ZGV2KTsN
+Cg0KDQpBcyBwZXIgeW91ciByZXF1ZXN0LCBJJ2xsIGdvIGJhY2sgYW5kIGFkZCBzb21lIHRleHQg
+dG8gZGVzY3JpYmluZyB0aGF0IGV2ZW4gdGhvdWdoDQp0aGlzIHNwZWNpZmljIEhXIGhhcyBhIHNl
+cGFyYXRlIGNsb2NrIGZvciBjYXJkIGRldGVjdCBmb3IgUE0sIHRoZSBleGlzdGluZyBkcml2ZXIN
+CmluZnJhc3RydWN0dXJlIGRvZXNuJ3QgaGFuZGxlIHRoYXQgc28gYm90aCBjbG9ja3MgbmVlZCB0
+byBiZSB0cmVhdGVkIGFzIG9uZS4NCg0KDQo+IE1vc3QgU29DIHZlbmRvcnMgYXJlIHRoZXJlZm9y
+ZSB1c2luZyBhIEdQSU8gY2FyZCBkZXRlY3QgaW5zdGVhZCwgYWx0aG91Z2gNCj4gSSBhc3N1bWUg
+eW91IGFscmVhZHkga25ldyB0aGF0LiA6LSkNCg0KTXkgZmlyc3Qgb2JqZWN0aXZlIGZvciB0aGUg
+UlovQTEgcGxhdGZvcm0gaXMgdG8gbW92ZSB0aGluZ3MgZnJvbSBhIGxvY2FsDQpjdXN0b20gQlNQ
+IGludG8gdXBzdHJlYW0gYW5kIGdldCB0aGluZ3MgJ3dvcmtpbmcnLiBMYXRlciBJIGNhbiBnbyBi
+YWNrDQphbmQgdHdlYWsgdGhpbmdzIGhlcmUgYW5kIHRoZXJlIGZvciBydW50aW1lIFBNIGFuZCBz
+dWNoLg0KDQoNClRoYW5rIHlvdSwNCkNocmlzDQoNCg==
