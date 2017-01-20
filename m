@@ -1,87 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:8381 "EHLO
+Received: from relmlor1.renesas.com ([210.160.252.171]:19163 "EHLO
         relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753115AbdATToK (ORCPT
+        by vger.kernel.org with ESMTP id S1751359AbdATPwK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 14:44:10 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 20 Jan 2017 10:52:10 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
-Date: Fri, 20 Jan 2017 14:43:30 -0500
-Message-Id: <20170120194332.1683-2-chris.brandt@renesas.com>
-In-Reply-To: <20170120194332.1683-1-chris.brandt@renesas.com>
-References: <20170120194332.1683-1-chris.brandt@renesas.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
+Date: Fri, 20 Jan 2017 15:52:04 +0000
+Message-ID: <SG2PR06MB1165089B50C28BFD333299CB8A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170118172502.13876-1-chris.brandt@renesas.com>
+ <20170118172502.13876-2-chris.brandt@renesas.com>
+ <CAPDyKFqO3YrDdKqOqJ=xKSH7uAiZ+rCPEDKMZ+c8Y5RKaVK4kg@mail.gmail.com>
+In-Reply-To: <CAPDyKFqO3YrDdKqOqJ=xKSH7uAiZ+rCPEDKMZ+c8Y5RKaVK4kg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some controllers have 2 clock sources instead of 1. The 2nd clock
-is for the internal card detect logic and must be enabled/disabled
-along with the main core clock for proper operation.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v3:
-* add more clarification to the commit log
-v2:
-* changed clk2 to clk_cd
-* disable clk if clk_cd enable fails
-* changed clock name from "carddetect" to "cd"
----
- drivers/mmc/host/sh_mobile_sdhi.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 59db14b..a3f995e 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -143,6 +143,7 @@ MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
- 
- struct sh_mobile_sdhi {
- 	struct clk *clk;
-+	struct clk *clk_cd;
- 	struct tmio_mmc_data mmc_data;
- 	struct tmio_mmc_dma dma_priv;
- 	struct pinctrl *pinctrl;
-@@ -190,6 +191,12 @@ static int sh_mobile_sdhi_clk_enable(struct tmio_mmc_host *host)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = clk_prepare_enable(priv->clk_cd);
-+	if (ret < 0) {
-+		clk_disable_unprepare(priv->clk);
-+		return ret;
-+	}
-+
- 	/*
- 	 * The clock driver may not know what maximum frequency
- 	 * actually works, so it should be set with the max-frequency
-@@ -255,6 +262,8 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
- 	struct sh_mobile_sdhi *priv = host_to_priv(host);
- 
- 	clk_disable_unprepare(priv->clk);
-+	if (priv->clk_cd)
-+		clk_disable_unprepare(priv->clk_cd);
- }
- 
- static int sh_mobile_sdhi_card_busy(struct mmc_host *mmc)
-@@ -572,6 +581,10 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 		goto eprobe;
- 	}
- 
-+	priv->clk_cd = devm_clk_get(&pdev->dev, "cd");
-+	if (IS_ERR(priv->clk_cd))
-+		priv->clk_cd = NULL;
-+
- 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
- 	if (!IS_ERR(priv->pinctrl)) {
- 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
--- 
-2.10.1
+SGVsbG8gVWxmLA0KDQoNCk9uIEZyaWRheSwgSmFudWFyeSAyMCwgMjAxNywgVWxmIEhhbnNzb24g
+d3JvdGU6DQo+IE9uIDE4IEphbnVhcnkgMjAxNyBhdCAxODoyNSwgQ2hyaXMgQnJhbmR0IDxjaHJp
+cy5icmFuZHRAcmVuZXNhcy5jb20+DQo+IHdyb3RlOg0KPiA+IFNvbWUgY29udHJvbGxlcnMgaGF2
+ZSAyIGNsb2NrIHNvdXJjZXMgaW5zdGVhZCBvZiAxLCBzbyB0aGV5IGJvdGggbmVlZA0KPiA+IHRv
+IGJlIHR1cm5lZCBvbi9vZmYuDQo+IA0KPiBUaGlzIGRvZXNuJ3QgdGVsbCBtZSBlbm91Z2guIFBs
+ZWFzZSBlbGFib3JhdGUuDQo+IA0KPiBGb3IgZXhhbXBsZSwgdGVsbCBob3cgeW91IHRyZWF0IHRo
+ZSBjbG9ja3MsIHdoaWNoIG9mIHRoZW0gdGhhdCBpcyBvcHRpb25hbA0KPiBhbmQgd2h5Lg0KDQpC
+YXNpY2FsbHksIHRoZSBjaGlwIGRlc2lnbmVycyB3ZW50IGluIGFuZCBicm9rZSBvdXQgdGhlIGxv
+Z2ljIHRoYXQganVzdCBkb2VzDQp0aGUgY2FyZCBkZXRlY3QgKG1vcmUgb3IgbGVzcyBpdCdzIHBy
+b2JhYmx5IGp1c3Qgc29tZSBzaW1wbGUgSVJRIGxvZ2ljKSBzbw0KdGhhdCB5b3UgY291bGQgc2h1
+dCBvZmYgdGhlIElQIGJsb2NrLCBidXQgaWYgeW91IHB1dCBpbiBhIGNhcmQsIHRoZSBpbnRlcm5h
+bA0KaW50ZXJydXB0IHNpZ25hbCBzdGlsbCB3ZW50IHRvIHRoZSBpbnRlcnJ1cHQgY29udHJvbGxl
+ciBhbmQgcmVnaXN0ZXJlZCB0aGUNCmludGVycnVwdCBldmVuIHRob3VnaCB0aGUgcmVzdCBvZiB0
+aGUgSVAgYmxvY2sgKGluY2x1ZGluZyB0aGUgcmVnaXN0ZXIgc3BhY2UpDQp3YXMgZGVhZC4NCg0K
+VGhlIGlkZWEgc2VlbXMgdG8gYmUgdGhhdCB5b3UgY291bGQgcHV0IHRoZSBlbnRpcmUgY2hpcCBp
+bnRvIGxvdyBwb3dlciBtb2RlDQphbmQgd2FrZSBpdCB1cCBpZiB5b3Ugc3R1Y2sgYSBjYXJkIGlu
+Lg0KDQpNeSBndWVzcyBpcyB0aGF0IHRoaXMgd2FzIGZvciBzb21lIGN1c3RvbWVyIHJlcXVlc3Qg
+b3Igc29tZXRoaW5nLg0KDQpQZXJzb25hbGx5Li4ueW91IGNvdWxkIGhhdmUgZG9uZSB0aGUgc2Ft
+ZSB0aGluZyBpZiB5b3UgbGFpZCBvdXQgYSBib2FyZA0KYW5kIHRpZWQgb25lIG9mIHRoZSBleHRy
+YSBJUlEgbGluZXMgdG8gdGhlIGNkIHNpZ25hbC4uLmJ1dCBJJ20gbm90IHN1cmUgaWYNCmFueW9u
+ZSB0aG91Z2h0IGFib3V0IHRoYXQgYXQgdGhlIHRpbWUuDQoNCg0KU28gdG8geW91ciByZXF1ZXN0
+LCBJIGNvdWxkIHB1dCBhbGwgdGhpcyB1Z2x5IGluZm8gaW50byB0aGUgZG9jdW1lbnRhdGlvbiwN
+CmJ1dCBiYXNpY2FsbHkgYWxsIEknbSB0cnlpbmcgdG8gZG8gaXMgam9pbiB0aGUgMiBjbG9ja3Mg
+YmFjayB0b2dldGhlcg0KdG8gbWFrZSBpdCB3b3JrIGxpa2UgYWxsIHRoZSBvdGhlciBTb0NzIHNp
+bmNlIHRoaXMgbmV3ICdmZWF0dXJlJyBtaWdodA0Kbm90IHJlYWxseSBiZSBwcmFjdGljYWwgdG8g
+ZXZlcnkgdXNlIGluIHRoaXMgZW52aXJvbm1lbnQuDQoNCg0KDQo+ID4gIHN0YXRpYyBpbnQgc2hf
+bW9iaWxlX3NkaGlfY2FyZF9idXN5KHN0cnVjdCBtbWNfaG9zdCAqbW1jKSBAQCAtNTcyLDYNCj4g
+PiArNTgxLDEwIEBAIHN0YXRpYyBpbnQgc2hfbW9iaWxlX3NkaGlfcHJvYmUoc3RydWN0IHBsYXRm
+b3JtX2RldmljZSAqcGRldikNCj4gPiAgICAgICAgICAgICAgICAgZ290byBlcHJvYmU7DQo+ID4g
+ICAgICAgICB9DQo+ID4NCj4gPiArICAgICAgIHByaXYtPmNsa19jZCA9IGRldm1fY2xrX2dldCgm
+cGRldi0+ZGV2LCAiY2QiKTsNCj4gPiArICAgICAgIGlmIChJU19FUlIocHJpdi0+Y2xrX2NkKSkN
+Cj4gPiArICAgICAgICAgICAgICAgcHJpdi0+Y2xrX2NkID0gTlVMTDsNCj4gDQo+IElzIHRoaXMg
+Y2xvY2sgc29sZWx5IGFib3V0IGNhcmQgZGV0ZWN0aW9uPyBTbyBpbiBjYXNlcyB3aGVuIHlvdSBo
+YXZlIGENCj4gR1BJTyBjYXJkIGRldGVjdCwgdGhlIGNsb2NrIGlzbid0IG5lZWRlZD8NCj4gDQo+
+IEp1c3QgdHJ5aW5nIHRvIHVuZGVyc3RhbmQgdGhpbmdzIGEgYml0IGJldHRlci4uLg0KDQpBY2Nv
+cmRpbmcgdG8gdGhlIGhhcmR3YXJlIG1hbnVhbCwgZW5hYmxpbmcgdGhlICJjb3JlIiBjbG9jayBi
+dXQgbm90IHRoZQ0KImNkIiBjbG9jayBpcyBub3QgYSB2YWxpZCBzZXR0aW5nLiBTbyBpbiBvdXIg
+Y2FzZSwgaXQncyBhbHdheXMgYWxsIG9yDQpub3RoaW5nLg0KDQoNCkNocmlzDQo=
