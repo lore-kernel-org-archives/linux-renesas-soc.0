@@ -1,90 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940143AbdAFLSW (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:44960 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbdATXTI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:22 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/16] arm64: dts: r8a7796: salvator-x: Enable EthernetAVB
-Date: Fri,  6 Jan 2017 12:17:56 +0100
-Message-Id: <dc36965a890515753671628cdf25365ee45e6206.1483700694.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
-References: <cover.1483700694.git.horms+renesas@verge.net.au>
+        Fri, 20 Jan 2017 18:19:08 -0500
+Date: Fri, 20 Jan 2017 15:18:37 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [git pull] clk: renesas: Updates for v4.11
+Message-ID: <20170120231837.GA20800@codeaurora.org>
+References: <1484315999-25110-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1484315999-25110-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On 01/13, Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
+> 
+> The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+> 
+>   Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.11-tag1
+> 
+> for you to fetch changes up to e6bdf28eff475a026b922abe78ae710e7179bdf7:
+> 
+>   clk: renesas: r8a7796: Add MSIOF controller clocks (2016-12-27 10:56:08 +0100)
+> 
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[geert: Add pinctrl]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Thanks. Pulled into clk-next.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 38bde9de3250..c7f40f8f3169 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -18,6 +18,7 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -107,6 +108,11 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	avb_pins: avb {
-+		groups = "avb_mdc";
-+		function = "avb";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
-@@ -158,6 +164,32 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <900>;
-+		rxdv-skew-ps = <0>;
-+		rxd0-skew-ps = <0>;
-+		rxd1-skew-ps = <0>;
-+		rxd2-skew-ps = <0>;
-+		rxd3-skew-ps = <0>;
-+		txc-skew-ps = <900>;
-+		txen-skew-ps = <0>;
-+		txd0-skew-ps = <0>;
-+		txd1-skew-ps = <0>;
-+		txd2-skew-ps = <0>;
-+		txd3-skew-ps = <0>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
 -- 
-2.7.0.rc3.207.g0ac5344
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
