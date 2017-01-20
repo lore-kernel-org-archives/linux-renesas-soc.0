@@ -1,47 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:33295 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752463AbdATQVH (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45064 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751323AbdATNEM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 11:21:07 -0500
-Received: by mail-lf0-f42.google.com with SMTP id k86so61149194lfi.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jan 2017 08:21:06 -0800 (PST)
-Subject: Re: [PATCH] ARM: shmobile: rcar-gen2: Add more register documentation
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 20 Jan 2017 08:04:12 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-References: <1484917448-8320-1-git-send-email-geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <9d12d719-0866-a454-88e2-d51a695085cd@cogentembedded.com>
-Date: Fri, 20 Jan 2017 19:21:02 +0300
-MIME-Version: 1.0
-In-Reply-To: <1484917448-8320-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: rcar-gen2: Add more register documentation
+Date: Fri, 20 Jan 2017 14:04:08 +0100
+Message-Id: <1484917448-8320-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/20/2017 04:04 PM, Geert Uytterhoeven wrote:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 40 +++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm/mach-shmobile/pm-rcar-gen2.c | 40 +++++++++++++++++++++++++----------
->  1 file changed, 29 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-> index dd9ac366868f4336..6ed9aa19c4d34766 100644
-> --- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-> +++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-> @@ -20,14 +20,30 @@
-[...]
-> +static inline u32 phys_to_sbar(phys_addr_t addr)
-> +{
-> +	return (((addr) >> 8) & 0xfffffc00);
-
-   It's not a macro -- innermost parens not needed...
-
-[...]
-
-MBR, Sergei
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index dd9ac366868f4336..6ed9aa19c4d34766 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -20,14 +20,30 @@
+ 
+ /* RST */
+ #define RST		0xe6160000
+-#define CA15BAR		0x0020
+-#define CA7BAR		0x0030
+-#define CA15RESCNT	0x0040
+-#define CA7RESCNT	0x0044
++
++#define CA15BAR		0x0020		/* CA15 Boot Address Register */
++#define CA7BAR		0x0030		/* CA7 Boot Address Register */
++#define CA15RESCNT	0x0040		/* CA15 Reset Control Register */
++#define CA7RESCNT	0x0044		/* CA7 Reset Control Register */
++
++/* SYS Boot Address Register */
++#define SBAR_BAREN	BIT(4)		/* SBAR is valid */
++
++/* Reset Control Registers */
++#define CA15RESCNT_CODE	0xa5a50000
++#define CA15RESCNT_CPUS	0xf		/* CPU0-3 */
++#define CA7RESCNT_CODE	0x5a5a0000
++#define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
++
+ 
+ /* On-chip RAM */
+ #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
+ 
++static inline u32 phys_to_sbar(phys_addr_t addr)
++{
++	return (((addr) >> 8) & 0xfffffc00);
++}
++
+ /* SYSC */
+ #define SYSCIER 0x0c
+ #define SYSCIMR 0x10
+@@ -82,22 +98,24 @@ void __init rcar_gen2_pm_init(void)
+ 
+ 	/* setup reset vectors */
+ 	p = ioremap_nocache(RST, 0x63);
+-	bar = (boot_vector_addr >> 8) & 0xfffffc00;
++	bar = phys_to_sbar(boot_vector_addr);
+ 	if (has_a15) {
+ 		writel_relaxed(bar, p + CA15BAR);
+-		writel_relaxed(bar | 0x10, p + CA15BAR);
++		writel_relaxed(bar | SBAR_BAREN, p + CA15BAR);
+ 
+ 		/* de-assert reset for CA15 CPUs */
+-		writel_relaxed((readl_relaxed(p + CA15RESCNT) & ~0x0f) |
+-				0xa5a50000, p + CA15RESCNT);
++		writel_relaxed((readl_relaxed(p + CA15RESCNT) &
++				~CA15RESCNT_CPUS) | CA15RESCNT_CODE,
++			       p + CA15RESCNT);
+ 	}
+ 	if (has_a7) {
+ 		writel_relaxed(bar, p + CA7BAR);
+-		writel_relaxed(bar | 0x10, p + CA7BAR);
++		writel_relaxed(bar | SBAR_BAREN, p + CA7BAR);
+ 
+ 		/* de-assert reset for CA7 CPUs */
+-		writel_relaxed((readl_relaxed(p + CA7RESCNT) & ~0x0f) |
+-				0x5a5a0000, p + CA7RESCNT);
++		writel_relaxed((readl_relaxed(p + CA7RESCNT) &
++				~CA7RESCNT_CPUS) | CA7RESCNT_CODE,
++			       p + CA7RESCNT);
+ 	}
+ 	iounmap(p);
+ 
+-- 
+1.9.1
