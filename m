@@ -1,76 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59066 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759654AbdACXGk (ORCPT
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:36506 "EHLO
+        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751257AbdATFzR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 18:06:40 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/19] serial: sh-sci: Set the SCSCR TE and RE bits in the driver
-Date: Wed,  4 Jan 2017 01:06:21 +0200
-Message-Id: <20170103230639.19660-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 20 Jan 2017 00:55:17 -0500
+Received: by mail-pf0-f172.google.com with SMTP id 189so19737272pfu.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Jan 2017 21:54:50 -0800 (PST)
+From: Kazunori Kobayashi <kkobayas@igel.co.jp>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, dhobsong@igel.co.jp,
+        Kazunori Kobayashi <kkobayas@igel.co.jp>
+Subject: [RFC PATCH 0/2] drm: rcar-du: Support importing multiple sg table entries via dma-buf
+Date: Fri, 20 Jan 2017 14:54:41 +0900
+Message-Id: <1484891683-27304-1-git-send-email-kkobayas@igel.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Transmit Enable and Receive Enable bits are set in the scscr field
-of all instances of the sh-sci platform data. Set them in the driver
-directly to prepare for their removal from platform data.
+This patch series add support for importing dma-bufs with
+multiple sg table entries, exported from other drivers into the DU.
+The patches are based on the salvator-x-hdmi-prototype-2016-08-30-v4.8-rc4
+topic branch in geert's git repository, which has IOMMU mapping support in
+the rcar-du driver.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/tty/serial/sh-sci.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+The current implementation of the rcar-du driver makes use of
+the drm_gem_cma_helper APIs because it currently only handles 
+physical contiguous memory.
+IOMMU support has been added to the rcar-du driver and can map
+the framebuffer memory to the IOVA space, so the device has been also capable of
+feeding non physical contiguous memory, in other words standard virtual memory
+can be handled by mapping multiple sg entries.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 91e7dddbf72c..1e573611719e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2341,7 +2341,8 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
- 		serial_port_out(port, SCFCR, ctrl);
- 	}
- 
--	scr_val |= s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0);
-+	scr_val |= SCSCR_RE | SCSCR_TE |
-+		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
- 	dev_dbg(port->dev, "SCSCR 0x%x\n", scr_val);
- 	serial_port_out(port, SCSCR, scr_val);
- 	if ((srr + 1 == 5) &&
-@@ -2791,7 +2792,8 @@ static void serial_console_write(struct console *co, const char *s,
- 
- 	/* first save SCSCR then disable interrupts, keep clock source */
- 	ctrl = serial_port_in(port, SCSCR);
--	ctrl_temp = (sci_port->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0)) |
-+	ctrl_temp = SCSCR_RE | SCSCR_TE |
-+		    (sci_port->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0)) |
- 		    (ctrl & (SCSCR_CKE1 | SCSCR_CKE0));
- 	serial_port_out(port, SCSCR, ctrl_temp);
- 
-@@ -2994,7 +2996,6 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
- 	p->flags = UPF_IOREMAP | UPF_BOOT_AUTOCONF;
- 	p->type = SCI_OF_TYPE(match->data);
- 	p->regtype = SCI_OF_REGTYPE(match->data);
--	p->scscr = SCSCR_RE | SCSCR_TE;
- 
- 	if (of_find_property(np, "uart-has-rtscts", NULL))
- 		p->capabilities |= SCIx_HAVE_RTSCTS;
-@@ -3162,9 +3163,9 @@ static int __init early_console_setup(struct earlycon_device *device,
- 	sci_ports[0].cfg = &port_cfg;
- 	sci_ports[0].cfg->type = type;
- 	sci_probe_regmap(sci_ports[0].cfg);
--	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR) |
--			 SCSCR_RE | SCSCR_TE;
--	sci_serial_out(&sci_ports[0].port, SCSCR, port_cfg.scscr);
-+	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR);
-+	sci_serial_out(&sci_ports[0].port, SCSCR,
-+		       SCSCR_RE | SCSCR_TE | port_cfg.scscr);
- 
- 	device->con->write = serial_console_write;
- 	return 0;
+The series removes the restriction of only handling a single sg entry
+in the dma-buf importing, although continues to use CMA GEM objects even when
+importing multiple sg entries in order to coexist with the implementation using
+the drm_gem_cma_helper APIs in the rcar-du driver. A generic implementation
+for sg table handling independently from CMA GEM objects should be considered,
+however has not been finished yet.
+
+I would appreciate any comments if any improvements are necessary for
+this series to be accepted upstream.
+
+Kazunori Kobayashi (2):
+  drm: rcar-du: Don't create a new sg table for dma-mapping when
+    importing other driver's dma-buf
+  drm: rcar-du: Allow for handling multiple sg table entries by IOMMU
+    mapping
+
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 102 ++++++++++++++++++++++++++++++++--
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c |  28 +++++++---
+ 2 files changed, 119 insertions(+), 11 deletions(-)
+
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
