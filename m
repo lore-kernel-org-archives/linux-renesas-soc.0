@@ -1,38 +1,46 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 20 Jan 2017 16:32:35 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/8] clk: renesas: cpg-mssr: Document suitability for
- RZ/G1
-Message-ID: <20170121003235.GT20800@codeaurora.org>
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/8] clk: renesas: cpg-mssr: Document suitability for RZ/G1
+Date: Fri, 20 Jan 2017 15:08:20 +0100
+Message-Id: <1484921306-9967-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
 References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
- <1484921306-9967-3-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1484921306-9967-3-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/20, Geert Uytterhoeven wrote:
-> The Renesas CPG/MSSR driver is already in active use for RZ/G1 since
-> commits c0b2d75d2a4bf6a3 ("clk: renesas: cpg-mssr: Add R8A7743 support")
-> and 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support").
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+The Renesas CPG/MSSR driver is already in active use for RZ/G1 since
+commits c0b2d75d2a4bf6a3 ("clk: renesas: cpg-mssr: Add R8A7743 support")
+and 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support").
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 6947482d48a55094..eb8534e5ebf3007d 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -43,7 +43,7 @@
+  * Module Standby and Software Reset register offets.
+  *
+  * If the registers exist, these are valid for SH-Mobile, R-Mobile,
+- * R-Car Gen 2, and R-Car Gen 3.
++ * R-Car Gen2, R-Car Gen3, and RZ/G1.
+  * These are NOT valid for R-Car Gen1 and RZ/A1!
+  */
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
