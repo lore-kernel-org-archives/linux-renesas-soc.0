@@ -1,8 +1,12 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Fri, 20 Jan 2017 23:41:39 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:15947 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752069AbdATWfW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 17:35:22 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
@@ -12,81 +16,80 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Message-ID: <20170120224137.GD1438@katana>
+Subject: RE: [PATCH v4 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+Date: Fri, 20 Jan 2017 22:35:14 +0000
+Message-ID: <SG2PR06MB1165035F107F504185B525658A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170120194332.1683-1-chris.brandt@renesas.com>
  <20170120194332.1683-3-chris.brandt@renesas.com>
  <20170120213901.GC1438@katana>
- <SG2PR06MB1165035F107F504185B525658A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <20170120213901.GC1438@katana>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LKTjZJSUETSlgu2t"
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165035F107F504185B525658A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello Wolfram,
 
---LKTjZJSUETSlgu2t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ulf's request was for more info, but it wasn't clear if he wanted more
+info in the commit logs or in the files themselves.
 
 
-> It sounds like your suggestion is to just put the HW description in
-> the DT bindings, but move the dirty details into the driver.
+On Friday, January 20, 2017, Wolfram Sang wrote:
+> > +- clocks: Most controllers only have 1 clock source per channel.
+> However, on
+> > +	  some variations of this controller, the internal card detection
+> > +	  logic that exists in this controller is sectioned off to be run by
+> a
+> > +	  separate second clock source to allow the main core clock to be
+> turned
+> > +	  off to save power. Unfortunately, the existing driver architecture
+> > +	  does not support such a separation of clocks.
+> > +	  Additionally, it is prohibited to supply a clock to the core but
+> not
+> > +	  to the card detect circuit. That leaves you with if separate
+> clocks
+> > +	  are presented, you must treat them both as 1.
+> > +	  If 2 clocks are specified by the hardware, you must name them as
+> > +	  "core" and "cd".
+> > +	  If the controller only has 1 clock, naming is not required.
 >=20
-> Keep in DT:
+> I know we are not perfect in this area, but DT binding should be OS
+> agnostic and should refrain from specifying Linux internals.
 >=20
-> +- clocks: Most controllers only have 1 clock source per channel. However=
-, on
-> +	  some variations of this controller, the internal card detection
-> +	  logic that exists in this controller is sectioned off to be run by a
-> +	  separate second clock source to allow the main core clock to be turned
-> +	  off to save power.
-> +	  If 2 clocks are specified by the hardware, you must name them as
-> +	  "core" and "cd".
-> +	  If the controller only has 1 clock, naming is not required.
->=20
->=20
->=20
-> Move somewhere in the driver (maybe where the 2nd clock is detected):
->=20
-> +	  Unfortunately, the existing driver architecture
-> +	  does not support such a separation of clocks.
-
-"such" is not explained. Maybe "does not support a seperation of clocks.
-It doesn't work with Runtime PM because ..."?
-
-> +	  Additionally, it is prohibited to supply a clock to the core but not
-> +	  to the card detect circuit. That leaves you with if separate clocks
-> +	  are presented, you must treat them both as 1.
->=20
->=20
-> Is this what you were thinking?
-
-Exactly.
+> So, I'd think the comments about driver architecture should be put into
+> the driver, not into the bindings.
 
 
---LKTjZJSUETSlgu2t
-Content-Type: application/pgp-signature; name="signature.asc"
+It sounds like your suggestion is to just put the HW description in
+the DT bindings, but move the dirty details into the driver.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Keep in DT:
 
-iQIbBAEBAgAGBQJYgpIhAAoJEBQN5MwUoCm21iEP9ivLnVX3LgSHxtqx8UYvJpKJ
-3Q+v2sD61HZUcVzzoXCDr9sUCEVFq1juoor1TaNgzLWGx31cgCD0pFl+MEZ2S9A+
-+rJz6xsYPOC/IITYAJvmC/8+GdK7pxkc+KWMFvlcBR/OAcZpzWHziMnkpQKKoW7o
-kR+B411kA/8kwoQpta5U+hL8Jk4Z/aQXOfiTyEDVDeZjHDUGm3+EAcSXLH2SGLd0
-EcZ5vyDbdQwAhljGtazfpnShkDM9Z4c0Jiuz+V2D9/lBYPWQBuiJmlJBf3SHKH2v
-rfd4ZVPKM1in8vGqDTNpUcON9koTIa3E/rXeWddxlCXGPiprwmuLsgyTjIZcVBl7
-EXqlvA2DQoqddXs6kulq/WAy4IeSDv8ePxe2h2R5z2opGiUXApXqm0vt7te0ert7
-tsJ6VphnJ1kpZIv4SQCa05HNhiKscBV8c4Al5MmyMbz6bpn2YJQ31pH+MXMqTN7G
-+OIZIQJ6ddz5L5XzEtMapXdjfGYUGw5zguQHNUjLywg8YYTTbYPsaHQFODT/CJ6I
-P2uoqBhUIclhdStOFgWLsZZZr/vL9Mr40r2H7BfrSRB9Fg8gDVRSgtmW96/EUwv5
-+/4NvjCqY06SSCbEIm89ccUhZ9Q3UEugUGPhjPTxN8wjfnHvzJKSTWKPlIfeE3y+
-ItQGojn/LZaSPo2cXpU=
-=HVRM
------END PGP SIGNATURE-----
++- clocks: Most controllers only have 1 clock source per channel. However, =
+on
++	  some variations of this controller, the internal card detection
++	  logic that exists in this controller is sectioned off to be run by a
++	  separate second clock source to allow the main core clock to be turned
++	  off to save power.
++	  If 2 clocks are specified by the hardware, you must name them as
++	  "core" and "cd".
++	  If the controller only has 1 clock, naming is not required.
 
---LKTjZJSUETSlgu2t--
+
+
+Move somewhere in the driver (maybe where the 2nd clock is detected):
+
++	  Unfortunately, the existing driver architecture
++	  does not support such a separation of clocks.
++	  Additionally, it is prohibited to supply a clock to the core but not
++	  to the card detect circuit. That leaves you with if separate clocks
++	  are presented, you must treat them both as 1.
+
+
+Is this what you were thinking?
+
+
+Thank you,
+Chris
