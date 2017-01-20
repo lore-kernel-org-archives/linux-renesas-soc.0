@@ -1,108 +1,92 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:54124 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1751723AbdATL1G (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 06:27:06 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 20 Jan 2017 23:41:39 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Eduardo Valentin <edubezval@gmail.com>
-Subject: [PATCH v7 1/2] arm64: dts: r8a7795: Add R-Car Gen3 thermal support
-Date: Fri, 20 Jan 2017 12:26:42 +0100
-Message-Id: <20170120112643.2282-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170120112643.2282-1-wsa+renesas@sang-engineering.com>
-References: <20170120112643.2282-1-wsa+renesas@sang-engineering.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+Message-ID: <20170120224137.GD1438@katana>
+References: <20170120194332.1683-1-chris.brandt@renesas.com>
+ <20170120194332.1683-3-chris.brandt@renesas.com>
+ <20170120213901.GC1438@katana>
+ <SG2PR06MB1165035F107F504185B525658A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LKTjZJSUETSlgu2t"
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165035F107F504185B525658A710@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 026a16ac41b422..d36783e751af87 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1647,5 +1647,63 @@
- 				};
- 			};
- 		};
-+
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a7795-thermal";
-+			reg = <0 0xe6198000 0 0x68>,
-+			      <0 0xe61a0000 0 0x5c>,
-+			      <0 0xe61a8000 0 0x5c>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
-+
-+		thermal-zones {
-+			sensor_thermal1: sensor-thermal1 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 0>;
-+
-+				trips {
-+					sensor1_crit: sensor1-crit {
-+						temperature = <120000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal2: sensor-thermal2 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 1>;
-+
-+				trips {
-+					sensor2_crit: sensor2-crit {
-+						temperature = <120000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+
-+			sensor_thermal3: sensor-thermal3 {
-+				polling-delay-passive = <250>;
-+				polling-delay = <1000>;
-+				thermal-sensors = <&tsc 2>;
-+
-+				trips {
-+					sensor3_crit: sensor3-crit {
-+						temperature = <120000>;
-+						hysteresis = <2000>;
-+						type = "critical";
-+					};
-+				};
-+			};
-+		};
- 	};
- };
--- 
-2.11.0
+--LKTjZJSUETSlgu2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> It sounds like your suggestion is to just put the HW description in
+> the DT bindings, but move the dirty details into the driver.
+>=20
+> Keep in DT:
+>=20
+> +- clocks: Most controllers only have 1 clock source per channel. However=
+, on
+> +	  some variations of this controller, the internal card detection
+> +	  logic that exists in this controller is sectioned off to be run by a
+> +	  separate second clock source to allow the main core clock to be turned
+> +	  off to save power.
+> +	  If 2 clocks are specified by the hardware, you must name them as
+> +	  "core" and "cd".
+> +	  If the controller only has 1 clock, naming is not required.
+>=20
+>=20
+>=20
+> Move somewhere in the driver (maybe where the 2nd clock is detected):
+>=20
+> +	  Unfortunately, the existing driver architecture
+> +	  does not support such a separation of clocks.
+
+"such" is not explained. Maybe "does not support a seperation of clocks.
+It doesn't work with Runtime PM because ..."?
+
+> +	  Additionally, it is prohibited to supply a clock to the core but not
+> +	  to the card detect circuit. That leaves you with if separate clocks
+> +	  are presented, you must treat them both as 1.
+>=20
+>=20
+> Is this what you were thinking?
+
+Exactly.
+
+
+--LKTjZJSUETSlgu2t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIbBAEBAgAGBQJYgpIhAAoJEBQN5MwUoCm21iEP9ivLnVX3LgSHxtqx8UYvJpKJ
+3Q+v2sD61HZUcVzzoXCDr9sUCEVFq1juoor1TaNgzLWGx31cgCD0pFl+MEZ2S9A+
++rJz6xsYPOC/IITYAJvmC/8+GdK7pxkc+KWMFvlcBR/OAcZpzWHziMnkpQKKoW7o
+kR+B411kA/8kwoQpta5U+hL8Jk4Z/aQXOfiTyEDVDeZjHDUGm3+EAcSXLH2SGLd0
+EcZ5vyDbdQwAhljGtazfpnShkDM9Z4c0Jiuz+V2D9/lBYPWQBuiJmlJBf3SHKH2v
+rfd4ZVPKM1in8vGqDTNpUcON9koTIa3E/rXeWddxlCXGPiprwmuLsgyTjIZcVBl7
+EXqlvA2DQoqddXs6kulq/WAy4IeSDv8ePxe2h2R5z2opGiUXApXqm0vt7te0ert7
+tsJ6VphnJ1kpZIv4SQCa05HNhiKscBV8c4Al5MmyMbz6bpn2YJQ31pH+MXMqTN7G
++OIZIQJ6ddz5L5XzEtMapXdjfGYUGw5zguQHNUjLywg8YYTTbYPsaHQFODT/CJ6I
+P2uoqBhUIclhdStOFgWLsZZZr/vL9Mr40r2H7BfrSRB9Fg8gDVRSgtmW96/EUwv5
++/4NvjCqY06SSCbEIm89ccUhZ9Q3UEugUGPhjPTxN8wjfnHvzJKSTWKPlIfeE3y+
+ItQGojn/LZaSPo2cXpU=
+=HVRM
+-----END PGP SIGNATURE-----
+
+--LKTjZJSUETSlgu2t--
