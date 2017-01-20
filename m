@@ -1,39 +1,67 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 20 Jan 2017 16:31:14 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:39942 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752314AbdATOIi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 09:08:38 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/8] clk: renesas: cpg-mssr: Document reset control
- support
-Message-ID: <20170121003114.GS20800@codeaurora.org>
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/8] clk: renesas: cpg-mssr: Document reset control support
+Date: Fri, 20 Jan 2017 15:08:19 +0100
+Message-Id: <1484921306-9967-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
 References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
- <1484921306-9967-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1484921306-9967-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/20, Geert Uytterhoeven wrote:
+Document properties needed to use the Reset Control feature of the
+Renesas Clock Pulse Generator / Module Standby and Software Reset
+module.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Document properties needed to use the Reset Control feature of the
-> Renesas Clock Pulse Generator / Module Standby and Software Reset
-> module.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Subject should be "dt-bindings: clock:" ?
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index c469194129536332..f4f944d813081857 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -42,6 +42,10 @@ Required Properties:
+ 	Domain bindings in
+ 	Documentation/devicetree/bindings/power/power_domain.txt.
+ 
++  - #reset-cells: Must be 1
++      - The single reset specifier cell must be the module number, as defined
++	in the datasheet.
++
+ 
+ Examples
+ --------
+@@ -55,6 +59,7 @@ Examples
+ 		clock-names = "extal", "extalr";
+ 		#clock-cells = <2>;
+ 		#power-domain-cells = <0>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 
+@@ -69,5 +74,6 @@ Examples
+ 		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+ 		dma-names = "tx", "rx";
+ 		power-domains = <&cpg>;
++		resets = <&cpg 310>;
+ 		status = "disabled";
+ 	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
