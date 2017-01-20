@@ -1,79 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:44334 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751774AbdATVjU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 16:39:20 -0500
-Date: Fri, 20 Jan 2017 22:39:01 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Message-ID: <20170120213901.GC1438@katana>
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+Date: Fri, 20 Jan 2017 14:43:31 -0500
+Message-Id: <20170120194332.1683-3-chris.brandt@renesas.com>
+In-Reply-To: <20170120194332.1683-1-chris.brandt@renesas.com>
 References: <20170120194332.1683-1-chris.brandt@renesas.com>
- <20170120194332.1683-3-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
-Content-Disposition: inline
-In-Reply-To: <20170120194332.1683-3-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+In the case of a single clock source, you don't need names. However,
+if the controller has 2 clock sources, you need to name them correctly
+so the driver can find the 2nd one. The 2nd clock is for the internal
+card detect logic and must be enabled/disabled along with the main
+core clock.
 
---MnLPg7ZWsaic7Fhd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+v3:
+* add more clarification about why there are sometimes 2 clocks
+  and what you should do with them.
+* remove 'status = "disabled"' from example
+v2:
+* fix spelling and change wording
+* changed clock name from "carddetect" to "cd"
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index a1650ed..9033c6a 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -25,8 +25,36 @@ Required properties:
+ 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+ 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
+ 
++- clocks: Most controllers only have 1 clock source per channel. However, on
++	  some variations of this controller, the internal card detection
++	  logic that exists in this controller is sectioned off to be run by a
++	  separate second clock source to allow the main core clock to be turned
++	  off to save power. Unfortunately, the existing driver architecture
++	  does not support such a separation of clocks.
++	  Additionally, it is prohibited to supply a clock to the core but not
++	  to the card detect circuit. That leaves you with if separate clocks
++	  are presented, you must treat them both as 1.
++	  If 2 clocks are specified by the hardware, you must name them as
++	  "core" and "cd".
++	  If the controller only has 1 clock, naming is not required.
++
+ Optional properties:
+ - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
+ - pinctrl-names: should be "default", "state_uhs"
+ - pinctrl-0: should contain default/high speed pin ctrl
+ - pinctrl-1: should contain uhs mode pin ctrl
++
++Example showing 2 clocks:
++	sdhi0: sd@e804e000 {
++		compatible = "renesas,sdhi-r7s72100";
++		reg = <0xe804e000 0x100>;
++		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
++			 <&mstp12_clks R7S72100_CLK_SDHI01>;
++		clock-names = "core", "cd";
++		cap-sd-highspeed;
++		cap-sdio-irq;
++	};
+-- 
+2.10.1
 
 
-> +- clocks: Most controllers only have 1 clock source per channel. However, on
-> +	  some variations of this controller, the internal card detection
-> +	  logic that exists in this controller is sectioned off to be run by a
-> +	  separate second clock source to allow the main core clock to be turned
-> +	  off to save power. Unfortunately, the existing driver architecture
-> +	  does not support such a separation of clocks.
-> +	  Additionally, it is prohibited to supply a clock to the core but not
-> +	  to the card detect circuit. That leaves you with if separate clocks
-> +	  are presented, you must treat them both as 1.
-> +	  If 2 clocks are specified by the hardware, you must name them as
-> +	  "core" and "cd".
-> +	  If the controller only has 1 clock, naming is not required.
-
-I know we are not perfect in this area, but DT binding should be OS
-agnostic and should refrain from specifying Linux internals.
-
-So, I'd think the comments about driver architecture should be put into
-the driver, not into the bindings.
-
-It is ultimately Ulf's decision, of course.
-
-
---MnLPg7ZWsaic7Fhd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYgoN1AAoJEBQN5MwUoCm23a8P/2Da+vtJow4xkn3upP0ntwtp
-CD5KMrUyCdKg8zj/Q9yrGcEmKl4dqeZhbK+7x0iOJs9SQLpYatriLSwzf7yNxgrB
-9gl3JNzVZfS1ysYS2pB8QZ67o6nYkSjzkNC5KiRFo+Qu/F6HlSAYzEWQq9gKLctT
-2oH0LrZi9UU6KO5QC9xeENtwJq5Kau5V7MY0z5wp/qI95Tdq2IEvB4pCJZ3suONM
-Ykjhq4okFhykzouG2F1mzF0W4f421Z59+CQ+1+qg/yu8/fJ1L85nsqL4BxVVLIO6
-Yn9s3Y5cjaaIWUTEG+rGSVYJ6B+DqCzZbhoARmJ5ZVTBzufmbBpLgiI7GS3qwRR4
-DqqAq4Z/j5l30Fze0trQIZ28iwQPIEjANAeJM7gNSztTNJfetbIZW+4cSBX1u7tz
-Fua6Yv8u/ffpD6wJOrqLmPh/HyNxCZQIm2L5XSCjOp+L/ciEJEsjVl7fpzSp2yre
-C4ZBbEUkh1+rryN2bhTsvQ9bbhHDi1XxRXi55WPEBPvNJ0HVKTWXUB9xsUYWa8Or
-JNrCcMP/jp+5dBQu13BwDKx79QNgqRBRVnt4qJZQFJ7oK1qFWn+Noqkb66LWQpam
-T3QrEt4COtgbjD1nhfyIR/Z9pcjoLt6t/c9OaDiosTI0gUFkdHOrMX9ZNGn1Oy3r
-FtOAw3fsuLuLlwGlhBSS
-=xXjm
------END PGP SIGNATURE-----
-
---MnLPg7ZWsaic7Fhd--
