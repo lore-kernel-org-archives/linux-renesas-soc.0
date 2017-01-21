@@ -1,99 +1,87 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 11/20] drm: bridge: dw-hdmi: Remove PHY configuration resolution parameter
-Date: Tue, 17 Jan 2017 10:29:01 +0200
-Message-Id: <20170117082910.27023-12-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:36828 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbdAUTBZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 21 Jan 2017 14:01:25 -0500
+Subject: Re: [PATCH] watchdog: softdog: make pretimeout support a compile
+ option
+To: Wolfram Sang <wsa@the-dreams.de>
+References: <20170106084144.22324-1-wsa+renesas@sang-engineering.com>
+ <20170110175840.GB13904@roeck-us.net>
+ <20170119201452.hv3zkmlhiz7rzb44@ninjato>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Zapolskiy <vz@mleia.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <073c43b8-41ae-92c0-957a-0d57b6874066@roeck-us.net>
+Date: Sat, 21 Jan 2017 11:01:21 -0800
+MIME-Version: 1.0
+In-Reply-To: <20170119201452.hv3zkmlhiz7rzb44@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 01/19/2017 12:14 PM, Wolfram Sang wrote:
+>
+>>> +#if IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT)
+>>>  static void softdog_pretimeout(unsigned long data)
+>>
+>> I would prefer __maybe_unused here ..
+>>
+>>>  {
+>>>  	watchdog_notify_pretimeout(&softdog_dev);
+>>> @@ -82,16 +83,23 @@ static void softdog_pretimeout(unsigned long data)
+>>>  static struct timer_list softdog_preticktock =
+>>>  		TIMER_INITIALIZER(softdog_pretimeout, 0, 0);
+>>>
+>>> +static struct timer_list *softdog_preticktock_ptr = &softdog_preticktock;
+>>> +#else
+>>> +static void *softdog_preticktock_ptr = NULL;
+>>> +#endif /* CONFIG_SOFT_WATCHDOG_PRETIMEOUT */
+>>> +
+>>>  static int softdog_ping(struct watchdog_device *w)
+>>>  {
+>>>  	if (!mod_timer(&softdog_ticktock, jiffies + (w->timeout * HZ)))
+>>>  		__module_get(THIS_MODULE);
+>>>
+>>> -	if (w->pretimeout)
+>>> -		mod_timer(&softdog_preticktock, jiffies +
+>>> -			  (w->timeout - w->pretimeout) * HZ);
+>>> -	else
+>>> -		del_timer(&softdog_preticktock);
+>>> +	if (softdog_preticktock_ptr) {
+>>
+>> and "if (IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT))" here.
+>>
+>>> +		if (w->pretimeout)
+>>> +			mod_timer(softdog_preticktock_ptr, jiffies +
+>>> +				  (w->timeout - w->pretimeout) * HZ);
+>>> +		else
+>>> +			del_timer(softdog_preticktock_ptr);
+>>> +	}
+>>>
+>>>  	return 0;
+>>>  }
+>>> @@ -101,15 +109,15 @@ static int softdog_stop(struct watchdog_device *w)
+>>>  	if (del_timer(&softdog_ticktock))
+>>>  		module_put(THIS_MODULE);
+>>>
+>>> -	del_timer(&softdog_preticktock);
+>>> +	if (softdog_preticktock_ptr)
+>>
+>> Is this conditional needed (assuming we get rid of softdog_preticktock_ptr) ?
+>> Ok though if you want to use it to drop the code if not needed.
+>
+> Yes. I tried a few variations and this is the outcome which I liked
+> best, because it is quite readable, keeps all the extra stuff within one
+> block and has 0 size penalty when the feature is not enabled.
+>
+> I'd like to keep it this way unless you have a strong opinion.
+>
+>
+I personally prefer the use of IS_ENABLED over #ifdefs, because it ensures
+that the code always compiles, and it doesn't incur any runtime penalties either.
 
-The current code hard codes the call of hdmi_phy_configure() to be 8bpp
-and provides extraneous error checking to verify that this hardcoded
-value is correct. Simplify the implementation by removing the argument.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 27 +++++----------------------
- 1 file changed, 5 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 107fea49c4c6..b4fb0bd78910 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -930,31 +930,14 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
- }
- 
--static int hdmi_phy_configure(struct dw_hdmi *hdmi,
--			      unsigned char res, int cscon)
-+static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
- {
--	unsigned res_idx;
- 	u8 val, msec;
- 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
- 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
- 
--	switch (res) {
--	case 0:	/* color resolution 0 is 8 bit colour depth */
--	case 8:
--		res_idx = DW_HDMI_RES_8;
--		break;
--	case 10:
--		res_idx = DW_HDMI_RES_10;
--		break;
--	case 12:
--		res_idx = DW_HDMI_RES_12;
--		break;
--	default:
--		return -EINVAL;
--	}
--
- 	/* PLL/MPLL Cfg - always match on final entry */
- 	for (; mpll_config->mpixelclock != ~0UL; mpll_config++)
- 		if (hdmi->hdmi_data.video_mode.mpixelclock <=
-@@ -1004,11 +987,11 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi,
- 		    HDMI_PHY_I2CM_SLAVE_ADDR);
- 	hdmi_phy_test_clear(hdmi, 0);
- 
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].cpce, 0x06);
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[res_idx].gmp, 0x15);
-+	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce, 0x06);
-+	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp, 0x15);
- 
- 	/* CURRCTRL */
--	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[res_idx], 0x10);
-+	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0], 0x10);
- 
- 	hdmi_phy_i2c_write(hdmi, 0x0000, 0x13);  /* PLLPHBYCTRL */
- 	hdmi_phy_i2c_write(hdmi, 0x0006, 0x17);
-@@ -1068,7 +1051,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
- 		dw_hdmi_phy_enable_powerdown(hdmi, true);
- 
- 		/* Enable CSC */
--		ret = hdmi_phy_configure(hdmi, 8, cscon);
-+		ret = hdmi_phy_configure(hdmi, cscon);
- 		if (ret)
- 			return ret;
- 	}
--- 
-Regards,
-
-Laurent Pinchart
+Guenter
