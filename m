@@ -1,142 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34872 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751540AbdAWQEo (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:34706 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752287AbdAUAMh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 11:04:44 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 6/7] serial: sh-sci: make RX FIFO parameters tunable via sysfs
-Date: Mon, 23 Jan 2017 17:04:17 +0100
-Message-Id: <1485187458-8195-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 20 Jan 2017 19:12:37 -0500
+Date: Fri, 20 Jan 2017 16:12:34 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] clk: vc5: Add bindings for IDT VersaClock
+ 5P49V5923 and 5P49V5933
+Message-ID: <20170121001234.GH20800@codeaurora.org>
+References: <20170112010324.28068-1-marek.vasut@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170112010324.28068-1-marek.vasut@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
-only applicable to SCIFA and SCIFB).
+On 01/12, Marek Vasut wrote:
+> Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
+> These are I2C clock generators with optional clock source from
+> either XTal or dedicated clock generator and, depending on the
+> model, two or more clock outputs.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/sh-sci.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+Applied to clk-next
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 034041e..46b3e84 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1183,6 +1183,66 @@ static void rx_fifo_timer_fn(unsigned long arg)
- 	scif_set_rtrg(port, 1);
- }
- 
-+static ssize_t rx_trigger_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+
-+	return sprintf(buf, "%d\n", sci->rx_trigger);
-+}
-+
-+static ssize_t rx_trigger_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf,
-+				size_t count)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+	long r;
-+
-+	if (kstrtol(buf, 0, &r) == -EINVAL)
-+		return -EINVAL;
-+	sci->rx_trigger = scif_set_rtrg(port, r);
-+	scif_set_rtrg(port, 1);
-+	return count;
-+}
-+
-+static DEVICE_ATTR(rx_fifo_trigger, 0644, rx_trigger_show, rx_trigger_store);
-+
-+static ssize_t rx_fifo_timeout_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+
-+	return sprintf(buf, "%d\n", sci->rx_fifo_timeout);
-+}
-+
-+static ssize_t rx_fifo_timeout_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf,
-+				size_t count)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+	long r;
-+
-+	if (kstrtol(buf, 0, &r) == -EINVAL)
-+		return -EINVAL;
-+	sci->rx_fifo_timeout = r;
-+	scif_set_rtrg(port, 1);
-+	if (r > 0)
-+		setup_timer(&sci->rx_fifo_timer, rx_fifo_timer_fn,
-+			    (unsigned long)sci);
-+	return count;
-+}
-+
-+static DEVICE_ATTR(rx_fifo_timeout, 0644, rx_fifo_timeout_show, rx_fifo_timeout_store);
-+
-+
- #ifdef CONFIG_SERIAL_SH_SCI_DMA
- static void sci_dma_tx_complete(void *arg)
- {
-@@ -3030,6 +3090,15 @@ static int sci_remove(struct platform_device *dev)
- 
- 	sci_cleanup_single(port);
- 
-+	if (port->port.fifosize > 1) {
-+		sysfs_remove_file(&dev->dev.kobj,
-+				  &dev_attr_rx_fifo_trigger.attr);
-+	}
-+	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB) {
-+		sysfs_remove_file(&dev->dev.kobj,
-+				  &dev_attr_rx_fifo_timeout.attr);
-+	}
-+
- 	return 0;
- }
- 
-@@ -3195,6 +3264,24 @@ static int sci_probe(struct platform_device *dev)
- 	if (ret)
- 		return ret;
- 
-+	if (sp->port.fifosize > 1) {
-+		ret = sysfs_create_file(&dev->dev.kobj,
-+				&dev_attr_rx_fifo_trigger.attr);
-+		if (ret)
-+			return ret;
-+	}
-+	if (sp->port.type == PORT_SCIFA || sp->port.type ==  PORT_SCIFB) {
-+		ret = sysfs_create_file(&dev->dev.kobj,
-+				&dev_attr_rx_fifo_timeout.attr);
-+		if (ret) {
-+			if (sp->port.fifosize > 1) {
-+				sysfs_remove_file(&dev->dev.kobj,
-+					&dev_attr_rx_fifo_trigger.attr);
-+			}
-+			return ret;
-+		}
-+	}
-+
- #ifdef CONFIG_SH_STANDARD_BIOS
- 	sh_bios_gdb_detach();
- #endif
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
