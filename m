@@ -1,166 +1,97 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56091 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762039AbdAEKnr (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 05:43:47 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC v2 net-next] ravb: unmap descriptors when freeing rings
-Date: Thu,  5 Jan 2017 11:43:20 +0100
-Message-Id: <1483613000-537-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v5 3/3] ARM: dts: r7s72100: update sdhi clock bindings
+Date: Fri, 20 Jan 2017 22:06:04 -0500
+Message-Id: <20170121030604.7672-4-chris.brandt@renesas.com>
+In-Reply-To: <20170121030604.7672-1-chris.brandt@renesas.com>
+References: <20170121030604.7672-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+The SDHI controller in the RZ/A1 has 2 clock sources per channel and both
+need to be enabled/disabled for proper operation. This fixes the fact that
+the define for R7S72100_CLK_SDHI1 was not correct to begin with (typo), and
+that all 4 clock sources need to be defined an used.
 
-"swiotlb buffer is full" errors occur after repeated initialisation of a
-device - f.e. suspend/resume or ip link set up/down. This is because memory
-mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
-is not released.  Resolve this problem by unmapping descriptors when
-freeing rings.
-
-Note, ravb_tx_free() is moved but not otherwise modified by this patch.
-
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[simon: reworked]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
---
-v1 [Kazuya Mizuguchi]
-
-v2 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - Use dma_mapping_error() and rx_desc->ds_cc when unmapping RX descriptors;
-    this is consistent with the way that they are mapped
-  - Use ravb_tx_free() to clear TX descriptors
-* Reduce scope of new local variable
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 89 ++++++++++++++++++--------------
- 1 file changed, 51 insertions(+), 38 deletions(-)
+v2:
+* add missing clock sources instead of just fixing typo
+* changed clock name from "carddetect" to "cd"
+---
+ arch/arm/boot/dts/r7s72100.dtsi            | 17 ++++++++++++-----
+ include/dt-bindings/clock/r7s72100-clock.h |  6 ++++--
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 92d7692c840d..1797c48e3176 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -179,6 +179,44 @@ static struct mdiobb_ops bb_ops = {
- 	.get_mdio_data = ravb_get_mdio_data,
- };
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 3dd427d..9d0b8d0 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -153,9 +153,12 @@
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe0444 4>;
+-			clocks = <&p1_clk>, <&p1_clk>;
+-			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
+-			clock-output-names = "sdhi1", "sdhi0";
++			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
++			clock-indices = <
++				R7S72100_CLK_SDHI00 R7S72100_CLK_SDHI01
++				R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
++			>;
++			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
+ 		};
+ 	};
  
-+/* Free TX skb function for AVB-IP */
-+static int ravb_tx_free(struct net_device *ndev, int q)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	struct net_device_stats *stats = &priv->stats[q];
-+	struct ravb_tx_desc *desc;
-+	int free_num = 0;
-+	int entry;
-+	u32 size;
-+
-+	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
-+		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
-+					     NUM_TX_DESC);
-+		desc = &priv->tx_ring[q][entry];
-+		if (desc->die_dt != DT_FEMPTY)
-+			break;
-+		/* Descriptor type must be checked before all other reads */
-+		dma_rmb();
-+		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
-+		/* Free the original skb. */
-+		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
-+			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
-+					 size, DMA_TO_DEVICE);
-+			/* Last packet descriptor? */
-+			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
-+				entry /= NUM_TX_DESC;
-+				dev_kfree_skb_any(priv->tx_skb[q][entry]);
-+				priv->tx_skb[q][entry] = NULL;
-+				stats->tx_packets++;
-+			}
-+			free_num++;
-+		}
-+		stats->tx_bytes += size;
-+		desc->die_dt = DT_EEMPTY;
-+	}
-+	return free_num;
-+}
-+
- /* Free skb's and DMA buffers for Ethernet AVB */
- static void ravb_ring_free(struct net_device *ndev, int q)
- {
-@@ -207,6 +245,18 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 	priv->tx_align[q] = NULL;
+@@ -478,7 +481,9 @@
+ 			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
  
- 	if (priv->rx_ring[q]) {
-+		for (i = 0; i < priv->num_rx_ring[q]; i++) {
-+			struct ravb_ex_rx_desc *rx_desc = &priv->rx_ring[q][i];
-+
-+			if (!dma_mapping_error(ndev->dev.parent,
-+					       rx_desc->dptr)) {
-+				dma_unmap_single(ndev->dev.parent,
-+						 le32_to_cpu(rx_desc->dptr),
-+						 PKT_BUF_SZ,
-+						 DMA_FROM_DEVICE);
-+				rx_desc->ds_cc = cpu_to_le16(0);
-+			}
-+		}
- 		ring_size = sizeof(struct ravb_ex_rx_desc) *
- 			    (priv->num_rx_ring[q] + 1);
- 		dma_free_coherent(ndev->dev.parent, ring_size, priv->rx_ring[q],
-@@ -215,6 +265,7 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 	}
+-		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
++			 <&mstp12_clks R7S72100_CLK_SDHI01>;
++		clock-names = "core", "cd";
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
+@@ -491,7 +496,9 @@
+ 			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
  
- 	if (priv->tx_ring[q]) {
-+		ravb_tx_free(ndev, q);
- 		ring_size = sizeof(struct ravb_tx_desc) *
- 			    (priv->num_tx_ring[q] * NUM_TX_DESC + 1);
- 		dma_free_coherent(ndev->dev.parent, ring_size, priv->tx_ring[q],
-@@ -431,44 +482,6 @@ static int ravb_dmac_init(struct net_device *ndev)
- 	return 0;
- }
+-		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
++			 <&mstp12_clks R7S72100_CLK_SDHI11>;
++		clock-names = "core", "cd";
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index 29e01ed..f2d8428 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -45,7 +45,9 @@
+ #define R7S72100_CLK_SPI4	3
  
--/* Free TX skb function for AVB-IP */
--static int ravb_tx_free(struct net_device *ndev, int q)
--{
--	struct ravb_private *priv = netdev_priv(ndev);
--	struct net_device_stats *stats = &priv->stats[q];
--	struct ravb_tx_desc *desc;
--	int free_num = 0;
--	int entry;
--	u32 size;
--
--	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
--		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
--					     NUM_TX_DESC);
--		desc = &priv->tx_ring[q][entry];
--		if (desc->die_dt != DT_FEMPTY)
--			break;
--		/* Descriptor type must be checked before all other reads */
--		dma_rmb();
--		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
--		/* Free the original skb. */
--		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
--			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
--					 size, DMA_TO_DEVICE);
--			/* Last packet descriptor? */
--			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
--				entry /= NUM_TX_DESC;
--				dev_kfree_skb_any(priv->tx_skb[q][entry]);
--				priv->tx_skb[q][entry] = NULL;
--				stats->tx_packets++;
--			}
--			free_num++;
--		}
--		stats->tx_bytes += size;
--		desc->die_dt = DT_EEMPTY;
--	}
--	return free_num;
--}
--
- static void ravb_get_tx_tstamp(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
+ /* MSTP12 */
+-#define R7S72100_CLK_SDHI0	3
+-#define R7S72100_CLK_SDHI1	2
++#define R7S72100_CLK_SDHI00	3
++#define R7S72100_CLK_SDHI01	2
++#define R7S72100_CLK_SDHI10	1
++#define R7S72100_CLK_SDHI11	0
+ 
+ #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.1
+
+
