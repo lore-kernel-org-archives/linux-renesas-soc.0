@@ -1,48 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33368 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934917AbdAJKQj (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:38400 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751366AbdAUATx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 05:16:39 -0500
+        Fri, 20 Jan 2017 19:19:53 -0500
+Date: Fri, 20 Jan 2017 16:19:51 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Magnus <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Subject: Re: [PATCH] clk: cs2000: add Suspend/Redume feature
+Message-ID: <20170121001951.GK20800@codeaurora.org>
+References: <87pojvxve9.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
-References: <20161201220442.22057-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Jan 2017 11:16:37 +0100
-Message-ID: <CAMuHMdV42qhaWuW9AqxwHwabcbvx8-HBGZBYOu54CcRVFO3RuQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] thermal: add driver for R-Car Gen3
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pojvxve9.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+On 01/10, Kuninori Morimoto wrote:
+> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> 
+> CS2000 needs re-setup when redume, otherwise, it can't
+> handle correct clock rate.
+> 
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> [Kuninori: cleanup original patch]
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
 
-On Thu, Dec 1, 2016 at 11:04 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Here is the next series for adding thermal support to Renesas R-Car Gen3 SoCs.
-> All changes from last revision went into patch 2/4, so please check the
-> changelog there. This series has again been tested on Salvator-X boards with
-> H3 and M3-W SoCs. The updated branch can be found here:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/thermal-on-4.10-next
+Applied to clk-next
 
-Dropped from renesas-drivers, as Niklas provided a branch with the
-reworked version.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
