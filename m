@@ -1,60 +1,43 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170120220302.GA20610@bigcity.dyn.berto.se>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
- <1484921306-9967-5-git-send-email-geert+renesas@glider.be> <20170120220302.GA20610@bigcity.dyn.berto.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Jan 2017 11:14:11 +0100
-Message-ID: <CAMuHMdUu=FwygW168GLVp2JtKbbB_R2wQLzq_3_TxLiu5ww6kA@mail.gmail.com>
-Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:50022 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752431AbdAUAg1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 19:36:27 -0500
+Date: Fri, 20 Jan 2017 16:33:15 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Sender: linux-kernel-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
+Message-ID: <20170121003315.GV20800@codeaurora.org>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+ <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+On 01/20, Geert Uytterhoeven wrote:
+> Add optional support for the Reset Control feature of the Renesas Clock
+> Pulse Generator / Module Standby and Software Reset module on R-Car
+> Gen2, R-Car Gen3, and RZ/G1 SoCs.
+> 
+> This allows to reset SoC devices using the Reset Controller API.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-On Fri, Jan 20, 2017 at 11:03 PM, Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
-> Nice patch! It took me a while to understand why you didn't need to read
-> the register before writing to it in cpg_mssr_deassert() :-)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Yeah, deassertion and assertion are asymmetrical.
-
-Note that on older (not yet supported) SH/R-Mobile parts, there are no
-reset clear registers, and deassertion is symmetrical.
-
-> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
->
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
