@@ -1,103 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35550 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750843AbdAWJWh (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:55846 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750924AbdAUJhR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 04:22:37 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170121030604.7672-2-chris.brandt@renesas.com>
-References: <20170121030604.7672-1-chris.brandt@renesas.com> <20170121030604.7672-2-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Jan 2017 10:22:35 +0100
-Message-ID: <CAMuHMdWwqa7CbNCRr8q60hDVsj243-ZjHCPp+o9R2a6Dg7YNWQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
+        Sat, 21 Jan 2017 04:37:17 -0500
+Date: Sat, 21 Jan 2017 10:37:14 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Chris Brandt <chris.brandt@renesas.com>
 Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
+Message-ID: <20170121093714.GB1440@katana>
+References: <20170121030604.7672-1-chris.brandt@renesas.com>
+ <20170121030604.7672-2-chris.brandt@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="WYTEVAkct0FjGQmd"
+Content-Disposition: inline
+In-Reply-To: <20170121030604.7672-2-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
 
-On Sat, Jan 21, 2017 at 4:06 AM, Chris Brandt <chris.brandt@renesas.com> wrote:
+--WYTEVAkct0FjGQmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jan 20, 2017 at 10:06:02PM -0500, Chris Brandt wrote:
 > Some controllers have 2 clock sources instead of 1. The 2nd clock
 > is for the internal card detect logic and must be enabled/disabled
 > along with the main core clock for proper operation.
->
+>=20
 > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
-> v4:
-> * add technical explanation within probe routine
-> v3:
-> * add more clarification to the commit log
-> v2:
-> * changed clk2 to clk_cd
-> * disable clk if clk_cd enable fails
-> * changed clock name from "carddetect" to "cd"
 
-Thanks for the updates!
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> ---
->  drivers/mmc/host/sh_mobile_sdhi.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-> index 59db14b..360d922 100644
-> --- a/drivers/mmc/host/sh_mobile_sdhi.c
-> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
-> @@ -143,6 +143,7 @@ MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
->
->  struct sh_mobile_sdhi {
->         struct clk *clk;
-> +       struct clk *clk_cd;
->         struct tmio_mmc_data mmc_data;
->         struct tmio_mmc_dma dma_priv;
->         struct pinctrl *pinctrl;
-> @@ -190,6 +191,12 @@ static int sh_mobile_sdhi_clk_enable(struct tmio_mmc_host *host)
->         if (ret < 0)
->                 return ret;
->
-> +       ret = clk_prepare_enable(priv->clk_cd);
-> +       if (ret < 0) {
-> +               clk_disable_unprepare(priv->clk);
-> +               return ret;
-> +       }
-> +
 
-As enabling the "core" clock but not the "cd" clock is not a valid setting,
-shouldn't the cd clock be enabled first?
+--WYTEVAkct0FjGQmd
+Content-Type: application/pgp-signature; name="signature.asc"
 
->         /*
->          * The clock driver may not know what maximum frequency
->          * actually works, so it should be set with the max-frequency
-> @@ -255,6 +262,8 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
->         struct sh_mobile_sdhi *priv = host_to_priv(host);
->
->         clk_disable_unprepare(priv->clk);
-> +       if (priv->clk_cd)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-No need to check for a NULL pointer first.
+iQIcBAEBAgAGBQJYgyvKAAoJEBQN5MwUoCm2bQQP/3RJ25QxzpNnb8NhjfkZgy8y
+hp/y2QbVaWZyFj0DDR9xO3hegNCVVWuiPlUBOFp5Jy+z8jCSC5tVzZfayHQNCdxZ
+/3nDCO1xkS9KG3Hdov3swkQvfxGL/KwWmZ37jj7yxLv5sGtQgHTWP5HzEAoDDHsO
+Vt6wSIw5/7xcE0ELA2jMDmD8qFO9W4O01zl16ij8rmrO08X3dZVdlhjWnyoOlMsx
+Mp3s18Mb4KLyWf++Zh+gck99Q34x5ZOBKNejkXLLim70xRW/io4x0BHeIVkmfh+s
+FYWOXUD9M7wZ4113uMZVe/UFZluGWQ5K59UBpBXvjCB6UPWGGToJw85QSEIPwS/r
+K8jzxVB6rIP4iVH7sHrjKbbmJb3+CCHqGBqFxkSmKEwHCY2emP/iiw8GPsi4TU6v
+QtDnbeN/C5vIR7FtUS0+X3kyLYEnRG/uC34Td6G3Cfii/h4EBQ6HiUObX/crt3yb
+4Y4V4y4vdNe0Uz236TlSOdowCxnOIMMTn2v+e+mjlP9zHpmCCsTPcBDu44iEFhGt
+xxM4OZeeMRjyM3gagYaMm5z3O3zDDypZiqe9PFk6j1gd/HSclTnoLblIabr2zmlm
+MEJaPfCmujCivWT9n32SmThsnEg1MwulBqWiK1ya0gPuIpTfg/sVY6pvz25C9aex
+JRIEc48y4lw5Yjux7IS8
+=Rwmc
+-----END PGP SIGNATURE-----
 
-> +               clk_disable_unprepare(priv->clk_cd);
-
-Disabling is already done in the correct order ;-)
-
->  }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--WYTEVAkct0FjGQmd--
