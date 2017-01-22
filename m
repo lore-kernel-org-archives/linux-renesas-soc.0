@@ -1,44 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36168 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936998AbdAJMmB (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42593 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750973AbdAVONv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 07:42:01 -0500
-Received: by mail-io0-f196.google.com with SMTP id q20so11288077ioi.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Jan 2017 04:42:00 -0800 (PST)
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Jan 2017 13:41:54 +0100
-Message-ID: <CAMuHMdXJVRmOCMVmaS_O28c2x2YinqXCK1-Z3bNzRckWo7YJ3Q@mail.gmail.com>
-Subject: DRM range manger test failures
-To: Chris Wilson <chris@chris-wilson.co.uk>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: DRI Development <dri-devel@lists.freedesktop.org>,
+        Sun, 22 Jan 2017 09:13:51 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH v2 2/3] ARM: dts: r7s72100: add ostm to device tree
+Date: Sun, 22 Jan 2017 14:13:08 +0000
+Message-ID: <SG2PR06MB11650A7C8014AB5880E1BED28A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170120212055.4157-1-chris.brandt@renesas.com>
+ <20170120212055.4157-3-chris.brandt@renesas.com>
+ <CAMuHMdXQCqs4bCR8o+BC5ak0rE64bQOEz65udFntcQSRkU6+cw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXQCqs4bCR8o+BC5ak0rE64bQOEz65udFntcQSRkU6+cw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris, Laurent,
-
-On R-Car Gen2 (Koelsch) and Gen3 (Salvator-X), the new DRM range
-manager selftests fail with:
-
-    drm_mm: Testing DRM range manger (struct drm_mm), with
-random_seed=0x83a9b910 max_iterations=8192 max_prime=128
-    drm_mm: igt_sanitycheck - ok!
-    drm_mm: node has wrong color, found 0, expected 1
-    drm_mm: default insert failed, size 1 step 1
-
-I have no idea what this means.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGVsbG8gR2VlcnQsDQoNCk9uIFN1bmRheSwgSmFudWFyeSAyMiwgMjAxNywgR2VlcnQgVXl0dGVy
+aG9ldmVuIHdyb3RlOg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9yN3M3MjEw
+MC5kdHNpDQo+ID4gYi9hcmNoL2FybS9ib290L2R0cy9yN3M3MjEwMC5kdHNpIGluZGV4IGQ1OTQ2
+ZGYuLjQ3YjIxNjUgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvcjdzNzIxMDAu
+ZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I3czcyMTAwLmR0c2kNCj4gPiBAQCAt
+NTA1LDQgKzUwNSwyMCBAQA0KPiA+ICAgICAgICAgICAgICAgICBjYXAtc2Rpby1pcnE7DQo+ID4g
+ICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4gICAgICAgICB9Ow0KPiA+
+ICsNCj4gPiArICAgICAgIG9zdG0wOiBvc3RtQGZjZmVjMDAwIHsNCj4gPiArICAgICAgICAgICAg
+ICAgY29tcGF0aWJsZSA9ICJyZW5lc2FzLHI3czcyMTAwLW9zdG0iLCAicmVuZXNhcyxvc3RtIjsN
+Cj4gPiArICAgICAgICAgICAgICAgcmVnID0gPDB4ZmNmZWMwMDAgMHgzMD47DQo+ID4gKyAgICAg
+ICAgICAgICAgIGludGVycnVwdHMgPSA8R0lDX1NQSSAxMDIgSVJRX1RZUEVfRURHRV9SSVNJTkc+
+Ow0KPiA+ICsgICAgICAgICAgICAgICBjbG9ja3MgPSA8Jm1zdHA1X2Nsa3MgUjdTNzIxMDBfQ0xL
+X09TVE0wPjsNCj4gDQo+IE1pc3NpbmcgcG93ZXItZG9tYWlucyBwcm9wZXJ0eToNCj4gDQo+ICAg
+ICAgICAgcG93ZXItZG9tYWlucyA9IDwmY3BnX2Nsb2Nrcz47DQo+IA0KPiA+ICsgICAgICAgICAg
+ICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiA+ICsgICAgICAgfTsNCj4gPiArDQo+ID4gKyAg
+ICAgICBvc3RtMTogb3N0bUBmY2ZlYzQwMCB7DQo+ID4gKyAgICAgICAgICAgICAgIGNvbXBhdGli
+bGUgPSAicmVuZXNhcyxyN3M3MjEwMC1vc3RtIiwgInJlbmVzYXMsb3N0bSI7DQo+ID4gKyAgICAg
+ICAgICAgICAgIHJlZyA9IDwweGZjZmVjNDAwIDB4MzA+Ow0KPiA+ICsgICAgICAgICAgICAgICBp
+bnRlcnJ1cHRzID0gPEdJQ19TUEkgMTAzIElSUV9UWVBFX0VER0VfUklTSU5HPjsNCj4gPiArICAg
+ICAgICAgICAgICAgY2xvY2tzID0gPCZtc3RwNV9jbGtzIFI3UzcyMTAwX0NMS19PU1RNMT47DQo+
+IA0KPiBMaWtld2lzZS4NCg0KT0suIFRoYW5rIHlvdS4NCg0KDQo+IEJUVywgdGhleSdyZSBhbHNv
+IG1pc3NpbmcgZm9yIHRoZSBsYXN0IGFkZGVkIGRldmljZSBub2RlcyAoTU1DIGFuZCBTREhJKS4N
+Cg0KT0ssIEkgd2lsbCBzdWJtaXQgcGF0Y2hlcyBmb3IgdGhlbSBhcyB3ZWxsLg0KDQpUaGFuayB5
+b3UgZm9yIHRoZSByZXZpZXcuDQoNCkNocmlzDQoNCg==
