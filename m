@@ -1,45 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59295 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754766AbdA0JOk (ORCPT
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:40253 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750968AbdAVNVq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:14:40 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] arm64: dts: r8a7795: Add missing power-domains property for sata
-Date: Fri, 27 Jan 2017 10:14:24 +0100
-Message-Id: <2cab226c345378b3cff652a9c8232f5070d31216.1485508214.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1485508214.git.horms+renesas@verge.net.au>
-References: <cover.1485508214.git.horms+renesas@verge.net.au>
+        Sun, 22 Jan 2017 08:21:46 -0500
+Subject: Re: [PATCHv5 2/2] dt-bindings: iio: document MAX11100 ADC
+To: Rob Herring <robh@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+References: <1484757053-7102-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1484757053-7102-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20170121203307.3ylfbh3xlhp5mkjs@rob-hp-laptop>
+Cc: wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        marek.vasut@gmail.com, geert@linux-m68k.org, mark.rutland@arm.com,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <d1ed3238-cba8-b53f-b178-f51445acd207@kernel.org>
+Date: Sun, 22 Jan 2017 13:21:43 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170121203307.3ylfbh3xlhp5mkjs@rob-hp-laptop>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 21/01/17 20:33, Rob Herring wrote:
+> On Wed, Jan 18, 2017 at 05:30:53PM +0100, Jacopo Mondi wrote:
+>> Add device tree bindings documentation for Maxim MAX11100 single-channel
+>> ADC
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
+>>  .../devicetree/bindings/iio/adc/max11100.txt          | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/iio/adc/max11100.txt
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+Thanks and added.
 
-This went unnoticed as the sata_rcar driver doesn't support Runtime PM
-yet, but manages module clocks manually.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 972e379c0596..026a16ac41b4 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1148,6 +1148,7 @@
- 			reg = <0 0xee300000 0 0x1fff>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 815>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
--- 
-2.7.0.rc3.207.g0ac5344
+Jonathan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
