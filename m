@@ -1,48 +1,73 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 27 Jan 2017 12:47:24 +0100
-From: Joerg Roedel <joro@8bytes.org>
+MIME-Version: 1.0
+In-Reply-To: <148517162908.13306.2467186615655446796.sendpatchset@little-apple>
+References: <148517158986.13306.314435910710426381.sendpatchset@little-apple> <148517162908.13306.2467186615655446796.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 13:42:15 +0100
+Message-ID: <CAMuHMdXc6iMgnN9GCgu4DecX2HVbReu_4=cb+6_LMD39=DYnMA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: iommu@lists.linux-foundation.org,
-        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au
-Subject: Re: [PATCH v2 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to
- 48
-Message-ID: <20170127114724.GI27598@8bytes.org>
-References: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
- <148517162908.13306.2467186615655446796.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <148517162908.13306.2467186615655446796.sendpatchset@little-apple>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 23, 2017 at 08:40:29PM +0900, Magnus Damm wrote:
+Hi Magnus,
+
+On Mon, Jan 23, 2017 at 12:40 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
 > From: Magnus Damm <damm+renesas@opensource.se>
-> 
+>
 > Bump up the maximum numbers of micro-TLBS to 48.
-> 
+>
 > Each IPMMU device instance get micro-TLB assignment via
 > the "iommus" property in DT. Older SoCs tend to use a
 > maximum number of 32 micro-TLBs per IPMMU instance however
 > newer SoCs such as r8a7796 make use of up to 48 micro-TLBs.
-> 
+>
 > At this point no SoC specific handling is done to validate
 > the maximum number of micro-TLBs, and because of that the
 > DT information is assumed to be within correct range for
 > each particular SoC.
-> 
+>
 > If needed in the future SoC specific feature flags can be
 > added to handle the maximum number of micro-TLBs without
 > requiring DT changes, however at this point this does not
 > seem necessary.
-> 
+>
 > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-I get a conflict when applying this to v4.10-rc5. What is this based on,
-any patches I missed?
+Thanks for your patch!
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-	Joerg
+> @@ -1141,7 +1145,7 @@ static int ipmmu_probe(struct platform_d
+>         }
+>
+>         mmu->dev = &pdev->dev;
+> -       mmu->num_utlbs = 32;
+> +       mmu->num_utlbs = 48;
+
+This value is only used to validate the utlb channel numbers received from DT,
+in ipmmu_init_platform_device(), right?
+
+>         spin_lock_init(&mmu->lock);
+>         bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+>         mmu->features = match->data;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
