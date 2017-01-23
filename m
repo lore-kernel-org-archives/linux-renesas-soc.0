@@ -1,70 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from newton.telenet-ops.be ([195.130.132.45]:38400 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbdAQNhA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 08:37:00 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 3v2qd63fmFzMs5G9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2017 13:47:38 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] clk: renesas: cpg-mssr: Migrate to CLK_IS_CRITICAL
-Date: Tue, 17 Jan 2017 13:46:29 +0100
-Message-Id: <1484657190-12838-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
-References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 23 Jan 2017 20:40:19 +0900
+Message-Id: <148517161983.13306.12375123408367009131.sendpatchset@little-apple>
+In-Reply-To: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
+References: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
+Subject: [PATCH v2 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the Renesas CPG/MSSR driver was introduced, it was anticipated that
-critical clocks would be handled through a new CLK_ENABLE_HAND_OFF flag
-soon.  However, CLK_ENABLE_HAND_OFF never made it upstream.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Instead, commit 32b9b10961860860 ("clk: Allow clocks to be marked as
-CRITICAL") introduced CLK_IS_CRITICAL, a flag with slightly differing
-semantics.  Still, it can be used to prevent e.g. the GIC module clock
-from being turned off, until the GIC-400 driver has full support for
-Runtime PM.
+Update the IPMMU DT binding documentation to include the r8a7796 compat
+string for R-Car M3-W.
 
-Hence migrate the Renesas CPG/MSSR driver from CLK_ENABLE_HAND_OFF to
-CLK_IS_CRITICAL.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Should this have a Fixes tag? ;-)
 
-Fixes: 32b9b10961860860 ("clk: Allow clocks to be marked as CRITICAL")
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ Previously posted separately as
+ [PATCH v3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 8359ce75db7aa4fb..6947482d48a55094 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -346,17 +346,10 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
- 	for (i = 0; i < info->num_crit_mod_clks; i++)
- 		if (id == info->crit_mod_clks[i]) {
--#ifdef CLK_ENABLE_HAND_OFF
--			dev_dbg(dev, "MSTP %s setting CLK_ENABLE_HAND_OFF\n",
-+			dev_dbg(dev, "MSTP %s setting CLK_IS_CRITICAL\n",
- 				mod->name);
--			init.flags |= CLK_ENABLE_HAND_OFF;
-+			init.flags |= CLK_IS_CRITICAL;
- 			break;
--#else
--			dev_dbg(dev, "Ignoring MSTP %s to prevent disabling\n",
--				mod->name);
--			kfree(clock);
--			return;
--#endif
- 		}
+ Changes since separate V3 version:
+ - Added Acked-by from Geert - thanks!
+
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2016-06-06 11:27:37.560607110 +0900
+@@ -16,6 +16,7 @@ Required Properties:
+     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
+     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
++    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
+     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
  
- 	parent_name = __clk_get_name(parent);
--- 
-1.9.1
+   - reg: Base address and size of the IPMMU registers.
