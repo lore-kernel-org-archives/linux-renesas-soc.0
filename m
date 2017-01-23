@@ -1,83 +1,220 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:49322 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbdAaMIx (ORCPT
+Received: from mail-wj0-f195.google.com ([209.85.210.195]:33618 "EHLO
+        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbdAWQEm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 07:08:53 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2] v4l: of: check for unique lanes in data-lanes and clock-lanes
-Date: Tue, 31 Jan 2017 13:08:31 +0100
-Message-Id: <20170131120831.11283-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 23 Jan 2017 11:04:42 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 5/7] serial: sh-sci: SCIFA/B RX FIFO software timeout
+Date: Mon, 23 Jan 2017 17:04:16 +0100
+Message-Id: <1485187458-8195-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All lanes in data-lanes and clock-lanes properties should be unique. Add
-a check for this in v4l2_of_parse_csi_bus() and print a warning if
-duplicated lanes are found.
+Implements support for FIFO fill thresholds greater than one with software
+timeout.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This mechanism is not possible (or at least not useful) on SCIF family
+hardware other than SCIFA and SCIFB because they do not support turning off
+the DR hardware timeout interrupt separately from the RI interrupt.
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
+ drivers/tty/serial/sh-sci.c | 102 ++++++++++++++++++++++++++++++--------------
+ 1 file changed, 69 insertions(+), 33 deletions(-)
 
-Changes since v1:
-
-- Do not return -EINVAL if a duplicate is found. Sakari pointed out 
-  there are drivers where the number of lanes matter but not the actual 
-  lane numbers. Updated commit message to highlight that only a warning 
-  is printed.
-- Switched to a bitmask to track lanes used instead of a nested loop, 
-  thanks Laurent for the suggestion.
-
-
- drivers/media/v4l2-core/v4l2-of.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
-index 93b33681776ca427..4f59f442dd0a64c9 100644
---- a/drivers/media/v4l2-core/v4l2-of.c
-+++ b/drivers/media/v4l2-core/v4l2-of.c
-@@ -26,7 +26,7 @@ static int v4l2_of_parse_csi_bus(const struct device_node *node,
- 	struct v4l2_of_bus_mipi_csi2 *bus = &endpoint->bus.mipi_csi2;
- 	struct property *prop;
- 	bool have_clk_lane = false;
--	unsigned int flags = 0;
-+	unsigned int flags = 0, lanes_used = 0;
- 	u32 v;
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index c7e2d0d..034041e 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -141,7 +141,10 @@ struct sci_port {
+ 	struct timer_list		rx_timer;
+ 	unsigned int			rx_timeout;
+ #endif
++	unsigned int			rx_frame;
+ 	int				rx_trigger;
++	struct timer_list		rx_fifo_timer;
++	int				rx_fifo_timeout;
  
- 	prop = of_find_property(node, "data-lanes", NULL);
-@@ -38,6 +38,12 @@ static int v4l2_of_parse_csi_bus(const struct device_node *node,
- 			lane = of_prop_next_u32(prop, lane, &v);
- 			if (!lane)
- 				break;
+ 	bool autorts;
+ };
+@@ -1162,6 +1165,24 @@ static int scif_set_rtrg(struct uart_port *port, int rx_trig)
+ 	return rx_trig;
+ }
+ 
++static int scif_rtrg_enabled(struct uart_port *port)
++{
++	if (sci_getreg(port, HSRTRGR)->size)
++		return serial_port_in(port, HSRTRGR) != 0;
++	else
++		return (serial_port_in(port, SCFCR) &
++			(SCFCR_RTRG0 | SCFCR_RTRG1)) != 0;
++}
 +
-+			if (lanes_used & BIT(v))
-+				pr_warn("%s: duplicated lane %u in data-lanes\n",
-+					node->full_name, v);
-+			lanes_used |= BIT(v);
++static void rx_fifo_timer_fn(unsigned long arg)
++{
++	struct sci_port *s = (struct sci_port *)arg;
++	struct uart_port *port = &s->port;
 +
- 			bus->data_lanes[i] = v;
- 		}
- 		bus->num_data_lanes = i;
-@@ -63,6 +69,11 @@ static int v4l2_of_parse_csi_bus(const struct device_node *node,
++	dev_dbg(port->dev, "Rx timed out\n");
++	scif_set_rtrg(port, 1);
++}
++
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
+ static void sci_dma_tx_complete(void *arg)
+ {
+@@ -1608,9 +1629,9 @@ static inline void sci_free_dma(struct uart_port *port)
+ 
+ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+ {
+-#ifdef CONFIG_SERIAL_SH_SCI_DMA
+ 	struct uart_port *port = ptr;
+ 	struct sci_port *s = to_sci_port(port);
++#ifdef CONFIG_SERIAL_SH_SCI_DMA
+ 
+ 	if (s->chan_rx) {
+ 		u16 scr = serial_port_in(port, SCSCR);
+@@ -1636,6 +1657,14 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+ 	}
+ #endif
+ 
++	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0) {
++		if (!scif_rtrg_enabled(port))
++			scif_set_rtrg(port, s->rx_trigger);
++
++		mod_timer(&s->rx_fifo_timer, jiffies + DIV_ROUND_UP(
++			  s->rx_frame * s->rx_fifo_timeout, 1000));
++	}
++
+ 	/* I think sci_receive_chars has to be called irrespective
+ 	 * of whether the I_IXOFF is set, otherwise, how is the interrupt
+ 	 * to be disabled?
+@@ -2221,14 +2250,20 @@ static void sci_reset(struct uart_port *port)
+ 		serial_port_out(port, SCLSR, status);
  	}
  
- 	if (!of_property_read_u32(node, "clock-lanes", &v)) {
-+		if (lanes_used & BIT(v))
-+			pr_warn("%s: duplicated lane %u in clock-lanes\n",
-+				node->full_name, v);
-+		lanes_used |= BIT(v);
-+
- 		bus->clock_lane = v;
- 		have_clk_lane = true;
+-	if (s->rx_trigger > 1)
+-		scif_set_rtrg(port, s->rx_trigger);
++	if (s->rx_trigger > 1) {
++		if (s->rx_fifo_timeout) {
++			scif_set_rtrg(port, 1);
++			setup_timer(&s->rx_fifo_timer, rx_fifo_timer_fn,
++				    (unsigned long)s);
++		} else
++			scif_set_rtrg(port, s->rx_trigger);
++	}
+ }
+ 
+ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			    struct ktermios *old)
+ {
+-	unsigned int baud, smr_val = SCSMR_ASYNC, scr_val = 0, i;
++	unsigned int baud, smr_val = SCSMR_ASYNC, scr_val = 0, i, bits;
+ 	unsigned int brr = 255, cks = 0, srr = 15, dl = 0, sccks = 0;
+ 	unsigned int brr1 = 255, cks1 = 0, srr1 = 15, dl1 = 0;
+ 	struct sci_port *s = to_sci_port(port);
+@@ -2427,7 +2462,6 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		udelay(DIV_ROUND_UP(10 * 1000000, baud));
  	}
+ 
+-#ifdef CONFIG_SERIAL_SH_SCI_DMA
+ 	/*
+ 	 * Calculate delay for 2 DMA buffers (4 FIFO).
+ 	 * See serial_core.c::uart_update_timeout().
+@@ -2438,36 +2472,34 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	 * value obtained by this formula is too small. Therefore, if the value
+ 	 * is smaller than 20ms, use 20ms as the timeout value for DMA.
+ 	 */
+-	if (s->chan_rx) {
+-		unsigned int bits;
++	/* byte size and parity */
++	switch (termios->c_cflag & CSIZE) {
++	case CS5:
++		bits = 7;
++		break;
++	case CS6:
++		bits = 8;
++		break;
++	case CS7:
++		bits = 9;
++		break;
++	default:
++		bits = 10;
++		break;
++	}
+ 
+-		/* byte size and parity */
+-		switch (termios->c_cflag & CSIZE) {
+-		case CS5:
+-			bits = 7;
+-			break;
+-		case CS6:
+-			bits = 8;
+-			break;
+-		case CS7:
+-			bits = 9;
+-			break;
+-		default:
+-			bits = 10;
+-			break;
+-		}
++	if (termios->c_cflag & CSTOPB)
++		bits++;
++	if (termios->c_cflag & PARENB)
++		bits++;
+ 
+-		if (termios->c_cflag & CSTOPB)
+-			bits++;
+-		if (termios->c_cflag & PARENB)
+-			bits++;
+-		s->rx_timeout = DIV_ROUND_UP((s->buf_len_rx * 2 * bits * HZ) /
+-					     (baud / 10), 10);
+-		dev_dbg(port->dev, "DMA Rx t-out %ums, tty t-out %u jiffies\n",
+-			s->rx_timeout * 1000 / HZ, port->timeout);
+-		if (s->rx_timeout < msecs_to_jiffies(20))
+-			s->rx_timeout = msecs_to_jiffies(20);
+-	}
++	s->rx_frame = (100 * bits * HZ) / (baud / 10);
++#ifdef CONFIG_SERIAL_SH_SCI_DMA
++	s->rx_timeout = DIV_ROUND_UP(s->buf_len_rx * 2 * s->rx_frame, 1000);
++	dev_dbg(port->dev, "DMA Rx t-out %ums, tty t-out %u jiffies\n",
++		s->rx_timeout * 1000 / HZ, port->timeout);
++	if (s->rx_timeout < msecs_to_jiffies(20))
++		s->rx_timeout = msecs_to_jiffies(20);
+ #endif
+ 
+ 	if ((termios->c_cflag & CREAD) != 0)
+@@ -2727,6 +2759,7 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->overrun_reg = SCxSR;
+ 		sci_port->overrun_mask = SCIFA_ORER;
+ 		sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
++		sci_port->rx_trigger = 48;
+ 		break;
+ 	case PORT_HSCIF:
+ 		port->fifosize = 128;
+@@ -2740,6 +2773,7 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->overrun_reg = SCxSR;
+ 		sci_port->overrun_mask = SCIFA_ORER;
+ 		sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
++		sci_port->rx_trigger = 32;
+ 		break;
+ 	case PORT_SCIF:
+ 		if (p->regtype == SCIx_SH7705_SCIF_REGTYPE) {
+@@ -2766,6 +2800,8 @@ static int sci_init_single(struct platform_device *dev,
+ 		break;
+ 	}
+ 
++	sci_port->rx_fifo_timeout = 0;
++
+ 	/* SCIFA on sh7723 and sh7724 need a custom sampling rate that doesn't
+ 	 * match the SoC datasheet, this should be investigated. Let platform
+ 	 * data override the sampling rate for now.
 -- 
-2.11.0
+2.7.4
