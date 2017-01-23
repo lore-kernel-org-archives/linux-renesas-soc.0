@@ -1,77 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:45805 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751000AbdAQUAQ (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33803 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbdAWJfM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 15:00:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
-Date: Tue, 17 Jan 2017 14:59:38 -0500
-Message-Id: <20170117195940.25092-2-chris.brandt@renesas.com>
-In-Reply-To: <20170117195940.25092-1-chris.brandt@renesas.com>
-References: <20170117195940.25092-1-chris.brandt@renesas.com>
+        Mon, 23 Jan 2017 04:35:12 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170120230000.GC8009@codeaurora.org>
+References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be> <20170120230000.GC8009@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 10:34:43 +0100
+Message-ID: <CAMuHMdUG40hrefKvu5HSRv0rTEo68kTcEh4JMLb5jyY3pmn-bQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: renesas: Use CLK_IS_CRITICAL to handle critical clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some controllers have 2 clock sources instead of 1, so they both need
-to be turned on/off.
+Hi Stephen,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/mmc/host/sh_mobile_sdhi.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On Sat, Jan 21, 2017 at 12:00 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/17, Geert Uytterhoeven wrote:
+>> This patch series adds support for the CLK_IS_CRITICAL flag to drivers
+>> for module clocks on Renesas ARM SoCs.  For now, this is used to prevent
+>> disabling of the ARM GIC module clock, which would lead to a system
+>> lock-up when accessing the GIC's registers.
+>>
+>>   1. The first patch migrates the Renesas CPG/MSSR driver from the
+>>      never merged CLK_ENABLE_HAND_OFF flag to the CLK_IS_CRITICAL flag.
+>>      Note that as the driver already handled critical clocks (i.e. it
+>>      ignored them :-), this is not a prerequisite for linking the GIC to
+>>      its module clock in DT.
+>>
+>>   2. The second patch makes sure the CLK_IS_CRITICAL flag is set for the
+>>      INTC-SYS clock on SoCs not (yet) using the Renesas CPG/MSSR driver.
+>>      Note that this is a hard dependency for describing the INTC-SYS
+>>      clock in DT on R-Mobile APE6 and R-Car Gen2.
+>>
+>> I plan to queue these patches in my clk-renesas-for-v4.11 branch, if
+>> you agree.
+>
+> Would the runtime PM patches for ccf make things any better here?
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 59db14b..5ad5744 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -143,6 +143,7 @@ MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
- 
- struct sh_mobile_sdhi {
- 	struct clk *clk;
-+	struct clk *clk2;
- 	struct tmio_mmc_data mmc_data;
- 	struct tmio_mmc_dma dma_priv;
- 	struct pinctrl *pinctrl;
-@@ -190,6 +191,10 @@ static int sh_mobile_sdhi_clk_enable(struct tmio_mmc_host *host)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = clk_prepare_enable(priv->clk2);
-+	if (ret < 0)
-+		return ret;
-+
- 	/*
- 	 * The clock driver may not know what maximum frequency
- 	 * actually works, so it should be set with the max-frequency
-@@ -255,6 +260,8 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
- 	struct sh_mobile_sdhi *priv = host_to_priv(host);
- 
- 	clk_disable_unprepare(priv->clk);
-+	if (priv->clk2)
-+		clk_disable_unprepare(priv->clk2);
- }
- 
- static int sh_mobile_sdhi_card_busy(struct mmc_host *mmc)
-@@ -572,6 +579,10 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 		goto eprobe;
- 	}
- 
-+	priv->clk2 = devm_clk_get(&pdev->dev, "carddetect");
-+	if (IS_ERR(priv->clk2))
-+		priv->clk2 = NULL;
-+
- 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
- 	if (!IS_ERR(priv->pinctrl)) {
- 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
--- 
-2.10.1
+It won't make much of a difference, as typically you'll want the GIC running
+all the time anyway, also for wake-up sources.
+We just have to make sure it's not disabled indefinitely.
+
+As such it's different from a real critical clock that kills the system
+immediately (e.g. some secret core clock): you can disable the GIC clock,
+just make sure to enable it again (and have a means to re-enable it, without
+relying on interrupts ;-)
+
+The only difference with a real critical clock is that you
+> I still plan to support CLK_ENABLE_HAND_OFF somehow, but it's not
+> at the top of my priority list right now.
+
+Good, we can convert back later, perhaps when the GIC driver is ready to
+support PM for non-secondary GICs...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
