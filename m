@@ -1,40 +1,36 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34770 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750705AbdAWPMS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 10:12:18 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170123141349.29844-1-chris.brandt@renesas.com>
-References: <20170123141349.29844-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Jan 2017 16:12:16 +0100
-Message-ID: <CAMuHMdULpxoNaTUX2Dc7R=d+FUb_V45H9=XXfsW3RKBTowE4Uw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r7s72100: add power-domains to mmcif
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] ARM: dts: r7s72100: add power-domains to mmcif
+Date: Mon, 23 Jan 2017 09:13:49 -0500
+Message-Id: <20170123141349.29844-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 23, 2017 at 3:13 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 3dd427d..354f4b6 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -466,6 +466,7 @@
+ 			      GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R7S72100_CLK_MMCIF>;
++		power-domains = <&cpg_clocks>;
+ 		reg-io-width = <4>;
+ 		bus-width = <8>;
+ 		status = "disabled";
+-- 
+2.10.1
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
