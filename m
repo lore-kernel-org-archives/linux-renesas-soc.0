@@ -1,191 +1,558 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Date: Mon, 23 Jan 2017 18:52:10 +0100
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 2/2] clocksource: Add renesas-ostm timer driver
-Date: Tue, 24 Jan 2017 04:45:47 +0000
-Message-ID: <SG2PR06MB11657AE9653A4B66B1EA02718A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] clocksource: Add renesas-ostm timer driver
+Message-ID: <20170123175210.GH2166@mai>
 References: <20170123135423.28780-1-chris.brandt@renesas.com>
- <20170123135423.28780-3-chris.brandt@renesas.com> <20170123175210.GH2166@mai>
-In-Reply-To: <20170123175210.GH2166@mai>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <20170123135423.28780-3-chris.brandt@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170123135423.28780-3-chris.brandt@renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gRGFuaWVsLA0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXcuDQpZb3VyIHN1Z2dlc3Rp
-b25zIHdlcmUgdmVyeSBoZWxwZnVsIHRvIG1lLg0KDQpJIGJhc2ljYWxseSBtYWRlIGFsbCB0aGUg
-Y2hhbmdlcywgYnV0IEkgaGFkIHNvbWUgcXVlc3Rpb25zIG9uDQp0aGUgS2NvbmZpZyBhbmQgbXVs
-dGktbGluZSBjb21tZW50aW5nLg0KDQoNCk9uIE1vbmRheSwgSmFudWFyeSAyMywgMjAxNywgRGFu
-aWVsIExlemNhbm8gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIGEgT1NUTSBkcml2ZXIgZm9y
-IHRoZSBSZW5lc2FzIGFyY2hpdGVjdHVyZS4NCj4gDQo+IEFzIGl0IGlzIGEgbmV3IGRyaXZlciwg
-cGxlYXNlIGdpdmUgdGVjaG5pY2FsIGRldGFpbHMgZm9yIHRoZSBsb2cuDQoNCk9LLg0KDQoNCj4g
-UmVwbGFjZSBpb3JlYWQvd3JpdGUgYnkgcmVhZGwvd3JpdGVsIGluIHRoZSBjb2RlLg0KDQpPSy4N
-Cg0KDQo+ID4gQEAgLTQ2Nyw2ICs0NzAsMTUgQEAgY29uZmlnIFNIX1RJTUVSX01UVTINCj4gPiAg
-CSAgVGltZXIgUHVsc2UgVW5pdCAyIChNVFUyKSBoYXJkd2FyZSBhdmFpbGFibGUgb24gU29DcyBm
-cm9tIFJlbmVzYXMuDQo+ID4gIAkgIFRoaXMgaGFyZHdhcmUgY29tZXMgd2l0aCAxNiBiaXQtdGlt
-ZXIgcmVnaXN0ZXJzLg0KPiA+DQo+ID4gK2NvbmZpZyBSRU5FU0FTX09TVE0NCj4gPiArCWJvb2wg
-IlJlbmVzYXMgT1NUTSB0aW1lciBkcml2ZXIiIGlmIENPTVBJTEVfVEVTVA0KPiA+ICsJZGVwZW5k
-cyBvbiBHRU5FUklDX0NMT0NLRVZFTlRTDQo+ID4gKwlzZWxlY3QgQ0xLU1JDX01NSU8NCj4gPiAr
-CWRlZmF1bHQgU1lTX1NVUFBPUlRTX1JFTkVTQVNfT1NUTQ0KPiANCj4gLSBkZWZhdWx0IFNZU19T
-VVBQT1JUU19SRU5FU0FTX09TVE0NCj4gDQo+IEV4Y2VwdCBJIG1pc3Npbmcgc29tZXRoaW5nLCBJ
-IGRvbicgdGhlIHBvaW50IG9mIGhhdmluZyB0aGlzIGludGVybWVkaWF0ZQ0KPiBjb25maWcgb3B0
-aW9uLg0KDQpJIHdhcyBiYXNpY2FsbHkgZm9sbG93aW5nIHdoYXQgYWxsIHRoZSBvdGhlciBjbG9j
-a3NvdXJjZSBkcml2ZXJzIGRvLg0KU2VsZWN0aW5nIGFuIEFSQ0ggd2lsbCB0aGVuIHNldCBTWVNf
-U1VQUE9SVFNfeHhUSU1FUnh4IHdoaWNoIHdpbGwgdGhlbg0KZm9yY2UgeHhUSU1FUnh4PXkuDQpC
-dXQsIGlmICJDT01QSUxFX1RFU1QiIGlzIHNldCwgeW91IGNhbiBjaG9vc2Ugd2hhdCBjbG9ja3Nv
-dXJjZSB0aW1lcnMNCnlvdSB3YW50IHRvIGJ1aWxkIGluLg0KDQpJcyB5b3VyIHN1Z2dlc3Rpb24g
-dG8gZG8gYXdheSB3aXRoIHRoZSBDT01QSUxFX1RFU1QgYWJpbGl0eSBhbmQNCmp1c3QgZm9yY2Ug
-UkVORVNBU19PU1RNPXkgaWYgQVJDSF9SN1M3MjEwMCBpcyBzZWxlY3RlZD8NCg0KDQoNCj4gPiAr
-I2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiANCj4gUGxlYXNlIHJlbW92ZSBldmVyeXRoaW5n
-IG1vZHVsZSByZWxhdGVkIGhlcmUgYW5kIGJlbG93LiBUaGlzIGRyaXZlciBpcyBub3QNCj4gc3Vw
-cG9zZWQgdG8gYmUgcmVtb3ZlZCBhbmQgaXQgaXMgY29tcGlsZWQgaW4gd2l0aCB0aGUgS2NvbmZp
-ZyBvcHRpb24uDQoNCkdvb2QgcG9pbnQuIEkgd2lsbCByZW1vdmUuDQoNCkkgZ3Vlc3MgaWYgeW91
-IGNhbid0IGNvbXBpbGUgaXQgYXMgYSBtb2R1bGUsIHlvdSBkb24ndCBuZWVkIHRoaW5ncyBsaWtl
-DQonTU9EVUxFX0xJQ0VOU0UnLg0KDQoNCj4gPiArc3RydWN0IG9zdG1fZGV2aWNlIHsNCj4gPiAr
-CXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXY7DQo+ID4gKwlpbnQgaXJxOw0KPiA+ICsJc3Ry
-dWN0IGNsayAqY2xrOw0KPiA+ICsJdW5zaWduZWQgbG9uZyByYXRlOw0KPiA+ICsJdm9pZCBfX2lv
-bWVtICpiYXNlOw0KPiA+ICsJdW5zaWduZWQgbG9uZyB0aWNrc19wZXJfamlmZnk7DQo+ID4gKwlz
-dHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlIGNlZDsNCj4gPiArfTsNCj4gDQo+IFlvdSBjYW4gcHJv
-YmFibHkgcmVkdWNlIHRoZSBzaXplIG9mIHRoaXMgc3RydWN0dXJlIGJ5IHJlbW92aW5nIHNvbWUg
-ZmllbGRzDQo+IHdoaWNoIGFyZSB1c2VkIG9ubHkgYXQgaW5pdCB0aW1lLg0KDQpMb29rcyBsaWtl
-IEkgY2FuIGdldCByaWQgb2YgJ2NsaycsICdpcnEnIGFuZCAncmF0ZScuDQpUaGFua3MuDQoNCg0K
-DQo+ID4gK3N0YXRpYyBpbnQgX19pbml0IG9zdG1faW5pdF9jbGtzcmMoc3RydWN0IG9zdG1fZGV2
-aWNlICpvc3RtKSB7DQo+ID4gKwlpbnQgcmV0Ow0KPiA+ICsNCj4gPiArCS8qIGlycSBub3QgdXNl
-ZCAoY2xvY2sgc291cmNlcyBkb24ndCB1c2UgaW50ZXJydXB0cykgKi8NCj4gPiArDQo+ID4gKwkv
-KiBzdG9wIGNvdW50ZXIgKi8NCj4gDQo+IE9uZSBsaW5lIGNvbW1lbnQgaXMgdXN1YWxseSBpbiB0
-aGUgbmV0d29yayBjb2RlLiBQbGVhc2UgdXNlIG11bHRpbGluZS4NCj4gDQo+IC8qDQo+ICAqIEJs
-YSBibGENCj4gICovDQoNCkknbSBjb25mdXNlZC4gRG8geW91IG1lYW46DQoNCkEpIHVzZSBtdWx0
-aWxpbmUgZm9ybWF0dGluZyBmb3IgZXZlcnkgc2luZ2xlLWxpbmUgY29tbWVudCB0aHJvdWdob3V0
-DQogICB0aGUgZmlsZT8NCg0KQikgdXNlIG11bHRpbGluZSBmb3IgYW55IHBsYWNlIHdoZXJlIHlv
-dSBoYXZlIDIgb3IgbW9yZSBzaW5nbGUtbGluZQ0KICAgY29tbWVudHMgYmFjayB0byBiYWNrPw0K
-DQoNCj4gPiArCWlvd3JpdGU4KFRULCBvc3RtLT5iYXNlICsgT1NUTV9UVCk7DQo+ID4gKwl3aGls
-ZSAoaW9yZWFkOChvc3RtLT5iYXNlICsgT1NUTV9URSkgJiBURSkNCj4gPiArCQk7DQo+IA0KPiBD
-b21tZW50IGhlcmUgZm9yIHRoaXMgZGFuZ2Vyb3VzIGxvb3AuIEV4cGxhaW4gd2h5IHdlIGNhbid0
-IGJlIHN0dWNrIGhlcmUuDQoNCk9LLCBJJ2xsIGFkZCBzb21ldGhpbmcgaW4gYXMgaXQncyBwcmV0
-dHkgc2FmZS4NCg0KPiANCj4gPiArDQo+ID4gKwkvKiBzZXR1cCBhcyBmcmVlcnVuICovDQo+ID4g
-Kwlpb3dyaXRlMzIoMCwgb3N0bS0+YmFzZSArIE9TVE1fQ01QKTsNCj4gPiArCWlvd3JpdGU4KENU
-TF9GUkVFUlVOLCBvc3RtLT5iYXNlICsgT1NUTV9DVEwpOw0KPiA+ICsJaW93cml0ZTgoVFMsIG9z
-dG0tPmJhc2UgKyBPU1RNX1RTKTsNCj4gPiArDQo+ID4gKwkvKiByZWdpc3RlciAqLw0KPiA+ICsJ
-cmV0ID0gY2xvY2tzb3VyY2VfbW1pb19pbml0KG9zdG0tPmJhc2UgKyBPU1RNX0NOVCwNCj4gPiAr
-CQkJIm9zdG0iLCBvc3RtLT5yYXRlLA0KPiA+ICsJCQkzMDAsIDMyLCBjbG9ja3NvdXJjZV9tbWlv
-X3JlYWRsX3VwKTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gcmV0Ow0KPiANCj4gcmV0dXJuIGNsb2Nr
-c291cmNlX21taW9faW5pdCguLi4pOw0KDQpPSy4NCg0KDQo+ID4gK3N0YXRpYyBpbnQgX19pbml0
-IG9zdG1faW5pdF9zY2hlZF9jbG9jayhzdHJ1Y3Qgb3N0bV9kZXZpY2UgKm9zdG0pIHsNCj4gPiAr
-CXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ID4gKw0KPiA+ICsJc3lzdGVtX2Nsb2NrID0gb3N0bS0+
-YmFzZSArIE9TVE1fQ05UOw0KPiA+ICsJbG9jYWxfaXJxX3NhdmUoZmxhZ3MpOw0KPiA+ICsJbG9j
-YWxfaXJxX2Rpc2FibGUoKTsNCj4gDQo+IDEuIGxvY2FsX2lycV9kaXNhYmxlKCkgaXMgbm90IG5l
-ZWRlZCwgbG9jYWxfaXJxX3NhdmUoKSBzYXZlcyB0aGUgaXJxIGZsYWdzDQo+IGFuZCBkaXNhYmxl
-cyB0aGUgaXJxLg0KPiANCj4gMi4gV2h5IGRvIHlvdSBuZWVkIHRvIGRpc2FibGUgdGhlIGlycSBo
-ZXJlID8NCg0KT0ssIEkgc2VlIHRoYXQgbm9uZSBvZiB0aGUgb3RoZXIgZHJpdmVycyBhcmUgZGlz
-YWJsaW5nIGlycSwgc28gSSdsbA0KdGFrZSB0aGF0IGNvZGUgb3V0Lg0KVGhhbmtzLg0KDQoNCj4g
-PiArc3RhdGljIGludCBvc3RtX2Nsb2NrX2V2ZW50X25leHQodW5zaWduZWQgbG9uZyBkZWx0YSwN
-Cj4gPiArCQkJCSAgICAgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqY2VkKSB7DQo+ID4gKwlz
-dHJ1Y3Qgb3N0bV9kZXZpY2UgKm9zdG0gPSBjZWRfdG9fb3N0bShjZWQpOw0KPiA+ICsNCj4gPiAr
-CVdBUk5fT04oIWNsb2NrZXZlbnRfc3RhdGVfb25lc2hvdChjZWQpKTsNCj4gDQo+IFBvaW50bGVz
-cyBjaGVjay4gSXQgaXMgdXAgdG8gdGhlIHRpbWUgZnJhbWV3b3JrIHRvIGhhbmRsZSB0aGF0IGFu
-ZCB0aGF0IGlzDQo+IHRoZSBjYXNlLg0KDQoNCk9LLiBJIHNhdyBvdGhlciBkcml2ZXJzIGRvaW5n
-IGl0IHNvIEkgdGhvdWdodCBpdCB3YXMgbXkgcmVzcG9uc2liaWxpdHkuDQpJJ2xsIHRha2UgdGhh
-dCBsaW5lb3V0Lg0KDQoNCg0KPiA+ICtzdGF0aWMgaW50IF9faW5pdCBvc3RtX2luaXRfY2xrZXZ0
-KHN0cnVjdCBvc3RtX2RldmljZSAqb3N0bSkgew0KPiA+ICsJc3RydWN0IGNsb2NrX2V2ZW50X2Rl
-dmljZSAqY2VkID0gJm9zdG0tPmNlZDsNCj4gPiArCWludCByZXQgPSAtRU5YSU87DQo+ID4gKw0K
-PiA+ICsJcmV0ID0gcmVxdWVzdF9pcnEob3N0bS0+aXJxLCBvc3RtX3RpbWVyX2ludGVycnVwdCwN
-Cj4gPiArCQkJICBJUlFGX1RJTUVSIHwgSVJRRl9JUlFQT0xMIHwgSVJRRl9OT0JBTEFOQ0lORywN
-Cj4gPiArCQkJICBkZXZfbmFtZSgmb3N0bS0+cGRldi0+ZGV2KSwgb3N0bSk7DQo+IA0KPiAJZGV2
-bV9yZXF1ZXN0X2lycQ0KPiANCj4gQXJlIHlvdSBzdXJlIHRoZSBJUlFGX05PQkFMQU5DSU5HIGZs
-YWcgc2hvdWxkIGJlIHVzZWQgPyBCeSBkZWZhdWx0IHRoZQ0KPiBpbnRlcnJ1cHQgaXMgcGlubmVk
-IHRvIGNwdTAgYmVsb3cuIElmIHRoaXMgdGltZXIgaXMgdXNlZCBhcyBhIGJyb2FkY2FzdA0KPiB0
-aW1lciBmb3IgYSBzeXN0ZW0gd2l0aCBkZWVwIGlkbGUsIHlvdSBtYXkgd2FudCB0byBhZGQgdGhl
-IERZTklSUSBmbGFnDQo+IGZlYXR1cmUgdG8gaW1wcm92ZSB0aGUgd2FrZXVwcyBvbiB0aGUgc3lz
-dGVtLg0KDQpPSywgdGhhbmsgeW91LiBBZnRlciBzb21lIHJlYWRpbmcsIEkgdW5kZXJzdGFuZCBJ
-UlFGX05PQkFMQU5DSU5HIGJldHRlci4NCg0KWW91J3JlIHBvaW50IGlzIHZhbGlkOiBSZWdhcmRs
-ZXNzIG9mIHRoZSBmYWN0IHRoYXQgdGhlIFNvQ3MgSSdsbCBiZSB1c2luZw0KdGhpcyBvbiBhcmUg
-YWxsIHNpbmdsZSBjb3JlLCBsaWtlIHlvdSBzYWlkIGJlbG93IHRoZSBjcHUgbWFzayBpcyBzZXQg
-dG8gY3B1MC4NCg0KSSB3aWxsIHJlbW92ZSBJUlFGX05PQkFMQU5DSU5HLg0KDQoNCj4gPiArc3Rh
-dGljIGludCBfX2luaXQgb3N0bV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KSB7
-DQo+ID4gKwlzdHJ1Y3Qgb3N0bV9kZXZpY2UgKm9zdG07DQo+ID4gKwlzdHJ1Y3QgcmVzb3VyY2Ug
-KnJlczsNCj4gPiArCWludCByZXQgPSAtRUZBVUxUOw0KPiA+ICsNCj4gPiArCWlmICghaXNfZWFy
-bHlfcGxhdGZvcm1fZGV2aWNlKHBkZXYpKSB7DQo+ID4gKwkJcG1fcnVudGltZV9zZXRfYWN0aXZl
-KCZwZGV2LT5kZXYpOw0KPiA+ICsJCXBtX3J1bnRpbWVfZW5hYmxlKCZwZGV2LT5kZXYpOw0KPiA+
-ICsJfQ0KPiANCj4gQ2FuIHlvdSBjbGFyaWZ5IHdoeSB0aGUgJ2Vhcmx5JyBpcyBuZWVkZWQgaGVy
-ZSA/DQoNCkFjdHVhbGx5LCBpdCBtZWFucyBub3RoaW5nLg0KDQpJIHdhcyB1c2luZyBzaF9tdHUy
-LmMgYW5kIHNoX2NtdC5jIGFzIHJlZmVyZW5jZSBhbmQgdGhleSB3ZXJlIHJlZ2lzdGVyaW5nDQph
-biAiZWFybHl0aW1lciIgd2hpY2ggbWFkZSBtZSB0aGluayB0aGUga2VybmVsIHdvdWxkIHByb2Jl
-IHRoaXMgZHJpdmVyDQplYXJseSBpbiBib290Li4uLmJ1dC4uLi5ub3cgSSBzZWUgdGhhdCBpcyBq
-dXN0IGEgU0g0IGtlcm5lbCBzcGVjaWZpYyB0aGluZy4NCg0KU28sIEkgd2lsbCByZW1vdmUgYWxs
-IHRoZSBlYXJseSBwbGF0Zm9ybSByZWZlcmVuY2Ugc3R1ZmYuDQoNCk9mIGNvdXJzZSBJIHN0aWxs
-IGhhdmUgdGhlIHF1ZXN0aW9uIG9mIGhvdyBhcmUgeW91IHN1cHBvc2VkIHRvIGdldCBhDQpjbG9j
-a3NvdXJjZSB1cCBhbmQgcnVubmluZyBlYXJseSBpbiBib290LiAoYnV0IEknbGwgZmlndXJlIHRo
-YXQgb3V0IGxhdGVyKS4NCg0KDQo+IEkgZG9uJ3Qgc2VlIHRoZSBwbV9ydW50aW1lX2dldC9wbV9y
-dW50aW1lX3B1dCBpbiB0aGUgY29ycmVzcG9uZGluZw0KPiBmdW5jdGlvbi4NCj4gDQo+IFdoYXQg
-aXMgdGhlIGJlbmVmaXQgb2YgdXNpbmcgcG1fcnVudGltZSBpbiB0aGlzIGRyaXZlciA/IElzbid0
-IHRoZSB0aW1lcg0KPiBzdXBwb3NlZCB0byBiZSBpbiBhbiBhbHdheXMtb24gcG93ZXIgZG9tYWlu
-ID8NCg0KV2hlbiB5b3UgcmVnaXN0ZXIgYSBjbG9ja3NvdXJjZSwgeW91IGNhbiBzcGVjaWZ5IGEg
-LmVuYWJsZSBhbmQgLmRpc2FibGUNCmNhbGxiYWNrIHdoZXJlIHlvdSBjYW4gZG8gcnVudGltZV9w
-bS4gSG93ZXZlci4uLg0KDQpBLiBJJ20gdXNpbmcgY2xvY2tzb3VyY2VfbW1pb19pbml0LCBzbyBu
-byBlbmFibGUvZGlzcGFibGUgb3B0aW9uIGlzDQogICBwb3NzaWJsZS4NCkIuIEkganVzdCBmb3Vu
-ZCBvdXQgdG9kYXkgdGhhdCBydW50aW1lIHBtIGlzIG5vdCBnb2luZyB0byB3b3JrIHdlbGwgb24g
-dGhlDQogICBTb0MgdGhpcyBkcml2ZXIgd2FzIGludGVuZGVkIGZvciwgc28gaXQgcG9pbnRsZXNz
-IGFueXdheS4NCg0KSSdsbCByZW1vdmUgYWxsIHRoZSBydW50aW1lIHBtIHN0dWZmLg0KVGhhbmsg
-eW91IGZvciBwb2ludCB0aGlzIG91dC4NCg0KPiA+ICsJb3N0bSA9IHBsYXRmb3JtX2dldF9kcnZk
-YXRhKHBkZXYpOw0KPiA+ICsJaWYgKG9zdG0pIHsNCj4gPiArCQlkZXZfaW5mbygmcGRldi0+ZGV2
-LCAia2VwdCBhcyBlYXJseXRpbWVyXG4iKTsNCj4gPiArCQlyZXQgPSAwOw0KPiA+ICsJCWdvdG8g
-b3V0Ow0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCW9zdG0gPSBremFsbG9jKHNpemVvZigqb3N0bSks
-IEdGUF9LRVJORUwpOw0KPiANCj4gCWRldm1fa3phbGxvYyA/DQoNCk9LLCB0aGFuayB5b3UuDQpN
-ZWFucyBJIGNhbiBhbHNvIGdldCByaWQgb2YgJyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+Jw0KDQo+
-ID4gKwlpZiAoIW9zdG0pIHsNCj4gPiArCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8g
-YWxsb2NhdGUgbWVtb3J5XG4iKTsNCj4gDQo+IEEgbWVtb3J5IGZhaWx1cmUgYWxsb2NhdGlvbiBh
-bHdheXMgdHJpZ2dlcnMgYSBkdW1wc3RhY2sgKElJUkMpLCBzbyB0aGlzDQo+IGVycm9yIG1lc3Nh
-Z2UgaXMgcG9pbnRsZXNzLg0KDQpPSywgcmVtb3ZlZC4NCg0KDQo+ID4gKwkJcmV0dXJuIC1FTk9N
-RU07DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJb3N0bS0+cGRldiA9IHBkZXY7DQo+ID4gKwlwbGF0
-Zm9ybV9zZXRfZHJ2ZGF0YShvc3RtLT5wZGV2LCBvc3RtKTsNCj4gPiArDQo+ID4gKwlyZXMgPSBw
-bGF0Zm9ybV9nZXRfcmVzb3VyY2Uob3N0bS0+cGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0KPiA+
-ICsJaWYgKCFyZXMpIHsNCj4gPiArCQlkZXZfZXJyKCZvc3RtLT5wZGV2LT5kZXYsICJmYWlsZWQg
-dG8gZ2V0IEkvTyBtZW1vcnlcbiIpOw0KPiA+ICsJCWdvdG8gZXJyOw0KPiA+ICsJfQ0KPiA+ICsN
-Cj4gPiArCW9zdG0tPmJhc2UgPSBpb3JlbWFwX25vY2FjaGUocmVzLT5zdGFydCwgcmVzb3VyY2Vf
-c2l6ZShyZXMpKTsNCj4gDQo+IAlkZXZtX2lvcmVtYXBfbm9jYWNoZSA/DQoNCk9LLCB0aGFuayB5
-b3UuDQpKdXN0IG5lZWQgdG8gYWxzbyBhZGQgJyNpbmNsdWRlIDxsaW51eC9pby5oPicNCg0KKGxv
-b2tzIGxpa2UgZGV2bV9pb3JlbWFwIGFuZCBkZXZtX2lvcmVtYXBfbm9jYWNoZSBpcyBub3QgYXMg
-cG9wdWxhciBhcw0KZGV2bV9remFsbG9jIGZvciBzb21lIHJlYXNvbikNCg0KDQo+ID4gKwkvKiBG
-aXJzdCBwcm9iZWQgZGV2aWNlIHdpbGwgYmUgdXNlZCBhcyBzeXN0ZW0gY2xvY2tzb3VyY2UgKi8N
-Cj4gPiArCWlmICghc3lzdGVtX2Nsb2NrKSB7DQo+ID4gKwkJLyogdXNlIGFzIGNsb2Nrc291cmNl
-ICovDQo+ID4gKwkJcmV0ID0gb3N0bV9pbml0X2Nsa3NyYyhvc3RtKTsNCj4gPiArDQo+ID4gKwkJ
-LyogdXNlIGFzIHN5c3RlbSBzY2hlZHVsaW5nIGNsb2NrICovDQo+ID4gKwkJaWYgKCFyZXQpDQo+
-ID4gKwkJCXJldCA9IG9zdG1faW5pdF9zY2hlZF9jbG9jayhvc3RtKTsNCj4gPiArDQo+ID4gKwkJ
-aWYgKHJldCkgew0KPiA+ICsJCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gdXNlIGFz
-IHNjaGVkX2Nsb2NrXG4iKTsNCj4gPiArCQkJc3lzdGVtX2Nsb2NrID0gKHZvaWQgKiktMTsgLyog
-cHJldmVudCBmdXR1cmUgYXR0ZW1wdHMgKi8NCj4gPiArCQkJcmV0ID0gMDsJLyogc3RpbGwgd29y
-a3MgYXMgY2xvY2tzb3VyY2UgKi8NCj4gPiArCQl9DQo+IA0KPiBUaGlzIGVycm9yIGNvZGUgY2hl
-Y2sgaXMgdW5uZWNlc3NhcnkgY29tcGxleC4gb3N0bV9pbml0X3NjaGVkX2Nsb2NrIGFsd2F5cw0K
-PiByZXR1cm4gemVyby4NCg0KR29vZCBwb2ludC4NCkFuZCBzaW5jZSBzY2hlZF9jbG9ja19yZWdp
-c3RlcigpIGFsd2F5cyByZXR1cm5zIHZvaWQsIG9zdG1faW5pdF9zY2hlZF9jbG9jaw0KbWlnaHQg
-d2FzIHdlbGwgcmV0dXJuIHZvaWQgYXMgd2VsbC4NCg0KDQo+ID4gK2VycjoNCj4gPiArCWlmIChy
-ZXQpIHsNCj4gPiArCQlpZiAob3N0bS0+Y2xrKQ0KPiA+ICsJCQljbGtfZGlzYWJsZV91bnByZXBh
-cmUob3N0bS0+Y2xrKTsNCj4gPiArCQlpZiAob3N0bS0+YmFzZSkNCj4gPiArCQkJaW91bm1hcChv
-c3RtLT5iYXNlKTsNCj4gPiArCQlrZnJlZShvc3RtKTsNCj4gPiArCQlwbGF0Zm9ybV9zZXRfZHJ2
-ZGF0YShwZGV2LCBOVUxMKTsNCj4gDQo+IEFzIGlvbWFwLCBremFsbG9jIHdlcmUgZG9uZSB3aXRo
-IHRoZSBkZXZtLCB0aGVuIHRoZSByb2xsYmFjayB3aWxsIGJlDQo+IGhhbmRsZWQgd2l0aCB0aGUg
-ZGV2aWNlIGZyYW1ld29yay4NCg0KSSBkaWRuJ3QgcmVhbGl6ZSB0aGF0LiBUaGFuayB5b3UuDQoN
-Cg0KPiA+ICtzdGF0aWMgaW50IF9faW5pdCBvc3RtX2luaXQodm9pZCkNCj4gPiArew0KPiA+ICsJ
-cmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9yZWdpc3Rlcigmb3N0bV90aW1lcik7DQo+ID4gK30NCj4g
-PiArDQo+ID4gK3N0YXRpYyB2b2lkIF9fZXhpdCBvc3RtX2V4aXQodm9pZCkNCj4gPiArew0KPiA+
-ICsJcGxhdGZvcm1fZHJpdmVyX3VucmVnaXN0ZXIoJm9zdG1fdGltZXIpOw0KPiA+ICt9DQo+ID4g
-Kw0KPiA+ICtlYXJseV9wbGF0Zm9ybV9pbml0KCJlYXJseXRpbWVyIiwgJm9zdG1fdGltZXIpOw0K
-PiA+ICtzdWJzeXNfaW5pdGNhbGwob3N0bV9pbml0KTsgbW9kdWxlX2V4aXQob3N0bV9leGl0KTsN
-Cj4gPiArDQo+ID4gK01PRFVMRV9BVVRIT1IoIkNocmlzIEJyYW5kdCIpOw0KPiA+ICtNT0RVTEVf
-REVTQ1JJUFRJT04oIlJlbmVzYXMgT1NUTSBUaW1lciBEcml2ZXIiKTsgTU9EVUxFX0xJQ0VOU0Uo
-IkdQTA0KPiA+ICt2MiIpOw0KPiANCj4gTWF5YmUgeW91IGNhbiB0cnkgd2l0aCBidWlsdGluX3Bs
-YXRmb3JtID8NCg0KR29vZCBpZGVhLiBCdXQsIG5vdyBJIGdldCBhICJTZWN0aW9uIG1pc21hdGNo
-IiBkdXJpbmcgbGluayB0aW1lIHNvIEknbGwNCmhhdmUgdG8gZmlndXJlIG91dCB3aHkgdGhhdCBp
-cy4NCg0KDQoNClRoYW5rIHlvdSwNCkNocmlzDQo=
+On Mon, Jan 23, 2017 at 08:54:23AM -0500, Chris Brandt wrote:
+> This patch adds a OSTM driver for the Renesas architecture.
+
+As it is a new driver, please give technical details for the log.
+ 
+Replace ioread/write by readl/writel in the code.
+
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> 
+> ---
+> v2:
+> * changed implementation to be independent channel nodes
+> ---
+>  arch/arm/mach-shmobile/Kconfig     |   1 +
+>  drivers/clocksource/Kconfig        |  12 ++
+>  drivers/clocksource/Makefile       |   1 +
+>  drivers/clocksource/renesas-ostm.c | 349 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 363 insertions(+)
+>  create mode 100644 drivers/clocksource/renesas-ostm.c
+> 
+> diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+> index 2bb4b09..b928634 100644
+> --- a/arch/arm/mach-shmobile/Kconfig
+> +++ b/arch/arm/mach-shmobile/Kconfig
+> @@ -57,6 +57,7 @@ config ARCH_R7S72100
+>  	select PM
+>  	select PM_GENERIC_DOMAINS
+>  	select SYS_SUPPORTS_SH_MTU2
+> +	select SYS_SUPPORTS_RENESAS_OSTM
+
+- select SYS_SUPPORTS_RENESAS_OSTM
++ select RENESAS_OSTM
+
+>  
+>  config ARCH_R8A73A4
+>  	bool "R-Mobile APE6 (R8A73A40)"
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index 4866f7a..95c8d56 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -431,6 +431,9 @@ config MTK_TIMER
+>  config SYS_SUPPORTS_SH_MTU2
+>          bool
+>  
+> +config SYS_SUPPORTS_RENESAS_OSTM
+> +        bool
+> +
+
+-config SYS_SUPPORTS_RENESAS_OSTM
+-        bool
+-
+
+>  config SYS_SUPPORTS_SH_TMU
+>          bool
+>  
+> @@ -467,6 +470,15 @@ config SH_TIMER_MTU2
+>  	  Timer Pulse Unit 2 (MTU2) hardware available on SoCs from Renesas.
+>  	  This hardware comes with 16 bit-timer registers.
+>  
+> +config RENESAS_OSTM
+> +	bool "Renesas OSTM timer driver" if COMPILE_TEST
+> +	depends on GENERIC_CLOCKEVENTS
+> +	select CLKSRC_MMIO
+> +	default SYS_SUPPORTS_RENESAS_OSTM
+
+- default SYS_SUPPORTS_RENESAS_OSTM
+
+Except I missing something, I don' the point of having this intermediate
+config option.
+
+> +	help
+> +	  This enables the build of the OSTM timer driver.
+> +	  It creates a clock source and clock event device.
+> +
+>  config SH_TIMER_TMU
+>  	bool "Renesas TMU timer driver" if COMPILE_TEST
+>  	depends on GENERIC_CLOCKEVENTS
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index a14111e..bbd163b 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_CS5535_CLOCK_EVENT_SRC)	+= cs5535-clockevt.o
+>  obj-$(CONFIG_CLKSRC_JCORE_PIT)		+= jcore-pit.o
+>  obj-$(CONFIG_SH_TIMER_CMT)	+= sh_cmt.o
+>  obj-$(CONFIG_SH_TIMER_MTU2)	+= sh_mtu2.o
+> +obj-$(CONFIG_RENESAS_OSTM)	+= renesas-ostm.o
+>  obj-$(CONFIG_SH_TIMER_TMU)	+= sh_tmu.o
+>  obj-$(CONFIG_EM_TIMER_STI)	+= em_sti.o
+>  obj-$(CONFIG_CLKBLD_I8253)	+= i8253.o
+> diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
+> new file mode 100644
+> index 0000000..37f2461
+> --- /dev/null
+> +++ b/drivers/clocksource/renesas-ostm.c
+> @@ -0,0 +1,349 @@
+> +/*
+> + * Renesas Timer Support - OSTM
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/slab.h>
+> +#include <linux/module.h>
+
+Please remove everything module related here and below. This driver is not
+supposed to be removed and it is compiled in with the Kconfig option.
+
+> +#include <linux/pm_runtime.h>
+> +#include <linux/sched_clock.h>
+> +
+> +/*
+> + * The OSTM contains independent channels.
+> + * The first OSTM channel probed will be set up as a free running
+> + * clocksource. Additionally we will use this clocksource for the system
+> + * schedule timer sched_clock().
+> + *
+> + * The second (or more) channel probed will be set up as an interrupt
+> + * driven clock event.
+> + */
+> +
+> +struct ostm_device {
+> +	struct platform_device *pdev;
+> +	int irq;
+> +	struct clk *clk;
+> +	unsigned long rate;
+> +	void __iomem *base;
+> +	unsigned long ticks_per_jiffy;
+> +	struct clock_event_device ced;
+> +};
+
+You can probably reduce the size of this structure by removing some fields
+which are used only at init time.
+
+> +
+> +static void __iomem *system_clock;	/* For sched_clock() */
+> +
+> +/* OSTM REGISTERS */
+> +#define	OSTM_CMP		0x000	/* RW,32 */
+> +#define	OSTM_CNT		0x004	/* R,32 */
+> +#define	OSTM_TE			0x010	/* R,8 */
+> +#define	OSTM_TS			0x014	/* W,8 */
+> +#define	OSTM_TT			0x018	/* W,8 */
+> +#define	OSTM_CTL		0x020	/* RW,8 */
+> +
+> +#define	TE			0x01
+> +#define	TS			0x01
+> +#define	TT			0x01
+> +#define	CTL_PERIODIC		0x00
+> +#define	CTL_ONESHOT		0x02
+> +#define	CTL_FREERUN		0x02
+> +
+> +static struct ostm_device *ced_to_ostm(struct clock_event_device *ced)
+> +{
+> +	return container_of(ced, struct ostm_device, ced);
+> +}
+> +
+> +static int __init ostm_init_clksrc(struct ostm_device *ostm)
+> +{
+> +	int ret;
+> +
+> +	/* irq not used (clock sources don't use interrupts) */
+> +
+> +	/* stop counter */
+
+One line comment is usually in the network code. Please use multiline.
+
+/*
+ * Bla bla
+ */
+
+> +	iowrite8(TT, ostm->base + OSTM_TT);
+> +	while (ioread8(ostm->base + OSTM_TE) & TE)
+> +		;
+
+Comment here for this dangerous loop. Explain why we can't be stuck here.
+
+> +
+> +	/* setup as freerun */
+> +	iowrite32(0, ostm->base + OSTM_CMP);
+> +	iowrite8(CTL_FREERUN, ostm->base + OSTM_CTL);
+> +	iowrite8(TS, ostm->base + OSTM_TS);
+> +
+> +	/* register */
+> +	ret = clocksource_mmio_init(ostm->base + OSTM_CNT,
+> +			"ostm", ostm->rate,
+> +			300, 32, clocksource_mmio_readl_up);
+> +
+> +	return ret;
+
+return clocksource_mmio_init(...);
+
+> +}
+> +
+> +static u64 notrace ostm_read_sched_clock(void)
+> +{
+> +	return ioread32(system_clock);
+> +}
+> +
+> +static int __init ostm_init_sched_clock(struct ostm_device *ostm)
+> +{
+> +	unsigned long flags;
+> +
+> +	system_clock = ostm->base + OSTM_CNT;
+> +	local_irq_save(flags);
+> +	local_irq_disable();
+
+1. local_irq_disable() is not needed, local_irq_save() saves the irq flags and
+disables the irq.
+
+2. Why do you need to disable the irq here ?
+
+> +	sched_clock_register(ostm_read_sched_clock, 32, ostm->rate);
+> +	local_irq_restore(flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static void ostm_clkevt_timer_stop(struct ostm_device *ostm)
+> +{
+> +	if (ioread8(ostm->base + OSTM_TE) & TE) {
+> +		iowrite8(TT, ostm->base + OSTM_TT);
+> +		while (ioread8(ostm->base + OSTM_TE) & TE)
+> +			;
+
+Same comment as above.
+
+> +	}
+> +}
+> +
+> +static int ostm_clock_event_next(unsigned long delta,
+> +				     struct clock_event_device *ced)
+> +{
+> +	struct ostm_device *ostm = ced_to_ostm(ced);
+> +
+> +	WARN_ON(!clockevent_state_oneshot(ced));
+
+Pointless check. It is up to the time framework to handle that and that is the
+case.
+
+> +
+> +	ostm_clkevt_timer_stop(ostm);
+> +
+> +	iowrite32(delta, ostm->base + OSTM_CMP);
+> +	iowrite8(CTL_ONESHOT, ostm->base + OSTM_CTL);
+> +	iowrite8(TS, ostm->base + OSTM_TS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ostm_shutdown(struct clock_event_device *ced)
+> +{
+> +	struct ostm_device *ostm = ced_to_ostm(ced);
+> +
+> +	ostm_clkevt_timer_stop(ostm);
+> +
+> +	return 0;
+> +}
+> +static int ostm_set_periodic(struct clock_event_device *ced)
+> +{
+> +	struct ostm_device *ostm = ced_to_ostm(ced);
+> +
+> +	if (clockevent_state_oneshot(ced) || clockevent_state_periodic(ced))
+> +		ostm_clkevt_timer_stop(ostm);
+> +
+> +	iowrite32(ostm->ticks_per_jiffy - 1, ostm->base + OSTM_CMP);
+> +	iowrite8(CTL_PERIODIC, ostm->base + OSTM_CTL);
+> +	iowrite8(TS, ostm->base + OSTM_TS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ostm_set_oneshot(struct clock_event_device *ced)
+> +{
+> +	struct ostm_device *ostm = ced_to_ostm(ced);
+> +
+> +	ostm_clkevt_timer_stop(ostm);
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t ostm_timer_interrupt(int irq, void *dev_id)
+> +{
+> +	struct ostm_device *ostm = dev_id;
+> +
+> +	if (clockevent_state_oneshot(&ostm->ced))
+> +		ostm_clkevt_timer_stop(ostm);
+> +
+> +	/* notify clockevent layer */
+> +	if (ostm->ced.event_handler)
+> +		ostm->ced.event_handler(&ostm->ced);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int __init ostm_init_clkevt(struct ostm_device *ostm)
+> +{
+> +	struct clock_event_device *ced = &ostm->ced;
+> +	int ret = -ENXIO;
+> +
+> +	ret = request_irq(ostm->irq, ostm_timer_interrupt,
+> +			  IRQF_TIMER | IRQF_IRQPOLL | IRQF_NOBALANCING,
+> +			  dev_name(&ostm->pdev->dev), ostm);
+
+	devm_request_irq
+
+Are you sure the IRQF_NOBALANCING flag should be used ? By default the
+interrupt is pinned to cpu0 below. If this timer is used as a broadcast timer
+for a system with deep idle, you may want to add the DYNIRQ flag feature to
+improve the wakeups on the system.
+
+> +	if (ret) {
+> +		dev_err(&ostm->pdev->dev, "failed to request irq\n");
+> +		return ret;
+> +	}
+> +
+> +	ced->name = "ostm";
+> +	ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_PERIODIC;
+> +	ced->set_state_shutdown = ostm_shutdown;
+> +	ced->set_state_periodic = ostm_set_periodic;
+> +	ced->set_state_oneshot = ostm_set_oneshot;
+> +	ced->set_next_event = ostm_clock_event_next;
+> +	ced->shift = 32;
+> +	ced->rating = 300;
+> +	ced->cpumask = cpumask_of(0);
+> +	clockevents_config_and_register(ced, ostm->rate, 0xf, 0xffffffff);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init ostm_probe(struct platform_device *pdev)
+> +{
+> +	struct ostm_device *ostm;
+> +	struct resource *res;
+> +	int ret = -EFAULT;
+> +
+> +	if (!is_early_platform_device(pdev)) {
+> +		pm_runtime_set_active(&pdev->dev);
+> +		pm_runtime_enable(&pdev->dev);
+> +	}
+
+Can you clarify why the 'early' is needed here ?
+
+I don't see the pm_runtime_get/pm_runtime_put in the corresponding function.
+
+What is the benefit of using pm_runtime in this driver ? Isn't the timer
+supposed to be in an always-on power domain ?
+
+> +	ostm = platform_get_drvdata(pdev);
+> +	if (ostm) {
+> +		dev_info(&pdev->dev, "kept as earlytimer\n");
+> +		ret = 0;
+> +		goto out;
+> +	}
+> +
+> +	ostm = kzalloc(sizeof(*ostm), GFP_KERNEL);
+
+	devm_kzalloc ?
+
+> +	if (!ostm) {
+> +		dev_err(&pdev->dev, "failed to allocate memory\n");
+
+A memory failure allocation always triggers a dumpstack (IIRC), so this
+error message is pointless.
+
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ostm->pdev = pdev;
+> +	platform_set_drvdata(ostm->pdev, ostm);
+> +
+> +	res = platform_get_resource(ostm->pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&ostm->pdev->dev, "failed to get I/O memory\n");
+> +		goto err;
+> +	}
+> +
+> +	ostm->base = ioremap_nocache(res->start, resource_size(res));
+
+	devm_ioremap_nocache ?
+
+> +	if (!ostm->base) {
+> +		dev_err(&ostm->pdev->dev, "failed to remap I/O memory\n");
+> +		goto err;
+> +	}
+> +
+> +	ostm->irq = platform_get_irq(ostm->pdev, 0);
+> +	if (ostm->irq < 0) {
+> +		dev_err(&ostm->pdev->dev, "failed to get irq\n");
+> +		goto err;
+> +	}
+> +
+> +	ostm->clk = devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(ostm->clk)) {
+> +		dev_err(&ostm->pdev->dev, "failed to get clock\n");
+> +		ostm->clk = NULL;
+> +		goto err;
+> +	}
+> +
+> +	ret = clk_prepare_enable(ostm->clk);
+> +	if (ret) {
+> +		dev_err(&ostm->pdev->dev, "failed to enable clock\n");
+> +		goto err;
+> +	}
+> +
+> +	ostm->rate = clk_get_rate(ostm->clk);
+> +	ostm->ticks_per_jiffy = (ostm->rate + HZ / 2) / HZ;
+> +
+> +	/* First probed device will be used as system clocksource */
+> +	if (!system_clock) {
+> +		/* use as clocksource */
+> +		ret = ostm_init_clksrc(ostm);
+> +
+> +		/* use as system scheduling clock */
+> +		if (!ret)
+> +			ret = ostm_init_sched_clock(ostm);
+> +
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "failed to use as sched_clock\n");
+> +			system_clock = (void *)-1; /* prevent future attempts */
+> +			ret = 0;	/* still works as clocksource */
+> +		}
+
+This error code check is unnecessary complex. ostm_init_sched_clock always
+return zero.
+
+	if (!system_clock) {
+		system_clock = ostm_init_sched_clock(ostm);
+		ret = ostm_init_clksrc(ostm)
+		if (ret)
+			dev_err("Failed to initialize the clocksource\n");
+	} else {
+
+		...
+	}
+
+This is not perfect but until I send the clksrc_of/clkevt_of split changes, we
+have to deal with these kind of hacks.
+
+> +		if (!ret)
+> +			dev_info(&pdev->dev, "used for clocksource\n");
+> +	} else {
+> +		/* use as clock event */
+> +		ret = ostm_init_clkevt(ostm);
+> +
+> +		if (!ret)
+> +			dev_info(&pdev->dev, "used for clock events\n");
+> +	}
+> +
+> +err:
+> +	if (ret) {
+> +		if (ostm->clk)
+> +			clk_disable_unprepare(ostm->clk);
+> +		if (ostm->base)
+> +			iounmap(ostm->base);
+> +		kfree(ostm);
+> +		platform_set_drvdata(pdev, NULL);
+
+As iomap, kzalloc were done with the devm, then the rollback will be handled
+with the device framework.
+
+> +		pm_runtime_idle(&pdev->dev);
+> +		return ret;
+> +	}
+> +
+> +	if (is_early_platform_device(pdev))
+> +		return ret;
+> +
+> +out:
+> +	pm_runtime_irq_safe(&pdev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ostm_remove(struct platform_device *pdev)
+> +{
+> +	return -EBUSY;	/* cannot unregister clockevent */
+> +}
+> +
+> +static const struct of_device_id ostm_of_table[] __maybe_unused = {
+> +	{ .compatible = "renesas,ostm" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, ostm_of_table);
+> +
+> +static struct platform_driver ostm_timer = {
+> +	.probe		= ostm_probe,
+> +	.remove		= ostm_remove,
+> +	.driver	= {
+> +		.name	= "ostm",
+> +		.of_match_table = of_match_ptr(ostm_of_table),
+> +	},
+> +};
+> +
+> +static int __init ostm_init(void)
+> +{
+> +	return platform_driver_register(&ostm_timer);
+> +}
+> +
+> +static void __exit ostm_exit(void)
+> +{
+> +	platform_driver_unregister(&ostm_timer);
+> +}
+> +
+> +early_platform_init("earlytimer", &ostm_timer);
+> +subsys_initcall(ostm_init);
+> +module_exit(ostm_exit);
+> +
+> +MODULE_AUTHOR("Chris Brandt");
+> +MODULE_DESCRIPTION("Renesas OSTM Timer Driver");
+> +MODULE_LICENSE("GPL v2");
+
+Maybe you can try with builtin_platform ?
+
+  -- Daniel
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
