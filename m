@@ -1,70 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35148 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbdAXIAo (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33078 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750951AbdAWQEj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 03:00:44 -0500
-MIME-Version: 1.0
-In-Reply-To: <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Jan 2017 09:00:37 +0100
-Message-ID: <CAMuHMdVu+f=FY+1R98FLqSHseQ=WnazGhTXcyLqsW9CPY7YfgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] serial: sh-sci: increase RX FIFO trigger defaults
- for (H)SCIF
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 23 Jan 2017 11:04:39 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 4/7] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+Date: Mon, 23 Jan 2017 17:04:15 +0100
+Message-Id: <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 23, 2017 at 5:04 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/tty/serial/sh-sci.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> @@ -2736,15 +2742,19 @@ static int sci_init_single(struct platform_device *dev,
->                 sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
->                 break;
->         case PORT_SCIF:
-> -               port->fifosize = 16;
->                 if (p->regtype == SCIx_SH7705_SCIF_REGTYPE) {
-> +                       port->fifosize = 64;
-
-Note that you forgot to mention that you also corrected the FIFO size for
-sh7705, ssh7720, and sh7721. Not that we can easily test that, though.
-
->                         sci_port->overrun_reg = SCxSR;
->                         sci_port->overrun_mask = SCIFA_ORER;
->                         sci_port->sampling_rate_mask = SCI_SR(16);
-> +                       /* RX triggering not implemented for this IP */
-> +                       sci_port->rx_trigger = 1;
->                 } else {
-> +                       port->fifosize = 16;
->                         sci_port->overrun_reg = SCLSR;
->                         sci_port->overrun_mask = SCLSR_ORER;
->                         sci_port->sampling_rate_mask = SCI_SR(32);
-> +                       sci_port->rx_trigger = 8;
->                 }
->                 break;
->         default:
-
-
-
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 39734cc..c7e2d0d 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -141,6 +141,7 @@ struct sci_port {
+ 	struct timer_list		rx_timer;
+ 	unsigned int			rx_timeout;
+ #endif
++	int				rx_trigger;
+ 
+ 	bool autorts;
+ };
+@@ -2197,6 +2198,7 @@ static void sci_reset(struct uart_port *port)
+ {
+ 	const struct plat_sci_reg *reg;
+ 	unsigned int status;
++	struct sci_port *s = to_sci_port(port);
+ 
+ 	if (serial_port_in(port, SCSCR) & SCSCR_TE) {
+ 		do {
+@@ -2218,6 +2220,9 @@ static void sci_reset(struct uart_port *port)
+ 		status &= ~(SCLSR_TO | SCLSR_ORER);
+ 		serial_port_out(port, SCLSR, status);
+ 	}
++
++	if (s->rx_trigger > 1)
++		scif_set_rtrg(port, s->rx_trigger);
+ }
+ 
+ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+@@ -2728,6 +2733,7 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->overrun_reg = SCLSR;
+ 		sci_port->overrun_mask = SCLSR_ORER;
+ 		sci_port->sampling_rate_mask = SCI_SR_RANGE(8, 32);
++		sci_port->rx_trigger = 64;
+ 		break;
+ 	case PORT_SCIFA:
+ 		port->fifosize = 64;
+@@ -2736,15 +2742,19 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
+ 		break;
+ 	case PORT_SCIF:
+-		port->fifosize = 16;
+ 		if (p->regtype == SCIx_SH7705_SCIF_REGTYPE) {
++			port->fifosize = 64;
+ 			sci_port->overrun_reg = SCxSR;
+ 			sci_port->overrun_mask = SCIFA_ORER;
+ 			sci_port->sampling_rate_mask = SCI_SR(16);
++			/* RX triggering not implemented for this IP */
++			sci_port->rx_trigger = 1;
+ 		} else {
++			port->fifosize = 16;
+ 			sci_port->overrun_reg = SCLSR;
+ 			sci_port->overrun_mask = SCLSR_ORER;
+ 			sci_port->sampling_rate_mask = SCI_SR(32);
++			sci_port->rx_trigger = 8;
+ 		}
+ 		break;
+ 	default:
+@@ -2752,6 +2762,7 @@ static int sci_init_single(struct platform_device *dev,
+ 		sci_port->overrun_reg = SCxSR;
+ 		sci_port->overrun_mask = SCI_ORER;
+ 		sci_port->sampling_rate_mask = SCI_SR(32);
++		sci_port->rx_trigger = 1;
+ 		break;
+ 	}
+ 
 -- 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
