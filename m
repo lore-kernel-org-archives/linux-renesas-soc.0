@@ -1,70 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59422 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760373AbdADBdf (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:28661 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbdAWIee (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 20:33:35 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Daniel Vetter <daniel@ffwll.ch>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 06/13] drm: bridge: Add LVDS encoder driver
-Date: Wed, 04 Jan 2017 03:33:39 +0200
-Message-ID: <2121942.vB7sALcUXN@avalon>
-In-Reply-To: <4516476.dJ1bJMDj4s@avalon>
-References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161129095409.36di7nm3wnxns4qp@phenom.ffwll.local> <4516476.dJ1bJMDj4s@avalon>
+        Mon, 23 Jan 2017 03:34:34 -0500
+Message-ID: <5885B7AA.4030403@jinso.co.jp>
+Date: Mon, 23 Jan 2017 16:58:34 +0900
+From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        DongCV <cv-dong@jinso.co.jp>
+CC: Wolfram Sang <wsa@sang-engineering.com>,
+        duclm <lm-duc@jinso.co.jp>,
+        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        na-hoan@jinso.co.jp
+Subject: Re: The failure summary report of GEN2 for linux stable v4.10-rc2
+References: <1484558970996626000058af@nat.cybozu.com> <5001200.M7izD2cjP9@avalon> <53275dcd-a10d-a9b1-6354-04f146eb633f@jinso.co.jp> <2549854.ggP3E59vJ7@avalon>
+In-Reply-To: <2549854.ggP3E59vJ7@avalon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Daniel,
+Hi Laurent,
 
-On Tuesday 29 Nov 2016 22:57:07 Laurent Pinchart wrote:
-> On Tuesday 29 Nov 2016 10:54:09 Daniel Vetter wrote:
-> > On Tue, Nov 29, 2016 at 11:04:36AM +0200, Laurent Pinchart wrote:
-> >> The LVDS encoder driver is a DRM bridge driver that supports the
-> >> parallel to LVDS encoders that don't require any configuration. The
-> >> driver thus doesn't interact with the device, but creates an LVDS
-> >> connector for the panel and exposes its size and timing based on
-> >> information retrieved from DT.
-> >> 
-> >> Signed-off-by: Laurent Pinchart
-> >> <laurent.pinchart+renesas@ideasonboard.com>
-> > 
-> > Since it's 100% dummy, why put LVDS into the name? This little thing here
-> > could be our generic "wrap drm_panel and attach it to a chain" helper. So
-> > what about calling this _The_ drm_panel_bridge, and also linking it into
-> > docs to feature it a bit more prominently.
-> 
-> I'm not opposed to that, except that this driver should not be considered as
-> just a helper to link a panel. It should only be used to support a real
-> hardware bridge that requires no control.
-> 
-> > I came up with this because I spotted some refactoring belows for building
-> > this helper, until I realized that this driver _is_ the helper I think we
-> > want ;-) Only thing missing is an exported function to instantiate a
-> > bridge with just a drm_panel as the parameter. And putting it into the
-> > drm_kms_helper.ko module.
-> 
-> What would that be used for ? The bridge should be instantiated by this
-> bridge driver, bound to a bridge device instantiated from DT (or the
-> platform firmware of your choice).
+Thanks for your feedback.
 
-Ping ?
+> Dear Dong,
+>
+> On Friday 20 Jan 2017 12:11:50 DongCV wrote:
+>> Dear Mr Laurent,
+>>
+>> Thank you for your quick reply.
+>> This is the log file contains information about the command "modetest -M
+>> rcar-du" (with the HDMI cable plugged).
+> Thank you. I think I know what's wrong. The default mode picked by the system
+> in your case uses positive H/V sync polarities, while in my cases the sync
+> signals have negative polarities. Could you try to select 1024x768 @60Hz
+> instead of 1024x768 @75Hz ? I think the HDMI output would then work correctly,
+> which would confirm that the problem is indeed caused by sync polarities.
+Dong is sick, so he did not attend today. He will reply to you tomorrow.
+Could you explain more how to set 1024x768 @60Hz and negative polarities 
+for the HDMI output?,
 
-> >> +static enum drm_connector_status
-> >> +lvds_connector_detect(struct drm_connector *connector, bool force)
-> >> +{
-> >> +	return connector_status_connected;
-> >> +}
-> > 
-> > We have piles of this exact dummy callback all over, maybe make it the
-> > default and rip them all out?
-> 
-> Done, "[PATCH] drm: Make the connector .detect() callback optional".
-
--- 
-Regards,
-
-Laurent Pinchart
+Thank you!.
+Hiep.
