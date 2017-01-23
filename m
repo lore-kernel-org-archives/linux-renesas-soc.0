@@ -1,77 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58686 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935259AbdAKOnc (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36821 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751513AbdAWQE2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:32 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 01/18] serial: sh-sci: Set the SCSCR TE and RE bits in the driver
-Date: Wed, 11 Jan 2017 16:43:23 +0200
-Message-Id: <20170111144340.29074-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 23 Jan 2017 11:04:28 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 0/7] Renesas *SCIF* RX FIFO support
+Date: Mon, 23 Jan 2017 17:04:11 +0100
+Message-Id: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Transmit Enable and Receive Enable bits are set in the scscr field
-of all instances of the sh-sci platform data. Set them in the driver
-directly to prepare for their removal from platform data.
+Hi!
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+This series implements support for using RX FIFO thresholds higher than one
+in PIO mode on SCIF, HSCIF, SCIFA and SCIFB serial ports.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 91e7dddbf72c..1e573611719e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2341,7 +2341,8 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
- 		serial_port_out(port, SCFCR, ctrl);
- 	}
- 
--	scr_val |= s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0);
-+	scr_val |= SCSCR_RE | SCSCR_TE |
-+		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
- 	dev_dbg(port->dev, "SCSCR 0x%x\n", scr_val);
- 	serial_port_out(port, SCSCR, scr_val);
- 	if ((srr + 1 == 5) &&
-@@ -2791,7 +2792,8 @@ static void serial_console_write(struct console *co, const char *s,
- 
- 	/* first save SCSCR then disable interrupts, keep clock source */
- 	ctrl = serial_port_in(port, SCSCR);
--	ctrl_temp = (sci_port->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0)) |
-+	ctrl_temp = SCSCR_RE | SCSCR_TE |
-+		    (sci_port->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0)) |
- 		    (ctrl & (SCSCR_CKE1 | SCSCR_CKE0));
- 	serial_port_out(port, SCSCR, ctrl_temp);
- 
-@@ -2994,7 +2996,6 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
- 	p->flags = UPF_IOREMAP | UPF_BOOT_AUTOCONF;
- 	p->type = SCI_OF_TYPE(match->data);
- 	p->regtype = SCI_OF_REGTYPE(match->data);
--	p->scscr = SCSCR_RE | SCSCR_TE;
- 
- 	if (of_find_property(np, "uart-has-rtscts", NULL))
- 		p->capabilities |= SCIx_HAVE_RTSCTS;
-@@ -3162,9 +3163,9 @@ static int __init early_console_setup(struct earlycon_device *device,
- 	sci_ports[0].cfg = &port_cfg;
- 	sci_ports[0].cfg->type = type;
- 	sci_probe_regmap(sci_ports[0].cfg);
--	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR) |
--			 SCSCR_RE | SCSCR_TE;
--	sci_serial_out(&sci_ports[0].port, SCSCR, port_cfg.scscr);
-+	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR);
-+	sci_serial_out(&sci_ports[0].port, SCSCR,
-+		       SCSCR_RE | SCSCR_TE | port_cfg.scscr);
- 
- 	device->con->write = serial_console_write;
- 	return 0;
+This revision addresses the issues found by Geert and Sergei in their
+reviews, see below for details.
+
+Setting the RX trigger on SH77xx-style ports is still not handled correctly,
+mostly because we don't have any hardware to test against. I have changed
+the trigger default for these ports to 1 to avoid regressions.
+
+CU
+Uli
+
+
+Changes since v1:
+- clarify HS trigger register enum
+- simplify DR bit handling
+- if() cascade -> switch()
+- disable RX trigger for SH77xx-style ports
+- clean up on failure to create sysfs attribute
+- r8a7796 DT: add control pins, rtscts flag
+
+
+Ulrich Hecht (7):
+  serial: sh-sci: add FIFO trigger bits
+  serial: sh-sci: consider DR (data ready) bit adequately
+  serial: sh-sci: implement FIFO threshold register setting
+  serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+  serial: sh-sci: SCIFA/B RX FIFO software timeout
+  serial: sh-sci: make RX FIFO parameters tunable via sysfs
+  arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
+
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  14 ++
+ drivers/tty/serial/sh-sci.c                        | 259 ++++++++++++++++++---
+ drivers/tty/serial/sh-sci.h                        |   8 +-
+ 3 files changed, 248 insertions(+), 33 deletions(-)
+
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
