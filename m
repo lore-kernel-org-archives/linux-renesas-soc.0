@@ -1,42 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940149AbdAFLSb (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36845 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750885AbdAWJPL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:31 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 23 Jan 2017 04:15:11 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170120212003.4103-2-chris.brandt@renesas.com>
+References: <20170120212003.4103-1-chris.brandt@renesas.com> <20170120212003.4103-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 10:15:09 +0100
+Message-ID: <CAMuHMdU+wfKj+B+7vHCnLMaakL6o9phJkYPex272z4UurcXemg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: document renesas-ostm timer
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/4] ARM: shmobile: defconfig: Enable r8a774[35] SoCs
-Date: Fri,  6 Jan 2017 12:18:11 +0100
-Message-Id: <d234e29dae04b224a63e39bc29938fa77819b3f1.1483701293.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483701293.git.horms+renesas@verge.net.au>
-References: <cover.1483701293.git.horms+renesas@verge.net.au>
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
+Hi Chris,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/shmobile_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+On Fri, Jan 20, 2017 at 10:20 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+>
+> ---
+> v2:
+> * remove sw implementation specific portions
+> ---
+>  .../devicetree/bindings/timer/renesas,ostm.txt     | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
+>
+> diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+> new file mode 100644
+> index 0000000..06d7d71
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+> @@ -0,0 +1,29 @@
+> +* Renesas OS Timer (OSTM)
+> +
+> +The OSTM is a multi-channel 32-bit timer/counter with fixed clock
+> +source that can operate in either interval count down timer or free-running
+> +compare match mode.
+> +
+> +Channels are independent from each other.
+> +
+> +Required Properties:
+> +
+> +  - compatible: must be one or more of the following:
+> +    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
+> +    - "renesas,ostm" for any OSTM
+> +               This is a fallback for the above renesas,*-ostm entries
+> +
+> +  - reg: base address and length of the register block for a timer channel.
+> +
+> +  - interrupts: interrupt specifier for the timer channel.
+> +
+> +  - clocks: clock specifier for the timer channel.
+> +
+> +Example: R7S72100 (RZ/A1H) OSTM node
+> +
+> +       ostm0: ostm@fcfec000 {
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index b66e17aec058..760688aa5c79 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -14,6 +14,8 @@ CONFIG_ARCH_EMEV2=y
- CONFIG_ARCH_R7S72100=y
- CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
-+CONFIG_ARCH_R8A7743=y
-+CONFIG_ARCH_R8A7745=y
- CONFIG_ARCH_R8A7778=y
- CONFIG_ARCH_R8A7779=y
- CONFIG_ARCH_R8A7790=y
--- 
-2.7.0.rc3.207.g0ac5344
+timer@fcfec000
+
+If you fix that:
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> +               compatible = "renesas,r7s72100-ostm", "renesas,ostm";
+> +               reg = <0xfcfec000 0x30>;
+> +               interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
+> +               clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
+> +       };
+> --
+> 2.10.1
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
