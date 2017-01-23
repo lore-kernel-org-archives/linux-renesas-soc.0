@@ -1,73 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59072 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761717AbdACXGm (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:8774 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751052AbdAWOBA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 18:06:42 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
+        Mon, 23 Jan 2017 09:01:00 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/19] serial: sh-sci: Don't rely on platform data flags when not needed
-Date: Wed,  4 Jan 2017 01:06:22 +0200
-Message-Id: <20170103230639.19660-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 1/2] dt-bindings: document renesas-ostm timer
+Date: Mon, 23 Jan 2017 08:54:22 -0500
+Message-Id: <20170123135423.28780-2-chris.brandt@renesas.com>
+In-Reply-To: <20170123135423.28780-1-chris.brandt@renesas.com>
+References: <20170123135423.28780-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The UPF_BOOT_AUTOCONF platform data flag is set by all platforms,
-hardcode it.
-
-The UPF_IOREMAP flag is set by a single SH platform and thus needs to be
-kept. However, for ARM platforms, we can base the decision on whether an
-OF node is present and bypass the platform data flags completely.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/tty/serial/sh-sci.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+v3:
+* changed ostm@fcfec000 to timer@fcfec000 in example
+* added power-domains in example
+v2:
+* remove sw implementation specific portions
+---
+ .../devicetree/bindings/timer/renesas,ostm.txt     | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 1e573611719e..8c58c43fc85d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2453,7 +2453,7 @@ static int sci_remap_port(struct uart_port *port)
- 	if (port->membase)
- 		return 0;
- 
--	if (port->flags & UPF_IOREMAP) {
-+	if (port->dev->of_node || (port->flags & UPF_IOREMAP)) {
- 		port->membase = ioremap_nocache(port->mapbase, sport->reg_size);
- 		if (unlikely(!port->membase)) {
- 			dev_err(port->dev, "can't remap port#%d\n", port->line);
-@@ -2475,7 +2475,7 @@ static void sci_release_port(struct uart_port *port)
- {
- 	struct sci_port *sport = to_sci_port(port);
- 
--	if (port->flags & UPF_IOREMAP) {
-+	if (port->dev->of_node || (port->flags & UPF_IOREMAP)) {
- 		iounmap(port->membase);
- 		port->membase = NULL;
- 	}
-@@ -2731,7 +2731,7 @@ static int sci_init_single(struct platform_device *dev,
- 	}
- 
- 	port->type		= p->type;
--	port->flags		= UPF_FIXED_PORT | p->flags;
-+	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
- 	port->regshift		= p->regshift;
- 
- 	/*
-@@ -2993,7 +2993,6 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
- 
- 	*dev_id = id;
- 
--	p->flags = UPF_IOREMAP | UPF_BOOT_AUTOCONF;
- 	p->type = SCI_OF_TYPE(match->data);
- 	p->regtype = SCI_OF_REGTYPE(match->data);
- 
+diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+new file mode 100644
+index 0000000..be3ae0f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+@@ -0,0 +1,30 @@
++* Renesas OS Timer (OSTM)
++
++The OSTM is a multi-channel 32-bit timer/counter with fixed clock
++source that can operate in either interval count down timer or free-running
++compare match mode.
++
++Channels are independent from each other.
++
++Required Properties:
++
++  - compatible: must be one or more of the following:
++    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
++    - "renesas,ostm" for any OSTM
++		This is a fallback for the above renesas,*-ostm entries
++
++  - reg: base address and length of the register block for a timer channel.
++
++  - interrupts: interrupt specifier for the timer channel.
++
++  - clocks: clock specifier for the timer channel.
++
++Example: R7S72100 (RZ/A1H) OSTM node
++
++	ostm0: timer@fcfec000 {
++		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
++		reg = <0xfcfec000 0x30>;
++		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
++		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
++		power-domains = <&cpg_clocks>;
++	};
 -- 
-Regards,
-
-Laurent Pinchart
+2.10.1
