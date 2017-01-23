@@ -1,82 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49370 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1754503AbdASUPo (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36181 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbdAWJui (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 15:15:44 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/3] mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
-Date: Thu, 19 Jan 2017 21:07:17 +0100
-Message-Id: <20170119200718.8115-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
-References: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
+        Mon, 23 Jan 2017 04:50:38 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170120231243.GE8009@codeaurora.org>
+References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+ <1484657190-12838-3-git-send-email-geert+renesas@glider.be> <20170120231243.GE8009@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 10:50:36 +0100
+Message-ID: <CAMuHMdWxmPr9B7QkrhXMbsis0UchdXf7p7TLky9QQNcz474iFw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: mstp: Make INTC-SYS a critical clock
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-QUIRK sounds like there is something wrong, but actually there are just
-some bits which need to be 1. Rename it to be more clear.
+Hi Stephen,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Sat, Jan 21, 2017 at 12:12 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/17, Geert Uytterhoeven wrote:
+>> INTC-SYS is the module clock for the GIC.  Accessing the GIC while it is
+>> disabled causes:
+>>
+>>     Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
+>>
+>> Currently, the GIC-400 driver cannot enable its module clock for several
+>> reasons:
+>>   - It does not use a platform device, so Runtime PM is not an option,
+>>   - gic_of_init() runs before any clocks are registered, so it cannot
+>>     enable the clock explicitly,
+>>   - gic_of_init() cannot return -EPROBE_DEFER, as IRQCHIP_DECLARE()
+>>     doesn't support deferred probing.
+>>
+>> Hence we have to keep on relying on the boot loader for enabling the
+>> module clock.
+>>
+>> To prevent the module clock from being disabled when the CCF core thinks
+>> it is unused, and thus causing a system lock-up, add a check to the MSTP
+>> clock driver and enable CLK_IS_CRITICAL. This will make sure the module
+>> clock is never disabled.
+>>
+>> This is a hard dependency for describing the INTC-SYS clock in DT on
+>> R-Mobile APE6 and R-Car Gen2.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Change since RFC: make comments more precise
+Thanks!
 
- drivers/mmc/host/sh_mobile_sdhi.c | 6 ++----
- drivers/mmc/host/tmio_mmc_pio.c   | 2 +-
- include/linux/mfd/tmio.h          | 6 ++----
- 3 files changed, 5 insertions(+), 9 deletions(-)
+>> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+>> index 9375777776d99407..c0319b8acf3521a2 100644
+>> --- a/drivers/clk/renesas/clk-mstp.c
+>> +++ b/drivers/clk/renesas/clk-mstp.c
+>> @@ -144,6 +144,11 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+>
+> Sad that git gets confused about which function this is in.
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 0b86ccdf9866e7..f82a8a058c7b6d 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -682,10 +682,8 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	 */
- 	mmc_data->flags |= TMIO_MMC_HAVE_CMD12_CTRL;
- 
--	/*
--	 * All SDHI need SDIO_INFO1 reserved bit
--	 */
--	mmc_data->flags |= TMIO_MMC_SDIO_STATUS_QUIRK;
-+	/* All SDHI have SDIO status bits which must be 1 */
-+	mmc_data->flags |= TMIO_MMC_SDIO_STATUS_SETBITS;
- 
- 	ret = tmio_mmc_host_probe(host, mmc_data);
- 	if (ret < 0)
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 6ab43892c132a9..f21e6a1b1a9206 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -770,7 +770,7 @@ static void __tmio_mmc_sdio_irq(struct tmio_mmc_host *host)
- 	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdio_irq_mask;
- 
- 	sdio_status = status & ~TMIO_SDIO_MASK_ALL;
--	if (pdata->flags & TMIO_MMC_SDIO_STATUS_QUIRK)
-+	if (pdata->flags & TMIO_MMC_SDIO_STATUS_SETBITS)
- 		sdio_status |= 6;
- 
- 	sd_ctrl_write16(host, CTL_SDIO_STATUS, sdio_status);
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 0dbcb7e66a02ee..662fedc87a31cf 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -94,10 +94,8 @@
-  */
- #define TMIO_MMC_HAVE_CMD12_CTRL	(1 << 7)
- 
--/*
-- * Some controllers needs to set 1 on SDIO status reserved bits
-- */
--#define TMIO_MMC_SDIO_STATUS_QUIRK	(1 << 8)
-+/* Controller has some SDIO status bits which must be 1 */
-+#define TMIO_MMC_SDIO_STATUS_SETBITS	(1 << 8)
- 
- /*
-  * Some controllers have a 32-bit wide data port register
--- 
-2.11.0
+Indeed. Will send a patch to fix that...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
