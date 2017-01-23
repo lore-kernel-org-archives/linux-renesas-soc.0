@@ -1,12 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7303 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751244AbdAWOsu (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35550 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750843AbdAWJWh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 09:48:50 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Mon, 23 Jan 2017 04:22:37 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170121030604.7672-2-chris.brandt@renesas.com>
+References: <20170121030604.7672-1-chris.brandt@renesas.com> <20170121030604.7672-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 10:22:35 +0100
+Message-ID: <CAMuHMdWwqa7CbNCRr8q60hDVsj243-ZjHCPp+o9R2a6Dg7YNWQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
@@ -14,56 +20,84 @@ CC: Ulf Hansson <ulf.hansson@linaro.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v5 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
-Date: Mon, 23 Jan 2017 14:48:45 +0000
-Message-ID: <SG2PR06MB11656145E7F0EEA7117F09A08A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170121030604.7672-1-chris.brandt@renesas.com>
- <20170121030604.7672-2-chris.brandt@renesas.com>
- <CAMuHMdWwqa7CbNCRr8q60hDVsj243-ZjHCPp+o9R2a6Dg7YNWQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWwqa7CbNCRr8q60hDVsj243-ZjHCPp+o9R2a6Dg7YNWQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgSmFudWFyeSAyMywgMjAxNywgR2VlcnQgVXl0dGVyaG9l
-dmVuOg0KPiA+IEBAIC0xOTAsNiArMTkxLDEyIEBAIHN0YXRpYyBpbnQgc2hfbW9iaWxlX3NkaGlf
-Y2xrX2VuYWJsZShzdHJ1Y3QNCj4gdG1pb19tbWNfaG9zdCAqaG9zdCkNCj4gPiAgICAgICAgIGlm
-IChyZXQgPCAwKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+DQo+ID4gKyAg
-ICAgICByZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUocHJpdi0+Y2xrX2NkKTsNCj4gPiArICAgICAg
-IGlmIChyZXQgPCAwKSB7DQo+ID4gKyAgICAgICAgICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFy
-ZShwcml2LT5jbGspOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICsgICAg
-ICAgfQ0KPiA+ICsNCj4gDQo+IEFzIGVuYWJsaW5nIHRoZSAiY29yZSIgY2xvY2sgYnV0IG5vdCB0
-aGUgImNkIiBjbG9jayBpcyBub3QgYSB2YWxpZCBzZXR0aW5nLA0KPiBzaG91bGRuJ3QgdGhlIGNk
-IGNsb2NrIGJlIGVuYWJsZWQgZmlyc3Q/DQoNCkknbSBwcmV0dHkgc3VyZSB0aGUgY2hpcCBkZXNp
-Z25lcnMganVzdCBkaWRuJ3Qgd2FudCB5b3UgdG8gJ3VzZScgdGhlDQpwZXJpcGhlcmFsIHdpdGgg
-dGhhdCBjbG9jayBjb25maWd1cmF0aW9uLCBhbmQgd2UgYXJlIG5vdCB1c2luZyBpdCBpbg0KYmV0
-d2VlbiB0aG9zZSAyIGxpbmVzIHNvIEkgcGVyc29uYWxseSB0aGluayBpdCdzIGZpbmUuDQoNCklm
-IEkgbmVlZCB0byBjaGFuZ2UgaXQgdG8gZ2V0IGl0IGFwcHJvdmVkLCBsZXQgbWUga25vdyBhbmQg
-SSdsbCBjaGFuZ2UNCnRoZSBjb2RlIGFyb3VuZC4NCg0KKEluIHJlYWxpdHksIEkgY2hlY2tlZCBh
-bmQgdGhlIFNESEkgZG9lcyB3b3JrIHdpdGggdGhlIGNkIGNsb2NrIG9mZiwNCmJ1dCBJIGRvbid0
-IGtub3cgaWYgdGhlIHJlc3RyaWN0aW9uIGluIHRoZSBzcGVjIHdhcyBiZWNhdXNlIHRoZXkgbmV2
-ZXINCmZ1bGx5IHRlc3RlZCB0aGUgdXNlIG9mIGl0IHRoYXQgd2F5IGJlY2F1c2UgaXQgd2Fzbid0
-IGEgZGVzaWduIGdvYWwgZm9yDQp0aGVtLikNCg0KDQoNCj4gPiAgICAgICAgIC8qDQo+ID4gICAg
-ICAgICAgKiBUaGUgY2xvY2sgZHJpdmVyIG1heSBub3Qga25vdyB3aGF0IG1heGltdW0gZnJlcXVl
-bmN5DQo+ID4gICAgICAgICAgKiBhY3R1YWxseSB3b3Jrcywgc28gaXQgc2hvdWxkIGJlIHNldCB3
-aXRoIHRoZSBtYXgtZnJlcXVlbmN5DQo+ID4gQEAgLTI1NSw2ICsyNjIsOCBAQCBzdGF0aWMgdm9p
-ZCBzaF9tb2JpbGVfc2RoaV9jbGtfZGlzYWJsZShzdHJ1Y3QNCj4gdG1pb19tbWNfaG9zdCAqaG9z
-dCkNCj4gPiAgICAgICAgIHN0cnVjdCBzaF9tb2JpbGVfc2RoaSAqcHJpdiA9IGhvc3RfdG9fcHJp
-dihob3N0KTsNCj4gPg0KPiA+ICAgICAgICAgY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHByaXYtPmNs
-ayk7DQo+ID4gKyAgICAgICBpZiAocHJpdi0+Y2xrX2NkKQ0KPiANCj4gTm8gbmVlZCB0byBjaGVj
-ayBmb3IgYSBOVUxMIHBvaW50ZXIgZmlyc3QuDQoNCk9LLCBJIHNlZSB0aGF0IElTX0VSUl9PUl9O
-VUxMKGNsaykgaXMgZG9uZSBmb3IgY2xrX2Rpc2FibGVfdW5wcmVwYXJlIHNvDQpJJ2xsIHRha2Ug
-dGhlIGNoZWNrIG91dC4NClRoYW5rIHlvdS4NCg0KDQo+ID4gKyAgICAgICAgICAgICAgIGNsa19k
-aXNhYmxlX3VucHJlcGFyZShwcml2LT5jbGtfY2QpOw0KPiANCj4gRGlzYWJsaW5nIGlzIGFscmVh
-ZHkgZG9uZSBpbiB0aGUgY29ycmVjdCBvcmRlciA7LSkNCg0KSSBndWVzcyB5b3UgY291bGQgZ2V0
-IGludG8gc29tZSB0aGVvcmV0aWNhbCB0ZWNobmljYWwgZGlzY3Vzc2lvbiBhcm91bmQNCmlmIGl0
-IGlzIE9LIHRvIGVuYWJsZS9kaXNhYmxlIHRoZSBjbG9ja3MgaW4gYW55IG9yZGVyIChhcyBsb25n
-IGFzIHlvdQ0KZG9uJ3QgdXNlIHRoZSBTREhJIGluIGJldHdlZW4pLCB0aGVuIHlvdSB3b3VsZCB3
-YW50IHRvIGVuYWJsZSB0aGUgY2QNCmNpcmN1aXQgbGFzdCwgYW5kIGRpc2FibGUgaXQgZmlyc3Qg
-c28geW91IHdvdWxkIGVuc3VyZSB0aGF0IG5vIGNkDQppbnRlcnJ1cHRzIGFyZSBiZWluZyByZWdp
-c3RlcmVkIHdoZW4gdGhlIGNvcmUgY2xvY2sgaXMgb2ZmPw0KSW4gdGhhdCBjYXNlLCB0aGUgY3Vy
-cmVudCBlbmFibGUgb3JkZXIgc2hvdWxkIHJlbWFpbiBidXQgdGhlIGRpc2FibGUNCm9yZGVyIHNo
-b3VsZCBjaGFuZ2UuDQoNCk9waW5pb25zPz8/DQoNCg0KVGhhbmsgeW91LA0KQ2hyaXMNCg==
+Hi Chris,
+
+On Sat, Jan 21, 2017 at 4:06 AM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Some controllers have 2 clock sources instead of 1. The 2nd clock
+> is for the internal card detect logic and must be enabled/disabled
+> along with the main core clock for proper operation.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v4:
+> * add technical explanation within probe routine
+> v3:
+> * add more clarification to the commit log
+> v2:
+> * changed clk2 to clk_cd
+> * disable clk if clk_cd enable fails
+> * changed clock name from "carddetect" to "cd"
+
+Thanks for the updates!
+
+> ---
+>  drivers/mmc/host/sh_mobile_sdhi.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+> index 59db14b..360d922 100644
+> --- a/drivers/mmc/host/sh_mobile_sdhi.c
+> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
+> @@ -143,6 +143,7 @@ MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
+>
+>  struct sh_mobile_sdhi {
+>         struct clk *clk;
+> +       struct clk *clk_cd;
+>         struct tmio_mmc_data mmc_data;
+>         struct tmio_mmc_dma dma_priv;
+>         struct pinctrl *pinctrl;
+> @@ -190,6 +191,12 @@ static int sh_mobile_sdhi_clk_enable(struct tmio_mmc_host *host)
+>         if (ret < 0)
+>                 return ret;
+>
+> +       ret = clk_prepare_enable(priv->clk_cd);
+> +       if (ret < 0) {
+> +               clk_disable_unprepare(priv->clk);
+> +               return ret;
+> +       }
+> +
+
+As enabling the "core" clock but not the "cd" clock is not a valid setting,
+shouldn't the cd clock be enabled first?
+
+>         /*
+>          * The clock driver may not know what maximum frequency
+>          * actually works, so it should be set with the max-frequency
+> @@ -255,6 +262,8 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
+>         struct sh_mobile_sdhi *priv = host_to_priv(host);
+>
+>         clk_disable_unprepare(priv->clk);
+> +       if (priv->clk_cd)
+
+No need to check for a NULL pointer first.
+
+> +               clk_disable_unprepare(priv->clk_cd);
+
+Disabling is already done in the correct order ;-)
+
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
