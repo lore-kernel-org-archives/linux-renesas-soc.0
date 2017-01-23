@@ -1,55 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940133AbdAFLSJ (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36843 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751514AbdAWQEb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:09 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/16] arm64: dts: r8a7796: Add CAN external clock support
-Date: Fri,  6 Jan 2017 12:17:44 +0100
-Message-Id: <8a6de0453954095c269efc5054da53c73bfc8298.1483700694.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
-References: <cover.1483700694.git.horms+renesas@verge.net.au>
+        Mon, 23 Jan 2017 11:04:31 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 1/7] serial: sh-sci: add FIFO trigger bits
+Date: Mon, 23 Jan 2017 17:04:12 +0100
+Message-Id: <1485187458-8195-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Paterson <chris.paterson2@renesas.com>
+Defines the bits controlling FIFO thresholds, adds the additional
+HSCIF registers to the register map.
 
-Adds external CAN clock node for r8a7796. This clock can be used as
-fCAN clock of CAN and CAN FD controller.
-
-Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
-
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/tty/serial/sh-sci.c | 2 ++
+ drivers/tty/serial/sh-sci.h | 6 ++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 4bf8e14956fe..c0f9ced8df7e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -69,6 +69,13 @@
- 		clock-frequency = <0>;
- 	};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index db5de80..3a9c001 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -377,6 +377,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
+ 		[SCPDR]		= sci_reg_invalid,
+ 		[SCDL]		= { 0x30, 16 },
+ 		[SCCKS]		= { 0x34, 16 },
++		[HSRTRGR]	= { 0x54, 16 },
++		[HSTTRGR]	= { 0x58, 16 },
+ 	},
  
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	/* External SCIF clock - to be overridden by boards that provide it */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
+ 	/*
+diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
+index ffa6d68..2c45e79 100644
+--- a/drivers/tty/serial/sh-sci.h
++++ b/drivers/tty/serial/sh-sci.h
+@@ -29,6 +29,8 @@ enum {
+ 	SCPDR,				/* Serial Port Data Register */
+ 	SCDL,				/* BRG Frequency Division Register */
+ 	SCCKS,				/* BRG Clock Select Register */
++	HSRTRGR,			/* Rx FIFO Data Count Trigger Register */
++	HSTTRGR,			/* Tx FIFO Data Count Trigger Register */
+ 
+ 	SCIx_NR_REGS,
+ };
+@@ -99,6 +101,10 @@ enum {
+ #define SCIF_BREAK_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_BRK))
+ 
+ /* SCFCR (FIFO Control Register) */
++#define SCFCR_RTRG1	BIT(7)	/* Receive FIFO Data Count Trigger */
++#define SCFCR_RTRG0	BIT(6)
++#define SCFCR_TTRG1	BIT(5)	/* Transmit FIFO Data Count Trigger */
++#define SCFCR_TTRG0	BIT(4)
+ #define SCFCR_MCE	BIT(3)	/* Modem Control Enable */
+ #define SCFCR_TFRST	BIT(2)	/* Transmit FIFO Data Register Reset */
+ #define SCFCR_RFRST	BIT(1)	/* Receive FIFO Data Register Reset */
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
