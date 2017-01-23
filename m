@@ -1,101 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:38124 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbdAYSJ5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 13:09:57 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [RFC 0/5] Renesas RZ series pinctrl driver
-Date: Wed, 25 Jan 2017 19:09:42 +0100
-Message-Id: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170120220302.GA20610@bigcity.dyn.berto.se>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+ <1484921306-9967-5-git-send-email-geert+renesas@glider.be> <20170120220302.GA20610@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 11:14:11 +0100
+Message-ID: <CAMuHMdUu=FwygW168GLVp2JtKbbB_R2wQLzq_3_TxLiu5ww6kA@mail.gmail.com>
+Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   after having discussed in great detail the RZ series per-pin PFC hardware
-peculiarities, this is a proposal for a possible pin-based pin controller
-driver for SoC devices of Renesas RZ family.
+Hi Niklas,
 
-This RFC series adds a minimal driver infrastructure which supports pin
-multiplexing via explicit per-pin settings performed in device tree sources.
+On Fri, Jan 20, 2017 at 11:03 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> Nice patch! It took me a while to understand why you didn't need to read
+> the register before writing to it in cpg_mssr_deassert() :-)
 
-The driver is composed by a "core" module, which aims to be generic enough to
-support different RZ SoC device, and a "SoC" module, which is instead specific
-to the single device.
-Right now, the only "SoC" module support implemented is for RZ/A1H (Genmai
-and GR-Peach boards).
+Yeah, deassertion and assertion are asymmetrical.
 
-Why an "SoC" module, if a single SoC is supported then?
-RZ devices with a pin-based PFC hardware have different register layouts and
-available pin functions, the "SoC" module is requested to enumerate its pins,
-and provide function for HW interfacing (currently only set_mux() is supported).
-This should make adding support for new chips fairly easy.
+Note that on older (not yet supported) SH/R-Mobile parts, there are no
+reset clear registers, and deassertion is symmetrical.
 
-One note on the current DT ABI:
-right now a pin configuration is specified in DTS using utility macros defined
-in the (currently undocumented)
-arch/arm/boot/dts/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h header file.
-Each pin configuration is a triplet of u32 in the form of
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
+>
 
-<BANK PIN ALTERNATE_FUNC_#>
+Thanks!
 
-It should be fairly easy adding additional parameters to configure
-what was missing in the original group-based PFC driver for RZ devices
-(I'm thinking of IO mode control, input buffer configuration, bi-directional
-configuration etc).
-Once these configuration parameters have been retrieved from the DTS, they can
-be passed down to the "SoC" module, and let it deal with them as it does right
-now with mux settings.
+Gr{oetje,eeting}s,
 
-Currently, there is no support for pinconfig operations, and no GPIO support.
-I'm planning to work on GPIO integration as soon as I have sent this out, but
-I wanted to send this first to start collecting comments as soon as I could.
+                        Geert
 
-I have tested the correctness of mux settings printing out register values,
-and enabling/disabling the SCIF2 module connected to serial debug interface.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-The series makes use of newly introduced pin[ctrl|mux]_generic functions,
-currently only available in Linus Walleij's linux-pinctrl.git tree.
-I have merged the devel/ branch of that tree on top of Geert's renesas-drivers
-master one.
-The merge is available for clone at git://jmondi.org/linux in
-jmondi/renesas/pinctrl-devel branch, for the interested ones.
-
-Sending out as RFC, as I do expect lot of comments both from Renesas people that
-has a deeper knowledge of other RZ Series SoCs than me, and from gpio/pinctrl
-people as this is the first pin control driver I send out (so please bear with
-me on this :)
-
-Thank you
-   j
-
-Jacopo Mondi (5):
-  pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
-  pinctrl: rz-pfc: Add Renesas RZ/A1 pinctrl driver
-  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-  arm: dts: r7s1000: Add pincontroller node
-  arm: dts: genmai: Add SCIF2 pin group
-
- arch/arm/boot/dts/r7s72100-genmai.dts            |  13 +
- arch/arm/boot/dts/r7s72100.dtsi                  |  12 +
- drivers/pinctrl/Kconfig                          |   1 +
- drivers/pinctrl/Makefile                         |   1 +
- drivers/pinctrl/rz-pfc/Kconfig                   |  25 ++
- drivers/pinctrl/rz-pfc/Makefile                  |   2 +
- drivers/pinctrl/rz-pfc/pinctrl-rz.c              | 433 +++++++++++++++++++++++
- drivers/pinctrl/rz-pfc/pinctrl-rz.h              | 114 ++++++
- drivers/pinctrl/rz-pfc/pinctrl-rza1.c            | 346 ++++++++++++++++++
- include/dt-bindings/pinctrl/pinctrl-renesas-rz.h |  19 +
- 10 files changed, 966 insertions(+)
- create mode 100644 drivers/pinctrl/rz-pfc/Kconfig
- create mode 100644 drivers/pinctrl/rz-pfc/Makefile
- create mode 100644 drivers/pinctrl/rz-pfc/pinctrl-rz.c
- create mode 100644 drivers/pinctrl/rz-pfc/pinctrl-rz.h
- create mode 100644 drivers/pinctrl/rz-pfc/pinctrl-rza1.c
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
