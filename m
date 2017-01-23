@@ -1,185 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61777 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:7303 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751744AbdAYM4A (ORCPT
+        by vger.kernel.org with ESMTP id S1751244AbdAWOsu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 07:56:00 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <joro@8bytes.org>
-CC: <magnus.damm@gmail.com>, <iommu@lists.linux-foundation.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 3/4] iommu: dma: iommu iova domain reset
-Date: Wed, 25 Jan 2017 21:54:01 +0900
-Message-ID: <1485348842-23712-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1485348842-23712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1485348842-23712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 23 Jan 2017 09:48:50 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v5 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
+Date: Mon, 23 Jan 2017 14:48:45 +0000
+Message-ID: <SG2PR06MB11656145E7F0EEA7117F09A08A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170121030604.7672-1-chris.brandt@renesas.com>
+ <20170121030604.7672-2-chris.brandt@renesas.com>
+ <CAMuHMdWwqa7CbNCRr8q60hDVsj243-ZjHCPp+o9R2a6Dg7YNWQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWwqa7CbNCRr8q60hDVsj243-ZjHCPp+o9R2a6Dg7YNWQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
-
-To add a workaround code for ipmmu-vmsa driver, this patch adds
-a new geometry "force_reset_when_empty" not to reuse iova space.
-When all pfns happen to get unmapped then ask the IOMMU driver to
-flush the state followed by starting from an empty iova space.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/iommu/dma-iommu.c | 42 +++++++++++++++++++++++++++++++++++++-----
- drivers/iommu/iova.c      |  9 +++++++++
- include/linux/iommu.h     |  2 ++
- include/linux/iova.h      |  1 +
- 4 files changed, 49 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index a0b8c0f..d0fa0b1 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -42,6 +42,7 @@ struct iommu_dma_cookie {
- 	struct iova_domain	iovad;
- 	struct list_head	msi_page_list;
- 	spinlock_t		msi_lock;
-+	spinlock_t		reset_lock;
- };
- 
- static inline struct iova_domain *cookie_iovad(struct iommu_domain *domain)
-@@ -74,6 +75,7 @@ int iommu_get_dma_cookie(struct iommu_domain *domain)
- 
- 	spin_lock_init(&cookie->msi_lock);
- 	INIT_LIST_HEAD(&cookie->msi_page_list);
-+	spin_lock_init(&cookie->reset_lock);
- 	domain->iova_cookie = cookie;
- 	return 0;
- }
-@@ -208,9 +210,11 @@ int dma_direction_to_prot(enum dma_data_direction dir, bool coherent)
- static struct iova *__alloc_iova(struct iommu_domain *domain, size_t size,
- 		dma_addr_t dma_limit)
- {
-+	struct iommu_dma_cookie *cookie = domain->iova_cookie;
- 	struct iova_domain *iovad = cookie_iovad(domain);
- 	unsigned long shift = iova_shift(iovad);
- 	unsigned long length = iova_align(iovad, size) >> shift;
-+	unsigned long flags;
- 	struct iova *iova;
- 
- 	if (domain->geometry.force_aperture)
-@@ -219,9 +223,19 @@ static struct iova *__alloc_iova(struct iommu_domain *domain, size_t size,
- 	 * Enforce size-alignment to be safe - there could perhaps be an
- 	 * attribute to control this per-device, or at least per-domain...
- 	 */
--	iova = alloc_iova(iovad, length, dma_limit >> shift, true);
--	if (iova)
--		atomic_add(iova_size(iova), &domain->iova_pfns_mapped);
-+	if (domain->geometry.force_reset_when_empty) {
-+		spin_lock_irqsave(&cookie->reset_lock, flags);
-+
-+		iova = alloc_iova(iovad, length, dma_limit >> shift, true);
-+		if (iova)
-+			atomic_add(iova_size(iova), &domain->iova_pfns_mapped);
-+
-+		spin_unlock_irqrestore(&cookie->reset_lock, flags);
-+	} else {
-+		iova = alloc_iova(iovad, length, dma_limit >> shift, true);
-+		if (iova)
-+			atomic_add(iova_size(iova), &domain->iova_pfns_mapped);
-+	}
- 
- 	return iova;
- }
-@@ -229,10 +243,28 @@ static struct iova *__alloc_iova(struct iommu_domain *domain, size_t size,
- void
- __free_iova_domain(struct iommu_domain *domain, struct iova *iova)
- {
-+	struct iommu_dma_cookie *cookie = domain->iova_cookie;
- 	struct iova_domain *iovad = cookie_iovad(domain);
-+	unsigned long flags;
- 
--	atomic_sub(iova_size(iova), &domain->iova_pfns_mapped);
--	__free_iova(iovad, iova);
-+	/* In case force_reset_when_empty is set, do not reuse iova space
-+	 * but instead simply keep on expanding seemingly forever.
-+	 * When all pfns happen to get unmapped then ask the IOMMU driver to
-+	 * flush the state followed by starting from an empty iova space.
-+	 */
-+	if (domain->geometry.force_reset_when_empty) {
-+		spin_lock_irqsave(&cookie->reset_lock, flags);
-+		if (atomic_sub_return(iova_size(iova),
-+				      &domain->iova_pfns_mapped) == 0) {
-+			reset_iova_domain(iovad);
-+			if (domain->ops->domain_reset)
-+				domain->ops->domain_reset(domain);
-+		}
-+		spin_unlock_irqrestore(&cookie->reset_lock, flags);
-+	} else {
-+		atomic_sub(iova_size(iova), &domain->iova_pfns_mapped);
-+		__free_iova(iovad, iova);
-+	}
- }
- 
- 
-diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index 866ad65..50aaa46 100644
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -464,6 +464,7 @@ void put_iova_domain(struct iova_domain *iovad)
- 	while (node) {
- 		struct iova *iova = rb_entry(node, struct iova, node);
- 
-+		__cached_rbnode_delete_update(iovad, iova);
- 		rb_erase(node, &iovad->rbroot);
- 		free_iova_mem(iova);
- 		node = rb_first(&iovad->rbroot);
-@@ -472,6 +473,14 @@ void put_iova_domain(struct iova_domain *iovad)
- }
- EXPORT_SYMBOL_GPL(put_iova_domain);
- 
-+void
-+reset_iova_domain(struct iova_domain *iovad)
-+{
-+	put_iova_domain(iovad);
-+	init_iova_rcaches(iovad);
-+}
-+EXPORT_SYMBOL_GPL(reset_iova_domain);
-+
- static int
- __is_range_overlap(struct rb_node *node,
- 	unsigned long pfn_lo, unsigned long pfn_hi)
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 91d0159..bd9ba1b 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -51,6 +51,7 @@ struct iommu_domain_geometry {
- 	dma_addr_t aperture_start; /* First address that can be mapped    */
- 	dma_addr_t aperture_end;   /* Last address that can be mapped     */
- 	bool force_aperture;       /* DMA only allowed in mappable range? */
-+	bool force_reset_when_empty;
- };
- 
- /* Domain feature flags */
-@@ -168,6 +169,7 @@ struct iommu_ops {
- 	/* Domain allocation and freeing by the iommu driver */
- 	struct iommu_domain *(*domain_alloc)(unsigned iommu_domain_type);
- 	void (*domain_free)(struct iommu_domain *);
-+	void (*domain_reset)(struct iommu_domain *);
- 
- 	int (*attach_dev)(struct iommu_domain *domain, struct device *dev);
- 	void (*detach_dev)(struct iommu_domain *domain, struct device *dev);
-diff --git a/include/linux/iova.h b/include/linux/iova.h
-index f27bb2c..31c8496 100644
---- a/include/linux/iova.h
-+++ b/include/linux/iova.h
-@@ -103,6 +103,7 @@ void init_iova_domain(struct iova_domain *iovad, unsigned long granule,
- 	unsigned long start_pfn, unsigned long pfn_32bit);
- struct iova *find_iova(struct iova_domain *iovad, unsigned long pfn);
- void put_iova_domain(struct iova_domain *iovad);
-+void reset_iova_domain(struct iova_domain *iovad);
- struct iova *split_and_remove_iova(struct iova_domain *iovad,
- 	struct iova *iova, unsigned long pfn_lo, unsigned long pfn_hi);
- void free_cpu_cached_iovas(unsigned int cpu, struct iova_domain *iovad);
--- 
-1.9.1
+SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgSmFudWFyeSAyMywgMjAxNywgR2VlcnQgVXl0dGVyaG9l
+dmVuOg0KPiA+IEBAIC0xOTAsNiArMTkxLDEyIEBAIHN0YXRpYyBpbnQgc2hfbW9iaWxlX3NkaGlf
+Y2xrX2VuYWJsZShzdHJ1Y3QNCj4gdG1pb19tbWNfaG9zdCAqaG9zdCkNCj4gPiAgICAgICAgIGlm
+IChyZXQgPCAwKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+DQo+ID4gKyAg
+ICAgICByZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUocHJpdi0+Y2xrX2NkKTsNCj4gPiArICAgICAg
+IGlmIChyZXQgPCAwKSB7DQo+ID4gKyAgICAgICAgICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFy
+ZShwcml2LT5jbGspOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICsgICAg
+ICAgfQ0KPiA+ICsNCj4gDQo+IEFzIGVuYWJsaW5nIHRoZSAiY29yZSIgY2xvY2sgYnV0IG5vdCB0
+aGUgImNkIiBjbG9jayBpcyBub3QgYSB2YWxpZCBzZXR0aW5nLA0KPiBzaG91bGRuJ3QgdGhlIGNk
+IGNsb2NrIGJlIGVuYWJsZWQgZmlyc3Q/DQoNCkknbSBwcmV0dHkgc3VyZSB0aGUgY2hpcCBkZXNp
+Z25lcnMganVzdCBkaWRuJ3Qgd2FudCB5b3UgdG8gJ3VzZScgdGhlDQpwZXJpcGhlcmFsIHdpdGgg
+dGhhdCBjbG9jayBjb25maWd1cmF0aW9uLCBhbmQgd2UgYXJlIG5vdCB1c2luZyBpdCBpbg0KYmV0
+d2VlbiB0aG9zZSAyIGxpbmVzIHNvIEkgcGVyc29uYWxseSB0aGluayBpdCdzIGZpbmUuDQoNCklm
+IEkgbmVlZCB0byBjaGFuZ2UgaXQgdG8gZ2V0IGl0IGFwcHJvdmVkLCBsZXQgbWUga25vdyBhbmQg
+SSdsbCBjaGFuZ2UNCnRoZSBjb2RlIGFyb3VuZC4NCg0KKEluIHJlYWxpdHksIEkgY2hlY2tlZCBh
+bmQgdGhlIFNESEkgZG9lcyB3b3JrIHdpdGggdGhlIGNkIGNsb2NrIG9mZiwNCmJ1dCBJIGRvbid0
+IGtub3cgaWYgdGhlIHJlc3RyaWN0aW9uIGluIHRoZSBzcGVjIHdhcyBiZWNhdXNlIHRoZXkgbmV2
+ZXINCmZ1bGx5IHRlc3RlZCB0aGUgdXNlIG9mIGl0IHRoYXQgd2F5IGJlY2F1c2UgaXQgd2Fzbid0
+IGEgZGVzaWduIGdvYWwgZm9yDQp0aGVtLikNCg0KDQoNCj4gPiAgICAgICAgIC8qDQo+ID4gICAg
+ICAgICAgKiBUaGUgY2xvY2sgZHJpdmVyIG1heSBub3Qga25vdyB3aGF0IG1heGltdW0gZnJlcXVl
+bmN5DQo+ID4gICAgICAgICAgKiBhY3R1YWxseSB3b3Jrcywgc28gaXQgc2hvdWxkIGJlIHNldCB3
+aXRoIHRoZSBtYXgtZnJlcXVlbmN5DQo+ID4gQEAgLTI1NSw2ICsyNjIsOCBAQCBzdGF0aWMgdm9p
+ZCBzaF9tb2JpbGVfc2RoaV9jbGtfZGlzYWJsZShzdHJ1Y3QNCj4gdG1pb19tbWNfaG9zdCAqaG9z
+dCkNCj4gPiAgICAgICAgIHN0cnVjdCBzaF9tb2JpbGVfc2RoaSAqcHJpdiA9IGhvc3RfdG9fcHJp
+dihob3N0KTsNCj4gPg0KPiA+ICAgICAgICAgY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHByaXYtPmNs
+ayk7DQo+ID4gKyAgICAgICBpZiAocHJpdi0+Y2xrX2NkKQ0KPiANCj4gTm8gbmVlZCB0byBjaGVj
+ayBmb3IgYSBOVUxMIHBvaW50ZXIgZmlyc3QuDQoNCk9LLCBJIHNlZSB0aGF0IElTX0VSUl9PUl9O
+VUxMKGNsaykgaXMgZG9uZSBmb3IgY2xrX2Rpc2FibGVfdW5wcmVwYXJlIHNvDQpJJ2xsIHRha2Ug
+dGhlIGNoZWNrIG91dC4NClRoYW5rIHlvdS4NCg0KDQo+ID4gKyAgICAgICAgICAgICAgIGNsa19k
+aXNhYmxlX3VucHJlcGFyZShwcml2LT5jbGtfY2QpOw0KPiANCj4gRGlzYWJsaW5nIGlzIGFscmVh
+ZHkgZG9uZSBpbiB0aGUgY29ycmVjdCBvcmRlciA7LSkNCg0KSSBndWVzcyB5b3UgY291bGQgZ2V0
+IGludG8gc29tZSB0aGVvcmV0aWNhbCB0ZWNobmljYWwgZGlzY3Vzc2lvbiBhcm91bmQNCmlmIGl0
+IGlzIE9LIHRvIGVuYWJsZS9kaXNhYmxlIHRoZSBjbG9ja3MgaW4gYW55IG9yZGVyIChhcyBsb25n
+IGFzIHlvdQ0KZG9uJ3QgdXNlIHRoZSBTREhJIGluIGJldHdlZW4pLCB0aGVuIHlvdSB3b3VsZCB3
+YW50IHRvIGVuYWJsZSB0aGUgY2QNCmNpcmN1aXQgbGFzdCwgYW5kIGRpc2FibGUgaXQgZmlyc3Qg
+c28geW91IHdvdWxkIGVuc3VyZSB0aGF0IG5vIGNkDQppbnRlcnJ1cHRzIGFyZSBiZWluZyByZWdp
+c3RlcmVkIHdoZW4gdGhlIGNvcmUgY2xvY2sgaXMgb2ZmPw0KSW4gdGhhdCBjYXNlLCB0aGUgY3Vy
+cmVudCBlbmFibGUgb3JkZXIgc2hvdWxkIHJlbWFpbiBidXQgdGhlIGRpc2FibGUNCm9yZGVyIHNo
+b3VsZCBjaGFuZ2UuDQoNCk9waW5pb25zPz8/DQoNCg0KVGhhbmsgeW91LA0KQ2hyaXMNCg==
