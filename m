@@ -1,420 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58694 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937981AbdAKOnu (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:33684 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750714AbdAXPrl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 09:43:50 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 14/18] serial: sh-sci: Extend sci_port_params with more port parameters
-Date: Wed, 11 Jan 2017 16:43:36 +0200
-Message-Id: <20170111144340.29074-15-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170111144340.29074-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 24 Jan 2017 10:47:41 -0500
+Received: by mail-lf0-f44.google.com with SMTP id x1so26635991lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jan 2017 07:47:40 -0800 (PST)
+Subject: Re: [PATCH 1/3] sh_eth: rename EESIPR bits
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1636105.gp4aQxGd5K@wasted.cogentembedded.com>
+ <6851530.HAKW22qnWH@wasted.cogentembedded.com>
+ <CAMuHMdVS4C37FGtB+eCytz-=aXSjGB7vYGUCnLG=rKN0L1io7g@mail.gmail.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <0f483c3d-8148-0aea-a9e1-7b3f5ccc22df@cogentembedded.com>
+Date: Tue, 24 Jan 2017 18:47:37 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVS4C37FGtB+eCytz-=aXSjGB7vYGUCnLG=rKN0L1io7g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The fifo size, overrun register and mask, sampling rate mask and error
-mask all depend on the port type only and don't need to be computed at
-runtime. Add them to the sci_port_parameters structure.
+Hello!
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 181 ++++++++++++++++++++++++--------------------
- drivers/tty/serial/sh-sci.h |   4 +-
- 2 files changed, 102 insertions(+), 83 deletions(-)
+On 01/23/2017 10:39 AM, Geert Uytterhoeven wrote:
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 4a54fd5909ed..3bbb7b4b2f19 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -107,6 +107,12 @@ struct plat_sci_reg {
- 
- struct sci_port_params {
- 	const struct plat_sci_reg regs[SCIx_NR_REGS];
-+	unsigned int fifosize;
-+	unsigned int overrun_reg;
-+	unsigned int overrun_mask;
-+	unsigned int sampling_rate_mask;
-+	unsigned int error_mask;
-+	unsigned int error_clear;
- };
- 
- struct sci_port {
-@@ -115,10 +121,6 @@ struct sci_port {
- 	/* Platform configuration */
- 	const struct sci_port_params *params;
- 	const struct plat_sci_port *cfg;
--	unsigned int		overrun_reg;
--	unsigned int		overrun_mask;
--	unsigned int		error_mask;
--	unsigned int		error_clear;
- 	unsigned int		sampling_rate_mask;
- 	resource_size_t		reg_size;
- 	struct mctrl_gpios	*gpios;
-@@ -179,6 +181,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCxSR]		= { 0x04,  8 },
- 			[SCxRDR]	= { 0x05,  8 },
- 		},
-+		.fifosize = 1,
-+		.overrun_reg = SCxSR,
-+		.overrun_mask = SCI_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCI_DEFAULT_ERROR_MASK | SCI_ORER,
-+		.error_clear = SCI_ERROR_CLEAR & ~SCI_ORER,
- 	},
- 
- 	/*
-@@ -195,6 +203,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCFCR]		= { 0x0c,  8 },
- 			[SCFDR]		= { 0x0e, 16 },
- 		},
-+		.fifosize = 1,
-+		.overrun_reg = SCxSR,
-+		.overrun_mask = SCI_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCI_DEFAULT_ERROR_MASK | SCI_ORER,
-+		.error_clear = SCI_ERROR_CLEAR & ~SCI_ORER,
- 	},
- 
- 	/*
-@@ -213,6 +227,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCPCR]		= { 0x30, 16 },
- 			[SCPDR]		= { 0x34, 16 },
- 		},
-+		.fifosize = 64,
-+		.overrun_reg = SCxSR,
-+		.overrun_mask = SCIFA_ORER,
-+		.sampling_rate_mask = SCI_SR_SCIFAB,
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK | SCIFA_ORER,
-+		.error_clear = SCIF_ERROR_CLEAR & ~SCIFA_ORER,
- 	},
- 
- 	/*
-@@ -232,6 +252,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCPCR]		= { 0x30, 16 },
- 			[SCPDR]		= { 0x34, 16 },
- 		},
-+		.fifosize = 256,
-+		.overrun_reg = SCxSR,
-+		.overrun_mask = SCIFA_ORER,
-+		.sampling_rate_mask = SCI_SR_SCIFAB,
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK | SCIFA_ORER,
-+		.error_clear = SCIF_ERROR_CLEAR & ~SCIFA_ORER,
- 	},
- 
- 	/*
-@@ -251,6 +277,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCSPTR]	= { 0x20, 16 },
- 			[SCLSR]		= { 0x24, 16 },
- 		},
-+		.fifosize = 16,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
- 	/*
-@@ -267,6 +299,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCFCR]		= { 0x0c,  8 },
- 			[SCFDR]		= { 0x0e, 16 },
- 		},
-+		.fifosize = 16,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
- 	/*
-@@ -285,6 +323,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCSPTR]	= { 0x20, 16 },
- 			[SCLSR]		= { 0x24, 16 },
- 		},
-+		.fifosize = 16,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
- 	/*
-@@ -306,6 +350,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCDL]		= { 0x30, 16 },
- 			[SCCKS]		= { 0x34, 16 },
- 		},
-+		.fifosize = 16,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
- 	/*
-@@ -327,6 +377,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCDL]		= { 0x30, 16 },
- 			[SCCKS]		= { 0x34, 16 },
- 		},
-+		.fifosize = 128,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR_RANGE(8, 32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
- 	/*
-@@ -345,6 +401,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCFDR]		= { 0x1c, 16 },
- 			[SCLSR]		= { 0x24, 16 },
- 		},
-+		.fifosize = 16,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
- 	/*
-@@ -366,6 +428,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCSPTR]	= { 0x24, 16 },
- 			[SCLSR]		= { 0x28, 16 },
- 		},
-+		.fifosize = 16,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
- 	/*
-@@ -383,6 +451,12 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCFCR]		= { 0x18, 16 },
- 			[SCFDR]		= { 0x1c, 16 },
- 		},
-+		.fifosize = 16,
-+		.overrun_reg = SCxSR,
-+		.overrun_mask = SCIFA_ORER,
-+		.sampling_rate_mask = SCI_SR(16),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK | SCIFA_ORER,
-+		.error_clear = SCIF_ERROR_CLEAR & ~SCIFA_ORER,
- 	},
- };
- 
-@@ -545,7 +619,7 @@ static void sci_clear_SCxSR(struct uart_port *port, unsigned int mask)
- 	if (port->type == PORT_SCI) {
- 		/* Just store the mask */
- 		serial_port_out(port, SCxSR, mask);
--	} else if (to_sci_port(port)->overrun_mask == SCIFA_ORER) {
-+	} else if (to_sci_port(port)->params->overrun_mask == SCIFA_ORER) {
- 		/* SCIFA/SCIFB and SCIF on SH7705/SH7720/SH7721 */
- 		/* Only clear the status bits we want to clear */
- 		serial_port_out(port, SCxSR,
-@@ -640,11 +714,13 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
- 
- static int sci_txfill(struct uart_port *port)
- {
-+	struct sci_port *s = to_sci_port(port);
-+	unsigned int fifo_mask = (s->params->fifosize << 1) - 1;
- 	const struct plat_sci_reg *reg;
- 
- 	reg = sci_getreg(port, SCTFDR);
- 	if (reg->size)
--		return serial_port_in(port, SCTFDR) & ((port->fifosize << 1) - 1);
-+		return serial_port_in(port, SCTFDR) & fifo_mask;
- 
- 	reg = sci_getreg(port, SCFDR);
- 	if (reg->size)
-@@ -660,15 +736,17 @@ static int sci_txroom(struct uart_port *port)
- 
- static int sci_rxfill(struct uart_port *port)
- {
-+	struct sci_port *s = to_sci_port(port);
-+	unsigned int fifo_mask = (s->params->fifosize << 1) - 1;
- 	const struct plat_sci_reg *reg;
- 
- 	reg = sci_getreg(port, SCRFDR);
- 	if (reg->size)
--		return serial_port_in(port, SCRFDR) & ((port->fifosize << 1) - 1);
-+		return serial_port_in(port, SCRFDR) & fifo_mask;
- 
- 	reg = sci_getreg(port, SCFDR);
- 	if (reg->size)
--		return serial_port_in(port, SCFDR) & ((port->fifosize << 1) - 1);
-+		return serial_port_in(port, SCFDR) & fifo_mask;
- 
- 	return (serial_port_in(port, SCxSR) & SCxSR_RDxF(port)) != 0;
- }
-@@ -879,7 +957,7 @@ static int sci_handle_errors(struct uart_port *port)
- 	struct sci_port *s = to_sci_port(port);
- 
- 	/* Handle overruns */
--	if (status & s->overrun_mask) {
-+	if (status & s->params->overrun_mask) {
- 		port->icount.overrun++;
- 
- 		/* overrun error */
-@@ -945,14 +1023,14 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
- 	int copied = 0;
- 	u16 status;
- 
--	reg = sci_getreg(port, s->overrun_reg);
-+	reg = sci_getreg(port, s->params->overrun_reg);
- 	if (!reg->size)
- 		return 0;
- 
--	status = serial_port_in(port, s->overrun_reg);
--	if (status & s->overrun_mask) {
--		status &= ~s->overrun_mask;
--		serial_port_out(port, s->overrun_reg, status);
-+	status = serial_port_in(port, s->params->overrun_reg);
-+	if (status & s->params->overrun_mask) {
-+		status &= ~s->params->overrun_mask;
-+		serial_port_out(port, s->params->overrun_reg, status);
- 
- 		port->icount.overrun++;
- 
-@@ -1541,12 +1619,10 @@ static irqreturn_t sci_mpxed_interrupt(int irq, void *ptr)
- 
- 	ssr_status = serial_port_in(port, SCxSR);
- 	scr_status = serial_port_in(port, SCSCR);
--	if (s->overrun_reg == SCxSR)
-+	if (s->params->overrun_reg == SCxSR)
- 		orer_status = ssr_status;
--	else {
--		if (sci_getreg(port, s->overrun_reg)->size)
--			orer_status = serial_port_in(port, s->overrun_reg);
--	}
-+	else if (sci_getreg(port, s->params->overrun_reg)->size)
-+		orer_status = serial_port_in(port, s->params->overrun_reg);
- 
- 	err_enabled = scr_status & port_rx_irq_mask(port);
- 
-@@ -1572,7 +1648,7 @@ static irqreturn_t sci_mpxed_interrupt(int irq, void *ptr)
- 		ret = sci_br_interrupt(irq, ptr);
- 
- 	/* Overrun Interrupt */
--	if (orer_status & s->overrun_mask) {
-+	if (orer_status & s->params->overrun_mask) {
- 		sci_handle_fifo_overrun(port);
- 		ret = IRQ_HANDLED;
- 	}
-@@ -2588,51 +2664,13 @@ static int sci_init_single(struct platform_device *dev,
- 	if (unlikely(sci_port->params == NULL))
- 		return -EINVAL;
- 
--	switch (p->type) {
--	case PORT_SCIFB:
--		port->fifosize = 256;
--		sci_port->overrun_reg = SCxSR;
--		sci_port->overrun_mask = SCIFA_ORER;
--		sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
--		break;
--	case PORT_HSCIF:
--		port->fifosize = 128;
--		sci_port->overrun_reg = SCLSR;
--		sci_port->overrun_mask = SCLSR_ORER;
--		sci_port->sampling_rate_mask = SCI_SR_RANGE(8, 32);
--		break;
--	case PORT_SCIFA:
--		port->fifosize = 64;
--		sci_port->overrun_reg = SCxSR;
--		sci_port->overrun_mask = SCIFA_ORER;
--		sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
--		break;
--	case PORT_SCIF:
--		port->fifosize = 16;
--		if (p->regtype == SCIx_SH7705_SCIF_REGTYPE) {
--			sci_port->overrun_reg = SCxSR;
--			sci_port->overrun_mask = SCIFA_ORER;
--			sci_port->sampling_rate_mask = SCI_SR(16);
--		} else {
--			sci_port->overrun_reg = SCLSR;
--			sci_port->overrun_mask = SCLSR_ORER;
--			sci_port->sampling_rate_mask = SCI_SR(32);
--		}
--		break;
--	default:
--		port->fifosize = 1;
--		sci_port->overrun_reg = SCxSR;
--		sci_port->overrun_mask = SCI_ORER;
--		sci_port->sampling_rate_mask = SCI_SR(32);
--		break;
--	}
--
- 	/* SCIFA on sh7723 and sh7724 need a custom sampling rate that doesn't
- 	 * match the SoC datasheet, this should be investigated. Let platform
- 	 * data override the sampling rate for now.
- 	 */
--	if (p->sampling_rate)
--		sci_port->sampling_rate_mask = SCI_SR(p->sampling_rate);
-+	sci_port->sampling_rate_mask = p->sampling_rate
-+				     ? SCI_SR(p->sampling_rate)
-+				     : sci_port->params->sampling_rate_mask;
- 
- 	if (!early) {
- 		ret = sci_init_clocks(sci_port, &dev->dev);
-@@ -2648,29 +2686,10 @@ static int sci_init_single(struct platform_device *dev,
- 	sci_port->break_timer.function = sci_break_timer;
- 	init_timer(&sci_port->break_timer);
- 
--	/*
--	 * Establish some sensible defaults for the error detection.
--	 */
--	if (p->type == PORT_SCI) {
--		sci_port->error_mask = SCI_DEFAULT_ERROR_MASK;
--		sci_port->error_clear = SCI_ERROR_CLEAR;
--	} else {
--		sci_port->error_mask = SCIF_DEFAULT_ERROR_MASK;
--		sci_port->error_clear = SCIF_ERROR_CLEAR;
--	}
--
--	/*
--	 * Make the error mask inclusive of overrun detection, if
--	 * supported.
--	 */
--	if (sci_port->overrun_reg == SCxSR) {
--		sci_port->error_mask |= sci_port->overrun_mask;
--		sci_port->error_clear &= ~sci_port->overrun_mask;
--	}
--
- 	port->type		= p->type;
- 	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
- 	port->regshift		= p->regshift;
-+	port->fifosize		= sci_port->params->fifosize;
- 
- 	/*
- 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index ffa6d688c335..08073f0db732 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -151,12 +151,12 @@ enum {
- #define SCxSR_PER(port)		(((port)->type == PORT_SCI) ? SCI_PER    : SCIF_PER)
- #define SCxSR_BRK(port)		(((port)->type == PORT_SCI) ? 0x00       : SCIF_BRK)
- 
--#define SCxSR_ERRORS(port)	(to_sci_port(port)->error_mask)
-+#define SCxSR_ERRORS(port)	(to_sci_port(port)->params->error_mask)
- 
- #define SCxSR_RDxF_CLEAR(port) \
- 	(((port)->type == PORT_SCI) ? SCI_RDxF_CLEAR : SCIF_RDxF_CLEAR)
- #define SCxSR_ERROR_CLEAR(port) \
--	(to_sci_port(port)->error_clear)
-+	(to_sci_port(port)->params->error_clear)
- #define SCxSR_TDxE_CLEAR(port) \
- 	(((port)->type == PORT_SCI) ? SCI_TDxE_CLEAR : SCIF_TDxE_CLEAR)
- #define SCxSR_BREAK_CLEAR(port) \
--- 
-Regards,
+>> Since the  commit  b0ca2a21f769 ("sh_eth: Add support of SH7763 to sh_eth")
+>> the *enum* declaring the EESIPR bits (interrupt mask) went out of sync with
+>> the *enum* declaring the EESR bits (interrupt status) WRT  bit naming  and
+>> formatting. I'd like to restore the consistency by using EESIPR as the bit
+>> name prefix, renaming the *enum* to EESIPR_BIT, and (finally) renaming the
+>> bits according to the available  Renesas SH77{34|63} manuals...
+>
+> Which versions of the SH77{34|63} manuals did you use?
+> Several registers are called slightly different in mine, and also in my
+> r8a7740 manual.
 
-Laurent Pinchart
+    SH7734 User's Manual: Hardware, Rev.1.00 Jun 2012.
+    SH7763 User’s Manual: Hardware, Rev.3.00 Mar 2012
+
+>> --- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
+>> +++ net-next/drivers/net/ethernet/renesas/sh_eth.h
+>> @@ -268,19 +268,29 @@ enum EESR_BIT {
+>>                                  EESR_TFE | EESR_TDE)
+>>
+>>  /* EESIPR */
+>> -enum DMAC_IM_BIT {
+>> -       DMAC_M_TWB = 0x40000000, DMAC_M_TABT = 0x04000000,
+>> -       DMAC_M_RABT = 0x02000000,
+>> -       DMAC_M_RFRMER = 0x01000000, DMAC_M_ADF = 0x00800000,
+>> -       DMAC_M_ECI = 0x00400000, DMAC_M_FTC = 0x00200000,
+>> -       DMAC_M_TDE = 0x00100000, DMAC_M_TFE = 0x00080000,
+>> -       DMAC_M_FRC = 0x00040000, DMAC_M_RDE = 0x00020000,
+>> -       DMAC_M_RFE = 0x00010000, DMAC_M_TINT4 = 0x00000800,
+>> -       DMAC_M_TINT3 = 0x00000400, DMAC_M_TINT2 = 0x00000200,
+>> -       DMAC_M_TINT1 = 0x00000100, DMAC_M_RINT8 = 0x00000080,
+>> -       DMAC_M_RINT5 = 0x00000010, DMAC_M_RINT4 = 0x00000008,
+>> -       DMAC_M_RINT3 = 0x00000004, DMAC_M_RINT2 = 0x00000002,
+>> -       DMAC_M_RINT1 = 0x00000001,
+>> +enum EESIPR_BIT {
+>> +       EESIPR_TWBIP    = 0x40000000,
+>
+> TWBIP is actually two bits in my manual: TWB1IP and TWB0IP
+
+    Yes. I'm adding TWB1 in the next patch.
+
+>> +       EESIPR_ADEIP    = 0x00800000,
+>
+> Nonexistent bit in my manual.
+
+    In mine as well. I used EESR *enum* as a source of info in this case.
+Note that this bit is documented for R-Car gen2 (but called differently).
+
+>> +       EESIPR_CNDIP    = 0x00000800,
+>
+> Nonexistent bit in my manual.
+
+    I used the EESR *enum* again.
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+
+MBR, Sergei
