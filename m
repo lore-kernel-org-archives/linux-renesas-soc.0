@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35322 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750705AbdAXHnY (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33067 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750705AbdAXHmY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 02:43:24 -0500
-Received: by mail-it0-f65.google.com with SMTP id 203so12958505ith.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jan 2017 23:43:24 -0800 (PST)
+        Tue, 24 Jan 2017 02:42:24 -0500
+Received: by mail-it0-f66.google.com with SMTP id e137so13006249itc.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jan 2017 23:42:24 -0800 (PST)
 MIME-Version: 1.0
 In-Reply-To: <b31104a5-afa2-06ab-e922-c4d9da5559ea@jinso.co.jp>
 References: <b31104a5-afa2-06ab-e922-c4d9da5559ea@jinso.co.jp>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Jan 2017 08:43:22 +0100
-Message-ID: <CAMuHMdWJ4JaKwPyaxKmqfVdLpAHT5bt2jrv5Qew8Fvuk4thg7w@mail.gmail.com>
+Date: Tue, 24 Jan 2017 08:42:22 +0100
+Message-ID: <CAMuHMdUmSjKm0jiSYLRtmZq3dqHO56m6EFFFxqhsxtgLUZ+A4g@mail.gmail.com>
 Subject: Re: [Lager(H2)-V4.10-rc2]: QSPI-FLASH: Warning message happened when
  writing a data file to SPI-FLASH
 To: DongCV <cv-dong@jinso.co.jp>
@@ -25,8 +25,7 @@ Cc: Michal Suchanek <hramrach@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
