@@ -1,43 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940136AbdAFLSN (ORCPT
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:36898 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750734AbdAXJ4W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:13 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/16] arm64: renesas: r8a7796/salvator-x: Add board part number to DT bindings
-Date: Fri,  6 Jan 2017 12:17:47 +0100
-Message-Id: <6be91f865660d56081fe67e969a4adf71c24cada.1483700694.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
-References: <cover.1483700694.git.horms+renesas@verge.net.au>
+        Tue, 24 Jan 2017 04:56:22 -0500
+Received: by mail-wm0-f54.google.com with SMTP id c206so200026779wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jan 2017 01:56:22 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
+References: <20170119200718.8115-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 24 Jan 2017 10:56:20 +0100
+Message-ID: <CAPDyKFr_5kDLSOe-m6xCTLgcMebTjDNkiTYpuEjsBahcfJ6ZNQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] mmc: host: tmio: sdio irq improvements
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 19 January 2017 at 21:07, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Here is a small series with two minor improvements (patches 1+2) and one bigger
+> change (patch 3) for SDIO handling with TMIO/SDHI. Since RFC, I addressed all
+> comments (Thanks Simon!) and since it is needed for the WLAN cards, I think it
+> should go in now.
+>
+>
+> Wolfram Sang (3):
+>   mmc: host: tmio: refactor calls to sdio irq
+>   mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
+>   mmc: tmio: discard obsolete SDIO irqs before enabling irqs
+>
+>  drivers/mmc/host/sh_mobile_sdhi.c |  6 ++----
+>  drivers/mmc/host/tmio_mmc.h       |  2 ++
+>  drivers/mmc/host/tmio_mmc_pio.c   | 20 ++++++++++++++------
+>  include/linux/mfd/tmio.h          |  6 ++----
+>  4 files changed, 20 insertions(+), 14 deletions(-)
+>
+> --
+> 2.11.0
+>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, applied for next!
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 253bf9b86690..c9502634316d 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -75,7 +75,7 @@ Boards:
-     compatible = "renesas,rskrza1", "renesas,r7s72100"
-   - Salvator-X (RTP0RC7795SIPB0010S)
-     compatible = "renesas,salvator-x", "renesas,r8a7795";
--  - Salvator-X
-+  - Salvator-X (RTP0RC7796SIPB0011S)
-     compatible = "renesas,salvator-x", "renesas,r8a7796";
-   - SILK (RTP0RC7794LCB00011S)
-     compatible = "renesas,silk", "renesas,r8a7794"
--- 
-2.7.0.rc3.207.g0ac5344
+Kind regards
+Uffe
