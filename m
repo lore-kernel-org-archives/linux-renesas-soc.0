@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:35929 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750704AbdAXHxo (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35375 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750704AbdAXHwK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 02:53:44 -0500
-Received: by mail-io0-f179.google.com with SMTP id j13so129254498iod.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jan 2017 23:53:43 -0800 (PST)
+        Tue, 24 Jan 2017 02:52:10 -0500
+Received: by mail-io0-f193.google.com with SMTP id m98so17670812iod.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jan 2017 23:52:09 -0800 (PST)
 MIME-Version: 1.0
 In-Reply-To: <SG2PR06MB116554401FE404334E924EE38A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <SG2PR06MB116554401FE404334E924EE38A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Jan 2017 08:53:42 +0100
-Message-ID: <CAMuHMdVaF=DpacHTV_T6nVcJMF-GfcRd3ybj-yagAy2nj_TeCw@mail.gmail.com>
+Date: Tue, 24 Jan 2017 08:52:06 +0100
+Message-ID: <CAMuHMdXj_5YX_9ndUMfohkk=PMOLbuYUF0N8yxfYC_zbCpGLBw@mail.gmail.com>
 Subject: Re: [RFC] Runtime PM on the RZ/A series is never going to work right
 To: Chris Brandt <Chris.Brandt@renesas.com>
 Cc: "linux-renesas-soc@vger.kernel.org"
@@ -67,7 +67,7 @@ On Mon, Jan 23, 2017 at 8:58 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
 Please have a look at Section 55.3.5 ("Module Standby Function"), which
 I had never read myself, apparently...
 
-Seem like there is some kind of status register, the STBCR register itself:
+Seems like there is some kind of status register, the STBCR register itself:
 
     Canceling Module Standby Function:
         1. Clear the MSTP bit to 0.
@@ -79,8 +79,8 @@ However, that section reveals another complicating factor for some modules:
 if the module has a bit in a STBREQn/STBACKn register, a module standy
 request must be sent to the module before stopping the module clock.
 
-Looks like you're gonna need a whole new RZ/A1-specific clock driver
-to handle all those details...
+Looks like you're gonna need a whole new RZ/A1-specific clock driver to
+handle all these details...
 
 Gr{oetje,eeting}s,
 
