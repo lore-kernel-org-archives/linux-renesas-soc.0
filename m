@@ -1,9 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:16834 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750766AbdAXUT4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 15:19:56 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Chris Brandt <Chris.Brandt@renesas.com>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>
 CC: Rob Herring <robh+dt@kernel.org>,
@@ -17,8 +12,8 @@ CC: Rob Herring <robh+dt@kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
 Subject: RE: [PATCH v3 2/2] clocksource: Add renesas-ostm timer driver
-Date: Tue, 24 Jan 2017 20:19:50 +0000
-Message-ID: <SG2PR06MB1165F79A1675FAC9ABEF12998A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Date: Tue, 24 Jan 2017 14:43:10 +0000
+Message-ID: <SG2PR06MB11652097D0BFA1A058F9CFBC8A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170123135423.28780-1-chris.brandt@renesas.com>
  <20170123135423.28780-3-chris.brandt@renesas.com> <20170123175210.GH2166@mai>
  <SG2PR06MB11657AE9653A4B66B1EA02718A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
@@ -28,7 +23,7 @@ Content-Language: en-US
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 SGkgRGFuaWVsLA0KDQpPbiBUdWVzZGF5LCBKYW51YXJ5IDI0LCAyMDE3LCBEYW5pZWwgTGV6Y2Fu
@@ -48,17 +43,19 @@ dG8gb3N0bV9pbml0IGluIG9yZGVyIHRvIHVzZSB0aGUgZGV2bV8qIEFQSS4NCj4gDQo+IEkgdGhp
 bmsgb2ZfZmluZF9kZXZpY2VfYnlfbm9kZSBzaG91bGQgcmV0dXJuIHRoZSBwbGF0Zm9ybV9kZXZp
 Y2UsIHRoZW4NCj4gcGRldi0+ZGV2LiBJZiB0aGF0IHdvcmtzIHRoZSBvdGhlciBkcml2ZXJzIHdp
 bGwgYmVuZWZpdCBmcm9tIHRoYXQgdG8NCj4gcGRldi0+cmVtb3ZlIGFsbA0KPiB0aGUgcm9sbGJh
-Y2sgY29kZSBldmVyeXdoZXJlLg0KDQoNCkl0IHdhcyBhIGdvb2QgaWRlYS4uLi5idXQgaXQgd2ls
-bCBub3Qgd29yay4NCg0KV2hpbGUgQ0xPQ0tTT1VSQ0VfT0ZfREVDTEFSRSBpcyBnb29kIGF0IHB1
-dHRpbmcgdGhlIGRyaXZlciBhdCB0aGUNCmZyb250IG9mIHRoZSBsaW5lIGZvciBsb2FkaW5nLCBp
-dCdzIHRvbyBlYXJseSBpbiBib290IHRvIGRldGVjdA0KYSBwbGF0Zm9ybV9kZXZpY2UuDQoNCm9m
-X2ZpbmRfZGV2aWNlX2J5X25vZGUgY2FsbHMgYnVzX2ZpbmRfZGV2aWNlLiBCdXQgdGhlIGZpcnN0
-IHRoaW5nIHRoYXQNCmJ1c19maW5kX2RldmljZSBkb2VzIGlzOg0KDQoJaWYgKCFidXMgfHwgIWJ1
-cy0+cCkNCgkJcmV0dXJuIE5VTEw7DQoNCkJ1dCBidXMtPnA9MCBzbyBpdCByZXR1cm5zIGltbWVk
-aWF0ZWx5Lg0KDQoNCk9mIGNvdXJzZSBjaGFuZ2luZyB0aGUgY29kZSBvdmVyIHRvOg0KICAgICAg
-ICBkZXZtX2t6YWxsb2MgLT4gZGV2bV9remFsbG9jDQpkZXZtX2lvcmVtYXBfbm9jYWNoZSAtPiBv
-Zl9pb19yZXF1ZXN0X2FuZF9tYXANCiAgICBwbGF0Zm9ybV9nZXRfaXJxIC0+IGlycV9vZl9wYXJz
-ZV9hbmRfbWFwDQogICAgICAgICAgICAgZGV2X2VyciAtPiBwcl9lcnINCg0KDQpUaGVuIHRoaW5n
-cyB3b3JrLCBidXQgSSdtIGJhY2sgdG8gbWFuYWdpbmcgdGhlIHJvbGxiYWNrIGNvZGUgbWFudWFs
-bHkuDQoNCg0KQW55IG90aGVyIGlkZWFzIG9uIGhvdyB0byBnZXQgdGhlIGNvcnJlc3BvbmRpbmcg
-cGxhdGZvcm1fZGV2aWNlIGZvcg0KYSBEVCBub2RlPw0KDQoNCkNocmlzDQoNCg==
+Y2sgY29kZSBldmVyeXdoZXJlLg0KDQoNClNvIEkgcmVhbGl6ZWQgdGhhdCBpbiBvcmRlciB0byB1
+c2UgYnVpbHRpbl9wbGF0Zm9ybSwgSSBjYW4ndCBoYXZlIGFueSBvZiB0aGUNCmZ1bmN0aW9ucyBp
+biBfX2luaXQgYmVjYXVzZSB0aGUgYnVpbGQgc3lzdGVtIGhhcyBubyBpZGVhIHRoYXQgSSBuZXZl
+ciBwbGFuDQpvbiByZW1vdmluZyBvciBwcm9iaW5nIGFnYWluIGFmdGVyIGJvb3QuIEJ1dCwgZXZl
+biBpZiBJIHRha2Ugb3V0IGFsbCB0aGUNCl9faW5pdCBmcm9tIG15IGNvZGUsIEknbSBzdGlsbCBj
+YWxsaW5nIGNsb2Nrc291cmNlX21taW9faW5pdCB3aGljaCBpcyBfX2luaXQNCnNvIEkgY2FuIG5l
+dmVyIGVzY2FwZSB0aGUgIlNlY3Rpb24gbWlzbWF0Y2giLg0KDQpUaGlzIGxlYXZlcyBtZSB3aXRo
+IDIgb3B0aW9uczoNCg0KMSkgUHVsbCB0aGUgY2xvY2tzb3VyY2VfbW1pbyBkcml2ZXIgY29kZSBp
+bnRvIG15IGRyaXZlciBhbmQgbGVhdmUgZXZlcnl0aGluZw0KICAgb3V0IG9mIF9faW5pdA0KMikg
+UmV3cml0ZSBhcyBhIERUIGRyaXZlciB1c2luZyBDTE9DS1NPVVJDRV9PRl9ERUNMQVJFIHdoaWNo
+IHB1dHMgbW9zdCBvZg0KICAgdGhlIGNvZGUgaW4gX19pbml0DQoNCk9mIGNvdXJzZSB0aGUgYmV0
+dGVyIChsb3dlciBzeXN0ZW0gbWVtb3J5KSBhbnN3ZXIgaXMgIzIuDQoNCkknbGwgdHJ5IHlvdXIg
+dHJpY2sgYWJvdXQgb2ZfZmluZF9kZXZpY2VfYnlfbm9kZSBiZWNhdXNlIHdoaWxlIHRoZXJlIGFy
+ZQ0KZXF1aXZhbGVudCBPRiBmdW5jdGlvbnMgZm9yIG1hcHBpbmcgcmVzb3VyY2VzLCBJIGRvIGxp
+a2UgdGhlIGF1dG8tcm9sbGJhY2sNCmZlYXR1cmUgb2YgZGVtdg0KDQpUaGFuayB5b3UsDQpDaHJp
+cw0K
