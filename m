@@ -1,31 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43198 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751655AbdAYKGD (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35148 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbdAXIAo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 05:06:03 -0500
-Date: Wed, 25 Jan 2017 11:06:14 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org, linux-serial@vger.kernel.org,
-        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com
+        Tue, 24 Jan 2017 03:00:44 -0500
+MIME-Version: 1.0
+In-Reply-To: <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jan 2017 09:00:37 +0100
+Message-ID: <CAMuHMdVu+f=FY+1R98FLqSHseQ=WnazGhTXcyLqsW9CPY7YfgQ@mail.gmail.com>
 Subject: Re: [PATCH v2 4/7] serial: sh-sci: increase RX FIFO trigger defaults
  for (H)SCIF
-Message-ID: <20170125100614.GA17954@kroah.com>
-References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1485187458-8195-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 23, 2017 at 05:04:15PM +0100, Ulrich Hecht wrote:
+On Mon, Jan 23, 2017 at 5:04 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
 > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
->  drivers/tty/serial/sh-sci.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
 
-I will not take a patch without any changelog text, sorry...
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> @@ -2736,15 +2742,19 @@ static int sci_init_single(struct platform_device *dev,
+>                 sci_port->sampling_rate_mask = SCI_SR_SCIFAB;
+>                 break;
+>         case PORT_SCIF:
+> -               port->fifosize = 16;
+>                 if (p->regtype == SCIx_SH7705_SCIF_REGTYPE) {
+> +                       port->fifosize = 64;
+
+Note that you forgot to mention that you also corrected the FIFO size for
+sh7705, ssh7720, and sh7721. Not that we can easily test that, though.
+
+>                         sci_port->overrun_reg = SCxSR;
+>                         sci_port->overrun_mask = SCIFA_ORER;
+>                         sci_port->sampling_rate_mask = SCI_SR(16);
+> +                       /* RX triggering not implemented for this IP */
+> +                       sci_port->rx_trigger = 1;
+>                 } else {
+> +                       port->fifosize = 16;
+>                         sci_port->overrun_reg = SCLSR;
+>                         sci_port->overrun_mask = SCLSR_ORER;
+>                         sci_port->sampling_rate_mask = SCI_SR(32);
+> +                       sci_port->rx_trigger = 8;
+>                 }
+>                 break;
+>         default:
+
+
+
+
+-- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
