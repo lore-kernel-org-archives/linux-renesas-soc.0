@@ -1,69 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:41084 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750707AbdAXQWd (ORCPT
+Received: from mail-it0-f41.google.com ([209.85.214.41]:35864 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750947AbdAXOkT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 11:22:33 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC] Runtime PM on the RZ/A series is never going to work right
-Date: Tue, 24 Jan 2017 16:22:29 +0000
-Message-ID: <SG2PR06MB11654DEF72DE224D798D19D68A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <SG2PR06MB116554401FE404334E924EE38A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdVaF=DpacHTV_T6nVcJMF-GfcRd3ybj-yagAy2nj_TeCw@mail.gmail.com>
- <SG2PR06MB1165A003EAAACA6C9771FA798A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdWn0C6W3Ueb9cYDUcXMnSZVRNn8pax+y7Zyy_P=1t2gGg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWn0C6W3Ueb9cYDUcXMnSZVRNn8pax+y7Zyy_P=1t2gGg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 24 Jan 2017 09:40:19 -0500
+Received: by mail-it0-f41.google.com with SMTP id c7so86763640itd.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jan 2017 06:40:19 -0800 (PST)
 MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165A003EAAACA6C9771FA798A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <SG2PR06MB116554401FE404334E924EE38A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdVaF=DpacHTV_T6nVcJMF-GfcRd3ybj-yagAy2nj_TeCw@mail.gmail.com> <SG2PR06MB1165A003EAAACA6C9771FA798A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jan 2017 15:40:17 +0100
+Message-ID: <CAMuHMdWn0C6W3Ueb9cYDUcXMnSZVRNn8pax+y7Zyy_P=1t2gGg@mail.gmail.com>
+Subject: Re: [RFC] Runtime PM on the RZ/A series is never going to work right
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIEphbnVhcnkgMjQsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiB3cm90ZToNCj4gPiBGcm9tIHdoYXQgSSBjYW4gdGVsbCwgdGhhdCBtYWtlcyB0aGUgcmVn
-aXN0ZXIgc3BhY2UgcmVhZGFibGUuLi5idXQgdGhlDQo+ID4gSVAgYmxvY2sgaXMgbm90IGZ1bGx5
-IGZ1bmN0aW9uYWwgdW5sZXNzIHlvdSBkZWxheSBhIGxpdHRsZS4NCj4gDQo+IElmIHlvdSBrbm93
-IHRoZSBtaW5pbXVtIGRlbGF5IG5lZWRlZCwgYW5kIGl0J3Mgbm90IHRvbyBsb25nLCBpdCBjYW4g
-YmUNCj4gYWRkZWQgdG8gdGhlIGVuYWJsZSBwYXRoLg0KDQpJIGNhbiBwbGF5IGFyb3VuZCBhbmQg
-c2VlLiBJIGtub3cgdWRlYWx5KDEwMCkgd29ya3MgT0ssIGJ1dCB0aGVuIEkgaGF2ZQ0KdG8gaGF2
-ZSBhIGRlbGF5IHRoYXQncyBhcyBsb25nIGFzIHRoZSBzbG93ZXN0IHBlcmlwaGVyYWwuDQpJZiBp
-dCB3YXMganVzdCB0byB0dXJuIGEgY2xvY2sgb24gb25jZSwgb3Igb25jZSBpbiBhIHdoaWxlLCB0
-aGF0J3MgT0suIEJ1dA0KaXQgc2VlbXMgbGlrZSBydW50aW1lIHBtIHdhbnRzIHRvIHR1cm4gdGhl
-IGNsb2NrcyBvbi9vZmYgYXMgbXVjaCBhcw0KcG9zc2libGUuDQoNCj4gPiBCdXQsIEkgdGhpbmsg
-SSdkIGxpa2UgdG8gZGlzYWJsZSBydW50aW1lIHBtIGZvciBSWi9BMSBpbiB0aGUgZHJpdmVycw0K
-PiA+IGZvciBub3cgQmVjYXVzZSAnZnVuY3Rpb25hbCcgaXMgYmV0dGVyIHRoYW4gJ2xvd2VyLXBv
-d2VyLWJ1dC1icm9rZW4nDQo+IA0KPiBJIHByZWZlciBub3QgZG9pbmcgdGhhdCBpbiB0aGUgaW5k
-aXZpZHVhbCBkcml2ZXJzLCBhcyB0aGV5J3JlIHNoYXJlZCB3aXRoDQo+IG90aGVyIFNvQ3MuDQoN
-CldoYXQgSSBtZWFudCB3YXMgbG9va2luZyBhdCB0aGUgY29tcGF0aWJsZSBzdHJpbmcgYW5kIG9u
-bHkgZG9pbmcNCml0IGZvciBSWi9BMS4NCg0KRm9yIGV4YW1wbGUsIGluIHJzcGlfcHJvYmUoKToN
-Cg0KaWYgKG9mX2RldmljZV9pc19jb21wYXRpYmxlKG5wLCAiIHJlbmVzYXMscnNwaS1yN3M3MjEw
-MCIpKQ0KCW1hc3Rlci0+YXV0b19ydW50aW1lX3BtID0gZmFsc2U7DQplbHNlDQoJbWFzdGVyLT5h
-dXRvX3J1bnRpbWVfcG0gPSB0cnVlOw0KDQoNCkkgd291bGQgZG8gdGhlIHNhbWUga2luZCBvZiB0
-aGluZyBmb3IgcmlpYy4NCg0KDQoNCj4gSSB0aGluayB5b3UgY2FuIGhhbmRsZSB0aGF0IGluIGRy
-aXZlcnMvY2xrL3JlbmVzYXMvY2xrLW1zdHAuYzoNCj4gICAtIGluIGNwZ19tc3RwX2F0dGFjaF9k
-ZXYoKSwgYWRkIGEgY2FsbCB0byBwbV9jbGtfcmVzdW1lKGRldikgYWZ0ZXIgdGhlDQo+ICAgICBj
-YWxsIHRvIHBtX2Nsa19hZGRfY2xrKCksDQo+ICAgLSBpbiBjcGdfbXN0cF9kZXRhY2hfZGV2KCks
-IGFkZCBhIGNhbGwgdG8gcG1fY2xrX3N1c3BlbmQoZGV2KSBiZWZvcmUgdGhlDQo+ICAgICBjYWxs
-IHRvIHBtX2Nsa19kZXN0cm95KCkuDQo+IFllcywgdGhhdCBtZWFucyB0aGUgbW9kdWxlIGNsb2Nr
-cyBhcmUgZW5hYmxlZCBhbGwgdGhlIHRpbWUuDQo+IE9mIGNvdXJzZSB3aGVuIHJ1bm5pbmcgb24g
-UlovQTFIIDstKQ0KDQpUaGF0IG1pZ2h0IGJlIE9LLg0KDQpCdXQgd29uJ3QgdGhlIGluZGl2aWR1
-YWwgZHJpdmVycyBzdGlsbCB3YW50IHRvIGtlZXAgdHVybmluZyBjbG9ja3Mgb24gYW5kIG9mZiBt
-YW51YWxseT8NCih1bmxlc3MgSSdtIG5vdCB1bmRlcnN0YW5kaW5nIHRoYXQgdGhlIHVuZGVybHlp
-bmcgY2xvY2sgcm91dGluZXMgd2lsbCBiYXNpY2FsbHkganVzdA0KaWdub3JlIGV2ZXJ5dGhpbmcp
-LiBCdXQgZXZlbiBpZiB0aGF0JyB0aGUgY2FzZS4uLnRoYXQganVzdCB3YXN0ZWQgQ1BVIGN5Y2xl
-cyAocmVtZW1iZXIsDQpJJ20gb25seSB3b3JraW5nIHdpdGggYSA0MDBNSHogc2luZ2xlIGNvcmUg
-aGVyZSBydW5uaW5nIFhJUF9LRVJORUwpDQoNCg0KDQpJIHRoaW5rIEkgc2hvdWxkIGF0IGxlYXN0
-IHB1dCB0aGUgZHVtbXkgcmVhZCBpbiBjcGdfbXN0cF9jbG9ja19lbmRpc2FibGUoKSBmaXJzdCwN
-CnRoZW4gbWF5YmUgSSBjYW4gc2VlIHdoYXQgZHJpdmVycyB3b3JrLiBTb21ldGhpbmcgbGlrZSB0
-aGlzOg0KDQoNCglzcGluX2xvY2tfaXJxc2F2ZSgmZ3JvdXAtPmxvY2ssIGZsYWdzKTsNCg0KCXZh
-bHVlID0gY3BnX21zdHBfcmVhZChncm91cCwgZ3JvdXAtPnNtc3RwY3IpOw0KCWlmIChlbmFibGUp
-DQoJCXZhbHVlICY9IH5iaXRtYXNrOw0KCWVsc2UNCgkJdmFsdWUgfD0gYml0bWFzazsNCgljcGdf
-bXN0cF93cml0ZShncm91cCwgdmFsdWUsIGdyb3VwLT5zbXN0cGNyKTsNCg0KKwlpZiAoIWdyb3Vw
-LT5tc3Rwc3IpIHsNCisJCS8qIGR1bW15IHJlYWQgdG8gZW5zdXJlIHdyaXRlIGhhcyBjb21wbGV0
-ZWQgKi8NCisJCWNsa19yZWFkbChncm91cC0+c21zdHBjcik7DQorCQliYXJyaWVyX2RhdGEoZ3Jv
-dXAtPnNtc3RwY3IpOw0KKwl9DQoNCglzcGluX3VubG9ja19pcnFyZXN0b3JlKCZncm91cC0+bG9j
-aywgZmxhZ3MpOw0KDQoNCg0KQ2hyaXMNCg==
+Hi Chris,
+
+On Tue, Jan 24, 2017 at 3:20 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Tuesday, January 24, 2017, Geert Uytterhoeven wrote:
+>> > Therefore, before I start firing off patches to remove runtime PM for
+>> RZ/A, does anyone have an opinion one way of the other????
+>>
+>> Please have a look at Section 55.3.5 ("Module Standby Function"), which I
+>> had never read myself, apparently...
+>>
+>> Seem like there is some kind of status register, the STBCR register
+>> itself:
+>>
+>>     Canceling Module Standby Function:
+>>         1. Clear the MSTP bit to 0.
+>>         2. After that, dummy-read the same register.
+>>
+>> Does it help if you add the dummy read when enabling the clock?
+>
+> Already tried that. And put a barrier() call just to make sure
+> everything was done.
+> It seems that might be enough for the RSPI, but the RIIC still has issues.
+
+:-(
+
+> From what I can tell, that makes the register space readable...but the IP block
+> is not fully functional unless you delay a little.
+
+If you know the minimum delay needed, and it's not too long, it can be
+added to the enable path.
+
+>> However, that section reveals another complicating factor for some
+>> modules:
+>> if the module has a bit in a STBREQn/STBACKn register, a module standy
+>> request must be sent to the module before stopping the module clock.
+>>
+>> Looks like you're gonna need a whole new RZ/A1-specific clock driver to
+>> handle all those details...
+>
+> There are only a couple IP blocks called out in the STBREQn/STBACKn registers,
+> and I think they are not really crucial for runtime pm (Ethenret, LCD,
+> Coresight, etc..).
+> So in my opinion it's not worth a new driver just yet.
+
+OK.
+
+> But, I think I'd like to disable runtime pm for RZ/A1 in the drivers for now
+> Because 'functional' is better than 'lower-power-but-broken'
+
+I prefer not doing that in the individual drivers, as they're shared
+with other SoCs.
+
+I think you can handle that in drivers/clk/renesas/clk-mstp.c:
+  - in cpg_mstp_attach_dev(), add a call to pm_clk_resume(dev) after the
+    call to pm_clk_add_clk(),
+  - in cpg_mstp_detach_dev(), add a call to pm_clk_suspend(dev) before the
+    call to pm_clk_destroy().
+Yes, that means the module clocks are enabled all the time.
+Of course when running on RZ/A1H ;-)
+
+Good luck!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
