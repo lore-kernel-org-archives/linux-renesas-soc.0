@@ -1,75 +1,96 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:55750 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbdAXQVI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Jan 2017 11:21:08 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cW3qE-0001zX-AZ
+        for linux-renesas-soc@vger.kernel.org; Tue, 24 Jan 2017 17:21:06 +0100
+Received: from geert by ramsan with local (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cW3qJ-00067i-Cc
+        for linux-renesas-soc@vger.kernel.org; Tue, 24 Jan 2017 17:21:11 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S. Miller" <davem@davemloft.net>,
-        Zach Brown <zach.brown@ni.com>,
-        Volodymyr Bendiuga <volodymyr.bendiuga@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        =?UTF-8?q?Magnus=20=C3=96berg?= <magnus.oberg@westermo.se>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] net: phy: leds: Fix truncated LED trigger names and crashes
-Date: Tue, 24 Jan 2017 16:41:08 +0100
-Message-Id: <1485272470-3497-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2017-01-24-v4.10-rc5
+Date: Tue, 24 Jan 2017 17:21:11 +0100
+Message-Id: <1485274871-23504-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi David,
+I have pushed renesas-drivers-2017-01-24-v4.10-rc5 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-I started seeing crashes during s2ram and poweroff on all my ARM boards,
-like:
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-    Unable to handle kernel NULL pointer dereference at virtual address 00000000
-    ...
-    [<c04116d4>] (__list_del_entry_valid) from [<c05e8948>] (led_trigger_unregister+0x34/0xcc)
-    [<c05e8948>] (led_trigger_unregister) from [<c05336c4>] (phy_led_triggers_unregister+0x28/0x34)
-    [<c05336c4>] (phy_led_triggers_unregister) from [<c0531d44>] (phy_detach+0x30/0x74)
-    [<c0531d44>] (phy_detach) from [<c0538bdc>] (sh_eth_close+0x64/0x9c)
-    [<c0538bdc>] (sh_eth_close) from [<c04d4ce0>] (dpm_run_callback+0x48/0xc8)
+Today's version is based on renesas-devel-20170123-v4.10-rc5.
 
-or:
+Included branches with driver code:
+  - clk-renesas-for-v4.11
+  - sh-pfc-for-v4.11
+  - https://git.ragnatech.se/linux#for-renesas-drivers~1
+  - topic/ipmmu-multi-arch-v6
+  - topic/r8a7795-ipmmu-v2-rebased4
+  - topic/r8a7796-ipmmu-v1-rebased4
+  - topic/r8a7795-ipmmu-integration-v2-rebased1
+  - topic/r8a7795-es2-v1-rebased7
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/suspend-resume-race
+  - git://linuxtv.org/pinchartl/media.git#drm/du/hdmi
+  - topic/renesas-cpg-mssr-reset-driver-v2
+  - topic/renesas-cpg-mssr-reset-dts-v1
 
-    list_del corruption. prev->next should be dede6540, but was 2e323931
-    ------------[ cut here ]------------
-    kernel BUG at lib/list_debug.c:52!
-    ...
-    [<c02f6d70>] (__list_del_entry_valid) from [<c0425168>] (led_trigger_unregister+0x34/0xcc)
-    [<c0425168>] (led_trigger_unregister) from [<c03a05a0>] (phy_led_triggers_unregister+0x28/0x34)
-    [<c03a05a0>] (phy_led_triggers_unregister) from [<c039ec04>] (phy_detach+0x30/0x74)
-    [<c039ec04>] (phy_detach) from [<c03a4fc0>] (sh_eth_close+0x6c/0xa4)
-    [<c03a4fc0>] (sh_eth_close) from [<c0483234>] (__dev_close_many+0xac/0xd0)
+Included fixes:
+  - serial: sh-sci: Fix early deassertion of dedicated RTS
+  - serial: sh-sci: Fix hang in sci_reset()
+  - arm64: Use __pa_symbol for empty_zero_page
+  - drivers: firmware: psci: Use __pa_symbol for cpu_resume
 
-As the only clue was a kernel message like
-
-    sh-eth ee700000.ethernet eth0: No phy led trigger registered for speed(100)
-
-I had to bisected this, leading to commit 4567d686f5c6d955 ("phy:
-increase size of MII_BUS_ID_SIZE and bus_id").  Reverting that commit
-fixed the issue.
-
-More investigation revealed the crashes are due to the combination of
-two things:
-  - Truncated LED trigger names, leading to duplicate names, and
-    registration failures,
-  - Bad error handling in case of registration failures.
-
-Both are fixed by this patch series.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  net: phy: leds: Clear phy_num_led_triggers on failure to avoid crash
-  net: phy: leds: Fix truncated LED trigger names
-
- drivers/net/phy/phy_led_triggers.c | 8 ++++++--
- include/linux/phy.h                | 3 ++-
- include/linux/phy_led_triggers.h   | 3 +--
- 3 files changed, 9 insertions(+), 5 deletions(-)
-
--- 
-1.9.1
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.infradead.org/battery-2.6.git#master
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
 
 Gr{oetje,eeting}s,
 
