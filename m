@@ -1,49 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940148AbdAFLSa (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:34443 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750892AbdAXQar (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:30 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/4] ARM: shmobile: defconfig: Enable CONFIG_VIDEO_ADV7604
-Date: Fri,  6 Jan 2017 12:18:09 +0100
-Message-Id: <1682a9c5694d228041dc7ff59f49427c83920675.1483701293.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483701293.git.horms+renesas@verge.net.au>
-References: <cover.1483701293.git.horms+renesas@verge.net.au>
+        Tue, 24 Jan 2017 11:30:47 -0500
+Received: by mail-vk0-f67.google.com with SMTP id r136so14203312vke.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jan 2017 08:30:41 -0800 (PST)
 MIME-Version: 1.0
+From: Stuvart S <lovelinuxdeeply@gmail.com>
+Date: Tue, 24 Jan 2017 22:00:35 +0530
+Message-ID: <CAAMGra7m8RGFegDu6on=_vCZvUBLut7sWDhCxTs5PgUCaLEJcQ@mail.gmail.com>
+Subject: About DU DRM
+To: linux-renesas-soc@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hello Laurent and all,
 
-The adv7612 is used on Gen2 boards (Lager, Koelsch and Gose) for HDMI
-input. Enable support for this chip in shmobile_defconfig.
+       I am tracking complete files of DU in my source tree linux 4.9
+one by one .I know it is not an easy task to study completely  but now
+it is really interesting for me..
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+first of all I am saying my ultimate goal here,I want to get track the
+ whole route of
+image/video data until it reaches to final output (Display) ..till now
+I understand the flow as below
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 1b0f8ae36fb3..98e9ce66740d 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -145,6 +145,7 @@ CONFIG_VIDEO_RENESAS_JPU=y
- CONFIG_VIDEO_RENESAS_VSP1=y
- # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
- CONFIG_VIDEO_ADV7180=y
-+CONFIG_VIDEO_ADV7604=y
- CONFIG_VIDEO_ML86V7667=y
- CONFIG_DRM=y
- CONFIG_DRM_I2C_ADV7511=y
+FRAME BUFFER ----> CRTC ------> ENCODER ------>CONNECTOR----->DISPLAY
+
+By familiarizing DRM I got following knowledge,
+
+mainly DRM has its Core(Generic ) and Driver(Specific)..for both of
+these there are different ioctls. and in the first case most of the
+ioctls are wrapped through libdrm functions for easiness ..
+
+hopping suggestions if I am in wrong path..
+
+On the other side, I think driver dependent APIs will be there right?
+
+How various graphics drivers will communicate to DRM?
+In my limited knowledge, DRM is purely software centric right? so the
+communication will be through some APIs I think..
+
+expecting a helping hand
+
 -- 
-2.7.0.rc3.207.g0ac5344
+                        --- Come    Let's enjoy the world of Open Source  ---
+
+
+Best regards,
+Stuvart
