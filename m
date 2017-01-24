@@ -1,89 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43762 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940151AbdAFLSk (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34102 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752049AbdAXICq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:40 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Tue, 24 Jan 2017 03:02:46 -0500
+MIME-Version: 1.0
+In-Reply-To: <1485187458-8195-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1485187458-8195-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1485187458-8195-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jan 2017 09:02:29 +0100
+Message-ID: <CAMuHMdV2ush4n=aTLbJG3ATDJDXu4zakxu4HrAkWGouPwuxcog@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] serial: sh-sci: make RX FIFO parameters tunable
+ via sysfs
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.11
-Date: Fri,  6 Jan 2017 12:18:31 +0100
-Message-Id: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Mon, Jan 23, 2017 at 5:04 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
+> only applicable to SCIFA and SCIFB).
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Please consider these Renesas ARM based SoC DT updates for v4.11.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+                        Geert
 
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-for-v4.11
-
-for you to fetch changes up to 654450baf2afba86cf328e1849ccac61ec4630af:
-
-  ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for msiof nodes (2017-01-03 10:47:05 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.11
-
-* Add da9063 PMIC device node for system restart to gose board
-* Add device node for PRR to SoCs where it was missing
-* Move RST node before SYSC node where it was incorrectly placed
-* Use Gen 2 fallback bindings for I2C, IIC, MSIOf and USB2 phy
-* Use SoC-specific compat string for MMCIF where it was missing
-
-----------------------------------------------------------------
-Geert Uytterhoeven (5):
-      ARM: dts: r8a7743: Move RST node before SYSC node
-      ARM: dts: r8a7745: Move RST node before SYSC node
-      ARM: dts: r8a7743: Add device node for PRR
-      ARM: dts: r8a7745: Add device node for PRR
-      ARM: dts: gose: Add da9063 PMIC device node for system restart
-
-Simon Horman (20):
-      ARM: dts: r8a73a4: Use SoC-specific compat string for mmcif
-      ARM: dts: r8a7778: Use SoC-specific compat string for mmcif
-      ARM: dts: sh73a0: Use SoC-specific compat string for mmcif
-      ARM: dts: r8a7790: Use renesas,rcar-gen2-usb-phy fallback binding
-      ARM: dts: r8a7791: Use renesas,rcar-gen2-usb-phy fallback binding
-      ARM: dts: r8a7794: Use renesas,rcar-gen2-usb-phy fallback binding
-      ARM: dts: r8a7779: Use R-Car Gen 1 fallback binding for i2c nodes
-      ARM: dts: r8a7778: Use R-Car Gen 1 fallback binding for i2c nodes
-      ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for i2c nodes
-      ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for i2c nodes
-      ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for i2c nodes
-      ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for i2c nodes
-      ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for i2c nodes
-      ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for iic nodes
-      ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for iic nodes
-      ARM: dts: r8a7793: Use R-Car Gen 2 fallback binding for iic nodes
-      ARM: dts: r8a7794: Use R-Car Gen 2 fallback binding for iic nodes
-      ARM: dts: r8a7791: Use R-Car Gen 2 fallback binding for msiof nodes
-      ARM: dts: r8a7792: Use R-Car Gen 2 fallback binding for msiof nodes
-      ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for msiof nodes
-
- arch/arm/boot/dts/r8a73a4.dtsi     |  4 ++--
- arch/arm/boot/dts/r8a7743.dtsi     | 13 +++++++++----
- arch/arm/boot/dts/r8a7745.dtsi     | 13 +++++++++----
- arch/arm/boot/dts/r8a7778.dtsi     | 10 +++++-----
- arch/arm/boot/dts/r8a7779.dtsi     |  8 ++++----
- arch/arm/boot/dts/r8a7790.dtsi     | 35 ++++++++++++++++++++++-------------
- arch/arm/boot/dts/r8a7791.dtsi     | 33 ++++++++++++++++++++-------------
- arch/arm/boot/dts/r8a7792.dtsi     | 24 ++++++++++++++++--------
- arch/arm/boot/dts/r8a7793-gose.dts | 21 +++++++++++++++++++++
- arch/arm/boot/dts/r8a7793.dtsi     | 21 ++++++++++++---------
- arch/arm/boot/dts/r8a7794.dtsi     | 21 ++++++++++++---------
- arch/arm/boot/dts/sh73a0.dtsi      |  2 +-
- 12 files changed, 133 insertions(+), 72 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
