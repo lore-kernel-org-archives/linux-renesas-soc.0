@@ -1,53 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:52238 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753013AbdA0DGJ (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35382 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbdAYOhr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 22:06:09 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC] Runtime PM on the RZ/A series is never going to work right
-Date: Fri, 27 Jan 2017 03:05:42 +0000
-Message-ID: <SG2PR06MB116597EAF28F1C5F2475DF158A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Wed, 25 Jan 2017 09:37:47 -0500
+Received: by mail-io0-f193.google.com with SMTP id m98so2052099iod.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 06:37:47 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165B0BB2EBCD6178528E00B8A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <SG2PR06MB116554401FE404334E924EE38A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdVaF=DpacHTV_T6nVcJMF-GfcRd3ybj-yagAy2nj_TeCw@mail.gmail.com>
  <SG2PR06MB1165A003EAAACA6C9771FA798A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdWn0C6W3Ueb9cYDUcXMnSZVRNn8pax+y7Zyy_P=1t2gGg@mail.gmail.com>
  <SG2PR06MB11654DEF72DE224D798D19D68A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com> <SG2PR06MB1165B0BB2EBCD6178528E00B8A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 25 Jan 2017 15:37:45 +0100
+Message-ID: <CAMuHMdV3=xVgsMcmgduQk43sLms3qserj50-0QU+kKibAvMxJQ@mail.gmail.com>
+Subject: Re: [RFC] Runtime PM on the RZ/A series is never going to work right
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgSmFudWFyeSAyNSwgMjAxNywgR2VlcnQgVXl0dGVy
-aG9ldmVuIHdyb3RlOg0KPiA+PiBJIHRoaW5rIHlvdSBjYW4gaGFuZGxlIHRoYXQgaW4gZHJpdmVy
-cy9jbGsvcmVuZXNhcy9jbGstbXN0cC5jOg0KPiA+PiAgIC0gaW4gY3BnX21zdHBfYXR0YWNoX2Rl
-digpLCBhZGQgYSBjYWxsIHRvIHBtX2Nsa19yZXN1bWUoZGV2KSBhZnRlcg0KPiB0aGUNCj4gPj4g
-ICAgIGNhbGwgdG8gcG1fY2xrX2FkZF9jbGsoKSwNCj4gPj4gICAtIGluIGNwZ19tc3RwX2RldGFj
-aF9kZXYoKSwgYWRkIGEgY2FsbCB0byBwbV9jbGtfc3VzcGVuZChkZXYpIGJlZm9yZQ0KPiB0aGUN
-Cj4gPj4gICAgIGNhbGwgdG8gcG1fY2xrX2Rlc3Ryb3koKS4NCj4gPj4gWWVzLCB0aGF0IG1lYW5z
-IHRoZSBtb2R1bGUgY2xvY2tzIGFyZSBlbmFibGVkIGFsbCB0aGUgdGltZS4NCj4gPj4gT2YgY291
-cnNlIHdoZW4gcnVubmluZyBvbiBSWi9BMUggOy0pDQo+ID4NCj4gPiBUaGF0IG1pZ2h0IGJlIE9L
-Lg0KPiANCj4gRm9yZ290IHRvIG1lbnRpb246IHlvdSBzaG91bGQgYWxzbyBubyBsb25nZXIgc2V0
-IEdFTlBEX0ZMQUdfUE1fQ0xLIGluDQo+IGNwZ19tc3RwX2FkZF9jbGtfZG9tYWluKCkuIFRoZSBm
-bGFnIHdvbid0IGh1cnQsIGl0IHdpbGwganVzdCBjYXVzZSBleHRyYQ0KPiBjb2RlIHRvIGJlIGV4
-ZWN1dGVkLg0KDQpTbyB0byBiZSBjbGVhciBiZWZvcmUgSSBzdGFydCBoYWNraW5nIGF3YXksIHlv
-dXIgc3VnZ2VzdGlvbiBoZXJlIGlzDQp0byBkbyB0aGlzIE9OTFkgZm9yIFJaL0ExIHNvIEkgZG9u
-J3Qgc2NyZXcgdXAgYW55IG90aGVyIFNvQ3MsIHJpZ2h0Pw0KDQpGb3IgZXhhbXBsZToNCg0KaW50
-IGNwZ19tc3RwX2F0dGFjaF9kZXYoKQ0Kew0KCS4uLg0KDQoJZXJyb3IgPSBwbV9jbGtfYWRkX2Ns
-ayhkZXYsIGNsayk7DQoJaWYgKGVycm9yKSB7DQoJCWRldl9lcnIoZGV2LCAicG1fY2xrX2FkZF9j
-bGsgJXBDIGZhaWxlZCAlZFxuIiwgY2xrLCBlcnJvcik7DQoJCWdvdG8gZmFpbF9kZXN0cm95Ow0K
-CX0NCg0KKwlpZiAob2ZfZGV2aWNlX2lzX2NvbXBhdGlibGUobnAsICJyZW5lc2FzLHI3czcyMTAw
-LW1zdHAtY2xvY2tzIikpDQorCQlwbV9jbGtfc3VzcGVuZChkZXYpOw0KDQoJLi4uDQp9DQoNClRo
-ZW4sIHRoaXMgd291bGQgYmUgT0sgdG8gc3VibWl0IHVudGlsIEkgZmluZCBzb21lIG90aGVyIHdh
-eSB0byBkbyBzdGFibGUNCnJ1bnRpbWUgcG0gZm9yIFJaL0ExPyAod2hpY2ggbWlnaHQgbm90IGJl
-IHBvc3NpYmxlLi4udW5sZXNzIEkgcHV0IGluIHRoZQ0Kc2lsbHkgZGVsYXkpDQoNCkEgdGhhdCBw
-b2ludCwgYW55IHBlcmlwaGVyYWwgSSB1c2UgKHN0YXR1cz0ib2theSIpIHdpbGwgc3RheSBvbiwg
-YnV0IHRoZQ0Kb25lcyBJIGRvbid0IHVzZSB3aWxsIHN0YXkgb2ZmLCBjb3JyZWN0Pw0KDQoNClRo
-YW5rIHlvdSwNCkNocmlzDQoNCg0K
+Hi Chris,
+
+On Wed, Jan 25, 2017 at 3:35 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Wednesday, January 25, 2017, Geert Uytterhoeven wrote:
+>> > But won't the individual drivers still want to keep turning clocks on
+>> and off manually?
+>> > (unless I'm not understanding that the underlying clock routines will
+>> basically just
+>> > ignore everything). But even if that' the case...that just wasted CPU
+>> cycles (remember,
+>> > I'm only working with a 400MHz single core here running XIP_KERNEL)
+>>
+>> If a clock is already enabled, preparing and/or enabling it again will
+>> just
+>> increase the prepare resp. enable counters. Disabling/unpreparing
+>> afterwards
+>> will also just decrease the counters. Should be quite cheap
+>
+> OK, I think I see your point:
+>
+> If I go and double-enable a clock, then the runtime pm won't do much
+> of anything because I'll always be a count higher so a true 'clock disable'
+> will never really occur. Is that correct?
+
+That's correct.
+
+> #I'm getting side tracked from what I really started to do which was test
+> out PFC for i2c and spi :(
+
+Welcome to the world of scratching your (increasing number of) itches ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
