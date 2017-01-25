@@ -1,46 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:35705 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753113AbdAZOyp (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40244 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752002AbdAYLTe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:54:45 -0500
-Received: by mail-lf0-f51.google.com with SMTP id n124so146409552lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 06:54:44 -0800 (PST)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Wed, 25 Jan 2017 06:19:34 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 4/4] arm64: dts: m3ulcb: enable HS200 for eMMC
-Date: Thu, 26 Jan 2017 17:54:46 +0300
-Message-Id: <1485442486-18427-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Dien Pham <dien.pham.ry@rvc.renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] clk: renesas: r8a7796: Add IIC-DVFS clock
+Date: Wed, 25 Jan 2017 12:19:34 +0100
+Message-Id: <1485343174-16973-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
+References: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 
-This supports HS200 mode for eMMC on M3ULCB board
+This patch adds DVFS clock for R8A7796 SoC.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 1 +
+Khiem: I've updated your email address, and added your missing SoB.
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index c7f40f8..c3e0b9e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -209,6 +209,7 @@
- 	vmmc-supply = <&reg_3p3v>;
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
-+	mmc-hs200-1_8v;
- 	non-removable;
- 	status = "okay";
- };
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 3bc36ef3aebf4108..11e084a56b0d9005 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -192,6 +192,7 @@ enum clk_ids {
+ 	DEF_MOD("can-if0",		 916,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c5",			 919,	R8A7796_CLK_S0D6),
++	DEF_MOD("i2c-dvfs",		 926,	R8A7796_CLK_CP),
+ 	DEF_MOD("i2c4",			 927,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c3",			 928,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
 -- 
 1.9.1
