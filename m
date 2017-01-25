@@ -1,30 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59969 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751590AbdAYK3z (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:48092 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751399AbdAYJo4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 05:29:55 -0500
-Date: Wed, 25 Jan 2017 11:29:44 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ARM: shmobile: rcar-gen2: Add more register
- documentation
-Message-ID: <20170125102943.GB14751@verge.net.au>
-References: <1485334933-26809-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1485334933-26809-1-git-send-email-geert+renesas@glider.be>
+        Wed, 25 Jan 2017 04:44:56 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] ARM: shmobile: rcar-gen2: Add more register documentation
+Date: Wed, 25 Jan 2017 10:02:13 +0100
+Message-Id: <1485334933-26809-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 10:02:13AM +0100, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Remove unneeded parentheses in phys_to_sbar().
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Remove unneeded parentheses in phys_to_sbar().
+---
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 40 +++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
 
-Thanks, I have queued this up for v4.11.
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index dd9ac366868f4336..0178da7ace82dcbd 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -20,14 +20,30 @@
+ 
+ /* RST */
+ #define RST		0xe6160000
+-#define CA15BAR		0x0020
+-#define CA7BAR		0x0030
+-#define CA15RESCNT	0x0040
+-#define CA7RESCNT	0x0044
++
++#define CA15BAR		0x0020		/* CA15 Boot Address Register */
++#define CA7BAR		0x0030		/* CA7 Boot Address Register */
++#define CA15RESCNT	0x0040		/* CA15 Reset Control Register */
++#define CA7RESCNT	0x0044		/* CA7 Reset Control Register */
++
++/* SYS Boot Address Register */
++#define SBAR_BAREN	BIT(4)		/* SBAR is valid */
++
++/* Reset Control Registers */
++#define CA15RESCNT_CODE	0xa5a50000
++#define CA15RESCNT_CPUS	0xf		/* CPU0-3 */
++#define CA7RESCNT_CODE	0x5a5a0000
++#define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
++
+ 
+ /* On-chip RAM */
+ #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
+ 
++static inline u32 phys_to_sbar(phys_addr_t addr)
++{
++	return (addr >> 8) & 0xfffffc00;
++}
++
+ /* SYSC */
+ #define SYSCIER 0x0c
+ #define SYSCIMR 0x10
+@@ -82,22 +98,24 @@ void __init rcar_gen2_pm_init(void)
+ 
+ 	/* setup reset vectors */
+ 	p = ioremap_nocache(RST, 0x63);
+-	bar = (boot_vector_addr >> 8) & 0xfffffc00;
++	bar = phys_to_sbar(boot_vector_addr);
+ 	if (has_a15) {
+ 		writel_relaxed(bar, p + CA15BAR);
+-		writel_relaxed(bar | 0x10, p + CA15BAR);
++		writel_relaxed(bar | SBAR_BAREN, p + CA15BAR);
+ 
+ 		/* de-assert reset for CA15 CPUs */
+-		writel_relaxed((readl_relaxed(p + CA15RESCNT) & ~0x0f) |
+-				0xa5a50000, p + CA15RESCNT);
++		writel_relaxed((readl_relaxed(p + CA15RESCNT) &
++				~CA15RESCNT_CPUS) | CA15RESCNT_CODE,
++			       p + CA15RESCNT);
+ 	}
+ 	if (has_a7) {
+ 		writel_relaxed(bar, p + CA7BAR);
+-		writel_relaxed(bar | 0x10, p + CA7BAR);
++		writel_relaxed(bar | SBAR_BAREN, p + CA7BAR);
+ 
+ 		/* de-assert reset for CA7 CPUs */
+-		writel_relaxed((readl_relaxed(p + CA7RESCNT) & ~0x0f) |
+-				0x5a5a0000, p + CA7RESCNT);
++		writel_relaxed((readl_relaxed(p + CA7RESCNT) &
++				~CA7RESCNT_CPUS) | CA7RESCNT_CODE,
++			       p + CA7RESCNT);
+ 	}
+ 	iounmap(p);
+ 
+-- 
+1.9.1
