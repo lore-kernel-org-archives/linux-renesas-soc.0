@@ -1,185 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:33398 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750843AbdA2MIJ (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:58256 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751779AbdAYKjt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 29 Jan 2017 07:08:09 -0500
-Received: by mail-lf0-f49.google.com with SMTP id x1so95548484lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 29 Jan 2017 04:07:37 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/3] sh_eth: rename EESIPR bits
-Date: Sun, 29 Jan 2017 15:07:34 +0300
-Message-ID: <1922521.2SuiKQeGh1@wasted.cogentembedded.com>
-In-Reply-To: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
-References: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 25 Jan 2017 05:39:49 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Zach Brown <zach.brown@ni.com>,
+        Volodymyr Bendiuga <volodymyr.bendiuga@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        =?UTF-8?q?Magnus=20=C3=96berg?= <magnus.oberg@westermo.se>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] net: phy: leds: Clear phy_num_led_triggers on failure to avoid crash
+Date: Wed, 25 Jan 2017 11:39:48 +0100
+Message-Id: <1485340790-10785-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485340790-10785-1-git-send-email-geert+renesas@glider.be>
+References: <1485340790-10785-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the  commit  b0ca2a21f769 ("sh_eth: Add support of SH7763 to sh_eth")
-the *enum* declaring the EESIPR bits (interrupt mask) went out of sync with
-the *enum* declaring the EESR bits (interrupt status) WRT  bit naming  and
-formatting. I'd like to restore the consistency by using EESIPR as the bit
-name prefix, renaming the *enum* to EESIPR_BIT, and (finally) renaming the
-bits according to the available  Renesas SH77{34|63} manuals; additionally,
-reconstruct  couple names using  the EESR bit declaration above...
+phy_attach_direct() ignores errors returned by
+phy_led_triggers_register(). I think that's OK, as LED triggers can be
+considered a non-critical feature.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+However, this causes problems later:
+  - phy_led_trigger_change_speed() will access the array
+    phy_device.phy_led_triggers, which has been freed in the error path
+    of phy_led_triggers_register(), which may lead to a crash.
 
+  - phy_led_triggers_unregister() will access the same array, leading to
+    crashes during s2ram or poweroff, like:
+
+	Unable to handle kernel NULL pointer dereference at virtual address
+	00000000
+	...
+	[<c04116d4>] (__list_del_entry_valid) from [<c05e8948>] (led_trigger_unregister+0x34/0xcc)
+	[<c05e8948>] (led_trigger_unregister) from [<c05336c4>] (phy_led_triggers_unregister+0x28/0x34)
+	[<c05336c4>] (phy_led_triggers_unregister) from [<c0531d44>] (phy_detach+0x30/0x74)
+	[<c0531d44>] (phy_detach) from [<c0538bdc>] (sh_eth_close+0x64/0x9c)
+	[<c0538bdc>] (sh_eth_close) from [<c04d4ce0>] (dpm_run_callback+0x48/0xc8)
+
+    or:
+
+	list_del corruption. prev->next should be dede6540, but was 2e323931
+	------------[ cut here ]------------
+	kernel BUG at lib/list_debug.c:52!
+	...
+	[<c02f6d70>] (__list_del_entry_valid) from [<c0425168>] (led_trigger_unregister+0x34/0xcc)
+	[<c0425168>] (led_trigger_unregister) from [<c03a05a0>] (phy_led_triggers_unregister+0x28/0x34)
+	[<c03a05a0>] (phy_led_triggers_unregister) from [<c039ec04>] (phy_detach+0x30/0x74)
+	[<c039ec04>] (phy_detach) from [<c03a4fc0>] (sh_eth_close+0x6c/0xa4)
+	[<c03a4fc0>] (sh_eth_close) from [<c0483234>] (__dev_close_many+0xac/0xd0)
+
+To fix this, clear phy_device.phy_num_led_triggers in the error path of
+phy_led_triggers_register() fails.
+
+Note that the "No phy led trigger registered for speed" message will
+still be printed on link speed changes, which is a good cue that
+something went wrong with the LED triggers.
+
+Fixes: 2e0bc452f4721520 ("net: phy: leds: add support for led triggers on phy link state change")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
-Changes in version 2:
-- clarified the patch description.
+Alternatively, phy_attach_direct() could consider
+phy_led_triggers_register() failures as fatal, so
+phy_led_trigger_change_speed() and phy_led_triggers_unregister() are
+never called afterwards.
 
- drivers/net/ethernet/renesas/sh_eth.c |   22 ++++++++++----------
- drivers/net/ethernet/renesas/sh_eth.h |   36 +++++++++++++++++++++-------------
- 2 files changed, 34 insertions(+), 24 deletions(-)
+Exposed by commit 4567d686f5c6d955 ("phy: increase size of
+MII_BUS_ID_SIZE and bus_id"), which caused duplicate trigger names.
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -556,7 +556,7 @@ static struct sh_eth_cpu_data r8a7740_da
+v2:
+  - Add Reviewed-by.
+---
+ drivers/net/phy/phy_led_triggers.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/phy/phy_led_triggers.c b/drivers/net/phy/phy_led_triggers.c
+index fa62bdf2f52694de..3f619e7371e97d8a 100644
+--- a/drivers/net/phy/phy_led_triggers.c
++++ b/drivers/net/phy/phy_led_triggers.c
+@@ -102,8 +102,10 @@ int phy_led_triggers_register(struct phy_device *phy)
+ 					    sizeof(struct phy_led_trigger) *
+ 						   phy->phy_num_led_triggers,
+ 					    GFP_KERNEL);
+-	if (!phy->phy_led_triggers)
+-		return -ENOMEM;
++	if (!phy->phy_led_triggers) {
++		err = -ENOMEM;
++		goto out_clear;
++	}
  
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -702,7 +702,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 
- 	.register_type	= SH_ETH_REG_FAST_SH4,
- 
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
- 
- 	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
-@@ -769,7 +769,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -800,7 +800,7 @@ static struct sh_eth_cpu_data sh7734_dat
- 
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003f07ff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003f07ff,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -830,7 +830,7 @@ static struct sh_eth_cpu_data sh7763_dat
- 
- 	.ecsr_value	= ECSR_ICD | ECSR_MPD,
- 	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003f07ff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003f07ff,
- 
- 	.tx_check	= EESR_TC1 | EESR_FTC,
- 	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-@@ -851,7 +851,7 @@ static struct sh_eth_cpu_data sh7763_dat
- static struct sh_eth_cpu_data sh7619_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
- 
- 	.apr		= 1,
- 	.mpr		= 1,
-@@ -862,7 +862,7 @@ static struct sh_eth_cpu_data sh7619_dat
- static struct sh_eth_cpu_data sh771x_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
--	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP | 0x003fffff,
- 	.tsu		= 1,
- };
- 
-@@ -1547,10 +1547,10 @@ static void sh_eth_emac_interrupt(struct
- 			sh_eth_rcv_snd_disable(ndev);
- 		} else {
- 			/* Link Up */
--			sh_eth_modify(ndev, EESIPR, DMAC_M_ECI, 0);
-+			sh_eth_modify(ndev, EESIPR, EESIPR_ECIIP, 0);
- 			/* clear int */
- 			sh_eth_modify(ndev, ECSR, 0, 0);
--			sh_eth_modify(ndev, EESIPR, DMAC_M_ECI, DMAC_M_ECI);
-+			sh_eth_modify(ndev, EESIPR, EESIPR_ECIIP, EESIPR_ECIIP);
- 			/* enable tx and rx */
- 			sh_eth_rcv_snd_enable(ndev);
- 		}
-@@ -1652,7 +1652,7 @@ static irqreturn_t sh_eth_interrupt(int
- 	 * bit...
- 	 */
- 	intr_enable = sh_eth_read(ndev, EESIPR);
--	intr_status &= intr_enable | DMAC_M_ECI;
-+	intr_status &= intr_enable | EESIPR_ECIIP;
- 	if (intr_status & (EESR_RX_CHECK | cd->tx_check | EESR_ECI |
- 			   cd->eesr_err_check))
- 		ret = IRQ_HANDLED;
-@@ -3199,7 +3199,7 @@ static int sh_eth_wol_setup(struct net_d
- 	/* Only allow ECI interrupts */
- 	synchronize_irq(ndev->irq);
- 	napi_disable(&mdp->napi);
--	sh_eth_write(ndev, DMAC_M_ECI, EESIPR);
-+	sh_eth_write(ndev, EESIPR_ECIIP, EESIPR);
- 
- 	/* Enable MagicPacket */
- 	sh_eth_modify(ndev, ECMR, 0, ECMR_MPDE);
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -268,19 +268,29 @@ enum EESR_BIT {
- 				 EESR_TFE | EESR_TDE)
- 
- /* EESIPR */
--enum DMAC_IM_BIT {
--	DMAC_M_TWB = 0x40000000, DMAC_M_TABT = 0x04000000,
--	DMAC_M_RABT = 0x02000000,
--	DMAC_M_RFRMER = 0x01000000, DMAC_M_ADF = 0x00800000,
--	DMAC_M_ECI = 0x00400000, DMAC_M_FTC = 0x00200000,
--	DMAC_M_TDE = 0x00100000, DMAC_M_TFE = 0x00080000,
--	DMAC_M_FRC = 0x00040000, DMAC_M_RDE = 0x00020000,
--	DMAC_M_RFE = 0x00010000, DMAC_M_TINT4 = 0x00000800,
--	DMAC_M_TINT3 = 0x00000400, DMAC_M_TINT2 = 0x00000200,
--	DMAC_M_TINT1 = 0x00000100, DMAC_M_RINT8 = 0x00000080,
--	DMAC_M_RINT5 = 0x00000010, DMAC_M_RINT4 = 0x00000008,
--	DMAC_M_RINT3 = 0x00000004, DMAC_M_RINT2 = 0x00000002,
--	DMAC_M_RINT1 = 0x00000001,
-+enum EESIPR_BIT {
-+	EESIPR_TWBIP	= 0x40000000,
-+	EESIPR_TABTIP	= 0x04000000,
-+	EESIPR_RABTIP	= 0x02000000,
-+	EESIPR_RFCOFIP	= 0x01000000,
-+	EESIPR_ADEIP	= 0x00800000,
-+	EESIPR_ECIIP	= 0x00400000,
-+	EESIPR_FTCIP	= 0x00200000,
-+	EESIPR_TDEIP	= 0x00100000,
-+	EESIPR_TFUFIP	= 0x00080000,
-+	EESIPR_FRIP	= 0x00040000,
-+	EESIPR_RDEIP	= 0x00020000,
-+	EESIPR_RFOFIP	= 0x00010000,
-+	EESIPR_CNDIP	= 0x00000800,
-+	EESIPR_DLCIP	= 0x00000400,
-+	EESIPR_CDIP	= 0x00000200,
-+	EESIPR_TROIP	= 0x00000100,
-+	EESIPR_RMAFIP	= 0x00000080,
-+	EESIPR_RRFIP	= 0x00000010,
-+	EESIPR_RTLFIP	= 0x00000008,
-+	EESIPR_RTSFIP	= 0x00000004,
-+	EESIPR_PREIP	= 0x00000002,
-+	EESIPR_CERFIP	= 0x00000001,
- };
- 
- /* Receive descriptor 0 bits */
+ 	for (i = 0; i < phy->phy_num_led_triggers; i++) {
+ 		err = phy_led_trigger_register(phy, &phy->phy_led_triggers[i],
+@@ -120,6 +122,8 @@ int phy_led_triggers_register(struct phy_device *phy)
+ 	while (i--)
+ 		phy_led_trigger_unregister(&phy->phy_led_triggers[i]);
+ 	devm_kfree(&phy->mdio.dev, phy->phy_led_triggers);
++out_clear:
++	phy->phy_num_led_triggers = 0;
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(phy_led_triggers_register);
+-- 
+1.9.1
