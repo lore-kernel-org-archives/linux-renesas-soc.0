@@ -1,93 +1,65 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Christoph Baumann <cbaumann@visteon.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] serial: sh-sci: Fix early deassertion of dedicated RTS
-Date: Fri, 06 Jan 2017 14:30:36 +0200
-Message-ID: <8834208.BLCpAM3tlx@avalon>
-In-Reply-To: <1480682111-9299-2-git-send-email-geert+renesas@glider.be>
-References: <1480682111-9299-1-git-send-email-geert+renesas@glider.be> <1480682111-9299-2-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-yb0-f175.google.com ([209.85.213.175]:35525 "EHLO
+        mail-yb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbdAYJaX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 04:30:23 -0500
+Received: by mail-yb0-f175.google.com with SMTP id f67so1540127ybc.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 01:30:23 -0800 (PST)
+Subject: Re: [PATCH] drivers: firmware: psci: Use __pa_symbol for cpu_resume
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <1485271819-2977-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <7231fdec-7582-b330-fa8d-db194effa622@redhat.com>
+Date: Wed, 25 Jan 2017 10:30:16 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1485271819-2977-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-Thank you for the patch.
-
-On Friday 02 Dec 2016 13:35:10 Geert Uytterhoeven wrote:
-> If a UART has dedicated RTS/CTS pins, there are some issues:
-> 
-> 1. When changing hardware control flow, the new AUTORTS state is not
->    immediately reflected in the hardware, but only when RTS is raised.
->    However, the serial core doesn't call .set_mctrl() after
->    .set_termios(), hence AUTORTS may only become effective when the port
->    is closed, and reopened later.
->    Note that this problem does not happen when manually using stty to
->    change CRTSCTS, as AUTORTS will work fine on next open.
-> 
-> 2. When hardware control flow is disabled (or AUTORTS is not yet
->    effective), changing any serial port configuration deasserts RTS, as
->    .set_termios() calls sci_init_pins().
-
-Isn't this still a problem with this patch applied ? Calling sci_set_mctrl() 
-should reconfigure the pins properly, but won't there be a short window during 
-which the configuration will be wrong ?
-
-> To fix both issues, call .set_mctrl() from .set_termios() when dedicated
-> RTS/CTS pins are present, to refresh the AUTORTS or RTS state.
-> This is similar to what other drivers supporting AUTORTS do (e.g.
-> omap-serial).
-> 
-> Reported-by: Baumann, Christoph (C.) <cbaumann@visteon.com> (issue 1)
-> Fixes: 33f50ffc253854cf ("serial: sh-sci: Fix support for hardware-assisted
-> RTS/CTS")
+On 01/24/2017 04:30 PM, Geert Uytterhoeven wrote:
+> If CONFIG_DEBUG_VIRTUAL=y, during s2ram:
+>
+>     virt_to_phys used for non-linear address: ffffff80085db280 (cpu_resume+0x0/0x20)
+>     ------------[ cut here ]------------
+>     WARNING: CPU: 0 PID: 1628 at arch/arm64/mm/physaddr.c:14 __virt_to_phys+0x28/0x60
+>     ...
+>     [<ffffff800809abb4>] __virt_to_phys+0x28/0x60
+>     [<ffffff80084a0c38>] psci_system_suspend+0x20/0x44
+>     [<ffffff8008095b28>] cpu_suspend+0x3c/0x68
+>     [<ffffff80084a0b48>] psci_system_suspend_enter+0x18/0x20
+>     [<ffffff80080ea3e0>] suspend_devices_and_enter+0x3f8/0x7e8
+>     [<ffffff80080ead14>] pm_suspend+0x544/0x5f4
+>
+> Fixes: 1a08e3d9e0ac4577 ("drivers: firmware: psci: Use __pa_symbol for kernel symbol")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> Tested on r8a7791/koelsch with HSCIF1 (GPIO hardware flow control),
-> and HSCIF2 and SCIFB0 (dedicated hardware flow control).
-> 
-> A simple test program (basically "cat" with CRTSCTS configuration
-> capability) can be found at https://github.com/geertu/sercat
-> 
-> Without this patch the following will fail:
-> 
->   1. sercat -f /dev/hscif2 &
->      seq 100 120 | sercat -f -w /dev/hscif1 # hangs
-> 
->   2. seq 200 220 | sercat -f -w /dev/hscif2 &
->      sercat -f /dev/hscif1 # no data received
-> ---
->  drivers/tty/serial/sh-sci.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 91e7dddbf72cd3de..c503db1900f003ed 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -2340,6 +2340,10 @@ static void sci_set_termios(struct uart_port *port,
-> struct ktermios *termios,
-> 
->  		serial_port_out(port, SCFCR, ctrl);
->  	}
-> +	if (port->flags & UPF_HARD_FLOW) {
-> +		/* Refresh (Auto) RTS */
-> +		sci_set_mctrl(port, port->mctrl);
-> +	}
-> 
->  	scr_val |= s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0);
->  	dev_dbg(port->dev, "SCSCR 0x%x\n", scr_val);
+>  drivers/firmware/psci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+> index 66a8793f3b3793ff..493a56a4cfc4a836 100644
+> --- a/drivers/firmware/psci.c
+> +++ b/drivers/firmware/psci.c
+> @@ -419,7 +419,7 @@ int psci_cpu_suspend_enter(unsigned long index)
+>  static int psci_system_suspend(unsigned long unused)
+>  {
+>  	return invoke_psci_fn(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND),
+> -			      virt_to_phys(cpu_resume), 0, 0);
+> +			      __pa_symbol(cpu_resume), 0, 0);
+>  }
+>
+>  static int psci_system_suspend_enter(suspend_state_t state)
+>
 
--- 
-Regards,
+(thought I sent this yesterday but SMTP was not set correctly)
 
-Laurent Pinchart
+Acked-by: Laura Abbott <labbott@redhat.com>
