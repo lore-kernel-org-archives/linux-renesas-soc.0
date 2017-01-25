@@ -1,13 +1,18 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34477 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751347AbdAYIhC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 03:37:02 -0500
 MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11652097D0BFA1A058F9CFBC8A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <SG2PR06MB1165F79A1675FAC9ABEF12998A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170123135423.28780-1-chris.brandt@renesas.com>
  <20170123135423.28780-3-chris.brandt@renesas.com> <20170123175210.GH2166@mai>
  <SG2PR06MB11657AE9653A4B66B1EA02718A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20170124143222.GA2021@mai> <SG2PR06MB11652097D0BFA1A058F9CFBC8A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20170124143222.GA2021@mai> <SG2PR06MB1165F79A1675FAC9ABEF12998A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Jan 2017 09:35:22 +0100
-Message-ID: <CAMuHMdXHqDrmvaCBCXy5gHJ9h0_6S7g8R0ji=Sb5TSoH2s57Gw@mail.gmail.com>
+Date: Wed, 25 Jan 2017 09:37:00 +0100
+Message-ID: <CAMuHMdXHWtSP00nHXPmiPS0qjihizXEjoP_C+AMmQVJTKfiD6A@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] clocksource: Add renesas-ostm timer driver
 To: Chris Brandt <Chris.Brandt@renesas.com>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -22,12 +27,10 @@ Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Tue, Jan 24, 2017 at 3:43 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+On Tue, Jan 24, 2017 at 9:19 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
 > On Tuesday, January 24, 2017, Daniel Lezcano wrote:
 >> > > > +early_platform_init("earlytimer", &ostm_timer);
 >> > > > +subsys_initcall(ostm_init); module_exit(ostm_exit);
@@ -53,13 +56,15 @@ On Tue, Jan 24, 2017 at 3:43 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
 >> pdev->remove all
 >> the rollback code everywhere.
 >
-> So I realized that in order to use builtin_platform, I can't have any of the
-> functions in __init because the build system has no idea that I never plan
-> on removing or probing again after boot. But, even if I take out all the
-> __init from my code, I'm still calling clocksource_mmio_init which is __init
-> so I can never escape the "Section mismatch".
+> It was a good idea....but it will not work.
+>
+> While CLOCKSOURCE_OF_DECLARE is good at putting the driver at the
+> front of the line for loading, it's too early in boot to detect
+> a platform_device.
 
-For single-probe drivers, you can use builtin_platform_driver_probe().
+That's correct. All those *_OF_DECLARE() style initializations start
+to break as soon as power and/or clock domains are involved.
+That's one reason why some subsystems (e.g. clock) are moving away from it.
 
 Gr{oetje,eeting}s,
 
