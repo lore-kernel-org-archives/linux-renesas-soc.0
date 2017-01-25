@@ -1,45 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:34438 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751574AbdAYNTa (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:37805 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752541AbdAYU2l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 08:19:30 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: Mark EthernetAVB device node disabled
-Date: Wed, 25 Jan 2017 14:19:30 +0100
-Message-Id: <1485350371-16091-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485350371-16091-1-git-send-email-geert+renesas@glider.be>
-References: <1485350371-16091-1-git-send-email-geert+renesas@glider.be>
+        Wed, 25 Jan 2017 15:28:41 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v6 3/3] ARM: dts: r7s72100: update sdhi clock bindings
+Date: Wed, 25 Jan 2017 15:28:10 -0500
+Message-Id: <20170125202810.16876-4-chris.brandt@renesas.com>
+In-Reply-To: <20170125202810.16876-1-chris.brandt@renesas.com>
+References: <20170125202810.16876-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Device nodes representing I/O devices should be marked disabled in the
-SoC-specific DTS, and overridden by board-specific DTSes where needed.
+The SDHI controller in the RZ/A1 has 2 clock sources per channel and both
+need to be enabled/disabled for proper operation. This fixes the fact that
+the define for R7S72100_CLK_SDHI1 was not correct to begin with (typo), and
+that all 4 clock sources need to be defined an used.
 
-Fixes: a92843c8a6f8c039 ("arm64: dts: r8a7795: add EthernetAVB device node")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-r8a7795-salvator-x.dts and r8a7795-h3ulcb.dts already have the override.
+v2:
+* add missing clock sources instead of just fixing typo
+* changed clock name from "carddetect" to "cd"
+---
+ arch/arm/boot/dts/r7s72100.dtsi            | 17 ++++++++++++-----
+ include/dt-bindings/clock/r7s72100-clock.h |  6 ++++--
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8b030c323c10488d..337061b8e99ec738 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -566,6 +566,7 @@
- 			phy-mode = "rgmii-id";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			status = "disabled";
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 3dd427d..9d0b8d0 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -153,9 +153,12 @@
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe0444 4>;
+-			clocks = <&p1_clk>, <&p1_clk>;
+-			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
+-			clock-output-names = "sdhi1", "sdhi0";
++			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
++			clock-indices = <
++				R7S72100_CLK_SDHI00 R7S72100_CLK_SDHI01
++				R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
++			>;
++			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
  		};
+ 	};
  
- 		can0: can@e6c30000 {
+@@ -478,7 +481,9 @@
+ 			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
++			 <&mstp12_clks R7S72100_CLK_SDHI01>;
++		clock-names = "core", "cd";
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
+@@ -491,7 +496,9 @@
+ 			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
+ 
+-		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
++			 <&mstp12_clks R7S72100_CLK_SDHI11>;
++		clock-names = "core", "cd";
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index 29e01ed..f2d8428 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -45,7 +45,9 @@
+ #define R7S72100_CLK_SPI4	3
+ 
+ /* MSTP12 */
+-#define R7S72100_CLK_SDHI0	3
+-#define R7S72100_CLK_SDHI1	2
++#define R7S72100_CLK_SDHI00	3
++#define R7S72100_CLK_SDHI01	2
++#define R7S72100_CLK_SDHI10	1
++#define R7S72100_CLK_SDHI11	0
+ 
+ #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
 -- 
-1.9.1
+2.10.1
