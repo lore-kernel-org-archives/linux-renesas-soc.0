@@ -1,112 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:32848 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755420AbdALBDy (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60749 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751445AbdAYOCz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 20:03:54 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5923 and 5P49V5933
-Date: Thu, 12 Jan 2017 02:03:23 +0100
-Message-Id: <20170112010324.28068-1-marek.vasut@gmail.com>
+        Wed, 25 Jan 2017 09:02:55 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 2/2] clocksource: Add renesas-ostm timer driver
+Date: Wed, 25 Jan 2017 14:02:49 +0000
+Message-ID: <SG2PR06MB1165831212DE76097BDB8DB78A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170123135423.28780-1-chris.brandt@renesas.com>
+ <20170123135423.28780-3-chris.brandt@renesas.com> <20170123175210.GH2166@mai>
+ <SG2PR06MB11657AE9653A4B66B1EA02718A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20170124143222.GA2021@mai>
+ <SG2PR06MB1165F79A1675FAC9ABEF12998A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20170125095603.GE2021@mai>
+In-Reply-To: <20170125095603.GE2021@mai>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
-These are I2C clock generators with optional clock source from
-either XTal or dedicated clock generator and, depending on the
-model, two or more clock outputs.
-
-Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Add mapping between the clock specifier and physical pins of the chip
----
- .../devicetree/bindings/clock/idt,versaclock5.txt  | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-new file mode 100644
-index 000000000000..87e9c47a89a3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -0,0 +1,65 @@
-+Binding for IDT VersaClock5 programmable i2c clock generator.
-+
-+The IDT VersaClock5 are programmable i2c clock generators providing
-+from 3 to 12 output clocks.
-+
-+==I2C device node==
-+
-+Required properties:
-+- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
-+- reg:		i2c device address, shall be 0x68 or 0x6a.
-+- #clock-cells:	from common clock binding; shall be set to 1.
-+- clocks:	from common clock binding; list of parent clock handles,
-+		- 5p49v5923: (required) either or both of XTAL or CLKIN
-+					reference clock.
-+		- 5p49v5933: (optional) property not present (internal
-+					Xtal used) or CLKIN reference
-+					clock.
-+- clock-names:	from common clock binding; clock input names, can be
-+		- 5p49v5923: (required) either or both of "xin", "clkin".
-+		- 5p49v5933: (optional) property not present or "clkin".
-+
-+==Mapping between clock specifier and physical pins==
-+
-+When referencing the provided clock in the DT using phandle and
-+clock specifier, the following mapping applies:
-+
-+5P49V5923:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+
-+5P49V5933:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT4
-+
-+==Example==
-+
-+/* 25MHz reference crystal */
-+ref25: ref25m {
-+	compatible = "fixed-clock";
-+	#clock-cells = <0>;
-+	clock-frequency = <25000000>;
-+};
-+
-+i2c-master-node {
-+
-+	/* IDT 5P49V5923 i2c clock generator */
-+	vc5: clock-generator@6a {
-+		compatible = "idt,5p49v5923";
-+		reg = <0x6a>;
-+		#clock-cells = <1>;
-+
-+		/* Connect XIN input to 25MHz reference */
-+		clocks = <&ref25m>;
-+		clock-names = "xin";
-+	};
-+};
-+
-+/* Consumer referencing the 5P49V5923 pin OUT1 */
-+consumer {
-+	...
-+	clocks = <&vc5 1>;
-+	...
-+}
--- 
-2.11.0
+SGkgRGFuaWVsLA0KDQpPbiBXZWRuZXNkYXksIEphbnVhcnkgMjUsIDIwMTcsIERhbmllbCBMZXpj
+YW5vIHdyb3RlOg0KPiA+IFRoZW4gdGhpbmdzIHdvcmssIGJ1dCBJJ20gYmFjayB0byBtYW5hZ2lu
+ZyB0aGUgcm9sbGJhY2sgY29kZSBtYW51YWxseS4NCj4gPg0KPiA+DQo+ID4gQW55IG90aGVyIGlk
+ZWFzIG9uIGhvdyB0byBnZXQgdGhlIGNvcnJlc3BvbmRpbmcgcGxhdGZvcm1fZGV2aWNlIGZvciBh
+DQo+ID4gRFQgbm9kZT8NCj4gDQo+IE5vIDovDQo+IA0KPiBTbyB1cCB0byB5b3UuDQo+IAktIENM
+T0NLU09VUkNFX09GX0RFQ0xBUkUgY29uc2lzdGVudCBidXQgbmVlZCByb2xsYmFjaw0KPiAJb3IN
+Cj4gCS0gcGxhdGZvcm1fZGV2aWNlIGJ1dCB3aXRoIGFub3RoZXIgdGltZXIgYXZhaWxhYmxlIGF0
+IGVhcmx5IHRpbWUNCg0KQXMgZmFyIGFzIEkgY2FuIHRlbGwsIHRoZSByb2xsYmFjayBmdW5jdGlv
+bnMgZG9uJ3QgbWluZCBpZiBJIHBhc3MgTlVMTA0KcG9pbnRlcnMgdG8gdGhlbS4gU28gd2l0aCBD
+TE9DS1NPVVJDRV9PRl9ERUNMQVJFLCBteSBlcnJvciByb2xsYmFjayBhdA0KdGhlIGVuZCBvZiBv
+c3RtX2luaXQgaXMgYmFzaWNhbGx5Og0KDQoNCmVycjoNCglpZiAocmV0KSB7DQoJCWNsa19kaXNh
+YmxlX3VucHJlcGFyZShvc3RtX2Nsayk7DQoJCWlvdW5tYXAob3N0bS0+YmFzZSk7DQoJCWtmcmVl
+KG9zdG0pOw0KCQlyZXR1cm4gcmV0Ow0KCX0NCg0KCXJldHVybiAwOw0KfQ0KDQoNCg0KSWYgSSBn
+byB3aXRoIENMT0NLU09VUkNFX09GX0RFQ0xBUkUsIEkgY2FuIGF0IGxlYXN0IGdldCByaWQgb2Yg
+dGhlIGVhcmx5IGJvb3QgbWVzc2FnZQ0KImNsb2Nrc291cmNlX3Byb2JlOiBubyBtYXRjaGluZyBj
+bG9ja3NvdXJjZXMgZm91bmQiDQoNCkknbGwgZ28gYWhlYWQgYW5kIHNlbmQgYSB2NCB0b2RheSB3
+aXRoIGFsbCB0aGUgY2hhbmdlcyB5b3Ugc3VnZ2VzdGVkLg0KDQpUaGFuayB5b3UgZm9yIHlvdXIg
+aGVscC4NCg0KUmVnYXJkcywNCkNocmlzDQoNCg==
