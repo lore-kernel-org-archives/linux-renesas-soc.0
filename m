@@ -1,47 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:34933 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935823AbdADMKZ (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:48228 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751573AbdAYJo6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 07:10:25 -0500
-Received: by mail-lf0-f54.google.com with SMTP id b14so303214653lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jan 2017 04:10:24 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] sh_eth: handle only enabled E-MAC interrupts
-Date: Wed, 04 Jan 2017 15:10:21 +0300
-Message-ID: <3040246.Jqm8G9qTbW@wasted.cogentembedded.com>
-In-Reply-To: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
-References: <64514012.uUvlhX0YRQ@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 25 Jan 2017 04:44:58 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/4] clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
+Date: Wed, 25 Jan 2017 10:15:02 +0100
+Message-Id: <1485335703-27184-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver should only handle the enabled E-MAC interrupts, like it does
-for the E-DMAC interrupts since commit 3893b27345ac ("sh_eth: workaround
-for spurious ECI interrupt"),  so mask ECSR with  ECSIPR when reading it
-in sh_eth_error().
+The spinlock is used to protect Read-Modify-Write register accesses,
+which won't be limited to SMSTPCR register accesses.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v2:
+  - Add Acked-by.
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Index: renesas/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- renesas.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ renesas/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1535,7 +1535,8 @@ static void sh_eth_error(struct net_devi
- 	u32 mask;
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index eb8534e5ebf3007d..f1161a585c57e433 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -98,7 +98,7 @@
+  *
+  * @dev: CPG/MSSR device
+  * @base: CPG/MSSR register block base address
+- * @mstp_lock: protects writes to SMSTPCR
++ * @rmw_lock: protects RMW register accesses
+  * @clks: Array containing all Core and Module Clocks
+  * @num_core_clks: Number of Core Clocks in clks[]
+  * @num_mod_clks: Number of Module Clocks in clks[]
+@@ -107,7 +107,7 @@
+ struct cpg_mssr_priv {
+ 	struct device *dev;
+ 	void __iomem *base;
+-	spinlock_t mstp_lock;
++	spinlock_t rmw_lock;
  
- 	if (intr_status & EESR_ECI) {
--		felic_stat = sh_eth_read(ndev, ECSR);
-+		felic_stat = sh_eth_read(ndev, ECSR) &
-+			     sh_eth_read(ndev, ECSIPR);
- 		sh_eth_write(ndev, felic_stat, ECSR);	/* clear int */
- 		if (felic_stat & ECSR_ICD)
- 			ndev->stats.tx_carrier_errors++;
+ 	struct clk **clks;
+ 	unsigned int num_core_clks;
+@@ -144,7 +144,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 
+ 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
+ 		enable ? "ON" : "OFF");
+-	spin_lock_irqsave(&priv->mstp_lock, flags);
++	spin_lock_irqsave(&priv->rmw_lock, flags);
+ 
+ 	value = readl(priv->base + SMSTPCR(reg));
+ 	if (enable)
+@@ -153,7 +153,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		value |= bitmask;
+ 	writel(value, priv->base + SMSTPCR(reg));
+ 
+-	spin_unlock_irqrestore(&priv->mstp_lock, flags);
++	spin_unlock_irqrestore(&priv->rmw_lock, flags);
+ 
+ 	if (!enable)
+ 		return 0;
+@@ -550,7 +550,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	priv->dev = dev;
+-	spin_lock_init(&priv->mstp_lock);
++	spin_lock_init(&priv->rmw_lock);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->base = devm_ioremap_resource(dev, res);
+-- 
+1.9.1
