@@ -1,53 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:60749 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751445AbdAYOCz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 09:02:55 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
 Subject: RE: [PATCH v3 2/2] clocksource: Add renesas-ostm timer driver
-Date: Wed, 25 Jan 2017 14:02:49 +0000
-Message-ID: <SG2PR06MB1165831212DE76097BDB8DB78A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Date: Wed, 25 Jan 2017 13:32:19 +0000
+Message-ID: <SG2PR06MB1165830ACADF14E3E65CAA728A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170123135423.28780-1-chris.brandt@renesas.com>
  <20170123135423.28780-3-chris.brandt@renesas.com> <20170123175210.GH2166@mai>
  <SG2PR06MB11657AE9653A4B66B1EA02718A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <20170124143222.GA2021@mai>
- <SG2PR06MB1165F79A1675FAC9ABEF12998A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20170125095603.GE2021@mai>
-In-Reply-To: <20170125095603.GE2021@mai>
+ <SG2PR06MB11652097D0BFA1A058F9CFBC8A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdXHqDrmvaCBCXy5gHJ9h0_6S7g8R0ji=Sb5TSoH2s57Gw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXHqDrmvaCBCXy5gHJ9h0_6S7g8R0ji=Sb5TSoH2s57Gw@mail.gmail.com>
 Content-Language: en-US
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgRGFuaWVsLA0KDQpPbiBXZWRuZXNkYXksIEphbnVhcnkgMjUsIDIwMTcsIERhbmllbCBMZXpj
-YW5vIHdyb3RlOg0KPiA+IFRoZW4gdGhpbmdzIHdvcmssIGJ1dCBJJ20gYmFjayB0byBtYW5hZ2lu
-ZyB0aGUgcm9sbGJhY2sgY29kZSBtYW51YWxseS4NCj4gPg0KPiA+DQo+ID4gQW55IG90aGVyIGlk
-ZWFzIG9uIGhvdyB0byBnZXQgdGhlIGNvcnJlc3BvbmRpbmcgcGxhdGZvcm1fZGV2aWNlIGZvciBh
-DQo+ID4gRFQgbm9kZT8NCj4gDQo+IE5vIDovDQo+IA0KPiBTbyB1cCB0byB5b3UuDQo+IAktIENM
-T0NLU09VUkNFX09GX0RFQ0xBUkUgY29uc2lzdGVudCBidXQgbmVlZCByb2xsYmFjaw0KPiAJb3IN
-Cj4gCS0gcGxhdGZvcm1fZGV2aWNlIGJ1dCB3aXRoIGFub3RoZXIgdGltZXIgYXZhaWxhYmxlIGF0
-IGVhcmx5IHRpbWUNCg0KQXMgZmFyIGFzIEkgY2FuIHRlbGwsIHRoZSByb2xsYmFjayBmdW5jdGlv
-bnMgZG9uJ3QgbWluZCBpZiBJIHBhc3MgTlVMTA0KcG9pbnRlcnMgdG8gdGhlbS4gU28gd2l0aCBD
-TE9DS1NPVVJDRV9PRl9ERUNMQVJFLCBteSBlcnJvciByb2xsYmFjayBhdA0KdGhlIGVuZCBvZiBv
-c3RtX2luaXQgaXMgYmFzaWNhbGx5Og0KDQoNCmVycjoNCglpZiAocmV0KSB7DQoJCWNsa19kaXNh
-YmxlX3VucHJlcGFyZShvc3RtX2Nsayk7DQoJCWlvdW5tYXAob3N0bS0+YmFzZSk7DQoJCWtmcmVl
-KG9zdG0pOw0KCQlyZXR1cm4gcmV0Ow0KCX0NCg0KCXJldHVybiAwOw0KfQ0KDQoNCg0KSWYgSSBn
-byB3aXRoIENMT0NLU09VUkNFX09GX0RFQ0xBUkUsIEkgY2FuIGF0IGxlYXN0IGdldCByaWQgb2Yg
-dGhlIGVhcmx5IGJvb3QgbWVzc2FnZQ0KImNsb2Nrc291cmNlX3Byb2JlOiBubyBtYXRjaGluZyBj
-bG9ja3NvdXJjZXMgZm91bmQiDQoNCkknbGwgZ28gYWhlYWQgYW5kIHNlbmQgYSB2NCB0b2RheSB3
-aXRoIGFsbCB0aGUgY2hhbmdlcyB5b3Ugc3VnZ2VzdGVkLg0KDQpUaGFuayB5b3UgZm9yIHlvdXIg
-aGVscC4NCg0KUmVnYXJkcywNCkNocmlzDQoNCg==
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgSmFudWFyeSAyNSwgMjAxNywgR2VlcnQgVXl0dGVy
+aG9ldmVuIHdyb3RlOg0KPiA+IFNvIEkgcmVhbGl6ZWQgdGhhdCBpbiBvcmRlciB0byB1c2UgYnVp
+bHRpbl9wbGF0Zm9ybSwgSSBjYW4ndCBoYXZlIGFueQ0KPiA+IG9mIHRoZSBmdW5jdGlvbnMgaW4g
+X19pbml0IGJlY2F1c2UgdGhlIGJ1aWxkIHN5c3RlbSBoYXMgbm8gaWRlYSB0aGF0IEkNCj4gPiBu
+ZXZlciBwbGFuIG9uIHJlbW92aW5nIG9yIHByb2JpbmcgYWdhaW4gYWZ0ZXIgYm9vdC4gQnV0LCBl
+dmVuIGlmIEkNCj4gPiB0YWtlIG91dCBhbGwgdGhlIF9faW5pdCBmcm9tIG15IGNvZGUsIEknbSBz
+dGlsbCBjYWxsaW5nDQo+ID4gY2xvY2tzb3VyY2VfbW1pb19pbml0IHdoaWNoIGlzIF9faW5pdCBz
+byBJIGNhbiBuZXZlciBlc2NhcGUgdGhlICJTZWN0aW9uDQo+IG1pc21hdGNoIi4NCj4gDQo+IEZv
+ciBzaW5nbGUtcHJvYmUgZHJpdmVycywgeW91IGNhbiB1c2UgYnVpbHRpbl9wbGF0Zm9ybV9kcml2
+ZXJfcHJvYmUoKS4NCg0KDQpUaGFuayB5b3UgZm9yIHRoZSBpbmZvLg0KDQoNCkNocmlzDQoNCg==
