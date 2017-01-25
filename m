@@ -1,68 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35382 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751466AbdAYOhr (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:52898 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751612AbdAYOgC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 09:37:47 -0500
-Received: by mail-io0-f193.google.com with SMTP id m98so2052099iod.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 06:37:47 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1165B0BB2EBCD6178528E00B8A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Wed, 25 Jan 2017 09:36:02 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [RFC] Runtime PM on the RZ/A series is never going to work right
+Date: Wed, 25 Jan 2017 14:35:58 +0000
+Message-ID: <SG2PR06MB1165B0BB2EBCD6178528E00B8A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <SG2PR06MB116554401FE404334E924EE38A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdVaF=DpacHTV_T6nVcJMF-GfcRd3ybj-yagAy2nj_TeCw@mail.gmail.com>
  <SG2PR06MB1165A003EAAACA6C9771FA798A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdWn0C6W3Ueb9cYDUcXMnSZVRNn8pax+y7Zyy_P=1t2gGg@mail.gmail.com>
  <SG2PR06MB11654DEF72DE224D798D19D68A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com> <SG2PR06MB1165B0BB2EBCD6178528E00B8A740@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Jan 2017 15:37:45 +0100
-Message-ID: <CAMuHMdV3=xVgsMcmgduQk43sLms3qserj50-0QU+kKibAvMxJQ@mail.gmail.com>
-Subject: Re: [RFC] Runtime PM on the RZ/A series is never going to work right
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+ <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Wed, Jan 25, 2017 at 3:35 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Wednesday, January 25, 2017, Geert Uytterhoeven wrote:
->> > But won't the individual drivers still want to keep turning clocks on
->> and off manually?
->> > (unless I'm not understanding that the underlying clock routines will
->> basically just
->> > ignore everything). But even if that' the case...that just wasted CPU
->> cycles (remember,
->> > I'm only working with a 400MHz single core here running XIP_KERNEL)
->>
->> If a clock is already enabled, preparing and/or enabling it again will
->> just
->> increase the prepare resp. enable counters. Disabling/unpreparing
->> afterwards
->> will also just decrease the counters. Should be quite cheap
->
-> OK, I think I see your point:
->
-> If I go and double-enable a clock, then the runtime pm won't do much
-> of anything because I'll always be a count higher so a true 'clock disable'
-> will never really occur. Is that correct?
-
-That's correct.
-
-> #I'm getting side tracked from what I really started to do which was test
-> out PFC for i2c and spi :(
-
-Welcome to the world of scratching your (increasing number of) itches ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgSmFudWFyeSAyNSwgMjAxNywgR2VlcnQgVXl0dGVy
+aG9ldmVuIHdyb3RlOg0KPiA+IEkgY2FuIHBsYXkgYXJvdW5kIGFuZCBzZWUuIEkga25vdyB1ZGVh
+bHkoMTAwKSB3b3JrcyBPSywgYnV0IHRoZW4gSQ0KPiA+IGhhdmUgdG8gaGF2ZSBhIGRlbGF5IHRo
+YXQncyBhcyBsb25nIGFzIHRoZSBzbG93ZXN0IHBlcmlwaGVyYWwuDQo+ID4gSWYgaXQgd2FzIGp1
+c3QgdG8gdHVybiBhIGNsb2NrIG9uIG9uY2UsIG9yIG9uY2UgaW4gYSB3aGlsZSwgdGhhdCdzIE9L
+Lg0KPiA+IEJ1dCBpdCBzZWVtcyBsaWtlIHJ1bnRpbWUgcG0gd2FudHMgdG8gdHVybiB0aGUgY2xv
+Y2tzIG9uL29mZiBhcyBtdWNoDQo+ID4gYXMgcG9zc2libGUuDQo+IA0KPiBUaGF0J3Mgbm90IHJl
+YWxseSB0cnVlOiBkZXBlbmRpbmcgb24gdHVuaW5nIGFuZC9vciBRb1MgcGFyYW1ldGVycywNCj4g
+cG1fcnVudGltZV9wdXQoKSBtYXkgYW50aWNpcGF0ZSBmdXR1cmUgdXNlLCBhbmQgbWF5IGRlY2lk
+ZSBub3QgdHVybiBvZmYNCj4gdGhlIGNsb2NrIGltbWVkaWF0ZWx5Lg0KPiBJdCBtYXkgYmUgd29y
+dGggbG9va2luZyBpbnRvIHRoYXQsIGFuZCB0byBzZWUgaG93IHRvIHJlbGF4IHRoYXQgYmVoYXZp
+b3INCj4gb24gUlovQTEuDQoNClllcywgaWYgdGhlcmUgaXMgYSB3YXkgdG8gcmVsYXggdGhpbmdz
+LCB0aGVuIHRoYXQgd291bGQgYmUgYmV0dGVyLg0KDQoNCj4gPiBCdXQgd29uJ3QgdGhlIGluZGl2
+aWR1YWwgZHJpdmVycyBzdGlsbCB3YW50IHRvIGtlZXAgdHVybmluZyBjbG9ja3Mgb24NCj4gYW5k
+IG9mZiBtYW51YWxseT8NCj4gPiAodW5sZXNzIEknbSBub3QgdW5kZXJzdGFuZGluZyB0aGF0IHRo
+ZSB1bmRlcmx5aW5nIGNsb2NrIHJvdXRpbmVzIHdpbGwNCj4gYmFzaWNhbGx5IGp1c3QNCj4gPiBp
+Z25vcmUgZXZlcnl0aGluZykuIEJ1dCBldmVuIGlmIHRoYXQnIHRoZSBjYXNlLi4udGhhdCBqdXN0
+IHdhc3RlZCBDUFUNCj4gY3ljbGVzIChyZW1lbWJlciwNCj4gPiBJJ20gb25seSB3b3JraW5nIHdp
+dGggYSA0MDBNSHogc2luZ2xlIGNvcmUgaGVyZSBydW5uaW5nIFhJUF9LRVJORUwpDQo+IA0KPiBJ
+ZiBhIGNsb2NrIGlzIGFscmVhZHkgZW5hYmxlZCwgcHJlcGFyaW5nIGFuZC9vciBlbmFibGluZyBp
+dCBhZ2FpbiB3aWxsDQo+IGp1c3QNCj4gaW5jcmVhc2UgdGhlIHByZXBhcmUgcmVzcC4gZW5hYmxl
+IGNvdW50ZXJzLiBEaXNhYmxpbmcvdW5wcmVwYXJpbmcNCj4gYWZ0ZXJ3YXJkcw0KPiB3aWxsIGFs
+c28ganVzdCBkZWNyZWFzZSB0aGUgY291bnRlcnMuIFNob3VsZCBiZSBxdWl0ZSBjaGVhcA0KDQpP
+SywgSSB0aGluayBJIHNlZSB5b3VyIHBvaW50Og0KDQpJZiBJIGdvIGFuZCBkb3VibGUtZW5hYmxl
+IGEgY2xvY2ssIHRoZW4gdGhlIHJ1bnRpbWUgcG0gd29uJ3QgZG8gbXVjaA0Kb2YgYW55dGhpbmcg
+YmVjYXVzZSBJJ2xsIGFsd2F5cyBiZSBhIGNvdW50IGhpZ2hlciBzbyBhIHRydWUgJ2Nsb2NrIGRp
+c2FibGUnDQp3aWxsIG5ldmVyIHJlYWxseSBvY2N1ci4gSXMgdGhhdCBjb3JyZWN0Pw0KDQoNCg0K
+I0knbSBnZXR0aW5nIHNpZGUgdHJhY2tlZCBmcm9tIHdoYXQgSSByZWFsbHkgc3RhcnRlZCB0byBk
+byB3aGljaCB3YXMgdGVzdA0Kb3V0IFBGQyBmb3IgaTJjIGFuZCBzcGkgOigNCg0KDQoNCkNocmlz
+DQo=
