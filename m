@@ -1,46 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:44273 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751108AbdAaPt5 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34438 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751574AbdAYNTa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 10:49:57 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 09/11] media: rcar-vin: use pad information when verifying media bus format
-Date: Tue, 31 Jan 2017 16:40:14 +0100
-Message-Id: <20170131154016.15526-10-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 25 Jan 2017 08:19:30 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] arm64: dts: r8a7795: Mark EthernetAVB device node disabled
+Date: Wed, 25 Jan 2017 14:19:30 +0100
+Message-Id: <1485350371-16091-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485350371-16091-1-git-send-email-geert+renesas@glider.be>
+References: <1485350371-16091-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use information about pad index when enumerating mbus codes.
+Device nodes representing I/O devices should be marked disabled in the
+SoC-specific DTS, and overridden by board-specific DTSes where needed.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Fixes: a92843c8a6f8c039 ("arm64: dts: r8a7795: add EthernetAVB device node")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 1 +
+r8a7795-salvator-x.dts and r8a7795-h3ulcb.dts already have the override.
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index e9373d9ab97fb827..50058fe9e37d8771 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -48,6 +48,7 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 8b030c323c10488d..337061b8e99ec738 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -566,6 +566,7 @@
+ 			phy-mode = "rgmii-id";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			status = "disabled";
+ 		};
  
- 	code.index = 0;
-+	code.pad = entity->source_pad_idx;
- 	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
- 		code.index++;
- 		switch (code.code) {
+ 		can0: can@e6c30000 {
 -- 
-2.11.0
+1.9.1
