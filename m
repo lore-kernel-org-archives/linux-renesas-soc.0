@@ -1,44 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43774 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940159AbdAFLSs (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:36763 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbdAYVd6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:48 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/25] ARM: dts: r8a7778: Use SoC-specific compat string for mmcif
-Date: Fri,  6 Jan 2017 12:18:15 +0100
-Message-Id: <f9be04fe05ee0a727471be10e1ec7c76d879b103.1483700969.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700969.git.horms+renesas@verge.net.au>
-References: <cover.1483700969.git.horms+renesas@verge.net.au>
+        Wed, 25 Jan 2017 16:33:58 -0500
+Received: by mail-lf0-f52.google.com with SMTP id z134so136035418lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 13:33:58 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
+        jani.nikula@linux.intel.com, seanpaul@chromium.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Enable R8A7790/1 DU VSPD compositor
+Date: Thu, 26 Jan 2017 00:33:55 +0300
+Message-ID: <1542778.dcWpka5Jpx@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the SoC-specific compat string for mmcif in DT for the r8a7778 SoC.
-This is in keeping with the use of compat strings for mmcif for other
-Renesas ARM based SoCs.
+Hello.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7778.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   Here's the set of 3 patches against the 'drm-next' branch of David Airlie's
+'linux.git' repo. This is a port of Laurent's DRM/DU live source patches to the
+recent kernel, see [1] for the version 2 of the patchset (including a Laurent's
+big blurb :-)). For the patch #3 to work one absolutely needs the VSP1 patch
+[2] to be applied, else the kernel will just hang...
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index d0db998effc8..b0c9674fad17 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -369,7 +369,7 @@
- 	};
- 
- 	mmcif: mmc@ffe4e000 {
--		compatible = "renesas,sh-mmcif";
-+		compatible = "renesas,mmcif-r8a7778", "renesas,sh-mmcif";
- 		reg = <0xffe4e000 0x100>;
- 		interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_MMC>;
--- 
-2.7.0.rc3.207.g0ac5344
+[1] https://lists.freedesktop.org/archives/dri-devel/2015-March/079319.html.
+[2] https://patchwork.kernel.org/patch/9473265/
+
+[1/3] drm: Add live source object
+[2/3] drm: Connect live source to framebuffers
+[3/3] drm: rcar-du: Add VSP1 live source support
+
+MBR, Sergei
