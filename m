@@ -1,72 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43610 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940134AbdAFLSK (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:50413 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752566AbdAYU2o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 06:18:10 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/16] arm64: dts: r8a7796: Add CAN FD support
-Date: Fri,  6 Jan 2017 12:17:46 +0100
-Message-Id: <f4176d7c7c03ed23d8335465f309b44519fb6ad5.1483700694.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1483700694.git.horms+renesas@verge.net.au>
-References: <cover.1483700694.git.horms+renesas@verge.net.au>
+        Wed, 25 Jan 2017 15:28:44 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v6 1/3] mmc: sh_mobile_sdhi: add support for 2 clocks
+Date: Wed, 25 Jan 2017 15:28:08 -0500
+Message-Id: <20170125202810.16876-2-chris.brandt@renesas.com>
+In-Reply-To: <20170125202810.16876-1-chris.brandt@renesas.com>
+References: <20170125202810.16876-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Paterson <chris.paterson2@renesas.com>
+Some controllers have 2 clock sources instead of 1. The 2nd clock
+is for the internal card detect logic and must be enabled/disabled
+along with the main core clock for proper operation.
 
-Adds CAN FD controller node for r8a7796.
-
-Based on a patch for r8a7795 by Ramesh Shanmugasundaram.
-
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+v5:
+* call clk_disable_unprepare even if clk_cd is NULL
+v4:
+* add technical explanation within probe routine
+v3:
+* add more clarification to the commit log
+v2:
+* changed clk2 to clk_cd
+* disable clk if clk_cd enable fails
+* changed clock name from "carddetect" to "cd"
+---
+ drivers/mmc/host/sh_mobile_sdhi.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index a97ef2e7202c..a37bb5eb062c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -397,6 +397,30 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 59db14b..d964a0d 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -143,6 +143,7 @@ MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
  
-+		canfd: can@e66c0000 {
-+			compatible = "renesas,r8a7796-canfd",
-+				     "renesas,rcar-gen3-canfd";
-+			reg = <0 0xe66c0000 0 0x8000>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 914>,
-+			       <&cpg CPG_CORE R8A7796_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
+ struct sh_mobile_sdhi {
+ 	struct clk *clk;
++	struct clk *clk_cd;
+ 	struct tmio_mmc_data mmc_data;
+ 	struct tmio_mmc_dma dma_priv;
+ 	struct pinctrl *pinctrl;
+@@ -190,6 +191,12 @@ static int sh_mobile_sdhi_clk_enable(struct tmio_mmc_host *host)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = clk_prepare_enable(priv->clk_cd);
++	if (ret < 0) {
++		clk_disable_unprepare(priv->clk);
++		return ret;
++	}
 +
-+			channel0 {
-+				status = "disabled";
-+			};
+ 	/*
+ 	 * The clock driver may not know what maximum frequency
+ 	 * actually works, so it should be set with the max-frequency
+@@ -255,6 +262,7 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
+ 	struct sh_mobile_sdhi *priv = host_to_priv(host);
+ 
+ 	clk_disable_unprepare(priv->clk);
++	clk_disable_unprepare(priv->clk_cd);
+ }
+ 
+ static int sh_mobile_sdhi_card_busy(struct mmc_host *mmc)
+@@ -572,6 +580,21 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		goto eprobe;
+ 	}
+ 
++	/*
++	 * Some controllers provide a 2nd clock just to run the internal card
++	 * detection logic. Unfortunately, the existing driver architecture does
++	 * not support a separation of clocks for runtime PM usage. When
++	 * native hotplug is used, the tmio driver assumes that the core
++	 * must continue to run for card detect to stay active, so we cannot
++	 * disable it.
++	 * Additionally, it is prohibited to supply a clock to the core but not
++	 * to the card detect circuit. That leaves us with if separate clocks
++	 * are presented, we must treat them both as virtually 1 clock.
++	 */
++	priv->clk_cd = devm_clk_get(&pdev->dev, "cd");
++	if (IS_ERR(priv->clk_cd))
++		priv->clk_cd = NULL;
 +
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
+ 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
+ 	if (!IS_ERR(priv->pinctrl)) {
+ 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.10.1
