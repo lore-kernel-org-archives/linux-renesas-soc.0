@@ -1,87 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:44251 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751124AbdAaPt5 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:59314 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751987AbdAYLTf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 10:49:57 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 08/11] media: rcar-vin: refactor pad lookup code
-Date: Tue, 31 Jan 2017 16:40:13 +0100
-Message-Id: <20170131154016.15526-9-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 25 Jan 2017 06:19:35 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Dien Pham <dien.pham.ry@rvc.renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] clk: renesas: r8a7795: Add IIC-DVFS clock
+Date: Wed, 25 Jan 2017 12:19:33 +0100
+Message-Id: <1485343174-16973-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
+References: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the subdeivce did not supply pad information the driver will return
--EINVAL, this is not what we want so remove that check. The code can
-then be broken out to a helper function reducing duplication.
+From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This patch adds DVFS clock for R8A7795 SoC.
+
+Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 2c40b6a1a93f108c..e9373d9ab97fb827 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -65,11 +65,21 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
- 	return false;
- }
- 
-+static unsigned int rvin_pad_idx(struct v4l2_subdev *sd, int direction)
-+{
-+	unsigned int pad_idx;
-+
-+	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
-+		if (sd->entity.pads[pad_idx].flags == direction)
-+			return pad_idx;
-+
-+	return 0;
-+}
-+
- static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
- 	struct v4l2_subdev *sd = vin->digital.subdev;
--	unsigned int pad_idx;
- 	int ret;
- 
- 	/* Verify subdevices mbus format */
-@@ -83,21 +93,8 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- 		vin->digital.subdev->name, vin->digital.code);
- 
- 	/* Figure out source and sink pad ids */
--	vin->digital.source_pad_idx = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
--			break;
--	if (pad_idx >= sd->entity.num_pads)
--		return -EINVAL;
--
--	vin->digital.source_pad_idx = pad_idx;
--
--	vin->digital.sink_pad_idx = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
--			vin->digital.sink_pad_idx = pad_idx;
--			break;
--		}
-+	vin->digital.source_pad_idx = rvin_pad_idx(sd, MEDIA_PAD_FL_SOURCE);
-+	vin->digital.sink_pad_idx = rvin_pad_idx(sd, MEDIA_PAD_FL_SINK);
- 
- 	vin_dbg(vin, "Found media pads for %s source: %d sink %d\n",
- 		vin->digital.subdev->name, vin->digital.source_pad_idx,
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 50698a7d90745447..bfffdb00df972547 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -221,6 +221,7 @@ enum clk_ids {
+ 	DEF_MOD("can-if0",		 916,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("i2c5",			 919,	R8A7795_CLK_S3D2),
++	DEF_MOD("i2c-dvfs",		 926,	R8A7795_CLK_CP),
+ 	DEF_MOD("i2c4",			 927,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("i2c3",			 928,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("i2c2",			 929,	R8A7795_CLK_S3D2),
 -- 
-2.11.0
+1.9.1
