@@ -1,203 +1,89 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
-Date: Fri, 20 Jan 2017 15:08:22 +0100
-Message-Id: <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:43566 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751755AbdAYM4A (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 07:56:00 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <joro@8bytes.org>
+CC: <magnus.damm@gmail.com>, <iommu@lists.linux-foundation.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 4/4] iommu: ipmmu-vmsa: enable force_reset_when_empty
+Date: Wed, 25 Jan 2017 21:54:02 +0900
+Message-ID: <1485348842-23712-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1485348842-23712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1485348842-23712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add optional support for the Reset Control feature of the Renesas Clock
-Pulse Generator / Module Standby and Software Reset module on R-Car
-Gen2, R-Car Gen3, and RZ/G1 SoCs.
+The IPMMU of R-Car Gen3 will mistake an address translation if
+IMCTR.FLUSH is set while some related devices that on the same doamin
+are running. To avoid this, this patch uses the force_reset_when_empty
+feature.
 
-This allows to reset SoC devices using the Reset Controller API.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 122 +++++++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
+ drivers/iommu/ipmmu-vmsa.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f1161a585c57e433..ea4af714ac14603a 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -16,6 +16,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clk/renesas.h>
-+#include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/mod_devicetable.h>
-@@ -25,6 +26,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 11550ac..4b62969 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -302,7 +302,8 @@ static void ipmmu_tlb_flush_all(void *cookie)
+ {
+ 	struct ipmmu_vmsa_domain *domain = cookie;
  
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
-@@ -96,6 +98,7 @@
- /**
-  * Clock Pulse Generator / Module Standby and Software Reset Private Data
-  *
-+ * @rcdev: Optional reset controller entity
-  * @dev: CPG/MSSR device
-  * @base: CPG/MSSR register block base address
-  * @rmw_lock: protects RMW register accesses
-@@ -105,6 +108,9 @@
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-  */
- struct cpg_mssr_priv {
-+#ifdef CONFIG_RESET_CONTROLLER
-+	struct reset_controller_dev rcdev;
-+#endif
- 	struct device *dev;
- 	void __iomem *base;
- 	spinlock_t rmw_lock;
-@@ -494,6 +500,118 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	return 0;
+-	ipmmu_tlb_invalidate(domain);
++	if (!domain->io_domain.geometry.force_reset_when_empty)
++		ipmmu_tlb_invalidate(domain);
  }
  
-+#ifdef CONFIG_RESET_CONTROLLER
-+
-+#define rcdev_to_priv(x)	container_of(x, struct cpg_mssr_priv, rcdev)
-+
-+static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
-+			  unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+	u32 bitmask = BIT(bit);
-+	unsigned long flags;
-+	u32 value;
-+
-+	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
-+
-+	/* Reset module */
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	value = readl(priv->base + SRCR(reg));
-+	value |= bitmask;
-+	writel(value, priv->base + SRCR(reg));
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+
-+	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-+	udelay(35);
-+
-+	/* Release module from reset state */
-+	writel(bitmask, priv->base + SRSTCLR(reg));
-+
-+	return 0;
-+}
-+
-+static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+	unsigned long flags;
-+	u32 value;
-+
-+	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
-+
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	value = readl(priv->base + SRCR(reg));
-+	writel(value | BIT(bit), priv->base + SRCR(reg));
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+	return 0;
-+}
-+
-+static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
-+			     unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+
-+	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
-+
-+	writel(BIT(bit), priv->base + SRSTCLR(reg));
-+	return 0;
-+}
-+
-+static int cpg_mssr_status(struct reset_controller_dev *rcdev,
-+			   unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+
-+	return !!(readl(priv->base + SRCR(reg)) & BIT(bit));
-+}
-+
-+static const struct reset_control_ops cpg_mssr_reset_ops = {
-+	.reset = cpg_mssr_reset,
-+	.assert = cpg_mssr_assert,
-+	.deassert = cpg_mssr_deassert,
-+	.status = cpg_mssr_status,
-+};
-+
-+static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
-+				const struct of_phandle_args *reset_spec)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int unpacked = reset_spec->args[0];
-+	unsigned int idx = MOD_CLK_PACK(unpacked);
-+
-+	if (unpacked % 100 > 31 || idx >= rcdev->nr_resets) {
-+		dev_err(priv->dev, "Invalid reset index %u\n", unpacked);
-+		return -EINVAL;
-+	}
-+
-+	return idx;
-+}
-+
-+static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
-+{
-+	priv->rcdev.ops = &cpg_mssr_reset_ops;
-+	priv->rcdev.of_node = priv->dev->of_node;
-+	priv->rcdev.of_reset_n_cells = 1;
-+	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
-+	priv->rcdev.nr_resets = priv->num_mod_clks;
-+	return devm_reset_controller_register(priv->dev, &priv->rcdev);
-+}
-+
-+#else /* !CONFIG_RESET_CONTROLLER */
-+static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
-+{
-+	return 0;
-+}
-+#endif /* !CONFIG_RESET_CONTROLLER */
-+
-+
- static const struct of_device_id cpg_mssr_match[] = {
- #ifdef CONFIG_ARCH_R8A7743
- 	{
-@@ -591,6 +709,10 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
-+	error = cpg_mssr_reset_controller_register(priv);
-+	if (error)
-+		return error;
-+
- 	return 0;
+ static void ipmmu_tlb_add_flush(unsigned long iova, size_t size,
+@@ -555,6 +556,13 @@ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ 	kfree(domain);
  }
  
++static void ipmmu_domain_reset(struct iommu_domain *io_domain)
++{
++	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
++
++	ipmmu_tlb_invalidate(domain);
++}
++
+ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 			       struct device *dev)
+ {
+@@ -832,6 +840,7 @@ static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+ static const struct iommu_ops ipmmu_ops = {
+ 	.domain_alloc = ipmmu_domain_alloc,
+ 	.domain_free = ipmmu_domain_free,
++	.domain_reset = ipmmu_domain_reset,
+ 	.attach_dev = ipmmu_attach_device,
+ 	.detach_dev = ipmmu_detach_device,
+ 	.map = ipmmu_map,
+@@ -858,8 +867,10 @@ static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
+ 
+ 	case IOMMU_DOMAIN_DMA:
+ 		io_domain = __ipmmu_domain_alloc(type);
+-		if (io_domain)
++		if (io_domain) {
+ 			iommu_get_dma_cookie(io_domain);
++			io_domain->geometry.force_reset_when_empty = true;
++		}
+ 		break;
+ 	}
+ 
+@@ -927,6 +938,7 @@ static int ipmmu_of_xlate_dma(struct device *dev,
+ static const struct iommu_ops ipmmu_ops = {
+ 	.domain_alloc = ipmmu_domain_alloc_dma,
+ 	.domain_free = ipmmu_domain_free_dma,
++	.domain_reset = ipmmu_domain_reset,
+ 	.attach_dev = ipmmu_attach_device,
+ 	.detach_dev = ipmmu_detach_device,
+ 	.map = ipmmu_map,
 -- 
 1.9.1
-
