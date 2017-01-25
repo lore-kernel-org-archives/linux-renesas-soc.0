@@ -1,49 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36060 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750965AbdAYQtD (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:33987 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751020AbdAYQST (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 11:49:03 -0500
-Date: Wed, 25 Jan 2017 17:48:57 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+        Wed, 25 Jan 2017 11:18:19 -0500
+Received: by mail-lf0-f45.google.com with SMTP id v186so131629182lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 08:18:19 -0800 (PST)
+Subject: Re: [PATCH/RFC v3 net] ravb: unmap descriptors when freeing rings
+To: Simon Horman <horms+renesas@verge.net.au>
+References: <1485282073-16662-1-git-send-email-horms+renesas@verge.net.au>
 Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFC v3 net] ravb: unmap descriptors when freeing rings
-Message-ID: <20170125164857.GD12042@verge.net.au>
-References: <1485282073-16662-1-git-send-email-horms+renesas@verge.net.au>
- <312867f0-f6dd-3c92-df09-fae72ea7405b@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <312867f0-f6dd-3c92-df09-fae72ea7405b@cogentembedded.com>
+Date: Wed, 25 Jan 2017 19:18:15 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <312867f0-f6dd-3c92-df09-fae72ea7405b@cogentembedded.com>
+In-Reply-To: <1485282073-16662-1-git-send-email-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 07:18:15PM +0300, Sergei Shtylyov wrote:
-> On 01/24/2017 09:21 PM, Simon Horman wrote:
-> 
-> >From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> >
-> >"swiotlb buffer is full" errors occur after repeated initialisation of a
-> >device - f.e. suspend/resume or ip link set up/down. This is because memory
-> >mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
-> >is not released.  Resolve this problem by unmapping descriptors when
-> >freeing rings.
-> 
->    Could you look into the sh_eth driver which seems to have the same issue?
+On 01/24/2017 09:21 PM, Simon Horman wrote:
 
-Sure, I will check.
+> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+>
+> "swiotlb buffer is full" errors occur after repeated initialisation of a
+> device - f.e. suspend/resume or ip link set up/down. This is because memory
+> mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
+> is not released.  Resolve this problem by unmapping descriptors when
+> freeing rings.
 
-> >Note, ravb_tx_free() is moved but not otherwise modified by this patch.
-> 
->    This is not true anymore BTW.
+    Could you look into the sh_eth driver which seems to have the same issue?
 
-Thanks for noticing, I'll fix that.
+> Note, ravb_tx_free() is moved but not otherwise modified by this patch.
 
-> >Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> >[simon: reworked]
-> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> MBR, Sergei
-> 
+    This is not true anymore BTW.
+
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> [simon: reworked]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+MBR, Sergei
