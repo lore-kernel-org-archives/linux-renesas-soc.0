@@ -1,88 +1,59 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S. Miller" <davem@davemloft.net>,
-        Zach Brown <zach.brown@ni.com>,
-        Volodymyr Bendiuga <volodymyr.bendiuga@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        =?UTF-8?q?Magnus=20=C3=96berg?= <magnus.oberg@westermo.se>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] net: phy: leds: Fix truncated LED trigger names
-Date: Tue, 24 Jan 2017 16:41:10 +0100
-Message-Id: <1485272470-3497-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485272470-3497-1-git-send-email-geert+renesas@glider.be>
-References: <1485272470-3497-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-yb0-f173.google.com ([209.85.213.173]:33642 "EHLO
+        mail-yb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbdAYJaF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 04:30:05 -0500
+Received: by mail-yb0-f173.google.com with SMTP id w194so107883791ybe.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 01:30:05 -0800 (PST)
+Subject: Re: [PATCH] arm64: Use __pa_symbol for empty_zero_page
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1485258220-21916-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <ce01d0cb-79a2-def8-8de0-d4ca3980e8e8@redhat.com>
+Date: Wed, 25 Jan 2017 10:30:00 +0100
+MIME-Version: 1.0
+In-Reply-To: <1485258220-21916-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 4567d686f5c6d955 ("phy: increase size of MII_BUS_ID_SIZE and
-bus_id") increased the size of MII bus IDs, but forgot to update the
-private definition in <linux/phy_led_triggers.h>.
-This may cause:
-  1. Truncation of LED trigger names,
-  2. Duplicate LED trigger names,
-  3. Failures registering LED triggers,
-  4. Crashes due to bad error handling in the LED trigger failure path.
+On 01/24/2017 12:43 PM, Geert Uytterhoeven wrote:
+> If CONFIG_DEBUG_VIRTUAL=y and CONFIG_ARM64_SW_TTBR0_PAN=y:
+>
+>     virt_to_phys used for non-linear address: ffffff8008cc0000 (empty_zero_page+0x0/0x1000)
+>     WARNING: CPU: 0 PID: 0 at arch/arm64/mm/physaddr.c:14 __virt_to_phys+0x28/0x60
+>     ...
+>     [<ffffff800809abb4>] __virt_to_phys+0x28/0x60
+>     [<ffffff8008a02600>] setup_arch+0x46c/0x4d4
+>
+> Fixes: 2077be6783b5936c ("arm64: Use __pa_symbol for kernel symbols")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm64/kernel/setup.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+> index 669fc9ff728b227f..b5222094ab52db6f 100644
+> --- a/arch/arm64/kernel/setup.c
+> +++ b/arch/arm64/kernel/setup.c
+> @@ -298,7 +298,7 @@ void __init setup_arch(char **cmdline_p)
+>  	 * faults in case uaccess_enable() is inadvertently called by the init
+>  	 * thread.
+>  	 */
+> -	init_task.thread_info.ttbr0 = virt_to_phys(empty_zero_page);
+> +	init_task.thread_info.ttbr0 = __pa_symbol(empty_zero_page);
+>  #endif
+>
+>  #ifdef CONFIG_VT
+>
 
-To fix this, and prevent the definitions going out of sync again in the
-future, let the PHY LED trigger code use the existing MII_BUS_ID_SIZE
-definition. Note that this requires moving the #include down, after the
-definition of MII_BUS_ID_SIZE.
+(thought I sent this yesterday but SMTP was not set correctly)
 
-Example:
-  - Before I had triggers "ee700000.etherne:01:100Mbps" and
-    "ee700000.etherne:01:10Mbps",
-  - After the increase of MII_BUS_ID_SIZE, both became
-    "ee700000.ethernet-ffffffff:01:" => FAIL,
-  - Now, the triggers are "ee700000.ethernet-ffffffff:01:100Mbps" and
-    "ee700000.ethernet-ffffffff:01:10Mbps", which are unique again.
-
-Fixes: 4567d686f5c6d955 ("phy: increase size of MII_BUS_ID_SIZE and bus_id")
-Fixes: 2e0bc452f4721520 ("net: phy: leds: add support for led triggers on phy link state change")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/phy.h              | 3 ++-
- include/linux/phy_led_triggers.h | 3 +--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 5c9d2529685fe215..f6ab919528ab3627 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -25,7 +25,6 @@
- #include <linux/timer.h>
- #include <linux/workqueue.h>
- #include <linux/mod_devicetable.h>
--#include <linux/phy_led_triggers.h>
- 
- #include <linux/atomic.h>
- 
-@@ -339,6 +338,8 @@ struct phy_c45_device_ids {
- 	u32 device_ids[8];
- };
- 
-+#include <linux/phy_led_triggers.h>
-+
- /* phy_device: An instance of a PHY
-  *
-  * drv: Pointer to the driver for this PHY instance
-diff --git a/include/linux/phy_led_triggers.h b/include/linux/phy_led_triggers.h
-index a2daea0a37d2ae14..69dffb4fc5a294e9 100644
---- a/include/linux/phy_led_triggers.h
-+++ b/include/linux/phy_led_triggers.h
-@@ -20,9 +20,8 @@
- #include <linux/leds.h>
- 
- #define PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE	10
--#define PHY_MII_BUS_ID_SIZE	(20 - 3)
- 
--#define PHY_LINK_LED_TRIGGER_NAME_SIZE (PHY_MII_BUS_ID_SIZE + \
-+#define PHY_LINK_LED_TRIGGER_NAME_SIZE (MII_BUS_ID_SIZE + \
- 				       FIELD_SIZEOF(struct mdio_device, addr)+\
- 				       PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE)
- 
--- 
-1.9.1
+Acked-by: Laura Abbott <labbott@redhat.com>
