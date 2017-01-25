@@ -1,77 +1,86 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:58268 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbdAYKjt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 05:39:49 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170124200339.GT10895@lunn.ch>
+References: <1485272470-3497-1-git-send-email-geert+renesas@glider.be>
+ <1485272470-3497-3-git-send-email-geert+renesas@glider.be> <20170124200339.GT10895@lunn.ch>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 25 Jan 2017 10:56:00 +0100
+Message-ID: <CAMuHMdWm4yMZ7EAmZp4uzi9+UBvYHFEiEC=Q1osDQD5-Td2A_A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] net: phy: leds: Fix truncated LED trigger names
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S. Miller" <davem@davemloft.net>,
         Zach Brown <zach.brown@ni.com>,
-        Volodymyr Bendiuga <volodymyr.bendiuga@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-        =?UTF-8?q?Magnus=20=C3=96berg?= <magnus.oberg@westermo.se>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] net: phy: leds: Break dependency of phy.h on phy_led_triggers.h
-Date: Wed, 25 Jan 2017 11:39:49 +0100
-Message-Id: <1485340790-10785-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485340790-10785-1-git-send-email-geert+renesas@glider.be>
-References: <1485340790-10785-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Volodymyr Bendiuga <volodymyr.bendiuga@gmail.com>,
+        =?UTF-8?Q?Magnus_=C3=96berg?= <magnus.oberg@westermo.se>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-<linux/phy.h> includes <linux/phy_led_triggers.h>, which is not really
-needed.  Drop the include from <linux/phy.h>, and add it to all users
-that didn't include it explicitly.
+Hi Andrew,
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/net/phy/phy.c              | 1 +
- drivers/net/phy/phy_led_triggers.c | 1 +
- include/linux/phy.h                | 1 -
- 3 files changed, 2 insertions(+), 1 deletion(-)
+On Tue, Jan 24, 2017 at 9:03 PM, Andrew Lunn <andrew@lunn.ch> wrote:
+>> diff --git a/include/linux/phy.h b/include/linux/phy.h
+>> index 5c9d2529685fe215..f6ab919528ab3627 100644
+>> --- a/include/linux/phy.h
+>> +++ b/include/linux/phy.h
+>> @@ -25,7 +25,6 @@
+>>  #include <linux/timer.h>
+>>  #include <linux/workqueue.h>
+>>  #include <linux/mod_devicetable.h>
+>> -#include <linux/phy_led_triggers.h>
+>>
+>>  #include <linux/atomic.h>
+>>
+>> @@ -339,6 +338,8 @@ struct phy_c45_device_ids {
+>>       u32 device_ids[8];
+>>  };
+>>
+>> +#include <linux/phy_led_triggers.h>
+>> +
+>>  /* phy_device: An instance of a PHY
+>>   *
+>>   * drv: Pointer to the driver for this PHY instance
+>> diff --git a/include/linux/phy_led_triggers.h b/include/linux/phy_led_triggers.h
+>> index a2daea0a37d2ae14..69dffb4fc5a294e9 100644
+>> --- a/include/linux/phy_led_triggers.h
+>> +++ b/include/linux/phy_led_triggers.h
+>> @@ -20,9 +20,8 @@
+>>  #include <linux/leds.h>
+>>
+>>  #define PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE    10
+>> -#define PHY_MII_BUS_ID_SIZE  (20 - 3)
+>>
+>> -#define PHY_LINK_LED_TRIGGER_NAME_SIZE (PHY_MII_BUS_ID_SIZE + \
+>> +#define PHY_LINK_LED_TRIGGER_NAME_SIZE (MII_BUS_ID_SIZE + \
+>>                                      FIELD_SIZEOF(struct mdio_device, addr)+\
+>>                                      PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE)
+>
+> Hi Geert
+>
+> Using the macro is great, but it does seem a bit ugly having the
+> include in the middle of the file.
+>
+> As far as i can see, phy.h only uses a pointer to a struct
+> phy_led_trigger, not struct phy_led_trigger itself. Could you try
+> removing the header file all together and just have a forward
+> declaration of phy_led_trigger?
 
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index 48da6e93c3f783e0..807abd6e331f8aa2 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -29,6 +29,7 @@
- #include <linux/mii.h>
- #include <linux/ethtool.h>
- #include <linux/phy.h>
-+#include <linux/phy_led_triggers.h>
- #include <linux/timer.h>
- #include <linux/workqueue.h>
- #include <linux/mdio.h>
-diff --git a/drivers/net/phy/phy_led_triggers.c b/drivers/net/phy/phy_led_triggers.c
-index 3f619e7371e97d8a..94ca42e630bbead0 100644
---- a/drivers/net/phy/phy_led_triggers.c
-+++ b/drivers/net/phy/phy_led_triggers.c
-@@ -12,6 +12,7 @@
-  */
- #include <linux/leds.h>
- #include <linux/phy.h>
-+#include <linux/phy_led_triggers.h>
- #include <linux/netdevice.h>
- 
- static struct phy_led_trigger *phy_speed_to_led_trigger(struct phy_device *phy,
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 5c9d2529685fe215..43474f39ef6523c5 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -25,7 +25,6 @@
- #include <linux/timer.h>
- #include <linux/workqueue.h>
- #include <linux/mod_devicetable.h>
--#include <linux/phy_led_triggers.h>
- 
- #include <linux/atomic.h>
- 
--- 
-1.9.1
+Thanks for the suggestion!
+Yes, the include can be removed. A forward declaration isn't even needed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
