@@ -1,52 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40244 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752002AbdAYLTe (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36292 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbdAYKC0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 06:19:34 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Dien Pham <dien.pham.ry@rvc.renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] clk: renesas: r8a7796: Add IIC-DVFS clock
-Date: Wed, 25 Jan 2017 12:19:34 +0100
-Message-Id: <1485343174-16973-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
-References: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
+        Wed, 25 Jan 2017 05:02:26 -0500
+Received: by mail-qk0-f196.google.com with SMTP id i34so7185636qkh.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 02:02:26 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <66c082c6-da2e-9765-0db8-e0ba2c5bd501@arm.com>
+References: <148517349585.18128.10696161017872202809.sendpatchset@little-apple>
+ <148517353630.18128.12799811817831597628.sendpatchset@little-apple> <66c082c6-da2e-9765-0db8-e0ba2c5bd501@arm.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 25 Jan 2017 19:02:24 +0900
+Message-ID: <CANqRtoSczM8U+u6ke0cqJ06EExqqQtt-dagqXFJ7CTeB01x=oA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 1/2] arm64: mm: Silently allow devices lacking IOMMU group
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux-foundation.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Hi Robin,
 
-This patch adds DVFS clock for R8A7796 SoC.
+On Mon, Jan 23, 2017 at 9:34 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> Hi Magnus,
+>
+> On 23/01/17 12:12, Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Consider failure of iommu_get_domain_for_dev() as non-critical and
+>> get rid of the warning printout. This allows IOMMU properties to be
+>> included in the DTB even though the kernel is configured with
+>> CONFIG_IOMMU_API=n or in case a particular IOMMU driver refuses to
+>> enable IOMMU support for a certain slave device and returns error
+>> from the ->add_device() callback.
+>>
+>> This is only a cosmetic change that removes console warning printouts.
+>
+> The warning is there for a reason - at this point, we *expected* the
+> device to be using an IOMMU for DMA, so a failure is significant. Rather
+> than masking genuine failures in other cases because your case
+> deliberately breaks that expectation, simply change the expectation -
+> i.e. rather than letting of_xlate() succeed then failing add_device()
+> later, reject the of_xlate() call up-front such that the DMA layer never
+> gets told about the IOMMU in the first place.
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Khiem: I've updated your email address, and added your missing SoB.
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for pointing me in the right direction! I will try to handle
+this in xlate() instead.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 3bc36ef3aebf4108..11e084a56b0d9005 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -192,6 +192,7 @@ enum clk_ids {
- 	DEF_MOD("can-if0",		 916,	R8A7796_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A7796_CLK_S0D6),
- 	DEF_MOD("i2c5",			 919,	R8A7796_CLK_S0D6),
-+	DEF_MOD("i2c-dvfs",		 926,	R8A7796_CLK_CP),
- 	DEF_MOD("i2c4",			 927,	R8A7796_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A7796_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
--- 
-1.9.1
+Cheers,
+
+/ magnus
