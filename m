@@ -1,117 +1,218 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, Andy Yan <andy.yan@rock-chips.com>, Fabio Estevam <fabio.estevam@freescale.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Ulrich Hecht <ulrich.hecht@gmail.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 16/29] drm: bridge: dw-hdmi: Detect PHY type at runtime
-Date: Thu, 05 Jan 2017 02:15:04 +0200
-Message-ID: <6935724.YkYy7FE9s6@avalon>
-In-Reply-To: <a9e7ad57-8a6a-05a9-4e74-f1e922ec6579@synopsys.com>
-References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com> <1706424.IHm6bGF9sZ@avalon> <a9e7ad57-8a6a-05a9-4e74-f1e922ec6579@synopsys.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] clk: renesas: cpg-mssr: Add support for reset control
+Date: Wed, 25 Jan 2017 10:15:03 +0100
+Message-Id: <1485335703-27184-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jose,
+Add optional support for the Reset Control feature of the Renesas Clock
+Pulse Generator / Module Standby and Software Reset module on R-Car
+Gen2, R-Car Gen3, and RZ/G1 SoCs.
 
-On Tuesday 20 Dec 2016 15:01:52 Jose Abreu wrote:
-> On 20-12-2016 13:11, Laurent Pinchart wrote:
-> > On Tuesday 20 Dec 2016 11:39:21 Jose Abreu wrote:
-> >> On 20-12-2016 01:33, Laurent Pinchart wrote:
-> >>> Detect the PHY type and use it to handle the PHY type-specific SVSRET
-> >>> signal.
-> >>> 
-> >>> Signed-off-by: Laurent Pinchart
-> >>> <laurent.pinchart+renesas@ideasonboard.com>
-> >>> ---
-> >>> 
-> >>>  drivers/gpu/drm/bridge/dw-hdmi.c | 68 +++++++++++++++++++++++++++++++--
-> >>>  include/drm/bridge/dw_hdmi.h     | 10 ++++++
-> >>>  2 files changed, 75 insertions(+), 3 deletions(-)
-> >>> 
-> >>> diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c
-> >>> b/drivers/gpu/drm/bridge/dw-hdmi.c index f4faa14213e5..ef4f2f96ed2c
-> >>> 100644
-> >>> --- a/drivers/gpu/drm/bridge/dw-hdmi.c
-> >>> +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-> 
-> [snip]
-> 
-> > I don't have access to the documentation so I can't comment on that :-)
-> > What does the SVSRET signal control (and what does the name stand for) ?
->
-> SVSRET stands for SVSRET :) (no idea what it means) Its a low
-> power mode of consumption.
-> 
-> > By de-asserting PHY reset, do you mean
-> > 
-> >         /* PHY reset */
-> >         hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_DEASSERT, HDMI_MC_PHYRSTZ);
-> >         hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_ASSERT, HDMI_MC_PHYRSTZ);
-> > 
-> > ? HDMI_MC_PHYRSTZ_DEASSERT is defined as 0x01 and HDMI_MC_PHYRSTZ_ASSERT
-> > as 0x00, which I believe leads to correct operation on Gen2 PHYs, but is
-> > incorrect on Gen1 PHYs that have an active low reset signal. Could you
-> > confirm that ? The DEASSERT and ASSERT macros should be renamed as
-> > they're obviously incorrect.
-> 
-> Correct. Older phys require PHYRSTZ to be deasserted (i.e. low)
-> for a PHY-dependent time. Newer phys require PHYRSTZ to be
-> asserted (i.e. high) for, again, a PHY-dependent time.
+This allows to reset SoC devices using the Reset Controller API.
 
-Thanks for the confirmation, I'll rename the macros.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+v2:
+  - Add Acked-by, Reviewed-by,
+  - Use variable bitmask in all reset operations, to make them more
+    similar.
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 126 +++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-> This is the kind of things that made me suggest you to extract
-> all the phy configuration from dw-hdmi. I think that having a
-> bunch of if's because of all the phy's that we need to support
-> does not make much sense. The downside is, of course, having code
-> duplicated.
-
-I agree with you in principle, but I'd rather do that when I'll have devices 
-to test the code on. The three devices (soon to be) supported in mainline by 
-the dw-hdmi drivers, i.MX6, RK3288 and R-Car Gen3, all use Gen2 PHYs, so I 
-can't test the Gen1 code paths meaningfully at the moment.
-
-> > I can move the SVSRET assertion before PHY reset and test it on RK3288 and
-> > R-Car H3.
-> 
-> Probably wont make much difference unless you have a way to
-> measure how much power the phy is consuming. But I think it is
-> the right thing to do according to docs.
-
-The init sequence is currently
-
-- Power the PHY off (TXPWRON = 0, PDDQ = 1)
-- Reset the PHY (through HDMI_MC_PHYRSTZ and HDMI_MC_HEACPHY_RST)
-- Configure the PHY through I2C
-- Power the PHY on (TXPWRON = 1, PDDQ = 0)
-- Set SVSRET
-- Wait for PHY PLL lock
-
-I've tried moving SVSRET right before the reset and everything still seems to 
-work fine, so I'll submit a patch.
-
-Is the rest of the sequence correct ? When should SVSRET be deasserted (the 
-driver currently keeps it asserted at all times) ?
-
-Speaking of reset, I believe support for HEAC PHYs is broken, given that the 
-driver asserts the reset signal (through the HDMI_MC_HEACPHY_RST register) but 
-never deasserts it.
-
-> [snip]
-> 
-> > The SoC datasheet mentions the SVSRET bit in the HDMI TX registers but
-> > doesn't document it any further. If I don't set SVSRET the HDMI output
-> > stays dead, so I assume I need to set it :-)
-> 
-> Hmm, ok. I still haven't figured out which phy you are using so
-> can't comment much further.
-
-I'll then leave has_svsret set to true for DW_HDMI_PHY_DWC_HDMI20_TX_PHY as 
-tests show it's needed.
-
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index f1161a585c57e433..eadcbd43ff88319b 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -16,6 +16,7 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clk/renesas.h>
++#include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/mod_devicetable.h>
+@@ -25,6 +26,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ 
+ #include <dt-bindings/clock/renesas-cpg-mssr.h>
+@@ -96,6 +98,7 @@
+ /**
+  * Clock Pulse Generator / Module Standby and Software Reset Private Data
+  *
++ * @rcdev: Optional reset controller entity
+  * @dev: CPG/MSSR device
+  * @base: CPG/MSSR register block base address
+  * @rmw_lock: protects RMW register accesses
+@@ -105,6 +108,9 @@
+  * @last_dt_core_clk: ID of the last Core Clock exported to DT
+  */
+ struct cpg_mssr_priv {
++#ifdef CONFIG_RESET_CONTROLLER
++	struct reset_controller_dev rcdev;
++#endif
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	spinlock_t rmw_lock;
+@@ -494,6 +500,122 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_RESET_CONTROLLER
++
++#define rcdev_to_priv(x)	container_of(x, struct cpg_mssr_priv, rcdev)
++
++static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
++			  unsigned long id)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int reg = id / 32;
++	unsigned int bit = id % 32;
++	u32 bitmask = BIT(bit);
++	unsigned long flags;
++	u32 value;
++
++	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
++
++	/* Reset module */
++	spin_lock_irqsave(&priv->rmw_lock, flags);
++	value = readl(priv->base + SRCR(reg));
++	value |= bitmask;
++	writel(value, priv->base + SRCR(reg));
++	spin_unlock_irqrestore(&priv->rmw_lock, flags);
++
++	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
++	udelay(35);
++
++	/* Release module from reset state */
++	writel(bitmask, priv->base + SRSTCLR(reg));
++
++	return 0;
++}
++
++static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int reg = id / 32;
++	unsigned int bit = id % 32;
++	u32 bitmask = BIT(bit);
++	unsigned long flags;
++	u32 value;
++
++	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
++
++	spin_lock_irqsave(&priv->rmw_lock, flags);
++	value = readl(priv->base + SRCR(reg));
++	value |= bitmask;
++	writel(value, priv->base + SRCR(reg));
++	spin_unlock_irqrestore(&priv->rmw_lock, flags);
++	return 0;
++}
++
++static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
++			     unsigned long id)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int reg = id / 32;
++	unsigned int bit = id % 32;
++	u32 bitmask = BIT(bit);
++
++	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
++
++	writel(bitmask, priv->base + SRSTCLR(reg));
++	return 0;
++}
++
++static int cpg_mssr_status(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int reg = id / 32;
++	unsigned int bit = id % 32;
++	u32 bitmask = BIT(bit);
++
++	return !!(readl(priv->base + SRCR(reg)) & bitmask);
++}
++
++static const struct reset_control_ops cpg_mssr_reset_ops = {
++	.reset = cpg_mssr_reset,
++	.assert = cpg_mssr_assert,
++	.deassert = cpg_mssr_deassert,
++	.status = cpg_mssr_status,
++};
++
++static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
++				const struct of_phandle_args *reset_spec)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int unpacked = reset_spec->args[0];
++	unsigned int idx = MOD_CLK_PACK(unpacked);
++
++	if (unpacked % 100 > 31 || idx >= rcdev->nr_resets) {
++		dev_err(priv->dev, "Invalid reset index %u\n", unpacked);
++		return -EINVAL;
++	}
++
++	return idx;
++}
++
++static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
++{
++	priv->rcdev.ops = &cpg_mssr_reset_ops;
++	priv->rcdev.of_node = priv->dev->of_node;
++	priv->rcdev.of_reset_n_cells = 1;
++	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
++	priv->rcdev.nr_resets = priv->num_mod_clks;
++	return devm_reset_controller_register(priv->dev, &priv->rcdev);
++}
++
++#else /* !CONFIG_RESET_CONTROLLER */
++static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
++{
++	return 0;
++}
++#endif /* !CONFIG_RESET_CONTROLLER */
++
++
+ static const struct of_device_id cpg_mssr_match[] = {
+ #ifdef CONFIG_ARCH_R8A7743
+ 	{
+@@ -591,6 +713,10 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++	error = cpg_mssr_reset_controller_register(priv);
++	if (error)
++		return error;
++
+ 	return 0;
+ }
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
