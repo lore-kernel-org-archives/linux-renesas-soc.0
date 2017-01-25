@@ -1,60 +1,100 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:37800 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936163AbdAKJ6c (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 04:58:32 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, chris.brandt@renesas.com,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 5/7] arm: dts: r7s72100-genmai: LED1 and LED2 support
-Date: Wed, 11 Jan 2017 10:57:11 +0100
-Message-Id: <1484128633-22683-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] Renesas CPG/MSSR Reset Control Support
+Date: Wed, 25 Jan 2017 10:14:59 +0100
+Message-Id: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+	Hi all,
 
-Add support for Genmai board LED1 and LED2 via gpio-leds.
+This patch series adds reset control support to the Renesas Clock Pulse
+Generator / Module Standby and Software Reset module, on the R-Car H3
+and M3-W, RZ/G1M, and RZ/G1E SoCs.
 
-Signed-off-by: Magnus Damm <damm@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+  - Patch 1 amends the Renesas CPG/MSSR DT bindings for reset control,
+  - Patches 2-4 add reset control to the Renesas CPG/MSSR driver.
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 8d8fcc7..72ae403 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Genmai";
-@@ -34,6 +35,16 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		led1 {
-+			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
-+		};
-+		led2 {
-+			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
- 
- &extal_clk {
+Note that this patch series implements reset functionality only.
+Actual reset policy is to be defined and implemented separately.
+
+This is an optional feature, to be enabled explicitly using
+CONFIG_RESET_CONTROLLER=y.  When enabled, an on-SoC device can be reset
+easily using device_reset(), or by using the reset_control_*() API when
+more fine-grained control is desired.
+
+Possible use cases are (not exhaustive):
+  - Reset a device before use, to make sure it's in a predefined state, and
+    doesn't depend on earlier configuration by e.g. the boot loader,
+  - Reset a device after detecting an anomaly,
+  - Reset a device to verify suspend/resume is handled correctly by the
+    driver in case the device would be part of a power domain on a
+    different/future SoC.
+
+Changes compared to v1:
+  - Change oneline summary for binding update to refer to dt-bindings.
+  - Add Acked-by, Reviewed-by,
+  - Use variable bitmask in all reset operations, to make them more
+    similar,
+  - Dropped the DTS changes:
+      - If CONFIG_RESET_CONTROLLER=y, they have a hard dependency on the
+	driver patches (at least for USB on R-Car Gen3), so they can
+	only go upstream in a later cycle,
+      - The DTS changes will have to be respun anyway, to accommodate
+	for changes in the DTS files between now and final upstreaming.
+
+For your convenience, the driver and DTS changes (incl. dependencies)
+are available in the topic/renesas-cpg-mssr-reset-driver-v2 resp.
+topic/renesas-cpg-mssr-reset-dts-v1 branches of my topic/rcar-rst-v4
+branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+
+This has been tested on the R-Car Gen3 Salvator-X (H3 and M3-W) and the
+R-Car M2-W (using out-of-tree driver modifications) Koelsch development
+boards, by inspecting device register contents before and after reset,
+and by comparing them with their documented reset values.
+
+As this modifies a Renesas clock driver, I'll queue this up in my
+clk-renesas-for-v4.11 branch, and will send a pull request later this
+week.  
+
+Thanks!
+
+Geert Uytterhoeven (4):
+  dt-bindings: clock: renesas: cpg-mssr: Document reset control support
+  clk: renesas: cpg-mssr: Document suitability for RZ/G1
+  clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
+  clk: renesas: cpg-mssr: Add support for reset control
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 138 ++++++++++++++++++++-
+ 2 files changed, 138 insertions(+), 6 deletions(-)
+
 -- 
-2.7.4
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
