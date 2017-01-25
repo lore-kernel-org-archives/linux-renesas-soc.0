@@ -1,39 +1,66 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 30 Jan 2017 13:56:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document
- reset control support
-Message-ID: <20170130195635.drveyzxfqrvj5fnh@rob-hp-laptop>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document reset control support
+Date: Wed, 25 Jan 2017 10:15:00 +0100
+Message-Id: <1485335703-27184-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
 References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
- <1485335703-27184-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1485335703-27184-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 10:15:00AM +0100, Geert Uytterhoeven wrote:
-> Document properties needed to use the Reset Control feature of the
-> Renesas Clock Pulse Generator / Module Standby and Software Reset
-> module.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Change oneline summary to refer to dt-bindings.
-> ---
->  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
+Document properties needed to use the Reset Control feature of the
+Renesas Clock Pulse Generator / Module Standby and Software Reset
+module.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Change oneline summary to refer to dt-bindings.
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index c469194129536332..f4f944d813081857 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -42,6 +42,10 @@ Required Properties:
+ 	Domain bindings in
+ 	Documentation/devicetree/bindings/power/power_domain.txt.
+ 
++  - #reset-cells: Must be 1
++      - The single reset specifier cell must be the module number, as defined
++	in the datasheet.
++
+ 
+ Examples
+ --------
+@@ -55,6 +59,7 @@ Examples
+ 		clock-names = "extal", "extalr";
+ 		#clock-cells = <2>;
+ 		#power-domain-cells = <0>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 
+@@ -69,5 +74,6 @@ Examples
+ 		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+ 		dma-names = "tx", "rx";
+ 		power-domains = <&cpg>;
++		resets = <&cpg 310>;
+ 		status = "disabled";
+ 	};
+-- 
+1.9.1
