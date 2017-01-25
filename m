@@ -1,97 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:35930 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753228AbdACSoq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36031 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751020AbdAYQsU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 13:44:46 -0500
-Date: Tue, 3 Jan 2017 18:44:44 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        artemi.ivanov@cogentembedded.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dma_mapping: allow PCI host driver to limit
- DMA mask
-Message-ID: <20170103184444.GP6986@arm.com>
-References: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
+        Wed, 25 Jan 2017 11:48:20 -0500
+Date: Wed, 25 Jan 2017 17:48:14 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC v3 net] ravb: unmap descriptors when freeing rings
+Message-ID: <20170125164814.GC12042@verge.net.au>
+References: <1485282073-16662-1-git-send-email-horms+renesas@verge.net.au>
+ <db2a9c3a-6b99-769d-4fa2-2d52af631966@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1483044304-2085-1-git-send-email-nikita.yoush@cogentembedded.com>
+In-Reply-To: <db2a9c3a-6b99-769d-4fa2-2d52af631966@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 29, 2016 at 11:45:03PM +0300, Nikita Yushchenko wrote:
-> It is possible that PCI device supports 64-bit DMA addressing, and thus
-> it's driver sets device's dma_mask to DMA_BIT_MASK(64), however PCI host
-> bridge has limitations on inbound transactions addressing. Example of
-> such setup is NVME SSD device connected to RCAR PCIe controller.
+On Wed, Jan 25, 2017 at 07:05:08PM +0300, Sergei Shtylyov wrote:
+> Hello.
 > 
-> Previously there was attempt to handle this via bus notifier: after
-> driver is attached to PCI device, bridge driver gets notifier callback,
-> and resets dma_mask from there. However, this is racy: PCI device driver
-> could already allocate buffers and/or start i/o in probe routine.
-> In NVME case, i/o is started in workqueue context, and this race gives
-> "sometimes works, sometimes not" effect.
+> On 01/24/2017 09:21 PM, Simon Horman wrote:
 > 
-> Proper solution should make driver's dma_set_mask() call to fail if host
-> bridge can't support mask being set.
+> >From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> >
+> >"swiotlb buffer is full" errors occur after repeated initialisation of a
+> >device - f.e. suspend/resume or ip link set up/down. This is because memory
+> >mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
+> >is not released.  Resolve this problem by unmapping descriptors when
+> >freeing rings.
+> >
+> >Note, ravb_tx_free() is moved but not otherwise modified by this patch.
+> >
+> >Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> >[simon: reworked]
+> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >--
+> >v3 [Simon Horman]
+> >* As suggested by Sergei Shtylyov
+> >  - consistently use le32_to_cpu(desc->dptr)
+> >  - Do not clear desc->ds_cc as it is not used
+> >* Paramatise ravb_tx_free() to allow it to free non-transmitted buffers
+> >
+> >v2 [Simon Horman]
+> >* As suggested by Sergei Shtylyov
+> >  - Use dma_mapping_error() and rx_desc->ds_cc when unmapping RX descriptors;
+> >    this is consistent with the way that they are mapped
+> >  - Use ravb_tx_free() to clear TX descriptors
+> >* Reduce scope of new local variable
+> >
+> >v1 [Kazuya Mizuguchi]
+> >---
+> > drivers/net/ethernet/renesas/ravb_main.c | 113 ++++++++++++++++++-------------
+> > 1 file changed, 65 insertions(+), 48 deletions(-)
+> >
+> >diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> >index 89ac1e3f6175..57fe1411bb9d 100644
+> >--- a/drivers/net/ethernet/renesas/ravb_main.c
+> >+++ b/drivers/net/ethernet/renesas/ravb_main.c
+> >@@ -179,6 +179,51 @@ static struct mdiobb_ops bb_ops = {
+> > 	.get_mdio_data = ravb_get_mdio_data,
+> > };
+> >
+> >+enum ravb_tx_free_mode {
+> >+	ravb_tx_free_all,
+> >+	ravb_tx_free_txed_only,
+> >+};
+> >+
+> >+/* Free TX skb function for AVB-IP */
+> >+static int ravb_tx_free(struct net_device *ndev, int q,
+> >+			enum ravb_tx_free_mode free_mode)
 > 
-> This patch makes __swiotlb_dma_supported() to check mask being set for
-> PCI device against dma_mask of struct device corresponding to PCI host
-> bridge (one with name "pciXXXX:YY"), if that dma_mask is set.
-> 
-> This is the least destructive approach: currently dma_mask of that device
-> object is not used anyhow, thus all existing setups will work as before,
-> and modification is required only in actually affected components -
-> driver of particular PCI host bridge, and dma_map_ops of particular
-> platform.
-> 
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> ---
->  arch/arm64/mm/dma-mapping.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-> index 290a84f..49645277 100644
-> --- a/arch/arm64/mm/dma-mapping.c
-> +++ b/arch/arm64/mm/dma-mapping.c
-> @@ -28,6 +28,7 @@
->  #include <linux/dma-contiguous.h>
->  #include <linux/vmalloc.h>
->  #include <linux/swiotlb.h>
-> +#include <linux/pci.h>
->  
->  #include <asm/cacheflush.h>
->  
-> @@ -347,6 +348,16 @@ static int __swiotlb_get_sgtable(struct device *dev, struct sg_table *sgt,
->  
->  static int __swiotlb_dma_supported(struct device *hwdev, u64 mask)
->  {
-> +#ifdef CONFIG_PCI
-> +	if (dev_is_pci(hwdev)) {
-> +		struct pci_dev *pdev = to_pci_dev(hwdev);
-> +		struct pci_host_bridge *br = pci_find_host_bridge(pdev->bus);
-> +
-> +		if (br->dev.dma_mask && (*br->dev.dma_mask) &&
-> +				(mask & (*br->dev.dma_mask)) != mask)
-> +			return 0;
-> +	}
-> +#endif
+>    Hmm... Sorry but this looks over-engineered. A *bool* parameter (named
+> e.g 'all) would suffice IMHO.
 
-Hmm, but this makes it look like the problem is both arm64 and swiotlb
-specific, when in reality it's not. Perhaps another hack you could try
-would be to register a PCI bus notifier in the host bridge looking for
-BUS_NOTIFY_BIND_DRIVER, then you could proxy the DMA ops for each child
-device before the driver has probed, but adding a dma_set_mask callback
-to limit the mask to what you need?
+Ha! The last time I used a bool for something like this I was encouraged
+to use an enum, admittedly that was not kernel code but I was unsure
+which way to go this time. I'll change things to bool as you sugget.
 
-I agree that it would be better if dma_set_mask handled all of this
-transparently, but it's all based on the underlying ops rather than the
-bus type.
+> >+{
+> >+	struct ravb_private *priv = netdev_priv(ndev);
+> >+	struct net_device_stats *stats = &priv->stats[q];
+> >+	struct ravb_tx_desc *desc;
+> >+	int free_num = 0;
+> >+	int entry;
+> >+	u32 size;
+> >+
+> >+	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
+> >+		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
+> >+					     NUM_TX_DESC);
+> >+		desc = &priv->tx_ring[q][entry];
+> >+		if (free_mode == ravb_tx_free_txed_only &&
+> >+		    desc->die_dt != DT_FEMPTY)
+> >+			break;
+> >+		/* Descriptor type must be checked before all other reads */
+> >+		dma_rmb();
+> >+		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
+> >+		/* Free the original skb. */
+> >+		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
+> >+			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
+> >+					 size, DMA_TO_DEVICE);
+> >+			/* Last packet descriptor? */
+> >+			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
+> >+				entry /= NUM_TX_DESC;
+> >+				dev_kfree_skb_any(priv->tx_skb[q][entry]);
+> >+				priv->tx_skb[q][entry] = NULL;
+> >+				stats->tx_packets++;
+> >+			}
+> >+			free_num++;
+> >+		}
+> >+		stats->tx_bytes += size;
+> 
+>    Hmmm... we shouldn't count the discarded unsent packets/bytes as sent, right?
 
-Will
+Yes, I think so. Sorry for missing that.
+
+> [...]
+> >@@ -215,12 +262,19 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+> > 	}
+> >
+> > 	if (priv->tx_ring[q]) {
+> >+		ravb_tx_free(ndev, q, ravb_tx_free_all);
+> >+
+> > 		ring_size = sizeof(struct ravb_tx_desc) *
+> > 			    (priv->num_tx_ring[q] * NUM_TX_DESC + 1);
+> > 		dma_free_coherent(ndev->dev.parent, ring_size, priv->tx_ring[q],
+> > 				  priv->tx_desc_dma[q]);
+> > 		priv->tx_ring[q] = NULL;
+> > 	}
+> >+
+> >+	/* Free TX skb ringbuffer.
+> >+	 * SKBs are freed by ravb_tx_free() call above. */
+> 
+>    This is not a recommended comment format:
+> 
+> /* bla
+>  * bla
+>  */
+
+Thanks, I will fix that.
