@@ -1,99 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:12232 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750825AbdA0SWS (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:35218 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752781AbdAZPNl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 13:22:18 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] clk: renesas: mstp: disable runtime pm for r7s72100
-Date: Fri, 27 Jan 2017 13:20:40 -0500
-Message-Id: <20170127182040.22240-1-chris.brandt@renesas.com>
+        Thu, 26 Jan 2017 10:13:41 -0500
+Received: by mail-lf0-f43.google.com with SMTP id n124so146722310lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 07:13:40 -0800 (PST)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 1/2] arm64: dts: h3ulcb: Update memory node to 4 GiB map
+Date: Thu, 26 Jan 2017 18:13:52 +0300
+Message-Id: <1485443632-22612-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Due to the lack of clock status bits, we need to disable runtime pm
-for all RZ/A1 peripherals. Otherwise, it is possible that a driver
-will start using a peripheral before it is fully ready.
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-By using pm_clk_resume immediately after we add the clock we ensure the
-usage counter will never get back down to 0, and hence will always keep
-the clock enabled.
+This patch adds memory region:
 
-In order for dis_runtime_pm to be accessible for all relevant functions
-in this file, it needed to be a global.
+  - After changes, the H3ULCB board has the following map:
+    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
+    Bank1: 1GiB RAM : 0x000500000000 -> 0x0053fffffff
+    Bank2: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
+    Bank3: 1GiB RAM : 0x000700000000 -> 0x0073fffffff
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+  - Before changes, the old map looked like this:
+    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 ---
- drivers/clk/renesas/clk-mstp.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 69cfdb9..3c91555 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -59,6 +59,8 @@ struct mstp_clock {
- 	struct mstp_clock_group *group;
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index b36c300..3edf966 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -33,6 +33,21 @@
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
  
-+static bool dis_runtime_pm;
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x40000000>;
++	};
 +
- #define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
- 
- static inline u32 cpg_mstp_read(struct mstp_clock_group *group,
-@@ -216,6 +218,13 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 	if (of_device_is_compatible(np, "renesas,r7s72100-mstp-clocks"))
- 		group->width_8bit = true;
- 
-+	/*
-+	 * Due to the lack of clock status bits, we need to disable runtime pm
-+	 * for all RZ/A1 peripherals.
-+	 */
-+	if (of_device_is_compatible(np, "renesas,r7s72100-mstp-clocks"))
-+		dis_runtime_pm = true;
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x40000000>;
++	};
 +
- 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i)
- 		clks[i] = ERR_PTR(-ENOENT);
- 
-@@ -314,6 +323,9 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		goto fail_destroy;
- 	}
- 
-+	if (dis_runtime_pm)
-+		pm_clk_resume(dev);
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x40000000>;
++	};
 +
- 	return 0;
+ 	leds {
+ 		compatible = "gpio-leds";
  
- fail_destroy:
-@@ -325,8 +337,11 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
- 
- void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- {
--	if (!list_empty(&dev->power.subsys_data->clock_list))
-+	if (!list_empty(&dev->power.subsys_data->clock_list)) {
-+		if (dis_runtime_pm)
-+			pm_clk_suspend(dev);
- 		pm_clk_destroy(dev);
-+	}
- }
- 
- void __init cpg_mstp_add_clk_domain(struct device_node *np)
-@@ -344,7 +359,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 		return;
- 
- 	pd->name = np->name;
--	pd->flags = GENPD_FLAG_PM_CLK;
-+	if (!dis_runtime_pm)
-+		pd->flags = GENPD_FLAG_PM_CLK;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
-2.10.1
+1.9.1
