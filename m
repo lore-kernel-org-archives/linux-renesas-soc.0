@@ -1,73 +1,36 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 1/2] dt-bindings: document renesas-ostm timer
-Date: Wed, 25 Jan 2017 21:07:06 -0500
-Message-Id: <20170126020707.4376-2-chris.brandt@renesas.com>
-In-Reply-To: <20170126020707.4376-1-chris.brandt@renesas.com>
-References: <20170126020707.4376-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:44723 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752828AbdAZHsQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 02:48:16 -0500
+Date: Thu, 26 Jan 2017 08:48:09 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] arm64: dts: renesas: Mark EthernetAVB device nodes
+ disabled
+Message-ID: <20170126074806.GE12042@verge.net.au>
+References: <1485350371-16091-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1485350371-16091-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-* changed ostm@fcfec000 to timer@fcfec000 in example
-* added power-domains in example
-v2:
-* remove sw implementation specific portions
----
- .../devicetree/bindings/timer/renesas,ostm.txt     | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
+On Wed, Jan 25, 2017 at 02:19:29PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series marks the EthernetAVB device nodes in the R-Car H3 and
+> M3-W DTSes disabled.
+> Device nodes representing I/O devices should be marked disabled in the
+> SoC-specific DTSes, and overridden by board-specific DTSes where needed.
+> 
+> Thanks for applying!
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-new file mode 100644
-index 0000000..be3ae0f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-@@ -0,0 +1,30 @@
-+* Renesas OS Timer (OSTM)
-+
-+The OSTM is a multi-channel 32-bit timer/counter with fixed clock
-+source that can operate in either interval count down timer or free-running
-+compare match mode.
-+
-+Channels are independent from each other.
-+
-+Required Properties:
-+
-+  - compatible: must be one or more of the following:
-+    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
-+    - "renesas,ostm" for any OSTM
-+		This is a fallback for the above renesas,*-ostm entries
-+
-+  - reg: base address and length of the register block for a timer channel.
-+
-+  - interrupts: interrupt specifier for the timer channel.
-+
-+  - clocks: clock specifier for the timer channel.
-+
-+Example: R7S72100 (RZ/A1H) OSTM node
-+
-+	ostm0: timer@fcfec000 {
-+		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+		reg = <0xfcfec000 0x30>;
-+		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
-+		power-domains = <&cpg_clocks>;
-+	};
--- 
-2.10.1
+Thanks,
 
-
+as these are fixes I have queued them up for v4.11.
