@@ -1,32 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35780 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752950AbdAZU0U (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34381 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753200AbdAZJtn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 15:26:20 -0500
+        Thu, 26 Jan 2017 04:49:43 -0500
+Received: by mail-lf0-f53.google.com with SMTP id v186so142763852lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 01:49:42 -0800 (PST)
+Subject: Re: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <9acf3e80-2e9b-10e0-2491-5157cc714f6c@cogentembedded.com>
+Date: Thu, 26 Jan 2017 12:49:41 +0300
 MIME-Version: 1.0
 In-Reply-To: <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jan 2017 20:54:39 +0100
-Message-ID: <CAMuHMdW3WtBp=cLpqFuuLxQq-=by3wwE1mQtwKJN4znDVrF6LQ@mail.gmail.com>
-Subject: Re: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Hello!
 
-On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+    s/r7s1000/r7s72100/ in the subject.
+
+On 1/25/2017 9:09 PM, Jacopo Mondi wrote:
+
 > Add pincontroller node compatible with the new Renesas RZ/A1
 > pincontroller driver.
->
+
+    Pin controller.
+
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
 >  arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++++
@@ -37,26 +44,11 @@ On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 > --- a/arch/arm/boot/dts/r7s72100.dtsi
 > +++ b/arch/arm/boot/dts/r7s72100.dtsi
 > @@ -171,6 +171,18 @@
->                 };
->         };
+>  		};
+>  	};
 >
-> +       pinctrl: pinctrl@fcfe3000 {
-> +               compatible = "renesas,rza1-pinctrl";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               #pinctrl-cells = <2>;
+> +	pinctrl: pinctrl@fcfe3000 {
 
-Souldn't that be <3>?
-E.g. <RZ_PIN(3, 0) ALTERNATE_FUNC_6> expands to <3 0 5>, i.e. 3 numbers.
+    I'd call the node "pin-controller@...".
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
