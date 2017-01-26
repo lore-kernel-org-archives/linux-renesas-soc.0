@@ -1,44 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33017 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752658AbdAZT4t (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:62478 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752453AbdAZC57 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 14:56:49 -0500
-MIME-Version: 1.0
-In-Reply-To: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jan 2017 20:56:47 +0100
-Message-ID: <CAMuHMdVw=--dc2N=58fOWZo6Kv=APPWzXvN-YO3Do36Er5mP=w@mail.gmail.com>
-Subject: Re: [RFC 0/5] Renesas RZ series pinctrl driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 25 Jan 2017 21:57:59 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [RFC 0/5] Renesas RZ series pinctrl driver
+Date: Thu, 26 Jan 2017 02:57:54 +0000
+Message-ID: <SG2PR06MB11653912C75B587A742FB0518A770@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Jacopo,
 
-On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->    after having discussed in great detail the RZ series per-pin PFC hardware
-> peculiarities, this is a proposal for a possible pin-based pin controller
-> driver for SoC devices of Renesas RZ family.
+Thanks for the patches.
 
-"RZ" is a bad name, as there are (currently) 3 RZ subfamilies, and they
-differ a lot. So it's better to use "RZ/A".
-Or perhaps even "RZ/A1", as you never know what's going to happen with "2"...
+On Wednesday, January 25, 2017, Jacopo Mondi wrote:
+> Right now, the only "SoC" module support implemented is for RZ/A1H (Genma=
+i
+> and GR-Peach boards).
 
-Gr{oetje,eeting}s,
+I'm going to give it a try on the RZ/A1 RSK board.
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> I have tested the correctness of mux settings printing out register value=
+s,
+> and enabling/disabling the SCIF2 module connected to serial debug
+> interface.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I can give it a try on things like Eth, I2C, SPI, SDHI, MMC.
+
+
+> One note on the current DT ABI:
+> right now a pin configuration is specified in DTS using utility macros
+> defined in the (currently undocumented) arch/arm/boot/dts/include/dt-
+> bindings/pinctrl/pinctrl-renesas-rz.h header file.
+> Each pin configuration is a triplet of u32 in the form of
+>=20
+> <BANK PIN ALTERNATE_FUNC_#>
+>=20
+> It should be fairly easy adding additional parameters to configure what
+> was missing in the original group-based PFC driver for RZ devices (I'm
+> thinking of IO mode control, input buffer configuration, bi-directional
+> configuration etc).
+
+SDHI is one that will need another parameter. Half the pins need Bidirectio=
+n
+(PBDC) enabled, and the other half need PBDC disabled.
+SDHI data pins are PBDC=3D1, the others are PBDC=3D0.
+
+
+> The series makes use of newly introduced pin[ctrl|mux]_generic functions,
+> currently only available in Linus Walleij's linux-pinctrl.git tree.
+
+Hmmm, I was hoping to 'easily' back port this to 4.9.
+I guess if it's the best way forward, then maybe I can back port those new
+generic functions for the LTSI tree.
+
+
+Chris
