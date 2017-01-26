@@ -1,55 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:52136 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754053AbdA3TTb (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35088 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753325AbdAZTtL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jan 2017 14:19:31 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: RE: [RFC 2/5] pinctrl: rz-pfc: Add Renesas RZ/A1 pinctrl driver
-Date: Mon, 30 Jan 2017 19:19:18 +0000
-Message-ID: <SG2PR06MB1165C49393EAA4027B020B448A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1485367787-8109-3-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 26 Jan 2017 14:49:11 -0500
 MIME-Version: 1.0
+In-Reply-To: <1485367787-8109-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-3-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jan 2017 20:49:09 +0100
+Message-ID: <CAMuHMdVShqXeZU+g1jz4adBqEoGvJRY2TUMrefm7KK+VUAgRfA@mail.gmail.com>
+Subject: Re: [RFC 2/5] pinctrl: rz-pfc: Add Renesas RZ/A1 pinctrl driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Jacopo,
 
+On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add pin controller driver for Renesas RZ/A1 SoC.
+> The SoC driver registers to rz-pfc core module and provides pin
+> description array and SoC specific pin mux operation.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On Wednesday, January 25, 2017, Jacopo Mondi wrote:
-> +	/* Port 5 */
-> +	RZ_PIN_NAME(5, 0), RZ_PIN_NAME(5, 1), RZ_PIN_NAME(5, 2),
-> +	RZ_PIN_NAME(5, 3), RZ_PIN_NAME(5, 4), RZ_PIN_NAME(5, 5),
-> +	RZ_PIN_NAME(5, 6), RZ_PIN_NAME(5, 7), RZ_PIN_NAME(5, 8),
-> +	RZ_PIN_NAME(5, 9), RZ_PIN_NAME(5, 10),
+> --- a/drivers/pinctrl/rz-pfc/Makefile
+> +++ b/drivers/pinctrl/rz-pfc/Makefile
+> @@ -1 +1,2 @@
+>  obj-$(CONFIG_PINCTRL_RZ_PINCTRL)               += pinctrl-rz.o
+> +obj-$(CONFIG_PINCTRL_RZA1_PINCTRL)             += pinctrl-rza1.o
+> diff --git a/drivers/pinctrl/rz-pfc/pinctrl-rza1.c b/drivers/pinctrl/rz-pfc/pinctrl-rza1.c
+> new file mode 100644
+> index 0000000..221f048
+> --- /dev/null
+> +++ b/drivers/pinctrl/rz-pfc/pinctrl-rza1.c
 
-The RZ/A1L (basically a subset of RZ/A1H to reduce cost) uses
-all 16 port pins on "port 5" so I'd like to include them as well.
+> +
+> +/* ----------------------------------------------------------------------------
+> + * SoC operations
+> + */
+> +
+> +static inline void rza1_set_bit(struct rz_pinctrl_res *res, int reg,
+> +                               int bank, int pin, int set)
+> +{
+> +       void __iomem *mem = RZA1_ADDR(res->base, reg, bank);
+> +       u16 val = set ? ioread16(mem) | 1 << pin :
+> +                       ioread16(mem) & ~(1 << pin);
+> +#ifdef RZA1_REG_DBG
+> +       u16 temp = ioread16(mem);
+> +
+> +       pr_err("%p %p %p - %4x %4x\n",
+> +              (void *)res->start, res->base, mem, temp, val);
 
+Please drop the cast, take the address, and use %pa to format a
+resource_size_t, cfr. Documentation/printk-formats.txt.
 
+> + static struct rz_pinctrl_ops rza1_pinctrl_ops = {
 
-> +static const struct of_device_id rza1_pinctrl_of_match[] =3D {
-> +	{ .compatible =3D "renesas,rza1-pinctrl", },
-> +	{ }
+const
+
+> +       .set_mux = rza1_set_mux,
 > +};
+> +
+> +static struct rz_pinctrl_info rza1_info = {
 
-Since this PFC driver file is specifically for RZ/A1, I think a
-better compatible string would be:
+const
 
-  .compatible =3D "renesas,r7s72100-renesas-pinctrl",
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Chris
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
