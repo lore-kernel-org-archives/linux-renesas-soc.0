@@ -1,77 +1,46 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 23 Jan 2017 20:40:29 +0900
-Message-Id: <148517162908.13306.2467186615655446796.sendpatchset@little-apple>
-In-Reply-To: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
-References: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
-Subject: [PATCH v2 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35652 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751872AbdAZSma (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 13:42:30 -0500
+Received: by mail-lf0-f45.google.com with SMTP id n124so149911747lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 10:42:29 -0800 (PST)
+Subject: Re: [PATCH v2] ARM: dts: r8a7791: link DU to VSPDs
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+References: <1529351.Fac5N2tKoF@wasted.cogentembedded.com>
+ <2492577.tBEnW0tCHD@wasted.cogentembedded.com>
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <4ae454ad-296c-dec9-27e9-fd050333737f@cogentembedded.com>
+Date: Thu, 26 Jan 2017 21:42:25 +0300
+MIME-Version: 1.0
+In-Reply-To: <2492577.tBEnW0tCHD@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 01/26/2017 12:42 AM, Sergei Shtylyov wrote:
 
-Bump up the maximum numbers of micro-TLBS to 48.
+> Add the "vsps" property to the DU device node in order to link this node to
+> the VSPD nodes.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> ---
+> Changes in version 2:
+> - rebased the patch.
+>
+> This patch is against the 'renesas-devel-20170125-v4.10-rc5' of Simon Horman's
+> 'renesas.git' repo.  It's  only meaningful if the DRM driver patches I've just
+> posted are applied.
 
-Each IPMMU device instance get micro-TLB assignment via
-the "iommus" property in DT. Older SoCs tend to use a
-maximum number of 32 micro-TLBs per IPMMU instance however
-newer SoCs such as r8a7796 make use of up to 48 micro-TLBs.
+    Forgot to note that without this patch the DU driver fails to link to VSPD 
+and probe correctly, so there's no video signal. So it makes sense to apply 
+before the DU driver patch (once it's ACKed for merge)...
 
-At this point no SoC specific handling is done to validate
-the maximum number of micro-TLBs, and because of that the
-DT information is assumed to be within correct range for
-each particular SoC.
-
-If needed in the future SoC specific feature flags can be
-added to handle the maximum number of micro-TLBs without
-requiring DT changes, however at this point this does not
-seem necessary.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Changes since V1:
- - Added support for the second I/O range at 0x600.
-
- drivers/iommu/ipmmu-vmsa.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
---- 0008/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-01-23 19:22:54.150607110 +0900
-@@ -214,7 +214,9 @@ static void set_archdata(struct device *
- #define IMPMBA(n)			(0x0280 + ((n) * 4))
- #define IMPMBD(n)			(0x02c0 + ((n) * 4))
- 
--#define IMUCTR(n)			(0x0300 + ((n) * 16))
-+#define IMUCTR(n)			(n) < 32 ? IMUCTR0(n) : IMUCTR32(n)
-+#define IMUCTR0(n)			(0x0300 + ((n) * 16))
-+#define IMUCTR32(n)			(0x0600 + (((n) - 32) * 16))
- #define IMUCTR_FIXADDEN			(1 << 31)
- #define IMUCTR_FIXADD_MASK		(0xff << 16)
- #define IMUCTR_FIXADD_SHIFT		16
-@@ -224,7 +226,9 @@ static void set_archdata(struct device *
- #define IMUCTR_FLUSH			(1 << 1)
- #define IMUCTR_MMUEN			(1 << 0)
- 
--#define IMUASID(n)			(0x0308 + ((n) * 16))
-+#define IMUASID(n)			(n) < 32 ? IMUASID0(n) : IMUASID32(n)
-+#define IMUASID0(n)			(0x0308 + ((n) * 16))
-+#define IMUASID32(n)			(0x0608 + (((n) - 32) * 16))
- #define IMUASID_ASID8_MASK		(0xff << 8)
- #define IMUASID_ASID8_SHIFT		8
- #define IMUASID_ASID0_MASK		(0xff << 0)
-@@ -1141,7 +1145,7 @@ static int ipmmu_probe(struct platform_d
- 	}
- 
- 	mmu->dev = &pdev->dev;
--	mmu->num_utlbs = 32;
-+	mmu->num_utlbs = 48;
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 	mmu->features = match->data;
+MBR, Sergei
