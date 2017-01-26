@@ -1,48 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58684 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754201AbdA0IaX (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:35263 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752781AbdAZPNt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 03:30:23 -0500
-Date: Fri, 27 Jan 2017 09:29:35 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 26 Jan 2017 10:13:49 -0500
+Received: by mail-lf0-f49.google.com with SMTP id n124so146724645lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 07:13:48 -0800 (PST)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: h3ulcb: enable HS200 for eMMC
-Message-ID: <20170127082935.GH21195@verge.net.au>
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 2/2] arm64: dts: h3ulcb: enable HS200 for eMMC
+Date: Thu, 26 Jan 2017 18:14:00 +0300
+Message-Id: <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
 References: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[CC Wolfram, linux-mmc]
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-On Thu, Jan 26, 2017 at 06:14:00PM +0300, Vladimir Barinov wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-> 
-> This supports HS200 mode for eMMC on H3ULCB board
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+This supports HS200 mode for eMMC on H3ULCB board
 
-Hi Vladimir,
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please resend this change once the relevant driver changes hit an rc
-release.
-
-I believe that means the following changes which are present in mmc/next.
-
-8c81459fa8ad mmc: sh_mobile_sdhi: enable HS200
-60f215caef3f mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
-f7c68068fb27 mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
-4cf3ecd2e097 mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
-bdba200138a9 mmc: sh_mobile_sdhi: improve prerequisites for tuning
-a7f2c661cca9 mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
-59c21074b582 mmc: sh_mobile_sdhi: simplify accessing DT data
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 7a8986e..51ef8bb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -329,6 +329,7 @@
+ 	vmmc-supply = <&reg_3p3v>;
+ 	vqmmc-supply = <&reg_1p8v>;
+ 	bus-width = <8>;
++	mmc-hs200-1_8v;
+ 	non-removable;
+ 	status = "okay";
+ };
+-- 
+1.9.1
