@@ -1,110 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:32916 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752332AbdATOIj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752971AbdAZKLS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 09:08:39 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 26 Jan 2017 05:11:18 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/8] Renesas CPG/MSSR Reset Control Support
-Date: Fri, 20 Jan 2017 15:08:18 +0100
-Message-Id: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/7] ARM: dts: r8a7779, marzen: Fix sata device status
+Date: Thu, 26 Jan 2017 11:11:03 +0100
+Message-Id: <e8aa6811ca9547bc82baa6ed44c38dde01fb0d86.1485425227.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
+References: <cover.1485425227.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch series adds reset control support to the Renesas Clock Pulse
-Generator / Module Standby and Software Reset module, on the R-Car H3
-and M3-W, RZ/G1M, and RZ/G1E SoCs.
+Device nodes representing I/O devices should be marked disabled in the
+SoC-specific DTS, and overridden by board-specific DTSes where needed.
 
-  - Patch 1 amends the Renesas CPG/MSSR DT bindings for reset control,
-  - Patches 2-4 add reset control to the Renesas CPG/MSSR driver,
-  - Patches 5-8 add reset control properties to the R-Car H3 and M3-W,
-    RZ/G1M, and RZ/G1E DTSes.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7779-marzen.dts | 4 ++++
+ arch/arm/boot/dts/r8a7779.dtsi       | 1 +
+ 2 files changed, 5 insertions(+)
 
-Note that this patch series implements reset functionality only.
-Actual reset policy is to be defined and implemented separately.
-
-This is an optional feature, to be enabled explicitly using
-CONFIG_RESET_CONTROLLER=y.  When enabled, an on-SoC device can be reset
-easily using device_reset(), or by using the reset_control_*() API when
-more fine-grained control is desired.
-
-Possible use cases are (not exhaustive):
-  - Reset a device before use, to make sure it's in a predefined state, and
-    doesn't depend on earlier configuration by e.g. the boot loader,
-  - Reset a device after detecting an anomaly,
-  - Reset a device to verify suspend/resume is handled correctly by the
-    driver in case the device would be part of a power domain on a
-    different/future SoC.
-
-Dependencies and upstreaming:
-  - As patches 1-4 touch a driver under drivers/clk/renesas/, I think
-    it's best if they go in through a pull request to the clock
-    maintainers, like other Renesas clock driver changes,
-  - Patches 5-8 have no dependencies nor impact as long as
-    CONFIG_RESET_CONTROLLER=n.
-    However, if CONFIG_RESET_CONTROLLER=y and resets properties are
-    prsesent in DTS, the EHCI and OHCI drivers already deassert reset as
-    part of their initialization sequences, and put the devices back
-    into reset state in case initialization failed, or on unbind.
-    Hence it's best to apply the DTS patches after the driver support
-    has landed upstream.  Else USB on R-Car H3 will fail to initialize
-    when booting a kernel with CONFIG_RESET_CONTROLLER=y.
-    I'm not aware of other relevant drivers already using reset control.
-
-For your convenience, the driver and DTS changes (incl. dependencies) are
-available in the topic/renesas-cpg-mssr-reset-driver-v1 resp.
-topic/renesas-cpg-mssr-reset-dts-v1 branches of my topic/rcar-rst-v4 branch of
-my renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-
-This has been tested on the R-Car Gen3 Salvator-X (H3 and M3-W) and the
-R-Car M2-W (using out-of-tree driver modifications) Koelsch development
-boards, by inspecting device register contents before and after reset,
-and by comparing them with their documented reset values.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (8):
-  clk: renesas: cpg-mssr: Document reset control support
-  clk: renesas: cpg-mssr: Document suitability for RZ/G1
-  clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
-  clk: renesas: cpg-mssr: Add support for reset control
-  arm64: dts: r8a7795: Add reset control properties
-  arm64: dts: r8a7796: Add reset control properties
-  ARM: dts: r8a7743: Add reset control properties
-  ARM: dts: r8a7745: Add reset control properties
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   6 +
- arch/arm/boot/dts/r8a7743.dtsi                     |  24 ++++
- arch/arm/boot/dts/r8a7745.dtsi                     |  24 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 103 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  34 ++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             | 134 ++++++++++++++++++++-
- 6 files changed, 319 insertions(+), 6 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index 676151b70185..89c5b24a3d03 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -216,6 +216,10 @@
+ 	};
+ };
+ 
++&sata {
++	status = "okay";
++};
++
+ &scif2 {
+ 	pinctrl-0 = <&scif2_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index f47a0edc26d4..ae2d9a9c65af 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -347,6 +347,7 @@
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
+ 		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
++		status = "disabled";
+ 	};
+ 
+ 	sdhi0: sd@ffe4c000 {
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.7.0.rc3.207.g0ac5344
