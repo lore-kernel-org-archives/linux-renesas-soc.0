@@ -1,233 +1,262 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/8] ARM: dts: r8a7743: Add reset control properties
-Date: Fri, 20 Jan 2017 15:08:25 +0100
-Message-Id: <1484921306-9967-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:33752 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751605AbdAZFup (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 00:50:45 -0500
+Received: by mail-qt0-f193.google.com with SMTP id n13so36305723qtc.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jan 2017 21:50:45 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <e179d829-dd95-b6b2-ccc3-4d6087ce8dff@arm.com>
+References: <1485348842-23712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1485348842-23712-4-git-send-email-yoshihiro.shimoda.uh@renesas.com> <e179d829-dd95-b6b2-ccc3-4d6087ce8dff@arm.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 26 Jan 2017 14:50:43 +0900
+Message-ID: <CANqRtoSa7H8_g=wazN3A+vtzfJ0MvfdmaN=U_buEyrr1KHkGjA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 3/4] iommu: dma: iommu iova domain reset
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        joro <joro@8bytes.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        iommu@lists.linux-foundation.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add properties to describe the reset topology for on-SoC devices:
-  - Add the "#reset-cells" property to the CPG/MSSR device node,
-  - Add resets and reset-names properties to the various device nodes.
+Hi Robin, Shimoda-san, everyone,
 
-This allows to reset SoC devices using the Reset Controller API.
+Thanks for your feedback!
 
-Note that all resets added match the corresponding module clocks.
+On Thu, Jan 26, 2017 at 1:38 AM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 25/01/17 12:54, Yoshihiro Shimoda wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> To add a workaround code for ipmmu-vmsa driver, this patch adds
+>> a new geometry "force_reset_when_empty" not to reuse iova space.
+>
+> The domain geometry is absolutely not the appropriate place for that. If
+> anything, it could possibly be a domain attribute, but it has nothing to
+> do with describing the range of input addresses the hardware is able to
+> translate.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+I agree, this flag was added without too much consideration about
+correct location.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 40d2cdede7022ff6..5f2287ea00922ee0 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -63,6 +63,7 @@
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
- 		};
- 
- 		irqc: interrupt-controller@e61c0000 {
-@@ -82,6 +83,7 @@
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 407>;
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
- 		};
- 
- 		timer {
-@@ -103,6 +105,7 @@
- 			clock-names = "extal", "usb_extal";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
- 
- 		prr: chipid@ff000044 {
-@@ -149,6 +152,7 @@
- 			clocks = <&cpg CPG_MOD 219>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -181,6 +185,7 @@
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -196,6 +201,7 @@
- 			       <&dmac1 0x21>, <&dmac1 0x22>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
- 			status = "disabled";
- 		};
- 
-@@ -210,6 +216,7 @@
- 			       <&dmac1 0x25>, <&dmac1 0x26>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
- 
-@@ -224,6 +231,7 @@
- 			       <&dmac1 0x27>, <&dmac1 0x28>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
- 			status = "disabled";
- 		};
- 
-@@ -238,6 +246,7 @@
- 			       <&dmac1 0x1b>, <&dmac1 0x1c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 1106>;
- 			status = "disabled";
- 		};
- 
-@@ -252,6 +261,7 @@
- 			       <&dmac1 0x1f>, <&dmac1 0x20>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 1107>;
- 			status = "disabled";
- 		};
- 
-@@ -266,6 +276,7 @@
- 			       <&dmac1 0x23>, <&dmac1 0x24>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 1108>;
- 			status = "disabled";
- 		};
- 
-@@ -280,6 +291,7 @@
- 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
- 			status = "disabled";
- 		};
- 
-@@ -294,6 +306,7 @@
- 			       <&dmac1 0x19>, <&dmac1 0x1a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
- 			status = "disabled";
- 		};
- 
-@@ -308,6 +321,7 @@
- 			       <&dmac1 0x1d>, <&dmac1 0x1e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 216>;
- 			status = "disabled";
- 		};
- 
-@@ -323,6 +337,7 @@
- 			       <&dmac1 0x29>, <&dmac1 0x2a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 721>;
- 			status = "disabled";
- 		};
- 
-@@ -338,6 +353,7 @@
- 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 720>;
- 			status = "disabled";
- 		};
- 
-@@ -353,6 +369,7 @@
- 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 719>;
- 			status = "disabled";
- 		};
- 
-@@ -368,6 +385,7 @@
- 			       <&dmac1 0x2f>, <&dmac1 0x30>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 718>;
- 			status = "disabled";
- 		};
- 
-@@ -383,6 +401,7 @@
- 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 715>;
- 			status = "disabled";
- 		};
- 
-@@ -398,6 +417,7 @@
- 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
- 			status = "disabled";
- 		};
- 
-@@ -413,6 +433,7 @@
- 			       <&dmac1 0x39>, <&dmac1 0x3a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
- 			status = "disabled";
- 		};
- 
-@@ -428,6 +449,7 @@
- 			       <&dmac1 0x4d>, <&dmac1 0x4e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
- 			status = "disabled";
- 		};
- 
-@@ -443,6 +465,7 @@
- 			       <&dmac1 0x3b>, <&dmac1 0x3c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
- 			status = "disabled";
- 		};
- 
-@@ -452,6 +475,7 @@
- 			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 813>;
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 813>;
- 			phy-mode = "rmii";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-1.9.1
+>> When all pfns happen to get unmapped then ask the IOMMU driver to
+>> flush the state followed by starting from an empty iova space.
+>
+> And what happens if all the PFNs are never unmapped? Many devices (USB
+> being among them) use a coherent allocation for some kind of descriptor
+> buffer which exists for the lifetime of the device, then use streaming
+> mappings for data transfers - the net result of that is that the number
+> of PFNs mapped will always be >=1, and eventually streaming mapping will
+> fail because you've exhausted the address space. And if the device *is*
+> a USB controller, at that point the thread will hang because the USB
+> core's response to a DMA mapping failure happens to be "keep trying
+> indefinitely".
+
+You are absolutely right. My apologies for not providing more
+information in the first place.
+
+Like you mention, the workaround can not be made into something
+general purpose, however for some restricted use case it might be
+helpful. For instance, we have some MMC controllers that are able to
+perform on-chip bus mastering but they lack scatter gather support.
+>From the hardware design point of view the scatter gather feature was
+decided to be put into the IPMMU hardware. Because of that we would
+like to use the IPMMU hardware for this purpose, however with some ES
+specific errata we need to handle unmapping in a special way.
+Fortunately the MMC controllers are grouped together using the same
+IPMMU and we are able to make sure that all the buffers are unmapped
+now and then from a workaround in the MMC device driver. Not pretty
+but not super intrusive.
+
+> Essentially, however long this allocation workaround postpones it, one
+> or other failure mode is unavoidable with certain devices unless you can
+> do something drastic like periodically suspend and resume the entire
+> system to reset everything.
+
+Yeah, suspend/resume or unbind/bind might work.
+
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> ---
+>>  drivers/iommu/dma-iommu.c | 42 +++++++++++++++++++++++++++++++++++++-----
+>>  drivers/iommu/iova.c      |  9 +++++++++
+>>  include/linux/iommu.h     |  2 ++
+>>  include/linux/iova.h      |  1 +
+>>  4 files changed, 49 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>> index a0b8c0f..d0fa0b1 100644
+>> --- a/drivers/iommu/dma-iommu.c
+>> +++ b/drivers/iommu/dma-iommu.c
+>> @@ -42,6 +42,7 @@ struct iommu_dma_cookie {
+>>       struct iova_domain      iovad;
+>>       struct list_head        msi_page_list;
+>>       spinlock_t              msi_lock;
+>> +     spinlock_t              reset_lock;
+>
+> So now we do get something in the cookie, but it's protecting a bunch of
+> machinery that's accessible from a wider scope? That doesn't seem like a
+> good design.
+
+It's not. =)
+
+There is room for improvement in the implementation for sure! We also
+had other ideas of tracking mapped pages per device instead of per
+domain. We have other requirements from the hardware to serialize some
+MMC data handling, so grouping the MMC devices together into a single
+IOMMU domain seemed light weight and simple for a first shot!
+
+>>  };
+>>
+>>  static inline struct iova_domain *cookie_iovad(struct iommu_domain *domain)
+>> @@ -74,6 +75,7 @@ int iommu_get_dma_cookie(struct iommu_domain *domain)
+>>
+>>       spin_lock_init(&cookie->msi_lock);
+>>       INIT_LIST_HEAD(&cookie->msi_page_list);
+>> +     spin_lock_init(&cookie->reset_lock);
+>>       domain->iova_cookie = cookie;
+>>       return 0;
+>>  }
+>> @@ -208,9 +210,11 @@ int dma_direction_to_prot(enum dma_data_direction dir, bool coherent)
+>>  static struct iova *__alloc_iova(struct iommu_domain *domain, size_t size,
+>>               dma_addr_t dma_limit)
+>>  {
+>> +     struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>>       struct iova_domain *iovad = cookie_iovad(domain);
+>>       unsigned long shift = iova_shift(iovad);
+>>       unsigned long length = iova_align(iovad, size) >> shift;
+>> +     unsigned long flags;
+>>       struct iova *iova;
+>>
+>>       if (domain->geometry.force_aperture)
+>> @@ -219,9 +223,19 @@ static struct iova *__alloc_iova(struct iommu_domain *domain, size_t size,
+>>        * Enforce size-alignment to be safe - there could perhaps be an
+>>        * attribute to control this per-device, or at least per-domain...
+>>        */
+>> -     iova = alloc_iova(iovad, length, dma_limit >> shift, true);
+>> -     if (iova)
+>> -             atomic_add(iova_size(iova), &domain->iova_pfns_mapped);
+>> +     if (domain->geometry.force_reset_when_empty) {
+>> +             spin_lock_irqsave(&cookie->reset_lock, flags);
+>
+> Is this locking definitely safe against the potential concurrent callers
+> of __free_iova() on the same domain who won't touch reset_lock? (It may
+> well be, it's just not clear)
+
+I think the code assumes that __free_iova_domain() is used instead of
+__free_iova(), and in such case I believe it should be safe as long as
+the flag force_reset_when_empty is set early in the IPMMU code and
+left unchanged.
+
+>> +
+>> +             iova = alloc_iova(iovad, length, dma_limit >> shift, true);
+>> +             if (iova)
+>> +                     atomic_add(iova_size(iova), &domain->iova_pfns_mapped);
+>> +
+>> +             spin_unlock_irqrestore(&cookie->reset_lock, flags);
+>> +     } else {
+>> +             iova = alloc_iova(iovad, length, dma_limit >> shift, true);
+>> +             if (iova)
+>> +                     atomic_add(iova_size(iova), &domain->iova_pfns_mapped);
+>
+> Why would we even need to keep track of this on non-broken IOMMUS?
+
+I agree it would be better to not keep track of it.
+
+>> +     }
+>>
+>>       return iova;
+>>  }
+>> @@ -229,10 +243,28 @@ static struct iova *__alloc_iova(struct iommu_domain *domain, size_t size,
+>>  void
+>>  __free_iova_domain(struct iommu_domain *domain, struct iova *iova)
+>>  {
+>> +     struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>>       struct iova_domain *iovad = cookie_iovad(domain);
+>> +     unsigned long flags;
+>>
+>> -     atomic_sub(iova_size(iova), &domain->iova_pfns_mapped);
+>> -     __free_iova(iovad, iova);
+>> +     /* In case force_reset_when_empty is set, do not reuse iova space
+>> +      * but instead simply keep on expanding seemingly forever.
+>> +      * When all pfns happen to get unmapped then ask the IOMMU driver to
+>> +      * flush the state followed by starting from an empty iova space.
+>> +      */
+>> +     if (domain->geometry.force_reset_when_empty) {
+>> +             spin_lock_irqsave(&cookie->reset_lock, flags);
+>> +             if (atomic_sub_return(iova_size(iova),
+>> +                                   &domain->iova_pfns_mapped) == 0) {
+>> +                     reset_iova_domain(iovad);
+>> +                     if (domain->ops->domain_reset)
+>> +                             domain->ops->domain_reset(domain);
+>> +             }
+>> +             spin_unlock_irqrestore(&cookie->reset_lock, flags);
+>> +     } else {
+>> +             atomic_sub(iova_size(iova), &domain->iova_pfns_mapped);
+>> +             __free_iova(iovad, iova);
+>> +     }
+>>  }
+>>
+>>
+>> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+>> index 866ad65..50aaa46 100644
+>> --- a/drivers/iommu/iova.c
+>> +++ b/drivers/iommu/iova.c
+>> @@ -464,6 +464,7 @@ void put_iova_domain(struct iova_domain *iovad)
+>>       while (node) {
+>>               struct iova *iova = rb_entry(node, struct iova, node);
+>>
+>> +             __cached_rbnode_delete_update(iovad, iova);
+>>               rb_erase(node, &iovad->rbroot);
+>>               free_iova_mem(iova);
+>>               node = rb_first(&iovad->rbroot);
+>> @@ -472,6 +473,14 @@ void put_iova_domain(struct iova_domain *iovad)
+>>  }
+>>  EXPORT_SYMBOL_GPL(put_iova_domain);
+>>
+>> +void
+>> +reset_iova_domain(struct iova_domain *iovad)
+>> +{
+>> +     put_iova_domain(iovad);
+>> +     init_iova_rcaches(iovad);
+>
+> And we have to nuke the entire domain rather than simply freeing all the
+> IOVAs because...?
+>
+> In summary, this is really ugly. If you must implement this workaround,
+> it would be infinitely preferable to use a more appropriate allocator in
+> the first place, at which point you then need none of the invasive
+> hacks. I've already proposed support for multiple allocator types for
+> the sake of MSI pages[1], and it's not all that complicated to move the
+> abstraction further up into the alloc and free helpers themselves so it
+> applies everywhere (I have some work in progress to convert alloc/free
+> to be PFN-based, which effectively requires most of the same changes, so
+> they're going to get done either way at some point). With that,
+> implementing a one-way wraparound allocator as a third type would be
+> pretty simple - the IPMMU driver could request that somehow upon getting
+> its cookie, then simply skip TLB syncs on unmaps internally (and maybe
+> still refcount maps vs. unmaps there if you think there's any chance of
+> stale TLB entries lasting long enough to be problematic).
+
+Thanks for your suggestion. Sounds much cleaner.
+
+> I'd still be inclined to simply not pretend to support managed DMA
+> domains on this IOMMU if at all possible, though.
+
+We can fortunately mix and match what to enable between different
+IPMMU instances, but this particular workaround is specific to some ES
+version so once the errata is fixed it should be possible to fall back
+to regular behaviour.
+
+> [1]:http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1314675.html
+
+Will have a look! Let me know if you happen to attend FOSDEM, would be
+good to discuss more if you have time!
+
+Thanks for your help!
+
+/ magnus
