@@ -1,10 +1,5 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:60202 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1752145AbdA1VZF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Jan 2017 16:25:05 -0500
-Date: Sat, 28 Jan 2017 22:23:19 +0100
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Thu, 26 Jan 2017 11:17:06 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Simon Horman <horms+renesas@verge.net.au>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -12,18 +7,18 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH i2c/for-next] i2c: sh_mobile: document support for
  r8a7796 (R-Car M3-W)
-Message-ID: <20170128212318.7ipb4xv4ofmwai2f@ninjato>
+Message-ID: <20170126101706.GD1435@katana>
 References: <1485420451-11752-1-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3g2zjtxmzjpehypd"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LTeJQqWS0MN7I/qa"
 Content-Disposition: inline
 In-Reply-To: <1485420451-11752-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---3g2zjtxmzjpehypd
+--LTeJQqWS0MN7I/qa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -35,27 +30,28 @@ On Thu, Jan 26, 2017 at 09:47:31AM +0100, Simon Horman wrote:
 >=20
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Applied to for-next, thanks!
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---3g2zjtxmzjpehypd
+--LTeJQqWS0MN7I/qa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAliNC8YACgkQFA3kzBSg
-KbZ3NA/9F7q3u0kaWLKUpkavgSaM9Naus1GFQcHqq4Hm5+M14bjWK6tgQeihhgBp
-ewEhvP2zyHIFQ3C9AlfdFpT7+oGPqWAr+ZNQMbFm2G9rLg5ZHIAepnbOrb98FnIO
-LY6gh2n6LTOIVIcFadD5IlfFqXoJuUxXfobjLLkLJbkZSpdHwniStfmo4qBTlvlA
-i7qRGKqBs8hbuKiVDMEJjiDDaL9ytzyVwXjioEYV/5gIi80JqnTANFITK2W+s86j
-VYfvwQ2xcjaB7x4iH1Q786nTwt3vZLlTvB1/M0MTr2dYBqyr4417COmVdV2W9zY1
-/pC23Gq7Pry4G52fqfTo8kWGJc/zhdGt2n1Hx6Z85Je0jlMMO8RXVKxgHgJRVaFz
-il+F1G4jNaFEzwAgnVPAs0JzpnLy4lAfAW+PhfqoxJOEgbnLrvsZUVQlnqnynbLj
-u6KQhN4JHi2evVQGIOUs/cjRTmCA39713NuhxKBYnvPSOlfse3smWmIpoK/mfNOb
-UZjQ5Z4kLyBFyGkSVWhRKdWhYn+an5v7NyzFSD4d0d6YP4OwpXDwIWjQVX2pRUaH
-FGMyvvEd0OUH+8A+WzbgT8LOGSkmgD0mIBtcRYpn/70sjIsh3RcrEe7zOhX8jTvv
-H7ubYXqUDugHIFgGa0pVUpTFdcnhQ6806vY+HL7VyUYaFhyFZr0=
-=B1lr
+iQIcBAEBAgAGBQJYicyiAAoJEBQN5MwUoCm2ZqYP/AlhSXe8Na8LZ6/H54DyDAws
+/iQjiCD85M0BEZ7BC+fdPKN9N/VYI3eQt9RkdVNvfYSMRuPIPzMKkFCws1SrqQCV
+TlSlsZtlz32zzeCW4PDSdbDv2Bvz8tXoD5O2a55UHHDBWi7AXp7QB6EMF7XwEAtk
+hMdTh34E+8l26m4eJUTBGCbYRIQaIHDxG5Ib8yYlDnzQe8PLCRdi1NjtMzmD3Yad
+CbBMKQeVqUmEOK2V8GwxZb8+lL4uX1KwrMX9Akbvih0P1RJXDAwsL6NyNZhs3dIk
+j7gsGVLWhdQ8Db4q+0SpjBwYXySzPFFuZDedkv0pN8qf6SUXrbOgnp7rcwP4pW3g
+jSCYdzkH1pJ3zgPlKpE45xbgKgAGiihwW2gJdw/BkeByXqmRYb7Mam6Wo/sogMw5
+uoKzyIzrccQJB0g8wyCOypbXaV54ZwH9pGuCnSGC0z2e/IHZ2aiOa+qm5/zz1SjF
++vlvx8WFHYcV8waWxL/vNaHa42C77n+qb/J2HIhvmrf/tvxQSX1QyGRdaeWtO7V+
+JGl7C5xsCspLpNGuCuImblrVAo6EhmCVIHwg3ybmo57MWrpD/jatiWTfUE8QdR86
+R1dvx6eRM26KwhgkumFe1spMuF0Ylee26whYZeLVnfHol6TPCUNqt+3xryOT+pJB
+R94F4epNET68gz6mVJSV
+=Fbuj
 -----END PGP SIGNATURE-----
 
---3g2zjtxmzjpehypd--
+--LTeJQqWS0MN7I/qa--
