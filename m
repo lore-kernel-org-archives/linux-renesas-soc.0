@@ -1,64 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:42170 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750870AbdAQNhA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753076AbdAZKLX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 08:37:00 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3v2qd62WZnzMqmXT
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2017 13:47:38 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] clk: renesas: Use CLK_IS_CRITICAL to handle critical clocks
-Date: Tue, 17 Jan 2017 13:46:28 +0100
-Message-Id: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+        Thu, 26 Jan 2017 05:11:23 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/7] ARM: dts: r7s72100: add ostm to device tree
+Date: Thu, 26 Jan 2017 11:11:07 +0100
+Message-Id: <69b5c6dceaa138859f03ca20e3adca7ddec6bae7.1485425227.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
+References: <cover.1485425227.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+From: Chris Brandt <chris.brandt@renesas.com>
 
-This patch series adds support for the CLK_IS_CRITICAL flag to drivers
-for module clocks on Renesas ARM SoCs.  For now, this is used to prevent
-disabling of the ARM GIC module clock, which would lead to a system
-lock-up when accessing the GIC's registers.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-  1. The first patch migrates the Renesas CPG/MSSR driver from the
-     never merged CLK_ENABLE_HAND_OFF flag to the CLK_IS_CRITICAL flag.
-     Note that as the driver already handled critical clocks (i.e. it
-     ignored them :-), this is not a prerequisite for linking the GIC to
-     its module clock in DT.
-
-  2. The second patch makes sure the CLK_IS_CRITICAL flag is set for the
-     INTC-SYS clock on SoCs not (yet) using the Renesas CPG/MSSR driver.
-     Note that this is a hard dependency for describing the INTC-SYS
-     clock in DT on R-Mobile APE6 and R-Car Gen2.
-
-I plan to queue these patches in my clk-renesas-for-v4.11 branch, if
-you agree.
-
-Thanks!
-        
-Geert Uytterhoeven (2):
-  clk: renesas: cpg-mssr: Migrate to CLK_IS_CRITICAL
-  clk: renesas: mstp: Make INTC-SYS a critical clock
-
- drivers/clk/renesas/clk-mstp.c         |  5 +++++
- drivers/clk/renesas/renesas-cpg-mssr.c | 11 ++---------
- 2 files changed, 7 insertions(+), 9 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index d5946df29222..74e684f3c1c7 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -505,4 +505,22 @@
+ 		cap-sdio-irq;
+ 		status = "disabled";
+ 	};
++
++	ostm0: timer@fcfec000 {
++		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
++		reg = <0xfcfec000 0x30>;
++		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
++		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	ostm1: timer@fcfec400 {
++		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
++		reg = <0xfcfec400 0x30>;
++		interrupts = <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
++		clocks = <&mstp5_clks R7S72100_CLK_OSTM1>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
+ };
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.7.0.rc3.207.g0ac5344
