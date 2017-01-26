@@ -1,69 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:24581 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750991AbdAQUAQ (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:53767 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753270AbdAZPZx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 15:00:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Date: Tue, 17 Jan 2017 14:59:39 -0500
-Message-Id: <20170117195940.25092-3-chris.brandt@renesas.com>
-In-Reply-To: <20170117195940.25092-1-chris.brandt@renesas.com>
-References: <20170117195940.25092-1-chris.brandt@renesas.com>
+        Thu, 26 Jan 2017 10:25:53 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv5 0/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 support
+Date: Thu, 26 Jan 2017 16:25:31 +0100
+Message-Id: <20170126152533.28434-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of a single clock source, you don't need names. However,
-if the controller has 2 clock sources, you need to name them correctly
-so the driver can find the 2nd one.
+Hi,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+This is the latest incarnation of R-Car MIPI CSI-2 receiver driver. It's 
+based on top of v4.10-rc1 and are tested on Renesas Salvator-X together 
+with the out of tree patches for rcar-vin to add support for Gen3 VIN 
+and a prototype driver for ADV7482. If anyone is interested to test 
+video grabbing using these out of tree patches please see [1].
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index a1650ed..258b98c 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -25,8 +25,29 @@ Required properties:
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
- 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
- 
-+- clocks: Most controllers only have 1 clock source per cahnnel. However, some
-+	  have 2. If 2 clocks are specified, you must name them as "core" and
-+	  "carddetect". If the controller only has 1 clock, naming is not
-+	  required.
-+
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
- - pinctrl-names: should be "default", "state_uhs"
- - pinctrl-0: should contain default/high speed pin ctrl
- - pinctrl-1: should contain uhs mode pin ctrl
-+
-+Example showing 2 clocks:
-+	sdhi0: sd@e804e000 {
-+		compatible = "renesas,sdhi-r7s72100";
-+		reg = <0xe804e000 0x100>;
-+		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
-+			 <&mstp12_clks R7S72100_CLK_SDHI01>;
-+		clock-names = "core", "carddetect";
-+		cap-sd-highspeed;
-+		cap-sdio-irq;
-+		status = "disabled";
-+	};
+Changes since v4:
+- Match SoC part numbers and drop trailing space in documentation, 
+  thanks Geert for pointing this out.
+- Clarify that the driver is a CSI-2 receiver by supervised 
+  s/interface/receiver/, thanks Laurent.
+- Add entries in Kconfig and Makefile alphabetically instead of append.
+- Rename struct rcar_csi2 member swap to lane_swap.
+- Remove macros to wrap calls to dev_{dbg,info,warn,err}.
+- Add wrappers for ioread32 and iowrite32.
+- Remove unused interrupt handler, but keep checking in probe that there 
+  are a interrupt define in DT.
+- Rework how to wait for LP-11 state, thanks Laurent for the great idea!
+- Remove unneeded delay in rcar_csi2_reset()
+- Remove check for duplicated lane id:s from DT parsing. Broken out to a 
+  separate patch adding this check directly to v4l2_of_parse_endpoint().
+- Fixed rcar_csi2_start() to ask it's source subdevice for information 
+  about pixel rate and frame format. With this change having 
+  {set,get}_fmt operations became redundant, it was only used for 
+  figuring out this out so dropped them.
+- Tabulated frequency settings map.
+- Dropped V4L2_SUBDEV_FL_HAS_DEVNODE it should never have been set.
+- Switched from MEDIA_ENT_F_ATV_DECODER to 
+  MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER as entity function. I can't 
+  find a more suitable function, and what the hardware do is to fetch 
+  video from an external chip and passes it on to a another SoC internal 
+  IP it's sort of a formatter.
+- Break out DT documentation and code in two patches.
+
+Changes since v3:
+- Update DT binding documentation with input from Geert Uytterhoeven,
+  thanks!
+
+Changes since v2:
+- Added media control pads as this is needed by the new rcar-vin driver.
+- Update DT bindings after review comments and to add r8a7796 support.
+- Add get_fmt handler.
+- Fix media bus format error s/YUYV8/UYVY8/
+
+Changes since v1:
+- Drop dependency on a pad aware s_stream operation.
+- Use the DT bindings format "renesas,<soctype>-<device>", thanks Geert
+  for pointing this out.
+
+1. http://elinux.org/R-Car/Tests:rcar-vin
+
+Niklas Söderlund (2):
+  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
+  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
+
+ .../devicetree/bindings/media/rcar-csi2.txt        | 116 ++++
+ drivers/media/platform/rcar-vin/Kconfig            |  11 +
+ drivers/media/platform/rcar-vin/Makefile           |   1 +
+ drivers/media/platform/rcar-vin/rcar-csi2.c        | 616 +++++++++++++++++++++
+ 4 files changed, 744 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+ create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
+
 -- 
-2.10.1
+2.11.0
