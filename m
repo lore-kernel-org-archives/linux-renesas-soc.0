@@ -1,87 +1,84 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Fri, 27 Jan 2017 11:31:09 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35218 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752049AbdAZNbI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 08:31:08 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170126131259.5621-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170126131259.5621-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jan 2017 14:31:06 +0100
+Message-ID: <CAMuHMdVQQaWd3QWccrun=MpG671FviiOEjxqnrgmyhsHa0PNFQ@mail.gmail.com>
+Subject: Re: [PATCH] v4l: of: check for unique lanes in data-lanes and clock-lanes
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] v4l: of: check for unique lanes in data-lanes and
- clock-lanes
-Message-ID: <20170127093108.GI7139@valkosipuli.retiisi.org.uk>
-References: <20170126131259.5621-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170126131259.5621-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Niklas,
 
-On Thu, Jan 26, 2017 at 02:12:59PM +0100, Niklas S�derlund wrote:
-> All lines in data-lanes and clock-lanes properties must be unique.
-> Instead of drivers checking for this add it to the generic parser.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/v4l2-core/v4l2-of.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
+On Thu, Jan 26, 2017 at 2:12 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/=
+v4l2-of.c
 > index 93b33681776c..1042db6bb996 100644
 > --- a/drivers/media/v4l2-core/v4l2-of.c
 > +++ b/drivers/media/v4l2-core/v4l2-of.c
-> @@ -32,12 +32,19 @@ static int v4l2_of_parse_csi_bus(const struct device_node *node,
->  	prop = of_find_property(node, "data-lanes", NULL);
->  	if (prop) {
->  		const __be32 *lane = NULL;
-> -		unsigned int i;
-> +		unsigned int i, n;
->  
->  		for (i = 0; i < ARRAY_SIZE(bus->data_lanes); i++) {
->  			lane = of_prop_next_u32(prop, lane, &v);
->  			if (!lane)
->  				break;
-> +			for (n = 0; n < i; n++) {
-> +				if (bus->data_lanes[n] == v) {
-> +					pr_warn("%s: duplicated lane %u in data-lanes\n",
-> +						node->full_name, v);
-> +					return -EINVAL;
-> +				}
-> +			}
+> @@ -32,12 +32,19 @@ static int v4l2_of_parse_csi_bus(const struct device_=
+node *node,
+>         prop =3D of_find_property(node, "data-lanes", NULL);
+>         if (prop) {
+>                 const __be32 *lane =3D NULL;
+> -               unsigned int i;
+> +               unsigned int i, n;
 
-In some cases it's just the number of lanes that matter, not their order, as
-the hardware cannot reorder them. I might still just print a warning but not
-return an error. Same below.
+Not "j"?
 
-Although then hardware that actually can reorder the lanes might have issues
-if such a bug exists in DTB. Presumably the DTB would have been tested at
-some point though.
+>                 for (i =3D 0; i < ARRAY_SIZE(bus->data_lanes); i++) {
+>                         lane =3D of_prop_next_u32(prop, lane, &v);
+>                         if (!lane)
+>                                 break;
+> +                       for (n =3D 0; n < i; n++) {
 
->  			bus->data_lanes[i] = v;
->  		}
->  		bus->num_data_lanes = i;
-> @@ -63,6 +70,15 @@ static int v4l2_of_parse_csi_bus(const struct device_node *node,
->  	}
->  
->  	if (!of_property_read_u32(node, "clock-lanes", &v)) {
-> +		unsigned int n;
-> +
-> +		for (n = 0; n < bus->num_data_lanes; n++) {
-> +			if (bus->data_lanes[n] == v) {
-> +				pr_warn("%s: duplicated lane %u in clock-lanes\n",
-> +					node->full_name, v);
-> +				return -EINVAL;
-> +			}
-> +		}
->  		bus->clock_lane = v;
->  		have_clk_lane = true;
->  	}
+I'm not used seeing for loops with an index named "n", and limit named "i" =
+;-)
 
--- 
-Kind regards,
+> +                               if (bus->data_lanes[n] =3D=3D v) {
+> +                                       pr_warn("%s: duplicated lane %u i=
+n data-lanes\n",
+> +                                               node->full_name, v);
+> +                                       return -EINVAL;
+> +                               }
+> +                       }
+>                         bus->data_lanes[i] =3D v;
+>                 }
+>                 bus->num_data_lanes =3D i;
+> @@ -63,6 +70,15 @@ static int v4l2_of_parse_csi_bus(const struct device_n=
+ode *node,
+>         }
+>
+>         if (!of_property_read_u32(node, "clock-lanes", &v)) {
+> +               unsigned int n;
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Likewise.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
