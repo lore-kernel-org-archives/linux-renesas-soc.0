@@ -1,70 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:33908 "EHLO
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:34660 "EHLO
         mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751041AbdA2MIN (ORCPT
+        with ESMTP id S1753053AbdAZOx5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 29 Jan 2017 07:08:13 -0500
-Received: by mail-lf0-f54.google.com with SMTP id v186so182279098lfa.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 29 Jan 2017 04:08:12 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/3] sh_eth: add missing EESIPR bits
-Date: Sun, 29 Jan 2017 15:08:09 +0300
-Message-ID: <4195481.pfyme3sVPu@wasted.cogentembedded.com>
-In-Reply-To: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
-References: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 26 Jan 2017 09:53:57 -0500
+Received: by mail-lf0-f54.google.com with SMTP id v186so146779575lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 06:53:56 -0800 (PST)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 1/4] arm64: dts: m3ulcb: enable I2C
+Date: Thu, 26 Jan 2017 17:54:09 +0300
+Message-Id: <1485442449-18300-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas SH77{34|63} manuals  describe more EESIPR bits than the current
-driver. Declare the new bits with the end goal of using the bit names
-instead of the bare numbers  for  the 'sh_eth_cpu_data::eesipr_value'
-initializers...
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This supports I2C2 bus on M3ULCB board
 
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 ---
-Changes in version 2:
-- added Geert's tag.
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
- drivers/net/ethernet/renesas/sh_eth.h |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -269,13 +269,17 @@ enum EESR_BIT {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index a9c296b..f35e96c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -120,6 +120,11 @@
+ 		function = "scif_clk";
+ 	};
  
- /* EESIPR */
- enum EESIPR_BIT {
--	EESIPR_TWBIP	= 0x40000000,
-+	EESIPR_TWB1IP	= 0x80000000,
-+	EESIPR_TWBIP	= 0x40000000,	/* same as TWB0IP */
-+	EESIPR_TC1IP	= 0x20000000,
-+	EESIPR_TUCIP	= 0x10000000,
-+	EESIPR_ROCIP	= 0x08000000,
- 	EESIPR_TABTIP	= 0x04000000,
- 	EESIPR_RABTIP	= 0x02000000,
- 	EESIPR_RFCOFIP	= 0x01000000,
- 	EESIPR_ADEIP	= 0x00800000,
- 	EESIPR_ECIIP	= 0x00400000,
--	EESIPR_FTCIP	= 0x00200000,
-+	EESIPR_FTCIP	= 0x00200000,	/* same as TC0IP */
- 	EESIPR_TDEIP	= 0x00100000,
- 	EESIPR_TFUFIP	= 0x00080000,
- 	EESIPR_FRIP	= 0x00040000,
-@@ -286,6 +290,8 @@ enum EESIPR_BIT {
- 	EESIPR_CDIP	= 0x00000200,
- 	EESIPR_TROIP	= 0x00000100,
- 	EESIPR_RMAFIP	= 0x00000080,
-+	EESIPR_CEEFIP	= 0x00000040,
-+	EESIPR_CELFIP	= 0x00000020,
- 	EESIPR_RRFIP	= 0x00000010,
- 	EESIPR_RTLFIP	= 0x00000008,
- 	EESIPR_RTSFIP	= 0x00000004,
++	i2c2_pins: i2c2 {
++		groups = "i2c2_a";
++		function = "i2c2";
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -183,6 +198,13 @@
+ 	status = "okay";
+ };
+ 
++&i2c2 {
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &wdt0 {
+ 	timeout-sec = <60>;
+ 	status = "okay";
+-- 
+1.9.1
