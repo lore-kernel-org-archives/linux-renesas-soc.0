@@ -1,190 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:35524 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbdAMLID (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34324 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752958AbdAZKNr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 06:08:03 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] iommu/dma: Add support for DMA_ATTR_FORCE_CONTIGUOUS
-Date: Fri, 13 Jan 2017 12:07:54 +0100
-Message-Id: <1484305674-15018-1-git-send-email-geert+renesas@glider.be>
+        Thu, 26 Jan 2017 05:13:47 -0500
+Received: by mail-it0-f65.google.com with SMTP id o185so4738443itb.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 02:13:46 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1485420750-12701-5-git-send-email-horms+renesas@verge.net.au>
+References: <1485420750-12701-1-git-send-email-horms+renesas@verge.net.au> <1485420750-12701-5-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jan 2017 11:13:45 +0100
+Message-ID: <CAMuHMdW1Okdf-D1yUCehQ9WFqCXO_t4y-Yk0sodhFL1E2FLG8g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: r8a7795: Add I2C for DVFS core to dtsi
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for DMA_ATTR_FORCE_CONTIGUOUS to the generic IOMMU DMA code.
-This allows to allocate physically contiguous DMA buffers on arm64
-systems with an IOMMU.
+On Thu, Jan 26, 2017 at 9:52 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+>
+> This patch adds I2C for DVFS device support for R8A7795 SoC.
+>
+> Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Note that as this uses the CMA allocator, setting this attribute has a
-runtime-dependency on CONFIG_DMA_CMA, just like on arm32.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-For arm64 systems using swiotlb, no changes are needed to support the
-allocation of physically contiguous DMA buffers:
-  - swiotlb always uses physically contiguous buffers (up to
-    IO_TLB_SEGSIZE = 128 pages),
-  - arm64's __dma_alloc_coherent() already calls
-    dma_alloc_from_contiguous() when CMA is available.
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/mm/dma-mapping.c |  4 ++--
- drivers/iommu/dma-iommu.c   | 44 ++++++++++++++++++++++++++++++++++----------
- include/linux/dma-iommu.h   |  2 +-
- 3 files changed, 37 insertions(+), 13 deletions(-)
+> @@ -793,6 +794,19 @@
+>                         status = "disabled";
+>                 };
+>
+> +               i2c_dvfs: i2c@e60b0000 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       compatible = "renesas,iic-r8a7795",
+> +                                    "renesas,rcar-gen3-iic",
+> +                                    "renesas,rmobile-iic";
+> +                       reg = <0 0xe60b0000 0 0x425>;
+> +                       interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&cpg CPG_MOD 926>;
 
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 1d7d5d2881db7c19..5fba14a21163e41f 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -589,7 +589,7 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
- 		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
- 					      __builtin_return_address(0));
- 		if (!addr)
--			iommu_dma_free(dev, pages, iosize, handle);
-+			iommu_dma_free(dev, pages, iosize, handle, attrs);
- 	} else {
- 		struct page *page;
- 		/*
-@@ -642,7 +642,7 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
- 
- 		if (WARN_ON(!area || !area->pages))
- 			return;
--		iommu_dma_free(dev, area->pages, iosize, &handle);
-+		iommu_dma_free(dev, area->pages, iosize, &handle, attrs);
- 		dma_common_free_remap(cpu_addr, size, VM_USERMAP);
- 	} else {
- 		iommu_dma_unmap_page(dev, handle, iosize, 0, 0);
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 2db0d641cf4505b5..b991e8dcbbbb35c5 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -30,6 +30,7 @@
- #include <linux/pci.h>
- #include <linux/scatterlist.h>
- #include <linux/vmalloc.h>
-+#include <linux/dma-contiguous.h>
- 
- struct iommu_dma_msi_page {
- 	struct list_head	list;
-@@ -238,15 +239,21 @@ static void __iommu_dma_unmap(struct iommu_domain *domain, dma_addr_t dma_addr)
- 	__free_iova(iovad, iova);
- }
- 
--static void __iommu_dma_free_pages(struct page **pages, int count)
-+static void __iommu_dma_free_pages(struct device *dev, struct page **pages,
-+				   int count, unsigned long attrs)
- {
--	while (count--)
--		__free_page(pages[count]);
-+	if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-+		dma_release_from_contiguous(dev, pages[0], count);
-+	} else {
-+		while (count--)
-+			__free_page(pages[count]);
-+	}
- 	kvfree(pages);
- }
- 
--static struct page **__iommu_dma_alloc_pages(unsigned int count,
--		unsigned long order_mask, gfp_t gfp)
-+static struct page **__iommu_dma_alloc_pages(struct device *dev,
-+		unsigned int count, unsigned long order_mask, gfp_t gfp,
-+		unsigned long attrs)
- {
- 	struct page **pages;
- 	unsigned int i = 0, array_size = count * sizeof(*pages);
-@@ -265,6 +272,20 @@ static struct page **__iommu_dma_alloc_pages(unsigned int count,
- 	/* IOMMU can map any pages, so himem can also be used here */
- 	gfp |= __GFP_NOWARN | __GFP_HIGHMEM;
- 
-+	if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-+		int order = get_order(count << PAGE_SHIFT);
-+		struct page *page;
-+
-+		page = dma_alloc_from_contiguous(dev, count, order);
-+		if (!page)
-+			return NULL;
-+
-+		while (count--)
-+			pages[i++] = page++;
-+
-+		return pages;
-+	}
-+
- 	while (count) {
- 		struct page *page = NULL;
- 		unsigned int order_size;
-@@ -294,7 +315,7 @@ static struct page **__iommu_dma_alloc_pages(unsigned int count,
- 			__free_pages(page, order);
- 		}
- 		if (!page) {
--			__iommu_dma_free_pages(pages, i);
-+			__iommu_dma_free_pages(dev, pages, i, attrs);
- 			return NULL;
- 		}
- 		count -= order_size;
-@@ -310,15 +331,17 @@ static struct page **__iommu_dma_alloc_pages(unsigned int count,
-  * @pages: Array of buffer pages as returned by iommu_dma_alloc()
-  * @size: Size of buffer in bytes
-  * @handle: DMA address of buffer
-+ * @attrs: DMA attributes used for allocation of this buffer
-  *
-  * Frees both the pages associated with the buffer, and the array
-  * describing them
-  */
- void iommu_dma_free(struct device *dev, struct page **pages, size_t size,
--		dma_addr_t *handle)
-+		dma_addr_t *handle, unsigned long attrs)
- {
- 	__iommu_dma_unmap(iommu_get_domain_for_dev(dev), *handle);
--	__iommu_dma_free_pages(pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
-+	__iommu_dma_free_pages(dev, pages, PAGE_ALIGN(size) >> PAGE_SHIFT,
-+			       attrs);
- 	*handle = DMA_ERROR_CODE;
- }
- 
-@@ -365,7 +388,8 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
- 		alloc_sizes = min_size;
- 
- 	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	pages = __iommu_dma_alloc_pages(count, alloc_sizes >> PAGE_SHIFT, gfp);
-+	pages = __iommu_dma_alloc_pages(dev, count, alloc_sizes >> PAGE_SHIFT,
-+					gfp, attrs);
- 	if (!pages)
- 		return NULL;
- 
-@@ -403,7 +427,7 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
- out_free_iova:
- 	__free_iova(iovad, iova);
- out_free_pages:
--	__iommu_dma_free_pages(pages, count);
-+	__iommu_dma_free_pages(dev, pages, count, attrs);
- 	return NULL;
- }
- 
-diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
-index 7f7e9a7e3839966c..35fa6b7f9bac9b35 100644
---- a/include/linux/dma-iommu.h
-+++ b/include/linux/dma-iommu.h
-@@ -44,7 +44,7 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
- 		unsigned long attrs, int prot, dma_addr_t *handle,
- 		void (*flush_page)(struct device *, const void *, phys_addr_t));
- void iommu_dma_free(struct device *dev, struct page **pages, size_t size,
--		dma_addr_t *handle);
-+		dma_addr_t *handle, unsigned long attrs);
- 
- int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma);
- 
--- 
-1.9.1
+Same comment about dmas/dma-names.
+
+> +                       power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> +                       status = "disabled";
+> +               };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
