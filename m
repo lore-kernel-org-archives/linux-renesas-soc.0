@@ -1,111 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34878 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754242AbdA0JCL (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:35915 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752757AbdAZOy1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:02:11 -0500
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVZOOLGziGm4YdHn_bRB_JOzWEeQ=Ogr8TiB47KTza7OA@mail.gmail.com>
-References: <74ea1835-3ce3-612c-ece5-52c8dba0ca87@jinso.co.jp> <CAMuHMdVZOOLGziGm4YdHn_bRB_JOzWEeQ=Ogr8TiB47KTza7OA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Jan 2017 10:02:08 +0100
-Message-ID: <CAMuHMdWwHeVmgWc27z7L7cSE+CfPTzXPaKQDEzeJ=XGg+jPmkA@mail.gmail.com>
-Subject: Re: [PATCH] spi: rspi: fix the bug related to mount/remount jffs2
-To: DongCV <cv-dong@jinso.co.jp>
-Cc: Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
-        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        Cao Minh Hiep <cm-hiep@jinso.co.jp>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Thu, 26 Jan 2017 09:54:27 -0500
+Received: by mail-lf0-f41.google.com with SMTP id z134so146714906lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 06:54:21 -0800 (PST)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 3/4] arm64: dts: m3ulcb: enable EthernetAVB
+Date: Thu, 26 Jan 2017 17:54:29 +0300
+Message-Id: <1485442469-18378-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CC correct linux-renesas-soc
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-On Fri, Jan 27, 2017 at 10:00 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Dong,
->
-> On Fri, Jan 27, 2017 at 9:12 AM, DongCV <cv-dong@jinso.co.jp> wrote:
->> This patch fixes the output warning logs and data loss when performing
->> mount/umount then remount the device with jffs2 format.
->> This patch is tested on Lager board at Linux uptream v4.10-rc5.
->> Please consider the patch for Renesas-soc Gen2
->
-> Please send patches inline.
->
->> From 5513c6a02c911fcf9f99d5188fa46256aa1e41b4 Mon Sep 17 00:00:00 2001
->> From: Dong <cv-dong@jinso.co.jp>
->> Date: Fri, 27 Jan 2017 16:29:18 +0900
->> Subject: [PATCH] spi: rspi: fix the bug related to mount/remount jffs2
->>
->> This patch fixes the output warning logs and data loss when
->> performing mount/umount then remount the device with jffs2 format.
->>
->> This is the warning logs when performing mount/umount then remount the device with jffs2 format:
->> "root@linaro-naro:~# mount -t jffs2 /dev/mtdblock2 /mnt/media
->> [ 3839.928013] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40000: 0x1900 instead
->> [ 3839.956515] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40004: 0x000c instead
->> [ 3839.985009] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40008: 0xb0b1 instead
->> [ 3840.013591] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b4000c: 0x1900 instead
->> [ 3840.042087] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40010: 0x0044 instead
->> [ 3840.070566] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40014: 0xfb1d instead
->> [ 3840.099159] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40018: 0x0002 instead
->> [ 3840.127604] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b4001c: 0x0001 instead
->> [ 3840.156043] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40020: 0x81a4 instead
->> [ 3840.184472] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b4002c: 0x6529 instead
->> [ 3840.212900] jffs2: Further such events for this erase block will not be printed
->> [ 3840.322915] jffs2: notice: (2008) read_dnode: node CRC failed on dnode at 0x3b40080: read 0xc40b5dfc, calculated 0x264be003
->> root@linaro-naro[ 3840.356857] jffs2: warning: (2008) jffs2_do_read_inode_internal: no data nodes found for ino #2
->> :~# [ 3840.386659] jffs2: Returned error for crccheck of ino #2. Expect badness...
->>
->> Signed-off-by: Dong <cv-dong@jinso.co.jp>
->> ---
->>  drivers/spi/spi-rspi.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
->> index 9daf500..2ee1301 100644
->> --- a/drivers/spi/spi-rspi.c
->> +++ b/drivers/spi/spi-rspi.c
->> @@ -848,7 +848,6 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
->>                       ret = rspi_pio_transfer(rspi, NULL, rx, n);
->>                       if (ret < 0)
->>                               return ret;
->> -                     *rx++ = ret;
->
-> Storing the success code (0) in the receive buffer is indeed wrong.
->
-> However, there are other bugs in that code:
->
-> rspi_pio_transfer(rspi, NULL, rx, n) transfers n bytes instead of len,
-> while n is decreased by len (which is <= n).
-> Furthermore rx is not incremented.
-> Hence if len < n, n will still be non-zero, and a new iteration of the
-> loop will be started, trying to receive more data, and overwriting the
-> just filled buffer.
->
-> The same bug is present in qspi_transfer_out().
->
->>               }
->>               n -= len;
->>       }
->> --
->> 1.9.1
+This supports Ethernet AVB on M3ULCB board
 
-Gr{oetje,eeting}s,
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 32 ++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index 38bde9d..c7f40f8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -20,6 +20,7 @@
+ 
+ 	aliases {
+ 		serial0 = &scif2;
++		ethernet0 = &avb;
+ 	};
+ 
+ 	chosen {
+@@ -115,6 +116,11 @@
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+ 
++	avb_pins: avb {
++		groups = "avb_mdc";
++		function = "avb";
++	};
++
+ 	scif2_pins: scif2 {
+ 		groups = "scif2_data_a";
+ 		function = "scif2";
+@@ -155,6 +161,32 @@
+ 	};
+ };
+ 
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <900>;
++		rxdv-skew-ps = <0>;
++		rxd0-skew-ps = <0>;
++		rxd1-skew-ps = <0>;
++		rxd2-skew-ps = <0>;
++		rxd3-skew-ps = <0>;
++		txc-skew-ps = <900>;
++		txen-skew-ps = <0>;
++		txd0-skew-ps = <0>;
++		txd1-skew-ps = <0>;
++		txd2-skew-ps = <0>;
++		txd3-skew-ps = <0>;
++		reg = <0>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-1 = <&sdhi0_pins_uhs>;
+-- 
+1.9.1
