@@ -1,60 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43188 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45210 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbdALMuK (ORCPT
+        with ESMTP id S1753106AbdAZIwl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jan 2017 07:50:10 -0500
-Date: Thu, 12 Jan 2017 13:21:06 +0100
+        Thu, 26 Jan 2017 03:52:41 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net] ravb: Remove Rx overflow log messages
-Message-ID: <20170112122106.GA32727@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 0/5] arm64: dts: r8a779[56]: salvator-x: Add I2C for DVFS device support
+Date: Thu, 26 Jan 2017 09:52:25 +0100
+Message-Id: <1485420750-12701-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Hi,
 
-Remove Rx overflow log messages as in an environment where logging results
-in network traffic logging may cause further overflows.
+this series enables I2C for DVFS  on the salvator-x board for the
+r8a7795 and r8a7796 SoCs.
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[simon: reworked changelog]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
----
-Changes since RFC:
-* Added Ack from Sergei
----
- drivers/net/ethernet/renesas/ravb_main.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Base:
+* This series is based on renesas-next-20170126-v4.10-rc2
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 92d7692c840d..5e5ad978eab9 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -926,14 +926,10 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- 	/* Receive error message handling */
- 	priv->rx_over_errors =  priv->stats[RAVB_BE].rx_over_errors;
- 	priv->rx_over_errors += priv->stats[RAVB_NC].rx_over_errors;
--	if (priv->rx_over_errors != ndev->stats.rx_over_errors) {
-+	if (priv->rx_over_errors != ndev->stats.rx_over_errors)
- 		ndev->stats.rx_over_errors = priv->rx_over_errors;
--		netif_err(priv, rx_err, ndev, "Receive Descriptor Empty\n");
--	}
--	if (priv->rx_fifo_errors != ndev->stats.rx_fifo_errors) {
-+	if (priv->rx_fifo_errors != ndev->stats.rx_fifo_errors)
- 		ndev->stats.rx_fifo_errors = priv->rx_fifo_errors;
--		netif_err(priv, rx_err, ndev, "Receive FIFO Overflow\n");
--	}
- out:
- 	return budget - quota;
- }
+Dependencies:
+* This series has a run-time dependency on
+  "[PATCH 0/2] clk: renesas: r8a7795/r8a7796: Add IIC-DVFS clock"
+* This series has a check patch dependency on
+  "[PATCH i2c/for-next] i2c: sh_mobile: document support for r8a7796 (R-Car M3-W)"
+* This series should be safe to apply independently of the above dependencies
+
+
+Dien Pham (2):
+  arm64: dts: r8a7796: Add I2C for DVFS device node
+  arm64: dts: r8a7796: salvator-x: Add I2C for DVFS device support
+
+Keita Kobayashi (2):
+  arm64: dts: r8a7795: Add I2C for DVFS core to dtsi
+  arm64: dts: r8a7795-salvator-x: Enable I2C for DVFS device
+
+Simon Horman (1):
+  arm64: defconfig: Enable SH Mobile I2C controller
+
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  4 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 14 ++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  4 ++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 14 ++++++++++++++
+ arch/arm64/configs/defconfig                       |  1 +
+ 5 files changed, 37 insertions(+)
+
 -- 
 2.7.0.rc3.207.g0ac5344
