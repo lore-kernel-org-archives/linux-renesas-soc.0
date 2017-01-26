@@ -1,163 +1,50 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 16/20] drm: bridge: dw-hdmi: Detect PHY type at runtime
-Date: Tue, 17 Jan 2017 10:29:06 +0200
-Message-Id: <20170117082910.27023-17-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752968AbdAZKLV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 05:11:21 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/7] ARM: dts: r8a7745: Link ARM GIC to clock and clock domain
+Date: Thu, 26 Jan 2017 11:11:05 +0100
+Message-Id: <db017f399639f68827edc954205803272ef20b24.1485425227.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
+References: <cover.1485425227.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Detect the PHY type and use it to handle the PHY type-specific SVSRET
-signal.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Link the ARM GIC to the INTC-SYS module clock, and add it to the SYSC
+"always-on" PM Domain, so it can be power managed using that clock.
+
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 68 ++++++++++++++++++++++++++++++++++++++--
- include/drm/bridge/dw_hdmi.h     | 10 ++++++
- 2 files changed, 75 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index f4faa14213e5..ef4f2f96ed2c 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -113,6 +113,12 @@ struct dw_hdmi_i2c {
- 	bool			is_regaddr;
- };
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 2f60c3cb9117..a81dcc82e2ea 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -60,6 +60,9 @@
+ 			      <0 0xf1006000 0 0x2000>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
+ 						 IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
+ 		};
  
-+struct dw_hdmi_phy_data {
-+	enum dw_hdmi_phy_type type;
-+	const char *name;
-+	bool has_svsret;
-+};
-+
- struct dw_hdmi {
- 	struct drm_connector connector;
- 	struct drm_bridge bridge;
-@@ -134,7 +140,9 @@ struct dw_hdmi {
- 	u8 edid[HDMI_EDID_LEN];
- 	bool cable_plugin;
- 
-+	const struct dw_hdmi_phy_data *phy;
- 	bool phy_enabled;
-+
- 	struct drm_display_mode previous_mode;
- 
- 	struct i2c_adapter *ddc;
-@@ -1015,7 +1023,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
- 	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
- 	dw_hdmi_phy_gen2_pddq(hdmi, 0);
- 
--	if (hdmi->dev_type == RK3288_HDMI)
-+	/* The DWC MHL and HDMI 2.0 PHYs need the SVSRET signal to be set. */
-+	if (hdmi->phy->has_svsret)
- 		dw_hdmi_phy_enable_svsret(hdmi, 1);
- 
- 	/*Wait for PHY PLL lock */
-@@ -1840,6 +1849,54 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static const struct dw_hdmi_phy_data dw_hdmi_phys[] = {
-+	{
-+		.type = DW_HDMI_PHY_DWC_HDMI_TX_PHY,
-+		.name = "DWC HDMI TX PHY",
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_MHL_PHY_HEAC,
-+		.name = "DWC MHL PHY + HEAC PHY",
-+		.has_svsret = true,
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_MHL_PHY,
-+		.name = "DWC MHL PHY",
-+		.has_svsret = true,
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY_HEAC,
-+		.name = "DWC HDMI 3D TX PHY + HEAC PHY",
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY,
-+		.name = "DWC HDMI 3D TX PHY",
-+	}, {
-+		.type = DW_HDMI_PHY_DWC_HDMI20_TX_PHY,
-+		.name = "DWC HDMI 2.0 TX PHY",
-+		.has_svsret = true,
-+	}
-+};
-+
-+static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
-+{
-+	unsigned int i;
-+	u8 phy_type;
-+
-+	phy_type = hdmi_readb(hdmi, HDMI_CONFIG2_ID);
-+
-+	for (i = 0; i < ARRAY_SIZE(dw_hdmi_phys); ++i) {
-+		if (dw_hdmi_phys[i].type == phy_type) {
-+			hdmi->phy = &dw_hdmi_phys[i];
-+			return 0;
-+		}
-+	}
-+
-+	if (phy_type == DW_HDMI_PHY_VENDOR_PHY)
-+		dev_err(hdmi->dev, "Unsupported vendor HDMI PHY\n");
-+	else
-+		dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n",
-+			phy_type);
-+
-+	return -ENODEV;
-+}
-+
- static struct dw_hdmi *
- __dw_hdmi_probe(struct platform_device *pdev,
- 		const struct dw_hdmi_plat_data *plat_data)
-@@ -1950,9 +2007,14 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 		goto err_iahb;
- 	}
- 
--	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP\n",
-+	ret = dw_hdmi_detect_phy(hdmi);
-+	if (ret < 0)
-+		goto err_iahb;
-+
-+	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
- 		 hdmi->version >> 12, hdmi->version & 0xfff,
--		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without");
-+		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without",
-+		 hdmi->phy->name);
- 
- 	initialize_hdmi_ih_mutes(hdmi);
- 
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 3bb22a849830..b080a171a23f 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -27,6 +27,16 @@ enum dw_hdmi_devtype {
- 	RK3288_HDMI,
- };
- 
-+enum dw_hdmi_phy_type {
-+	DW_HDMI_PHY_DWC_HDMI_TX_PHY = 0x00,
-+	DW_HDMI_PHY_DWC_MHL_PHY_HEAC = 0xb2,
-+	DW_HDMI_PHY_DWC_MHL_PHY = 0xc2,
-+	DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY_HEAC = 0xe2,
-+	DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY = 0xf2,
-+	DW_HDMI_PHY_DWC_HDMI20_TX_PHY = 0xf3,
-+	DW_HDMI_PHY_VENDOR_PHY = 0xfe,
-+};
-+
- struct dw_hdmi_mpll_config {
- 	unsigned long mpixelclock;
- 	struct {
+ 		irqc: interrupt-controller@e61c0000 {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
