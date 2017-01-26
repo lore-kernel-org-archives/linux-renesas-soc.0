@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:8191 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:31614 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753401AbdA0Ca6 (ORCPT
+        by vger.kernel.org with ESMTP id S1753586AbdAZQp2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 21:30:58 -0500
+        Thu, 26 Jan 2017 11:45:28 -0500
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -15,11 +15,11 @@ To: Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v6 1/2] dt-bindings: document renesas-ostm timer
-Date: Thu, 26 Jan 2017 21:23:31 -0500
-Message-Id: <20170127022332.15906-2-chris.brandt@renesas.com>
-In-Reply-To: <20170127022332.15906-1-chris.brandt@renesas.com>
-References: <20170127022332.15906-1-chris.brandt@renesas.com>
+Subject: [PATCH v5 1/2] dt-bindings: document renesas-ostm timer
+Date: Thu, 26 Jan 2017 11:44:30 -0500
+Message-Id: <20170126164431.11995-2-chris.brandt@renesas.com>
+In-Reply-To: <20170126164431.11995-1-chris.brandt@renesas.com>
+References: <20170126164431.11995-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
