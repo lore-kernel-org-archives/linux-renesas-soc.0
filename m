@@ -1,63 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48855 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752480AbdAZOGx (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36034 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751733AbdAZN67 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:06:53 -0500
-Date: Thu, 26 Jan 2017 15:06:43 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RESEND 0/2] arm64: gen3: enable eMMC HS200 in DT
-Message-ID: <20170126140643.GA11104@verge.net.au>
+        Thu, 26 Jan 2017 08:58:59 -0500
+Received: by mail-io0-f196.google.com with SMTP id q20so4964027ioi.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 05:58:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
- <20170126135453.GB2718@katana>
+In-Reply-To: <20170126100355.GA1435@katana>
+References: <20170104173954.3135-1-wsa+renesas@sang-engineering.com>
+ <20170112224353.GB1490@katana> <20170113083719.GE2269@verge.net.au>
+ <20170113083928.GD1446@katana> <20170126100116.GC21851@verge.net.au> <20170126100355.GA1435@katana>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jan 2017 14:58:58 +0100
+Message-ID: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
+Subject: Re: [PATCH RESEND 0/2] arm64: gen3: enable eMMC HS200 in DT
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 02:54:53PM +0100, Wolfram Sang wrote:
-> 
-> > > Do you already fetch from Ulf's kernel.org tree? He switched away from
-> > > the Linaro tree for MMC for a while. I only realized when he complained
-> 
-> "since a while" not "for a while", of course.
-> 
-> > Thanks, I had not realised that. I've pulled the kernel.org tree.
+Hi Wolfram,
 
-I have tested with "the new mmc/next" and things seem better.
-The problem does not appear to manifest in light testing.
+On Thu, Jan 26, 2017 at 11:03 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Thu, Jan 26, 2017 at 11:01:17AM +0100, Simon Horman wrote:
+>> On Fri, Jan 13, 2017 at 09:39:28AM +0100, Wolfram Sang wrote:
+>> > > Sorry for missing these.
+>> > > I have queued them up for v4.11.
+>> >
+>> > Thank you!
+>>
+>> On my r8a7796/salvator-x I see the following with this series applied:
+>>
+>> sh_mobile_sdhi ee140000.sd: timeout waiting for hardware interrupt (CMD13)
+>
+> Do you have the HS200 enablement patches in that branch? They are
+> currently in -next.
 
-> So, there is hope for the patches to be in v4.11? :)
+I saw the same thing with renesas-devel last week, only on M3-W.
+The same kernel on H3 didn't spew such messages.
+According to Shimoda-san, it was due to different eMMCs on H3 and M3-W.
 
-On Thu, Jan 26, 2017 at 02:58:58PM +0100, Geert Uytterhoeven wrote:
-> Hi Wolfram,
-> 
-> On Thu, Jan 26, 2017 at 11:03 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> > On Thu, Jan 26, 2017 at 11:01:17AM +0100, Simon Horman wrote:
-> >> On Fri, Jan 13, 2017 at 09:39:28AM +0100, Wolfram Sang wrote:
-> >> > > Sorry for missing these.
-> >> > > I have queued them up for v4.11.
-> >> >
-> >> > Thank you!
-> >>
-> >> On my r8a7796/salvator-x I see the following with this series applied:
-> >>
-> >> sh_mobile_sdhi ee140000.sd: timeout waiting for hardware interrupt (CMD13)
-> >
-> > Do you have the HS200 enablement patches in that branch? They are
-> > currently in -next.
-> 
-> I saw the same thing with renesas-devel last week, only on M3-W.
-> The same kernel on H3 didn't spew such messages.
-> According to Shimoda-san, it was due to different eMMCs on H3 and M3-W.
+Gr{oetje,eeting}s,
 
-Thanks, my interpretation of that is that the H3 patch of this series is fine.
+                        Geert
 
-I am still of a mind to drop the M3-W patch of this series because unless
-we can control the order that things are merged into Linus's tree
-there will be a temporary regression there. Moreover I'm not very excited
-about renesas-next having regressed.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
