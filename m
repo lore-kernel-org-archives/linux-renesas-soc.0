@@ -1,49 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:55226 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbdAXLnv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753073AbdAZKLW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 06:43:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laura Abbott <labbott@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
+        Thu, 26 Jan 2017 05:11:22 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: Use __pa_symbol for empty_zero_page
-Date: Tue, 24 Jan 2017 12:43:40 +0100
-Message-Id: <1485258220-21916-1-git-send-email-geert+renesas@glider.be>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/7] ARM: dts: r8a7743: Link ARM GIC to clock and clock domain
+Date: Thu, 26 Jan 2017 11:11:04 +0100
+Message-Id: <7add1da17ac8d5c4a2ecc967843ca5b55ce35fa6.1485425227.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
+References: <cover.1485425227.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If CONFIG_DEBUG_VIRTUAL=y and CONFIG_ARM64_SW_TTBR0_PAN=y:
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    virt_to_phys used for non-linear address: ffffff8008cc0000 (empty_zero_page+0x0/0x1000)
-    WARNING: CPU: 0 PID: 0 at arch/arm64/mm/physaddr.c:14 __virt_to_phys+0x28/0x60
-    ...
-    [<ffffff800809abb4>] __virt_to_phys+0x28/0x60
-    [<ffffff8008a02600>] setup_arch+0x46c/0x4d4
+Link the ARM GIC to the INTC-SYS module clock, and add it to the SYSC
+"always-on" PM Domain, so it can be power managed using that clock.
 
-Fixes: 2077be6783b5936c ("arm64: Use __pa_symbol for kernel symbols")
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/kernel/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index 669fc9ff728b227f..b5222094ab52db6f 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -298,7 +298,7 @@ void __init setup_arch(char **cmdline_p)
- 	 * faults in case uaccess_enable() is inadvertently called by the init
- 	 * thread.
- 	 */
--	init_task.thread_info.ttbr0 = virt_to_phys(empty_zero_page);
-+	init_task.thread_info.ttbr0 = __pa_symbol(empty_zero_page);
- #endif
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 0956125597fd..40d2cdede702 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -60,6 +60,9 @@
+ 			      <0 0xf1006000 0 0x2000>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
+ 						 IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+ 		};
  
- #ifdef CONFIG_VT
+ 		irqc: interrupt-controller@e61c0000 {
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
