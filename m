@@ -1,65 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63416 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754037AbdA3TTb (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35956 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753407AbdAZTzn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jan 2017 14:19:31 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: RE: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
-Date: Mon, 30 Jan 2017 19:19:15 +0000
-Message-ID: <SG2PR06MB11651AE84528322CB29B33FF8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 26 Jan 2017 14:55:43 -0500
 MIME-Version: 1.0
+In-Reply-To: <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jan 2017 20:43:06 +0100
+Message-ID: <CAMuHMdUmOAW5kPacMskVT_7R+T4qMmbPiaZV2z51sn1EELG4SQ@mail.gmail.com>
+Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Jacopo,
 
-On Wednesday, January 25, 2017, Jacopo Mondi wrote:
-> +
-> +	return 0;
-> +
-> +free_map:
-> +	devm_kfree(rz_pinctrl->dev, *map);
-> +free_fngrps:
-> +	devm_kfree(rz_pinctrl->dev, fngrps);
-> +free_pins:
-> +	devm_kfree(rz_pinctrl->dev, mux_modes);
-> +	devm_kfree(rz_pinctrl->dev, grpins);
-> +	return ret;
-> +}
+On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add core module for per-pin Renesas RZ series pin controller.
+> The core module allows SoC driver to register their pins and SoC
+> specific operations and interfaces with pinctrl and pinmux core on their
+> behalf.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Since one of the benefits of using devm_kzalloc is that if
-the probe fails and returns an error, all the memory associated with
-that device will automatically get freed, you 'might' not
-need this code to free memory.
+I believe nothing besides the DT property "renesas-rz,pins" and the value
+of the RZ_PIN_ARGS_COUNT macro is really specific to Renesas or RZ(A)?
+So this could become something really generic, and part of core pinctrl?
 
-I say might because I'm not sure if returning an error here will
-kill the driver or not. But, might be interesting to look into.
+> --- /dev/null
+> +++ b/drivers/pinctrl/rz-pfc/pinctrl-rz.c
+> @@ -0,0 +1,447 @@
 
+> +#define RZ_PIN_ARGS_COUNT      3
 
-> +#define RZ_PIN_NAME(bank, pin)						\
-> +	PIN_##bank##_##pin
-> +
-> +#define RZ_PIN_DESC(b, p)						\
-> +	{ .number =3D RZ_PIN_NAME(b, p),					\
-> +	  .name =3D __stringify(RZ_PIN_NAME(b, p)),			\
+This should be a parameter in the SoC-specific subdriver.
 
-The hardware manual uses the names "P1_0" for ports, so it might
-be better to match that format for consistency.
+> +/**
+> + * rz_pinctrl_pos_to_index() - Retrieve the index of pin at position [bank:pin]
+> + *
+> + * This can be improved, as it walks all the pins reported by the SoC driver
+> + *
+> + * @return: pin number between [0 - npins]; -1 if not found
+> + */
+> +static int rz_pinctrl_pos_to_index(struct rz_pinctrl_dev *rz_pinctrl,
+> +                                  unsigned int bank, unsigned int pin)
+> +{
+> +       struct rz_pinctrl_info *info;
+> +       struct rz_pin_desc *rz_pin;
 
+const
 
-Chris
+> +       int i, npins;
+
+unsigned int
+
+> +/* ----------------------------------------------------------------------------
+> + * pinctrl operations
+> + */
+> +static void rz_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
+
+const ... pctldev
+
+> +                           unsigned int pin)
+> +{
+> +       struct rz_pinctrl_dev *rz_pinctrl;
+> +       struct rz_pinctrl_info *info;
+
+const
+
+> +static int rz_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +                            struct device_node *np_config,
+> +                            struct pinctrl_map **map, unsigned int *num_maps)
+> +{
+
+> +       fngrps = devm_kzalloc(rz_pinctrl->dev, sizeof(*fngrps), GFP_KERNEL);
+> +       if (unlikely(!fngrps)) {
+
+Please don't use unlikely.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
