@@ -1,98 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:64876 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751030AbdAQUAQ (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33952 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753248AbdAZKQA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 15:00:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/3] ARM: dts: r7s72100: update sdhi clock bindings
-Date: Tue, 17 Jan 2017 14:59:40 -0500
-Message-Id: <20170117195940.25092-4-chris.brandt@renesas.com>
-In-Reply-To: <20170117195940.25092-1-chris.brandt@renesas.com>
-References: <20170117195940.25092-1-chris.brandt@renesas.com>
+        Thu, 26 Jan 2017 05:16:00 -0500
+Received: by mail-io0-f195.google.com with SMTP id c80so4672849iod.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 02:16:00 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1485420750-12701-6-git-send-email-horms+renesas@verge.net.au>
+References: <1485420750-12701-1-git-send-email-horms+renesas@verge.net.au> <1485420750-12701-6-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jan 2017 11:15:59 +0100
+Message-ID: <CAMuHMdWmZ=M7jey2AbKXZU+oJLYLGUq19caxZDVaHs=gK+zd9A@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: dts: r8a7795-salvator-x: Enable I2C for DVFS device
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SDHI controller in the RZ/A1 has 2 clock sources per channel and both
-need to be enabled/disabled for proper operation. This fixes the fact that
-the define for R7S72100_CLK_SDHI1 was not correct to begin with (typo), and
-that all 4 clock sources need to be defined an used.
+On Thu, Jan 26, 2017 at 9:52 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+>
+> This patch enables I2C for DVFS device for for Salvator-X board on
+> R8A7795 SoC.
+>
+> Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* add missing clock sources instead of just fixing typo
----
- arch/arm/boot/dts/r7s72100.dtsi            | 17 ++++++++++++-----
- include/dt-bindings/clock/r7s72100-clock.h |  6 ++++--
- 2 files changed, 16 insertions(+), 7 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 3dd427d..8e7e516 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -153,9 +153,12 @@
- 			#clock-cells = <1>;
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0xfcfe0444 4>;
--			clocks = <&p1_clk>, <&p1_clk>;
--			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
--			clock-output-names = "sdhi1", "sdhi0";
-+			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
-+			clock-indices = <
-+				R7S72100_CLK_SDHI00 R7S72100_CLK_SDHI01
-+				R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
-+			>;
-+			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
- 		};
- 	};
- 
-@@ -478,7 +481,9 @@
- 			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
- 			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
- 
--		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
-+			 <&mstp12_clks R7S72100_CLK_SDHI01>;
-+		clock-names = "core", "carddetect";
- 		cap-sd-highspeed;
- 		cap-sdio-irq;
- 		status = "disabled";
-@@ -491,7 +496,9 @@
- 			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
- 			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
- 
--		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
-+			 <&mstp12_clks R7S72100_CLK_SDHI11>;
-+		clock-names = "core", "carddetect";
- 		cap-sd-highspeed;
- 		cap-sdio-irq;
- 		status = "disabled";
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index 29e01ed..f2d8428 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -45,7 +45,9 @@
- #define R7S72100_CLK_SPI4	3
- 
- /* MSTP12 */
--#define R7S72100_CLK_SDHI0	3
--#define R7S72100_CLK_SDHI1	2
-+#define R7S72100_CLK_SDHI00	3
-+#define R7S72100_CLK_SDHI01	2
-+#define R7S72100_CLK_SDHI10	1
-+#define R7S72100_CLK_SDHI11	0
- 
- #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
--- 
-2.10.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
