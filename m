@@ -1,75 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751183AbdAaUUs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38280 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750902AbdA0Tqw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 15:20:48 -0500
-Subject: [PATCH 1 2/4] PCI: iproc: Use of_device_get_match_data() to
- simplify probe
-From: Bjorn Helgaas <bhelgaas@google.com>
-To: linux-pci@vger.kernel.org
-Cc: Scott Branden <sbranden@broadcom.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        Minghuan Lian <minghuan.Lian@freescale.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Mingkai Hu <mingkai.hu@freescale.com>,
-        Roy Zang <tie-fei.zang@freescale.com>,
-        Shailendra Verma <shailendra.v@samsung.com>
-Date: Tue, 31 Jan 2017 14:20:06 -0600
-Message-ID: <20170131202006.27605.98823.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Fri, 27 Jan 2017 14:46:52 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 net-next 1/2] ravb: Add tx and rx clock internal delays mode of APSR
+Date: Fri, 27 Jan 2017 20:46:26 +0100
+Message-Id: <1485546387-30809-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1485546387-30809-1-git-send-email-horms+renesas@verge.net.au>
+References: <1485546387-30809-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The only way to call iproc_pcie_pltfm_probe() is to match an entry in
-iproc_pcie_of_match_table[], so match cannot be NULL.
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Use of_device_get_match_data() to retrieve the pcie->type.  No functional
-change intended.
+This patch enables tx and rx clock internal delay modes (TDM and RDM).
 
-Based-on-suggestion-from: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+This is to address a failure in the case of 1Gbps communication using the
+by salvator-x board with the KSZ9031RNX phy. This has been reported to
+occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
+
+With this change APSR internal delay modes are enabled for
+"rgmii-id", "rgmii-rxid" and "rgmii-txid" phy modes as follows:
+
+phy mode   | ASPR delay mode
+-----------+----------------
+rgmii-id   | TDM and RDM
+rgmii-rxid | RDM
+rgmii-txid | TDM
+
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/pci/host/pcie-iproc-platform.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+v3 [Simon Horman]
+* Move comment to above ravb_set_delay_mode()
 
-diff --git a/drivers/pci/host/pcie-iproc-platform.c b/drivers/pci/host/pcie-iproc-platform.c
-index 22d814a78a78..f4909bb0b2ad 100644
---- a/drivers/pci/host/pcie-iproc-platform.c
-+++ b/drivers/pci/host/pcie-iproc-platform.c
-@@ -47,7 +47,6 @@ MODULE_DEVICE_TABLE(of, iproc_pcie_of_match_table);
- static int iproc_pcie_pltfm_probe(struct platform_device *pdev)
+v2 [Simon Horman]
+* As suggested by Sergei Shtylyov
+  - Add a comment to indicate that APSR_DM appears to be undocumented.
+  - Move chip_id check outside of ravb_set_delay_mode for consistency
+  - Call ravb_modify() once in ravb_set_delay_mode()
+* Enhance comment before calls to ravb_set_delay_mode()
+
+v1 [Simon Horman]
+- Combined patches
+- Reworded changelog
+
+v0 [Kazuya Mizuguchi]
+---
+ drivers/net/ethernet/renesas/ravb.h      | 10 ++++++++++
+ drivers/net/ethernet/renesas/ravb_main.c | 23 +++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index f1109661a533..0525bd696d5d 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -76,6 +76,7 @@ enum ravb_reg {
+ 	CDAR20	= 0x0060,
+ 	CDAR21	= 0x0064,
+ 	ESR	= 0x0088,
++	APSR	= 0x008C,	/* R-Car Gen3 only */
+ 	RCR	= 0x0090,
+ 	RQC0	= 0x0094,
+ 	RQC1	= 0x0098,
+@@ -248,6 +249,15 @@ enum ESR_BIT {
+ 	ESR_EIL		= 0x00001000,
+ };
+ 
++/* APSR */
++enum APSR_BIT {
++	APSR_MEMS		= 0x00000002,
++	APSR_CMSW		= 0x00000010,
++	APSR_DM			= 0x00006000,	/* Undocumented? */
++	APSR_DM_RDM		= 0x00002000,
++	APSR_DM_TDM		= 0x00004000,
++};
++
+ /* RCR */
+ enum RCR_BIT {
+ 	RCR_EFFS	= 0x00000001,
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 89ac1e3f6175..732cdea7800b 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1904,6 +1904,23 @@ static void ravb_set_config_mode(struct net_device *ndev)
+ 	}
+ }
+ 
++/* Set tx and rx clock internal delay modes */
++static void ravb_set_delay_mode(struct net_device *ndev)
++{
++	struct ravb_private *priv = netdev_priv(ndev);
++	int set = 0;
++
++	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
++	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
++		set |= APSR_DM_RDM;
++
++	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
++	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
++		set |= APSR_DM_TDM;
++
++	ravb_modify(ndev, APSR, APSR_DM, set);
++}
++
+ static int ravb_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
--	const struct of_device_id *of_id;
- 	struct iproc_pcie *pcie;
- 	struct device_node *np = dev->of_node;
- 	struct resource reg;
-@@ -55,16 +54,12 @@ static int iproc_pcie_pltfm_probe(struct platform_device *pdev)
- 	LIST_HEAD(res);
- 	int ret;
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -2016,6 +2033,9 @@ static int ravb_probe(struct platform_device *pdev)
+ 	/* Request GTI loading */
+ 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
  
--	of_id = of_match_device(iproc_pcie_of_match_table, dev);
--	if (!of_id)
--		return -EINVAL;
--
- 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
- 	if (!pcie)
- 		return -ENOMEM;
++	if (priv->chip_id != RCAR_GEN2)
++		ravb_set_delay_mode(ndev);
++
+ 	/* Allocate descriptor base address table */
+ 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
+ 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
+@@ -2152,6 +2172,9 @@ static int __maybe_unused ravb_resume(struct device *dev)
+ 	/* Request GTI loading */
+ 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
  
- 	pcie->dev = dev;
--	pcie->type = (enum iproc_pcie_type)of_id->data;
-+	pcie->type = (enum iproc_pcie_type) of_device_get_match_data(dev);
++	if (priv->chip_id != RCAR_GEN2)
++		ravb_set_delay_mode(ndev);
++
+ 	/* Restore descriptor base address table */
+ 	ravb_write(ndev, priv->desc_bat_dma, DBAT);
  
- 	ret = of_address_to_resource(np, 0, &reg);
- 	if (ret < 0) {
+-- 
+2.7.0.rc3.207.g0ac5344
