@@ -1,93 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:32978 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754117AbdA0Hwx (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:52238 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753013AbdA0DGJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 02:52:53 -0500
-Received: by mail-io0-f172.google.com with SMTP id v96so55360431ioi.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 23:51:10 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB116597EAF28F1C5F2475DF158A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Thu, 26 Jan 2017 22:06:09 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [RFC] Runtime PM on the RZ/A series is never going to work right
+Date: Fri, 27 Jan 2017 03:05:42 +0000
+Message-ID: <SG2PR06MB116597EAF28F1C5F2475DF158A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <SG2PR06MB116554401FE404334E924EE38A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdVaF=DpacHTV_T6nVcJMF-GfcRd3ybj-yagAy2nj_TeCw@mail.gmail.com>
  <SG2PR06MB1165A003EAAACA6C9771FA798A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdWn0C6W3Ueb9cYDUcXMnSZVRNn8pax+y7Zyy_P=1t2gGg@mail.gmail.com>
  <SG2PR06MB11654DEF72DE224D798D19D68A750@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com> <SG2PR06MB116597EAF28F1C5F2475DF158A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Jan 2017 08:51:08 +0100
-Message-ID: <CAMuHMdUoCNF034bs+wxNA-07LqaLziGg-QpLZjcUPGQbCGF3hw@mail.gmail.com>
-Subject: Re: [RFC] Runtime PM on the RZ/A series is never going to work right
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+ <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWeL21_OJkH4XVATxfYZwutWTTh7mfDLy=17d95RLC5Hg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Fri, Jan 27, 2017 at 4:05 AM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Wednesday, January 25, 2017, Geert Uytterhoeven wrote:
->> >> I think you can handle that in drivers/clk/renesas/clk-mstp.c:
->> >>   - in cpg_mstp_attach_dev(), add a call to pm_clk_resume(dev) after
->> the
->> >>     call to pm_clk_add_clk(),
->> >>   - in cpg_mstp_detach_dev(), add a call to pm_clk_suspend(dev) before
->> the
->> >>     call to pm_clk_destroy().
->> >> Yes, that means the module clocks are enabled all the time.
->> >> Of course when running on RZ/A1H ;-)
->> >
->> > That might be OK.
->>
->> Forgot to mention: you should also no longer set GENPD_FLAG_PM_CLK in
->> cpg_mstp_add_clk_domain(). The flag won't hurt, it will just cause extra
->> code to be executed.
->
-> So to be clear before I start hacking away, your suggestion here is
-> to do this ONLY for RZ/A1 so I don't screw up any other SoCs, right?
-
-Correct.
-
-> For example:
->
-> int cpg_mstp_attach_dev()
-> {
->         ...
->
->         error = pm_clk_add_clk(dev, clk);
->         if (error) {
->                 dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
->                 goto fail_destroy;
->         }
->
-> +       if (of_device_is_compatible(np, "renesas,r7s72100-mstp-clocks"))
-> +               pm_clk_suspend(dev);
-
-That should be pm_clk_resume(dev), as is this the attach function ;-)
-
-And please drop GENPD_FLAG_PM_CLK on RZ/A1, too.
-
->         ...
-> }
->
-> Then, this would be OK to submit until I find some other way to do stable
-> runtime pm for RZ/A1? (which might not be possible...unless I put in the
-> silly delay)
->
-> A that point, any peripheral I use (status="okay") will stay on, but the
-> ones I don't use will stay off, correct?
-
-Correct.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgSmFudWFyeSAyNSwgMjAxNywgR2VlcnQgVXl0dGVy
+aG9ldmVuIHdyb3RlOg0KPiA+PiBJIHRoaW5rIHlvdSBjYW4gaGFuZGxlIHRoYXQgaW4gZHJpdmVy
+cy9jbGsvcmVuZXNhcy9jbGstbXN0cC5jOg0KPiA+PiAgIC0gaW4gY3BnX21zdHBfYXR0YWNoX2Rl
+digpLCBhZGQgYSBjYWxsIHRvIHBtX2Nsa19yZXN1bWUoZGV2KSBhZnRlcg0KPiB0aGUNCj4gPj4g
+ICAgIGNhbGwgdG8gcG1fY2xrX2FkZF9jbGsoKSwNCj4gPj4gICAtIGluIGNwZ19tc3RwX2RldGFj
+aF9kZXYoKSwgYWRkIGEgY2FsbCB0byBwbV9jbGtfc3VzcGVuZChkZXYpIGJlZm9yZQ0KPiB0aGUN
+Cj4gPj4gICAgIGNhbGwgdG8gcG1fY2xrX2Rlc3Ryb3koKS4NCj4gPj4gWWVzLCB0aGF0IG1lYW5z
+IHRoZSBtb2R1bGUgY2xvY2tzIGFyZSBlbmFibGVkIGFsbCB0aGUgdGltZS4NCj4gPj4gT2YgY291
+cnNlIHdoZW4gcnVubmluZyBvbiBSWi9BMUggOy0pDQo+ID4NCj4gPiBUaGF0IG1pZ2h0IGJlIE9L
+Lg0KPiANCj4gRm9yZ290IHRvIG1lbnRpb246IHlvdSBzaG91bGQgYWxzbyBubyBsb25nZXIgc2V0
+IEdFTlBEX0ZMQUdfUE1fQ0xLIGluDQo+IGNwZ19tc3RwX2FkZF9jbGtfZG9tYWluKCkuIFRoZSBm
+bGFnIHdvbid0IGh1cnQsIGl0IHdpbGwganVzdCBjYXVzZSBleHRyYQ0KPiBjb2RlIHRvIGJlIGV4
+ZWN1dGVkLg0KDQpTbyB0byBiZSBjbGVhciBiZWZvcmUgSSBzdGFydCBoYWNraW5nIGF3YXksIHlv
+dXIgc3VnZ2VzdGlvbiBoZXJlIGlzDQp0byBkbyB0aGlzIE9OTFkgZm9yIFJaL0ExIHNvIEkgZG9u
+J3Qgc2NyZXcgdXAgYW55IG90aGVyIFNvQ3MsIHJpZ2h0Pw0KDQpGb3IgZXhhbXBsZToNCg0KaW50
+IGNwZ19tc3RwX2F0dGFjaF9kZXYoKQ0Kew0KCS4uLg0KDQoJZXJyb3IgPSBwbV9jbGtfYWRkX2Ns
+ayhkZXYsIGNsayk7DQoJaWYgKGVycm9yKSB7DQoJCWRldl9lcnIoZGV2LCAicG1fY2xrX2FkZF9j
+bGsgJXBDIGZhaWxlZCAlZFxuIiwgY2xrLCBlcnJvcik7DQoJCWdvdG8gZmFpbF9kZXN0cm95Ow0K
+CX0NCg0KKwlpZiAob2ZfZGV2aWNlX2lzX2NvbXBhdGlibGUobnAsICJyZW5lc2FzLHI3czcyMTAw
+LW1zdHAtY2xvY2tzIikpDQorCQlwbV9jbGtfc3VzcGVuZChkZXYpOw0KDQoJLi4uDQp9DQoNClRo
+ZW4sIHRoaXMgd291bGQgYmUgT0sgdG8gc3VibWl0IHVudGlsIEkgZmluZCBzb21lIG90aGVyIHdh
+eSB0byBkbyBzdGFibGUNCnJ1bnRpbWUgcG0gZm9yIFJaL0ExPyAod2hpY2ggbWlnaHQgbm90IGJl
+IHBvc3NpYmxlLi4udW5sZXNzIEkgcHV0IGluIHRoZQ0Kc2lsbHkgZGVsYXkpDQoNCkEgdGhhdCBw
+b2ludCwgYW55IHBlcmlwaGVyYWwgSSB1c2UgKHN0YXR1cz0ib2theSIpIHdpbGwgc3RheSBvbiwg
+YnV0IHRoZQ0Kb25lcyBJIGRvbid0IHVzZSB3aWxsIHN0YXkgb2ZmLCBjb3JyZWN0Pw0KDQoNClRo
+YW5rIHlvdSwNCkNocmlzDQoNCg0K
