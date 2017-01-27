@@ -1,131 +1,111 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] arm64: Add support for DMA_ATTR_FORCE_CONTIGUOUS to IOMMU
-Date: Fri, 27 Jan 2017 16:34:19 +0100
-Message-Id: <1485531259-17513-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485531259-17513-1-git-send-email-geert+renesas@glider.be>
-References: <1485531259-17513-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34878 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754242AbdA0JCL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Jan 2017 04:02:11 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVZOOLGziGm4YdHn_bRB_JOzWEeQ=Ogr8TiB47KTza7OA@mail.gmail.com>
+References: <74ea1835-3ce3-612c-ece5-52c8dba0ca87@jinso.co.jp> <CAMuHMdVZOOLGziGm4YdHn_bRB_JOzWEeQ=Ogr8TiB47KTza7OA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 27 Jan 2017 10:02:08 +0100
+Message-ID: <CAMuHMdWwHeVmgWc27z7L7cSE+CfPTzXPaKQDEzeJ=XGg+jPmkA@mail.gmail.com>
+Subject: Re: [PATCH] spi: rspi: fix the bug related to mount/remount jffs2
+To: DongCV <cv-dong@jinso.co.jp>
+Cc: Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        Cao Minh Hiep <cm-hiep@jinso.co.jp>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for allocation physically contiguous DMA buffers on arm64
-systems with an IOMMU, by dispatching DMA buffer allocations with the
-DMA_ATTR_FORCE_CONTIGUOUS attribute to the appropriate IOMMU DMA
-helpers.
+CC correct linux-renesas-soc
 
-Note that as this uses the CMA allocator, setting this attribute has a
-runtime-dependency on CONFIG_DMA_CMA, just like on arm32.
+On Fri, Jan 27, 2017 at 10:00 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Dong,
+>
+> On Fri, Jan 27, 2017 at 9:12 AM, DongCV <cv-dong@jinso.co.jp> wrote:
+>> This patch fixes the output warning logs and data loss when performing
+>> mount/umount then remount the device with jffs2 format.
+>> This patch is tested on Lager board at Linux uptream v4.10-rc5.
+>> Please consider the patch for Renesas-soc Gen2
+>
+> Please send patches inline.
+>
+>> From 5513c6a02c911fcf9f99d5188fa46256aa1e41b4 Mon Sep 17 00:00:00 2001
+>> From: Dong <cv-dong@jinso.co.jp>
+>> Date: Fri, 27 Jan 2017 16:29:18 +0900
+>> Subject: [PATCH] spi: rspi: fix the bug related to mount/remount jffs2
+>>
+>> This patch fixes the output warning logs and data loss when
+>> performing mount/umount then remount the device with jffs2 format.
+>>
+>> This is the warning logs when performing mount/umount then remount the device with jffs2 format:
+>> "root@linaro-naro:~# mount -t jffs2 /dev/mtdblock2 /mnt/media
+>> [ 3839.928013] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40000: 0x1900 instead
+>> [ 3839.956515] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40004: 0x000c instead
+>> [ 3839.985009] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40008: 0xb0b1 instead
+>> [ 3840.013591] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b4000c: 0x1900 instead
+>> [ 3840.042087] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40010: 0x0044 instead
+>> [ 3840.070566] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40014: 0xfb1d instead
+>> [ 3840.099159] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40018: 0x0002 instead
+>> [ 3840.127604] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b4001c: 0x0001 instead
+>> [ 3840.156043] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40020: 0x81a4 instead
+>> [ 3840.184472] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b4002c: 0x6529 instead
+>> [ 3840.212900] jffs2: Further such events for this erase block will not be printed
+>> [ 3840.322915] jffs2: notice: (2008) read_dnode: node CRC failed on dnode at 0x3b40080: read 0xc40b5dfc, calculated 0x264be003
+>> root@linaro-naro[ 3840.356857] jffs2: warning: (2008) jffs2_do_read_inode_internal: no data nodes found for ino #2
+>> :~# [ 3840.386659] jffs2: Returned error for crccheck of ino #2. Expect badness...
+>>
+>> Signed-off-by: Dong <cv-dong@jinso.co.jp>
+>> ---
+>>  drivers/spi/spi-rspi.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+>> index 9daf500..2ee1301 100644
+>> --- a/drivers/spi/spi-rspi.c
+>> +++ b/drivers/spi/spi-rspi.c
+>> @@ -848,7 +848,6 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+>>                       ret = rspi_pio_transfer(rspi, NULL, rx, n);
+>>                       if (ret < 0)
+>>                               return ret;
+>> -                     *rx++ = ret;
+>
+> Storing the success code (0) in the receive buffer is indeed wrong.
+>
+> However, there are other bugs in that code:
+>
+> rspi_pio_transfer(rspi, NULL, rx, n) transfers n bytes instead of len,
+> while n is decreased by len (which is <= n).
+> Furthermore rx is not incremented.
+> Hence if len < n, n will still be non-zero, and a new iteration of the
+> loop will be started, trying to receive more data, and overwriting the
+> just filled buffer.
+>
+> The same bug is present in qspi_transfer_out().
+>
+>>               }
+>>               n -= len;
+>>       }
+>> --
+>> 1.9.1
 
-For arm64 systems using swiotlb, no changes are needed to support the
-allocation of physically contiguous DMA buffers:
-  - swiotlb always uses physically contiguous buffers (up to
-    IO_TLB_SEGSIZE = 128 pages),
-  - arm64's __dma_alloc_coherent() already calls
-    dma_alloc_from_contiguous() when CMA is available.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New, handle dispatching in the arch (arm64) code, as requested by
-    Robin Murphy.
----
- arch/arm64/mm/dma-mapping.c | 51 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 14 deletions(-)
+                        Geert
 
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 1d7d5d2881db7c19..325803e0ba79ef26 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -577,20 +577,7 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
- 	 */
- 	gfp |= __GFP_ZERO;
- 
--	if (gfpflags_allow_blocking(gfp)) {
--		struct page **pages;
--		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
--
--		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
--					handle, flush_page);
--		if (!pages)
--			return NULL;
--
--		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
--					      __builtin_return_address(0));
--		if (!addr)
--			iommu_dma_free(dev, pages, iosize, handle);
--	} else {
-+	if (!gfpflags_allow_blocking(gfp)) {
- 		struct page *page;
- 		/*
- 		 * In atomic context we can't remap anything, so we'll only
-@@ -614,6 +601,35 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
- 				__free_from_pool(addr, size);
- 			addr = NULL;
- 		}
-+	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-+		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-+		struct page *page;
-+
-+		page = iommu_dma_alloc_contiguous(dev, iosize, ioprot, handle);
-+		if (!page)
-+			return NULL;
-+
-+		if (!coherent)
-+			__dma_flush_area(page_to_virt(page), iosize);
-+
-+		addr = dma_common_contiguous_remap(page, size, VM_USERMAP,
-+						   prot,
-+						   __builtin_return_address(0));
-+		if (!addr)
-+			iommu_dma_free_contiguous(dev, page, iosize, handle);
-+	} else {
-+		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-+		struct page **pages;
-+
-+		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
-+					handle, flush_page);
-+		if (!pages)
-+			return NULL;
-+
-+		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
-+					      __builtin_return_address(0));
-+		if (!addr)
-+			iommu_dma_free(dev, pages, iosize, handle);
- 	}
- 	return addr;
- }
-@@ -626,6 +642,8 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
- 	size = PAGE_ALIGN(size);
- 	/*
- 	 * @cpu_addr will be one of 3 things depending on how it was allocated:
-+	 * - A remapped array of pages from iommu_dma_alloc_contiguous()
-+	 *   for contiguous allocations.
- 	 * - A remapped array of pages from iommu_dma_alloc(), for all
- 	 *   non-atomic allocations.
- 	 * - A non-cacheable alias from the atomic pool, for atomic
-@@ -637,6 +655,11 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
- 	if (__in_atomic_pool(cpu_addr, size)) {
- 		iommu_dma_unmap_page(dev, handle, iosize, 0, 0);
- 		__free_from_pool(cpu_addr, size);
-+	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-+		struct page *page = phys_to_page(dma_to_phys(dev, handle));
-+
-+		iommu_dma_free_contiguous(dev, page, iosize, &handle);
-+		dma_common_free_remap(cpu_addr, size, VM_USERMAP);
- 	} else if (is_vmalloc_addr(cpu_addr)){
- 		struct vm_struct *area = find_vm_area(cpu_addr);
- 
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
