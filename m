@@ -1,46 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59316 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:58866 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754774AbdA0JPa (ORCPT
+        with ESMTP id S1754297AbdA0Inl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:15:30 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 9/9] arm64: dts: r8a7796: Mark EthernetAVB device node disabled
-Date: Fri, 27 Jan 2017 10:14:31 +0100
-Message-Id: <7e1c23b94ed7f0d2719795a9828402003de5335d.1485508214.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1485508214.git.horms+renesas@verge.net.au>
-References: <cover.1485508214.git.horms+renesas@verge.net.au>
+        Fri, 27 Jan 2017 03:43:41 -0500
+Date: Fri, 27 Jan 2017 09:43:35 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 2/5] arm64: dts: r8a7796: Add I2C for DVFS device node
+Message-ID: <20170127084334.GJ21195@verge.net.au>
+References: <1485420750-12701-1-git-send-email-horms+renesas@verge.net.au>
+ <1485420750-12701-3-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdXSriucRXVACQoGx0S8CX0sXPmuWvAQy0+RP9PY-z7U3g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXSriucRXVACQoGx0S8CX0sXPmuWvAQy0+RP9PY-z7U3g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Jan 26, 2017 at 11:07:24AM +0100, Geert Uytterhoeven wrote:
+> On Thu, Jan 26, 2017 at 9:52 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> >
+> > This patch adds I2C for DVFS device node for R8A7796 SoC.
+> >
+> > Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> 
+> > @@ -269,6 +270,19 @@
+> >                         #power-domain-cells = <1>;
+> >                 };
+> >
+> > +               i2c_dvfs: i2c@e60b0000 {
+> > +                       #address-cells = <1>;
+> > +                       #size-cells = <0>;
+> > +                       compatible = "renesas,iic-r8a7796",
+> > +                                    "renesas,rcar-gen3-iic",
+> > +                                    "renesas,rmobile-iic";
+> > +                       reg = <0 0xe60b0000 0 0x425>;
+> > +                       interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&cpg CPG_MOD 926>;
+> 
+> You may want to add dmas/dma-names.
+> That can be done later, though.
 
-Device nodes representing I/O devices should be marked disabled in the
-SoC-specific DTS, and overridden by board-specific DTSes where needed.
-
-Fixes: 8e8b9eaef8fb05d9 ("arm64: dts: renesas: r8a7796: Add EthernetAVB instance")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 82c5ef1b6065..f7120cdedd0d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -472,6 +472,7 @@
- 			phy-mode = "rgmii-id";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		scif2: serial@e6e88000 {
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks, I will do that as a follow up and queue up this series
+for v4.12 in the mean time.
