@@ -1,65 +1,46 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: sakari.ailus@iki.fi, mchehab@kernel.org, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: entity: Catch unbalanced media_pipeline_stop calls
-Date: Tue, 03 Jan 2017 15:36:43 +0200
-Message-ID: <2426604.oXt7iAeI8O@avalon>
-In-Reply-To: <1483449131-18075-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1483449131-18075-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58647 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754261AbdA0I1G (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Jan 2017 03:27:06 -0500
+Date: Fri, 27 Jan 2017 09:16:08 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH RESEND 0/2] arm64: gen3: enable eMMC HS200 in DT
+Message-ID: <20170127081608.GG21195@verge.net.au>
+References: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
+ <20170126135453.GB2718@katana>
+ <20170126140643.GA11104@verge.net.au>
+ <20170126141656.GD2718@katana>
+ <20170126152413.GA12534@verge.net.au>
+ <20170126201702.6kb62spuvx6jgll2@ninjato>
+ <20170127063327.GA13565@verge.net.au>
+ <20170127072728.GA1473@katana>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170127072728.GA1473@katana>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
-
-Thank you for the patch.
-
-On Tuesday 03 Jan 2017 13:12:11 Kieran Bingham wrote:
-> Drivers must not perform unbalanced calls to stop the entity pipeline,
-> however if they do they will fault in the core media code, as the
-> entity->pipe will be set as NULL. We handle this gracefully in the core
-> with a WARN for the developer.
+On Fri, Jan 27, 2017 at 08:27:28AM +0100, Wolfram Sang wrote:
 > 
-> Replace the erroneous check on zero streaming counts, with a check on
-> NULL pipe elements instead, as this is the symptom of unbalanced
-> media_pipeline_stop calls.
+> > Using renesas-next without mmc-next I see the problem above on the M3-W.
+> > Using renesas-next with mmc-next I do not see the problem above.
+> > Using v4.10-rc2 I also do not see the problem above.
 > 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-This looks good to me,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-I'll let Sakari review and merge the patch.
-
-> ---
->  drivers/media/media-entity.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> OK. So there is no problem with the code, at least.
 > 
-> diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-> index caa13e6f09f5..cb1fb2c17f85 100644
-> --- a/drivers/media/media-entity.c
-> +++ b/drivers/media/media-entity.c
-> @@ -534,8 +534,13 @@ void __media_pipeline_stop(struct media_entity *entity)
-> struct media_graph *graph = &entity->pipe->graph;
->  	struct media_pipeline *pipe = entity->pipe;
+> > So I believe we should delay the integration change, which is currently in
+> > renesas-next, until the driver change in mmc-next hits Linus's tree.
 > 
-> +	/*
-> +	 * If the following check fails, the driver has performed an
-> +	 * unbalanced call to media_pipeline_stop()
-> +	 */
-> +	if (WARN_ON(!pipe))
-> +		return;
-> 
-> -	WARN_ON(!pipe->streaming_count);
->  	media_graph_walk_start(graph, entity);
-> 
->  	while ((entity = media_graph_walk_next(graph))) {
+> Whatever you do, H3 and M3-W should be treated equally IMO.
 
--- 
-Regards,
+Sure, that is reasonable. This is what I plan to do:
 
-Laurent Pinchart
+1. Drop this series from v4.11
+2. Re-queue them for v4.12 once the driver changes hit an rc release
+   - Please ping me one that happens
