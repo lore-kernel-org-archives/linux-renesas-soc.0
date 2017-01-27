@@ -1,38 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:41282 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750805AbdA2Xgk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38280 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbdA0Tqx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 29 Jan 2017 18:36:40 -0500
-Date: Sun, 29 Jan 2017 18:36:37 -0500 (EST)
-Message-Id: <20170129.183637.1519401740877958836.davem@davemloft.net>
-To: horms+renesas@verge.net.au
-Cc: sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 net-next 0/2] ravb: Support 1Gbps on R-Car H3 ES1.1+
- and R-Car M3-W
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1485542120-10205-1-git-send-email-horms+renesas@verge.net.au>
-References: <1485542120-10205-1-git-send-email-horms+renesas@verge.net.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Fri, 27 Jan 2017 14:46:53 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 net-next 2/2] ravb: Support 1Gbps on R-Car H3 ES1.1+ and R-Car M3-W
+Date: Fri, 27 Jan 2017 20:46:27 +0100
+Message-Id: <1485546387-30809-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1485546387-30809-1-git-send-email-horms+renesas@verge.net.au>
+References: <1485546387-30809-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
-Date: Fri, 27 Jan 2017 19:35:18 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> this series adds support for gigabit communication to the Renesas EthernetAVB
-> controller when used in conjunction with  R-Car Gen3 H3 ES1.1+ and M3-W SoCs.
-> Gigabit is already supported with R-Car Gen 2 SoCs.
-> 
-> The patch from Geert was previously posted for inclusion in v4.10 and
-> acked by Dave for that purpose. It was, however, not accepted by the
-> ARM SoC maintainers.
-> 
-> The path from Mizuguchi-san is to address timing problems observed with
-> gigabit transfers. I would like it considered although my own testing on
-> M3-W did not show any timing problems.
+The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
+ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
+revisions of R-Car H3, and on R-Car M3-W.
 
-Series applied, thanks Simon.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 732cdea7800b..615a3cb6f18c 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -31,6 +31,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/sys_soc.h>
+ 
+ #include <asm/div64.h>
+ 
+@@ -973,6 +974,11 @@ static void ravb_adjust_link(struct net_device *ndev)
+ 		phy_print_status(phydev);
+ }
+ 
++static const struct soc_device_attribute r8a7795es10[] = {
++	{ .soc_id = "r8a7795", .revision = "ES1.0", },
++	{ /* sentinel */ }
++};
++
+ /* PHY init function */
+ static int ravb_phy_init(struct net_device *ndev)
+ {
+@@ -1008,10 +1014,10 @@ static int ravb_phy_init(struct net_device *ndev)
+ 		goto err_deregister_fixed_link;
+ 	}
+ 
+-	/* This driver only support 10/100Mbit speeds on Gen3
++	/* This driver only support 10/100Mbit speeds on R-Car H3 ES1.0
+ 	 * at this time.
+ 	 */
+-	if (priv->chip_id == RCAR_GEN3) {
++	if (soc_device_match(r8a7795es10)) {
+ 		err = phy_set_max_speed(phydev, SPEED_100);
+ 		if (err) {
+ 			netdev_err(ndev, "failed to limit PHY to 100Mbit/s\n");
+-- 
+2.7.0.rc3.207.g0ac5344
