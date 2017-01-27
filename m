@@ -1,53 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v6 0/3] mmc: sh_mobile_sdhi: fix missing r7s72100 clocks
-Date: Wed, 25 Jan 2017 15:28:07 -0500
-Message-Id: <20170125202810.16876-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:59316 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754774AbdA0JPa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Jan 2017 04:15:30 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 9/9] arm64: dts: r8a7796: Mark EthernetAVB device node disabled
+Date: Fri, 27 Jan 2017 10:14:31 +0100
+Message-Id: <7e1c23b94ed7f0d2719795a9828402003de5335d.1485508214.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1485508214.git.horms+renesas@verge.net.au>
+References: <cover.1485508214.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-At first this started out as a simple typo fix, until I realized
-that the SDHI in the RZ/A1 has 2 clocks per channel and both need
-to be turned on/off.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch series adds the ability to specify 2 clocks instead of
-just 1, and does so for the RZ/A1 r7s72100.
+Device nodes representing I/O devices should be marked disabled in the
+SoC-specific DTS, and overridden by board-specific DTSes where needed.
 
-This patch has been tested on an RZ/A1 RSK board. Card detect works
-fine as well as bind/unbind.
+Fixes: 8e8b9eaef8fb05d9 ("arm64: dts: renesas: r8a7796: Add EthernetAVB instance")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-v6:
-* more detailed descritpion in tmio_mmc.txt
-
-v5:
-* Take implementation details out of DT documentation and put into
-  the driver code.
-
-v4:
-* No code changes, only text udpates to explain why there are 2 clocks
-  and why we need to treat them as 1 clock.
-
-Chris Brandt (3):
-  mmc: sh_mobile_sdhi: add support for 2 clocks
-  mmc: sh_mobile_sdhi: explain clock bindings
-  ARM: dts: r7s72100: update sdhi clock bindings
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 13 ++++++++++++
- arch/arm/boot/dts/r7s72100.dtsi                    | 17 +++++++++++-----
- drivers/mmc/host/sh_mobile_sdhi.c                  | 23 ++++++++++++++++++++++
- include/dt-bindings/clock/r7s72100-clock.h         |  6 ++++--
- 4 files changed, 52 insertions(+), 7 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 82c5ef1b6065..f7120cdedd0d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -472,6 +472,7 @@
+ 			phy-mode = "rgmii-id";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 
+ 		scif2: serial@e6e88000 {
 -- 
-2.10.1
-
-
+2.7.0.rc3.207.g0ac5344
