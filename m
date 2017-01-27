@@ -1,51 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753535AbdAKSmS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60039 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754798AbdA0KH0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 13:42:18 -0500
-Date: Wed, 11 Jan 2017 12:42:12 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-Subject: Re: [PATCH pci/next] PCI: rcar: return ENODEV code when PCIe card
- does not insert
-Message-ID: <20170111184212.GF14532@bhelgaas-glaptop.roam.corp.google.com>
-References: <1481889004-26124-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1481889004-26124-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 27 Jan 2017 05:07:26 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] arm64: dts: r8a779[56]: Enable I2C DVFS DMA
+Date: Fri, 27 Jan 2017 11:06:21 +0100
+Message-Id: <1485511583-21614-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 16, 2016 at 12:50:04PM +0100, Simon Horman wrote:
-> From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-> 
-> R-Car PCIe does not support hotplug so it is appropriate to
-> treat the absence of a PCIe card as an ENODEV error.
-> 
-> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-> [simon: updated changelog]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Hi,
 
-Applied to pci/host-rcar for v4.11 with the following changelog (I updated
-the summary line):
+this series enables DMA for I2C DVFS on the r8a7795 and r8a7796 SoCs.
+I2C DVFS was recently enabled on the salvator-x board for those SoCs.
 
-commit e94888d23736cec51ba851f6e798d0eeb9ef5f41
-Author: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-Date:   Fri Dec 16 12:50:04 2016 +0100
+Base:
+* This series is based on renesas-devel-20170127v2-v4.10-rc5
 
-    PCI: rcar: Return -ENODEV from host bridge probe when no card present
-    
-    R-Car PCIe does not support hotplug so it is appropriate to treat the
-    absence of a PCIe card as an -ENODEV error.
-    
-    Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-    [simon: updated changelog]
-    Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Dependencies:
+* This series has a run-time dependency on
+  "[PATCH 0/2] clk: renesas: r8a7795/r8a7796: Add IIC-DVFS clock"
+
+Simon Horman (2):
+  arm64: dts: r8a7796: Enable I2C DVFS DMA
+  arm64: dts: r8a7795: Enable I2C DVFS DMA
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 +++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
+ 2 files changed, 6 insertions(+)
+
+-- 
+2.7.0.rc3.207.g0ac5344
