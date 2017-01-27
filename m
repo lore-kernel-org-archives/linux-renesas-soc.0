@@ -1,46 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:35263 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752781AbdAZPNt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38209 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbdA0TlW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 10:13:49 -0500
-Received: by mail-lf0-f49.google.com with SMTP id n124so146724645lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 07:13:48 -0800 (PST)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 2/2] arm64: dts: h3ulcb: enable HS200 for eMMC
-Date: Thu, 26 Jan 2017 18:14:00 +0300
-Message-Id: <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        Fri, 27 Jan 2017 14:41:22 -0500
+Date: Fri, 27 Jan 2017 20:40:33 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Miller <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 1/2] ravb: Add tx and rx clock internal
+ delays mode of APSR
+Message-ID: <20170127194030.GA18706@verge.net.au>
+References: <1485542120-10205-1-git-send-email-horms+renesas@verge.net.au>
+ <1485542120-10205-2-git-send-email-horms+renesas@verge.net.au>
+ <0570b250-83eb-fbac-de2a-0ea99a7250c2@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0570b250-83eb-fbac-de2a-0ea99a7250c2@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On Fri, Jan 27, 2017 at 10:05:58PM +0300, Sergei Shtylyov wrote:
+> On 01/27/2017 09:35 PM, Simon Horman wrote:
+> 
+> >From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> >
+> >This patch enables tx and rx clock internal delay modes (TDM and RDM).
+> >
+> >This is to address a failure in the case of 1Gbps communication using the
+> >by salvator-x board with the KSZ9031RNX phy. This has been reported to
+> >occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
+> >
+> >With this change APSR internal delay modes are enabled for
+> >"rgmii-id", "rgmii-rxid" and "rgmii-txid" phy modes as follows:
+> >
+> >phy mode   | ASPR delay mode
+> >-----------+----------------
+> >rgmii-id   | TDM and RDM
+> >rgmii-rxid | RDM
+> >rgmii-txid | TDM
+> >
+> >Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> >---
+> >v2 [Simon Horman]
+> >* As suggested by Sergei Shtylyov
+> >  - Add a comment to indicate that APSR_DM appears to be undocumented.
+> >  - Move chip_id check outside of ravb_set_delay_mode for consistency
+> >  - Call ravb_modify() once in ravb_set_delay_mode()
+> >* Enhance comment before calls to ravb_set_delay_mode()
+> 
+>    Well, I meant to say that the comment should precede the body of the
+> function, not be repeated at every call...
 
-This supports HS200 mode for eMMC on H3ULCB board
+I scratched my head trying to work out what you meant... and guessed wrong.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 1 +
- 1 file changed, 1 insertion(+)
+> >* Remove unnecessary break from end of switch statement.
+> 
+>   Come on, you did remove all the *switch*. :-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 7a8986e..51ef8bb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -329,6 +329,7 @@
- 	vmmc-supply = <&reg_3p3v>;
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
-+	mmc-hs200-1_8v;
- 	non-removable;
- 	status = "okay";
- };
--- 
-1.9.1
+Yes, after I wrote the comment above :)
