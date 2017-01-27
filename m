@@ -1,55 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:32790 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755152AbdA0QsR (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:54912 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750808AbdA0UIk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 11:48:17 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, Chris.Brandt@renesas.com,
-        wsa@the-dreams.de
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [RFC fixes 1/2] arm: dts: genmai: Configure RIIC2 pins
-Date: Fri, 27 Jan 2017 17:47:07 +0100
-Message-Id: <1485535628-17097-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 27 Jan 2017 15:08:40 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v7 1/2] dt-bindings: document renesas-ostm timer
+Date: Fri, 27 Jan 2017 15:02:14 -0500
+Message-Id: <20170127200215.4894-2-chris.brandt@renesas.com>
+In-Reply-To: <20170127200215.4894-1-chris.brandt@renesas.com>
+References: <20170127200215.4894-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration for RIIC2 pins interface.
-The i2c2 is connected to internal eeprom.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+v3:
+* changed ostm@fcfec000 to timer@fcfec000 in example
+* added power-domains in example
+v2:
+* remove sw implementation specific portions
+---
+ .../devicetree/bindings/timer/renesas,ostm.txt     | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index ea649c7..0068a1a 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -40,13 +40,19 @@
- 
- &pinctrl {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-0 = <&scif2_pins &i2c2_pins>;
- 
- 	scif2_pins: serial2 {
- 		/* P3_0 as TxD2; P3_2 as RxD2 */
- 		renesas-rz,pins = <RZ_PIN(3, 0) ALTERNATE_FUNC_6>,
- 				  <RZ_PIN(3, 2) ALTERNATE_FUNC_4>;
- 	};
+diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+new file mode 100644
+index 0000000..be3ae0f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+@@ -0,0 +1,30 @@
++* Renesas OS Timer (OSTM)
 +
-+	i2c2_pins: i2c2 {
-+		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
-+		renesas-rz,pins = <RZ_PIN(1, 4) ALTERNATE_FUNC_1>,
-+				  <RZ_PIN(1, 5) ALTERNATE_FUNC_1>;
++The OSTM is a multi-channel 32-bit timer/counter with fixed clock
++source that can operate in either interval count down timer or free-running
++compare match mode.
++
++Channels are independent from each other.
++
++Required Properties:
++
++  - compatible: must be one or more of the following:
++    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
++    - "renesas,ostm" for any OSTM
++		This is a fallback for the above renesas,*-ostm entries
++
++  - reg: base address and length of the register block for a timer channel.
++
++  - interrupts: interrupt specifier for the timer channel.
++
++  - clocks: clock specifier for the timer channel.
++
++Example: R7S72100 (RZ/A1H) OSTM node
++
++	ostm0: timer@fcfec000 {
++		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
++		reg = <0xfcfec000 0x30>;
++		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
++		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
++		power-domains = <&cpg_clocks>;
 +	};
- };
- 
- &extal_clk {
 -- 
-2.7.4
+2.10.1
