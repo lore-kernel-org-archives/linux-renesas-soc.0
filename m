@@ -1,173 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:53750 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753114AbdAZPZv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59316 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754770AbdA0JP2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 10:25:51 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
+        Fri, 27 Jan 2017 04:15:28 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv5 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-Date: Thu, 26 Jan 2017 16:25:32 +0100
-Message-Id: <20170126152533.28434-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170126152533.28434-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170126152533.28434-1-niklas.soderlund+renesas@ragnatech.se>
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/9] arm64: dts: r8a7795: Add R-Car Gen3 thermal support
+Date: Fri, 27 Jan 2017 10:14:25 +0100
+Message-Id: <b443cd1740a28195e965d78b9478a88117ea73f9.1485508214.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1485508214.git.horms+renesas@verge.net.au>
+References: <cover.1485508214.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
-are located between the video sources (CSI-2 transmitters) and the video
-grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Each CSI-2 device is connected to more then one VIN device which
-simultaneously can receive video from the same CSI-2 device. Each VIN
-device can also be connected to more then one CSI-2 device. The routing
-of which link are used are controlled by the VIN devices. There are only
-a few possible routes which are set by hardware limitations, which are
-different for each SoC in the Gen3 family.
-
-To work with the limitations of routing possibilities it is necessary
-for the DT bindings to describe which VIN device is connected to which
-CSI-2 device. This is why port 1 needs to to assign reg numbers for each
-VIN device that be connected to it. To setup and to know which links are
-valid for each SoC is the responsibility of the VIN driver since the
-register to configure it belongs to the VIN hardware.
-
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Thao Nguyen <thao.nguyen.yb@rvc.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../devicetree/bindings/media/rcar-csi2.txt        | 116 +++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-new file mode 100644
-index 0000000000000000..f6e2027ee92b171a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-@@ -0,0 +1,116 @@
-+Renesas R-Car MIPI CSI-2
-+------------------------
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 026a16ac41b4..d36783e751af 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1647,5 +1647,63 @@
+ 				};
+ 			};
+ 		};
 +
-+The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
-+family of devices. It is to be used in conjunction with the R-Car VIN module,
-+which provides the video capture capabilities.
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a7795-thermal";
++			reg = <0 0xe6198000 0 0x68>,
++			      <0 0xe61a0000 0 0x5c>,
++			      <0 0xe61a8000 0 0x5c>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
 +
-+ - compatible: Must be one or more of the following
-+   - "renesas,r8a7795-csi2" for the R8A7795 device.
-+   - "renesas,r8a7796-csi2" for the R8A7796 device.
-+   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
++		thermal-zones {
++			sensor_thermal1: sensor-thermal1 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 0>;
 +
-+   When compatible with a generic version nodes must list the
-+   SoC-specific version corresponding to the platform first
-+   followed by the generic version.
++				trips {
++					sensor1_crit: sensor1-crit {
++						temperature = <120000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
 +
-+ - reg: the register base and size for the device registers
-+ - interrupts: the interrupt for the device
-+ - clocks: Reference to the parent clock
++			sensor_thermal2: sensor-thermal2 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 1>;
 +
-+The device node should contain two 'port' child nodes according to the
-+bindings defined in Documentation/devicetree/bindings/media/
-+video-interfaces.txt. Port 0 should connect the node that is the video
-+source for to the CSI-2. Port 1 should connect all the R-Car VIN
-+modules, which can make use of the CSI-2 module.
++				trips {
++					sensor2_crit: sensor2-crit {
++						temperature = <120000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
++				};
++			};
 +
-+- Port 0 - Video source
-+	- Reg 0 - sub-node describing the endpoint that is the video source
++			sensor_thermal3: sensor-thermal3 {
++				polling-delay-passive = <250>;
++				polling-delay = <1000>;
++				thermal-sensors = <&tsc 2>;
 +
-+- Port 1 - VIN instances
-+	- Reg 0 - sub-node describing the endpoint that is VIN0
-+	- Reg 1 - sub-node describing the endpoint that is VIN1
-+	- Reg 2 - sub-node describing the endpoint that is VIN2
-+	- Reg 3 - sub-node describing the endpoint that is VIN3
-+	- Reg 4 - sub-node describing the endpoint that is VIN4
-+	- Reg 5 - sub-node describing the endpoint that is VIN5
-+	- Reg 6 - sub-node describing the endpoint that is VIN6
-+	- Reg 7 - sub-node describing the endpoint that is VIN7
-+
-+Example:
-+
-+/* SoC properties */
-+
-+	 csi20: csi2@fea80000 {
-+		 compatible = "renesas,r8a7796-csi2";
-+		 reg = <0 0xfea80000 0 0x10000>;
-+		 interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
-+		 clocks = <&cpg CPG_MOD 714>;
-+		 power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		 status = "disabled";
-+
-+		 ports {
-+			 #address-cells = <1>;
-+			 #size-cells = <0>;
-+
-+			 port@1 {
-+				 #address-cells = <1>;
-+				 #size-cells = <0>;
-+
-+				 reg = <1>;
-+
-+				 csi20vin0: endpoint@0 {
-+					 reg = <0>;
-+					 remote-endpoint = <&vin0csi20>;
-+				 };
-+				 csi20vin1: endpoint@1 {
-+					 reg = <1>;
-+					 remote-endpoint = <&vin1csi20>;
-+				 };
-+				 csi20vin2: endpoint@2 {
-+					 reg = <2>;
-+					 remote-endpoint = <&vin2csi20>;
-+				 };
-+				 csi20vin3: endpoint@3 {
-+					 reg = <3>;
-+					 remote-endpoint = <&vin3csi20>;
-+				 };
-+				 csi20vin4: endpoint@4 {
-+					 reg = <4>;
-+					 remote-endpoint = <&vin4csi20>;
-+				 };
-+				 csi20vin5: endpoint@5 {
-+					 reg = <5>;
-+					 remote-endpoint = <&vin5csi20>;
-+				 };
-+				 csi20vin6: endpoint@6 {
-+					 reg = <6>;
-+					 remote-endpoint = <&vin6csi20>;
-+				 };
-+				 csi20vin7: endpoint@7 {
-+					 reg = <7>;
-+					 remote-endpoint = <&vin7csi20>;
-+				 };
-+			 };
-+		 };
-+	 };
-+
-+/* Board properties */
-+
-+	&csi20 {
-+		status = "okay";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				csi20_in: endpoint@0 {
-+					clock-lanes = <0>;
-+					data-lanes = <1>;
-+					remote-endpoint = <&adv7482_txb>;
++				trips {
++					sensor3_crit: sensor3-crit {
++						temperature = <120000>;
++						hysteresis = <2000>;
++						type = "critical";
++					};
 +				};
 +			};
 +		};
-+	};
+ 	};
+ };
 -- 
-2.11.0
+2.7.0.rc3.207.g0ac5344
