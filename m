@@ -1,41 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34081 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754806AbdA0MxK (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36714 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932351AbdA0MRe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 07:53:10 -0500
-Received: by mail-lf0-f51.google.com with SMTP id v186so161438479lfa.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2017 04:52:13 -0800 (PST)
-Subject: Re: [PATCH net-next 2/2] ravb: Support 1Gbps on R-Car H3 ES1.1+ and
- R-Car M3-W
-To: Simon Horman <horms+renesas@verge.net.au>,
-        David Miller <davem@davemloft.net>
-References: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
- <1485515090-7570-3-git-send-email-horms+renesas@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1a03b93c-3793-a9c5-14df-010c24b4f3a9@cogentembedded.com>
-Date: Fri, 27 Jan 2017 15:52:10 +0300
+        Fri, 27 Jan 2017 07:17:34 -0500
 MIME-Version: 1.0
-In-Reply-To: <1485515090-7570-3-git-send-email-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
+References: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 27 Jan 2017 13:16:43 +0100
+Message-ID: <CAMuHMdUdHVcFpQyqtngps__Z99vWBYbs1vVvVSLvKBWSEkOrgw@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/2] ravb: Support 1Gbps on R-Car H3 ES1.1+ and
+ R-Car M3-W
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/27/2017 02:04 PM, Simon Horman wrote:
+Hi Simon,
 
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> The limitation to 10/100Mbit speeds on R-Car Gen3 is valid for R-Car H3
-> ES1.0 only. Check for the exact SoC model to allow 1Gbps on newer
-> revisions of R-Car H3, and on R-Car M3-W.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+On Fri, Jan 27, 2017 at 12:04 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> The path from Mizuguchi-san is to address timing problems observed with
+> gigabit transfers. I would like it considered although my own testing on
+> M3-W did not show any timing problems.
 
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Is there any relation with the *-skew-ps properties in the DTS in the BSP?
 
-MBR, Sergei
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
