@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36047 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:35999 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932975AbdA0Qv3 (ORCPT
+        with ESMTP id S933402AbdA0Qt2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 11:51:29 -0500
-Date: Fri, 27 Jan 2017 17:51:23 +0100
+        Fri, 27 Jan 2017 11:49:28 -0500
+Date: Fri, 27 Jan 2017 17:49:21 +0100
 From: Simon Horman <horms@verge.net.au>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: David Miller <davem@davemloft.net>,
@@ -13,18 +13,20 @@ Cc: David Miller <davem@davemloft.net>,
         Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 Subject: Re: [PATCH net-next 1/2] ravb: Add tx and rx clock internal delays
  mode of APSR
-Message-ID: <20170127165123.GC7336@verge.net.au>
+Message-ID: <20170127164921.GB7336@verge.net.au>
 References: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
  <1485515090-7570-2-git-send-email-horms+renesas@verge.net.au>
- <57812c3f-3130-7141-c479-6beefb237907@cogentembedded.com>
+ <813af981-9a1b-8e45-1fed-788047ab26b5@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <57812c3f-3130-7141-c479-6beefb237907@cogentembedded.com>
+In-Reply-To: <813af981-9a1b-8e45-1fed-788047ab26b5@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 27, 2017 at 04:00:27PM +0300, Sergei Shtylyov wrote:
+On Fri, Jan 27, 2017 at 03:42:05PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
 > On 01/27/2017 02:04 PM, Simon Horman wrote:
 > 
 > >From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
@@ -53,7 +55,46 @@ On Fri, Jan 27, 2017 at 04:00:27PM +0300, Sergei Shtylyov wrote:
 > >- Reworded changelog
 > >
 > >v0 [Kazuya Mizuguchi]
+> >---
+> > drivers/net/ethernet/renesas/ravb.h      | 10 ++++++++++
+> > drivers/net/ethernet/renesas/ravb_main.c | 29 +++++++++++++++++++++++++++++
+> > 2 files changed, 39 insertions(+)
+> >
+> >diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+> >index f1109661a533..d7c91d48cc48 100644
+> >--- a/drivers/net/ethernet/renesas/ravb.h
+> >+++ b/drivers/net/ethernet/renesas/ravb.h
 > [...]
+> >@@ -248,6 +249,15 @@ enum ESR_BIT {
+> > 	ESR_EIL		= 0x00001000,
+> > };
+> >
+> >+/* APSR */
+> >+enum APSR_BIT {
+> >+	APSR_MEMS		= 0x00000002,
+> 
+>    Not documented in the revision 0.5 of the gen3 manual...
+
+It is in version 0.53 of the documentation but I think it can be dropped
+from this patch as its unused.
+
+> >+	APSR_CMSW		= 0x00000010,
+
+I think the above can also be dropped as it is unused.
+
+> >+	APSR_DM			= 0x00006000,
+> 
+>    ... and neither this field. Are these documented in the latter revs?
+
+This one is not. I can ask Mizuguchi-san to confirm it exists (with himself).
+
+> >+	APSR_DM_RDM		= 0x00002000,
+> >+	APSR_DM_TDM		= 0x00004000,
+> >+};
+> >+
+> > /* RCR */
+> > enum RCR_BIT {
+> > 	RCR_EFFS	= 0x00000001,
 > >diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
 > >index 89ac1e3f6175..9fb4c04c5885 100644
 > >--- a/drivers/net/ethernet/renesas/ravb_main.c
@@ -82,39 +123,22 @@ On Fri, Jan 27, 2017 at 04:00:27PM +0300, Sergei Shtylyov wrote:
 > >+			ravb_modify(ndev, APSR, APSR_DM, 0);
 > >+			break;
 > >+		}
-> >+	}
-> >+}
-> >+
-> > static int ravb_probe(struct platform_device *pdev)
-> > {
-> > 	struct device_node *np = pdev->dev.of_node;
-> >@@ -2016,6 +2039,9 @@ static int ravb_probe(struct platform_device *pdev)
-> > 	/* Request GTI loading */
-> > 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-> >
-> >+	/* Set APSR */
-> >+	ravb_set_delay_mode(ndev);
-> >+
-> > 	/* Allocate descriptor base address table */
-> > 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
-> > 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
-> >@@ -2152,6 +2178,9 @@ static int __maybe_unused ravb_resume(struct device *dev)
-> > 	/* Request GTI loading */
-> > 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-> >
-> >+	/* Set APSR */
-> >+	ravb_set_delay_mode(ndev);
-> >+
 > 
->    So far the pattern was to first check if gen != 2, then calling a gen3
-> specific function. I'd like to keep it, rather than checking in the function
-> itself.
+>    How about doing ravb_modify() only once?
 
-So you would like something like?
+Something like this?
 
-	/* Set APSR */
-	if (priv->chip_id != RCAR_GEN2)
-		 ravb_set_delay_mode(ndev);
+		int set = 0;
 
-That does not seem better to me but I can make it so if that is your
-preference.
+		if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
+		    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
+		    set |= APSR_DM_RDM;
+
+		if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
+		    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
+		    set |= APSR_DM_TDM;
+
+		ravb_modify(ndev, APSR, APSR_DM, set);
+
+I don't really see any advantage to it but I can change things around
+however you like.
