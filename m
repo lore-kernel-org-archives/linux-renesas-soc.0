@@ -1,136 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60904 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933350AbdA0LGP (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34750 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932393AbdA0KWz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 06:06:15 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH net-next 1/2] ravb: Add tx and rx clock internal delays mode of APSR
-Date: Fri, 27 Jan 2017 12:04:49 +0100
-Message-Id: <1485515090-7570-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
-References: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 27 Jan 2017 05:22:55 -0500
+Received: by mail-it0-f65.google.com with SMTP id o185so7855007itb.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2017 02:22:31 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1485511583-21614-3-git-send-email-horms+renesas@verge.net.au>
+References: <1485511583-21614-1-git-send-email-horms+renesas@verge.net.au> <1485511583-21614-3-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 27 Jan 2017 11:22:29 +0100
+Message-ID: <CAMuHMdUNqTmLnrgMfLVtmr_h+3r3kaqi+TwTbiQ+Y329ovcvcw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: r8a7795: Enable I2C DVFS DMA
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+On Fri, Jan 27, 2017 at 11:06 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -804,6 +804,9 @@
+>                         interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks = <&cpg CPG_MOD 926>;
+>                         power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> +                       dmas = <&dmac1 0x11>, <&dmac1 0x10>,
+> +                              <&dmac2 0x11>, <&dmac2 0x10>;
+> +                       dma-names = "tx", "rx", "tx", "rx";
 
-This patch enables tx and rx clock internal delay modes (TDM and RDM).
+The datasheet says IIC-DVFS can use dmac0 only.
 
-This is to address a failure in the case of 1Gbps communication using the
-by salvator-x board with the KSZ9031RNX phy. This has been reported to
-occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
+Gr{oetje,eeting}s,
 
-With this change APSR internal delay modes are enabled for
-"rgmii-id", "rgmii-rxid" and "rgmii-txid" phy modes as follows:
+                        Geert
 
-phy mode   | ASPR delay mode
------------+----------------
-rgmii-id   | TDM and RDM
-rgmii-rxid | RDM
-rgmii-txid | TDM
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
----
-v1 [Simon Horman]
-- Combined patches
-- Reworded changelog
-
-v0 [Kazuya Mizuguchi]
----
- drivers/net/ethernet/renesas/ravb.h      | 10 ++++++++++
- drivers/net/ethernet/renesas/ravb_main.c | 29 +++++++++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
-
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index f1109661a533..d7c91d48cc48 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -76,6 +76,7 @@ enum ravb_reg {
- 	CDAR20	= 0x0060,
- 	CDAR21	= 0x0064,
- 	ESR	= 0x0088,
-+	APSR	= 0x008C,	/* R-Car Gen3 only */
- 	RCR	= 0x0090,
- 	RQC0	= 0x0094,
- 	RQC1	= 0x0098,
-@@ -248,6 +249,15 @@ enum ESR_BIT {
- 	ESR_EIL		= 0x00001000,
- };
- 
-+/* APSR */
-+enum APSR_BIT {
-+	APSR_MEMS		= 0x00000002,
-+	APSR_CMSW		= 0x00000010,
-+	APSR_DM			= 0x00006000,
-+	APSR_DM_RDM		= 0x00002000,
-+	APSR_DM_TDM		= 0x00004000,
-+};
-+
- /* RCR */
- enum RCR_BIT {
- 	RCR_EFFS	= 0x00000001,
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 89ac1e3f6175..9fb4c04c5885 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1904,6 +1904,29 @@ static void ravb_set_config_mode(struct net_device *ndev)
- 	}
- }
- 
-+static void ravb_set_delay_mode(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+
-+	if (priv->chip_id != RCAR_GEN2) {
-+		switch (priv->phy_interface) {
-+		case PHY_INTERFACE_MODE_RGMII_ID:
-+			ravb_modify(ndev, APSR, APSR_DM, APSR_DM_RDM |
-+				   APSR_DM_TDM);
-+			break;
-+		case PHY_INTERFACE_MODE_RGMII_RXID:
-+			ravb_modify(ndev, APSR, APSR_DM, APSR_DM_RDM);
-+			break;
-+		case PHY_INTERFACE_MODE_RGMII_TXID:
-+			ravb_modify(ndev, APSR, APSR_DM, APSR_DM_TDM);
-+			break;
-+		default:
-+			ravb_modify(ndev, APSR, APSR_DM, 0);
-+			break;
-+		}
-+	}
-+}
-+
- static int ravb_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -2016,6 +2039,9 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Request GTI loading */
- 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
- 
-+	/* Set APSR */
-+	ravb_set_delay_mode(ndev);
-+
- 	/* Allocate descriptor base address table */
- 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
- 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
-@@ -2152,6 +2178,9 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	/* Request GTI loading */
- 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
- 
-+	/* Set APSR */
-+	ravb_set_delay_mode(ndev);
-+
- 	/* Restore descriptor base address table */
- 	ravb_write(ndev, priv->desc_bat_dma, DBAT);
- 
--- 
-2.7.0.rc3.207.g0ac5344
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
