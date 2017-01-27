@@ -1,33 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:33360 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753585AbdA0SBI (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:36229 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932928AbdA0Rps (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 13:01:08 -0500
-Received: by mail-lf0-f53.google.com with SMTP id x1so79234267lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2017 10:01:07 -0800 (PST)
+        Fri, 27 Jan 2017 12:45:48 -0500
+Received: by mail-lf0-f51.google.com with SMTP id z134so165688130lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2017 09:44:55 -0800 (PST)
 Subject: Re: [PATCH net-next 1/2] ravb: Add tx and rx clock internal delays
  mode of APSR
 To: Simon Horman <horms@verge.net.au>
 References: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
  <1485515090-7570-2-git-send-email-horms+renesas@verge.net.au>
- <813af981-9a1b-8e45-1fed-788047ab26b5@cogentembedded.com>
- <20170127164921.GB7336@verge.net.au>
+ <57812c3f-3130-7141-c479-6beefb237907@cogentembedded.com>
+ <20170127165123.GC7336@verge.net.au>
 Cc: David Miller <davem@davemloft.net>,
         Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <d1e19006-b57f-9429-1e6e-ff906ced47a0@cogentembedded.com>
-Date: Fri, 27 Jan 2017 19:55:25 +0300
+Message-ID: <77488d7f-b94b-1053-7f55-2a16ee09c3c8@cogentembedded.com>
+Date: Fri, 27 Jan 2017 20:13:43 +0300
 MIME-Version: 1.0
-In-Reply-To: <20170127164921.GB7336@verge.net.au>
+In-Reply-To: <20170127165123.GC7336@verge.net.au>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/27/2017 07:49 PM, Simon Horman wrote:
+On 01/27/2017 07:51 PM, Simon Horman wrote:
 
 >>> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 >>>
@@ -55,96 +55,46 @@ On 01/27/2017 07:49 PM, Simon Horman wrote:
 >>> - Reworded changelog
 >>>
 >>> v0 [Kazuya Mizuguchi]
->>> ---
->>> drivers/net/ethernet/renesas/ravb.h      | 10 ++++++++++
->>> drivers/net/ethernet/renesas/ravb_main.c | 29 +++++++++++++++++++++++++++++
->>> 2 files changed, 39 insertions(+)
->>>
->>> diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
->>> index f1109661a533..d7c91d48cc48 100644
->>> --- a/drivers/net/ethernet/renesas/ravb.h
->>> +++ b/drivers/net/ethernet/renesas/ravb.h
 >> [...]
->>> @@ -248,6 +249,15 @@ enum ESR_BIT {
->>> 	ESR_EIL		= 0x00001000,
->>> };
->>>
->>> +/* APSR */
->>> +enum APSR_BIT {
->>> +	APSR_MEMS		= 0x00000002,
->>
->>    Not documented in the revision 0.5 of the gen3 manual...
->
-> It is in version 0.53 of the documentation but I think it can be dropped
-> from this patch as its unused.
-
-    No need to drop, let it be. :-)
-
->>> +	APSR_CMSW		= 0x00000010,
->
-> I think the above can also be dropped as it is unused.
-
-    No need.
-
->>> +	APSR_DM			= 0x00006000,
->>
->>    ... and neither this field. Are these documented in the latter revs?
->
-> This one is not. I can ask Mizuguchi-san to confirm it exists (with himself).
-
-    The whole patch depends on it! If it's not documented, I'd like a comment 
-added, like I did for the other undocumented things in this driver...
-
-[...]
 >>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
 >>> index 89ac1e3f6175..9fb4c04c5885 100644
 >>> --- a/drivers/net/ethernet/renesas/ravb_main.c
 >>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
->>> @@ -1904,6 +1904,29 @@ static void ravb_set_config_mode(struct net_device *ndev)
->>> 	}
->>> }
+[...]
+>>> @@ -2016,6 +2039,9 @@ static int ravb_probe(struct platform_device *pdev)
+>>> 	/* Request GTI loading */
+>>> 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
 >>>
->>> +static void ravb_set_delay_mode(struct net_device *ndev)
->>> +{
->>> +	struct ravb_private *priv = netdev_priv(ndev);
+>>> +	/* Set APSR */
+>>> +	ravb_set_delay_mode(ndev);
 >>> +
->>> +	if (priv->chip_id != RCAR_GEN2) {
->>> +		switch (priv->phy_interface) {
->>> +		case PHY_INTERFACE_MODE_RGMII_ID:
->>> +			ravb_modify(ndev, APSR, APSR_DM, APSR_DM_RDM |
->>> +				   APSR_DM_TDM);
->>> +			break;
->>> +		case PHY_INTERFACE_MODE_RGMII_RXID:
->>> +			ravb_modify(ndev, APSR, APSR_DM, APSR_DM_RDM);
->>> +			break;
->>> +		case PHY_INTERFACE_MODE_RGMII_TXID:
->>> +			ravb_modify(ndev, APSR, APSR_DM, APSR_DM_TDM);
->>> +			break;
->>> +		default:
->>> +			ravb_modify(ndev, APSR, APSR_DM, 0);
->>> +			break;
->>> +		}
+>>> 	/* Allocate descriptor base address table */
+>>> 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
+>>> 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
+>>> @@ -2152,6 +2178,9 @@ static int __maybe_unused ravb_resume(struct device *dev)
+>>> 	/* Request GTI loading */
+>>> 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
+>>>
+>>> +	/* Set APSR */
+>>> +	ravb_set_delay_mode(ndev);
+>>> +
 >>
->>    How about doing ravb_modify() only once?
+>>    So far the pattern was to first check if gen != 2, then calling a gen3
+>> specific function. I'd like to keep it, rather than checking in the function
+>> itself.
 >
-> Something like this?
+> So you would like something like?
 >
-> 		int set = 0;
->
-> 		if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-> 		    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
-> 		    set |= APSR_DM_RDM;
->
-> 		if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-> 		    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
-> 		    set |= APSR_DM_TDM;
->
-> 		ravb_modify(ndev, APSR, APSR_DM, set);
->
-> I don't really see any advantage to it but I can change things around
-> however you like.
+> 	/* Set APSR */
+> 	if (priv->chip_id != RCAR_GEN2)
+> 		 ravb_set_delay_mode(ndev);
 
-    I didn't mean to replace *switch*, actually -- just to move ravb_modify() 
-out of it.
+    Yes (except the comment).
+
+>
+> That does not seem better to me but I can make it so if that is your
+> preference.
+
+    Yes, not better code-wise but more consistent.
 
 MBR, Sergei
