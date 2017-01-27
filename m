@@ -1,107 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753277AbdAFMQY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58684 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754201AbdA0IaX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 07:16:24 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 1/4] v4l: vsp1: Prevent multiple streamon race commencing pipeline early
-Date: Fri,  6 Jan 2017 12:15:28 +0000
-Message-Id: <d510ad628ee135c12e7b5050ddd5606e573cf01a.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 27 Jan 2017 03:30:23 -0500
+Date: Fri, 27 Jan 2017 09:29:35 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: h3ulcb: enable HS200 for eMMC
+Message-ID: <20170127082935.GH21195@verge.net.au>
+References: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With multiple inputs through the BRU it is feasible for the streams to
-race each other at stream-on.
+[CC Wolfram, linux-mmc]
 
-Multiple VIDIOC_STREAMON calls racing each other could have process
-N-1 skipping over the pipeline setup section and then start the pipeline
-early, if videobuf2 has already enqueued buffers to the driver for
-process N but not called the .start_streaming() operation yet
+On Thu, Jan 26, 2017 at 06:14:00PM +0300, Vladimir Barinov wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> 
+> This supports HS200 mode for eMMC on H3ULCB board
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-In the case of the video pipelines, this
-can present two serious issues.
+Hi Vladimir,
 
- 1) A null-dereference if the pipe->dl is committed at the same time as
-    the vsp1_video_setup_pipeline() is processing
+Please resend this change once the relevant driver changes hit an rc
+release.
 
- 2) A hardware hang, where a display list is committed without having
-    called vsp1_video_setup_pipeline() first
+I believe that means the following changes which are present in mmc/next.
 
-Repair this issue, by ensuring that only the stream which configures the
-pipeline is able to start it.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
----
-
-v4:
- - Revert and rework back to v1 implementation style
- - Provide detailed comments on the race
-
-v3:
- - Move 'flag reset' to be inside the vsp1_reset_wpf() function call
- - Tidy up the wpf->pipe reference for the configured flag
-
-To test this race, I have used the vsp-unit-test-0007.sh from Laurent's
-VSP-Tests [0] in iteration. Without this patch, failures can be seen be
-seen anywhere up to the 150 iterations mark.
-
-With this patch in place, tests have successfully iterated over 1500
-loops.
-
-The function affected by this change appears to have been around since
-v4.6-rc2-105-g351bbf99f245 and thus could be included in stable trees
-from that point forward. The issue may have been prevalent before that
-but the solution would need reworking for earlier version.
-
-[0] http://git.ideasonboard.com/renesas/vsp-tests.git
----
- drivers/media/platform/vsp1/vsp1_video.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index e6592b576ca3..f7dc249eb398 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -797,6 +797,7 @@ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct vsp1_video *video = vb2_get_drv_priv(vq);
- 	struct vsp1_pipeline *pipe = video->rwpf->pipe;
-+	bool start_pipeline = false;
- 	unsigned long flags;
- 	int ret;
- 
-@@ -807,11 +808,23 @@ static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
- 			mutex_unlock(&pipe->lock);
- 			return ret;
- 		}
-+
-+		start_pipeline = true;
- 	}
- 
- 	pipe->stream_count++;
- 	mutex_unlock(&pipe->lock);
- 
-+	/*
-+	 * vsp1_pipeline_ready() is not sufficient to establish that all streams
-+	 * are prepared and the pipeline is configured, as multiple streams
-+	 * can race through streamon with buffers already queued; Therefore we
-+	 * don't even attempt to start the pipeline until the last stream has
-+	 * called through here.
-+	 */
-+	if (!start_pipeline)
-+		return 0;
-+
- 	spin_lock_irqsave(&pipe->irqlock, flags);
- 	if (vsp1_pipeline_ready(pipe))
- 		vsp1_video_pipeline_run(pipe);
--- 
-git-series 0.9.1
+8c81459fa8ad mmc: sh_mobile_sdhi: enable HS200
+60f215caef3f mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
+f7c68068fb27 mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
+4cf3ecd2e097 mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
+bdba200138a9 mmc: sh_mobile_sdhi: improve prerequisites for tuning
+a7f2c661cca9 mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
+59c21074b582 mmc: sh_mobile_sdhi: simplify accessing DT data
