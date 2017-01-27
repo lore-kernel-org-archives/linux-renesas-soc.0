@@ -1,72 +1,88 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 00/20] dw-hdmi: Cleanups, fixes and updates for v4.11
-Date: Tue, 17 Jan 2017 10:28:50 +0200
-Message-Id: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:37444 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754378AbdA0IhI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Jan 2017 03:37:08 -0500
+Received: by mail-it0-f50.google.com with SMTP id r185so51579587ita.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Jan 2017 00:36:33 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAL_Jsq+uit6rVcqsJjxmbtYfYdCvyRLCgDbp9RZd-B8SJo0+yg@mail.gmail.com>
+References: <20170121030604.7672-1-chris.brandt@renesas.com>
+ <20170121030604.7672-3-chris.brandt@renesas.com> <20170123165523.fnavkx263ifvss4p@rob-hp-laptop>
+ <SG2PR06MB1165F465C5802912ED62820C8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAL_Jsq+uit6rVcqsJjxmbtYfYdCvyRLCgDbp9RZd-B8SJo0+yg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 27 Jan 2017 09:36:27 +0100
+Message-ID: <CAPDyKFrx+mLNH-DEt90g9tutgpHUoTYzv3-Zt8GoSFEuPeqM+A@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] mmc: sh_mobile_sdhi: explain clock bindings
+To: Rob Herring <robh@kernel.org>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On 26 January 2017 at 15:39, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Jan 23, 2017 at 11:56 AM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+>> Hello Rob,
+>>
+>>
+>> On Monday, January 23, 2017, Rob Herring wrote:
+>>> > --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+>>> > +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+>>> > @@ -25,8 +25,32 @@ Required properties:
+>>> >             "renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+>>> >             "renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
+>>> >
+>>> > +- clocks: Most controllers only have 1 clock source per channel.
+>>> However, on
+>>> > +     some variations of this controller, the internal card detection
+>>>
+>>> This should be explicit as to which compatible strings have 2 clocks and
+>>> which have 1 clock.
+>>
+>> OK. I'll make a list like I did for sh_mmcif:
+>>
+>> https://patchwork.kernel.org/patch/9512091/
+>>
+>>
+>>
+>>> > +
+>>> > +Example showing 2 clocks:
+>>> > +   sdhi0: sd@e804e000 {
+>>>
+>>> mmc@...
+>>
+>> I'm confused. I see that for all SDHI controllers, it either "sd@" or "sdhci@".
+>>
+>> $ grep sdhi $(find arch/arm/boot/dts -name "*.dtsi")
+>>
+>> $ grep sdhci $(find arch/arm/boot/dts -name "*.dtsi")
+>
+> Yes, there's lots of variation. Node names are supposed to be generic
+> for their class of device (e.g. ethernet, pci, usb,
+> interrupt-controller, etc.). I'd be fine with "sd", but think "mmc" is
+> more common. Either way, we should pick one moving forward. "sdhci"
+> should not be used as that's a specific implementation.
 
-This patch series contains the part of my pending dw-hdmi patches that have
-been successfully tested on all three supported platforms (i.MX6, RK3288 and
-R-Car H3) and have been reviewed without any problem being reported.
+I think we discussed this earlier. The problem with these devices is
+that it covers several type of devices, so it's hard to find a generic
+node name.
 
-All patches here have been previously posted as part of the "[PATCH v2 00/29]
-R-Car Gen3 HDMI output support" and "[PATCH 0/3] dw-hdmi: miscellaneous
-cleanups and fix" series. This series is a repost with all review tags
-collected.
+The devices are: MMC, eMMC, SD, SDIO. I don't have strong opinions on
+whether to chose a generic node name, and perhaps "mmc" is the best we
+can get?
 
-Kieran Bingham (2):
-  drm: bridge: dw-hdmi: Remove unused function parameter
-  drm: bridge: dw-hdmi: Remove PHY configuration resolution parameter
+Whatever we decide, we should update all mmc DTS docs, to avoid future
+confusion.
 
-Laurent Pinchart (18):
-  drm: bridge: dw-hdmi: Merge __hdmi_phy_i2c_write and
-    hdmi_phy_i2c_write
-  drm: bridge: dw-hdmi: Remove unneeded arguments to bind/unbind
-    functions
-  drm: bridge: dw-hdmi: Embed drm_bridge in struct dw_hdmi
-  drm: bridge: dw-hdmi: Remove encoder field from struct dw_hdmi
-  drm: bridge: dw-hdmi: Don't forward HPD events to DRM core before
-    attach
-  drm: bridge: dw-hdmi: Move IRQ and IO resource allocation to common
-    code
-  drm: bridge: dw-hdmi: Reorder functions to prepare for next commit
-  drm: bridge: dw-hdmi: Create connector in the bridge attach operation
-  drm: bridge: dw-hdmi: Implement DRM bridge registration
-  drm: bridge: dw-hdmi: Rename CONF0 SPARECTRL bit to SVSRET
-  drm: bridge: dw-hdmi: Reject invalid product IDs
-  drm: bridge: dw-hdmi: Detect AHB audio DMA using correct register
-  drm: bridge: dw-hdmi: Handle overflow workaround based on device
-    version
-  drm: bridge: dw-hdmi: Detect PHY type at runtime
-  drm: bridge: dw-hdmi: Define and use macros for PHY register addresses
-  drm: bridge: dw-hdmi: Fix the name of the PHY reset macros
-  drm: bridge: dw-hdmi: Assert SVSRET before resetting the PHY
-  dt-bindings: display: dw-hdmi: Clean up DT bindings documentation
-
- .../devicetree/bindings/display/bridge/dw_hdmi.txt |  85 ++--
- .../devicetree/bindings/display/imx/hdmi.txt       |  51 +--
- .../bindings/display/rockchip/dw_hdmi-rockchip.txt |  43 +-
- drivers/gpu/drm/bridge/dw-hdmi.c                   | 438 +++++++++++++--------
- drivers/gpu/drm/bridge/dw-hdmi.h                   |  85 +++-
- drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  14 +-
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  14 +-
- include/drm/bridge/dw_hdmi.h                       |  19 +-
- 8 files changed, 472 insertions(+), 277 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+Kind regards
+Uffe
