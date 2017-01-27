@@ -1,127 +1,76 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:8191 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753401AbdA0Ca6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 21:30:58 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        artemi.ivanov@cogentembedded.com,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] arm64: do not set dma masks that device connection can't handle
-Date: Fri,  6 Jan 2017 17:38:35 +0300
-Message-Id: <1483713515-1945-1-git-send-email-nikita.yoush@cogentembedded.com>
-In-Reply-To: <9a03c05d-ad4c-0547-d1fe-01edb8b082d6@cogentembedded.com>
-References: <9a03c05d-ad4c-0547-d1fe-01edb8b082d6@cogentembedded.com>
-Sender: linux-kernel-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v6 1/2] dt-bindings: document renesas-ostm timer
+Date: Thu, 26 Jan 2017 21:23:31 -0500
+Message-Id: <20170127022332.15906-2-chris.brandt@renesas.com>
+In-Reply-To: <20170127022332.15906-1-chris.brandt@renesas.com>
+References: <20170127022332.15906-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is possible that device is capable of 64-bit DMA addresses, and
-device driver tries to set wide DMA mask, but bridge or bus used to
-connect device to the system can't handle wide addresses.
-
-With swiotlb, memory above 4G still can be used by drivers for streaming
-DMA, but *dev->mask and dev->dma_coherent_mask must still keep values
-that hardware handles physically.
-
-This patch enforces that. Based on original version by
-Arnd Bergmann <arnd@arndb.de>, extended with coherent mask hadnling.
-
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-CC: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/Kconfig              |  3 +++
- arch/arm64/include/asm/device.h |  1 +
- arch/arm64/mm/dma-mapping.c     | 40 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 44 insertions(+)
+v3:
+* changed ostm@fcfec000 to timer@fcfec000 in example
+* added power-domains in example
+v2:
+* remove sw implementation specific portions
+---
+ .../devicetree/bindings/timer/renesas,ostm.txt     | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/renesas,ostm.txt
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 1117421..afb2c08 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -216,6 +216,9 @@ config NEED_DMA_MAP_STATE
- config NEED_SG_DMA_LENGTH
- 	def_bool y
- 
-+config ARCH_HAS_DMA_SET_COHERENT_MASK
-+	def_bool y
+diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+new file mode 100644
+index 0000000..be3ae0f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
+@@ -0,0 +1,30 @@
++* Renesas OS Timer (OSTM)
 +
- config SMP
- 	def_bool y
- 
-diff --git a/arch/arm64/include/asm/device.h b/arch/arm64/include/asm/device.h
-index 243ef25..a57e7bb 100644
---- a/arch/arm64/include/asm/device.h
-+++ b/arch/arm64/include/asm/device.h
-@@ -22,6 +22,7 @@ struct dev_archdata {
- 	void *iommu;			/* private IOMMU data */
- #endif
- 	bool dma_coherent;
-+	u64 parent_dma_mask;
- };
- 
- struct pdev_archdata {
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 290a84f..be3632e 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -352,6 +352,31 @@ static int __swiotlb_dma_supported(struct device *hwdev, u64 mask)
- 	return 1;
- }
- 
-+static int __swiotlb_set_dma_mask(struct device *dev, u64 mask)
-+{
-+	/* device is not DMA capable */
-+	if (!dev->dma_mask)
-+		return -EIO;
++The OSTM is a multi-channel 32-bit timer/counter with fixed clock
++source that can operate in either interval count down timer or free-running
++compare match mode.
 +
-+	/* mask is below swiotlb bounce buffer, so fail */
-+	if (!swiotlb_dma_supported(dev, mask))
-+		return -EIO;
++Channels are independent from each other.
 +
-+	/*
-+	 * because of the swiotlb, we can return success for
-+	 * larger masks, but need to ensure that bounce buffers
-+	 * are used above parent_dma_mask, so set that as
-+	 * the effective mask.
-+	 */
-+	if (mask > dev->archdata.parent_dma_mask)
-+		mask = dev->archdata.parent_dma_mask;
++Required Properties:
 +
++  - compatible: must be one or more of the following:
++    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
++    - "renesas,ostm" for any OSTM
++		This is a fallback for the above renesas,*-ostm entries
 +
-+	*dev->dma_mask = mask;
++  - reg: base address and length of the register block for a timer channel.
 +
-+	return 0;
-+}
++  - interrupts: interrupt specifier for the timer channel.
 +
- static struct dma_map_ops swiotlb_dma_ops = {
- 	.alloc = __dma_alloc,
- 	.free = __dma_free,
-@@ -367,8 +392,23 @@ static struct dma_map_ops swiotlb_dma_ops = {
- 	.sync_sg_for_device = __swiotlb_sync_sg_for_device,
- 	.dma_supported = __swiotlb_dma_supported,
- 	.mapping_error = swiotlb_dma_mapping_error,
-+	.set_dma_mask = __swiotlb_set_dma_mask,
- };
- 
-+int dma_set_coherent_mask(struct device *dev, u64 mask)
-+{
-+	if (!dma_supported(dev, mask))
-+		return -EIO;
++  - clocks: clock specifier for the timer channel.
 +
-+	if (get_dma_ops(dev) == &swiotlb_dma_ops &&
-+	    mask > dev->archdata.parent_dma_mask)
-+		mask = dev->archdata.parent_dma_mask;
++Example: R7S72100 (RZ/A1H) OSTM node
 +
-+	dev->coherent_dma_mask = mask;
-+	return 0;
-+}
-+EXPORT_SYMBOL(dma_set_coherent_mask);
-+
- static int __init atomic_pool_init(void)
- {
- 	pgprot_t prot = __pgprot(PROT_NORMAL_NC);
++	ostm0: timer@fcfec000 {
++		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
++		reg = <0xfcfec000 0x30>;
++		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
++		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
++		power-domains = <&cpg_clocks>;
++	};
 -- 
-2.1.4
+2.10.1
