@@ -1,91 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35915 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752757AbdAZOy1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35770 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933079AbdA0Qew (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:54:27 -0500
-Received: by mail-lf0-f41.google.com with SMTP id z134so146714906lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 06:54:21 -0800 (PST)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 27 Jan 2017 11:34:52 -0500
+Date: Fri, 27 Jan 2017 17:34:20 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 3/4] arm64: dts: m3ulcb: enable EthernetAVB
-Date: Thu, 26 Jan 2017 17:54:29 +0300
-Message-Id: <1485442469-18378-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH net-next 0/2] ravb: Support 1Gbps on R-Car H3 ES1.1+ and
+ R-Car M3-W
+Message-ID: <20170127163417.GA7336@verge.net.au>
+References: <1485515090-7570-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdUdHVcFpQyqtngps__Z99vWBYbs1vVvVSLvKBWSEkOrgw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUdHVcFpQyqtngps__Z99vWBYbs1vVvVSLvKBWSEkOrgw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On Fri, Jan 27, 2017 at 01:16:43PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Jan 27, 2017 at 12:04 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > The path from Mizuguchi-san is to address timing problems observed with
+> > gigabit transfers. I would like it considered although my own testing on
+> > M3-W did not show any timing problems.
+> 
+> Is there any relation with the *-skew-ps properties in the DTS in the BSP?
 
-This supports Ethernet AVB on M3ULCB board
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index 38bde9d..c7f40f8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -20,6 +20,7 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -115,6 +116,11 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	avb_pins: avb {
-+		groups = "avb_mdc";
-+		function = "avb";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
-@@ -155,6 +161,32 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <900>;
-+		rxdv-skew-ps = <0>;
-+		rxd0-skew-ps = <0>;
-+		rxd1-skew-ps = <0>;
-+		rxd2-skew-ps = <0>;
-+		rxd3-skew-ps = <0>;
-+		txc-skew-ps = <900>;
-+		txen-skew-ps = <0>;
-+		txd0-skew-ps = <0>;
-+		txd1-skew-ps = <0>;
-+		txd2-skew-ps = <0>;
-+		txd3-skew-ps = <0>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-1 = <&sdhi0_pins_uhs>;
--- 
-1.9.1
+Yes, I believe they are also intended to address timeouts.
+I plan to post them too.
