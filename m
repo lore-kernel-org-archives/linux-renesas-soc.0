@@ -1,235 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59072 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964799AbdACXGz (ORCPT
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:34416 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753950AbdA0GVt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 18:06:55 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 12/19] serial: sh-sci: Remove initialization of zero fields in sci_port_params
-Date: Wed,  4 Jan 2017 01:06:32 +0200
-Message-Id: <20170103230639.19660-13-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170103230639.19660-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 27 Jan 2017 01:21:49 -0500
+Received: by mail-pf0-f195.google.com with SMTP id y143so17954909pfb.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jan 2017 22:21:04 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-renesas-soc@vger.kernel.org,
+        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
+Date: Fri, 27 Jan 2017 15:14:45 +0900
+Message-Id: <148549768562.22203.6722636560743534786.sendpatchset@little-apple>
+In-Reply-To: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
+References: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
+Subject: [PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Opt-in slave devices based on ES version
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The compiler zeros uninitialized fields, don't zero them manually.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Match on r8a7795 ES2 and enable a certain DMA controller.
+In other cases the IPMMU driver remains disabled.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/tty/serial/sh-sci.c | 94 ---------------------------------------------
- 1 file changed, 94 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 8c58c43fc85d..3da00f432c73 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -160,14 +160,7 @@ struct plat_sci_reg {
- 	u8 offset, size;
- };
- 
--/* Helper for invalidating specific entries of an inherited map. */
--#define sci_reg_invalid	{ .offset = 0, .size = 0 }
--
- static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
--	[SCIx_PROBE_REGTYPE] = {
--		[0 ... SCIx_NR_REGS - 1] = sci_reg_invalid,
--	},
--
- 	/*
- 	 * Common SCI definitions, dependent on the port's regshift
- 	 * value.
-@@ -179,17 +172,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxTDR]	= { 0x03,  8 },
- 		[SCxSR]		= { 0x04,  8 },
- 		[SCxRDR]	= { 0x05,  8 },
--		[SCFCR]		= sci_reg_invalid,
--		[SCFDR]		= sci_reg_invalid,
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -205,15 +187,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x05,  8 },
- 		[SCFCR]		= { 0x06,  8 },
- 		[SCFDR]		= { 0x07, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -228,15 +201,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x24,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
- 		[SCPCR]		= { 0x30, 16 },
- 		[SCPDR]		= { 0x34, 16 },
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -250,16 +216,10 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxSR]		= { 0x14, 16 },
- 		[SCxRDR]	= { 0x60,  8 },
- 		[SCFCR]		= { 0x18, 16 },
--		[SCFDR]		= sci_reg_invalid,
- 		[SCTFDR]	= { 0x38, 16 },
- 		[SCRFDR]	= { 0x3c, 16 },
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
- 		[SCPCR]		= { 0x30, 16 },
- 		[SCPDR]		= { 0x34, 16 },
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -275,15 +235,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -298,15 +251,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x0a,  8 },
- 		[SCFCR]		= { 0x0c,  8 },
- 		[SCFDR]		= { 0x0e, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -321,15 +265,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -345,13 +282,8 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
- 		[SCDL]		= { 0x30, 16 },
- 		[SCCKS]		= { 0x34, 16 },
- 	},
-@@ -368,13 +300,9 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
- 		[SCSPTR]	= { 0x20, 16 },
- 		[SCLSR]		= { 0x24, 16 },
- 		[HSSRR]		= { 0x40, 16 },
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
- 		[SCDL]		= { 0x30, 16 },
- 		[SCCKS]		= { 0x34, 16 },
- 	},
-@@ -392,15 +320,7 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x14,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
- 		[SCLSR]		= { 0x24, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -420,11 +340,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCRFDR]	= { 0x20, 16 },
- 		[SCSPTR]	= { 0x24, 16 },
- 		[SCLSR]		= { 0x28, 16 },
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- 
- 	/*
-@@ -440,15 +355,6 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
- 		[SCxRDR]	= { 0x24,  8 },
- 		[SCFCR]		= { 0x18, 16 },
- 		[SCFDR]		= { 0x1c, 16 },
--		[SCTFDR]	= sci_reg_invalid,
--		[SCRFDR]	= sci_reg_invalid,
--		[SCSPTR]	= sci_reg_invalid,
--		[SCLSR]		= sci_reg_invalid,
--		[HSSRR]		= sci_reg_invalid,
--		[SCPCR]		= sci_reg_invalid,
--		[SCPDR]		= sci_reg_invalid,
--		[SCDL]		= sci_reg_invalid,
--		[SCCKS]		= sci_reg_invalid,
- 	},
- };
- 
--- 
-Regards,
+ Changes since V1:
+ - Perform white list check in ->xlate() instead of ->add_device()
 
-Laurent Pinchart
+ drivers/iommu/ipmmu-vmsa.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+--- 0009/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-01-27 13:14:47.470607110 +0900
+@@ -23,6 +23,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
++#include <linux/sys_soc.h>
+ 
+ #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ #include <asm/dma-iommu.h>
+@@ -1032,9 +1033,33 @@ static void ipmmu_remove_device_dma(stru
+ 	iommu_group_remove_device(dev);
+ }
+ 
++static const struct soc_device_attribute r8a7795es2[] = {
++	{ .soc_id = "r8a7795", .revision = "ES2.*" },
++	{ /* sentinel */ }
++};
++
++static int ipmmu_slave_whitelist(struct device *dev)
++{
++	/* Opt-in slave devices based on SoC and ES version */
++	if (soc_device_match(r8a7795es2)) {
++		if (!strcmp(dev_name(dev), "e7310000.dma-controller"))
++			return 0;
++	}
++
++	/* By default, do not allow use of IPMMU */
++	return -ENODEV;
++}
++
+ static int ipmmu_of_xlate_dma(struct device *dev,
+ 			      struct of_phandle_args *spec)
+ {
++	int ret;
++
++	/* Opt-in devices based on SoC and ES version */
++	ret = ipmmu_slave_whitelist(dev);
++	if (ret)
++		return ret;
++
+ 	/* For now only tested on R-Car Gen3 with ARM64 arch init order
+ 	 * TODO: Test R-Car Gen2 with ARM32 arch init order
+ 	 */
