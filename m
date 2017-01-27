@@ -1,16 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58647 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754261AbdA0I1G (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:59476 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754038AbdA0H2E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 03:27:06 -0500
-Date: Fri, 27 Jan 2017 09:16:08 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
+        Fri, 27 Jan 2017 02:28:04 -0500
+Date: Fri, 27 Jan 2017 08:27:28 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH RESEND 0/2] arm64: gen3: enable eMMC HS200 in DT
-Message-ID: <20170127081608.GG21195@verge.net.au>
+Message-ID: <20170127072728.GA1473@katana>
 References: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
  <20170126135453.GB2718@katana>
  <20170126140643.GA11104@verge.net.au>
@@ -18,29 +18,51 @@ References: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
  <20170126152413.GA12534@verge.net.au>
  <20170126201702.6kb62spuvx6jgll2@ninjato>
  <20170127063327.GA13565@verge.net.au>
- <20170127072728.GA1473@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
 Content-Disposition: inline
-In-Reply-To: <20170127072728.GA1473@katana>
+In-Reply-To: <20170127063327.GA13565@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 27, 2017 at 08:27:28AM +0100, Wolfram Sang wrote:
-> 
-> > Using renesas-next without mmc-next I see the problem above on the M3-W.
-> > Using renesas-next with mmc-next I do not see the problem above.
-> > Using v4.10-rc2 I also do not see the problem above.
-> 
-> OK. So there is no problem with the code, at least.
-> 
-> > So I believe we should delay the integration change, which is currently in
-> > renesas-next, until the driver change in mmc-next hits Linus's tree.
-> 
-> Whatever you do, H3 and M3-W should be treated equally IMO.
 
-Sure, that is reasonable. This is what I plan to do:
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-1. Drop this series from v4.11
-2. Re-queue them for v4.12 once the driver changes hit an rc release
-   - Please ping me one that happens
+
+> Using renesas-next without mmc-next I see the problem above on the M3-W.
+> Using renesas-next with mmc-next I do not see the problem above.
+> Using v4.10-rc2 I also do not see the problem above.
+
+OK. So there is no problem with the code, at least.
+
+> So I believe we should delay the integration change, which is currently in
+> renesas-next, until the driver change in mmc-next hits Linus's tree.
+
+Whatever you do, H3 and M3-W should be treated equally IMO.
+
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYivZgAAoJEBQN5MwUoCm24L8P/1u3bHsHrn+4f0Dl5YspHF3t
+Y93/OOcDmb88AOTSQEmO6UkUKI8zKNgAjVhHic6oZ6iRPs6nkGoJrCycbNUPr0og
+Q8EqzJvIVmJQiCP65Zm/mEcK/3e7gTvKZK9PQYIozOJ7fV2N9ysizSveNaP1GBTl
+iQKQ3lk80hrcfhwR7AmNyRYpjw8/zAWfH7WYpbn1MYyJ7WJWJwdOCjZYKK82yf5i
+hXz/69KPadebx2Iwjdt4iyC/TSkYgYPVGXqyWljF4pYs+uTp0eH0DutqEOUs7qWK
+dH3LB0revvS43NSb3bCtWsguH0N/B7k7sfUkKoh6K0inqwNf/8PI+Au04aHK38sU
+hwMMfesCgmZ2VownFw9OpuJRXeg8iOCyxTeFx8xvAeK2ADUKxHo4LQYFDZb+GqgG
+ipmGpcRpQY9LW2oGQz8+LlPF8SoYB2h1youmJuRxy5Tf8EWs2QLLWJxcxkoEjhDp
+Ub51MT/RWU8RZ8/O/LdNr8JZixtPzyXvFVdiebQJqlDj3MybrB1G8Mug/KoJc9NT
+Mx2+Xh1pUiD8F9cpGwc9sb96OldGflSFQPjio9os8b5saEHqSDBRgC9QAI0mu4x3
+wmalnUx3mVPNl5ivoJsT2tai6z3j5Ijy1ZtlC5Il84x1tyQVhOlq39rNI2G9JN2d
+kXPIjuXokjl6fbGZTPnk
+=0vV1
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
