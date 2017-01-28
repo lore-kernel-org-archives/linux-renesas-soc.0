@@ -1,74 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751193AbdAaUUs (ORCPT
+Received: from sauhun.de ([89.238.76.85]:60202 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1752145AbdA1VZF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 15:20:48 -0500
-Subject: [PATCH 1 3/4] PCI: layerscape: Use of_device_get_match_data() to
- simplify probe
-From: Bjorn Helgaas <bhelgaas@google.com>
-To: linux-pci@vger.kernel.org
-Cc: Scott Branden <sbranden@broadcom.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        Minghuan Lian <minghuan.Lian@freescale.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Mingkai Hu <mingkai.hu@freescale.com>,
-        Roy Zang <tie-fei.zang@freescale.com>,
-        Shailendra Verma <shailendra.v@samsung.com>
-Date: Tue, 31 Jan 2017 14:20:13 -0600
-Message-ID: <20170131202013.27605.44566.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Sat, 28 Jan 2017 16:25:05 -0500
+Date: Sat, 28 Jan 2017 22:23:19 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH i2c/for-next] i2c: sh_mobile: document support for
+ r8a7796 (R-Car M3-W)
+Message-ID: <20170128212318.7ipb4xv4ofmwai2f@ninjato>
+References: <1485420451-11752-1-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3g2zjtxmzjpehypd"
+Content-Disposition: inline
+In-Reply-To: <1485420451-11752-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The only way to call ls_pcie_probe() is to match an entry in
-ls_pcie_of_match[], so match cannot be NULL.
 
-Use of_device_get_match_data() to retrieve the drvdata pointer.  No
-functional change intended.
+--3g2zjtxmzjpehypd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based-on-suggestion-from: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pci-layerscape.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+On Thu, Jan 26, 2017 at 09:47:31AM +0100, Simon Horman wrote:
+> Explicitly list per-SoC binding for r8a7796. No driver change
+> is required as the initialisation sequence is currently the same
+> as for the R-Car Gen3 fallback binding.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/drivers/pci/host/pci-layerscape.c b/drivers/pci/host/pci-layerscape.c
-index ea789138531b..c1f06f8f05fd 100644
---- a/drivers/pci/host/pci-layerscape.c
-+++ b/drivers/pci/host/pci-layerscape.c
-@@ -239,23 +239,18 @@ static int __init ls_add_pcie_port(struct ls_pcie *pcie)
- static int __init ls_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	const struct of_device_id *match;
- 	struct ls_pcie *pcie;
- 	struct pcie_port *pp;
- 	struct resource *dbi_base;
- 	int ret;
- 
--	match = of_match_device(ls_pcie_of_match, dev);
--	if (!match)
--		return -ENODEV;
--
- 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
- 	if (!pcie)
- 		return -ENOMEM;
- 
- 	pp = &pcie->pp;
- 	pp->dev = dev;
--	pcie->drvdata = match->data;
-+	pcie->drvdata = of_device_get_match_data(dev);
- 	pp->ops = pcie->drvdata->ops;
- 
- 	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
+Applied to for-next, thanks!
+
+
+--3g2zjtxmzjpehypd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAliNC8YACgkQFA3kzBSg
+KbZ3NA/9F7q3u0kaWLKUpkavgSaM9Naus1GFQcHqq4Hm5+M14bjWK6tgQeihhgBp
+ewEhvP2zyHIFQ3C9AlfdFpT7+oGPqWAr+ZNQMbFm2G9rLg5ZHIAepnbOrb98FnIO
+LY6gh2n6LTOIVIcFadD5IlfFqXoJuUxXfobjLLkLJbkZSpdHwniStfmo4qBTlvlA
+i7qRGKqBs8hbuKiVDMEJjiDDaL9ytzyVwXjioEYV/5gIi80JqnTANFITK2W+s86j
+VYfvwQ2xcjaB7x4iH1Q786nTwt3vZLlTvB1/M0MTr2dYBqyr4417COmVdV2W9zY1
+/pC23Gq7Pry4G52fqfTo8kWGJc/zhdGt2n1Hx6Z85Je0jlMMO8RXVKxgHgJRVaFz
+il+F1G4jNaFEzwAgnVPAs0JzpnLy4lAfAW+PhfqoxJOEgbnLrvsZUVQlnqnynbLj
+u6KQhN4JHi2evVQGIOUs/cjRTmCA39713NuhxKBYnvPSOlfse3smWmIpoK/mfNOb
+UZjQ5Z4kLyBFyGkSVWhRKdWhYn+an5v7NyzFSD4d0d6YP4OwpXDwIWjQVX2pRUaH
+FGMyvvEd0OUH+8A+WzbgT8LOGSkmgD0mIBtcRYpn/70sjIsh3RcrEe7zOhX8jTvv
+H7ubYXqUDugHIFgGa0pVUpTFdcnhQ6806vY+HL7VyUYaFhyFZr0=
+=B1lr
+-----END PGP SIGNATURE-----
+
+--3g2zjtxmzjpehypd--
