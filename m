@@ -1,59 +1,153 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:44334 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751244AbdAaPuD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 10:50:03 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 04/11] media: rcar-vin: fix standard in input enumeration
-Date: Tue, 31 Jan 2017 16:40:09 +0100
-Message-Id: <20170131154016.15526-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: Add support for DMA_ATTR_FORCE_CONTIGUOUS to IOMMU
+Date: Sat, 28 Jan 2017 17:43:28 +0200
+Message-ID: <1696731.3PdB1ViRsr@avalon>
+In-Reply-To: <1485531259-17513-3-git-send-email-geert+renesas@glider.be>
+References: <1485531259-17513-1-git-send-email-geert+renesas@glider.be> <1485531259-17513-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the subdevice supports dv_timings_cap the driver should not fill in
-the standard. Also don't use the standard from probe time ask the
-subdevice each time.
+Hi Geert,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 610f59e2a9142622..f9218f230322eb0b 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -483,10 +483,16 @@ static int rvin_enum_input(struct file *file, void *priv,
- 		return ret;
- 
- 	i->type = V4L2_INPUT_TYPE_CAMERA;
--	i->std = vin->vdev.tvnorms;
- 
--	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
-+	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap)) {
- 		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
-+		i->std = 0;
-+	} else {
-+		i->capabilities = V4L2_IN_CAP_STD;
-+		ret = v4l2_subdev_call(sd, video, g_tvnorms, &i->std);
-+		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-+			return ret;
-+	}
- 
- 	strlcpy(i->name, "Camera", sizeof(i->name));
- 
+On Friday 27 Jan 2017 16:34:19 Geert Uytterhoeven wrote:
+> Add support for allocation physically contiguous DMA buffers on arm64
+> systems with an IOMMU, by dispatching DMA buffer allocations with the
+> DMA_ATTR_FORCE_CONTIGUOUS attribute to the appropriate IOMMU DMA
+> helpers.
+> 
+> Note that as this uses the CMA allocator, setting this attribute has a
+> runtime-dependency on CONFIG_DMA_CMA, just like on arm32.
+> 
+> For arm64 systems using swiotlb, no changes are needed to support the
+> allocation of physically contiguous DMA buffers:
+>   - swiotlb always uses physically contiguous buffers (up to
+>     IO_TLB_SEGSIZE = 128 pages),
+>   - arm64's __dma_alloc_coherent() already calls
+>     dma_alloc_from_contiguous() when CMA is available.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - New, handle dispatching in the arch (arm64) code, as requested by
+>     Robin Murphy.
+> ---
+>  arch/arm64/mm/dma-mapping.c | 51 +++++++++++++++++++++++++++++-------------
+>  1 file changed, 37 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+> index 1d7d5d2881db7c19..325803e0ba79ef26 100644
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+> @@ -577,20 +577,7 @@ static void *__iommu_alloc_attrs(struct device *dev,
+> size_t size, */
+>  	gfp |= __GFP_ZERO;
+> 
+> -	if (gfpflags_allow_blocking(gfp)) {
+> -		struct page **pages;
+> -		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, 
+coherent);
+> -
+> -		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
+> -					handle, flush_page);
+> -		if (!pages)
+> -			return NULL;
+> -
+> -		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
+> -					      __builtin_return_address(0));
+> -		if (!addr)
+> -			iommu_dma_free(dev, pages, iosize, handle);
+> -	} else {
+> +	if (!gfpflags_allow_blocking(gfp)) {
+>  		struct page *page;
+>  		/*
+>  		 * In atomic context we can't remap anything, so we'll only
+> @@ -614,6 +601,35 @@ static void *__iommu_alloc_attrs(struct device *dev,
+> size_t size, __free_from_pool(addr, size);
+>  			addr = NULL;
+>  		}
+> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
+> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, 
+coherent);
+> +		struct page *page;
+> +
+> +		page = iommu_dma_alloc_contiguous(dev, iosize, ioprot, 
+handle);
+> +		if (!page)
+> +			return NULL;
+> +
+> +		if (!coherent)
+> +			__dma_flush_area(page_to_virt(page), iosize);
+> +
+> +		addr = dma_common_contiguous_remap(page, size, VM_USERMAP,
+> +						   prot,
+> +						   
+__builtin_return_address(0));
+> +		if (!addr)
+> +			iommu_dma_free_contiguous(dev, page, iosize, handle);
+> +	} else {
+> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, 
+coherent);
+> +		struct page **pages;
+> +
+> +		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
+> +					handle, flush_page);
+> +		if (!pages)
+> +			return NULL;
+> +
+> +		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
+> +					      __builtin_return_address(0));
+> +		if (!addr)
+> +			iommu_dma_free(dev, pages, iosize, handle);
+>  	}
+>  	return addr;
+>  }
+> @@ -626,6 +642,8 @@ static void __iommu_free_attrs(struct device *dev,
+> size_t size, void *cpu_addr, size = PAGE_ALIGN(size);
+>  	/*
+>  	 * @cpu_addr will be one of 3 things depending on how it was 
+allocated:
+
+s/one of 3/one of 4/
+
+Apart from that,
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +	 * - A remapped array of pages from iommu_dma_alloc_contiguous()
+> +	 *   for contiguous allocations.
+>  	 * - A remapped array of pages from iommu_dma_alloc(), for all
+>  	 *   non-atomic allocations.
+>  	 * - A non-cacheable alias from the atomic pool, for atomic
+> @@ -637,6 +655,11 @@ static void __iommu_free_attrs(struct device *dev,
+> size_t size, void *cpu_addr, if (__in_atomic_pool(cpu_addr, size)) {
+>  		iommu_dma_unmap_page(dev, handle, iosize, 0, 0);
+>  		__free_from_pool(cpu_addr, size);
+> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
+> +		struct page *page = phys_to_page(dma_to_phys(dev, handle));
+> +
+> +		iommu_dma_free_contiguous(dev, page, iosize, &handle);
+> +		dma_common_free_remap(cpu_addr, size, VM_USERMAP);
+>  	} else if (is_vmalloc_addr(cpu_addr)){
+>  		struct vm_struct *area = find_vm_area(cpu_addr);
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
