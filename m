@@ -1,58 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34663 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751936AbdAKWql (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:41282 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750805AbdA2Xgk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 17:46:41 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 06/13] drm: panels: Add LVDS panel driver
-Date: Thu, 12 Jan 2017 00:46:09 +0200
-Message-ID: <1520553.AzMTRoXz5E@avalon>
-In-Reply-To: <3357569.dBCZ3D9MU7@avalon>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161122111457.GC22735@ulmo.ba.sec> <3357569.dBCZ3D9MU7@avalon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Sun, 29 Jan 2017 18:36:40 -0500
+Date: Sun, 29 Jan 2017 18:36:37 -0500 (EST)
+Message-Id: <20170129.183637.1519401740877958836.davem@davemloft.net>
+To: horms+renesas@verge.net.au
+Cc: sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 0/2] ravb: Support 1Gbps on R-Car H3 ES1.1+
+ and R-Car M3-W
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1485542120-10205-1-git-send-email-horms+renesas@verge.net.au>
+References: <1485542120-10205-1-git-send-email-horms+renesas@verge.net.au>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Thierry,
+From: Simon Horman <horms+renesas@verge.net.au>
+Date: Fri, 27 Jan 2017 19:35:18 +0100
 
-Ping ?
-
-On Tuesday 22 Nov 2016 15:17:09 Laurent Pinchart wrote:
-> On Tuesday 22 Nov 2016 12:14:57 Thierry Reding wrote:
-> > On Sat, Nov 19, 2016 at 05:28:06AM +0200, Laurent Pinchart wrote:
-> >> This driver supports LVDS panels that don't require device-specific
-> >> handling of power supplies or control signals. It implements automatic
-> >> backlight handling if the panel is attached to a backlight controller.
-> >> 
-> >> Signed-off-by: Laurent Pinchart
-> >> <laurent.pinchart+renesas@ideasonboard.com>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/panel/Kconfig      |  10 ++
-> >>  drivers/gpu/drm/panel/Makefile     |   1 +
-> >>  drivers/gpu/drm/panel/panel-lvds.c | 284 ++++++++++++++++++++++++++++++
-> >>  3 files changed, 295 insertions(+)
-> >>  create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
-> > 
-> > The bulk of this is a duplicate of panel-simple.c
+> this series adds support for gigabit communication to the Renesas EthernetAVB
+> controller when used in conjunction with  R-Car Gen3 H3 ES1.1+ and M3-W SoCs.
+> Gigabit is already supported with R-Car Gen 2 SoCs.
 > 
-> Implementing the panel API should obviously be expected to produce some
-> quantity of similar code.
+> The patch from Geert was previously posted for inclusion in v4.10 and
+> acked by Dave for that purpose. It was, however, not accepted by the
+> ARM SoC maintainers.
 > 
-> > and it adds all the things on top that I've been repeatedly rejecting in
-> > the past.
-> 
-> It's a good thing I haven't tried to add them to panel-simple.c then :-)
+> The path from Mizuguchi-san is to address timing problems observed with
+> gigabit transfers. I would like it considered although my own testing on
+> M3-W did not show any timing problems.
 
--- 
-Regards,
-
-Laurent Pinchart
+Series applied, thanks Simon.
