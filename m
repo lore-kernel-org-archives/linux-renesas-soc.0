@@ -1,84 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44232 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751232AbdAaUUH (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:33908 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751041AbdA2MIN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 15:20:07 -0500
-Subject: [PATCH 1 1/4] PCI: hisi: Use of_device_get_match_data() to simplify
- probe
-From: Bjorn Helgaas <bhelgaas@google.com>
-To: linux-pci@vger.kernel.org
-Cc: Scott Branden <sbranden@broadcom.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        Minghuan Lian <minghuan.Lian@freescale.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Mingkai Hu <mingkai.hu@freescale.com>,
-        Roy Zang <tie-fei.zang@freescale.com>,
-        Shailendra Verma <shailendra.v@samsung.com>
-Date: Tue, 31 Jan 2017 14:19:59 -0600
-Message-ID: <20170131201958.27605.54898.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Sun, 29 Jan 2017 07:08:13 -0500
+Received: by mail-lf0-f54.google.com with SMTP id v186so182279098lfa.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 29 Jan 2017 04:08:12 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 2/3] sh_eth: add missing EESIPR bits
+Date: Sun, 29 Jan 2017 15:08:09 +0300
+Message-ID: <4195481.pfyme3sVPu@wasted.cogentembedded.com>
+In-Reply-To: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
+References: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Shailendra Verma <shailendra.v@samsung.com>
+Renesas SH77{34|63} manuals  describe more EESIPR bits than the current
+driver. Declare the new bits with the end goal of using the bit names
+instead of the bare numbers  for  the 'sh_eth_cpu_data::eesipr_value'
+initializers...
 
-The only way to call hisi_pcie_probe() is to match an entry in
-hisi_pcie_of_match[], so match cannot be NULL.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Use of_device_get_match_data() to retrieve the soc_ops pointer.  No
-functional change intended.
-
-[bhelgaas: use of_device_get_match_data(), changelog]
-Based-on-suggestion-from: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/host/pcie-hisi.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Changes in version 2:
+- added Geert's tag.
 
-diff --git a/drivers/pci/host/pcie-hisi.c b/drivers/pci/host/pcie-hisi.c
-index a301a7187b30..33c201afdbf1 100644
---- a/drivers/pci/host/pcie-hisi.c
-+++ b/drivers/pci/host/pcie-hisi.c
-@@ -139,7 +139,7 @@ struct hisi_pcie {
- 	struct pcie_port pp;		/* pp.dbi_base is DT rc_dbi */
- 	struct regmap *subctrl;
- 	u32 port_id;
--	struct pcie_soc_ops *soc_ops;
-+	const struct pcie_soc_ops *soc_ops;
- };
+ drivers/net/ethernet/renesas/sh_eth.h |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
++++ net-next/drivers/net/ethernet/renesas/sh_eth.h
+@@ -269,13 +269,17 @@ enum EESR_BIT {
  
- /* HipXX PCIe host only supports 32-bit config access */
-@@ -259,7 +259,6 @@ static int hisi_pcie_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct hisi_pcie *hisi_pcie;
- 	struct pcie_port *pp;
--	const struct of_device_id *match;
- 	struct resource *reg;
- 	struct device_driver *driver;
- 	int ret;
-@@ -272,11 +271,10 @@ static int hisi_pcie_probe(struct platform_device *pdev)
- 	pp->dev = dev;
- 	driver = dev->driver;
- 
--	match = of_match_device(driver->of_match_table, dev);
--	hisi_pcie->soc_ops = (struct pcie_soc_ops *) match->data;
-+	hisi_pcie->soc_ops = of_device_get_match_data(dev);
- 
- 	hisi_pcie->subctrl =
--	syscon_regmap_lookup_by_compatible("hisilicon,pcie-sas-subctrl");
-+	    syscon_regmap_lookup_by_compatible("hisilicon,pcie-sas-subctrl");
- 	if (IS_ERR(hisi_pcie->subctrl)) {
- 		dev_err(dev, "cannot get subctrl base\n");
- 		return PTR_ERR(hisi_pcie->subctrl);
+ /* EESIPR */
+ enum EESIPR_BIT {
+-	EESIPR_TWBIP	= 0x40000000,
++	EESIPR_TWB1IP	= 0x80000000,
++	EESIPR_TWBIP	= 0x40000000,	/* same as TWB0IP */
++	EESIPR_TC1IP	= 0x20000000,
++	EESIPR_TUCIP	= 0x10000000,
++	EESIPR_ROCIP	= 0x08000000,
+ 	EESIPR_TABTIP	= 0x04000000,
+ 	EESIPR_RABTIP	= 0x02000000,
+ 	EESIPR_RFCOFIP	= 0x01000000,
+ 	EESIPR_ADEIP	= 0x00800000,
+ 	EESIPR_ECIIP	= 0x00400000,
+-	EESIPR_FTCIP	= 0x00200000,
++	EESIPR_FTCIP	= 0x00200000,	/* same as TC0IP */
+ 	EESIPR_TDEIP	= 0x00100000,
+ 	EESIPR_TFUFIP	= 0x00080000,
+ 	EESIPR_FRIP	= 0x00040000,
+@@ -286,6 +290,8 @@ enum EESIPR_BIT {
+ 	EESIPR_CDIP	= 0x00000200,
+ 	EESIPR_TROIP	= 0x00000100,
+ 	EESIPR_RMAFIP	= 0x00000080,
++	EESIPR_CEEFIP	= 0x00000040,
++	EESIPR_CELFIP	= 0x00000020,
+ 	EESIPR_RRFIP	= 0x00000010,
+ 	EESIPR_RTLFIP	= 0x00000008,
+ 	EESIPR_RTSFIP	= 0x00000004,
