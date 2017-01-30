@@ -1,51 +1,75 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 02/11] media: rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
-Date: Tue, 31 Jan 2017 16:40:07 +0100
-Message-Id: <20170131154016.15526-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33228 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753949AbdA3StP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 30 Jan 2017 13:49:15 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert+renesas@glider.be, linus.walleij@linaro.org,
+        Chris.Brandt@renesas.com, wsa@the-dreams.de,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [RFC fixes 1/2] arm: dts: genmai: Configure RIIC2 pins
+Date: Mon, 30 Jan 2017 20:49:25 +0200
+Message-ID: <1616919.mJ2Z5iDMxU@avalon>
+In-Reply-To: <1485535628-17097-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org> <1485535628-17097-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use rvin_reset_format() in rvin_s_dv_timings() instead if just resetting
-a few fields. This fixes an issue where the field format was not
-properly set after S_DV_TIMINGS.
+Hi Jacopo,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 69bc4cfea6a8aeb5..7ca27599b9982ffc 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, void *priv_fh,
- 	if (ret)
- 		return ret;
- 
--	vin->source.width = timings->bt.width;
--	vin->source.height = timings->bt.height;
--	vin->format.width = timings->bt.width;
--	vin->format.height = timings->bt.height;
--
--	return 0;
-+	/* Changing the timings will change the width/height */
-+	return rvin_reset_format(vin);
- }
- 
- static int rvin_g_dv_timings(struct file *file, void *priv_fh,
+On Friday 27 Jan 2017 17:47:07 Jacopo Mondi wrote:
+> Add pin configuration for RIIC2 pins interface.
+> The i2c2 is connected to internal eeprom.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm/boot/dts/r7s72100-genmai.dts | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts
+> b/arch/arm/boot/dts/r7s72100-genmai.dts index ea649c7..0068a1a 100644
+> --- a/arch/arm/boot/dts/r7s72100-genmai.dts
+> +++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+> @@ -40,13 +40,19 @@
+> 
+>  &pinctrl {
+>  	pinctrl-names = "default";
+> -	pinctrl-0 = <&scif2_pins>;
+> +	pinctrl-0 = <&scif2_pins &i2c2_pins>;
+
+Referencing the SCIF2 and I2C2 pins nodes from the pinctrl node will result in 
+the corresponding pins being configured when the pinctrl driver is probed. You 
+could move this to the SCIF2 and I2C2 DT nodes, to have the pins configured as 
+part of the probe sequence of the corresponding drivers. The advantage would 
+be that pins would only be configured if the corresponding devices are enabled 
+and get probed by a driver. This could save a bit of power if the boot loader 
+configured the pins in low-power mode and the devices were unused (although in 
+this very specific case I don't think it will make a difference).
+
+> 
+>  	scif2_pins: serial2 {
+>  		/* P3_0 as TxD2; P3_2 as RxD2 */
+>  		renesas-rz,pins = <RZ_PIN(3, 0) ALTERNATE_FUNC_6>,
+>  				  <RZ_PIN(3, 2) ALTERNATE_FUNC_4>;
+>  	};
+> +
+> +	i2c2_pins: i2c2 {
+> +		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
+> +		renesas-rz,pins = <RZ_PIN(1, 4) ALTERNATE_FUNC_1>,
+> +				  <RZ_PIN(1, 5) ALTERNATE_FUNC_1>;
+> +	};
+>  };
+> 
+>  &extal_clk {
+
 -- 
-2.11.0
+Regards,
 
+Laurent Pinchart
