@@ -1,88 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:51891 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751510AbdAaKZB (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:28210 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751033AbdA3Tky (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 05:25:01 -0500
-Subject: Re: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mon, 30 Jan 2017 14:40:54 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
+CC: "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: RE: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
+Date: Mon, 30 Jan 2017 19:39:33 +0000
+Message-ID: <SG2PR06MB11651F027332E4A764567CF68A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
  <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdW3WtBp=cLpqFuuLxQq-=by3wwE1mQtwKJN4znDVrF6LQ@mail.gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-From: jacopo mondi <jacopo@jmondi.org>
-Message-ID: <61bdee6b-2573-35f8-f08b-2ff6cbc200de@jmondi.org>
-Date: Tue, 31 Jan 2017 11:24:56 +0100
+ <3913852.YsQFAgHAs5@avalon>
+In-Reply-To: <3913852.YsQFAgHAs5@avalon>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW3WtBp=cLpqFuuLxQq-=by3wwE1mQtwKJN4znDVrF6LQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Jacopo,
 
-On 26/01/2017 20:54, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->> Add pincontroller node compatible with the new Renesas RZ/A1
->> pincontroller driver.
->>
->> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> ---
->>  arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
->> index 3dd427d..764006d 100644
->> --- a/arch/arm/boot/dts/r7s72100.dtsi
->> +++ b/arch/arm/boot/dts/r7s72100.dtsi
->> @@ -171,6 +171,18 @@
->>                 };
->>         };
->>
->> +       pinctrl: pinctrl@fcfe3000 {
->> +               compatible = "renesas,rza1-pinctrl";
->> +               #address-cells = <1>;
->> +               #size-cells = <0>;
->> +
->> +               #pinctrl-cells = <2>;
->
-> Souldn't that be <3>?
-> E.g. <RZ_PIN(3, 0) ALTERNATE_FUNC_6> expands to <3 0 5>, i.e. 3 numbers.
->
+On Monday, January 30, 2017, Laurent Pinchart wrote:
+> > +	pinctrl: pinctrl@fcfe3000 {
+> > +		compatible =3D "renesas,rza1-pinctrl";
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <0>;
+> > +
+> > +		#pinctrl-cells =3D <2>;
+> > +
+> > +		reg =3D <0xfcfe3000 0xa30>, /* Pn, ..., PFCAEn */
+> > +		      <0xfcfe7000 0x230>, /* PIBCn, ..., PIPCn */
+>=20
+> What's the reason for splitting those registers in two sets ? Maybe you
+> can explain that in the DT bindings documentation that this patch series
+> is missing ;-)
 
- From pinctrl-bindings.txt:
 
-#pinctrl-cells:	Number of pin control cells in addition to the index 
-within the pin controller device instance
-
-So here it's (2 + 1) as at least the pin index (first parameter) is 
-mandatory.
-
-We're twisting the assumption of having "index" as first, single, 
-parameter, as we have <bank pin mode> and the <bank, pin> pair 
-identifies a pin.
-
-Hope this is ok, and we can re-use existing bindings even if our 
-semantic is a bit different.
+I left this out of my review comments, but even though the chip designers l=
+eft
+a BIG HOLE in the memory map of the PFC controller, I don't think it will
+'cost' you anything by just mapping the whole area (dead space and all) and
+getting rid of the "high and low" memory indexing thing that you are doing
+in the driver.
+There is nothing mapped in that dead area anyway.
 
 
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
->
+Chris
