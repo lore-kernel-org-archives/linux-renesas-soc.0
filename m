@@ -1,61 +1,31 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v3 01/20] drm: bridge: dw-hdmi: Merge __hdmi_phy_i2c_write and hdmi_phy_i2c_write
-Date: Tue, 17 Jan 2017 10:28:51 +0200
-Message-Id: <20170117082910.27023-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170117082910.27023-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([184.105.139.130]:54868 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbdA3QZv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 30 Jan 2017 11:25:51 -0500
+Date: Mon, 30 Jan 2017 11:18:16 -0500 (EST)
+Message-Id: <20170130.111816.407600624117593483.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] sh_eth: E-DMAC interrupt mask cleanups
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
+References: <3387005.NzsGXf10rT@wasted.cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The latter is just an int wrapper around the former void function that
-unconditionally returns 0. As the return value is never checked, merge
-the two functions into one.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Sun, 29 Jan 2017 15:06:39 +0300
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+>    Here's a set of 3 patches against DaveM's 'net-next.git' repo. The main goal
+> of this set is to stop using the bare numbers for the E-DMAC interrupt masks.
+> 
+> [1/3] sh_eth: rename EESIPR bits
+> [2/3] sh_eth: add missing EESIPR bits
+> [3/3] sh_eth: stop using bare numbers for EESIPR values
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index f5009ae39b89..a6685502571e 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -868,7 +868,7 @@ static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
- 	return true;
- }
- 
--static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
-+static void hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- 				 unsigned char addr)
- {
- 	hdmi_writeb(hdmi, 0xFF, HDMI_IH_I2CMPHY_STAT0);
-@@ -882,13 +882,6 @@ static void __hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- 	hdmi_phy_wait_i2c_done(hdmi, 1000);
- }
- 
--static int hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
--			      unsigned char addr)
--{
--	__hdmi_phy_i2c_write(hdmi, data, addr);
--	return 0;
--}
--
- static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
- {
- 	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
--- 
-Regards,
-
-Laurent Pinchart
+Series applied, thank you.
