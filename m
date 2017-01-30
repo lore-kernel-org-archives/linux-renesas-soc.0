@@ -1,104 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:55750 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbdAXQVI (ORCPT
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:38785 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752501AbdA3JeD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 11:21:08 -0500
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cW3qE-0001zX-AZ
-        for linux-renesas-soc@vger.kernel.org; Tue, 24 Jan 2017 17:21:06 +0100
-Received: from geert by ramsan with local (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cW3qJ-00067i-Cc
-        for linux-renesas-soc@vger.kernel.org; Tue, 24 Jan 2017 17:21:11 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2017-01-24-v4.10-rc5
-Date: Tue, 24 Jan 2017 17:21:11 +0100
-Message-Id: <1485274871-23504-1-git-send-email-geert+renesas@glider.be>
+        Mon, 30 Jan 2017 04:34:03 -0500
+Received: by mail-wm0-f48.google.com with SMTP id r141so24542938wmg.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jan 2017 01:33:54 -0800 (PST)
+Date: Mon, 30 Jan 2017 10:33:50 +0100
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v7 0/2] clocksource: Add renesas-ostm timer driver
+Message-ID: <20170130093350.GA2206@mai>
+References: <20170127200215.4894-1-chris.brandt@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170127200215.4894-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2017-01-24-v4.10-rc5 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+On Fri, Jan 27, 2017 at 03:02:13PM -0500, Chris Brandt wrote:
+> This patch set adds a new clocksource driver that uses the OS Timer
+> (OSTM) that exists in the R7S72100 (RZ/A1) SoC.
+> 
+> The operation of the driver was tested with a simple user application
+> that does multiple calls to nanosleep() and gettimeofday().
+> 
+> The purpose of adding this driver is to get better time keeping
+> accuracy over the default MTU2 clocksource timer.
+> 
+> v7:
+> * initialize *ostm_clk=NULL to remove 'may be used uninitialized'
+>   warning. Reported by "kbuild test robot"
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Hi Chris,
 
-Today's version is based on renesas-devel-20170123-v4.10-rc5.
+I queued up the patches for 4.11.
 
-Included branches with driver code:
-  - clk-renesas-for-v4.11
-  - sh-pfc-for-v4.11
-  - https://git.ragnatech.se/linux#for-renesas-drivers~1
-  - topic/ipmmu-multi-arch-v6
-  - topic/r8a7795-ipmmu-v2-rebased4
-  - topic/r8a7796-ipmmu-v1-rebased4
-  - topic/r8a7795-ipmmu-integration-v2-rebased1
-  - topic/r8a7795-es2-v1-rebased7
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/suspend-resume-race
-  - git://linuxtv.org/pinchartl/media.git#drm/du/hdmi
-  - topic/renesas-cpg-mssr-reset-driver-v2
-  - topic/renesas-cpg-mssr-reset-dts-v1
+Thanks !
 
-Included fixes:
-  - serial: sh-sci: Fix early deassertion of dedicated RTS
-  - serial: sh-sci: Fix hang in sci_reset()
-  - arm64: Use __pa_symbol for empty_zero_page
-  - drivers: firmware: psci: Use __pa_symbol for cpu_resume
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.infradead.org/battery-2.6.git#master
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+  -- Daniel
