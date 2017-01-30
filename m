@@ -1,76 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50413 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752446AbdAYU2p (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:16549 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932445AbdA3Qab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 15:28:45 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v6 2/3] mmc: sh_mobile_sdhi: explain clock bindings
-Date: Wed, 25 Jan 2017 15:28:09 -0500
-Message-Id: <20170125202810.16876-3-chris.brandt@renesas.com>
-In-Reply-To: <20170125202810.16876-1-chris.brandt@renesas.com>
-References: <20170125202810.16876-1-chris.brandt@renesas.com>
+        Mon, 30 Jan 2017 11:30:31 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: RE: [RFC fixes 0/2] FIX: Renesas RZ series pinctrl driver
+Date: Mon, 30 Jan 2017 16:29:29 +0000
+Message-ID: <SG2PR06MB116503FA052D0C2A96D5CE3B8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB1165AE0403810D368E508C5F8A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <a8578e24-e142-aad6-a170-d682ee3b24d2@jmondi.org>
+In-Reply-To: <a8578e24-e142-aad6-a170-d682ee3b24d2@jmondi.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of a single clock source, you don't need names. However,
-if the controller has 2 clock sources, you need to name them correctly
-so the driver can find the 2nd one. The 2nd clock is for the internal
-card detect logic.
+Hi Jacopo,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5:
-* add Reviewed-by: Geert Uytterhoeven
-* list number of clocks for each SoC
-* remove example because it already exists in mmc.txt
-v4:
-* just explain there might be 2 clocks, don't explain how
-  we will use them in the driver
-v3:
-* add more clarification about why there are sometimes 2 clocks
-  and what you should do with them.
-* remove 'status = "disabled"' from example
-v2:
-* fix spelling and change wording
-* changed clock name from "carddetect" to "cd"
----
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Monday, January 30, 2017, Jacopo Mondi wrote:
+> > Note that the I2C pin need to be configured at "bi-directional" but
+> > there is no way to specify that from DT, so that has to be added as a
+> parameter.
+>=20
+> That's something I would like to discuss quite soon.
+> One general thing I would like is having the so-called "additional
+> parameters" part of the SoC driver module, as my gut feeling is that
+> different PFC hw requires different configuration options.
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index a1650ed..4fd8b7a 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -25,6 +25,19 @@ Required properties:
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
- 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
- 
-+- clocks: Most controllers only have 1 clock source per channel. However, on
-+	  some variations of this controller, the internal card detection
-+	  logic that exists in this controller is sectioned off to be run by a
-+	  separate second clock source to allow the main core clock to be turned
-+	  off to save power.
-+	  If 2 clocks are specified by the hardware, you must name them as
-+	  "core" and "cd". If the controller only has 1 clock, naming is not
-+	  required.
-+	  Below is the number clocks for each supported SoC:
-+	   1: SH73A0, R8A73A4, R8A7740, R8A7778, R8A7779, R8A7790
-+	      R8A7791, R8A7792, R8A7793, R8A7794, R8A7795, R8A7796
-+	   2: R7S72100
-+
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
- - pinctrl-names: should be "default", "state_uhs"
--- 
-2.10.1
+In the API I used for the current RZ/A1 BSP, I used an extra parameter
+to pass in any non-normal settings.
+
+
+> In example, the RZ/A1 SoC requires the input/output direction of the pin
+> to be specified even when the alternate function is supposed to drive it
+> (in order to enable/disable input buffer). The same applies to bi-
+> directional port control as you pointed out in your example (bi-
+> directional enables input buffer, but that's a consequence of how hw work=
+s
+> there).
+>=20
+> I'm almost sure the same won't be required by all existing and forth-
+> coming Renesas SoCs with a pin-based PFC hardware, but maybe other
+> parameters I cannot think of right now will have to be specified instead.
+
+I would guess for one reason or another, there is always some exception
+in the hardware manual when it comes to pins settings. Meaning, there are
+restrictions in the I/O pad circuits that the HW designers find it easier
+to tell the SW guys to deal with it instead of trying to make it 'automatic=
+'
+in HW.
+So...you'll always have the need for an extra parameter.
+
+
+> If we want to keep the configuration flags SoC-specific, the most easy wa=
+y
+> to pass them down from core module to SoC module would be compressing the
+> alternate function number and other configurations in a single u32.
+>=20
+> In that case the dts will look like:
+>=20
+> renesasa,rz-pins =3D <BANK PORT (ALTERNATE_FUNC_# | IO_MODE | DIRECTION)>=
+;
+>=20
+> We could even add a parameter to separate ALTERNATE_FUNCTION from the
+> additional configurations, but I don't see any advantage in doing this at
+> the moment.
+
+As I said, I made "additional configs" a separate parameter, but combining
+it with ALTERNATE_FUNC_# is fine with me. I have not seen an SoC that allow=
+ed
+any more than 8 different functions per pin, so you have lots of bits
+in u32 in order to set flags bits.
+
+However, as already mentioned by Geert, "ALTERNATE_FUNC_#" is too long of
+a name. Just "ALT_#" is fine.
+
+    renesasa,rz-pins =3D <BANK PORT (ALT_# | IO_MODE | DIRECTION)>;
+
+Geert's suggestion was to just use the actual number (1-8), ALT_# might mak=
+e
+it easier to decode if you are combining multiple things into a single u32.
+
+There is one more idea....but I heist to suggest it.
+You just pass in the port and alternate function number, and you do a looku=
+p
+table for settings such as bi-direction or port direction register.
+You only put into the table the pin settings that are "not normal".
+
+The benefit is that the user doesn't have to know what pins needs what spec=
+ial
+tweak/flag/setting....but of course it start to make the driver more comple=
+x.
+
+
+
+Chris
