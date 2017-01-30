@@ -1,155 +1,81 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 05/11] media: rcar-vin: add wrapper to get rvin_graph_entity
-Date: Tue, 31 Jan 2017 16:40:10 +0100
-Message-Id: <20170131154016.15526-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34630 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752899AbdA3WRR (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 30 Jan 2017 17:17:17 -0500
 MIME-Version: 1.0
+In-Reply-To: <20170127114724.GI27598@8bytes.org>
+References: <148517158986.13306.314435910710426381.sendpatchset@little-apple>
+ <148517162908.13306.2467186615655446796.sendpatchset@little-apple> <20170127114724.GI27598@8bytes.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 31 Jan 2017 07:16:23 +0900
+Message-ID: <CANqRtoQGtak34vEd=aAsPaHM2o=MkZwq0WLOjiHi7fmqFnxUQg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the driver to retrieve the code and mbus_cfg values from a
-rvin_graph_entity retrieved from a wrapper function instead of directly
-accessing the entity for the digital port. This is done to prepare for
-Gen3 support where the subdeivce might change during runtime, so to
-directly accesses a specific rvin_graph_entity is bad.
+Hi Joerg,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c |  9 +++++++++
- drivers/media/platform/rcar-vin/rcar-dma.c  | 15 ++++++++++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  6 +++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  1 +
- 4 files changed, 25 insertions(+), 6 deletions(-)
+On Fri, Jan 27, 2017 at 8:47 PM, Joerg Roedel <joro@8bytes.org> wrote:
+> On Mon, Jan 23, 2017 at 08:40:29PM +0900, Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Bump up the maximum numbers of micro-TLBS to 48.
+>>
+>> Each IPMMU device instance get micro-TLB assignment via
+>> the "iommus" property in DT. Older SoCs tend to use a
+>> maximum number of 32 micro-TLBs per IPMMU instance however
+>> newer SoCs such as r8a7796 make use of up to 48 micro-TLBs.
+>>
+>> At this point no SoC specific handling is done to validate
+>> the maximum number of micro-TLBs, and because of that the
+>> DT information is assumed to be within correct range for
+>> each particular SoC.
+>>
+>> If needed in the future SoC specific feature flags can be
+>> added to handle the maximum number of micro-TLBs without
+>> requiring DT changes, however at this point this does not
+>> seem necessary.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>
+> I get a conflict when applying this to v4.10-rc5. What is this based on,
+> any patches I missed?
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 098a0b1cc10a26ba..89a9280efa05aa0c 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -26,6 +26,15 @@
- #include "rcar-vin.h"
- 
- /* -----------------------------------------------------------------------------
-+ * Subdevice helpers
-+ */
-+
-+struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin)
-+{
-+	return &vin->digital;
-+}
-+
-+/* -----------------------------------------------------------------------------
-  * Async notifier
-  */
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 9ccd5ff55e192514..eac5c192b887ea45 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -131,10 +131,15 @@ static u32 rvin_read(struct rvin_dev *vin, u32 offset)
- 
- static int rvin_setup(struct rvin_dev *vin)
- {
-+	struct rvin_graph_entity *rent;
- 	u32 vnmc, dmr, dmr2, interrupts;
- 	v4l2_std_id std;
- 	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
- 
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
-+
- 	switch (vin->format.field) {
- 	case V4L2_FIELD_TOP:
- 		vnmc = VNMC_IM_ODD;
-@@ -174,7 +179,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 	/*
- 	 * Input interface
- 	 */
--	switch (vin->digital.code) {
-+	switch (rent->code) {
- 	case MEDIA_BUS_FMT_YUYV8_1X16:
- 		/* BT.601/BT.1358 16bit YCbCr422 */
- 		vnmc |= VNMC_INF_YUV16;
-@@ -182,7 +187,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
--		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= rent->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -191,7 +196,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
--		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= rent->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -203,11 +208,11 @@ static int rvin_setup(struct rvin_dev *vin)
- 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
--	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+	if (!(rent->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_HPS;
- 
- 	/* Vsync Signal Polarity Select */
--	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+	if (!(rent->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_VPS;
- 
- 	/*
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index f9218f230322eb0b..370bb184e5faace7 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -164,6 +164,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- {
- 	struct v4l2_subdev *sd;
- 	struct v4l2_subdev_pad_config *pad_cfg;
-+	struct rvin_graph_entity *rent;
- 	struct v4l2_subdev_format format = {
- 		.which = which,
- 	};
-@@ -171,8 +172,11 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	int ret;
- 
- 	sd = vin_to_source(vin);
-+	rent = vin_to_entity(vin);
-+	if (!rent)
-+		return -ENODEV;
- 
--	v4l2_fill_mbus_format(&format.format, pix, vin->digital.code);
-+	v4l2_fill_mbus_format(&format.format, pix, rent->code);
- 
- 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
- 	if (pad_cfg == NULL)
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 727e215c08718eb9..daec26a38d896b21 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -144,6 +144,7 @@ struct rvin_dev {
- 	struct v4l2_rect compose;
- };
- 
-+struct rvin_graph_entity *vin_to_entity(struct rvin_dev *vin);
- #define vin_to_source(vin)		vin->digital.subdev
- 
- /* Debug */
--- 
-2.11.0
+Thanks for giving it a go. The second patch in this series should apply as-is:
+[PATCH v2 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
 
+However for driver code there are two series in between:
+ [PATCH v6 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V6
+ [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
+
+For more detailed dependency information please see the cover letter!
+
+Regarding the driver code please wait for "IPMMU multi-arch update V7"
+that takes comments from Laurent into consideration. Hopefully I
+should be able to send it out some time this week.
+
+As for "[PATCH v2 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding",
+would it be possible to fast track mainline merge of that particular
+DT binding patch? Can you take it in your tree?
+
+To give some background, we already have the IPMMU DT binding for
+older devices and the sister device r8a7795 in mainline, so the
+r8a7796 DT binding is just a small incremental step. To make sure we
+don't go too wild with DT changes we tend to require that the DT
+binding change should be queued up before starting to merge changes to
+DTS files. So currently some DT changes are blocking on that r8a7796
+DT binding and it would be nice to unblock those if possible..
+
+Thanks!
+
+/ magnus
