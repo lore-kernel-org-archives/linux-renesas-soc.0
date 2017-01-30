@@ -1,68 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56448 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757762AbdACJYM (ORCPT
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34875 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbdA3Ffh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 04:24:12 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, magnus.damm@gmail.com,
-        linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: r8a7794: link DU to VSPD
-Date: Tue, 03 Jan 2017 11:24:15 +0200
-Message-ID: <1931710.8mMFQrpegP@avalon>
-In-Reply-To: <1524349.7vYNCWaVjE@wasted.cogentembedded.com>
-References: <1529351.Fac5N2tKoF@wasted.cogentembedded.com> <1524349.7vYNCWaVjE@wasted.cogentembedded.com>
+        Mon, 30 Jan 2017 00:35:37 -0500
+Received: by mail-pg0-f68.google.com with SMTP id 204so30610378pge.2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 29 Jan 2017 21:34:21 -0800 (PST)
+Date: Sun, 29 Jan 2017 20:57:38 -0800
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates
+ for v4.11
+Message-ID: <20170130045738.GD18943@localhost>
+References: <cover.1485508214.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1485508214.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
-
-On Thursday 29 Dec 2016 00:35:07 Sergei Shtylyov wrote:
-> Add the "vsps" property to the DU device node in order to link this node to
-> the (single) VSPD node.
+On Fri, Jan 27, 2017 at 10:14:27AM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
 > 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-I'd like to first address the issues I've pointed out on the driver side of 
-this change.
-
-> ---
-> This patch is against the 'renesas-devel-20161220-v4.9' of Simon Horman's
-> 'renesas.git' repo.  It's  only meaningful if the "Enable R8A7794 DU VSPD
-> compositor" DU driver patches are applied...
+> Please consider these second round of Renesas ARM64 based SoC DT updates for v4.11.
 > 
->  arch/arm/boot/dts/r8a7794.dtsi |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-arm64-dt-for-v4.11,
+> which you have already pulled.
 > 
-> Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-> ===================================================================
-> --- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-> +++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-> @@ -908,7 +908,7 @@
->  		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
->  	};
 > 
-> -	vsp1@fe930000 {
-> +	vspd0: vsp1@fe930000 {
->  		compatible = "renesas,vsp1";
->  		reg = <0 0xfe930000 0 0x8000>;
->  		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -925,6 +925,7 @@
->  		clocks = <&mstp7_clks R8A7794_CLK_DU0>,
->  			 <&mstp7_clks R8A7794_CLK_DU0>;
->  		clock-names = "du.0", "du.1";
-> +		vsps = <&vspd0>;
->  		status = "disabled";
+> The following changes since commit b2b9443beee5017ebdb3f2be9ef472c73d260481:
 > 
->  		ports {
+>   arm64: dts: r8a7795: Add PWM support (2017-01-04 10:00:44 +0100)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.11
+> 
+> for you to fetch changes up to 7e1c23b94ed7f0d2719795a9828402003de5335d:
+> 
+>   arm64: dts: r8a7796: Mark EthernetAVB device node disabled (2017-01-27 10:09:02 +0100)
+> 
+> ----------------------------------------------------------------
+> Second Round of Renesas ARM64 Based SoC DT Updates for v4.11
+> 
+> r8a779[56] SoCs:
+> * Mark EthernetAVB device node disabled in DT for r8a779[56] SoCs
+>   - They are enabled as appropriate in board DT files
+> * Link ARM GIC to clock and clock domain on r8a779[56] SoCs
+> * Add thermal support
+> 
+> r8a7795 SoC:
+> * Tidyup audma definition order on r8a7795 SoC
+> * Add missing power-domains property for SATA
+> 
+> r8a7795/h3ulcb board:
+> * Add MIX/CTU support as per support present in DT for r8a7796
 
--- 
-Regards,
+Merged, thanks!
 
-Laurent Pinchart
+
+-Olof
