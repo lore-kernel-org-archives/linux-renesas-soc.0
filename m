@@ -1,230 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47173 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753162AbdAZLFS (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:44251 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751124AbdAaPt5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 06:05:18 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 net] ravb: unmap descriptors when freeing rings
-Date: Thu, 26 Jan 2017 12:04:59 +0100
-Message-Id: <1485428699-2598-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 31 Jan 2017 10:49:57 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 08/11] media: rcar-vin: refactor pad lookup code
+Date: Tue, 31 Jan 2017 16:40:13 +0100
+Message-Id: <20170131154016.15526-9-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+If the subdeivce did not supply pad information the driver will return
+-EINVAL, this is not what we want so remove that check. The code can
+then be broken out to a helper function reducing duplication.
 
-"swiotlb buffer is full" errors occur after repeated initialisation of a
-device - f.e. suspend/resume or ip link set up/down. This is because memory
-mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
-is not released.  Resolve this problem by unmapping descriptors when
-freeing rings.
-
-Fixes: a780893c89f6 ("ravb: unmap descriptors when freeing rings")
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[simon: reworked]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
---
-
-On inspection it appears that a similar problem is also present in
-the SH-Ethernet driver.
-
-v4 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - Use bool as type for new parameter to ravb_tx_free()
-  - Clean up comment style
-  - Only increment tx_bytes for transmitted skbs
-
-v3 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - consistently use le32_to_cpu(desc->dptr)
-  - Do not clear desc->ds_cc as it is not used
-* Paramatise ravb_tx_free() to allow it to free non-transmitted buffers
-
-v2 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - Use dma_mapping_error() and rx_desc->ds_cc when unmapping RX descriptors;
-    this is consistent with the way that they are mapped
-  - Use ravb_tx_free() to clear TX descriptors
-* Reduce scope of new local variable
-
-v1 [Kazuya Mizuguchi]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 111 ++++++++++++++++++-------------
- 1 file changed, 63 insertions(+), 48 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 89ac1e3f6175..5d66ac721335 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -179,6 +179,48 @@ static struct mdiobb_ops bb_ops = {
- 	.get_mdio_data = ravb_get_mdio_data,
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 2c40b6a1a93f108c..e9373d9ab97fb827 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -65,11 +65,21 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+ 	return false;
+ }
  
-+/* Free TX skb function for AVB-IP */
-+static int ravb_tx_free(struct net_device *ndev, int q, bool free_txed_only)
++static unsigned int rvin_pad_idx(struct v4l2_subdev *sd, int direction)
 +{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	struct net_device_stats *stats = &priv->stats[q];
-+	struct ravb_tx_desc *desc;
-+	int free_num = 0;
-+	int entry;
-+	u32 size;
++	unsigned int pad_idx;
 +
-+	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
-+		bool txed;
++	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
++		if (sd->entity.pads[pad_idx].flags == direction)
++			return pad_idx;
 +
-+		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
-+					     NUM_TX_DESC);
-+		desc = &priv->tx_ring[q][entry];
-+		txed = desc->die_dt == DT_FEMPTY;
-+		if (free_txed_only && !txed)
-+			break;
-+		/* Descriptor type must be checked before all other reads */
-+		dma_rmb();
-+		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
-+		/* Free the original skb. */
-+		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
-+			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
-+					 size, DMA_TO_DEVICE);
-+			/* Last packet descriptor? */
-+			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
-+				entry /= NUM_TX_DESC;
-+				dev_kfree_skb_any(priv->tx_skb[q][entry]);
-+				priv->tx_skb[q][entry] = NULL;
-+				stats->tx_packets++;
-+			}
-+			free_num++;
-+		}
-+		if (!txed)
-+			stats->tx_bytes += size;
-+		desc->die_dt = DT_EEMPTY;
-+	}
-+	return free_num;
++	return 0;
 +}
 +
- /* Free skb's and DMA buffers for Ethernet AVB */
- static void ravb_ring_free(struct net_device *ndev, int q)
+ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
  {
-@@ -194,19 +236,21 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 	kfree(priv->rx_skb[q]);
- 	priv->rx_skb[q] = NULL;
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
+ 	struct v4l2_subdev *sd = vin->digital.subdev;
+-	unsigned int pad_idx;
+ 	int ret;
  
--	/* Free TX skb ringbuffer */
--	if (priv->tx_skb[q]) {
--		for (i = 0; i < priv->num_tx_ring[q]; i++)
--			dev_kfree_skb(priv->tx_skb[q][i]);
--	}
--	kfree(priv->tx_skb[q]);
--	priv->tx_skb[q] = NULL;
--
- 	/* Free aligned TX buffers */
- 	kfree(priv->tx_align[q]);
- 	priv->tx_align[q] = NULL;
+ 	/* Verify subdevices mbus format */
+@@ -83,21 +93,8 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ 		vin->digital.subdev->name, vin->digital.code);
  
- 	if (priv->rx_ring[q]) {
-+		for (i = 0; i < priv->num_rx_ring[q]; i++) {
-+			struct ravb_ex_rx_desc *desc = &priv->rx_ring[q][i];
-+
-+			if (!dma_mapping_error(ndev->dev.parent,
-+					       le32_to_cpu(desc->dptr)))
-+				dma_unmap_single(ndev->dev.parent,
-+						 le32_to_cpu(desc->dptr),
-+						 PKT_BUF_SZ,
-+						 DMA_FROM_DEVICE);
-+		}
- 		ring_size = sizeof(struct ravb_ex_rx_desc) *
- 			    (priv->num_rx_ring[q] + 1);
- 		dma_free_coherent(ndev->dev.parent, ring_size, priv->rx_ring[q],
-@@ -215,12 +259,20 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 	}
- 
- 	if (priv->tx_ring[q]) {
-+		ravb_tx_free(ndev, q, false);
-+
- 		ring_size = sizeof(struct ravb_tx_desc) *
- 			    (priv->num_tx_ring[q] * NUM_TX_DESC + 1);
- 		dma_free_coherent(ndev->dev.parent, ring_size, priv->tx_ring[q],
- 				  priv->tx_desc_dma[q]);
- 		priv->tx_ring[q] = NULL;
- 	}
-+
-+	/* Free TX skb ringbuffer.
-+	 * SKBs are freed by ravb_tx_free() call above.
-+	 */
-+	kfree(priv->tx_skb[q]);
-+	priv->tx_skb[q] = NULL;
- }
- 
- /* Format skb and descriptor buffer for Ethernet AVB */
-@@ -431,44 +483,6 @@ static int ravb_dmac_init(struct net_device *ndev)
- 	return 0;
- }
- 
--/* Free TX skb function for AVB-IP */
--static int ravb_tx_free(struct net_device *ndev, int q)
--{
--	struct ravb_private *priv = netdev_priv(ndev);
--	struct net_device_stats *stats = &priv->stats[q];
--	struct ravb_tx_desc *desc;
--	int free_num = 0;
--	int entry;
--	u32 size;
--
--	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
--		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
--					     NUM_TX_DESC);
--		desc = &priv->tx_ring[q][entry];
--		if (desc->die_dt != DT_FEMPTY)
+ 	/* Figure out source and sink pad ids */
+-	vin->digital.source_pad_idx = 0;
+-	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+-		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
 -			break;
--		/* Descriptor type must be checked before all other reads */
--		dma_rmb();
--		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
--		/* Free the original skb. */
--		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
--			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
--					 size, DMA_TO_DEVICE);
--			/* Last packet descriptor? */
--			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
--				entry /= NUM_TX_DESC;
--				dev_kfree_skb_any(priv->tx_skb[q][entry]);
--				priv->tx_skb[q][entry] = NULL;
--				stats->tx_packets++;
--			}
--			free_num++;
--		}
--		stats->tx_bytes += size;
--		desc->die_dt = DT_EEMPTY;
--	}
--	return free_num;
--}
+-	if (pad_idx >= sd->entity.num_pads)
+-		return -EINVAL;
 -
- static void ravb_get_tx_tstamp(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-@@ -902,7 +916,7 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- 			spin_lock_irqsave(&priv->lock, flags);
- 			/* Clear TX interrupt */
- 			ravb_write(ndev, ~mask, TIS);
--			ravb_tx_free(ndev, q);
-+			ravb_tx_free(ndev, q, true);
- 			netif_wake_subqueue(ndev, q);
- 			mmiowb();
- 			spin_unlock_irqrestore(&priv->lock, flags);
-@@ -1567,7 +1581,8 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+-	vin->digital.source_pad_idx = pad_idx;
+-
+-	vin->digital.sink_pad_idx = 0;
+-	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+-		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
+-			vin->digital.sink_pad_idx = pad_idx;
+-			break;
+-		}
++	vin->digital.source_pad_idx = rvin_pad_idx(sd, MEDIA_PAD_FL_SOURCE);
++	vin->digital.sink_pad_idx = rvin_pad_idx(sd, MEDIA_PAD_FL_SINK);
  
- 	priv->cur_tx[q] += NUM_TX_DESC;
- 	if (priv->cur_tx[q] - priv->dirty_tx[q] >
--	    (priv->num_tx_ring[q] - 1) * NUM_TX_DESC && !ravb_tx_free(ndev, q))
-+	    (priv->num_tx_ring[q] - 1) * NUM_TX_DESC &&
-+	    !ravb_tx_free(ndev, q, true))
- 		netif_stop_subqueue(ndev, q);
- 
- exit:
+ 	vin_dbg(vin, "Found media pads for %s source: %d sink %d\n",
+ 		vin->digital.subdev->name, vin->digital.source_pad_idx,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
