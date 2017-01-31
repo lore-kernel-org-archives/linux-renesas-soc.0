@@ -1,129 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:51902 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755237AbdA0QsS (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:44334 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751244AbdAaPuD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 11:48:18 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, Chris.Brandt@renesas.com,
-        wsa@the-dreams.de
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [RFC fixes 2/2] pinctrl: rz-pfc: Fix RZ/A1 pin function configuration
-Date: Fri, 27 Jan 2017 17:47:08 +0100
-Message-Id: <1485535628-17097-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 31 Jan 2017 10:50:03 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 04/11] media: rcar-vin: fix standard in input enumeration
+Date: Tue, 31 Jan 2017 16:40:09 +0100
+Message-Id: <20170131154016.15526-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix alternate function configuration sequence for RZ/A1 SoC.
-The pin is first configured as simple input port, then alternate
-function is configured.
-Always enable input buffer for now as long as we don't have
-configuration paramters coming from device tree.
+If the subdevice supports dv_timings_cap the driver should not fill in
+the standard. Also don't use the standard from probe time ask the
+subdevice each time.
 
-Tested accessing embedded EEPROM chip through RIIC2 interface.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/pinctrl/rz-pfc/pinctrl-rza1.c | 55 +++++++++++++++++++++++------------
- 1 file changed, 36 insertions(+), 19 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/rz-pfc/pinctrl-rza1.c b/drivers/pinctrl/rz-pfc/pinctrl-rza1.c
-index 221f048..53b71c8 100644
---- a/drivers/pinctrl/rz-pfc/pinctrl-rza1.c
-+++ b/drivers/pinctrl/rz-pfc/pinctrl-rza1.c
-@@ -27,6 +27,7 @@
- #define MEM_RES_HIGH	1 /* PORTn_base + 0x4000 */
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 610f59e2a9142622..f9218f230322eb0b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -483,10 +483,16 @@ static int rvin_enum_input(struct file *file, void *priv,
+ 		return ret;
  
- /* displacements from PORTn_base */
-+#define PM_REG		0x300
- #define PMC_REG		0x400
- #define PFC_REG		0x500
- #define PFCE_REG	0x600
-@@ -235,8 +236,8 @@ static inline void rza1_set_bit(struct rz_pinctrl_res *res, int reg,
- #ifdef RZA1_REG_DBG
- 	u16 temp = ioread16(mem);
+ 	i->type = V4L2_INPUT_TYPE_CAMERA;
+-	i->std = vin->vdev.tvnorms;
  
--	pr_err("%p %p %p - %4x %4x\n",
--	       (void *)res->start, res->base, mem, temp, val);
-+	pr_err("%p %p %p - %d:%d - %4x %4x\n",
-+	       (void *)res->start, res->base, mem, bank, pin, temp, val);
- #endif
- 	iowrite16(val, mem);
- }
-@@ -253,25 +254,35 @@ static inline void rza1_set_bit(struct rz_pinctrl_res *res, int reg,
- static int rza1_set_mux(struct rz_pinctrl_dev *pinctrl,
- 			struct rz_pin_desc *pin_desc, unsigned int mux_mode)
- {
--	struct rz_pinctrl_res *res;
-+	struct rz_pinctrl_res *res_low, *res_high;
- 	unsigned int bank = pin_desc->bank,
- 		     pin = pin_desc->pin;
+-	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
++	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap)) {
+ 		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
++		i->std = 0;
++	} else {
++		i->capabilities = V4L2_IN_CAP_STD;
++		ret = v4l2_subdev_call(sd, video, g_tvnorms, &i->std);
++		if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
++			return ret;
++	}
  
-+	res_high = &pinctrl->res[MEM_RES_HIGH];
-+	res_low = &pinctrl->res[MEM_RES_LOW];
-+
- 	/*
--	 * disable input buffer and bi-control direction before entering
--	 * alternate mode and let alternate function drive the IO mode by
--	 * setting PIPCn to 1
-+	 * reset pin state disabling input buffer and bi-directional control
-+	 * and configure it as input port before configuring alternate
-+	 * function later
- 	 */
--	res = &pinctrl->res[MEM_RES_HIGH];
--	rza1_set_bit(res, PIBC_REG, bank, pin, 0);
--	rza1_set_bit(res, PBDC_REG, bank, pin, 0);
--	rza1_set_bit(res, PIPC_REG, bank, pin, 1);
-+	rza1_set_bit(res_high, PIBC_REG, bank, pin, 0);
-+	rza1_set_bit(res_high, PBDC_REG, bank, pin, 0);
+ 	strlcpy(i->name, "Camera", sizeof(i->name));
  
--	/* TODO:
--	 * all alternate functions except a few (3) need PIPCn = 1;
--	 * find a way to identify those 3 functions, do not set PIPCn to 1
--	 * and set PMn according to some flag passed as parameter from DTS
-+	rza1_set_bit(res_low, PM_REG, bank, pin, 1);
-+	rza1_set_bit(res_low, PMC_REG, bank, pin, 0);
-+	rza1_set_bit(res_high, PIPC_REG, bank, pin, 0);
-+
-+	/*
-+	 * pins that has to be used as input, even in alternate function mode,
-+	 * needs input buffer enabled.
-+	 * Set PBDCn to enable bi-control which enables input buffer
-+	 * consequentialy.
-+	 *
-+	 * TODO: Add a flag to dts pin configuration to specify when a pin
-+	 * requires input buffer enabled and set PBDCn conditionally.
- 	 */
-+	rza1_set_bit(res_high, PBDC_REG, bank, pin, 1);
- 
- 	/*
- 	 * enable alternate function mode and select it.
-@@ -290,11 +301,17 @@ static int rza1_set_mux(struct rz_pinctrl_dev *pinctrl,
- 	 * 1	1	1	1	8		7
- 	 * ----------------------------------------------------
- 	 */
--	res = &pinctrl->res[MEM_RES_LOW];
--	rza1_set_bit(res, PMC_REG, bank, pin, 1);
--	rza1_set_bit(res, PFC_REG, bank, pin, mux_mode & 0x1);
--	rza1_set_bit(res, PFCE_REG, bank, pin, mux_mode & 0x2);
--	rza1_set_bit(res, PFCEA_REG, bank, pin, mux_mode & 0x4);
-+	rza1_set_bit(res_low, PFC_REG, bank, pin, mux_mode & 0x1);
-+	rza1_set_bit(res_low, PFCE_REG, bank, pin, mux_mode & 0x2);
-+	rza1_set_bit(res_low, PFCEA_REG, bank, pin, mux_mode & 0x4);
-+
-+	/* TODO:
-+	 * all alternate functions except a few (4) need PIPCn = 1;
-+	 * find a way to identify those 3 functions, do not set PIPCn to 1
-+	 * and set PMn according to some flag passed as parameter from DTS
-+	 */
-+	rza1_set_bit(res_high, PIPC_REG, bank, pin, 1);
-+	rza1_set_bit(res_low, PMC_REG, bank, pin, 1);
- 
- 	return 0;
- }
 -- 
-2.7.4
+2.11.0
