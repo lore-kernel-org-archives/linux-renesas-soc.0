@@ -1,220 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51798 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbdAXSV1 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:59592 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751295AbdAaLRN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 13:21:27 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC v3 net] ravb: unmap descriptors when freeing rings
-Date: Tue, 24 Jan 2017 19:21:13 +0100
-Message-Id: <1485282073-16662-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 31 Jan 2017 06:17:13 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Joerg Roedel <joro@8bytes.org>, Magnus Damm <magnus.damm@gmail.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] iommu/ipmmu-vmsa: Restrict IOMMU Domain Geometry to 32-bit address space
+Date: Tue, 31 Jan 2017 12:17:07 +0100
+Message-Id: <1485861427-23487-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Currently, the IPMMU/VMSA driver supports 32-bit I/O Virtual Addresses
+only, and thus sets io_pgtable_cfg.ias = 32.  However, it doesn't force
+a 32-bit IOVA space through the IOMMU Domain Geometry.
 
-"swiotlb buffer is full" errors occur after repeated initialisation of a
-device - f.e. suspend/resume or ip link set up/down. This is because memory
-mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
-is not released.  Resolve this problem by unmapping descriptors when
-freeing rings.
+Hence if a device (e.g. SYS-DMAC) rightfully configures a 40-bit DMA
+mask, it will still be handed out a 40-bit IOVA, outside the 32-bit IOVA
+space, leading to out-of-bounds accesses of the PGD when mapping the
+IOVA.
 
-Note, ravb_tx_free() is moved but not otherwise modified by this patch.
+Force a 32-bit IOMMU Domain Geometry to fix this.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-[simon: reworked]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
---
-v3 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - consistently use le32_to_cpu(desc->dptr)
-  - Do not clear desc->ds_cc as it is not used
-* Paramatise ravb_tx_free() to allow it to free non-transmitted buffers
-
-v2 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - Use dma_mapping_error() and rx_desc->ds_cc when unmapping RX descriptors;
-    this is consistent with the way that they are mapped
-  - Use ravb_tx_free() to clear TX descriptors
-* Reduce scope of new local variable
-
-v1 [Kazuya Mizuguchi]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 113 ++++++++++++++++++-------------
- 1 file changed, 65 insertions(+), 48 deletions(-)
+v2:
+  - Add Reviewed-by.
+---
+ drivers/iommu/ipmmu-vmsa.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 89ac1e3f6175..57fe1411bb9d 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -179,6 +179,51 @@ static struct mdiobb_ops bb_ops = {
- 	.get_mdio_data = ravb_get_mdio_data,
- };
- 
-+enum ravb_tx_free_mode {
-+	ravb_tx_free_all,
-+	ravb_tx_free_txed_only,
-+};
-+
-+/* Free TX skb function for AVB-IP */
-+static int ravb_tx_free(struct net_device *ndev, int q,
-+			enum ravb_tx_free_mode free_mode)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	struct net_device_stats *stats = &priv->stats[q];
-+	struct ravb_tx_desc *desc;
-+	int free_num = 0;
-+	int entry;
-+	u32 size;
-+
-+	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
-+		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
-+					     NUM_TX_DESC);
-+		desc = &priv->tx_ring[q][entry];
-+		if (free_mode == ravb_tx_free_txed_only &&
-+		    desc->die_dt != DT_FEMPTY)
-+			break;
-+		/* Descriptor type must be checked before all other reads */
-+		dma_rmb();
-+		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
-+		/* Free the original skb. */
-+		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
-+			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
-+					 size, DMA_TO_DEVICE);
-+			/* Last packet descriptor? */
-+			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
-+				entry /= NUM_TX_DESC;
-+				dev_kfree_skb_any(priv->tx_skb[q][entry]);
-+				priv->tx_skb[q][entry] = NULL;
-+				stats->tx_packets++;
-+			}
-+			free_num++;
-+		}
-+		stats->tx_bytes += size;
-+		desc->die_dt = DT_EEMPTY;
-+	}
-+	return free_num;
-+}
-+
- /* Free skb's and DMA buffers for Ethernet AVB */
- static void ravb_ring_free(struct net_device *ndev, int q)
- {
-@@ -194,19 +239,21 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 	kfree(priv->rx_skb[q]);
- 	priv->rx_skb[q] = NULL;
- 
--	/* Free TX skb ringbuffer */
--	if (priv->tx_skb[q]) {
--		for (i = 0; i < priv->num_tx_ring[q]; i++)
--			dev_kfree_skb(priv->tx_skb[q][i]);
--	}
--	kfree(priv->tx_skb[q]);
--	priv->tx_skb[q] = NULL;
--
- 	/* Free aligned TX buffers */
- 	kfree(priv->tx_align[q]);
- 	priv->tx_align[q] = NULL;
- 
- 	if (priv->rx_ring[q]) {
-+		for (i = 0; i < priv->num_rx_ring[q]; i++) {
-+			struct ravb_ex_rx_desc *desc = &priv->rx_ring[q][i];
-+
-+			if (!dma_mapping_error(ndev->dev.parent,
-+					       le32_to_cpu(desc->dptr)))
-+				dma_unmap_single(ndev->dev.parent,
-+						 le32_to_cpu(desc->dptr),
-+						 PKT_BUF_SZ,
-+						 DMA_FROM_DEVICE);
-+		}
- 		ring_size = sizeof(struct ravb_ex_rx_desc) *
- 			    (priv->num_rx_ring[q] + 1);
- 		dma_free_coherent(ndev->dev.parent, ring_size, priv->rx_ring[q],
-@@ -215,12 +262,19 @@ static void ravb_ring_free(struct net_device *ndev, int q)
- 	}
- 
- 	if (priv->tx_ring[q]) {
-+		ravb_tx_free(ndev, q, ravb_tx_free_all);
-+
- 		ring_size = sizeof(struct ravb_tx_desc) *
- 			    (priv->num_tx_ring[q] * NUM_TX_DESC + 1);
- 		dma_free_coherent(ndev->dev.parent, ring_size, priv->tx_ring[q],
- 				  priv->tx_desc_dma[q]);
- 		priv->tx_ring[q] = NULL;
- 	}
-+
-+	/* Free TX skb ringbuffer.
-+	 * SKBs are freed by ravb_tx_free() call above. */
-+	kfree(priv->tx_skb[q]);
-+	priv->tx_skb[q] = NULL;
- }
- 
- /* Format skb and descriptor buffer for Ethernet AVB */
-@@ -431,44 +485,6 @@ static int ravb_dmac_init(struct net_device *ndev)
- 	return 0;
- }
- 
--/* Free TX skb function for AVB-IP */
--static int ravb_tx_free(struct net_device *ndev, int q)
--{
--	struct ravb_private *priv = netdev_priv(ndev);
--	struct net_device_stats *stats = &priv->stats[q];
--	struct ravb_tx_desc *desc;
--	int free_num = 0;
--	int entry;
--	u32 size;
--
--	for (; priv->cur_tx[q] - priv->dirty_tx[q] > 0; priv->dirty_tx[q]++) {
--		entry = priv->dirty_tx[q] % (priv->num_tx_ring[q] *
--					     NUM_TX_DESC);
--		desc = &priv->tx_ring[q][entry];
--		if (desc->die_dt != DT_FEMPTY)
--			break;
--		/* Descriptor type must be checked before all other reads */
--		dma_rmb();
--		size = le16_to_cpu(desc->ds_tagl) & TX_DS;
--		/* Free the original skb. */
--		if (priv->tx_skb[q][entry / NUM_TX_DESC]) {
--			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
--					 size, DMA_TO_DEVICE);
--			/* Last packet descriptor? */
--			if (entry % NUM_TX_DESC == NUM_TX_DESC - 1) {
--				entry /= NUM_TX_DESC;
--				dev_kfree_skb_any(priv->tx_skb[q][entry]);
--				priv->tx_skb[q][entry] = NULL;
--				stats->tx_packets++;
--			}
--			free_num++;
--		}
--		stats->tx_bytes += size;
--		desc->die_dt = DT_EEMPTY;
--	}
--	return free_num;
--}
--
- static void ravb_get_tx_tstamp(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-@@ -902,7 +918,7 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- 			spin_lock_irqsave(&priv->lock, flags);
- 			/* Clear TX interrupt */
- 			ravb_write(ndev, ~mask, TIS);
--			ravb_tx_free(ndev, q);
-+			ravb_tx_free(ndev, q, ravb_tx_free_txed_only);
- 			netif_wake_subqueue(ndev, q);
- 			mmiowb();
- 			spin_unlock_irqrestore(&priv->lock, flags);
-@@ -1567,7 +1583,8 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 
- 	priv->cur_tx[q] += NUM_TX_DESC;
- 	if (priv->cur_tx[q] - priv->dirty_tx[q] >
--	    (priv->num_tx_ring[q] - 1) * NUM_TX_DESC && !ravb_tx_free(ndev, q))
-+	    (priv->num_tx_ring[q] - 1) * NUM_TX_DESC &&
-+	    !ravb_tx_free(ndev, q, ravb_tx_free_txed_only))
- 		netif_stop_subqueue(ndev, q);
- 
- exit:
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 798578f1676480c6..eb8b3df8733b15fb 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -424,6 +424,8 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+ 	domain->cfg.ias = 32;
+ 	domain->cfg.oas = 40;
+ 	domain->cfg.tlb = &ipmmu_gather_ops;
++	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
++	domain->io_domain.geometry.force_aperture = true;
+ 	/*
+ 	 * TODO: Add support for coherent walk through CCI with DVM and remove
+ 	 * cache handling. For now, delegate it to the io-pgtable code.
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
