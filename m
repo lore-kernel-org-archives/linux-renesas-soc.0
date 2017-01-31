@@ -1,53 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:47282 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753326AbdAZJxM (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:44273 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751108AbdAaPt5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 04:53:12 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] iommu/ipmmu-vmsa: Restrict IOMMU Domain Geometry to 32-bit address space
-Date: Thu, 26 Jan 2017 10:53:11 +0100
-Message-Id: <1485424391-29914-1-git-send-email-geert+renesas@glider.be>
+        Tue, 31 Jan 2017 10:49:57 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 09/11] media: rcar-vin: use pad information when verifying media bus format
+Date: Tue, 31 Jan 2017 16:40:14 +0100
+Message-Id: <20170131154016.15526-10-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently, the IPMMU/VMSA driver supports 32-bit I/O Virtual Addresses
-only, and thus sets io_pgtable_cfg.ias = 32.  However, it doesn't force
-a 32-bit IOVA space through the IOMMU Domain Geometry.
+Use information about pad index when enumerating mbus codes.
 
-Hence if a device (e.g. SYS-DMAC) rightfully configures a 40-bit DMA
-mask, it will still be handed out a 40-bit IOVA, outside the 32-bit IOVA
-space, leading to out-of-bounds accesses of the PGD when mapping the
-IOVA.
-
-Force a 32-bit IOMMU Domain Geometry to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Should the generic code restrict the geometry based on IAS instead?
----
- drivers/iommu/ipmmu-vmsa.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 798578f1676480c6..eb8b3df8733b15fb 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -424,6 +424,8 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- 	domain->cfg.ias = 32;
- 	domain->cfg.oas = 40;
- 	domain->cfg.tlb = &ipmmu_gather_ops;
-+	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
-+	domain->io_domain.geometry.force_aperture = true;
- 	/*
- 	 * TODO: Add support for coherent walk through CCI with DVM and remove
- 	 * cache handling. For now, delegate it to the io-pgtable code.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index e9373d9ab97fb827..50058fe9e37d8771 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -48,6 +48,7 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+ 	};
+ 
+ 	code.index = 0;
++	code.pad = entity->source_pad_idx;
+ 	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
+ 		code.index++;
+ 		switch (code.code) {
 -- 
-1.9.1
+2.11.0
