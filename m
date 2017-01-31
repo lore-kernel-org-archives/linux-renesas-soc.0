@@ -1,58 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753076AbdAZKLX (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:44616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751247AbdAaUUs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 05:11:23 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/7] ARM: dts: r7s72100: add ostm to device tree
-Date: Thu, 26 Jan 2017 11:11:07 +0100
-Message-Id: <69b5c6dceaa138859f03ca20e3adca7ddec6bae7.1485425227.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
-References: <cover.1485425227.git.horms+renesas@verge.net.au>
+        Tue, 31 Jan 2017 15:20:48 -0500
+Subject: [PATCH 1 4/4] PCI: rcar: Use of_device_get_match_data() to simplify
+ probe
+From: Bjorn Helgaas <bhelgaas@google.com>
+To: linux-pci@vger.kernel.org
+Cc: Scott Branden <sbranden@broadcom.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        Minghuan Lian <minghuan.Lian@freescale.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Mingkai Hu <mingkai.hu@freescale.com>,
+        Roy Zang <tie-fei.zang@freescale.com>,
+        Shailendra Verma <shailendra.v@samsung.com>
+Date: Tue, 31 Jan 2017 14:20:20 -0600
+Message-ID: <20170131202020.27605.39560.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+This is a DT-only driver, so the only way to call rcar_pcie_probe() is to
+match an entry in rcar_pcie_of_match[], so of_id cannot be NULL.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Furthermore, of_id->data can only be NULL if an rcar_pcie_of_match[] entry
+has a NULL .data member.  That's a driver defect, and we don't want to
+return -EINVAL, which is easy to ignore.  We'd rather take the NULL pointer
+dereference so we notice the problem and fix it.
+
+Use of_device_get_match_data() to retrieve the hw_init_fn pointer.  No
+functional change intended.
+
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/pci/host/pcie-rcar.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index d5946df29222..74e684f3c1c7 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -505,4 +505,22 @@
- 		cap-sdio-irq;
- 		status = "disabled";
- 	};
-+
-+	ostm0: timer@fcfec000 {
-+		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+		reg = <0xfcfec000 0x30>;
-+		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
-+
-+	ostm1: timer@fcfec400 {
-+		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+		reg = <0xfcfec400 0x30>;
-+		interrupts = <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp5_clks R7S72100_CLK_OSTM1>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
- };
--- 
-2.7.0.rc3.207.g0ac5344
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index aca85be101f8..b3b6d5273347 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -1125,7 +1125,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct rcar_pcie *pcie;
+ 	unsigned int data;
+-	const struct of_device_id *of_id;
+ 	int err;
+ 	int (*hw_init_fn)(struct rcar_pcie *);
+ 
+@@ -1149,11 +1148,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
+-	of_id = of_match_device(rcar_pcie_of_match, dev);
+-	if (!of_id || !of_id->data)
+-		return -EINVAL;
+-	hw_init_fn = of_id->data;
+-
+ 	pm_runtime_enable(dev);
+ 	err = pm_runtime_get_sync(dev);
+ 	if (err < 0) {
+@@ -1162,6 +1156,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Failure to get a link might just be that no cards are inserted */
++	hw_init_fn = of_device_get_match_data(dev);
+ 	err = hw_init_fn(pcie);
+ 	if (err) {
+ 		dev_info(dev, "PCIe link down\n");
