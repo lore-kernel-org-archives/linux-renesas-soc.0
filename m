@@ -1,72 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46307 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbdAZKLP (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:44492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751193AbdAaUUs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 05:11:15 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Tue, 31 Jan 2017 15:20:48 -0500
+Subject: [PATCH 1 3/4] PCI: layerscape: Use of_device_get_match_data() to
+ simplify probe
+From: Bjorn Helgaas <bhelgaas@google.com>
+To: linux-pci@vger.kernel.org
+Cc: Scott Branden <sbranden@broadcom.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        Minghuan Lian <minghuan.Lian@freescale.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for v4.11
-Date: Thu, 26 Jan 2017 11:11:05 +0100
-Message-Id: <cover.1485425227.git.horms+renesas@verge.net.au>
+        bcm-kernel-feedback-list@broadcom.com,
+        Mingkai Hu <mingkai.hu@freescale.com>,
+        Roy Zang <tie-fei.zang@freescale.com>,
+        Shailendra Verma <shailendra.v@samsung.com>
+Date: Tue, 31 Jan 2017 14:20:13 -0600
+Message-ID: <20170131202013.27605.44566.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+The only way to call ls_pcie_probe() is to match an entry in
+ls_pcie_of_match[], so match cannot be NULL.
 
-Please consider these second round of Renesas ARM based SoC DT updates for v4.11.
+Use of_device_get_match_data() to retrieve the drvdata pointer.  No
+functional change intended.
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-dt-for-v4.11,
-which you have already pulled.
+Based-on-suggestion-from: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/host/pci-layerscape.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-
-The following changes since commit 654450baf2afba86cf328e1849ccac61ec4630af:
-
-  ARM: dts: r8a7790: Use R-Car Gen 2 fallback binding for msiof nodes (2017-01-03 10:47:05 +0100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.11
-
-for you to fetch changes up to 5786ac14239a0809ca13e6a6f77147e6bb04aa29:
-
-  ARM: dts: r7s72100: add power-domains to mmcif (2017-01-25 11:32:02 +0100)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC DT Updates for v4.11
-
-Enhancements:
-* Add power-domains to mmcif on r7s72100 SoC
-* Add OSTM to rskrza1/r7s72100
-* Link ARM GIC to clock and clock domain on r8a774[35] SoCs
-
-Clean-up:
-* Correct SATA device status on r8a7779/marzen
-
-----------------------------------------------------------------
-Chris Brandt (4):
-      ARM: dts: r7s72100: add ostm clock to device tree
-      ARM: dts: r7s72100: add ostm to device tree
-      ARM: dts: rskrza1: add ostm DT support
-      ARM: dts: r7s72100: add power-domains to mmcif
-
-Geert Uytterhoeven (3):
-      ARM: dts: r8a7779, marzen: Fix sata device status
-      ARM: dts: r8a7743: Link ARM GIC to clock and clock domain
-      ARM: dts: r8a7745: Link ARM GIC to clock and clock domain
-
- arch/arm/boot/dts/r7s72100-rskrza1.dts     |  8 ++++++++
- arch/arm/boot/dts/r7s72100.dtsi            | 28 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7743.dtsi             |  3 +++
- arch/arm/boot/dts/r8a7745.dtsi             |  3 +++
- arch/arm/boot/dts/r8a7779-marzen.dts       |  4 ++++
- arch/arm/boot/dts/r8a7779.dtsi             |  1 +
- include/dt-bindings/clock/r7s72100-clock.h |  4 ++++
- 7 files changed, 51 insertions(+)
+diff --git a/drivers/pci/host/pci-layerscape.c b/drivers/pci/host/pci-layerscape.c
+index ea789138531b..c1f06f8f05fd 100644
+--- a/drivers/pci/host/pci-layerscape.c
++++ b/drivers/pci/host/pci-layerscape.c
+@@ -239,23 +239,18 @@ static int __init ls_add_pcie_port(struct ls_pcie *pcie)
+ static int __init ls_pcie_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	const struct of_device_id *match;
+ 	struct ls_pcie *pcie;
+ 	struct pcie_port *pp;
+ 	struct resource *dbi_base;
+ 	int ret;
+ 
+-	match = of_match_device(ls_pcie_of_match, dev);
+-	if (!match)
+-		return -ENODEV;
+-
+ 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+ 	if (!pcie)
+ 		return -ENOMEM;
+ 
+ 	pp = &pcie->pp;
+ 	pp->dev = dev;
+-	pcie->drvdata = match->data;
++	pcie->drvdata = of_device_get_match_data(dev);
+ 	pp->ops = pcie->drvdata->ops;
+ 
+ 	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
