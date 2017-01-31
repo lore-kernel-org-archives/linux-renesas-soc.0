@@ -1,44 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:55125 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755143AbdA0QsR (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:44232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751232AbdAaUUH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 11:48:17 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, Chris.Brandt@renesas.com,
-        wsa@the-dreams.de
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [RFC fixes 0/2] FIX: Renesas RZ series pinctrl driver
-Date: Fri, 27 Jan 2017 17:47:06 +0100
-Message-Id: <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 31 Jan 2017 15:20:07 -0500
+Subject: [PATCH 1 1/4] PCI: hisi: Use of_device_get_match_data() to simplify
+ probe
+From: Bjorn Helgaas <bhelgaas@google.com>
+To: linux-pci@vger.kernel.org
+Cc: Scott Branden <sbranden@broadcom.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        Minghuan Lian <minghuan.Lian@freescale.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Mingkai Hu <mingkai.hu@freescale.com>,
+        Roy Zang <tie-fei.zang@freescale.com>,
+        Shailendra Verma <shailendra.v@samsung.com>
+Date: Tue, 31 Jan 2017 14:19:59 -0600
+Message-ID: <20170131201958.27605.54898.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   sorry if I'm sending 2 patches on top of an RFC series with comments
-still pending, but these patches enabled me to properly test pin configuration
-sequence in order to access the internal EEPROM through RIIC2 interface on
-pins 1_4 and 1_5.
+From: Shailendra Verma <shailendra.v@samsung.com>
 
-The outcome is a bugfix to RZ/A1 pincontroller driver which [2/2] applies on.
+The only way to call hisi_pcie_probe() is to match an entry in
+hisi_pcie_of_match[], so match cannot be NULL.
 
-When sending v2 of the whole series I'll probably squash these, but if someone
-is testing the RFC series I wanted to make sure he does not waste his time with
-a broken driver.
+Use of_device_get_match_data() to retrieve the soc_ops pointer.  No
+functional change intended.
 
-Thanks
-   j
+[bhelgaas: use of_device_get_match_data(), changelog]
+Based-on-suggestion-from: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/host/pcie-hisi.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Jacopo Mondi (2):
-  arm: dts: genmai: Configure RIIC2 pins
-  pinctrl: rz-pfc: Fix RZ/A1 pin function configuration
-
- arch/arm/boot/dts/r7s72100-genmai.dts |  8 ++++-
- drivers/pinctrl/rz-pfc/pinctrl-rza1.c | 55 +++++++++++++++++++++++------------
- 2 files changed, 43 insertions(+), 20 deletions(-)
-
--- 
-2.7.4
+diff --git a/drivers/pci/host/pcie-hisi.c b/drivers/pci/host/pcie-hisi.c
+index a301a7187b30..33c201afdbf1 100644
+--- a/drivers/pci/host/pcie-hisi.c
++++ b/drivers/pci/host/pcie-hisi.c
+@@ -139,7 +139,7 @@ struct hisi_pcie {
+ 	struct pcie_port pp;		/* pp.dbi_base is DT rc_dbi */
+ 	struct regmap *subctrl;
+ 	u32 port_id;
+-	struct pcie_soc_ops *soc_ops;
++	const struct pcie_soc_ops *soc_ops;
+ };
+ 
+ /* HipXX PCIe host only supports 32-bit config access */
+@@ -259,7 +259,6 @@ static int hisi_pcie_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct hisi_pcie *hisi_pcie;
+ 	struct pcie_port *pp;
+-	const struct of_device_id *match;
+ 	struct resource *reg;
+ 	struct device_driver *driver;
+ 	int ret;
+@@ -272,11 +271,10 @@ static int hisi_pcie_probe(struct platform_device *pdev)
+ 	pp->dev = dev;
+ 	driver = dev->driver;
+ 
+-	match = of_match_device(driver->of_match_table, dev);
+-	hisi_pcie->soc_ops = (struct pcie_soc_ops *) match->data;
++	hisi_pcie->soc_ops = of_device_get_match_data(dev);
+ 
+ 	hisi_pcie->subctrl =
+-	syscon_regmap_lookup_by_compatible("hisilicon,pcie-sas-subctrl");
++	    syscon_regmap_lookup_by_compatible("hisilicon,pcie-sas-subctrl");
+ 	if (IS_ERR(hisi_pcie->subctrl)) {
+ 		dev_err(dev, "cannot get subctrl base\n");
+ 		return PTR_ERR(hisi_pcie->subctrl);
