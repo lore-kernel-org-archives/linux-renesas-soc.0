@@ -1,88 +1,115 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Christoph Baumann <cbaumann@visteon.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: sh-sci: Fix hang in sci_reset()
-Date: Fri, 06 Jan 2017 14:31:28 +0200
-Message-ID: <52992122.70bgT4fDeQ@avalon>
-In-Reply-To: <1480682111-9299-3-git-send-email-geert+renesas@glider.be>
-References: <1480682111-9299-1-git-send-email-geert+renesas@glider.be> <1480682111-9299-3-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:44255 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbdAaPt5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 31 Jan 2017 10:49:57 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 07/11] media: rcar-vin: move pad index discovery to async complete handler
+Date: Tue, 31 Jan 2017 16:40:12 +0100
+Message-Id: <20170131154016.15526-8-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+To fix support for unbind and rebinding of subdevices the
+rvin_v4l2_probe() needs to be called before there might be any subdevice
+bound. Move pad index discovery to when we know the subdevice is
+present.
 
-Thank you for the patch.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 18 +-----------------
+ 2 files changed, 24 insertions(+), 17 deletions(-)
 
-On Friday 02 Dec 2016 13:35:11 Geert Uytterhoeven wrote:
-> When the .set_termios() callback resets the UART, it first waits until
-> all characters in the transmit FIFO have been transmitted, to prevent a
-> port configuration change from impacting these characters.
-> 
-> However, if the previous user of the UART had dedicated RTS/CTS hardware
-> flow control enabled, these characters may have been stuck in the FIFO
-> due to CTS not being asserted. When the new user opens the port,
-> .set_termios() is called while transmission is still disabled, leading
-> to an infinite loop:
-> 
->     NMI watchdog: BUG: soft lockup - CPU#0 stuck for 22s!
-> 
-> This has been observed with SCIFA (on r8a7740/armadillo) and SCIFB (on
-> r8a7791/koelsch).
-> 
-> The issue does not seem to happen when using:
->   - GPIO RTS/CTS hardware flow control,
->   - No hardware flow control,
->   - HSCIF (on r8a7791/koelsch).
-> 
-> To fix this, wait for the draining of the transmit FIFO only if
-> transmission is already enabled.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> To reproduce:
-> 
->     stty -echo < /dev/scifb0
->     stty crtscts < /dev/scifb0
->     echo hello > /dev/scifb0	# returns early (wrote to FIFO)
->     echo hello > /dev/scifb0	# hangs
-> 
->  drivers/tty/serial/sh-sci.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index c503db1900f003ed..db5de80c5399a7bd 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -2137,9 +2137,11 @@ static void sci_reset(struct uart_port *port)
->  	const struct plat_sci_reg *reg;
->  	unsigned int status;
-> 
-> -	do {
-> -		status = serial_port_in(port, SCxSR);
-> -	} while (!(status & SCxSR_TEND(port)));
-> +	if (serial_port_in(port, SCSCR) & SCSCR_TE) {
-> +		do {
-> +			status = serial_port_in(port, SCxSR);
-> +		} while (!(status & SCxSR_TEND(port)));
-
-Won't we still loop forever if the remote side never asserts CTS ?
-
-> +	}
-> 
->  	serial_port_out(port, SCSCR, 0x00);	/* TE=0, RE=0, CKE1=0 */
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 89a9280efa05aa0c..2c40b6a1a93f108c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -68,6 +68,8 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ {
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
++	struct v4l2_subdev *sd = vin->digital.subdev;
++	unsigned int pad_idx;
+ 	int ret;
+ 
+ 	/* Verify subdevices mbus format */
+@@ -80,6 +82,27 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ 	vin_dbg(vin, "Found media bus format for %s: %d\n",
+ 		vin->digital.subdev->name, vin->digital.code);
+ 
++	/* Figure out source and sink pad ids */
++	vin->digital.source_pad_idx = 0;
++	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
++		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
++			break;
++	if (pad_idx >= sd->entity.num_pads)
++		return -EINVAL;
++
++	vin->digital.source_pad_idx = pad_idx;
++
++	vin->digital.sink_pad_idx = 0;
++	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
++		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
++			vin->digital.sink_pad_idx = pad_idx;
++			break;
++		}
++
++	vin_dbg(vin, "Found media pads for %s source: %d sink %d\n",
++		vin->digital.subdev->name, vin->digital.source_pad_idx,
++		vin->digital.sink_pad_idx);
++
+ 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
+ 	if (ret < 0) {
+ 		vin_err(vin, "Failed to register subdev nodes\n");
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index f8ff7c43944dd64a..51324c6d826f76ea 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -905,7 +905,7 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ {
+ 	struct video_device *vdev = &vin->vdev;
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad_idx, ret;
++	int ret;
+ 
+ 	v4l2_set_subdev_hostdata(sd, vin);
+ 
+@@ -951,22 +951,6 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
+ 
+-	vin->digital.source_pad_idx = 0;
+-	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+-		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
+-			break;
+-	if (pad_idx >= sd->entity.num_pads)
+-		return -EINVAL;
+-
+-	vin->digital.source_pad_idx = pad_idx;
+-
+-	vin->digital.sink_pad_idx = 0;
+-	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+-		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
+-			vin->digital.sink_pad_idx = pad_idx;
+-			break;
+-		}
+-
+ 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
+ 	rvin_reset_format(vin);
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
