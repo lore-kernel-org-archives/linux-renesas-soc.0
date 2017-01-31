@@ -1,61 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46334 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752971AbdAZKLS (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55128 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751851AbdAaMMu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 05:11:18 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/7] ARM: dts: r8a7779, marzen: Fix sata device status
-Date: Thu, 26 Jan 2017 11:11:03 +0100
-Message-Id: <e8aa6811ca9547bc82baa6ed44c38dde01fb0d86.1485425227.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1485425227.git.horms+renesas@verge.net.au>
-References: <cover.1485425227.git.horms+renesas@verge.net.au>
+        Tue, 31 Jan 2017 07:12:50 -0500
+Date: Tue, 31 Jan 2017 14:12:19 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCHv2] v4l: of: check for unique lanes in data-lanes and
+ clock-lanes
+Message-ID: <20170131121219.GV7139@valkosipuli.retiisi.org.uk>
+References: <20170131120831.11283-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170131120831.11283-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Jan 31, 2017 at 01:08:31PM +0100, Niklas S�derlund wrote:
+> All lanes in data-lanes and clock-lanes properties should be unique. Add
+> a check for this in v4l2_of_parse_csi_bus() and print a warning if
+> duplicated lanes are found.
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Device nodes representing I/O devices should be marked disabled in the
-SoC-specific DTS, and overridden by board-specific DTSes where needed.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7779-marzen.dts | 4 ++++
- arch/arm/boot/dts/r8a7779.dtsi       | 1 +
- 2 files changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
-index 676151b70185..89c5b24a3d03 100644
---- a/arch/arm/boot/dts/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/r8a7779-marzen.dts
-@@ -216,6 +216,10 @@
- 	};
- };
- 
-+&sata {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index f47a0edc26d4..ae2d9a9c65af 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -347,6 +347,7 @@
- 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
- 		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
-+		status = "disabled";
- 	};
- 
- 	sdhi0: sd@ffe4c000 {
 -- 
-2.7.0.rc3.207.g0ac5344
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
