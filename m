@@ -1,139 +1,216 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38280 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbdA0Tqw (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:44323 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750935AbdAaPuD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 14:46:52 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 net-next 1/2] ravb: Add tx and rx clock internal delays mode of APSR
-Date: Fri, 27 Jan 2017 20:46:26 +0100
-Message-Id: <1485546387-30809-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1485546387-30809-1-git-send-email-horms+renesas@verge.net.au>
-References: <1485546387-30809-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 31 Jan 2017 10:50:03 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 06/11] media: rcar-vin: move subdev source and sink pad index to rvin_graph_entity
+Date: Tue, 31 Jan 2017 16:40:11 +0100
+Message-Id: <20170131154016.15526-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+It makes more sens to store the sink and source pad index in struct
+rvin_graph_entity since that contains other subdevice related
+information. Add complete documentation for struct rvin_graph_entity
+while we are at it.
 
-This patch enables tx and rx clock internal delay modes (TDM and RDM).
-
-This is to address a failure in the case of 1Gbps communication using the
-by salvator-x board with the KSZ9031RNX phy. This has been reported to
-occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
-
-With this change APSR internal delay modes are enabled for
-"rgmii-id", "rgmii-rxid" and "rgmii-txid" phy modes as follows:
-
-phy mode   | ASPR delay mode
------------+----------------
-rgmii-id   | TDM and RDM
-rgmii-rxid | RDM
-rgmii-txid | TDM
-
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v3 [Simon Horman]
-* Move comment to above ravb_set_delay_mode()
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 45 ++++++++++++++++++++++-------
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 17 ++++++-----
+ 2 files changed, 44 insertions(+), 18 deletions(-)
 
-v2 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - Add a comment to indicate that APSR_DM appears to be undocumented.
-  - Move chip_id check outside of ravb_set_delay_mode for consistency
-  - Call ravb_modify() once in ravb_set_delay_mode()
-* Enhance comment before calls to ravb_set_delay_mode()
-
-v1 [Simon Horman]
-- Combined patches
-- Reworded changelog
-
-v0 [Kazuya Mizuguchi]
----
- drivers/net/ethernet/renesas/ravb.h      | 10 ++++++++++
- drivers/net/ethernet/renesas/ravb_main.c | 23 +++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index f1109661a533..0525bd696d5d 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -76,6 +76,7 @@ enum ravb_reg {
- 	CDAR20	= 0x0060,
- 	CDAR21	= 0x0064,
- 	ESR	= 0x0088,
-+	APSR	= 0x008C,	/* R-Car Gen3 only */
- 	RCR	= 0x0090,
- 	RQC0	= 0x0094,
- 	RQC1	= 0x0098,
-@@ -248,6 +249,15 @@ enum ESR_BIT {
- 	ESR_EIL		= 0x00001000,
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 370bb184e5faace7..f8ff7c43944dd64a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -109,9 +109,14 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+ 	};
+ 	struct v4l2_mbus_framefmt *mf = &fmt.format;
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
+-	fmt.pad = vin->src_pad_idx;
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
++	fmt.pad = rent->source_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
+ 	if (ret)
+@@ -182,7 +187,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	if (pad_cfg == NULL)
+ 		return -ENOMEM;
+ 
+-	format.pad = vin->src_pad_idx;
++	format.pad = rent->source_pad_idx;
+ 
+ 	field = pix->field;
+ 
+@@ -560,12 +565,17 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (timings->pad)
+ 		return -EINVAL;
+ 
+-	timings->pad = vin->sink_pad_idx;
++	timings->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+ 
+@@ -612,12 +622,17 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (cap->pad)
+ 		return -EINVAL;
+ 
+-	cap->pad = vin->sink_pad_idx;
++	cap->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+ 
+@@ -630,12 +645,17 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	edid->pad = vin->sink_pad_idx;
++	edid->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
+ 
+@@ -648,12 +668,17 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
++	struct rvin_graph_entity *rent;
+ 	int ret;
+ 
++	rent = vin_to_entity(vin);
++	if (!rent)
++		return -ENODEV;
++
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	edid->pad = vin->sink_pad_idx;
++	edid->pad = rent->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
+ 
+@@ -926,19 +951,19 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
+ 
+-	vin->src_pad_idx = 0;
++	vin->digital.source_pad_idx = 0;
+ 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+ 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
+ 			break;
+ 	if (pad_idx >= sd->entity.num_pads)
+ 		return -EINVAL;
+ 
+-	vin->src_pad_idx = pad_idx;
++	vin->digital.source_pad_idx = pad_idx;
+ 
+-	vin->sink_pad_idx = 0;
++	vin->digital.sink_pad_idx = 0;
+ 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+ 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
+-			vin->sink_pad_idx = pad_idx;
++			vin->digital.sink_pad_idx = pad_idx;
+ 			break;
+ 		}
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index daec26a38d896b21..d31212a992e15506 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -70,10 +70,12 @@ struct rvin_video_format {
+ 
+ /**
+  * struct rvin_graph_entity - Video endpoint from async framework
+- * @asd:	sub-device descriptor for async framework
+- * @subdev:	subdevice matched using async framework
+- * @code:	Media bus format from source
+- * @mbus_cfg:	Media bus format from DT
++ * @asd:		sub-device descriptor for async framework
++ * @subdev:		subdevice matched using async framework
++ * @code:		Media bus format from source
++ * @mbus_cfg:		Media bus format from DT
++ * @source_pad_idx:	source pad index on remote device
++ * @sink_pad_idx:	sink pad index on remote device
+  */
+ struct rvin_graph_entity {
+ 	struct v4l2_async_subdev asd;
+@@ -81,6 +83,9 @@ struct rvin_graph_entity {
+ 
+ 	u32 code;
+ 	struct v4l2_mbus_config mbus_cfg;
++
++	int source_pad_idx;
++	int sink_pad_idx;
  };
  
-+/* APSR */
-+enum APSR_BIT {
-+	APSR_MEMS		= 0x00000002,
-+	APSR_CMSW		= 0x00000010,
-+	APSR_DM			= 0x00006000,	/* Undocumented? */
-+	APSR_DM_RDM		= 0x00002000,
-+	APSR_DM_TDM		= 0x00004000,
-+};
-+
- /* RCR */
- enum RCR_BIT {
- 	RCR_EFFS	= 0x00000001,
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 89ac1e3f6175..732cdea7800b 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1904,6 +1904,23 @@ static void ravb_set_config_mode(struct net_device *ndev)
- 	}
- }
+ /**
+@@ -91,8 +96,6 @@ struct rvin_graph_entity {
+  *
+  * @vdev:		V4L2 video device associated with VIN
+  * @v4l2_dev:		V4L2 device
+- * @src_pad_idx:	source pad index for media controller drivers
+- * @sink_pad_idx:	sink pad index for media controller drivers
+  * @ctrl_handler:	V4L2 control handler
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+@@ -121,8 +124,6 @@ struct rvin_dev {
  
-+/* Set tx and rx clock internal delay modes */
-+static void ravb_set_delay_mode(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	int set = 0;
-+
-+	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
-+		set |= APSR_DM_RDM;
-+
-+	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
-+		set |= APSR_DM_TDM;
-+
-+	ravb_modify(ndev, APSR, APSR_DM, set);
-+}
-+
- static int ravb_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -2016,6 +2033,9 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Request GTI loading */
- 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
- 
-+	if (priv->chip_id != RCAR_GEN2)
-+		ravb_set_delay_mode(ndev);
-+
- 	/* Allocate descriptor base address table */
- 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
- 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
-@@ -2152,6 +2172,9 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	/* Request GTI loading */
- 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
- 
-+	if (priv->chip_id != RCAR_GEN2)
-+		ravb_set_delay_mode(ndev);
-+
- 	/* Restore descriptor base address table */
- 	ravb_write(ndev, priv->desc_bat_dma, DBAT);
- 
+ 	struct video_device vdev;
+ 	struct v4l2_device v4l2_dev;
+-	int src_pad_idx;
+-	int sink_pad_idx;
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity digital;
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
