@@ -1,137 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37532 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbdA0Sfq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 13:35:46 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 net-next 1/2] ravb: Add tx and rx clock internal delays mode of APSR
-Date: Fri, 27 Jan 2017 19:35:19 +0100
-Message-Id: <1485542120-10205-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1485542120-10205-1-git-send-email-horms+renesas@verge.net.au>
-References: <1485542120-10205-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 02/11] media: rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
+Date: Tue, 31 Jan 2017 16:40:07 +0100
+Message-Id: <20170131154016.15526-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Use rvin_reset_format() in rvin_s_dv_timings() instead if just resetting
+a few fields. This fixes an issue where the field format was not
+properly set after S_DV_TIMINGS.
 
-This patch enables tx and rx clock internal delay modes (TDM and RDM).
-
-This is to address a failure in the case of 1Gbps communication using the
-by salvator-x board with the KSZ9031RNX phy. This has been reported to
-occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
-
-With this change APSR internal delay modes are enabled for
-"rgmii-id", "rgmii-rxid" and "rgmii-txid" phy modes as follows:
-
-phy mode   | ASPR delay mode
------------+----------------
-rgmii-id   | TDM and RDM
-rgmii-rxid | RDM
-rgmii-txid | TDM
-
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v2 [Simon Horman]
-* As suggested by Sergei Shtylyov
-  - Add a comment to indicate that APSR_DM appears to be undocumented.
-  - Move chip_id check outside of ravb_set_delay_mode for consistency
-  - Call ravb_modify() once in ravb_set_delay_mode()
-* Enhance comment before calls to ravb_set_delay_mode()
-* Remove unnecessary break from end of switch statement.
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-v1 [Simon Horman]
-- Combined patches
-- Reworded changelog
-
-v0 [Kazuya Mizuguchi]
----
- drivers/net/ethernet/renesas/ravb.h      | 10 ++++++++++
- drivers/net/ethernet/renesas/ravb_main.c | 24 ++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
-
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index f1109661a533..0525bd696d5d 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -76,6 +76,7 @@ enum ravb_reg {
- 	CDAR20	= 0x0060,
- 	CDAR21	= 0x0064,
- 	ESR	= 0x0088,
-+	APSR	= 0x008C,	/* R-Car Gen3 only */
- 	RCR	= 0x0090,
- 	RQC0	= 0x0094,
- 	RQC1	= 0x0098,
-@@ -248,6 +249,15 @@ enum ESR_BIT {
- 	ESR_EIL		= 0x00001000,
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 69bc4cfea6a8aeb5..7ca27599b9982ffc 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, void *priv_fh,
+ 	if (ret)
+ 		return ret;
  
-+/* APSR */
-+enum APSR_BIT {
-+	APSR_MEMS		= 0x00000002,
-+	APSR_CMSW		= 0x00000010,
-+	APSR_DM			= 0x00006000,	/* Undocumented? */
-+	APSR_DM_RDM		= 0x00002000,
-+	APSR_DM_TDM		= 0x00004000,
-+};
-+
- /* RCR */
- enum RCR_BIT {
- 	RCR_EFFS	= 0x00000001,
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 89ac1e3f6175..f655c1c23765 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1904,6 +1904,22 @@ static void ravb_set_config_mode(struct net_device *ndev)
- 	}
+-	vin->source.width = timings->bt.width;
+-	vin->source.height = timings->bt.height;
+-	vin->format.width = timings->bt.width;
+-	vin->format.height = timings->bt.height;
+-
+-	return 0;
++	/* Changing the timings will change the width/height */
++	return rvin_reset_format(vin);
  }
  
-+static void ravb_set_delay_mode(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	int set = 0;
-+
-+	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
-+		set |= APSR_DM_RDM;
-+
-+	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
-+		set |= APSR_DM_TDM;
-+
-+	ravb_modify(ndev, APSR, APSR_DM, set);
-+}
-+
- static int ravb_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -2016,6 +2032,10 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Request GTI loading */
- 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
- 
-+	if (priv->chip_id != RCAR_GEN2)
-+		/* Set tx and rx clock internal delay modes */
-+		ravb_set_delay_mode(ndev);
-+
- 	/* Allocate descriptor base address table */
- 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
- 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
-@@ -2152,6 +2172,10 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	/* Request GTI loading */
- 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
- 
-+	if (priv->chip_id != RCAR_GEN2)
-+		/* Set tx and rx clock internal delay modes */
-+		ravb_set_delay_mode(ndev);
-+
- 	/* Restore descriptor base address table */
- 	ravb_write(ndev, priv->desc_bat_dma, DBAT);
- 
+ static int rvin_g_dv_timings(struct file *file, void *priv_fh,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
+
