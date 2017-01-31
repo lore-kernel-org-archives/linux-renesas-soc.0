@@ -1,100 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:24249 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751676AbdARR1W (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:44148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751193AbdAaUUH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 12:27:22 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Tue, 31 Jan 2017 15:20:07 -0500
+Subject: [PATCH 1 0/4] PCI: Use of_device_get_match_data() to simplify probe
+From: Bjorn Helgaas <bhelgaas@google.com>
+To: linux-pci@vger.kernel.org
+Cc: Scott Branden <sbranden@broadcom.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        Minghuan Lian <minghuan.Lian@freescale.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
         Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 3/3] ARM: dts: r7s72100: update sdhi clock bindings
-Date: Wed, 18 Jan 2017 12:25:02 -0500
-Message-Id: <20170118172502.13876-4-chris.brandt@renesas.com>
-In-Reply-To: <20170118172502.13876-1-chris.brandt@renesas.com>
-References: <20170118172502.13876-1-chris.brandt@renesas.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Mingkai Hu <mingkai.hu@freescale.com>,
+        Roy Zang <tie-fei.zang@freescale.com>,
+        Shailendra Verma <shailendra.v@samsung.com>
+Date: Tue, 31 Jan 2017 14:19:51 -0600
+Message-ID: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SDHI controller in the RZ/A1 has 2 clock sources per channel and both
-need to be enabled/disabled for proper operation. This fixes the fact that
-the define for R7S72100_CLK_SDHI1 was not correct to begin with (typo), and
-that all 4 clock sources need to be defined an used.
+This turned into much ado about nothing, but Shailendra's hisi patch
+prompted similar cleanups in other drivers.  It's a minor simplification,
+but I think worth doing consistently across drivers.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* add missing clock sources instead of just fixing typo
-* changed clock name from "carddetect" to "cd"
----
- arch/arm/boot/dts/r7s72100.dtsi            | 17 ++++++++++++-----
- include/dt-bindings/clock/r7s72100-clock.h |  6 ++++--
- 2 files changed, 16 insertions(+), 7 deletions(-)
+Basically this is Geert's observation that when the driver probe function
+is called only as a result of matching something in <match_table>, a
+subsequent of_match_device(<match_table>, dev) call should never fail.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 3dd427d..9d0b8d0 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -153,9 +153,12 @@
- 			#clock-cells = <1>;
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0xfcfe0444 4>;
--			clocks = <&p1_clk>, <&p1_clk>;
--			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
--			clock-output-names = "sdhi1", "sdhi0";
-+			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
-+			clock-indices = <
-+				R7S72100_CLK_SDHI00 R7S72100_CLK_SDHI01
-+				R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
-+			>;
-+			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
- 		};
- 	};
- 
-@@ -478,7 +481,9 @@
- 			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
- 			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
- 
--		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
-+			 <&mstp12_clks R7S72100_CLK_SDHI01>;
-+		clock-names = "core", "cd";
- 		cap-sd-highspeed;
- 		cap-sdio-irq;
- 		status = "disabled";
-@@ -491,7 +496,9 @@
- 			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
- 			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
- 
--		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
-+			 <&mstp12_clks R7S72100_CLK_SDHI11>;
-+		clock-names = "core", "cd";
- 		cap-sd-highspeed;
- 		cap-sdio-irq;
- 		status = "disabled";
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index 29e01ed..f2d8428 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -45,7 +45,9 @@
- #define R7S72100_CLK_SPI4	3
- 
- /* MSTP12 */
--#define R7S72100_CLK_SDHI0	3
--#define R7S72100_CLK_SDHI1	2
-+#define R7S72100_CLK_SDHI00	3
-+#define R7S72100_CLK_SDHI01	2
-+#define R7S72100_CLK_SDHI10	1
-+#define R7S72100_CLK_SDHI11	0
- 
- #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
--- 
-2.10.1
+Therefore, instead of this:
+
+  struct of_device_id *match;
+
+  match = of_match_device(<match_table>, dev);
+  ... = match->data;
+
+we can do this:
+
+  ... = of_device_get_match_data(dev);
+
+---
+
+Bjorn Helgaas (3):
+      PCI: iproc: Use of_device_get_match_data() to simplify probe
+      PCI: layerscape: Use of_device_get_match_data() to simplify probe
+      PCI: rcar: Use of_device_get_match_data() to simplify probe
+
+Shailendra Verma (1):
+      PCI: hisi: Use of_device_get_match_data() to simplify probe
+
+
+ drivers/pci/host/pci-layerscape.c      |    7 +------
+ drivers/pci/host/pcie-hisi.c           |    8 +++-----
+ drivers/pci/host/pcie-iproc-platform.c |    7 +------
+ drivers/pci/host/pcie-rcar.c           |    7 +------
+ 4 files changed, 6 insertions(+), 23 deletions(-)
