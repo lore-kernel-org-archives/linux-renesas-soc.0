@@ -1,99 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:48092 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751399AbdAYJo4 (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:29901 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751964AbdAaOAc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 04:44:56 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] ARM: shmobile: rcar-gen2: Add more register documentation
-Date: Wed, 25 Jan 2017 10:02:13 +0100
-Message-Id: <1485334933-26809-1-git-send-email-geert+renesas@glider.be>
+        Tue, 31 Jan 2017 09:00:32 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        jacopo mondi <jacopo@jmondi.org>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: RE: [RFC 3/5] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+Date: Tue, 31 Jan 2017 14:00:27 +0000
+Message-ID: <SG2PR06MB1165CFA46BC3C034B18448098A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUmy2QkvRomf8euzB0QNkeCA=N8=rhY0GkObz8qn-UvMQ@mail.gmail.com>
+ <5227448.uVg4OnCqZq@avalon> <b315cc0c-a9f3-6287-8443-56e866a32924@jmondi.org>
+ <CAMuHMdX_vYuBzJ5_AgPNkzAv3KxEWWjrM0qF7ZbRUDfgjj1BmQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdX_vYuBzJ5_AgPNkzAv3KxEWWjrM0qF7ZbRUDfgjj1BmQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Remove unneeded parentheses in phys_to_sbar().
----
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 40 +++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index dd9ac366868f4336..0178da7ace82dcbd 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -20,14 +20,30 @@
- 
- /* RST */
- #define RST		0xe6160000
--#define CA15BAR		0x0020
--#define CA7BAR		0x0030
--#define CA15RESCNT	0x0040
--#define CA7RESCNT	0x0044
-+
-+#define CA15BAR		0x0020		/* CA15 Boot Address Register */
-+#define CA7BAR		0x0030		/* CA7 Boot Address Register */
-+#define CA15RESCNT	0x0040		/* CA15 Reset Control Register */
-+#define CA7RESCNT	0x0044		/* CA7 Reset Control Register */
-+
-+/* SYS Boot Address Register */
-+#define SBAR_BAREN	BIT(4)		/* SBAR is valid */
-+
-+/* Reset Control Registers */
-+#define CA15RESCNT_CODE	0xa5a50000
-+#define CA15RESCNT_CPUS	0xf		/* CPU0-3 */
-+#define CA7RESCNT_CODE	0x5a5a0000
-+#define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
-+
- 
- /* On-chip RAM */
- #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
- 
-+static inline u32 phys_to_sbar(phys_addr_t addr)
-+{
-+	return (addr >> 8) & 0xfffffc00;
-+}
-+
- /* SYSC */
- #define SYSCIER 0x0c
- #define SYSCIMR 0x10
-@@ -82,22 +98,24 @@ void __init rcar_gen2_pm_init(void)
- 
- 	/* setup reset vectors */
- 	p = ioremap_nocache(RST, 0x63);
--	bar = (boot_vector_addr >> 8) & 0xfffffc00;
-+	bar = phys_to_sbar(boot_vector_addr);
- 	if (has_a15) {
- 		writel_relaxed(bar, p + CA15BAR);
--		writel_relaxed(bar | 0x10, p + CA15BAR);
-+		writel_relaxed(bar | SBAR_BAREN, p + CA15BAR);
- 
- 		/* de-assert reset for CA15 CPUs */
--		writel_relaxed((readl_relaxed(p + CA15RESCNT) & ~0x0f) |
--				0xa5a50000, p + CA15RESCNT);
-+		writel_relaxed((readl_relaxed(p + CA15RESCNT) &
-+				~CA15RESCNT_CPUS) | CA15RESCNT_CODE,
-+			       p + CA15RESCNT);
- 	}
- 	if (has_a7) {
- 		writel_relaxed(bar, p + CA7BAR);
--		writel_relaxed(bar | 0x10, p + CA7BAR);
-+		writel_relaxed(bar | SBAR_BAREN, p + CA7BAR);
- 
- 		/* de-assert reset for CA7 CPUs */
--		writel_relaxed((readl_relaxed(p + CA7RESCNT) & ~0x0f) |
--				0x5a5a0000, p + CA7RESCNT);
-+		writel_relaxed((readl_relaxed(p + CA7RESCNT) &
-+				~CA7RESCNT_CPUS) | CA7RESCNT_CODE,
-+			       p + CA7RESCNT);
- 	}
- 	iounmap(p);
- 
--- 
-1.9.1
+T24gVHVlc2RheSwgSmFudWFyeSAzMSwgMjAxNywgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0K
+PiA+IFRoaXMgbWF5IGJlY29tZSBzb21ldGhpbmcgbGlrZToNCj4gPg0KPiA+ICNkZWZpbmUgQUxU
+X0ZVTkNfMSAgICAgICAwDQo+ID4gI2RlZmluZSBBTFRfRlVOQ18yICAgICAgIDENCj4gPiAjZGVm
+aW5lIEFMVF9GVU5DXzMgICAgICAgMg0KPiA+ICNkZWZpbmUgQUxUX0ZVTkNfNCAgICAgICAzDQo+
+ID4gI2RlZmluZSBBTFRfRlVOQ181ICAgICAgIDQNCj4gPiAjZGVmaW5lIEFMVF9GVU5DXzYgICAg
+ICAgNQ0KPiA+ICNkZWZpbmUgQUxUX0ZVTkNfNyAgICAgICA2DQo+ID4gI2RlZmluZSBBTFRfRlVO
+Q184ICAgICAgIDcNCg0KDQpBTFRfRlVOQ18xIGlzIHN0aWxsIHRvbyBsb25nIGlmIHlvdSdyZSBn
+b2luZyB0byBPUiB0aGluZ3Mgb24gMSBsaW5lIGluIHRoZSBEVC4NCg0KSSBwZXJzb25hbGx5IGxp
+a2U6DQojZGVmaW5lIEFMVF8xICAgICAgIDANCg0KDQo+ID4gI2RlZmluZSBQSU4oYiwgcCkgYiBw
+DQo+ID4gI2RlZmluZSBQSU5fTVVYKGZ1bmMsIGNvbmYpICAgICBcDQo+ID4gICAgICAgICAoKGZ1
+bmMgJiAweGYpIHwgKChjb25mKSA8PCAxNikpDQo+ID4NCj4gPiBhbmQgaW4gRFRTIHNvdXJjZXMg
+eW91IHdvdWxkIGRlc2NyaWJlIGEgcGluIGFzDQo+ID4NCj4gPiBwaW5zID0gPFBJTihiYW5rLCBw
+aW4pIFBJTl9NVVgoQUxUX0ZVTkNfMSwgSU5QVVQgfCBCSURJUkVDVElPTkFMKT47DQo+ID4NCj4g
+PiBXZSBjYW4gZHJvcCB0aGUgUElOIG1hY3JvIGFzIGl0IGRvZXMgbm90IGJyaW5nIGFueXRoaW5n
+IEkgYWdyZWUsIGJ1dA0KPiA+IGl0J3MgbmljZXIgdG8gc2VlIGltaG8NCj4gDQo+IC4uLiB5b3Ug
+Y2FuIGtlZXAgcGxhaW4gMS1iYXNlZCBudW1iZXJzIGZvciBhbHRlcm5hdGUgZnVuY3Rpb25zLCBh
+bmQgdXNlDQo+IHRoZSBkZWZpbml0aW9ucyBmb3IgZmxhZ3MsIGUuZy46DQo+IA0KPiAgICAgIHBp
+bnMgPSA8UElOKGJhbmssIHBpbikgKDEgfCBJTlBVVF9NT0RFIHwgQklESVJFQ1RJT05BTCk+Ow0K
+DQoNClRvIEdlZXJ0J3MgcG9pbnQsIG5vdGhpbmcgaXMgZ29pbmcgdG8gYmUgInNob3J0ZXIiIHRo
+YW4ganVzdCB1c2luZw0KJzEnLCcyJywnMycsZXRjLi4NCg0KDQpJIGFsc28gdGhpbmsgIkJJRElS
+RUNUSU9OQUwiID4+ICJCSURJUiINCg0KT3IuLi4ud2UgY291bGQgbWFrZSBsaWZlIGVhc3kgb24g
+cGVvcGxlIGFuZCAjZGVmaW5lIHRoZSBwaW5zIHRoYXQNCmFyZSB0cmlja3k6DQoNCg0KI2RlZmlu
+ZSBJMkMJCUJJRElSRUNUSU9OQUwNCiNkZWZpbmUgU0RISV9EQVRBCUJJRElSRUNUSU9OQUwNCiNk
+ZWZpbmUgU0RISV9DVFJMIC8qIG5vbmUgKi8NCiNkZWZpbmUgUlNQSQkvKiBub25lICovDQojZGVm
+aW5lIEVUSEVSTkVUCS8qIG5vbmUgKi8NCg0KDQpDaHJpcw0KDQo=
