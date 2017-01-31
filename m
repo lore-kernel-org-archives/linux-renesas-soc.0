@@ -1,55 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59592 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751295AbdAaLRN (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:34122 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752028AbdAaNtM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 06:17:13 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] iommu/ipmmu-vmsa: Restrict IOMMU Domain Geometry to 32-bit address space
-Date: Tue, 31 Jan 2017 12:17:07 +0100
-Message-Id: <1485861427-23487-1-git-send-email-geert+renesas@glider.be>
+        Tue, 31 Jan 2017 08:49:12 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: RE: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
+Date: Tue, 31 Jan 2017 13:48:57 +0000
+Message-ID: <SG2PR06MB1165749A38E25572B7B548D18A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB11651AE84528322CB29B33FF8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <fd107367-caf5-0817-6a02-352f5af0dbb8@jmondi.org>
+In-Reply-To: <fd107367-caf5-0817-6a02-352f5af0dbb8@jmondi.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently, the IPMMU/VMSA driver supports 32-bit I/O Virtual Addresses
-only, and thus sets io_pgtable_cfg.ias = 32.  However, it doesn't force
-a 32-bit IOVA space through the IOMMU Domain Geometry.
+Hi Jacopo,
 
-Hence if a device (e.g. SYS-DMAC) rightfully configures a 40-bit DMA
-mask, it will still be handed out a 40-bit IOVA, outside the 32-bit IOVA
-space, leading to out-of-bounds accesses of the PGD when mapping the
-IOVA.
+On  Tuesday, January 31, 2017, Jacopo Mondi wrote:
+> > Since one of the benefits of using devm_kzalloc is that if the probe
+> > fails and returns an error, all the memory associated with that device
+> > will automatically get freed, you 'might' not need this code to free
+> > memory.
+> >
+> > I say might because I'm not sure if returning an error here will kill
+> > the driver or not. But, might be interesting to look into.
+> >
+>=20
+> No, returning an error here would not kill the driver BUT if
+> dt_node_to_map fails, dt_free_map is called immediately later [1]
+>=20
+> So here we maybe should not use device managed memory as it does not brin=
+g
+> anything, do not free *map as it is freed later in dt_free_map, but
+> release fngrps mux_modes and grpins, as we lose reference to them outside
+> the scope of this function.
+>=20
+> Do you agree?
 
-Force a 32-bit IOMMU Domain Geometry to fix this.
+Like you said, there is no benefit one way of the other.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/iommu/ipmmu-vmsa.c | 2 ++
- 1 file changed, 2 insertions(+)
+But, doing a grep of the pinctrl directory, devm_kzalloc is used more by
+the other drivers than kzalloc, so maybe we just stick with devm_kzalloc
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 798578f1676480c6..eb8b3df8733b15fb 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -424,6 +424,8 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- 	domain->cfg.ias = 32;
- 	domain->cfg.oas = 40;
- 	domain->cfg.tlb = &ipmmu_gather_ops;
-+	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
-+	domain->io_domain.geometry.force_aperture = true;
- 	/*
- 	 * TODO: Add support for coherent walk through CCI with DVM and remove
- 	 * cache handling. For now, delegate it to the io-pgtable code.
--- 
-1.9.1
+   (baah goes the sheep)
+
+
+Chris
+
+
+
+> -----Original Message-----
+> From: jacopo mondi [mailto:jacopo@jmondi.org]
+> Sent: Tuesday, January 31, 2017 4:01 AM
+> To: Chris Brandt <Chris.Brandt@renesas.com>; Jacopo Mondi
+> <jacopo+renesas@jmondi.org>; laurent.pinchart@ideasonboard.com;
+> geert+renesas@glider.be; linus.walleij@linaro.org
+> Cc: linux-renesas-soc@vger.kernel.org; linux-gpio@vger.kernel.org
+> Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core modul=
+e
+>=20
+> Hi Chris,
+>=20
+> On 30/01/2017 20:19, Chris Brandt wrote:
+> > Hi Jacopo,
+> >
+> > On Wednesday, January 25, 2017, Jacopo Mondi wrote:
+> >> +
+> >> +	return 0;
+> >> +
+> >> +free_map:
+> >> +	devm_kfree(rz_pinctrl->dev, *map);
+> >> +free_fngrps:
+> >> +	devm_kfree(rz_pinctrl->dev, fngrps);
+> >> +free_pins:
+> >> +	devm_kfree(rz_pinctrl->dev, mux_modes);
+> >> +	devm_kfree(rz_pinctrl->dev, grpins);
+> >> +	return ret;
+> >> +}
+> >
+> > Since one of the benefits of using devm_kzalloc is that if the probe
+> > fails and returns an error, all the memory associated with that device
+> > will automatically get freed, you 'might' not need this code to free
+> > memory.
+> >
+> > I say might because I'm not sure if returning an error here will kill
+> > the driver or not. But, might be interesting to look into.
+> >
+>=20
+> No, returning an error here would not kill the driver BUT if
+> dt_node_to_map fails, dt_free_map is called immediately later [1]
+>=20
+> So here we maybe should not use device managed memory as it does not brin=
+g
+> anything, do not free *map as it is freed later in dt_free_map, but
+> release fngrps mux_modes and grpins, as we lose reference to them outside
+> the scope of this function.
+>=20
+> Do you agree?
+>=20
+> >
+>=20
+> >> +#define RZ_PIN_NAME(bank, pin)						\
+> >> +	PIN_##bank##_##pin
+> >> +
+> >> +#define RZ_PIN_DESC(b, p)						\
+> >> +	{ .number =3D RZ_PIN_NAME(b, p),					\
+> >> +	  .name =3D __stringify(RZ_PIN_NAME(b, p)),			\
+> >
+> > The hardware manual uses the names "P1_0" for ports, so it might be
+> > better to match that format for consistency.
+> >
+> >
+>=20
+> Noted
+>=20
+> Thanks
+>     j
+>=20
+>=20
+> [1] http://lxr.free-electrons.com/source/drivers/pinctrl/devicetree.c#L23=
+6
+>=20
