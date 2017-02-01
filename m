@@ -1,140 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49688 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753288AbdBARn7 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:54580 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750954AbdBAP5b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 12:43:59 -0500
-Date: Wed, 1 Feb 2017 17:43:11 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Wed, 1 Feb 2017 10:57:31 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
+        "Arnd Bergmann" <arnd@arndb.de>,
         Mark Rutland <mark.rutland@arm.com>,
-        Richard Cochran <rcochran@linutronix.de>,
+        "Richard Cochran" <rcochran@linutronix.de>,
         Brad Mouring <brad.mouring@ni.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [RFC] ARM: l2c:  Adding L310_AUX_CTRL_FULL_LINE_ZERO broke my
- system
-Message-ID: <20170201174310.GO27312@n2100.armlinux.org.uk>
-References: <SG2PR06MB11657BAF8CFC0BCA9D07D0648A4D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: [RFC] ARM: l2c:  Adding L310_AUX_CTRL_FULL_LINE_ZERO broke my system
+Date: Wed, 1 Feb 2017 15:57:26 +0000
+Message-ID: <SG2PR06MB11657BAF8CFC0BCA9D07D0648A4D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB11657BAF8CFC0BCA9D07D0648A4D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 01, 2017 at 03:57:26PM +0000, Chris Brandt wrote:
-> It basically boils down to these lines in the commit:
-> 
-> +		if (!(aux & L310_AUX_CTRL_FULL_LINE_ZERO) && !outer_cache.write_sec) {
-> +			aux |= L310_AUX_CTRL_FULL_LINE_ZERO;
-> +			pr_info("L2C-310 full line of zeros enabled for Cortex-A9\n");
-> +		}
+As of commit=20
 
-... which is correct.  It's saying
+8ef418c7178f "ARM: l2c: trial at enabling some Cortex-A9 optimisations"
 
-"If this is a Cortex-A9, FLZ was not enabled, and write_sec function is
-not present, then enable FLZ.
+from linux-3.16, my Renesas RZ/A1 (R7s72100) has never been able to use
+its PL310 r3p2. It enables it fine, but then crashes later on in boot
+because of corrupted memory.
 
-> As reference, going into this line I have the following variable values:
-> 
->   acr = 0x00000000
->   aux = 0x42020000
->   aux_cur = 0x00000000
->   outer_cache.write_sec = (null)
-> 
-> Also as reference from cache-l2x0.h:
-> 
-> #define L310_AUX_CTRL_FULL_LINE_ZERO            BIT(0)  /* R2P0+ */
 
-Which is probably what everyone has.  This is not a feature that can be
-enabled by the boot loader or firmware, it can only be done once the MMU
-and caches are up and running.
+It basically boils down to these lines in the commit:
 
-> According to the PL310 documentation:
-> 
-> Full line of zero write
->  
-> To enable this feature, perform the following steps:
-> 1. enable Full line of zero feature in the L2C-310
-> 2. turn on L2C-310
-> 3. enable Full line of zero feature in A9.
++		if (!(aux & L310_AUX_CTRL_FULL_LINE_ZERO) && !outer_cache.write_sec) {
++			aux |=3D L310_AUX_CTRL_FULL_LINE_ZERO;
++			pr_info("L2C-310 full line of zeros enabled for Cortex-A9\n");
++		}
 
-... which we follow.
 
-> However, in the code snippet from the patch, the "!" in the if statement
-> is saying:
-> 
->   "if you didn't want this feature, then we are turning it on"
+As reference, going into this line I have the following variable values:
 
-No.  There's no "want this feature".  The bit is almost certainly
-guaranteed to be zero there - the bit isn't there to request the
-feature.
+  acr =3D 0x00000000
+  aux =3D 0x42020000
+  aux_cur =3D 0x00000000
+  outer_cache.write_sec =3D (null)
 
-> Of course changing this line to the following works fine because zero fill
-> will not get enabled.
-> 
-> +		if (aux & L310_AUX_CTRL_FULL_LINE_ZERO && !outer_cache.write_sec) {
-> +			aux |= L310_AUX_CTRL_FULL_LINE_ZERO;
-> +			pr_info("L2C-310 full line of zeros enabled for Cortex-A9\n");
-> +		}
+Also as reference from cache-l2x0.h:
 
-And so results with it always being off everywhere.
+#define L310_AUX_CTRL_FULL_LINE_ZERO            BIT(0)  /* R2P0+ */
 
-> So here's my questions:
-> 
-> (1) I see that the PL310 is enabled on multiple platforms, so how as this not
-> broken any systems since it was introduced in 2014? What am I missing?
-> 
-> I see that only 2 platforms explicitly set this aux bit (both have CA9):
->   mach-tegra/tegra.c:	.l2c_aux_val	= 0x3c400001,
->   mach-exynos/exynos.c:	.l2c_aux_val	= 0x3c400001,
 
-I think a better question is:
 
- * Why does enabling FLZ break your system.
+According to the PL310 documentation:
 
-It can only be that your system doesn't wire the L2C-310 up to the Cortex
-A9 correctly, missing the out-of-band signals that inform the L2C-310 that
-the Cortex A9 wants it to zero a full cache line.
+Full line of zero write
+=20
+To enable this feature, perform the following steps:
+1. enable Full line of zero feature in the L2C-310
+2. turn on L2C-310
+3. enable Full line of zero feature in A9.
 
-BTW, the bit in the auxilary control register merely _enables_ the
-reception of that signal at the L2C-310.  If the signal is permanently
-deasserted, the L2C-310 does nothing with it, and the bit is a no-op.
 
-Where it does matter is at the Cortex-A9.  That changes the behaviour of
-the Cortex-A9 from issuing multiple bus cycles zeroing the cache line
-word by word, to merely signalling that it wants the L2C-310 to zero the
-cache line.
+So I get that if I want to use this feature, I first need to get it
+enabled in the L2C-310, then later on enabled it in the CA9. That
+seems to be done by l2c310_starting_cpu() in today's kernel:
 
-So, if _merely_ enabling the FLZ bit in the 310's auxiliary control
-register _without_ setting the bit in the Cortex-A9 as well leads to
-memory corruption, it definitely means the 310 in your SoC is miswired,
-and we need a DT property to reflect that.
+	if (aux & L310_AUX_CTRL_FULL_LINE_ZERO)
+		cpuhp_setup_state(CPUHP_AP_ARM_L2X0_STARTING,
+				  "arm/l2x0:starting", l2c310_starting_cpu,
+				  l2c310_dying_cpu);
 
-> (2) Bits 1 and 2 of the Auxiliary Control Register are "L1 Prefetch enable"
-> and " L2 Prefetch hint enable". So if I want those enabled, it looks like
-> I have to enable full-line-zero, correct?
 
-Prefetching is entirely separate from FLZ.
+However, in the code snippet from the patch, the "!" in the if statement
+is saying:
 
-> It seems the issue on my SoC is that when I enable FULL_LINE_ZERO in the CA9,
-> it doesn't seem to work very well.
+  "if you didn't want this feature, then we are turning it on"
 
-That will definitely lead to data corruption.  The Cortex-A9 must _never_
-have FLZ enabled on the CPU without (a) a compatible L2 cache controller
-and (b) the feature _already_ enabled on the L2 cache controller and (c)
-the cache controller is correctly wired to the Cortex-A9.
 
-It sounds to me like you have a rare (the only?) system where (c) is
-false.
+Of course changing this line to the following works fine because zero fill
+will not get enabled.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
++		if (aux & L310_AUX_CTRL_FULL_LINE_ZERO && !outer_cache.write_sec) {
++			aux |=3D L310_AUX_CTRL_FULL_LINE_ZERO;
++			pr_info("L2C-310 full line of zeros enabled for Cortex-A9\n");
++		}
+
+So here's my questions:
+
+(1) I see that the PL310 is enabled on multiple platforms, so how as this n=
+ot
+broken any systems since it was introduced in 2014? What am I missing?
+
+I see that only 2 platforms explicitly set this aux bit (both have CA9):
+  mach-tegra/tegra.c:	.l2c_aux_val	=3D 0x3c400001,
+  mach-exynos/exynos.c:	.l2c_aux_val	=3D 0x3c400001,
+
+
+
+(2) Bits 1 and 2 of the Auxiliary Control Register are "L1 Prefetch enable"
+and " L2 Prefetch hint enable". So if I want those enabled, it looks like
+I have to enable full-line-zero, correct?
+
+It seems the issue on my SoC is that when I enable FULL_LINE_ZERO in the CA=
+9,
+it doesn't seem to work very well.
+As in, this simple change will also allow me to boot:
+
+ static int l2c310_starting_cpu(unsigned int cpu)
+ {
+-	set_auxcr(get_auxcr() | BIT(3) | BIT(2) | BIT(1));
++	set_auxcr(get_auxcr() | BIT(2) | BIT(1));
+ 	return 0;
+ }
+
+
+So, before I go firing off patches that will effect a bunch of systems, I
+would like to understand if there is some logic here that I'm not seeing.
+
+
+Thank you,
+Chris
