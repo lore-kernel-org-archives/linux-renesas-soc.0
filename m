@@ -1,70 +1,73 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=Wi0l=ZX=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Subject: [PATCH v2 4/4] tests: Add RPF cropping test
-Date: Fri, 10 Feb 2017 13:30:08 +0000
-Message-Id: <e5e453cb2a3a04e3f265f1457aa7e77cb19837c3.1486733302.git-series.kieran.bingham@ideasonboard.com>
-In-Reply-To: <cover.eec601d2240d67bb1b1cbcb6d8485e49a40ffee3.1486733302.git-series.kieran.bingham@ideasonboard.com>
-References: <cover.eec601d2240d67bb1b1cbcb6d8485e49a40ffee3.1486733302.git-series.kieran.bingham@ideasonboard.com>
-In-Reply-To: <cover.eec601d2240d67bb1b1cbcb6d8485e49a40ffee3.1486733302.git-series.kieran.bingham@ideasonboard.com>
-References: <cover.eec601d2240d67bb1b1cbcb6d8485e49a40ffee3.1486733302.git-series.kieran.bingham@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:59919 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751664AbdBAImT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 1 Feb 2017 03:42:19 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 5/5] arm64: dts: r8a7796: salvator-x: Fix EthernetAVB PHY timing
+Date: Wed,  1 Feb 2017 09:42:04 +0100
+Message-Id: <1485938524-9322-6-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
+References: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Test both the input cropping size and position
+Set PHY rxc-skew-ps to 1500 and all other values to their default values.
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This is intended to to address failures in the case of 1Gbps communication
+using the by salvator-x board with the KSZ9031RNX phy. This has been
+reported to occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
+
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
 ---
- tests/vsp-unit-test-0021.sh | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100755 tests/vsp-unit-test-0021.sh
+v1 [Simon Horman]
+* Do not set values to defaults, omit them and let the driver set the defaults
+* Rewrote changelog
 
-diff --git a/tests/vsp-unit-test-0021.sh b/tests/vsp-unit-test-0021.sh
-new file mode 100755
-index 000000000000..9d692cfc6194
---- /dev/null
-+++ b/tests/vsp-unit-test-0021.sh
-@@ -0,0 +1,36 @@
-+#!/bin/sh
-+
-+#
-+# Test RPF crop using RGB. Use a RPF -> WPF pipeline, passing a selection of
-+# cropping windows.
-+#
-+
-+source vsp-lib.sh
-+
-+features="rpf.0 wpf.0"
-+crops="(0,0)/512x384 (32,32)/512x384 (32,64)/512x384 (64,32)/512x384"
-+
-+test_rpf_cropping() {
-+	test_start "RPF crop from $crop"
-+
-+	pipe_configure rpf-wpf 0 0
-+	format_configure rpf-wpf 0 0 RGB24 1024x768 ARGB32 --rpfcrop=$crop
-+
-+	vsp_runner rpf.0 &
-+	vsp_runner wpf.0
-+
-+	local result=$(compare_frames crop=${crop})
-+
-+	test_complete $result
-+}
-+
-+test_main() {
-+	local crop
-+
-+	for crop in $crops ; do
-+		test_rpf_cropping $crop
-+	done
-+}
-+
-+test_init $0 "$features"
-+test_run
+  N.B. The communications failures have been reported by the BSP team,
+       however I did not observe them during testing with a
+       salvator-x/M3-W-ES1.0
+
+       My test-case was to bring up the system using NFS root and
+       run: netperf -H <HOST>
+
+v0 [Kazuya Mizuguchi]
+---
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 61f4662db497..93ed23ab71bb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -172,18 +172,7 @@
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+-		rxc-skew-ps = <900>;
+-		rxdv-skew-ps = <0>;
+-		rxd0-skew-ps = <0>;
+-		rxd1-skew-ps = <0>;
+-		rxd2-skew-ps = <0>;
+-		rxd3-skew-ps = <0>;
+-		txc-skew-ps = <900>;
+-		txen-skew-ps = <0>;
+-		txd0-skew-ps = <0>;
+-		txd1-skew-ps = <0>;
+-		txd2-skew-ps = <0>;
+-		txd3-skew-ps = <0>;
++		rxc-skew-ps = <1500>;
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
 -- 
-git-series 0.9.1
+2.7.0.rc3.207.g0ac5344
