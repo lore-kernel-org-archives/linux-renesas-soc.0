@@ -1,69 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f195.google.com ([209.85.210.195]:33983 "EHLO
-        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752316AbdBCKij (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:32860 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbdBANK6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Feb 2017 05:38:39 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org
-Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
-        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v4 4/4] arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
-Date: Fri,  3 Feb 2017 11:38:20 +0100
-Message-Id: <1486118300-12633-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 1 Feb 2017 08:10:58 -0500
+MIME-Version: 1.0
+In-Reply-To: <1485442469-18378-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1485442469-18378-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 1 Feb 2017 14:10:56 +0100
+Message-ID: <CAMuHMdUQbResdbbRA1M1tZiauZKjO8Es=YZ+YLmH1UzrKBLUhA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: m3ulcb: enable EthernetAVB
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enables the SCIF hooked up to the DEBUG1 connector.
+On Thu, Jan 26, 2017 at 3:54 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+>
+> This supports Ethernet AVB on M3ULCB board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index f35e96c..443eb0a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -18,6 +18,7 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		serial1 = &scif1;
- 	};
- 
- 	chosen {
-@@ -102,6 +103,11 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	scif1_pins: scif1 {
-+		groups = "scif1_data_a", "scif1_ctrl";
-+		function = "scif1";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
-@@ -202,6 +208,14 @@
- 	status = "okay";
- };
- 
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
