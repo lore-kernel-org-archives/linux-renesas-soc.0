@@ -1,52 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:50545 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751142AbdBLLMf (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33352 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750863AbdBANFn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Feb 2017 06:12:35 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/4] mmc: host: tmio: properly report status from autocmd12
-Date: Sun, 12 Feb 2017 12:12:23 +0100
-Message-Id: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
+        Wed, 1 Feb 2017 08:05:43 -0500
+MIME-Version: 1.0
+In-Reply-To: <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 1 Feb 2017 14:05:41 +0100
+Message-ID: <CAMuHMdXPoGEjz2Z88u7iGT1sBJXZVW4TxwyZrfYyCfgnia1Ddw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: h3ulcb: enable HS200 for eMMC
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SDHI automatically sends CMD12 when the desired amount of data was transferred
-after multi block commands. However, the response from that CMD12 was never
-reported back to the mmc core, so that errors like ECC might go unnoticed. This
-series aims to fix that and clean up minor issues on the way when dealing with
-the autocmd12 feature. So far, I could only test that the success case was
-reported back to the MMC core [1]. An error case (like ECC) could not be
-created yet, but I will keep on trying. However, the initial flaw of the CMD12
-response not reported back is fixed with this series as the success case
-demonstrates. If an ECC error is not properly handled, it is a seperate issue
-anyway. So, I think this series could go in now. No pressure for 4.11, though.
-But would be nice, of course ;)
+On Thu, Jan 26, 2017 at 4:14 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+>
+> This supports HS200 mode for eMMC on H3ULCB board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-The patches are based on mmc-next. A branch can be found here:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp
+Gr{oetje,eeting}s,
 
-Thanks and all the best,
+                        Geert
 
-   Wolfram
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-[1] http://elinux.org/Tests:SDHI-autocmd12-responses
-
-
-Wolfram Sang (4):
-  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
-  mmc: host: tmio: fix minor typos in a comment
-  mmc: host: tmio: don't BUG on unsupported stop commands
-  mmc: host: tmio: fill in response from auto cmd12
-
- drivers/mmc/host/tmio_mmc.h     |  6 +++++-
- drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
- 2 files changed, 15 insertions(+), 7 deletions(-)
-
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
