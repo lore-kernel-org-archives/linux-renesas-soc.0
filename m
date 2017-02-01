@@ -1,42 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:33083 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbdBAP4Y (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:44078 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751103AbdBAOn1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 10:56:24 -0500
-Received: by mail-lf0-f49.google.com with SMTP id x1so144078375lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Feb 2017 07:56:18 -0800 (PST)
-Subject: Re: [PATCH 2/2] sh_eth: fix wakeup event reporting from MagicPacket
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
+        Wed, 1 Feb 2017 09:43:27 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         netdev@vger.kernel.org
-References: <20170201144155.17123-1-niklas.soderlund+renesas@ragnatech.se>
- <20170201144155.17123-3-niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <75b5c064-21e6-0fd6-d335-afafff412f2e@cogentembedded.com>
-Date: Wed, 1 Feb 2017 18:56:10 +0300
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] sh_eth: fix wakeup event reporting from MagicPacket
+Date: Wed,  1 Feb 2017 15:41:55 +0100
+Message-Id: <20170201144155.17123-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170201144155.17123-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170201144155.17123-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20170201144155.17123-3-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/01/2017 05:41 PM, Niklas Söderlund wrote:
+If a link change interrupt happens along side the MagicPacket interrupt
+and the link change interrupt is ignored the interrupt handler will
+return and the wakeup event is not register. Fix this by moving the
+MagicPacket check before the link change check.
 
-> If a link change interrupt happens along side the MagicPacket interrupt
-> and the link change interrupt is ignored the interrupt handler will
-> return and the wakeup event is not register. Fix this by moving the
-> MagicPacket check before the link change check.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-[...]
-
-MBR, Sergei
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index f9134c818ac6ef53..54248775f227b062 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -1605,6 +1605,8 @@ static void sh_eth_emac_interrupt(struct net_device *ndev)
+ 	sh_eth_write(ndev, felic_stat, ECSR);	/* clear int */
+ 	if (felic_stat & ECSR_ICD)
+ 		ndev->stats.tx_carrier_errors++;
++	if (felic_stat & ECSR_MPD)
++		pm_wakeup_event(&mdp->pdev->dev, 0);
+ 	if (felic_stat & ECSR_LCHNG) {
+ 		/* Link Changed */
+ 		if (mdp->cd->no_psr || mdp->no_ether_link)
+@@ -1624,8 +1626,6 @@ static void sh_eth_emac_interrupt(struct net_device *ndev)
+ 			sh_eth_rcv_snd_enable(ndev);
+ 		}
+ 	}
+-	if (felic_stat & ECSR_MPD)
+-		pm_wakeup_event(&mdp->pdev->dev, 0);
+ }
+ 
+ /* error control function */
+-- 
+2.11.0
