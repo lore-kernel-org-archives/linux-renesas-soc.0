@@ -1,57 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:19049 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751743AbdBGRJ5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59919 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751664AbdBAImQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 12:09:57 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Brad Mouring <brad.mouring@ni.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <rcochran@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] ARM: l2c: add l2c support for RZ/A1
-Date: Tue,  7 Feb 2017 12:09:26 -0500
-Message-Id: <20170207170929.29525-1-chris.brandt@renesas.com>
+        Wed, 1 Feb 2017 03:42:16 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 2/5] arm64: dts: r8a7795: salvator-x: Fix EthernetAVB PHY timing
+Date: Wed,  1 Feb 2017 09:42:01 +0100
+Message-Id: <1485938524-9322-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
+References: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PL310 in the Renesas RZ/A1 SoC (R7S72100) does not have the sideband
-signals connected between the CPU and L2C. According the PL310 TRM,
-sideband signals are optional.
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-If a PL310 is added to a system, but the sideband signals are not
-connected, some Cortex A9 optimizations cannot be used. In particular,
-enabling Full Line Zeros in the CA9 without sidebands connected will
-crash the system since the CA9 will expect the L2C to perform operations,
-yet the L2C never gets the commands.
+Set PHY rxc-skew-ps to 1500 and all other values to their default values.
 
-This series adds the option to not enable anything in the PL310 that
-uses sidebands, and then adds L2C support to the RZ/A1 DT.
+This is intended to to address failures in the case of 1Gbps communication
+using the by salvator-x board with the KSZ9031RNX phy. This has been
+reported to occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
 
-v2:
-* Added "arm,pl310-no-sideband" to cache-l2x0.c instead of hacking in a
-  dummy l2c_write_sec function to keep FLZ from being enabled.
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
+---
+v1 [Simon Horman]
+* Do not set values to defaults, omit them and let the driver set the defaults
+* Rewrote changelog
 
-Chris Brandt (3):
-  ARM: l2c: add pl310-no-sideband option
-  ARM: shmobile: r7s72100: Enable L2 cache
-  ARM: dts: r7s72100: add l2 cache
+  N.B. The communications failures have been reported by the BSP team,
+       however I did not observe them during testing with a
+       salvator-x/M3-W-ES1.0
 
- Documentation/devicetree/bindings/arm/l2c2x0.txt |  2 ++
- arch/arm/boot/dts/r7s72100.dtsi                  | 10 ++++++++++
- arch/arm/mach-shmobile/setup-r7s72100.c          |  2 ++
- arch/arm/mm/cache-l2x0.c                         |  9 +++++++--
- 4 files changed, 21 insertions(+), 2 deletions(-)
+       I have also exercised this on salvator-x/H3-ES1.0, which
+       supports a maximum communication speed of 100Mbit/s. I did
+       not observe communications failures during that testing.
 
+       My test-case was to bring up the system using NFS root and
+       run: netperf -H <HOST>
+
+v0 [Kazuya Mizuguchi]
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index dc1177c76aa5..5158ba3f9ce3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -497,18 +497,7 @@
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+-		rxc-skew-ps = <900>;
+-		rxdv-skew-ps = <0>;
+-		rxd0-skew-ps = <0>;
+-		rxd1-skew-ps = <0>;
+-		rxd2-skew-ps = <0>;
+-		rxd3-skew-ps = <0>;
+-		txc-skew-ps = <900>;
+-		txen-skew-ps = <0>;
+-		txd0-skew-ps = <0>;
+-		txd1-skew-ps = <0>;
+-		txd2-skew-ps = <0>;
+-		txd3-skew-ps = <0>;
++		rxc-skew-ps = <1500>;
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
 -- 
-2.10.1
+2.7.0.rc3.207.g0ac5344
