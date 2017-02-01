@@ -1,81 +1,40 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1485442486-18427-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1485442486-18427-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 1 Feb 2017 14:05:06 +0100
+Message-ID: <CAMuHMdXGKsB9z4mjOSdQ7yViM9sw0FoJt3EoczdTRuNgNwdXxg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: m3ulcb: enable HS200 for eMMC
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/6] alarmtimer: Postpone wake-up source registration until really available
-Date: Mon, 20 Feb 2017 21:33:24 +0100
-Message-Id: <1487622809-25127-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the alarmtimer registers a wake-up source unconditionally,
-regardless of the system having a (wake-up capable) RTC or not.
-To fix this, postpone registration until a wake-up capable RTC device is
-added.
+On Thu, Jan 26, 2017 at 3:54 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+>
+> This supports HS200 mode for eMMC on M3ULCB board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-After this, the alarmtimer no longer shows up in
-/sys/kernel/debug/wakeup_sources, unless it is available for real.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- kernel/time/alarmtimer.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index e6dc9a538efa2116..5e0ce78607da5b5d 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -82,6 +82,7 @@ static int alarmtimer_rtc_add_device(struct device *dev,
- {
- 	unsigned long flags;
- 	struct rtc_device *rtc = to_rtc_device(dev);
-+	struct wakeup_source *__ws;
- 
- 	if (rtcdev)
- 		return -EBUSY;
-@@ -91,13 +92,20 @@ static int alarmtimer_rtc_add_device(struct device *dev,
- 	if (!device_may_wakeup(rtc->dev.parent))
- 		return -1;
- 
-+	__ws = wakeup_source_register("alarmtimer");
-+
- 	spin_lock_irqsave(&rtcdev_lock, flags);
- 	if (!rtcdev) {
- 		rtcdev = rtc;
- 		/* hold a reference so it doesn't go away */
- 		get_device(dev);
-+		ws = __ws;
-+		__ws = NULL;
- 	}
- 	spin_unlock_irqrestore(&rtcdev_lock, flags);
-+
-+	wakeup_source_unregister(__ws);
-+
- 	return 0;
- }
- 
-@@ -908,7 +916,6 @@ static int __init alarmtimer_init(void)
- 		error = PTR_ERR(pdev);
- 		goto out_drv;
- 	}
--	ws = wakeup_source_register("alarmtimer");
- 	return 0;
- 
- out_drv:
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
