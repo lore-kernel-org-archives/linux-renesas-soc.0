@@ -1,30 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:40153 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751901AbdBFMK2 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42750 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbdBAMlJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Feb 2017 07:10:28 -0500
-Date: Mon, 6 Feb 2017 13:10:52 +0100
-From: Joerg Roedel <joro@8bytes.org>
+        Wed, 1 Feb 2017 07:41:09 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund@ragnatech.se>, iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] iommu/ipmmu-vmsa: Restrict IOMMU Domain Geometry to
- 32-bit address space
-Message-ID: <20170206121052.GA25981@8bytes.org>
+Subject: Re: [PATCH v2] iommu/ipmmu-vmsa: Restrict IOMMU Domain Geometry to 32-bit address space
+Date: Wed, 01 Feb 2017 14:41:28 +0200
+Message-ID: <1835710.b18B135Bdu@avalon>
+In-Reply-To: <1485861427-23487-1-git-send-email-geert+renesas@glider.be>
 References: <1485861427-23487-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1485861427-23487-1-git-send-email-geert+renesas@glider.be>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 31, 2017 at 12:17:07PM +0100, Geert Uytterhoeven wrote:
+Hi Geert,
+
+Thank you for the patch.
+
+On Tuesday 31 Jan 2017 12:17:07 Geert Uytterhoeven wrote:
 > Currently, the IPMMU/VMSA driver supports 32-bit I/O Virtual Addresses
 > only, and thus sets io_pgtable_cfg.ias = 32.  However, it doesn't force
 > a 32-bit IOVA space through the IOMMU Domain Geometry.
@@ -39,4 +42,30 @@ On Tue, Jan 31, 2017 at 12:17:07PM +0100, Geert Uytterhoeven wrote:
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-Applied, thanks.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> v2:
+>   - Add Reviewed-by.
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 798578f1676480c6..eb8b3df8733b15fb 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -424,6 +424,8 @@ static int ipmmu_domain_init_context(struct
+> ipmmu_vmsa_domain *domain) domain->cfg.ias = 32;
+>  	domain->cfg.oas = 40;
+>  	domain->cfg.tlb = &ipmmu_gather_ops;
+> +	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
+> +	domain->io_domain.geometry.force_aperture = true;
+>  	/*
+>  	 * TODO: Add support for coherent walk through CCI with DVM and remove
+>  	 * cache handling. For now, delegate it to the io-pgtable code.
+
+-- 
+Regards,
+
+Laurent Pinchart
