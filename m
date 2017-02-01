@@ -1,41 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40377 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753821AbdBGLGk (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:33302 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750873AbdBAP4v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 06:06:40 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
+        Wed, 1 Feb 2017 10:56:51 -0500
+Received: by mail-lf0-f42.google.com with SMTP id x1so144088618lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Feb 2017 07:56:50 -0800 (PST)
+Subject: Re: [PATCH 2/2] sh_eth: fix wakeup event reporting from MagicPacket
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org
+References: <20170201144155.17123-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170201144155.17123-3-niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC 2/4] mmc: host: tmio: fix minor typos in a comment
-Date: Tue,  7 Feb 2017 12:06:27 +0100
-Message-Id: <20170207110629.2441-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
-References: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <4436a62d-8856-e793-96f9-b265388046e2@cogentembedded.com>
+Date: Wed, 1 Feb 2017 18:56:48 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170201144155.17123-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Making sure we match the actual register name.
+On 02/01/2017 05:41 PM, Niklas Söderlund wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> If a link change interrupt happens along side the MagicPacket interrupt
+> and the link change interrupt is ignored the interrupt handler will
+> return and the wakeup event is not register. Fix this by moving the
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index b20b451ad90daa..8a4e99ffe64eb1 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -54,7 +54,7 @@
- #define TMIO_STOP_STP		BIT(0)
- #define TMIO_STOP_SEC		BIT(8)
- 
--/* Definitions for values the CTRL_STATUS register can take. */
-+/* Definitions for values the CTL_STATUS register can take */
- #define TMIO_STAT_CMDRESPEND    BIT(0)
- #define TMIO_STAT_DATAEND       BIT(2)
- #define TMIO_STAT_CARD_REMOVE   BIT(3)
--- 
-2.11.0
+    Registered?
+
+> MagicPacket check before the link change check.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+[...]
+
+MBR, Sergei
