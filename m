@@ -1,109 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:9176 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932386AbdBPQTC (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:32964 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751040AbdBAPzw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 11:19:02 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Brad Mouring <brad.mouring@ni.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <rcochran@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 1/3] ARM: l2c: allow CA9 optimizations to be disabled
-Date: Thu, 16 Feb 2017 11:17:40 -0500
-Message-Id: <20170216161742.29320-2-chris.brandt@renesas.com>
-In-Reply-To: <20170216161742.29320-1-chris.brandt@renesas.com>
-References: <20170216161742.29320-1-chris.brandt@renesas.com>
+        Wed, 1 Feb 2017 10:55:52 -0500
+Received: by mail-lf0-f43.google.com with SMTP id x1so144072584lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Feb 2017 07:55:51 -0800 (PST)
+Subject: Re: [PATCH 1/2] sh_eth: align usage of sh_eth_modify() with rest of
+ driver
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org
+References: <20170201144155.17123-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170201144155.17123-2-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ba671d9f-6f2f-0c4a-b94c-a885d54f39dc@cogentembedded.com>
+Date: Wed, 1 Feb 2017 18:55:48 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170201144155.17123-2-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a PL310 is added to a system, but the sideband signals are not
-connected, some Cortex A9 optimizations cannot be used. In particular,
-enabling Full Line of Zeros in the CA9 without sidebands connected will
-crash the system since the CA9 will expect the L2C to perform operations,
-yet the L2C never gets the commands. Early BRESP also does not work
-without sideband signals.
+Hello!
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v3:
-* changed l2x0_bresp_dis to l2x0_bresp_disable
-* changed l2x0_flz_dis to l2x0_flz_disable
-v2:
-* split "arm,pl310-no-sideband" into "arm,early-bresp-disable" and
-  "arm,full-line-zero-disable"
----
- Documentation/devicetree/bindings/arm/l2c2x0.txt |  3 +++
- arch/arm/mm/cache-l2x0.c                         | 13 +++++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
+On 02/01/2017 05:41 PM, Niklas Söderlund wrote:
 
-diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.txt b/Documentation/devicetree/bindings/arm/l2c2x0.txt
-index 917199f..d9650c1 100644
---- a/Documentation/devicetree/bindings/arm/l2c2x0.txt
-+++ b/Documentation/devicetree/bindings/arm/l2c2x0.txt
-@@ -90,6 +90,9 @@ Optional properties:
- - arm,standby-mode: L2 standby mode enable. Value <0> (forcibly disable),
-   <1> (forcibly enable), property absent (OS specific behavior,
-   preferably retain firmware settings)
-+- arm,early-bresp-disable : Disable the CA9 optimization Early BRESP (PL310)
-+- arm,full-line-zero-disable : Disable the CA9 optimization Full line of zero
-+  write (PL310)
- 
- Example:
- 
-diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-index 2290be3..808efbb 100644
---- a/arch/arm/mm/cache-l2x0.c
-+++ b/arch/arm/mm/cache-l2x0.c
-@@ -57,6 +57,9 @@ static unsigned long sync_reg_offset = L2X0_CACHE_SYNC;
- 
- struct l2x0_regs l2x0_saved_regs;
- 
-+static bool l2x0_bresp_disable;
-+static bool l2x0_flz_disable;
-+
- /*
-  * Common code for all cache controllers.
-  */
-@@ -620,7 +623,7 @@ static void __init l2c310_enable(void __iomem *base, unsigned num_lock)
- 	u32 aux = l2x0_saved_regs.aux_ctrl;
- 
- 	if (rev >= L310_CACHE_ID_RTL_R2P0) {
--		if (cortex_a9) {
-+		if (cortex_a9 && !l2x0_bresp_disable) {
- 			aux |= L310_AUX_CTRL_EARLY_BRESP;
- 			pr_info("L2C-310 enabling early BRESP for Cortex-A9\n");
- 		} else if (aux & L310_AUX_CTRL_EARLY_BRESP) {
-@@ -629,7 +632,7 @@ static void __init l2c310_enable(void __iomem *base, unsigned num_lock)
- 		}
- 	}
- 
--	if (cortex_a9) {
-+	if (cortex_a9 && !l2x0_flz_disable) {
- 		u32 aux_cur = readl_relaxed(base + L2X0_AUX_CTRL);
- 		u32 acr = get_auxcr();
- 
-@@ -1200,6 +1203,12 @@ static void __init l2c310_of_parse(const struct device_node *np,
- 		*aux_mask &= ~L2C_AUX_CTRL_PARITY_ENABLE;
- 	}
- 
-+	if (of_property_read_bool(np, "arm,early-bresp-disable"))
-+		l2x0_bresp_disable = true;
-+
-+	if (of_property_read_bool(np, "arm,full-line-zero-disable"))
-+		l2x0_flz_disable = true;
-+
- 	prefetch = l2x0_saved_regs.prefetch_ctrl;
- 
- 	ret = of_property_read_u32(np, "arm,double-linefill", &val);
--- 
-2.10.1
+> To be consistent with the rest of the driver when setting bits using
+> sh_eth_modify() the same bit should also be cleared. This have no
+> functional change and should have been done from the start.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+[...]
+
+MBR, Sergei
