@@ -1,75 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:50549 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751149AbdBLLMg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59919 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751664AbdBAImP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Feb 2017 06:12:36 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/4] mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
-Date: Sun, 12 Feb 2017 12:12:24 +0100
-Message-Id: <20170212111227.1550-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
-References: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
+        Wed, 1 Feb 2017 03:42:15 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 3/5] arm64: dts: h3ulcb: Fix EthernetAVB PHY timing
+Date: Wed,  1 Feb 2017 09:42:02 +0100
+Message-Id: <1485938524-9322-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
+References: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Don't use hardcoded values.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Set PHY rxc-skew-ps to 1500 and all other values to their default values.
+
+This is intended to to address failures in the case of 1Gbps communication
+using the by h3ulcb board with the KSZ9031RNX phy.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
 ---
- drivers/mmc/host/tmio_mmc.h     | 4 ++++
- drivers/mmc/host/tmio_mmc_pio.c | 6 +++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+v1 [Simon Horman]
+* Do not set values to defaults, omit them and let the driver set the defaults
+* Rewrote changelog
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 2b349d48fb9a8a..b20b451ad90daa 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -50,6 +50,10 @@
- #define CTL_CLK_AND_WAIT_CTL 0x138
- #define CTL_RESET_SDIO 0x1e0
+  N.B. I have not tested this patch as I do not have access to an h3ulcb
+
+v0 [Vladimir Barinov]
+---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index c5f8f69a4f5f..baaa9330cfab 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -339,18 +339,7 @@
+ 	status = "okay";
  
-+/* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
-+#define TMIO_STOP_STP		BIT(0)
-+#define TMIO_STOP_SEC		BIT(8)
-+
- /* Definitions for values the CTRL_STATUS register can take. */
- #define TMIO_STAT_CMDRESPEND    BIT(0)
- #define TMIO_STAT_DATAEND       BIT(2)
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 6b789a739d4dfe..ad2840e1bfae51 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -340,7 +340,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 
- 	/* CMD12 is handled by hardware */
- 	if (cmd->opcode == MMC_STOP_TRANSMISSION && !cmd->arg) {
--		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x001);
-+		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
- 		return 0;
- 	}
- 
-@@ -367,7 +367,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 	if (data) {
- 		c |= DATA_PRESENT;
- 		if (data->blocks > 1) {
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x100);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_SEC);
- 			c |= TRANSFER_MULTI;
- 
- 			/*
-@@ -554,7 +554,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 
- 	if (stop) {
- 		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x000);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 		else
- 			BUG();
- 	}
+ 	phy0: ethernet-phy@0 {
+-		rxc-skew-ps = <900>;
+-		rxdv-skew-ps = <0>;
+-		rxd0-skew-ps = <0>;
+-		rxd1-skew-ps = <0>;
+-		rxd2-skew-ps = <0>;
+-		rxd3-skew-ps = <0>;
+-		txc-skew-ps = <900>;
+-		txen-skew-ps = <0>;
+-		txd0-skew-ps = <0>;
+-		txd1-skew-ps = <0>;
+-		txd2-skew-ps = <0>;
+-		txd3-skew-ps = <0>;
++		rxc-skew-ps = <1500>;
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
 -- 
-2.11.0
+2.7.0.rc3.207.g0ac5344
