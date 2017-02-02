@@ -1,57 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:50190 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752194AbdBMLAf (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34990 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbdBBS2z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 06:00:35 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dmaengine: rcar-dmac: Widen DMA mask to 40 bits
-Date: Mon, 13 Feb 2017 12:00:26 +0100
-Message-Id: <1486983626-10744-1-git-send-email-geert+renesas@glider.be>
+        Thu, 2 Feb 2017 13:28:55 -0500
+MIME-Version: 1.0
+In-Reply-To: <1485442460-18339-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1485442460-18339-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 2 Feb 2017 19:19:41 +0100
+Message-ID: <CAMuHMdU7dHC3rCeYGVbEPQ0riNU9PEptxT-0WhmLJp0S7CS1LQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] arm64: dts: m3ulcb: Update memory node to 2 GiB map
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-By default, the DMA mask covers only the low 32-bit address space, which
-causes SWIOTLB on arm64 to fall back to a bounce buffer for DMA
-transfers involving memory outside the 32-bit address space.
+Hi Vladimir,
 
-The R-Car DMA controller hardware supports a 40-bit address space, hence
-widen the DMA mask to 40 bits to actually make use of this feature.
+On Thu, Jan 26, 2017 at 3:54 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+>
+> This patch updates memory region:
+>
+>   - After changes, the new map of the m3ulcb board on R8A7796 SoC
+>     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
+>     Bank1: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
+>
+>   - Before changes, the old map looked like this:
+>     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Note that for proper operation in the presence of an enabled IOMMU, you
-also need commit 3b6bb5b705a4051c ("iommu/ipmmu-vmsa: Restrict IOMMU
-Domain Geometry to 32-bit address space") in iommu/next.
+BTW, this means M3ULCB has a different R-Car M3 SiP than Salvator-X,
+with half the RAM?
 
-However, as the IOMMU is not enabled in upstream nor linux-next, it is
-safe to apply this patch in parallel.
+Gr{oetje,eeting}s,
 
-v2:
-  - No changes.
----
- drivers/dma/sh/rcar-dmac.c | 1 +
- 1 file changed, 1 insertion(+)
+                        Geert
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 2e441d0ccd79a37a..93a69b992a51a7aa 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1716,6 +1716,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 
- 	dmac->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, dmac);
-+	dma_set_mask_and_coherent(dmac->dev, DMA_BIT_MASK(40));
- 
- 	ret = rcar_dmac_parse_of(&pdev->dev, dmac);
- 	if (ret < 0)
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
