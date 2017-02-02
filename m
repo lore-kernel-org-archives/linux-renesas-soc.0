@@ -1,61 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44078 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751103AbdBAOn1 (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35629 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbdBBRKf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 09:43:27 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] sh_eth: fix wakeup event reporting from MagicPacket
-Date: Wed,  1 Feb 2017 15:41:55 +0100
-Message-Id: <20170201144155.17123-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170201144155.17123-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170201144155.17123-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 2 Feb 2017 12:10:35 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3 0/7] Renesas *SCIF* RX FIFO support
+Date: Thu,  2 Feb 2017 18:10:13 +0100
+Message-Id: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a link change interrupt happens along side the MagicPacket interrupt
-and the link change interrupt is ignored the interrupt handler will
-return and the wakeup event is not register. Fix this by moving the
-MagicPacket check before the link change check.
+Hi!
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
----
- drivers/net/ethernet/renesas/sh_eth.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This series implements support for using RX FIFO thresholds higher than one
+in PIO mode on SCIF, HSCIF, SCIFA and SCIFB serial ports.
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index f9134c818ac6ef53..54248775f227b062 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1605,6 +1605,8 @@ static void sh_eth_emac_interrupt(struct net_device *ndev)
- 	sh_eth_write(ndev, felic_stat, ECSR);	/* clear int */
- 	if (felic_stat & ECSR_ICD)
- 		ndev->stats.tx_carrier_errors++;
-+	if (felic_stat & ECSR_MPD)
-+		pm_wakeup_event(&mdp->pdev->dev, 0);
- 	if (felic_stat & ECSR_LCHNG) {
- 		/* Link Changed */
- 		if (mdp->cd->no_psr || mdp->no_ether_link)
-@@ -1624,8 +1626,6 @@ static void sh_eth_emac_interrupt(struct net_device *ndev)
- 			sh_eth_rcv_snd_enable(ndev);
- 		}
- 	}
--	if (felic_stat & ECSR_MPD)
--		pm_wakeup_event(&mdp->pdev->dev, 0);
- }
- 
- /* error control function */
+This revision has been rebased onto renesas-drivers-2017-01-24-v4.10-rc5 and
+adds the missing changelog for "serial: sh-sci: increase RX FIFO trigger
+defaults for (H)SCIF" requested by Geert and Greg.
+
+CU
+Uli
+
+
+Changes since v2:
+- rebase
+- add missing changelog entry
+
+Changes since v1:
+- clarify HS trigger register enum
+- simplify DR bit handling
+- if() cascade -> switch()
+- disable RX trigger for SH77xx-style ports
+- clean up on failure to create sysfs attribute
+- r8a7796 DT: add control pins, rtscts flag
+
+
+Ulrich Hecht (7):
+  serial: sh-sci: add FIFO trigger bits
+  serial: sh-sci: consider DR (data ready) bit adequately
+  serial: sh-sci: implement FIFO threshold register setting
+  serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+  serial: sh-sci: SCIFA/B RX FIFO software timeout
+  serial: sh-sci: make RX FIFO parameters tunable via sysfs
+  arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
+
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  14 ++
+ drivers/tty/serial/sh-sci.c                        | 273 ++++++++++++++++++---
+ drivers/tty/serial/sh-sci.h                        |   8 +-
+ 3 files changed, 262 insertions(+), 33 deletions(-)
+
 -- 
-2.11.0
+2.7.4
