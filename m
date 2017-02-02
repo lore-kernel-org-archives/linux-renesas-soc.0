@@ -1,100 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35723 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751802AbdBBRKq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45963 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750903AbdBBJYw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 12:10:46 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3 3/7] serial: sh-sci: implement FIFO threshold register setting
-Date: Thu,  2 Feb 2017 18:10:16 +0100
-Message-Id: <1486055420-31595-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 2 Feb 2017 04:24:52 -0500
+Date: Thu, 2 Feb 2017 10:24:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH] PCI: rcar: Check for OF device match early
+Message-ID: <20170202092443.GL21831@verge.net.au>
+References: <20170131151044.14062.85997.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <CAMuHMdWxoMsZAobYSmxeuga1NdMbruss4g-KQjczNeurcn_wkA@mail.gmail.com>
+ <20170131180915.GA16450@bhelgaas-glaptop.roam.corp.google.com>
+ <CAMuHMdUKVsxAHtLBC70EOY5uTcSkMm1qLBUf6mLck6YA=1qaBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUKVsxAHtLBC70EOY5uTcSkMm1qLBUf6mLck6YA=1qaBg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sets the closest match for a desired RX trigger level.
+On Tue, Jan 31, 2017 at 10:43:39PM +0100, Geert Uytterhoeven wrote:
+> Hi Bjorn,
+> 
+> On Tue, Jan 31, 2017 at 7:09 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Tue, Jan 31, 2017 at 04:33:15PM +0100, Geert Uytterhoeven wrote:
+> >> On Tue, Jan 31, 2017 at 4:10 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+> >> > A match in the rcar_pcie_of_match[] table is required, so check that first,
+> >> > before we start setting up things that need to be undone if it fails.  No
+> >> > functional change intended.
+> >> >
+> >> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> >> > ---
+> >> >  drivers/pci/host/pcie-rcar.c |   10 +++++-----
+> >> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> >> >
+> >> > diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> >> > index 0d9b96c3c49d..c91ff0b91be8 100644
+> >> > --- a/drivers/pci/host/pcie-rcar.c
+> >> > +++ b/drivers/pci/host/pcie-rcar.c
+> >> > @@ -1129,6 +1129,10 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+> >> >         int err;
+> >> >         int (*hw_init_fn)(struct rcar_pcie *);
+> >> >
+> >> > +       of_id = of_match_device(rcar_pcie_of_match, dev);
+> >> > +       if (!of_id || !of_id->data)
+> >> > +               return -EINVAL;
+> >> > +
+> >>
+> >> As this driver is DT-only, none of the above can fail, and you could just do
+> >>
+> >>        hw_init_fn = of_device_get_match_data(dev);
+> >>
+> >> instead, getting rid of of_id completely.
+> >
+> > Oh, I really like that, thanks for pointing that out!
+> >
+> > I was about to say that I personally would not check of_id->data for NULL,
+> > because it is only NULL if somebody adds an entry to rcar_pcie_of_match
+> > without a .data member.  In that case, I'd rather take the NULL pointer
+> > dereference than return -EINVAL because it's too easy to ignore the
+> > -EINVAL.
+> >
+> > What do you think about the following?
+> 
+> Thanks, looks fine!
+> 
+> > commit 25bd3aa972ee32f04590aa68b2b785dce36b036a
+> > Author: Bjorn Helgaas <bhelgaas@google.com>
+> > Date:   Tue Jan 31 08:45:49 2017 -0600
+> >
+> >     PCI: rcar: Use of_device_get_match_data() to simplify probe
+> >
+> >     This is a DT-only driver, so the only way to call rcar_pcie_probe() is to
+> >     match an entry in rcar_pcie_of_match[], so of_id cannot be NULL.
+> >
+> >     Furthermore, of_id->data can only be NULL if an rcar_pcie_of_match[] entry
+> >     has a NULL .data member.  That's a driver defect, and we don't want to
+> >     return -EINVAL, which is easy to ignore.  We'd rather take the NULL pointer
+> >     dereference so we notice the problem and fix it.
+> >
+> >     Use of_device_get_match_data() to retrieve the hw_init_fn pointer.  No
+> >     functional change intended.
+> >
+> >     Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 6085839..b89e6f8 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -974,6 +974,65 @@ static int sci_handle_breaks(struct uart_port *port)
- 	return copied;
- }
- 
-+static int scif_set_rtrg(struct uart_port *port, int rx_trig)
-+{
-+	unsigned int bits;
-+
-+	if (rx_trig < 1)
-+		rx_trig = 1;
-+	if (rx_trig >= port->fifosize)
-+		rx_trig = port->fifosize;
-+
-+	/* HSCIF can be set to an arbitrary level. */
-+	if (sci_getreg(port, HSRTRGR)->size) {
-+		serial_port_out(port, HSRTRGR, rx_trig);
-+		return rx_trig;
-+	}
-+
-+	switch (port->type) {
-+	case PORT_SCIF:
-+		if (rx_trig < 4) {
-+			bits = 0;
-+			rx_trig = 1;
-+		} else if (rx_trig < 8) {
-+			bits = SCFCR_RTRG0;
-+			rx_trig = 4;
-+		} else if (rx_trig < 14) {
-+			bits = SCFCR_RTRG1;
-+			rx_trig = 8;
-+		} else {
-+			bits = SCFCR_RTRG0 | SCFCR_RTRG1;
-+			rx_trig = 14;
-+		}
-+		break;
-+	case PORT_SCIFA:
-+	case PORT_SCIFB:
-+		if (rx_trig < 16) {
-+			bits = 0;
-+			rx_trig = 1;
-+		} else if (rx_trig < 32) {
-+			bits = SCFCR_RTRG0;
-+			rx_trig = 16;
-+		} else if (rx_trig < 48) {
-+			bits = SCFCR_RTRG1;
-+			rx_trig = 32;
-+		} else {
-+			bits = SCFCR_RTRG0 | SCFCR_RTRG1;
-+			rx_trig = 48;
-+		}
-+		break;
-+	default:
-+		WARN(1, "unknown FIFO configuration");
-+		return 1;
-+	}
-+
-+	serial_port_out(port, SCFCR,
-+		(serial_port_in(port, SCFCR) &
-+		~(SCFCR_RTRG1 | SCFCR_RTRG0)) | bits);
-+
-+	return rx_trig;
-+}
-+
- #ifdef CONFIG_SERIAL_SH_SCI_DMA
- static void sci_dma_tx_complete(void *arg)
- {
--- 
-2.7.4
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
