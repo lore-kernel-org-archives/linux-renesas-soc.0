@@ -1,40 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41516 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbdBCJQH (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:32934 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752175AbdBBRKs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Feb 2017 04:16:07 -0500
-Date: Fri, 3 Feb 2017 10:16:11 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org, linux-serial@vger.kernel.org,
-        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com
-Subject: Re: [PATCH v3 4/7] serial: sh-sci: increase RX FIFO trigger defaults
- for (H)SCIF
-Message-ID: <20170203091611.GA28577@kroah.com>
+        Thu, 2 Feb 2017 12:10:48 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3 4/7] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+Date: Thu,  2 Feb 2017 18:10:17 +0100
+Message-Id: <1486055420-31595-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1486055420-31595-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1486055420-31595-5-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 02, 2017 at 06:10:17PM +0100, Ulrich Hecht wrote:
-> Sets reasonable trigger defaults for the various SCIF variants.
-> Also corrects the FIFO size for SH7705-style ports.
-> 
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/tty/serial/sh-sci.c | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
+Sets reasonable trigger defaults for the various SCIF variants.
+Also corrects the FIFO size for SH7705-style ports.
 
-This patch doesn't apply cleanly, so I've stopped here in the series.
-Please rebase and resend the rest.
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-thanks,
-
-greg k-h
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index b89e6f8..ae9b10a 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -148,6 +148,7 @@ struct sci_port {
+ 	struct timer_list		rx_timer;
+ 	unsigned int			rx_timeout;
+ #endif
++	int				rx_trigger;
+ 
+ 	bool has_rtscts;
+ 	bool autorts;
+@@ -450,7 +451,7 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
+ 			[SCFCR]		= { 0x18, 16 },
+ 			[SCFDR]		= { 0x1c, 16 },
+ 		},
+-		.fifosize = 16,
++		.fifosize = 64,
+ 		.overrun_reg = SCxSR,
+ 		.overrun_mask = SCIFA_ORER,
+ 		.sampling_rate_mask = SCI_SR(16),
+@@ -2062,6 +2063,7 @@ static void sci_reset(struct uart_port *port)
+ {
+ 	const struct plat_sci_reg *reg;
+ 	unsigned int status;
++	struct sci_port *s = to_sci_port(port);
+ 
+ 	if (serial_port_in(port, SCSCR) & SCSCR_TE) {
+ 		do {
+@@ -2083,6 +2085,9 @@ static void sci_reset(struct uart_port *port)
+ 		status &= ~(SCLSR_TO | SCLSR_ORER);
+ 		serial_port_out(port, SCLSR, status);
+ 	}
++
++	if (s->rx_trigger > 1)
++		scif_set_rtrg(port, s->rx_trigger);
+ }
+ 
+ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+@@ -2621,6 +2626,28 @@ static int sci_init_single(struct platform_device *dev,
+ 	if (unlikely(sci_port->params == NULL))
+ 		return -EINVAL;
+ 
++	switch (p->type) {
++	case PORT_SCIFB:
++		sci_port->rx_trigger = 48;
++		break;
++	case PORT_HSCIF:
++		sci_port->rx_trigger = 64;
++		break;
++	case PORT_SCIFA:
++		sci_port->rx_trigger = 32;
++		break;
++	case PORT_SCIF:
++		if (p->regtype == SCIx_SH7705_SCIF_REGTYPE)
++			/* RX triggering not implemented for this IP */
++			sci_port->rx_trigger = 1;
++		else
++			sci_port->rx_trigger = 8;
++		break;
++	default:
++		sci_port->rx_trigger = 1;
++		break;
++	}
++
+ 	/* SCIFA on sh7723 and sh7724 need a custom sampling rate that doesn't
+ 	 * match the SoC datasheet, this should be investigated. Let platform
+ 	 * data override the sampling rate for now.
+-- 
+2.7.4
