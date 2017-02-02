@@ -1,69 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:36248 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752121AbdBBRKl (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35723 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751802AbdBBRKq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 12:10:41 -0500
+        Thu, 2 Feb 2017 12:10:46 -0500
 From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
         geert@linux-m68k.org
 Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
         sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3 1/7] serial: sh-sci: add FIFO trigger bits
-Date: Thu,  2 Feb 2017 18:10:14 +0100
-Message-Id: <1486055420-31595-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3 3/7] serial: sh-sci: implement FIFO threshold register setting
+Date: Thu,  2 Feb 2017 18:10:16 +0100
+Message-Id: <1486055420-31595-4-git-send-email-ulrich.hecht+renesas@gmail.com>
 In-Reply-To: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Defines the bits controlling FIFO thresholds, adds the additional
-HSCIF registers to the register map.
+Sets the closest match for a desired RX trigger level.
 
 Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/tty/serial/sh-sci.c | 2 ++
- drivers/tty/serial/sh-sci.h | 6 ++++++
- 2 files changed, 8 insertions(+)
+ drivers/tty/serial/sh-sci.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 9bc9756..6085839 100644
+index 6085839..b89e6f8 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -373,6 +373,8 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[HSSRR]		= { 0x40, 16 },
- 			[SCDL]		= { 0x30, 16 },
- 			[SCCKS]		= { 0x34, 16 },
-+			[HSRTRGR]	= { 0x54, 16 },
-+			[HSTTRGR]	= { 0x58, 16 },
- 		},
- 		.fifosize = 128,
- 		.overrun_reg = SCLSR,
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 08073f0..30b6d67 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -29,6 +29,8 @@ enum {
- 	SCPDR,				/* Serial Port Data Register */
- 	SCDL,				/* BRG Frequency Division Register */
- 	SCCKS,				/* BRG Clock Select Register */
-+	HSRTRGR,			/* Rx FIFO Data Count Trigger Register */
-+	HSTTRGR,			/* Tx FIFO Data Count Trigger Register */
+@@ -974,6 +974,65 @@ static int sci_handle_breaks(struct uart_port *port)
+ 	return copied;
+ }
  
- 	SCIx_NR_REGS,
- };
-@@ -99,6 +101,10 @@ enum {
- #define SCIF_BREAK_CLEAR	(u32)(~(SCIF_PER | SCIF_FER | SCIF_BRK))
- 
- /* SCFCR (FIFO Control Register) */
-+#define SCFCR_RTRG1	BIT(7)	/* Receive FIFO Data Count Trigger */
-+#define SCFCR_RTRG0	BIT(6)
-+#define SCFCR_TTRG1	BIT(5)	/* Transmit FIFO Data Count Trigger */
-+#define SCFCR_TTRG0	BIT(4)
- #define SCFCR_MCE	BIT(3)	/* Modem Control Enable */
- #define SCFCR_TFRST	BIT(2)	/* Transmit FIFO Data Register Reset */
- #define SCFCR_RFRST	BIT(1)	/* Receive FIFO Data Register Reset */
++static int scif_set_rtrg(struct uart_port *port, int rx_trig)
++{
++	unsigned int bits;
++
++	if (rx_trig < 1)
++		rx_trig = 1;
++	if (rx_trig >= port->fifosize)
++		rx_trig = port->fifosize;
++
++	/* HSCIF can be set to an arbitrary level. */
++	if (sci_getreg(port, HSRTRGR)->size) {
++		serial_port_out(port, HSRTRGR, rx_trig);
++		return rx_trig;
++	}
++
++	switch (port->type) {
++	case PORT_SCIF:
++		if (rx_trig < 4) {
++			bits = 0;
++			rx_trig = 1;
++		} else if (rx_trig < 8) {
++			bits = SCFCR_RTRG0;
++			rx_trig = 4;
++		} else if (rx_trig < 14) {
++			bits = SCFCR_RTRG1;
++			rx_trig = 8;
++		} else {
++			bits = SCFCR_RTRG0 | SCFCR_RTRG1;
++			rx_trig = 14;
++		}
++		break;
++	case PORT_SCIFA:
++	case PORT_SCIFB:
++		if (rx_trig < 16) {
++			bits = 0;
++			rx_trig = 1;
++		} else if (rx_trig < 32) {
++			bits = SCFCR_RTRG0;
++			rx_trig = 16;
++		} else if (rx_trig < 48) {
++			bits = SCFCR_RTRG1;
++			rx_trig = 32;
++		} else {
++			bits = SCFCR_RTRG0 | SCFCR_RTRG1;
++			rx_trig = 48;
++		}
++		break;
++	default:
++		WARN(1, "unknown FIFO configuration");
++		return 1;
++	}
++
++	serial_port_out(port, SCFCR,
++		(serial_port_in(port, SCFCR) &
++		~(SCFCR_RTRG1 | SCFCR_RTRG0)) | bits);
++
++	return rx_trig;
++}
++
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
+ static void sci_dma_tx_complete(void *arg)
+ {
 -- 
 2.7.4
