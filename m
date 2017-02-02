@@ -1,142 +1,143 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40806 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934072AbdBQPES (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33004 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752215AbdBBRKy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 10:04:18 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Dirk Behme <dirk.behme@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3] arm64: dts: r8a7795: Add Cortex-A53 CPU cores
-Date: Fri, 17 Feb 2017 16:04:09 +0100
-Message-Id: <1487343849-32616-1-git-send-email-geert+renesas@glider.be>
+        Thu, 2 Feb 2017 12:10:54 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org
+Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3 6/7] serial: sh-sci: make RX FIFO parameters tunable via sysfs
+Date: Thu,  2 Feb 2017 18:10:19 +0100
+Message-Id: <1486055420-31595-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
+only applicable to SCIFA and SCIFB).
 
-This patch adds Cortex-A53 CPU cores to r8a7795 SoC for a total of 8
-cores (4 x Cortex-A57 + 4 x Cortex-A53).
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
-[geert: Add power-domains and next-level-cache properties]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This patch describes the hardware; actual enabling of the CPU depends on
-the PSCI firmware.
+ drivers/tty/serial/sh-sci.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-With the current firmware version (v2.16.0), only the CA57 CPU cores are
-enabled, hence this patch does not introduce undeterministic scheduling
-behavior due to migration between big and LITTLE cores.
-
-v3:
-  - Link recently added CPU nodes 100-103 to their L2 cache nodes,
-
-v2:
-  - Rebased.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 ++++++++++++++++++++++++++++----
- 1 file changed, 51 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7f2434adb757498f..6148e514eb648288 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -73,6 +73,42 @@
- 			enable-method = "psci";
- 		};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 17a2be3..5bbcb3b 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1055,6 +1055,66 @@ static void rx_fifo_timer_fn(unsigned long arg)
+ 	scif_set_rtrg(port, 1);
+ }
  
-+		a53_0: cpu@100 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x100>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
++static ssize_t rx_trigger_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
 +
-+		a53_1: cpu@101 {
-+			compatible = "arm,cortex-a53","arm,armv8";
-+			reg = <0x101>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
++	return sprintf(buf, "%d\n", sci->rx_trigger);
++}
 +
-+		a53_2: cpu@102 {
-+			compatible = "arm,cortex-a53","arm,armv8";
-+			reg = <0x102>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
++static ssize_t rx_trigger_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++	long r;
 +
-+		a53_3: cpu@103 {
-+			compatible = "arm,cortex-a53","arm,armv8";
-+			reg = <0x103>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
++	if (kstrtol(buf, 0, &r) == -EINVAL)
++		return -EINVAL;
++	sci->rx_trigger = scif_set_rtrg(port, r);
++	scif_set_rtrg(port, 1);
++	return count;
++}
 +
- 		L2_CA57: cache-controller@0 {
- 			compatible = "cache";
- 			reg = <0>;
-@@ -166,7 +202,7 @@
- 			      <0x0 0xf1040000 0 0x20000>,
- 			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
--					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -307,23 +343,31 @@
- 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-affinity = <&a57_0>,
- 					     <&a57_1>,
- 					     <&a57_2>,
--					     <&a57_3>;
-+					     <&a57_3>,
-+					     <&a53_0>,
-+					     <&a53_1>,
-+					     <&a53_2>,
-+					     <&a53_3>;
- 		};
++static DEVICE_ATTR(rx_fifo_trigger, 0644, rx_trigger_show, rx_trigger_store);
++
++static ssize_t rx_fifo_timeout_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++
++	return sprintf(buf, "%d\n", sci->rx_fifo_timeout);
++}
++
++static ssize_t rx_fifo_timeout_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++	long r;
++
++	if (kstrtol(buf, 0, &r) == -EINVAL)
++		return -EINVAL;
++	sci->rx_fifo_timeout = r;
++	scif_set_rtrg(port, 1);
++	if (r > 0)
++		setup_timer(&sci->rx_fifo_timer, rx_fifo_timer_fn,
++			    (unsigned long)sci);
++	return count;
++}
++
++static DEVICE_ATTR(rx_fifo_timeout, 0644, rx_fifo_timeout_show, rx_fifo_timeout_store);
++
++
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
+ static void sci_dma_tx_complete(void *arg)
+ {
+@@ -2891,6 +2951,15 @@ static int sci_remove(struct platform_device *dev)
  
- 		timer {
- 			compatible = "arm,armv8-timer";
- 			interrupts = <GIC_PPI 13
--					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
- 				     <GIC_PPI 14
--					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
- 				     <GIC_PPI 11
--					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
- 				     <GIC_PPI 10
--					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
- 		};
+ 	sci_cleanup_single(port);
  
- 		cpg: clock-controller@e6150000 {
++	if (port->port.fifosize > 1) {
++		sysfs_remove_file(&dev->dev.kobj,
++				  &dev_attr_rx_fifo_trigger.attr);
++	}
++	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB) {
++		sysfs_remove_file(&dev->dev.kobj,
++				  &dev_attr_rx_fifo_timeout.attr);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -3056,6 +3125,24 @@ static int sci_probe(struct platform_device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (sp->port.fifosize > 1) {
++		ret = sysfs_create_file(&dev->dev.kobj,
++				&dev_attr_rx_fifo_trigger.attr);
++		if (ret)
++			return ret;
++	}
++	if (sp->port.type == PORT_SCIFA || sp->port.type ==  PORT_SCIFB) {
++		ret = sysfs_create_file(&dev->dev.kobj,
++				&dev_attr_rx_fifo_timeout.attr);
++		if (ret) {
++			if (sp->port.fifosize > 1) {
++				sysfs_remove_file(&dev->dev.kobj,
++					&dev_attr_rx_fifo_trigger.attr);
++			}
++			return ret;
++		}
++	}
++
+ #ifdef CONFIG_SH_STANDARD_BIOS
+ 	sh_bios_gdb_detach();
+ #endif
 -- 
-1.9.1
+2.7.4
