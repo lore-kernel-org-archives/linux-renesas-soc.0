@@ -1,61 +1,87 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: kieran.bingham@ideasonboard.com
-Subject: [PATCH] scripts: Add statistics to test suite runner
-Date: Mon, 13 Feb 2017 15:26:46 +0200
-Message-Id: <20170213132646.10599-1-laurent.pinchart@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46003 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751355AbdBBJZs (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Feb 2017 04:25:48 -0500
+Date: Thu, 2 Feb 2017 10:25:41 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        Minghuan Lian <minghuan.Lian@freescale.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Mingkai Hu <mingkai.hu@freescale.com>,
+        Roy Zang <tie-fei.zang@freescale.com>,
+        Shailendra Verma <shailendra.v@samsung.com>
+Subject: Re: [PATCH 1 4/4] PCI: rcar: Use of_device_get_match_data() to
+ simplify probe
+Message-ID: <20170202092541.GM21831@verge.net.au>
+References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20170131202020.27605.39560.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170131202020.27605.39560.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Print the number of passed, failed and skipped tests.
+On Tue, Jan 31, 2017 at 02:20:20PM -0600, Bjorn Helgaas wrote:
+> This is a DT-only driver, so the only way to call rcar_pcie_probe() is to
+> match an entry in rcar_pcie_of_match[], so of_id cannot be NULL.
+> 
+> Furthermore, of_id->data can only be NULL if an rcar_pcie_of_match[] entry
+> has a NULL .data member.  That's a driver defect, and we don't want to
+> return -EINVAL, which is easy to ignore.  We'd rather take the NULL pointer
+> dereference so we notice the problem and fix it.
+> 
+> Use of_device_get_match_data() to retrieve the hw_init_fn pointer.  No
+> functional change intended.
+> 
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- scripts/vsp-tests.sh | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/scripts/vsp-tests.sh b/scripts/vsp-tests.sh
-index 6a10f70ca35c..1ed81713e5c5 100755
---- a/scripts/vsp-tests.sh
-+++ b/scripts/vsp-tests.sh
-@@ -21,9 +21,17 @@ KERNEL_VERSION=`uname -r`
- run_test() {
- 	local script=$1
- 	local iteration=$2
-+	local IFS="$(printf '\n\t')"
- 
- 	echo "- $script"
--	./$script
-+
-+	local output=$(./$script 2>&1 | tee /proc/self/fd/2)
-+	for line in $output ; do
-+		(echo "$line" | grep -q 'fail$') && num_fail=$((num_fail+1))
-+		(echo "$line" | grep -q 'pass$') && num_pass=$((num_pass+1))
-+		(echo "$line" | grep -q 'skipped$') && num_skip=$((num_skip+1))
-+		num_test=$((num_test+1))
-+	done
- 
- 	if [ $(ls *.bin 2>/dev/null | wc -l) != 0 ] ; then
- 		local dir=$KERNEL_VERSION/test-$script/$iteration/
-@@ -36,9 +44,16 @@ run_test() {
- run_suite() {
- 	echo "--- Test loop $1 ---"
- 
-+	num_fail=0
-+	num_pass=0
-+	num_skip=0
-+	num_test=0
-+
- 	for test in vsp-unit-test*.sh; do
- 		run_test $test $1
- 	done;
-+
-+	echo "$num_test tests: $num_pass passed, $num_fail failed, $num_skip skipped"
- }
- 
- for loop in `seq 1 1 $1`; do
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>  drivers/pci/host/pcie-rcar.c |    7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index aca85be101f8..b3b6d5273347 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -1125,7 +1125,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct rcar_pcie *pcie;
+>  	unsigned int data;
+> -	const struct of_device_id *of_id;
+>  	int err;
+>  	int (*hw_init_fn)(struct rcar_pcie *);
+>  
+> @@ -1149,11 +1148,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	if (err)
+>  		return err;
+>  
+> -	of_id = of_match_device(rcar_pcie_of_match, dev);
+> -	if (!of_id || !of_id->data)
+> -		return -EINVAL;
+> -	hw_init_fn = of_id->data;
+> -
+>  	pm_runtime_enable(dev);
+>  	err = pm_runtime_get_sync(dev);
+>  	if (err < 0) {
+> @@ -1162,6 +1156,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/* Failure to get a link might just be that no cards are inserted */
+> +	hw_init_fn = of_device_get_match_data(dev);
+>  	err = hw_init_fn(pcie);
+>  	if (err) {
+>  		dev_info(dev, "PCIe link down\n");
+> 
