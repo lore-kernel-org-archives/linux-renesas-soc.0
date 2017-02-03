@@ -1,63 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:39942 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751187AbdBXNua (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:35108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752441AbdBCVHo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Feb 2017 08:50:30 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        Fri, 3 Feb 2017 16:07:44 -0500
+Date: Fri, 3 Feb 2017 15:07:40 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        Roy Zang <tie-fei.zang@freescale.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] arm64: dts: r8a7796: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-Date: Fri, 24 Feb 2017 14:49:14 +0100
-Message-Id: <1487944154-31435-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487944154-31435-1-git-send-email-geert+renesas@glider.be>
-References: <1487944154-31435-1-git-send-email-geert+renesas@glider.be>
+        Minghuan Lian <minghuan.Lian@freescale.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Shailendra Verma <shailendra.v@samsung.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Mingkai Hu <mingkai.hu@freescale.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1 0/4] PCI: Use of_device_get_match_data() to simplify
+ probe
+Message-ID: <20170203210740.GC24162@bhelgaas-glaptop.roam.corp.google.com>
+References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+On Tue, Jan 31, 2017 at 02:19:51PM -0600, Bjorn Helgaas wrote:
+> This turned into much ado about nothing, but Shailendra's hisi patch
+> prompted similar cleanups in other drivers.  It's a minor simplification,
+> but I think worth doing consistently across drivers.
+> 
+> Basically this is Geert's observation that when the driver probe function
+> is called only as a result of matching something in <match_table>, a
+> subsequent of_match_device(<match_table>, dev) call should never fail.
+> 
+> Therefore, instead of this:
+> 
+>   struct of_device_id *match;
+> 
+>   match = of_match_device(<match_table>, dev);
+>   ... = match->data;
+> 
+> we can do this:
+> 
+>   ... = of_device_get_match_data(dev);
+> 
+> ---
+> 
+> Bjorn Helgaas (3):
+>       PCI: iproc: Use of_device_get_match_data() to simplify probe
+>       PCI: layerscape: Use of_device_get_match_data() to simplify probe
+>       PCI: rcar: Use of_device_get_match_data() to simplify probe
+> 
+> Shailendra Verma (1):
+>       PCI: hisi: Use of_device_get_match_data() to simplify probe
+> 
+> 
+>  drivers/pci/host/pci-layerscape.c      |    7 +------
+>  drivers/pci/host/pcie-hisi.c           |    8 +++-----
+>  drivers/pci/host/pcie-iproc-platform.c |    7 +------
+>  drivers/pci/host/pcie-rcar.c           |    7 +------
+>  4 files changed, 6 insertions(+), 23 deletions(-)
 
->From PSCI v1.0, Suspend-to-RAM is supported via SYSTEM_SUSPEND PSCI
-function call. Hence, upgrade PSCI version for R-Car M3-W to support
-Suspend-to-RAM.
-
-The Suspend-to-RAM is highly dependent on ARM Trusted Firwmare support
-since necessary callback functions will be registered after a query
-to ARM Trusted Firmware about SYSTEM_SUSPEND support.
-
-Since PSCI v1.0 is backward compatible with PSCI v0.2, CPU Hotplug and
-CPUIdle should be able to work normally with this change.
-
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Keep "arm,psci-0.2"]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Khiem: I've updated your email address.
-
-v2:
-  - Keep "arm,psci-0.2".
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index e664456490ec0cc7..4985274b3c5f4a06 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -29,7 +29,7 @@
- 	};
- 
- 	psci {
--		compatible = "arm,psci-0.2";
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
- 	};
- 
--- 
-2.7.4
+I applied these to pci/host-layerscape, pci/host-hisi, pci/host-iproc,
+pci/host-rcar for v4.11.
