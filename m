@@ -1,93 +1,143 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35217 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753345AbdBGOkw (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35837 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbdBCKii (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 09:40:52 -0500
-MIME-Version: 1.0
-In-Reply-To: <1486118300-12633-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1486118300-12633-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Feb 2017 15:40:50 +0100
-Message-ID: <CAMuHMdVc3eyXCZfASUst4Kd93WWNVi05q-L32yta8rDDrBLhOQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] serial: sh-sci: make RX FIFO parameters tunable
- via sysfs
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset=UTF-8
+        Fri, 3 Feb 2017 05:38:38 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        gregkh@linuxfoundation.org
+Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
+        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v4 3/4] serial: sh-sci: make RX FIFO parameters tunable via sysfs
+Date: Fri,  3 Feb 2017 11:38:19 +0100
+Message-Id: <1486118300-12633-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
+only applicable to SCIFA and SCIFB).
 
-On Fri, Feb 3, 2017 at 11:38 AM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
-> only applicable to SCIFA and SCIFB).
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/tty/serial/sh-sci.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
->
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 4a165ed..f95a56c 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -1055,6 +1055,66 @@ static void rx_fifo_timer_fn(unsigned long arg)
->         scif_set_rtrg(port, 1);
->  }
->
-> +static ssize_t rx_trigger_show(struct device *dev,
-> +                              struct device_attribute *attr,
-> +                              char *buf)
-> +{
-> +       struct uart_port *port = dev_get_drvdata(dev);
-> +       struct sci_port *sci = to_sci_port(port);
-> +
-> +       return sprintf(buf, "%d\n", sci->rx_trigger);
-> +}
-> +
-> +static ssize_t rx_trigger_store(struct device *dev,
-> +                               struct device_attribute *attr,
-> +                               const char *buf,
-> +                               size_t count)
-> +{
-> +       struct uart_port *port = dev_get_drvdata(dev);
-> +       struct sci_port *sci = to_sci_port(port);
-> +       long r;
-> +
-> +       if (kstrtol(buf, 0, &r) == -EINVAL)
-> +               return -EINVAL;
-> +       sci->rx_trigger = scif_set_rtrg(port, r);
-> +       scif_set_rtrg(port, 1);
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-I seem to have missed the above function call during my earlier review.
-What's the purpose of resetting the trigger immediately to 1?
-
-This means I can change the value of scif->rx_trigger on the fly, but the
-actual value programmed in the hardware is always 1?
-
-I.e. "echo 1 > /sys/class/tty/ttySC0/device/rx_fifo_trigger" fixes serial
-console input on e.g. armadillo, but echoing 32 into rx_fifo_trigger doesn't
-break it again.
-
-> +       return count;
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 4a165ed..f95a56c 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1055,6 +1055,66 @@ static void rx_fifo_timer_fn(unsigned long arg)
+ 	scif_set_rtrg(port, 1);
+ }
+ 
++static ssize_t rx_trigger_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++
++	return sprintf(buf, "%d\n", sci->rx_trigger);
++}
++
++static ssize_t rx_trigger_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++	long r;
++
++	if (kstrtol(buf, 0, &r) == -EINVAL)
++		return -EINVAL;
++	sci->rx_trigger = scif_set_rtrg(port, r);
++	scif_set_rtrg(port, 1);
++	return count;
++}
++
++static DEVICE_ATTR(rx_fifo_trigger, 0644, rx_trigger_show, rx_trigger_store);
++
++static ssize_t rx_fifo_timeout_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++
++	return sprintf(buf, "%d\n", sci->rx_fifo_timeout);
++}
++
++static ssize_t rx_fifo_timeout_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct sci_port *sci = to_sci_port(port);
++	long r;
++
++	if (kstrtol(buf, 0, &r) == -EINVAL)
++		return -EINVAL;
++	sci->rx_fifo_timeout = r;
++	scif_set_rtrg(port, 1);
++	if (r > 0)
++		setup_timer(&sci->rx_fifo_timer, rx_fifo_timer_fn,
++			    (unsigned long)sci);
++	return count;
++}
++
++static DEVICE_ATTR(rx_fifo_timeout, 0644, rx_fifo_timeout_show, rx_fifo_timeout_store);
++
++
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
+ static void sci_dma_tx_complete(void *arg)
+ {
+@@ -2886,6 +2946,15 @@ static int sci_remove(struct platform_device *dev)
+ 
+ 	sci_cleanup_single(port);
+ 
++	if (port->port.fifosize > 1) {
++		sysfs_remove_file(&dev->dev.kobj,
++				  &dev_attr_rx_fifo_trigger.attr);
++	}
++	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB) {
++		sysfs_remove_file(&dev->dev.kobj,
++				  &dev_attr_rx_fifo_timeout.attr);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -3051,6 +3120,24 @@ static int sci_probe(struct platform_device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (sp->port.fifosize > 1) {
++		ret = sysfs_create_file(&dev->dev.kobj,
++				&dev_attr_rx_fifo_trigger.attr);
++		if (ret)
++			return ret;
++	}
++	if (sp->port.type == PORT_SCIFA || sp->port.type ==  PORT_SCIFB) {
++		ret = sysfs_create_file(&dev->dev.kobj,
++				&dev_attr_rx_fifo_timeout.attr);
++		if (ret) {
++			if (sp->port.fifosize > 1) {
++				sysfs_remove_file(&dev->dev.kobj,
++					&dev_attr_rx_fifo_trigger.attr);
++			}
++			return ret;
++		}
++	}
++
+ #ifdef CONFIG_SH_STANDARD_BIOS
+ 	sh_bios_gdb_detach();
+ #endif
+-- 
+2.7.4
