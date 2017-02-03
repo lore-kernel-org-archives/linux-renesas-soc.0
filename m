@@ -1,143 +1,59 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] v4l: vsp1: Move vsp1_video_setup_pipeline()
-Date: Tue, 14 Feb 2017 02:27:02 +0200
-Message-ID: <1924310.HjluRV82qB@avalon>
-In-Reply-To: <703b4aa60797b9ce28ed26a0d8b2583a62a181f4.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com> <703b4aa60797b9ce28ed26a0d8b2583a62a181f4.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35755 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752200AbdBCKi0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 3 Feb 2017 05:38:26 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        gregkh@linuxfoundation.org
+Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
+        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v4 0/4] Renesas *SCIF* RX FIFO support
+Date: Fri,  3 Feb 2017 11:38:16 +0100
+Message-Id: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi!
 
-Thank you for the patch.
+This series implements support for using RX FIFO thresholds higher than one
+in PIO mode on SCIF, HSCIF, SCIFA and SCIFB serial ports.
 
-On Friday 06 Jan 2017 12:15:29 Kieran Bingham wrote:
-> Move the static vsp1_video_setup_pipeline() function in preparation for
-> the callee updates so that the vsp1_video_pipeline_run() call can
-> configure pipelines following suspend resume actions.
-> 
-> This commit is just a code move for clarity performing no functional
-> change.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+This revision is the remainder of the series rebased to apply cleanly to
+tty-testing, with some minor style adjustments as suggested by Sergei.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CU
+Uli
 
-> ---
->  drivers/media/platform/vsp1/vsp1_video.c | 82 ++++++++++++-------------
->  1 file changed, 41 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
-> b/drivers/media/platform/vsp1/vsp1_video.c index f7dc249eb398..938ecc2766ed
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
-> @@ -355,6 +355,47 @@ static void vsp1_video_frame_end(struct vsp1_pipeline
-> *pipe, pipe->buffers_ready |= 1 << video->pipe_index;
->  }
-> 
-> +static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
-> +{
-> +	struct vsp1_entity *entity;
-> +
-> +	/* Determine this pipelines sizes for image partitioning support. */
-> +	vsp1_video_pipeline_setup_partitions(pipe);
-> +
-> +	/* Prepare the display list. */
-> +	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-> +	if (!pipe->dl)
-> +		return -ENOMEM;
-> +
-> +	if (pipe->uds) {
-> +		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
-> +
-> +		/* If a BRU is present in the pipeline before the UDS, the 
-alpha
-> +		 * component doesn't need to be scaled as the BRU output alpha
-> +		 * value is fixed to 255. Otherwise we need to scale the alpha
-> +		 * component only when available at the input RPF.
-> +		 */
-> +		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
-> +			uds->scale_alpha = false;
-> +		} else {
-> +			struct vsp1_rwpf *rpf =
-> +				to_rwpf(&pipe->uds_input->subdev);
-> +
-> +			uds->scale_alpha = rpf->fmtinfo->alpha;
-> +		}
-> +	}
-> +
-> +	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-> +		vsp1_entity_route_setup(entity, pipe->dl);
-> +
-> +		if (entity->ops->configure)
-> +			entity->ops->configure(entity, pipe, pipe->dl,
-> +					       VSP1_ENTITY_PARAMS_INIT);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
->  					      struct vsp1_dl_list *dl)
->  {
-> @@ -752,47 +793,6 @@ static void vsp1_video_buffer_queue(struct vb2_buffer
-> *vb) spin_unlock_irqrestore(&pipe->irqlock, flags);
->  }
-> 
-> -static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
-> -{
-> -	struct vsp1_entity *entity;
-> -
-> -	/* Determine this pipelines sizes for image partitioning support. */
-> -	vsp1_video_pipeline_setup_partitions(pipe);
-> -
-> -	/* Prepare the display list. */
-> -	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-> -	if (!pipe->dl)
-> -		return -ENOMEM;
-> -
-> -	if (pipe->uds) {
-> -		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
-> -
-> -		/* If a BRU is present in the pipeline before the UDS, the 
-alpha
-> -		 * component doesn't need to be scaled as the BRU output alpha
-> -		 * value is fixed to 255. Otherwise we need to scale the alpha
-> -		 * component only when available at the input RPF.
-> -		 */
-> -		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
-> -			uds->scale_alpha = false;
-> -		} else {
-> -			struct vsp1_rwpf *rpf =
-> -				to_rwpf(&pipe->uds_input->subdev);
-> -
-> -			uds->scale_alpha = rpf->fmtinfo->alpha;
-> -		}
-> -	}
-> -
-> -	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-> -		vsp1_entity_route_setup(entity, pipe->dl);
-> -
-> -		if (entity->ops->configure)
-> -			entity->ops->configure(entity, pipe, pipe->dl,
-> -					       VSP1_ENTITY_PARAMS_INIT);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int
-> count) {
->  	struct vsp1_video *video = vb2_get_drv_priv(vq);
+
+Changes since v3:
+- rebased onto tty-testing
+- fixed a few style issues
+
+Changes since v2:
+- rebase
+- add missing changelog entry
+
+Changes since v1:
+- clarify HS trigger register enum
+- simplify DR bit handling
+- if() cascade -> switch()
+- disable RX trigger for SH77xx-style ports
+- clean up on failure to create sysfs attribute
+- r8a7796 DT: add control pins, rtscts flag
+
+
+Ulrich Hecht (4):
+  serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
+  serial: sh-sci: SCIFA/B RX FIFO software timeout
+  serial: sh-sci: make RX FIFO parameters tunable via sysfs
+  arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
+
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  14 ++
+ drivers/tty/serial/sh-sci.c                        | 213 +++++++++++++++++----
+ 2 files changed, 195 insertions(+), 32 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
