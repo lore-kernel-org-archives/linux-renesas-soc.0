@@ -1,53 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34842 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbdBJN7E (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:40153 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751901AbdBFMK2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 08:59:04 -0500
+        Mon, 6 Feb 2017 07:10:28 -0500
+Date: Mon, 6 Feb 2017 13:10:52 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>, iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] iommu/ipmmu-vmsa: Restrict IOMMU Domain Geometry to
+ 32-bit address space
+Message-ID: <20170206121052.GA25981@8bytes.org>
+References: <1485861427-23487-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <312867f0-f6dd-3c92-df09-fae72ea7405b@cogentembedded.com>
-References: <1485282073-16662-1-git-send-email-horms+renesas@verge.net.au> <312867f0-f6dd-3c92-df09-fae72ea7405b@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Feb 2017 14:52:50 +0100
-Message-ID: <CAMuHMdVzN_6tfjD1eYBLzrpynupo6C2hnLv6mm5UzcdSNzWtyQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC v3 net] ravb: unmap descriptors when freeing rings
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1485861427-23487-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 5:18 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 01/24/2017 09:21 PM, Simon Horman wrote:
->
->> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->>
->> "swiotlb buffer is full" errors occur after repeated initialisation of a
->> device - f.e. suspend/resume or ip link set up/down. This is because
->> memory
->> mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
->> is not released.  Resolve this problem by unmapping descriptors when
->> freeing rings.
->
->
->    Could you look into the sh_eth driver which seems to have the same issue?
+On Tue, Jan 31, 2017 at 12:17:07PM +0100, Geert Uytterhoeven wrote:
+> Currently, the IPMMU/VMSA driver supports 32-bit I/O Virtual Addresses
+> only, and thus sets io_pgtable_cfg.ias = 32.  However, it doesn't force
+> a 32-bit IOVA space through the IOMMU Domain Geometry.
+> 
+> Hence if a device (e.g. SYS-DMAC) rightfully configures a 40-bit DMA
+> mask, it will still be handed out a 40-bit IOVA, outside the 32-bit IOVA
+> space, leading to out-of-bounds accesses of the PGD when mapping the
+> IOVA.
+> 
+> Force a 32-bit IOMMU Domain Geometry to fix this.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-Indeed, after a few suspend/resume cycles on r8a7791/koelsch:
-
-WARNING: CPU: 1 PID: 1699 at lib/dma-debug.c:517 add_dma_entry+0xfc/0x148
-DMA-API: exceeded 7 overlapping mappings of cacheline 0x0000000001a827e3
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Applied, thanks.
