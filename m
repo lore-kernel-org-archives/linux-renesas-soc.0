@@ -1,47 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61971 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752155AbdBFONO (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35114 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751002AbdBFIux (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Feb 2017 09:13:14 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-CC: Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mon, 6 Feb 2017 03:50:53 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170202212000.10768-1-chris.brandt@renesas.com>
+References: <20170202212000.10768-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Feb 2017 09:50:51 +0100
+Message-ID: <CAMuHMdU6kJDxGtjUT1S2JkQTLvzrgtF3mkqa5Xo08oF6d3tUbw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: r7s72100: Enable L2 cache
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] ARM: shmobile: r7s72100: Enable L2 cache
-Date: Mon, 6 Feb 2017 14:13:09 +0000
-Message-ID: <SG2PR06MB1165ABE474EDB227522FCF148A400@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170202212000.10768-1-chris.brandt@renesas.com>
- <20170206082525.GB13441@verge.net.au>
-In-Reply-To: <20170206082525.GB13441@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Hi Chris,
 
-On Monday, February 06, 2017, Simon Horman wrote:
-> is it possible to apply the .dtsi and .c portions of this change
-> separately and still get sane behaviour at each step?
->=20
-> If so I would like to request that this patch be split into two patches,
-> one for .c and one for .dtsi. This will allow me to apply the patches to
-> separate branches which will in turn make it easier for me to get the
-> change accepted.
+CC linux-arm-kernel
 
-OK, no problem.
+On Thu, Feb 2, 2017 at 10:20 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> This enables the 128KB L2 cache in the RZ/A1 (R7S72100).
+>
+> The 'Write full line of zeros mode' of this Cortex-A9 cannot be used
+> because the sideband signals between the CA9 and PL310 are not connected.
+> Since there is no option to disable this feature in the cache-l2x0 driver,
+> our only option is to specify a secure write function which will then cause
+> the cache-l2x0 driver to not enable this feature.
 
-I tried thinking about which way you guys would want it...I had a 50/50
-shot...I picked the wrong one ;)
+What about adding a DT property (e.g. "arm,pl310-broken-sideband", cfr.
+"arm,pl330-broken-no-flushp"), and handling this in arch/arm/mm/cache-l2x0.c
+instead?
 
+> If you do not override a l2c_write_sec function which causes the line of
+> zeros mode to be enabled, then the system will crash pretty quickly after
+> the L2C is enabled.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Chris
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi         |  9 +++++++++
+>  arch/arm/mach-shmobile/setup-r7s72100.c | 21 +++++++++++++++++++++
+>  2 files changed, 30 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index 74e684f..08aaaff 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -177,6 +177,7 @@
+>                         compatible = "arm,cortex-a9";
+>                         reg = <0>;
+>                         clock-frequency = <400000000>;
+> +                       next-level-cache = <&L2>;
+>                 };
+>         };
+>
+> @@ -368,6 +369,14 @@
+>                         <0xe8202000 0x1000>;
+>         };
+>
+> +       L2: cache-controller@3ffff000 {
+> +               compatible = "arm,pl310-cache";
+> +               reg = <0x3ffff000 0x1000>;
+> +               interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> +               cache-unified;
+> +               cache-level = <2>;
+> +       };
+> +
+>         i2c0: i2c@fcfee000 {
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+> diff --git a/arch/arm/mach-shmobile/setup-r7s72100.c b/arch/arm/mach-shmobile/setup-r7s72100.c
+> index d46639f..655deba 100644
+> --- a/arch/arm/mach-shmobile/setup-r7s72100.c
+> +++ b/arch/arm/mach-shmobile/setup-r7s72100.c
+> @@ -15,6 +15,7 @@
+>   */
+>
+>  #include <linux/kernel.h>
+> +#include <linux/io.h>
+>
+>  #include <asm/mach/arch.h>
+>
+> @@ -25,7 +26,27 @@ static const char *const r7s72100_boards_compat_dt[] __initconst = {
+>         NULL,
+>  };
+>
+> +/*
+> + * The 'Write full line of zeros mode' of this Cortex-A9 cannot be used because
+> + * the sideband signals between the CA9 and PL310 are not connected. Since there
+> + * is no option to disable this feature in the cache-l2x0 driver, our only
+> + * option is to specify a secure write function which will then cause the
+> + * cache-l2x0 driver to not enable this feature.
+> + */
+> +static void r7s72100_l2c_write_sec(unsigned long val, unsigned int reg)
+> +{
+> +       static void __iomem *base;
+> +
+> +       if (!base)
+> +               base = ioremap_nocache(0x3ffff000, SZ_4K);
+
+FWIW, plain ioremap() is fine.
+
+> +
+> +       writel_relaxed(val, base + reg);
+> +}
+> +
+>  DT_MACHINE_START(R7S72100_DT, "Generic R7S72100 (Flattened Device Tree)")
+> +       .l2c_aux_val    = 0,
+> +       .l2c_aux_mask   = ~0,
+> +       .l2c_write_sec  = r7s72100_l2c_write_sec,
+>         .init_early     = shmobile_init_delay,
+>         .init_late      = shmobile_init_late,
+>         .dt_compat      = r7s72100_boards_compat_dt,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
