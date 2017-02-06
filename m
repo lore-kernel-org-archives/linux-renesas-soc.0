@@ -1,19 +1,7 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36740 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbdBFPak (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Feb 2017 10:30:40 -0500
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11657125A12CC1BDE6AD17748A400@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170202212000.10768-1-chris.brandt@renesas.com>
- <CAMuHMdU6kJDxGtjUT1S2JkQTLvzrgtF3mkqa5Xo08oF6d3tUbw@mail.gmail.com> <SG2PR06MB11657125A12CC1BDE6AD17748A400@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 6 Feb 2017 16:30:38 +0100
-Message-ID: <CAMuHMdW0-KPEKS5wFRK7aRKwvvUcjQDa7Rmo0cDDwnfGAAmJ5w@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: r7s72100: Enable L2 cache
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -22,76 +10,55 @@ Cc: Simon Horman <horms+renesas@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: RE: [PATCH] ARM: shmobile: r7s72100: Enable L2 cache
+Date: Mon, 6 Feb 2017 14:58:59 +0000
+Message-ID: <SG2PR06MB11657125A12CC1BDE6AD17748A400@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170202212000.10768-1-chris.brandt@renesas.com>
+ <CAMuHMdU6kJDxGtjUT1S2JkQTLvzrgtF3mkqa5Xo08oF6d3tUbw@mail.gmail.com>
+In-Reply-To: <CAMuHMdU6kJDxGtjUT1S2JkQTLvzrgtF3mkqa5Xo08oF6d3tUbw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Mon, Feb 6, 2017 at 3:58 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Monday, February 06, 2017, Geert Uytterhoeven wrote:
->> CC linux-arm-kernel
->>
->> On Thu, Feb 2, 2017 at 10:20 PM, Chris Brandt <chris.brandt@renesas.com>
->> wrote:
->> > This enables the 128KB L2 cache in the RZ/A1 (R7S72100).
->> >
->> > The 'Write full line of zeros mode' of this Cortex-A9 cannot be used
->> > because the sideband signals between the CA9 and PL310 are not connected.
->> > Since there is no option to disable this feature in the cache-l2x0
->> > driver, our only option is to specify a secure write function which
->> > will then cause the cache-l2x0 driver to not enable this feature.
->>
->> What about adding a DT property (e.g. "arm,pl310-broken-sideband", cfr.
->> "arm,pl330-broken-no-flushp"), and handling this in arch/arm/mm/cache-
->> l2x0.c instead?
->
-> Well, first I have to say that 'broken-sideband' is not actually "accurate"
-> in this case.
->
-> From the RZ/A1H Hardware Manual:
->
-> 4.  Secondary Cache
-> 4.1 Features
->
->   * Sideband signal from CA9: No
-
-OK.
-
-> So the chip designers knew the sideband signals were not connected.
-> If you have a look at the next chapter "5. LSI Internal Bus", you'll notice
-> that the CA9 is on the North bus (fig 5.2) but the PL310 is on the south
-> bus (fig 5.3) in between the AXI and the SDRAM/QSPI controller. So in this
-> in SoC, maybe the PL310 looks more like a L3 than an L2 cache???
-
-No, according to Figures 5.1 and 5.3, the CA9 is connected to both the
-North and South main buses.
-
-> So, I would say "arm,pl310-no-sideband" is a better name.
-
-OK.
-
-> I agree that faking out a secure write function just so the fill-zeros
-> sideband feature is not enabled is a bit of a hack, but I'm not sure if
-> modifying the cache-l2x0.c was an option.
-
-Given I've added "arm,shared-override" in the past, I'd say yes ;-)
-
-> If you think so, I can try the "arm,pl310-no-sideband" path first,
-> and if that doesn't get in I can fall back to what I'm doing now.
->
-> Thoughts???
-
-According to the "CoreLink Level 2 Cache Controller L2C-310" TRM,
-"no sideband signals" is even the default configuration?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgRmVicnVhcnkgMDYsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
+ZXZlbiB3cm90ZToNCj4gQ0MgbGludXgtYXJtLWtlcm5lbA0KPiANCj4gT24gVGh1LCBGZWIgMiwg
+MjAxNyBhdCAxMDoyMCBQTSwgQ2hyaXMgQnJhbmR0IDxjaHJpcy5icmFuZHRAcmVuZXNhcy5jb20+
+DQo+IHdyb3RlOg0KPiA+IFRoaXMgZW5hYmxlcyB0aGUgMTI4S0IgTDIgY2FjaGUgaW4gdGhlIFJa
+L0ExIChSN1M3MjEwMCkuDQo+ID4NCj4gPiBUaGUgJ1dyaXRlIGZ1bGwgbGluZSBvZiB6ZXJvcyBt
+b2RlJyBvZiB0aGlzIENvcnRleC1BOSBjYW5ub3QgYmUgdXNlZA0KPiA+IGJlY2F1c2UgdGhlIHNp
+ZGViYW5kIHNpZ25hbHMgYmV0d2VlbiB0aGUgQ0E5IGFuZCBQTDMxMCBhcmUgbm90IGNvbm5lY3Rl
+ZC4NCj4gPiBTaW5jZSB0aGVyZSBpcyBubyBvcHRpb24gdG8gZGlzYWJsZSB0aGlzIGZlYXR1cmUg
+aW4gdGhlIGNhY2hlLWwyeDANCj4gPiBkcml2ZXIsIG91ciBvbmx5IG9wdGlvbiBpcyB0byBzcGVj
+aWZ5IGEgc2VjdXJlIHdyaXRlIGZ1bmN0aW9uIHdoaWNoDQo+ID4gd2lsbCB0aGVuIGNhdXNlIHRo
+ZSBjYWNoZS1sMngwIGRyaXZlciB0byBub3QgZW5hYmxlIHRoaXMgZmVhdHVyZS4NCj4gDQo+IFdo
+YXQgYWJvdXQgYWRkaW5nIGEgRFQgcHJvcGVydHkgKGUuZy4gImFybSxwbDMxMC1icm9rZW4tc2lk
+ZWJhbmQiLCBjZnIuDQo+ICJhcm0scGwzMzAtYnJva2VuLW5vLWZsdXNocCIpLCBhbmQgaGFuZGxp
+bmcgdGhpcyBpbiBhcmNoL2FybS9tbS9jYWNoZS0NCj4gbDJ4MC5jIGluc3RlYWQ/DQoNCldlbGws
+IGZpcnN0IEkgaGF2ZSB0byBzYXkgdGhhdCAnYnJva2VuLXNpZGViYW5kJyBpcyBub3QgYWN0dWFs
+bHkgImFjY3VyYXRlIg0KaW4gdGhpcyBjYXNlLg0KDQpGcm9tIHRoZSBSWi9BMUggSGFyZHdhcmUg
+TWFudWFsOg0KDQo0LiAgU2Vjb25kYXJ5IENhY2hlDQo0LjEgRmVhdHVyZXMNCg0KICAqIFNpZGVi
+YW5kIHNpZ25hbCBmcm9tIENBOTogTm8NCg0KDQpTbyB0aGUgY2hpcCBkZXNpZ25lcnMga25ldyB0
+aGUgc2lkZWJhbmQgc2lnbmFscyB3ZXJlIG5vdCBjb25uZWN0ZWQuDQpJZiB5b3UgaGF2ZSBhIGxv
+b2sgYXQgdGhlIG5leHQgY2hhcHRlciAiNS4gTFNJIEludGVybmFsIEJ1cyIsIHlvdSdsbCBub3Rp
+Y2UNCnRoYXQgdGhlIENBOSBpcyBvbiB0aGUgTm9ydGggYnVzIChmaWcgNS4yKSBidXQgdGhlIFBM
+MzEwIGlzIG9uIHRoZSBzb3V0aA0KYnVzIChmaWcgNS4zKSBpbiBiZXR3ZWVuIHRoZSBBWEkgYW5k
+IHRoZSBTRFJBTS9RU1BJIGNvbnRyb2xsZXIuIFNvIGluIHRoaXMNCmluIFNvQywgbWF5YmUgdGhl
+IFBMMzEwIGxvb2tzIG1vcmUgbGlrZSBhIEwzIHRoYW4gYW4gTDIgY2FjaGU/Pz8NCg0KU28sIEkg
+d291bGQgc2F5ICJhcm0scGwzMTAtbm8tc2lkZWJhbmQiIGlzIGEgYmV0dGVyIG5hbWUuDQoNCg0K
+SSBhZ3JlZSB0aGF0IGZha2luZyBvdXQgYSBzZWN1cmUgd3JpdGUgZnVuY3Rpb24ganVzdCBzbyB0
+aGUgZmlsbC16ZXJvcw0Kc2lkZWJhbmQgZmVhdHVyZSBpcyBub3QgZW5hYmxlZCBpcyBhIGJpdCBv
+ZiBhIGhhY2ssIGJ1dCBJJ20gbm90IHN1cmUgaWYNCm1vZGlmeWluZyB0aGUgY2FjaGUtbDJ4MC5j
+IHdhcyBhbiBvcHRpb24uDQoNCg0KSWYgeW91IHRoaW5rIHNvLCBJIGNhbiB0cnkgdGhlICJhcm0s
+cGwzMTAtbm8tc2lkZWJhbmQiIHBhdGggZmlyc3QsDQphbmQgaWYgdGhhdCBkb2Vzbid0IGdldCBp
+biBJIGNhbiBmYWxsIGJhY2sgdG8gd2hhdCBJJ20gZG9pbmcgbm93Lg0KDQpUaG91Z2h0cz8/Pw0K
+DQoNCg0KPiA+ICtzdGF0aWMgdm9pZCByN3M3MjEwMF9sMmNfd3JpdGVfc2VjKHVuc2lnbmVkIGxv
+bmcgdmFsLCB1bnNpZ25lZCBpbnQNCj4gPiArcmVnKSB7DQo+ID4gKyAgICAgICBzdGF0aWMgdm9p
+ZCBfX2lvbWVtICpiYXNlOw0KPiA+ICsNCj4gPiArICAgICAgIGlmICghYmFzZSkNCj4gPiArICAg
+ICAgICAgICAgICAgYmFzZSA9IGlvcmVtYXBfbm9jYWNoZSgweDNmZmZmMDAwLCBTWl80Syk7DQo+
+IA0KPiBGV0lXLCBwbGFpbiBpb3JlbWFwKCkgaXMgZmluZS4NCg0KT2YgY291cnNlIHRoZXkgYm90
+aCBnbyB0byB0aGUgc2FtZSB0aGluZyBmb3IgQVJNLCBidXQgSSB0aG91Z2h0IHRoZSAiX25vY2Fj
+aGUiDQp2ZXJzaW9uIHNob3VsZCBiZSB1c2VkIGZvciBzYW5pdHkgcHVycG9zZXMgKGFzIGllLCAi
+eWVzLCBJIGtub3cgd2hhdCBJJ20NCmRvaW5nIikuDQoNCg0KVGhhbmtzLA0KQ2hyaXMNCg0K
