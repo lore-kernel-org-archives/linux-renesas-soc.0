@@ -1,64 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:61971 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752155AbdBFONO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 6 Feb 2017 09:13:14 -0500
 From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+To: Simon Horman <horms@verge.net.au>
+CC: Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
 Subject: RE: [PATCH] ARM: shmobile: r7s72100: Enable L2 cache
-Date: Mon, 6 Feb 2017 14:58:59 +0000
-Message-ID: <SG2PR06MB11657125A12CC1BDE6AD17748A400@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Date: Mon, 6 Feb 2017 14:13:09 +0000
+Message-ID: <SG2PR06MB1165ABE474EDB227522FCF148A400@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170202212000.10768-1-chris.brandt@renesas.com>
- <CAMuHMdU6kJDxGtjUT1S2JkQTLvzrgtF3mkqa5Xo08oF6d3tUbw@mail.gmail.com>
-In-Reply-To: <CAMuHMdU6kJDxGtjUT1S2JkQTLvzrgtF3mkqa5Xo08oF6d3tUbw@mail.gmail.com>
+ <20170206082525.GB13441@verge.net.au>
+In-Reply-To: <20170206082525.GB13441@verge.net.au>
 Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgRmVicnVhcnkgMDYsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiB3cm90ZToNCj4gQ0MgbGludXgtYXJtLWtlcm5lbA0KPiANCj4gT24gVGh1LCBGZWIgMiwg
-MjAxNyBhdCAxMDoyMCBQTSwgQ2hyaXMgQnJhbmR0IDxjaHJpcy5icmFuZHRAcmVuZXNhcy5jb20+
-DQo+IHdyb3RlOg0KPiA+IFRoaXMgZW5hYmxlcyB0aGUgMTI4S0IgTDIgY2FjaGUgaW4gdGhlIFJa
-L0ExIChSN1M3MjEwMCkuDQo+ID4NCj4gPiBUaGUgJ1dyaXRlIGZ1bGwgbGluZSBvZiB6ZXJvcyBt
-b2RlJyBvZiB0aGlzIENvcnRleC1BOSBjYW5ub3QgYmUgdXNlZA0KPiA+IGJlY2F1c2UgdGhlIHNp
-ZGViYW5kIHNpZ25hbHMgYmV0d2VlbiB0aGUgQ0E5IGFuZCBQTDMxMCBhcmUgbm90IGNvbm5lY3Rl
-ZC4NCj4gPiBTaW5jZSB0aGVyZSBpcyBubyBvcHRpb24gdG8gZGlzYWJsZSB0aGlzIGZlYXR1cmUg
-aW4gdGhlIGNhY2hlLWwyeDANCj4gPiBkcml2ZXIsIG91ciBvbmx5IG9wdGlvbiBpcyB0byBzcGVj
-aWZ5IGEgc2VjdXJlIHdyaXRlIGZ1bmN0aW9uIHdoaWNoDQo+ID4gd2lsbCB0aGVuIGNhdXNlIHRo
-ZSBjYWNoZS1sMngwIGRyaXZlciB0byBub3QgZW5hYmxlIHRoaXMgZmVhdHVyZS4NCj4gDQo+IFdo
-YXQgYWJvdXQgYWRkaW5nIGEgRFQgcHJvcGVydHkgKGUuZy4gImFybSxwbDMxMC1icm9rZW4tc2lk
-ZWJhbmQiLCBjZnIuDQo+ICJhcm0scGwzMzAtYnJva2VuLW5vLWZsdXNocCIpLCBhbmQgaGFuZGxp
-bmcgdGhpcyBpbiBhcmNoL2FybS9tbS9jYWNoZS0NCj4gbDJ4MC5jIGluc3RlYWQ/DQoNCldlbGws
-IGZpcnN0IEkgaGF2ZSB0byBzYXkgdGhhdCAnYnJva2VuLXNpZGViYW5kJyBpcyBub3QgYWN0dWFs
-bHkgImFjY3VyYXRlIg0KaW4gdGhpcyBjYXNlLg0KDQpGcm9tIHRoZSBSWi9BMUggSGFyZHdhcmUg
-TWFudWFsOg0KDQo0LiAgU2Vjb25kYXJ5IENhY2hlDQo0LjEgRmVhdHVyZXMNCg0KICAqIFNpZGVi
-YW5kIHNpZ25hbCBmcm9tIENBOTogTm8NCg0KDQpTbyB0aGUgY2hpcCBkZXNpZ25lcnMga25ldyB0
-aGUgc2lkZWJhbmQgc2lnbmFscyB3ZXJlIG5vdCBjb25uZWN0ZWQuDQpJZiB5b3UgaGF2ZSBhIGxv
-b2sgYXQgdGhlIG5leHQgY2hhcHRlciAiNS4gTFNJIEludGVybmFsIEJ1cyIsIHlvdSdsbCBub3Rp
-Y2UNCnRoYXQgdGhlIENBOSBpcyBvbiB0aGUgTm9ydGggYnVzIChmaWcgNS4yKSBidXQgdGhlIFBM
-MzEwIGlzIG9uIHRoZSBzb3V0aA0KYnVzIChmaWcgNS4zKSBpbiBiZXR3ZWVuIHRoZSBBWEkgYW5k
-IHRoZSBTRFJBTS9RU1BJIGNvbnRyb2xsZXIuIFNvIGluIHRoaXMNCmluIFNvQywgbWF5YmUgdGhl
-IFBMMzEwIGxvb2tzIG1vcmUgbGlrZSBhIEwzIHRoYW4gYW4gTDIgY2FjaGU/Pz8NCg0KU28sIEkg
-d291bGQgc2F5ICJhcm0scGwzMTAtbm8tc2lkZWJhbmQiIGlzIGEgYmV0dGVyIG5hbWUuDQoNCg0K
-SSBhZ3JlZSB0aGF0IGZha2luZyBvdXQgYSBzZWN1cmUgd3JpdGUgZnVuY3Rpb24ganVzdCBzbyB0
-aGUgZmlsbC16ZXJvcw0Kc2lkZWJhbmQgZmVhdHVyZSBpcyBub3QgZW5hYmxlZCBpcyBhIGJpdCBv
-ZiBhIGhhY2ssIGJ1dCBJJ20gbm90IHN1cmUgaWYNCm1vZGlmeWluZyB0aGUgY2FjaGUtbDJ4MC5j
-IHdhcyBhbiBvcHRpb24uDQoNCg0KSWYgeW91IHRoaW5rIHNvLCBJIGNhbiB0cnkgdGhlICJhcm0s
-cGwzMTAtbm8tc2lkZWJhbmQiIHBhdGggZmlyc3QsDQphbmQgaWYgdGhhdCBkb2Vzbid0IGdldCBp
-biBJIGNhbiBmYWxsIGJhY2sgdG8gd2hhdCBJJ20gZG9pbmcgbm93Lg0KDQpUaG91Z2h0cz8/Pw0K
-DQoNCg0KPiA+ICtzdGF0aWMgdm9pZCByN3M3MjEwMF9sMmNfd3JpdGVfc2VjKHVuc2lnbmVkIGxv
-bmcgdmFsLCB1bnNpZ25lZCBpbnQNCj4gPiArcmVnKSB7DQo+ID4gKyAgICAgICBzdGF0aWMgdm9p
-ZCBfX2lvbWVtICpiYXNlOw0KPiA+ICsNCj4gPiArICAgICAgIGlmICghYmFzZSkNCj4gPiArICAg
-ICAgICAgICAgICAgYmFzZSA9IGlvcmVtYXBfbm9jYWNoZSgweDNmZmZmMDAwLCBTWl80Syk7DQo+
-IA0KPiBGV0lXLCBwbGFpbiBpb3JlbWFwKCkgaXMgZmluZS4NCg0KT2YgY291cnNlIHRoZXkgYm90
-aCBnbyB0byB0aGUgc2FtZSB0aGluZyBmb3IgQVJNLCBidXQgSSB0aG91Z2h0IHRoZSAiX25vY2Fj
-aGUiDQp2ZXJzaW9uIHNob3VsZCBiZSB1c2VkIGZvciBzYW5pdHkgcHVycG9zZXMgKGFzIGllLCAi
-eWVzLCBJIGtub3cgd2hhdCBJJ20NCmRvaW5nIikuDQoNCg0KVGhhbmtzLA0KQ2hyaXMNCg0K
+Hi Simon,
+
+On Monday, February 06, 2017, Simon Horman wrote:
+> is it possible to apply the .dtsi and .c portions of this change
+> separately and still get sane behaviour at each step?
+>=20
+> If so I would like to request that this patch be split into two patches,
+> one for .c and one for .dtsi. This will allow me to apply the patches to
+> separate branches which will in turn make it easier for me to get the
+> change accepted.
+
+OK, no problem.
+
+I tried thinking about which way you guys would want it...I had a 50/50
+shot...I picked the wrong one ;)
+
+
+Chris
