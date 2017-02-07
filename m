@@ -1,53 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10751 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751703AbdBMSob (ORCPT
+Received: from sauhun.de ([89.238.76.85]:40377 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753821AbdBGLGk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:44:31 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] clk: renesas: mstp: ensure register writes complete
-Date: Mon, 13 Feb 2017 13:44:05 -0500
-Message-Id: <20170213184405.5657-1-chris.brandt@renesas.com>
+        Tue, 7 Feb 2017 06:06:40 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC 2/4] mmc: host: tmio: fix minor typos in a comment
+Date: Tue,  7 Feb 2017 12:06:27 +0100
+Message-Id: <20170207110629.2441-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
+References: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When there is no status bit, it is possible for the clock enable/disable
-operation to have not completed by the time the driver code resumes
-execution. This is due to the fact that write operations are sometimes
-queued and delayed internally. Doing a read ensures the write operations
-has completed.
+Making sure we match the actual register name.
 
-Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v2:
-* add Fixes because technically this is a bug fix
----
- drivers/clk/renesas/clk-mstp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mmc/host/tmio_mmc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 3ce819c..69cfdb9 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -91,6 +91,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		value |= bitmask;
- 	cpg_mstp_write(group, value, group->smstpcr);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index b20b451ad90daa..8a4e99ffe64eb1 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -54,7 +54,7 @@
+ #define TMIO_STOP_STP		BIT(0)
+ #define TMIO_STOP_SEC		BIT(8)
  
-+	if (!group->mstpsr) {
-+		/* dummy read to ensure write has completed */
-+		clk_readl(group->smstpcr);
-+		barrier_data(group->smstpcr);
-+	}
-+
- 	spin_unlock_irqrestore(&group->lock, flags);
- 
- 	if (!enable || !group->mstpsr)
+-/* Definitions for values the CTRL_STATUS register can take. */
++/* Definitions for values the CTL_STATUS register can take */
+ #define TMIO_STAT_CMDRESPEND    BIT(0)
+ #define TMIO_STAT_DATAEND       BIT(2)
+ #define TMIO_STAT_CARD_REMOVE   BIT(3)
 -- 
-2.10.1
+2.11.0
