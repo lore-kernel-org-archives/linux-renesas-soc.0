@@ -1,45 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33352 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbdBANFn (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:19049 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751743AbdBGRJ5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 08:05:43 -0500
-MIME-Version: 1.0
-In-Reply-To: <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1485443640-22651-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Feb 2017 14:05:41 +0100
-Message-ID: <CAMuHMdXPoGEjz2Z88u7iGT1sBJXZVW4TxwyZrfYyCfgnia1Ddw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: h3ulcb: enable HS200 for eMMC
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 7 Feb 2017 12:09:57 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Russell King <linux@armlinux.org.uk>,
+        Brad Mouring <brad.mouring@ni.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Cochran <rcochran@linutronix.de>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 0/3] ARM: l2c: add l2c support for RZ/A1
+Date: Tue,  7 Feb 2017 12:09:26 -0500
+Message-Id: <20170207170929.29525-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 4:14 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
->
-> This supports HS200 mode for eMMC on H3ULCB board
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+The PL310 in the Renesas RZ/A1 SoC (R7S72100) does not have the sideband
+signals connected between the CPU and L2C. According the PL310 TRM,
+sideband signals are optional.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+If a PL310 is added to a system, but the sideband signals are not
+connected, some Cortex A9 optimizations cannot be used. In particular,
+enabling Full Line Zeros in the CA9 without sidebands connected will
+crash the system since the CA9 will expect the L2C to perform operations,
+yet the L2C never gets the commands.
 
-Gr{oetje,eeting}s,
+This series adds the option to not enable anything in the PL310 that
+uses sidebands, and then adds L2C support to the RZ/A1 DT.
 
-                        Geert
+v2:
+* Added "arm,pl310-no-sideband" to cache-l2x0.c instead of hacking in a
+  dummy l2c_write_sec function to keep FLZ from being enabled.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Chris Brandt (3):
+  ARM: l2c: add pl310-no-sideband option
+  ARM: shmobile: r7s72100: Enable L2 cache
+  ARM: dts: r7s72100: add l2 cache
+
+ Documentation/devicetree/bindings/arm/l2c2x0.txt |  2 ++
+ arch/arm/boot/dts/r7s72100.dtsi                  | 10 ++++++++++
+ arch/arm/mach-shmobile/setup-r7s72100.c          |  2 ++
+ arch/arm/mm/cache-l2x0.c                         |  9 +++++++--
+ 4 files changed, 21 insertions(+), 2 deletions(-)
+
+-- 
+2.10.1
