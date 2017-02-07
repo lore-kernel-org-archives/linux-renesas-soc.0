@@ -1,59 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] arm64: dts: r8a7795: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-Date: Fri, 24 Feb 2017 14:49:13 +0100
-Message-Id: <1487944154-31435-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487944154-31435-1-git-send-email-geert+renesas@glider.be>
-References: <1487944154-31435-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:19049 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751743AbdBGRJ6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Feb 2017 12:09:58 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Brad Mouring <brad.mouring@ni.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Cochran <rcochran@linutronix.de>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 2/3] ARM: shmobile: r7s72100: Enable L2 cache
+Date: Tue,  7 Feb 2017 12:09:28 -0500
+Message-Id: <20170207170929.29525-3-chris.brandt@renesas.com>
+In-Reply-To: <20170207170929.29525-1-chris.brandt@renesas.com>
+References: <20170207170929.29525-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Even though L2C is specified in the DT, you still need to add the aux
+settings in the machine_desc.
 
->From PSCI v1.0, Suspend-to-RAM is supported via SYSTEM_SUSPEND PSCI
-function call. Hence, upgrade PSCI version for R-Car H3 to support
-Suspend-to-RAM.
-
-The Suspend-to-RAM is highly dependent on ARM Trusted Firwmare support
-since necessary callback functions will be registered after a query
-to ARM Trusted Firmware about SYSTEM_SUSPEND support.
-
-Since PSCI v1.0 is backward compatible with PSCI v0.2, CPU Hotplug and
-CPUIdle should be able to work normally with this change.
-
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Keep "arm,psci-0.2"]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Khiem: I've updated your email address.
-
 v2:
-  - Keep "arm,psci-0.2".
+* removed dummy l2c_write_sec function
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-shmobile/setup-r7s72100.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index dd2888f0b523f76c..8c43e9d7a6d2f799 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -29,7 +29,7 @@
- 	};
+diff --git a/arch/arm/mach-shmobile/setup-r7s72100.c b/arch/arm/mach-shmobile/setup-r7s72100.c
+index d46639f..319ca95 100644
+--- a/arch/arm/mach-shmobile/setup-r7s72100.c
++++ b/arch/arm/mach-shmobile/setup-r7s72100.c
+@@ -26,6 +26,8 @@ static const char *const r7s72100_boards_compat_dt[] __initconst = {
+ };
  
- 	psci {
--		compatible = "arm,psci-0.2";
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
- 	};
- 
+ DT_MACHINE_START(R7S72100_DT, "Generic R7S72100 (Flattened Device Tree)")
++	.l2c_aux_val    = 0,
++	.l2c_aux_mask   = ~0,
+ 	.init_early	= shmobile_init_delay,
+ 	.init_late	= shmobile_init_late,
+ 	.dt_compat	= r7s72100_boards_compat_dt,
 -- 
-2.7.4
-
+2.10.1
