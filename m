@@ -1,63 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33136 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754665AbdBHRbx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42674 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753893AbdBGLVt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Feb 2017 12:31:53 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org
-Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
-        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH] serial: sh-sci: fix hardware RX trigger level setting
-Date: Wed,  8 Feb 2017 18:31:14 +0100
-Message-Id: <1486575074-20130-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 7 Feb 2017 06:21:49 -0500
+Date: Tue, 7 Feb 2017 12:21:43 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 0/5] arm64: dts: r8a779[56]: EtherAVB Gigabit timing
+ enhancements
+Message-ID: <20170207112143.GA28188@verge.net.au>
+References: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-1. Do not set the RX trigger level for software timeout devices on reset;
-there is no timeout by default, and data will rot.
-2. Do set the RX trigger level for hardware timeout devices when set
-via sysfs attribute.
+On Wed, Feb 01, 2017 at 09:41:59AM +0100, Simon Horman wrote:
+> Hi,
+> 
+> this series tweaks PHY settings to address communications failures reported
+> for 1Gbit communication using EtherAVB. Gigabit is supported for R-Car H3
+> ES1.1+ and M3-W as of commit 0e98f9d5f0b4 ("ravb: Support 1Gbps on R-Car H3
+> ES1.1+ and R-Car M3-W") which is present in net-next and should be included
+> in v4.11.
+> 
+> This series is based on renesas-devel-20170130-v4.10-rc6
 
-Fixes SCIFA-type serial consoles.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index f95a56c..9a47cc4 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1076,8 +1076,11 @@ static ssize_t rx_trigger_store(struct device *dev,
- 
- 	if (kstrtol(buf, 0, &r) == -EINVAL)
- 		return -EINVAL;
-+
- 	sci->rx_trigger = scif_set_rtrg(port, r);
--	scif_set_rtrg(port, 1);
-+	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
-+		scif_set_rtrg(port, 1);
-+
- 	return count;
- }
- 
-@@ -2179,7 +2182,11 @@ static void sci_reset(struct uart_port *port)
- 			setup_timer(&s->rx_fifo_timer, rx_fifo_timer_fn,
- 				    (unsigned long)s);
- 		} else {
--			scif_set_rtrg(port, s->rx_trigger);
-+			if (port->type == PORT_SCIFA ||
-+			    port->type == PORT_SCIFB)
-+				scif_set_rtrg(port, 1);
-+			else
-+				scif_set_rtrg(port, s->rx_trigger);
- 		}
- 	}
- }
--- 
-2.7.4
+I have queued up this series for v4.12.
