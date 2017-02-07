@@ -1,63 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40439 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751526AbdBGLUn (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:59423 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751414AbdBGEWJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 06:20:43 -0500
-Date: Tue, 7 Feb 2017 12:20:40 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com
-Subject: Re: [PATCH 00/11] media: rcar-vin: fix OPS and format/pad index
- issues
-Message-ID: <20170207112040.iicu2whtmkjmld7e@ninjato>
-References: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 6 Feb 2017 23:22:09 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        "vinod.koul@intel.com" <vinod.koul@intel.com>
+CC: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        HIROYUKI YOKOYAMA <hiroyuki.yokoyama.vx@renesas.com>
+Subject: RE: [PATCH] dmaengine: rcar: Fix release resources after interrupt
+ process
+Date: Tue, 7 Feb 2017 04:21:59 +0000
+Message-ID: <HK2PR06MB054848A53B951196E76FD0C5D8430@HK2PR06MB0548.apcprd06.prod.outlook.com>
+References: <1486384214-23580-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <761b3333-732d-9b5f-feb3-89768ac1c74c@metafoo.de>
+In-Reply-To: <761b3333-732d-9b5f-feb3-89768ac1c74c@metafoo.de>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="c2zyb4sq36mzkzdt"
-Content-Disposition: inline
-In-Reply-To: <20170131154016.15526-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Lars,
 
---c2zyb4sq36mzkzdt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> -----Original Message-----
+> From: Lars-Peter Clausen [mailto:lars@metafoo.de]
+> Sent: Monday, February 06, 2017 9:40 PM
+>=20
+> On 02/06/2017 01:30 PM, Yoshihiro Shimoda wrote:
+> > From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> >
+> > This patch fixes the problem that occasionally released resources
+> > before the end of interrupt processing.
+> >
+> > [   58.156412] Unable to handle kernel NULL pointer dereference at virt=
+ual
+> >  address 00000000
+> > [   58.166155] pgd =3D ffff8006f78b0000
+> > [   58.169822] [00000000] *pgd=3D000000073773b003 , *pud=3D0000000737c7=
+0003 ,
+> >  *pmd=3D0000000000000000
+> > [   58.179738]
+> > [   58.181548] Internal error: Oops: 96000046 [#1] PREEMPT SMP
+> > [   58.187484] Modules linked in:
+> > [   58.190919] CPU: 0 PID: 2898 Comm: dma_ioctl Not tainted 4.9.0-00002=
+-g501
+> > 07f2-dirty #147
+> > [   58.199438] Hardware name: Renesas Salvator-X board based on r8a7795=
+ (DT)
+> > [   58.206680] task: ffff8006f77b1900 task.stack: ffff8006f7bd4000
+> > [   58.213090] PC is at rcar_dmac_chan_prep_sg+0xa4/0x3f0
+> > [   58.218725] LR is at rcar_dmac_chan_prep_sg+0x6c/0x3f0
+> >
+> > Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>=20
+> How about implementing the synchronize() callback. This will fix not only
+> this race condition, but also others that can result from the same issue.
+> E.g. the completion callback still running after terminate() has complete=
+d.
 
+Thank you for the suggestion!
+I will investigate how to implement device_snchronize() in this driver.
 
-> Patch 10-11 fix a OPS when unbinding/binding the video source subdevice.
-
-I can happily confirm that this series finally makes the I2C demuxer
-work on the I2C bus with the HDMI clients because rebinding works now!
-Note that I didn't test inputting any actual video but only the
-rebinding capabilites. But since rebinding was a major motivation for
-this series to be factored out of a bigger one:
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---c2zyb4sq36mzkzdt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAliZrYQACgkQFA3kzBSg
-KbZr5w/+KuhuY/nyCK3i9t5kgpFMHp2RHjM8iBeGePvecR7SevRUmuEY8CN8+sa2
-RxNCfJaYrtPAEeU6/ywV4GcqQODzDjsFNVKokED5J6LM2QAd/VNSLl9/TkxQOuVx
-E8KlLGXRRgjKgZwuHdZVnwzBLMFlZd7h+UfLXmvl4yOVcKCRHwks7cDDYmDsILKl
-bWt6FZhMyA27PAF1xyxbhzp4OauaOt/fV1KA1nWNq1lKKNXeWnfx/FJYJM7Yamvb
-Ahxf2JdNbnyHSOU03pug0dVpPwQOsMi5d/qcqVQuTCmsORXR3pdx/cDpu9x7EqLQ
-2khEQkrymwwK+WVJgfOvB3NwXdiC5ziu+wBcoosDW060IH38X8RvzrKZX+BHKbhz
-mT0dtqozKBa7avfDk68TuhH33sUjnCC9R3g46Q65TH7GeUdFwe6o+4hv7UDjprhS
-sx0EE9P+eciTEAl8W/g/sGvUYZnv+bkDZivm1YniTBQ2sgYOXv1Xt1YwvFXi3LXx
-uekMzVk2iBdm44dUK21F2C44wbsXMDy25MAaXketLkn9gqHJH48PFy0Ui6TrYYot
-Pgq/WG0EujyqYY/2psX95rtAylHiMszHTOknuTYeIEowvuUtKmldlSeHMxym2gWt
-828o6iujNXFUiQP4ucQTP+ULC2xi24bBoV2FLJr/gXSk5PJyeAk=
-=orWe
------END PGP SIGNATURE-----
-
---c2zyb4sq36mzkzdt--
+Best regards,
+Yoshihiro Shimoda
