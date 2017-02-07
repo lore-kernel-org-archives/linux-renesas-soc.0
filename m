@@ -1,75 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39352 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751203AbdBLNMr (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37634 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751189AbdBGK1X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Feb 2017 08:12:47 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] R-Car DU fences support
-Date: Sun, 12 Feb 2017 15:13:10 +0200
-Message-ID: <2544319.rV1JboMAgI@avalon>
+        Tue, 7 Feb 2017 05:27:23 -0500
+Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
+To: Tony Lindgren <tony@atomide.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+ <2041391.79UjQ7DgUt@avalon> <83c749f8-4eee-96e7-9c91-8a350d2a7498@jmondi.org>
+ <20170206182813.GI3897@atomide.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linus.walleij@linaro.org, geert+renesas@glider.be,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+From: jacopo mondi <jacopo@jmondi.org>
+Message-ID: <064eba3d-40a3-5def-0947-7c57c11517d8@jmondi.org>
+Date: Tue, 7 Feb 2017 11:27:17 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170206182813.GI3897@atomide.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Tony,
 
-The following changes since commit 5685cab84a6dc376a8d0e4534ae4b973546158b4:
+On 06/02/2017 19:28, Tony Lindgren wrote:
+> * jacopo mondi <jacopo@jmondi.org> [170206 10:16]:
+>> Currently there is no generic pinctrl and pinmux function to retrieve a
+>> group or function by name, but only by their id (selector).
+>> It would take 10minutes to add them, but I wonder if that's desirable or
+>> there are other ways to do so I haven't found out yet.
+>>
+>> Linus, Tony and gpio people: do you have opinions on this? I can add those
+>> functions to core/pinmux in my next patch series if I get your ack here.
+>
+> I would just get rid of the names and allow optionally configuring them
+> from the consumer. Just like we do for interrupts and GPIOs.
+>
 
-  Merge remote-tracking branch 'drm-misc/drm-misc-next' into drm/next/base 
-(2017-02-12 13:18:50 +0200)
+Mostly, I wonder why so far nobody had to remove function and groups and 
+release their associated data when deleting a map. It makes me think 
+this is not required or I didn't fully get dt_free_map() purpose :/
+Or, put it in another way, I see lot of code releasing memory associated 
+with PIN_MAP_TYPE_CONFIGS_GROUP map types (as map.data.configs.configs 
+it's easy accessible), but none releasing data associated to 
+PIN_MAP_TYPE_MUX_GROUP map types...
 
-are available in the git repository at:
+Thanks
+    j
 
-  git://linuxtv.org/pinchartl/media.git drm/next/du
 
-for you to fetch changes up to a194138cd82dff52d4c39895fd89dc6f26eafc97:
-
-  drm: rcar-du: Use DRM core's atomic commit helper (2017-02-12 14:15:36 
-+0200)
-
-Please note that the branch is based on a merge of Dave's DRM master and the 
-drm-misc master. Assuming that the 7 patches by Maarten get merged early 
-enough in Dave's tree, I plan to submit a pull request for the rcar-du patches 
-for v4.12.
-
-----------------------------------------------------------------
-Laurent Pinchart (4):
-      drm: rcar-du: Switch to encoder .atomic_mode_set() helper function
-      drm: rcar-du: Handle event when disabling CRTCs
-      drm: rcar-du: Clear handled event pointer in CRTC state
-      drm: rcar-du: Use DRM core's atomic commit helper
-
-Maarten Lankhorst (7):
-      drm/atomic: Add new iterators over all state, v3.
-      drm/atomic: Make add_affected_connectors look at crtc_state.
-      drm/atomic: Use new atomic iterator macros.
-      drm/atomic: Fix atomic helpers to use the new iterator macros.
-      drm/atomic: Add macros to access existing old/new state
-      drm/atomic: Convert get_existing_state callers to get_old/new_state, v2.
-      drm/blend: Use new atomic iterator macros.
-
-Wolfram Sang (1):
-      drm: rcar-du: Don't open code of_device_get_match_data()
-
- drivers/gpu/drm/drm_atomic.c              |  39 ++--
- drivers/gpu/drm/drm_atomic_helper.c       | 377 +++++++++++++++++------------
- drivers/gpu/drm/drm_blend.c               |  23 ++-
- drivers/gpu/drm/i915/intel_display.c      |  13 +-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    |  13 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c     |   2 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |   8 +-
- drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c |   8 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     |  99 +---------
- include/drm/drm_atomic.h                  | 180 +++++++++++++++++-
- include/drm/drm_atomic_helper.h           |   2 +
- 11 files changed, 466 insertions(+), 298 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+> Regards,
+>
+> Tony
+>
