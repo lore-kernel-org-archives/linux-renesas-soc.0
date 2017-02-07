@@ -1,53 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:23048 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752343AbdBMS0I (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:57764 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754738AbdBGPNb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:26:08 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/3] dt-bindings: power: reset: add document for renesas-reset driver
-Date: Mon, 13 Feb 2017 13:25:31 -0500
-Message-Id: <20170213182532.4042-3-chris.brandt@renesas.com>
-In-Reply-To: <20170213182532.4042-1-chris.brandt@renesas.com>
-References: <20170213182532.4042-1-chris.brandt@renesas.com>
+        Tue, 7 Feb 2017 10:13:31 -0500
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v3 1/7] media: v4l2-ctrls: Reserve controls for MAX217X
+Date: Tue,  7 Feb 2017 15:02:31 +0000
+Message-Id: <1486479757-32128-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1486479757-32128-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1486479757-32128-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings document for renesas-reset driver.
-This driver uses the WDT hardware to issue an immediate reset.
+Reserve controls for MAX217X RF to Bits tuner family. These hybrid
+radio receiver chips are highly programmable and hence reserving 32
+controls.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- .../devicetree/bindings/power/reset/renesas-reset.txt     | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/reset/renesas-reset.txt
+ include/uapi/linux/v4l2-controls.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/reset/renesas-reset.txt b/Documentation/devicetree/bindings/power/reset/renesas-reset.txt
-new file mode 100644
-index 0000000..241722d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/reset/renesas-reset.txt
-@@ -0,0 +1,15 @@
-+Device-Tree bindings for Renesas WDT reset functionality
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 0d2e1e0..83b28b4 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -180,6 +180,11 @@ enum v4l2_colorfx {
+  * We reserve 16 controls for this driver. */
+ #define V4L2_CID_USER_TC358743_BASE		(V4L2_CID_USER_BASE + 0x1080)
+ 
++/* The base for the max217x driver controls.
++ * We reserve 32 controls for this driver
++ */
++#define V4L2_CID_USER_MAX217X_BASE		(V4L2_CID_USER_BASE + 0x1090)
 +
-+Required properties:
-+  - compatible: must be one or more of the following:
-+    - "renesas,r7s72100-reset" for the r7s72100 SoC
-+    - "renesas,wdt-reset"
-+                This is a fallback for the above renesas,*-reset entries
-+
-+  - reg: base address and length of the WDT register block
-+
-+Example node:
-+	wdt: timer@fcfe0000 {
-+		compatible = "renesas,r7s72100-reset", "renesas,wdt-reset";
-+		reg = <0xfcfe0000 0x6>;
-+	};
+ /* MPEG-class control IDs */
+ /* The MPEG controls are applicable to all codec controls
+  * and the 'MPEG' part of the define is historical */
 -- 
-2.10.1
+1.9.1
