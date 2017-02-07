@@ -1,43 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:60083 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754265AbdBGOZ1 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:40818 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753893AbdBGODe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 09:25:27 -0500
-Subject: Re: [PATCH v2] watchdog: softdog: make pretimeout support a compile
- option
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-watchdog@vger.kernel.org>
-References: <20170207140329.31459-1-wsa+renesas@sang-engineering.com>
-CC: <linux-renesas-soc@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <586b7403-6b2f-4a62-7d7d-3a7277119508@mentor.com>
-Date: Tue, 7 Feb 2017 16:25:20 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170207140329.31459-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+        Tue, 7 Feb 2017 09:03:34 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2] watchdog: softdog: make pretimeout support a compile option
+Date: Tue,  7 Feb 2017 15:03:29 +0100
+Message-Id: <20170207140329.31459-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+It occurred to me that the panic pretimeout governor will stall the
+softdog, because it is purely software which simply breaks when the
+kernel panics. Testing governors with the softdog on the other hand is
+really useful, so make this feature a compile time option which nees to
+be enabled explicitly. This also removes the overhead if pretimeout
+support is not used because it will now be compiled away (saving ~10% on
+ARM32).
 
-On 02/07/2017 04:03 PM, Wolfram Sang wrote:
-> It occurred to me that the panic pretimeout governor will stall the
-> softdog, because it is purely software which simply breaks when the
-> kernel panics. Testing governors with the softdog on the other hand is
-> really useful, so make this feature a compile time option which nees to
-> be enabled explicitly. This also removes the overhead if pretimeout
-> support is not used because it will now be compiled away (saving ~10% on
-> ARM32).
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-the changes looks perfect,
+Change since V1:
 
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+* use IS_DEFINED as if-conditions, removing the need for #ifdef
 
---
-With best wishes,
-Vladimir
+I have to admit that this result is better readable and what the compiler
+compiles away is sufficient.
+
+ drivers/watchdog/Kconfig   |  8 ++++++++
+ drivers/watchdog/softdog.c | 21 +++++++++++++--------
+ 2 files changed, 21 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index acb00b53a5207b..70726ce3d166e8 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -71,6 +71,14 @@ config SOFT_WATCHDOG
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called softdog.
+ 
++config SOFT_WATCHDOG_PRETIMEOUT
++	bool "Software watchdog pretimeout governor support"
++	depends on SOFT_WATCHDOG && WATCHDOG_PRETIMEOUT_GOV
++	help
++	  Enable this if you want to use pretimeout governors with the software
++	  watchdog. Be aware that governors might affect the watchdog because it
++	  is purely software, e.g. the panic governor will stall it!
++
+ config DA9052_WATCHDOG
+ 	tristate "Dialog DA9052 Watchdog"
+ 	depends on PMIC_DA9052
+diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
+index c7bdc986dca1c2..7983029852ab0d 100644
+--- a/drivers/watchdog/softdog.c
++++ b/drivers/watchdog/softdog.c
+@@ -87,11 +87,13 @@ static int softdog_ping(struct watchdog_device *w)
+ 	if (!mod_timer(&softdog_ticktock, jiffies + (w->timeout * HZ)))
+ 		__module_get(THIS_MODULE);
+ 
+-	if (w->pretimeout)
+-		mod_timer(&softdog_preticktock, jiffies +
+-			  (w->timeout - w->pretimeout) * HZ);
+-	else
+-		del_timer(&softdog_preticktock);
++	if (IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT)) {
++		if (w->pretimeout)
++			mod_timer(&softdog_preticktock, jiffies +
++				  (w->timeout - w->pretimeout) * HZ);
++		else
++			del_timer(&softdog_preticktock);
++	}
+ 
+ 	return 0;
+ }
+@@ -101,15 +103,15 @@ static int softdog_stop(struct watchdog_device *w)
+ 	if (del_timer(&softdog_ticktock))
+ 		module_put(THIS_MODULE);
+ 
+-	del_timer(&softdog_preticktock);
++	if (IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT))
++		del_timer(&softdog_preticktock);
+ 
+ 	return 0;
+ }
+ 
+ static struct watchdog_info softdog_info = {
+ 	.identity = "Software Watchdog",
+-	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE |
+-		   WDIOF_PRETIMEOUT,
++	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+ };
+ 
+ static const struct watchdog_ops softdog_ops = {
+@@ -134,6 +136,9 @@ static int __init softdog_init(void)
+ 	watchdog_set_nowayout(&softdog_dev, nowayout);
+ 	watchdog_stop_on_reboot(&softdog_dev);
+ 
++	if (IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT))
++		softdog_info.options |= WDIOF_PRETIMEOUT;
++
+ 	ret = watchdog_register_device(&softdog_dev);
+ 	if (ret)
+ 		return ret;
+-- 
+2.11.0
