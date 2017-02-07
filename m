@@ -1,46 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f196.google.com ([209.85.210.196]:34771 "EHLO
-        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752180AbdBBRKo (ORCPT
+Received: from sauhun.de ([89.238.76.85]:40366 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753829AbdBGLGk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 12:10:44 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3 2/7] serial: sh-sci: consider DR (data ready) bit adequately
-Date: Thu,  2 Feb 2017 18:10:15 +0100
-Message-Id: <1486055420-31595-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 7 Feb 2017 06:06:40 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC 0/4] mmc: host: tmio: properly report status from autocmd12
+Date: Tue,  7 Feb 2017 12:06:25 +0100
+Message-Id: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To allow operation with a higher RX FIFO interrupt threshold in PIO
-mode, it is necessary to consider the DR bit ("FIFO not full, but no
-data received for 1.5 frames") as an indicator that data can be read.
-Otherwise the driver will let data rot in the FIFO until the threshold
-is reached.
+SDHI automatically sends CMD12 when the desired amount of data was transferred
+after multi block commands. However, the response from that CMD12 was never
+reported back to the mmc core, so that errors like ECC might go unnoticed. This
+series aims to fix that and clean up minor issues on the way when dealing with
+the autocmd12 feature. It is marked as RFC because, so far, I could only test
+that the success case was reported back to the MMC core. An error case (like
+ECC) could not be created yet. But people inside Renesas will try some SD
+tester soon, and I also will keep writing GB to an 64MB cards until wear level
+problems kick in (though, I have to admit, I am trying this for days now and my
+trust in lifetimes of SD cards has significantly increased since). I wanted to
+present the patches early in case other parties are interested in testing, too.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/sh-sci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patches are based on mmc-next. A branch can be found here:
 
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 30b6d67..971b2ab 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -151,7 +151,7 @@ enum {
- #define SCCKS_XIN	BIT(14)	/* SC_CLK uses bus clock (1) or SCIF_CLK (0) */
- 
- #define SCxSR_TEND(port)	(((port)->type == PORT_SCI) ? SCI_TEND   : SCIF_TEND)
--#define SCxSR_RDxF(port)	(((port)->type == PORT_SCI) ? SCI_RDRF   : SCIF_RDF)
-+#define SCxSR_RDxF(port)	(((port)->type == PORT_SCI) ? SCI_RDRF   : SCIF_DR | SCIF_RDF)
- #define SCxSR_TDxE(port)	(((port)->type == PORT_SCI) ? SCI_TDRE   : SCIF_TDFE)
- #define SCxSR_FER(port)		(((port)->type == PORT_SCI) ? SCI_FER    : SCIF_FER)
- #define SCxSR_PER(port)		(((port)->type == PORT_SCI) ? SCI_PER    : SCIF_PER)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp
+
+Thanks and all the best,
+
+   Wolfram
+
+
+Wolfram Sang (4):
+  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+  mmc: host: tmio: fix minor typos in a comment
+  mmc: host: tmio: don't BUG on unsupported stop commands
+  mmc: host: tmio: fill in response from auto cmd12
+
+ drivers/mmc/host/tmio_mmc.h     |  6 +++++-
+ drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
 -- 
-2.7.4
+2.11.0
