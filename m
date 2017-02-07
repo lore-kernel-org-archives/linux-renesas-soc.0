@@ -1,55 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:19049 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751743AbdBGRJ6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 12:09:58 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Brad Mouring <brad.mouring@ni.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <rcochran@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/3] ARM: shmobile: r7s72100: Enable L2 cache
-Date: Tue,  7 Feb 2017 12:09:28 -0500
-Message-Id: <20170207170929.29525-3-chris.brandt@renesas.com>
-In-Reply-To: <20170207170929.29525-1-chris.brandt@renesas.com>
-References: <20170207170929.29525-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20160606035810.31763.53611.sendpatchset@little-apple>
+References: <20160606035723.31763.66500.sendpatchset@little-apple> <20160606035810.31763.53611.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Feb 2017 13:59:11 +0100
+Message-ID: <CAMuHMdWSDrcbrh5+hQ4SqwOxobG0b1zpRN0+Gpgopi+kzLOLQg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/11] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Even though L2C is specified in the DT, you still need to add the aux
-settings in the machine_desc.
+Hi Magnus,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* removed dummy l2c_write_sec function
----
- arch/arm/mach-shmobile/setup-r7s72100.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Jun 6, 2016 at 5:58 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Hook up IOMMU_OF_DECLARE() support in case CONFIG_IOMMU_DMA
+> is enabled. The only current supported case for 32-bit ARM
+> is disabled, however for 64-bit ARM this is required.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+>
+>  Changes since V1:
+>  - Reworked slightly to fit updated patch order and
+>    [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
+>
+>  drivers/iommu/ipmmu-vmsa.c |   26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>
+> --- 0015/drivers/iommu/ipmmu-vmsa.c
+> +++ work/drivers/iommu/ipmmu-vmsa.c     2016-06-06 10:57:26.790607110 +0900
 
-diff --git a/arch/arm/mach-shmobile/setup-r7s72100.c b/arch/arm/mach-shmobile/setup-r7s72100.c
-index d46639f..319ca95 100644
---- a/arch/arm/mach-shmobile/setup-r7s72100.c
-+++ b/arch/arm/mach-shmobile/setup-r7s72100.c
-@@ -26,6 +26,8 @@ static const char *const r7s72100_boards_compat_dt[] __initconst = {
- };
- 
- DT_MACHINE_START(R7S72100_DT, "Generic R7S72100 (Flattened Device Tree)")
-+	.l2c_aux_val    = 0,
-+	.l2c_aux_mask   = ~0,
- 	.init_early	= shmobile_init_delay,
- 	.init_late	= shmobile_init_late,
- 	.dt_compat	= r7s72100_boards_compat_dt,
--- 
-2.10.1
+> +#ifdef CONFIG_IOMMU_DMA
+> +static int __init ipmmu_vmsa_iommu_of_setup(struct device_node *np)
+> +{
+> +       static const struct iommu_ops *ops = &ipmmu_ops;
+> +
+> +       ipmmu_init();
+> +
+> +       of_iommu_set_ops(np, (struct iommu_ops *)ops);
+
+As of commit 65e251a4634c5644 ("iommu: Drop the of_iommu_{set/get}_ops()
+interface"), this should become:
+
+        iommu_register_instance(&np->fwnode, (struct iommu_ops *)ops);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
