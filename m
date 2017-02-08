@@ -1,27 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44876 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751731AbdBIKxo (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:44558 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752021AbdBHSBY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Feb 2017 05:53:44 -0500
-Date: Thu, 9 Feb 2017 11:53:38 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: dts: r8a7743: Fix SCIFB0 dmas indentation
-Message-ID: <20170209105337.GH16056@verge.net.au>
-References: <1486576844-25121-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1486576844-25121-1-git-send-email-geert+renesas@glider.be>
+        Wed, 8 Feb 2017 13:01:24 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: dts: r8a7743: Fix SCIFB0 dmas indentation
+Date: Wed,  8 Feb 2017 19:00:43 +0100
+Message-Id: <1486576844-25121-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 08, 2017 at 07:00:43PM +0100, Geert Uytterhoeven wrote:
-> Fixes: 809c013426914694 ("ARM: dts: r8a7743: add [H]SCIF{A|B} support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 809c013426914694 ("ARM: dts: r8a7743: add [H]SCIF{A|B} support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, applied. Likewise for patch 2/2.
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 5f2287ea00922ee0..bc350dcc1be67afd 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -288,7 +288,7 @@
+ 			clocks = <&cpg CPG_MOD 206>;
+ 			clock-names = "fck";
+ 			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
+-		       <&dmac1 0x3d>, <&dmac1 0x3e>;
++			       <&dmac1 0x3d>, <&dmac1 0x3e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+ 			status = "disabled";
+-- 
+1.9.1
