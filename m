@@ -1,77 +1,118 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:45489 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753029AbdBIQpA (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:64630 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751189AbdBHCmh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Feb 2017 11:45:00 -0500
-Date: Thu, 9 Feb 2017 17:44:26 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <chris.brandt@renesas.com>
+        Tue, 7 Feb 2017 21:42:37 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] i2c: riic: correctly finish transfers
-Message-ID: <20170209164426.zlwhbcdv3te52ihm@ninjato>
-References: <20170208024122.13116-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4pv3lj7f7oxj2pa2"
-Content-Disposition: inline
-In-Reply-To: <20170208024122.13116-1-chris.brandt@renesas.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] i2c: riic: correctly finish transfers
+Date: Tue,  7 Feb 2017 21:41:22 -0500
+Message-Id: <20170208024122.13116-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This fixes the condition where the controller has not fully completed its
+final transfer and leaves the bus and controller in a undesirable state.
 
---4pv3lj7f7oxj2pa2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+At the end of the last transmitted byte, the existing driver would just
+signal for a STOP condition to be transmitted then immediately signal
+completion. However, the full STOP procedure might not have fully taken
+place by the time the runtime PM shuts off the peripheral clock, leaving
+the bus in a suspended state.
 
-On Tue, Feb 07, 2017 at 09:41:22PM -0500, Chris Brandt wrote:
-> This fixes the condition where the controller has not fully completed its
-> final transfer and leaves the bus and controller in a undesirable state.
->=20
-> At the end of the last transmitted byte, the existing driver would just
-> signal for a STOP condition to be transmitted then immediately signal
-> completion. However, the full STOP procedure might not have fully taken
-> place by the time the runtime PM shuts off the peripheral clock, leaving
-> the bus in a suspended state.
->=20
-> Alternatively, the STOP condition on the bus may have completed, but when
-> the next transaction is requested by the upper layer, not all the
-> necessary register cleanup was finished from the last transfer which made
-> the driver return BUS BUSY when it really wasn't.
->=20
-> This patch now makes all transmit and receive transactions wait for the
-> STOP condition to fully complete before signaling a completed transaction.
-> With this new method, runtime PM no longer seems to be an issue.
->=20
-> Fixes: 310c18a41450 ("i2c: riic: add driver")
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Alternatively, the STOP condition on the bus may have completed, but when
+the next transaction is requested by the upper layer, not all the
+necessary register cleanup was finished from the last transfer which made
+the driver return BUS BUSY when it really wasn't.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch now makes all transmit and receive transactions wait for the
+STOP condition to fully complete before signaling a completed transaction.
+With this new method, runtime PM no longer seems to be an issue.
 
-Applied to for-next, thanks!
+Fixes: 310c18a41450 ("i2c: riic: add driver")
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/i2c/busses/i2c-riic.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-
---4pv3lj7f7oxj2pa2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlicnGoACgkQFA3kzBSg
-KbZkZQ/9H4hiWOCR7f/RyFJ34nOiM6wkIa5JCUsgYlFOwaBtMHply/WW+rpz5ywA
-0X1K6wOvXkukiVrtomqAkfqpcSKd3uSGzx6DYI9Y2fzv8vZQe9J9EC9xIvClyPiR
-iOLBBGP+h6P8Tcbj7PBYSvxhpTY6OXOIFD4qcfbrChCkzyGxzXkkN6oi0RJzz0hx
-jUyWhK/psn7EEQwieubyYhpcd5fpyXK9xAldNtvnZDOQOKzKpBIiG16Sz/7MAVgV
-PH3iqU3EVMKyd+8V3XAtR3S7jrsyYJ1HEvulT7yk2V7ZwFZ+LC7P+VBf83PHOHg/
-r8QgtrT6zcZQrYv285fnLKkqI9Q8Z27PihK99eeLqVRqJxt7SkuEOl28T1XoF+GI
-B7PLGzvu4D6m6sKy1Q7+gpfz7jJAL3tIilJY/JDURREzOgpYcwyPehMTPzb1oc3D
-pZZFMjns82aPdeJQi0uvd1o8EFOwNp5J8SF/2LzlMWhGNGO/mrnORCrnt+R6Ux1/
-H/j3NEXjkMYIr7pQykG2WuWzgtlgL6dYk+iaIwaIMNWru5liNnST56apJF0RPeUG
-qxUqywysxCyuiEnZPLMDJfll5polqVpTSFpbIU1voCOXKKL5qNyaI5gJVbsHTaUK
-khJr1laY02W4P9b7IvKc8jl2WONc6ask77p2/xQEmx8vwiSePdg=
-=x0CI
------END PGP SIGNATURE-----
-
---4pv3lj7f7oxj2pa2--
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index 6263ea8..8f11d34 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -80,6 +80,7 @@
+ #define ICIER_TEIE	0x40
+ #define ICIER_RIE	0x20
+ #define ICIER_NAKIE	0x10
++#define ICIER_SPIE	0x08
+ 
+ #define ICSR2_NACKF	0x10
+ 
+@@ -216,11 +217,10 @@ static irqreturn_t riic_tend_isr(int irq, void *data)
+ 		return IRQ_NONE;
+ 	}
+ 
+-	if (riic->is_last || riic->err)
++	if (riic->is_last || riic->err) {
++		riic_clear_set_bit(riic, 0, ICIER_SPIE, RIIC_ICIER);
+ 		writeb(ICCR2_SP, riic->base + RIIC_ICCR2);
+-
+-	writeb(0, riic->base + RIIC_ICIER);
+-	complete(&riic->msg_done);
++	}
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -240,13 +240,13 @@ static irqreturn_t riic_rdrf_isr(int irq, void *data)
+ 
+ 	if (riic->bytes_left == 1) {
+ 		/* STOP must come before we set ACKBT! */
+-		if (riic->is_last)
++		if (riic->is_last) {
++			riic_clear_set_bit(riic, 0, ICIER_SPIE, RIIC_ICIER);
+ 			writeb(ICCR2_SP, riic->base + RIIC_ICCR2);
++		}
+ 
+ 		riic_clear_set_bit(riic, 0, ICMR3_ACKBT, RIIC_ICMR3);
+ 
+-		writeb(0, riic->base + RIIC_ICIER);
+-		complete(&riic->msg_done);
+ 	} else {
+ 		riic_clear_set_bit(riic, ICMR3_ACKBT, 0, RIIC_ICMR3);
+ 	}
+@@ -259,6 +259,21 @@ static irqreturn_t riic_rdrf_isr(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t riic_stop_isr(int irq, void *data)
++{
++	struct riic_dev *riic = data;
++
++	/* read back registers to confirm writes have fully propagated */
++	writeb(0, riic->base + RIIC_ICSR2);
++	readb(riic->base + RIIC_ICSR2);
++	writeb(0, riic->base + RIIC_ICIER);
++	readb(riic->base + RIIC_ICIER);
++
++	complete(&riic->msg_done);
++
++	return IRQ_HANDLED;
++}
++
+ static u32 riic_func(struct i2c_adapter *adap)
+ {
+ 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+@@ -326,6 +341,7 @@ static struct riic_irq_desc riic_irqs[] = {
+ 	{ .res_num = 0, .isr = riic_tend_isr, .name = "riic-tend" },
+ 	{ .res_num = 1, .isr = riic_rdrf_isr, .name = "riic-rdrf" },
+ 	{ .res_num = 2, .isr = riic_tdre_isr, .name = "riic-tdre" },
++	{ .res_num = 3, .isr = riic_stop_isr, .name = "riic-stop" },
+ 	{ .res_num = 5, .isr = riic_tend_isr, .name = "riic-nack" },
+ };
+ 
+-- 
+2.10.1
