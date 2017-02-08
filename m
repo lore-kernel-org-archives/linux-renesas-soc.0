@@ -1,54 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:53110 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752211AbdBHSrQ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:33668 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751809AbdBHSBY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Feb 2017 13:47:16 -0500
-Date: Wed, 8 Feb 2017 18:39:37 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-        "linux-arm-kernel@lists.infradead.org"
+        Wed, 8 Feb 2017 13:01:24 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+CC: "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] ARM: xip: disable PATCH_PHYS_VIRT for ARCH_MULTIPLATFORM
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: xip: disable PATCH_PHYS_VIRT for ARCH_MULTIPLATFORM
  when XIP
-Message-ID: <20170208183937.GX27312@n2100.armlinux.org.uk>
+Date: Wed, 8 Feb 2017 18:00:26 +0000
+Message-ID: <SG2PR06MB116573368B09D2E36C5C70F98A420@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170208172209.31673-1-chris.brandt@renesas.com>
  <20170208174437.GW27312@n2100.armlinux.org.uk>
- <CAMuHMdVWT4KNqWNbTa1YBAt83+XOtn0qRFMAui8FDnHz-iYj0g@mail.gmail.com>
+In-Reply-To: <20170208174437.GW27312@n2100.armlinux.org.uk>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVWT4KNqWNbTa1YBAt83+XOtn0qRFMAui8FDnHz-iYj0g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 08, 2017 at 06:53:14PM +0100, Geert Uytterhoeven wrote:
-> The problem is that "multiplatform" may mean one of two things:
->   1. Build a single kernel that can run on multiple platforms.
->      This is tricky when enabling XIP and/or NOMMU, as the physical parameters
->      must be compatible with all platforms. But building a kernel with the
->      right parameters is the responsibility of the user.
->      I.e. don't shoot yourself in the foot.
->   2. Your platform uses the arch/arm multiplatform framework.
-> 
-> As everything is being migrated to 2, not allowing XIP and/or NOMMU on
-> "multiplatform" is IMHO an insane limitation.
+On Wednesday, February 08, 2017, Russell King wrote:
+> On Wed, Feb 08, 2017 at 12:22:09PM -0500, Chris Brandt wrote:
+> > Since ARCH_MULTIPLATFORM explicitly selects ARM_PATCH_PHYS_VIRT, even
+> > though ARCH_MULTIPLATFORM has 'depends on !XIP_KERNEL',
+> > ARM_PATCH_PHYS_VIRT is still forcibly selected. The result is that
+> > PHYS_OFFSET depends on !ARM_PATCH_PHYS_VIRT. This means you cannot
+> > enter a physical RAM address for an XIP kernel and you cannot build.
+> >
+> > Given that it is already clear in the Kconfig that ARM_PATCH_PHYS_VIRT
+> > and XIP_KERNEL do not go well together (read the help for
+> > ARM_PATCH_PHYS_VIRT), adding this condition to ARCH_MULTIPLATFORM is
+> > logical and will fix this build issue.
+>=20
+> And, ergo, multiplatform kernels and XIP_KERNEL don't go together either.
+> Think about it...
+>=20
+> This is why I regard those who want multiplatform to work with options
+> such as XIP_KERNEL and NOMMU to be insane.
 
-There _isn't_ a framework.  What there is are a collection of Kconfig
-options that multiplatform provides you that can also be selected by
-any other configuration route.
+It's not so much that I want multiplatform and XIP together (because
+absolutely they do not), it's that the SOC I care about is shoved under
+the multiplatform umbrella.
 
-(2) really doesn't apply.
 
-The real issue is that board stuff ends up with a "depends on MULTI_xxx"
-which needs to be bypassed.  That's pretty easy to do - I've done it as
-a proof of concept a few years ago when this exact same thing came up
-for !MMU, and since then I've been NAKing and refusing to apply patches
-that try to re-use multiplat for !MMU.
+> Please, can we stop trying to make multiplatform also cover the situation=
+s
+> where only a single class of platforms works (iow, the old way we used to
+> deal with platforms is the most sensible solution.)
+>=20
+> IMHO multiplatform was done right for multiplatform but at the expense of
+> totally breaking stuff like XIP and noMMU.  We need to stop trying to ben=
+d
+> multiplatform to cover XIP and noMMU, but instead restore the old way of
+> handling this _along_ with multiplatform as an additional option.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+A while back there was a grandiose idea if it would be great you only selec=
+ted
+1 (and only 1) of the platforms in a multiplatform arch, then and only then
+would the XIP option become available for you.
+However, I tried everything I could, but the kbuild system just doesn't hav=
+e
+a way to do such a thing. So, I'm back to shoving XIP and multiplatform
+together.
+
+So, any ideas on how I can take an ARCH_xxx and make it show up under
+both single and multiplatform??
+
+Can I get away with making a separate ARCH_xxx_XIP that selects ARCH_xxx?
+
+Of course I just tested 4.10-rc7 for XIP+MMU and it works fine, but I have
+to hack the Kconfig each time.
+
+Chris
