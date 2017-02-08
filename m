@@ -1,45 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:32860 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbdBANK6 (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33136 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754665AbdBHRbx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 08:10:58 -0500
-MIME-Version: 1.0
-In-Reply-To: <1485442469-18378-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1485442469-18378-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Feb 2017 14:10:56 +0100
-Message-ID: <CAMuHMdUQbResdbbRA1M1tZiauZKjO8Es=YZ+YLmH1UzrKBLUhA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] arm64: dts: m3ulcb: enable EthernetAVB
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Wed, 8 Feb 2017 12:31:53 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        gregkh@linuxfoundation.org
+Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
+        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH] serial: sh-sci: fix hardware RX trigger level setting
+Date: Wed,  8 Feb 2017 18:31:14 +0100
+Message-Id: <1486575074-20130-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 3:54 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
->
-> This supports Ethernet AVB on M3ULCB board
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+1. Do not set the RX trigger level for software timeout devices on reset;
+there is no timeout by default, and data will rot.
+2. Do set the RX trigger level for hardware timeout devices when set
+via sysfs attribute.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes SCIFA-type serial consoles.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index f95a56c..9a47cc4 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1076,8 +1076,11 @@ static ssize_t rx_trigger_store(struct device *dev,
+ 
+ 	if (kstrtol(buf, 0, &r) == -EINVAL)
+ 		return -EINVAL;
++
+ 	sci->rx_trigger = scif_set_rtrg(port, r);
+-	scif_set_rtrg(port, 1);
++	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
++		scif_set_rtrg(port, 1);
++
+ 	return count;
+ }
+ 
+@@ -2179,7 +2182,11 @@ static void sci_reset(struct uart_port *port)
+ 			setup_timer(&s->rx_fifo_timer, rx_fifo_timer_fn,
+ 				    (unsigned long)s);
+ 		} else {
+-			scif_set_rtrg(port, s->rx_trigger);
++			if (port->type == PORT_SCIFA ||
++			    port->type == PORT_SCIFB)
++				scif_set_rtrg(port, 1);
++			else
++				scif_set_rtrg(port, s->rx_trigger);
+ 		}
+ 	}
+ }
+-- 
+2.7.4
