@@ -1,54 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33074 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751486AbdBAMkK (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:51840 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752043AbdBHSBY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 07:40:10 -0500
-MIME-Version: 1.0
-In-Reply-To: <1485443632-22612-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485443606-22566-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1485443632-22612-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Feb 2017 13:40:08 +0100
-Message-ID: <CAMuHMdV8Mn83rpkqaB655GPSjw1E_QLCcRJKoU+QYyogMEv1mw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: h3ulcb: Update memory node to 4 GiB map
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Wed, 8 Feb 2017 13:01:24 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] ARM: dts: r8a7745: Fix SCIFB0 dmas indentation
+Date: Wed,  8 Feb 2017 19:00:44 +0100
+Message-Id: <1486576844-25121-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1486576844-25121-1-git-send-email-geert+renesas@glider.be>
+References: <1486576844-25121-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 4:13 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
->
-> This patch adds memory region:
->
->   - After changes, the H3ULCB board has the following map:
->     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
->     Bank1: 1GiB RAM : 0x000500000000 -> 0x0053fffffff
->     Bank2: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
->     Bank3: 1GiB RAM : 0x000700000000 -> 0x0073fffffff
->
->   - Before changes, the old map looked like this:
->     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Fixes: e0d2da54c4d01ba2 ("ARM: dts: r8a7745: add [H]SCIF{|A|B} support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index ac62c14af764dd1a..112eabdaddb549f2 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -288,7 +288,7 @@
+ 			clocks = <&cpg CPG_MOD 206>;
+ 			clock-names = "fck";
+ 			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
+-		       <&dmac1 0x3d>, <&dmac1 0x3e>;
++			       <&dmac1 0x3d>, <&dmac1 0x3e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
+ 			status = "disabled";
+-- 
+1.9.1
