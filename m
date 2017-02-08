@@ -1,67 +1,82 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:39854 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751557AbdBHTJq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 8 Feb 2017 14:09:46 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+CC: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: xip: disable PATCH_PHYS_VIRT for ARCH_MULTIPLATFORM
+ when XIP
+Date: Wed, 8 Feb 2017 19:08:52 +0000
+Message-ID: <SG2PR06MB1165A3CC8452CF2901EDDC068A420@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170208172209.31673-1-chris.brandt@renesas.com>
+ <20170208174437.GW27312@n2100.armlinux.org.uk>
+ <SG2PR06MB116573368B09D2E36C5C70F98A420@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20170208185226.GY27312@n2100.armlinux.org.uk>
+In-Reply-To: <20170208185226.GY27312@n2100.armlinux.org.uk>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20160606035810.31763.53611.sendpatchset@little-apple>
-References: <20160606035723.31763.66500.sendpatchset@little-apple> <20160606035810.31763.53611.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Feb 2017 13:59:11 +0100
-Message-ID: <CAMuHMdWSDrcbrh5+hQ4SqwOxobG0b1zpRN0+Gpgopi+kzLOLQg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/11] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+Hello Russell,
 
-On Mon, Jun 6, 2016 at 5:58 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Hook up IOMMU_OF_DECLARE() support in case CONFIG_IOMMU_DMA
-> is enabled. The only current supported case for 32-bit ARM
-> is disabled, however for 64-bit ARM this is required.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
->
->  Changes since V1:
->  - Reworked slightly to fit updated patch order and
->    [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
->
->  drivers/iommu/ipmmu-vmsa.c |   26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->
-> --- 0015/drivers/iommu/ipmmu-vmsa.c
-> +++ work/drivers/iommu/ipmmu-vmsa.c     2016-06-06 10:57:26.790607110 +0900
+On Wednesday, February 08, 2017, Russell King wrote:
+> We have the big "ARM system type" choice, one of the options there is to
+> build for multi-platform.  Historically, it's been to select the SoC
+> family - where "SoC family" means a group of SoCs that could be built
+> together into one image without all the fun and games of V:P patching,
+> auto-zreladdr, etc - _exactly_ the conditions that !MMU and XIP_KERNEL
+> depended upon[*].
+>=20
+> To allow a SOC to be built without multiplatform, you add another option
+> to that choice statement (exactly as we used to have before multiplatform=
+).
+> For the sake of argument, let's say we're talking about iMX ARMv7 SoCs.
+> So, let's call it ARM_SOC_IMX_V7.
+>=20
+> You add to that all the select statements that multiplatform gives you
+> that you need for that platform, omitting those that don't make sense
+> (like virt/phys patching), making it depend on XIP_KERNEL and/or !MMU.
+>=20
+> Then you change the mach-*/Kconfig entry like this:
+>=20
+> menuconfig ARCH_MXC
+> -       bool "Freescale i.MX family"
+> -       depends on ARCH_MULTI_V4_V5 || ARCH_MULTI_V6_V7 ||
+> ARM_SINGLE_ARMV7M
+> +       bool "Freescale i.MX family" if !ARM_SOC_IMX_V7
+> +       depends on ARCH_MULTI_V4_V5 || ARCH_MULTI_V6_V7 ||
+> ARM_SINGLE_ARMV7M ||\
+> +		ARM_SOC_IMX_V7
+> +	default ARM_SOC_IMX_V7
+>=20
+> and also modify the if ARCH_MULTI_V7 to also allow that section if
+> ARM_SOC_IMX_V7 is enabled.
+>=20
+>=20
+> * - that's the problem - multiplatform went head-long into the "we don't
+> like the existing solution, we need to move everyone away, and let's hope
+> no one wants XIP_KERNEL or !MMU now".  So we went from a relatively good
+> solution that didn't support building diverse platforms together to one
+> that rather sucks for XIP_KERNEL and !MMU.
 
-> +#ifdef CONFIG_IOMMU_DMA
-> +static int __init ipmmu_vmsa_iommu_of_setup(struct device_node *np)
-> +{
-> +       static const struct iommu_ops *ops = &ipmmu_ops;
-> +
-> +       ipmmu_init();
-> +
-> +       of_iommu_set_ops(np, (struct iommu_ops *)ops);
 
-As of commit 65e251a4634c5644 ("iommu: Drop the of_iommu_{set/get}_ops()
-interface"), this should become:
+So, a quick hack and it seems that works. I get my family of SoC that I
+can select XIP_KERNEL.
 
-        iommu_register_instance(&np->fwnode, (struct iommu_ops *)ops);
+I'll do some build experiments, and if it looks like it will work, I'll
+send off a patch to see how opposes it.
+For the most part, if everyone is off playing in the multiplatform pool,
+me creating a new ARM V7 single-platform pool won't affect anyone.
 
-Gr{oetje,eeting}s,
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Chris
