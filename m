@@ -1,53 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52364 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932450AbdBHRoq (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:36118 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932086AbdBHRWY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Feb 2017 12:44:46 -0500
-Date: Wed, 8 Feb 2017 17:44:38 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: xip: disable PATCH_PHYS_VIRT for ARCH_MULTIPLATFORM
- when XIP
-Message-ID: <20170208174437.GW27312@n2100.armlinux.org.uk>
-References: <20170208172209.31673-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170208172209.31673-1-chris.brandt@renesas.com>
+        Wed, 8 Feb 2017 12:22:24 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] ARM: xip: disable PATCH_PHYS_VIRT for ARCH_MULTIPLATFORM when XIP
+Date: Wed,  8 Feb 2017 12:22:09 -0500
+Message-Id: <20170208172209.31673-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 08, 2017 at 12:22:09PM -0500, Chris Brandt wrote:
-> Since ARCH_MULTIPLATFORM explicitly selects ARM_PATCH_PHYS_VIRT, even
-> though ARCH_MULTIPLATFORM has 'depends on !XIP_KERNEL', ARM_PATCH_PHYS_VIRT
-> is still forcibly selected. The result is that PHYS_OFFSET depends on
-> !ARM_PATCH_PHYS_VIRT. This means you cannot enter a physical RAM address
-> for an XIP kernel and you cannot build.
-> 
-> Given that it is already clear in the Kconfig that ARM_PATCH_PHYS_VIRT and
-> XIP_KERNEL do not go well together (read the help for ARM_PATCH_PHYS_VIRT),
-> adding this condition to ARCH_MULTIPLATFORM is logical and will fix this
-> build issue.
+Since ARCH_MULTIPLATFORM explicitly selects ARM_PATCH_PHYS_VIRT, even
+though ARCH_MULTIPLATFORM has 'depends on !XIP_KERNEL', ARM_PATCH_PHYS_VIRT
+is still forcibly selected. The result is that PHYS_OFFSET depends on
+!ARM_PATCH_PHYS_VIRT. This means you cannot enter a physical RAM address
+for an XIP kernel and you cannot build.
 
-And, ergo, multiplatform kernels and XIP_KERNEL don't go together either.
-Think about it...
+Given that it is already clear in the Kconfig that ARM_PATCH_PHYS_VIRT and
+XIP_KERNEL do not go well together (read the help for ARM_PATCH_PHYS_VIRT),
+adding this condition to ARCH_MULTIPLATFORM is logical and will fix this
+build issue.
 
-This is why I regard those who want multiplatform to work with options
-such as XIP_KERNEL and NOMMU to be insane.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ arch/arm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please, can we stop trying to make multiplatform also cover the situations
-where only a single class of platforms works (iow, the old way we used to
-deal with platforms is the most sensible solution.)
-
-IMHO multiplatform was done right for multiplatform but at the expense of
-totally breaking stuff like XIP and noMMU.  We need to stop trying to
-bend multiplatform to cover XIP and noMMU, but instead restore the old
-way of handling this _along_ with multiplatform as an additional option.
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index bf8d86d..c97bd2c 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -330,7 +330,7 @@ config ARCH_MULTIPLATFORM
+ 	bool "Allow multiple platforms to be selected"
+ 	depends on MMU
+ 	select ARM_HAS_SG_CHAIN
+-	select ARM_PATCH_PHYS_VIRT
++	select ARM_PATCH_PHYS_VIRT if !XIP_KERNEL
+ 	select AUTO_ZRELADDR
+ 	select CLKSRC_OF
+ 	select COMMON_CLK
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.10.1
