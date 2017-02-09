@@ -1,59 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:20928 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751096AbdBID6p (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42350 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751096AbdBIDxi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Feb 2017 22:58:45 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Wed, 8 Feb 2017 22:53:38 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/2] ARM: add ARM_SINGLE_ARMV7 as config option
-Date: Thu, 9 Feb 2017 03:50:55 +0000
-Message-ID: <SG2PR06MB1165828CEDD6C06F6D1CBBF98A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 1/2] ARM: add ARM_SINGLE_ARMV7 as config option
+Date: Wed,  8 Feb 2017 22:30:43 -0500
+Message-Id: <20170209033044.19513-2-chris.brandt@renesas.com>
+In-Reply-To: <20170209033044.19513-1-chris.brandt@renesas.com>
 References: <20170209033044.19513-1-chris.brandt@renesas.com>
- <20170209033044.19513-2-chris.brandt@renesas.com>
- <519f1f67-5cfc-db78-c2b7-6bb74b78f3c8@gmail.com>
-In-Reply-To: <519f1f67-5cfc-db78-c2b7-6bb74b78f3c8@gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gRmxvcmlhbiwNCg0KT24gV2VkbmVzZGF5LCBGZWJydWFyeSAwOCwgMjAxNywgRmxvcmlh
-biBGYWluZWxsaSB3cm90ZToNCj4gT24gMDIvMDgvMjAxNyAwNzozMCBQTSwgQ2hyaXMgQnJhbmR0
-IHdyb3RlOg0KPiA+IENyZWF0ZXMgYSBuZXcgQVJNX1NJTkdMRV9BUk1WNyBvcHRpb24gYXMgYW4g
-YWx0ZXJuYXRpdmUNCj4gQVJDSF9NVUxUSVBMQVRGT1JNLg0KPiA+DQo+ID4gQVJNX1NJTkdMRV9B
-Uk1WNyBpcyB2ZXJ5IHNpbWlsYXIgdG8gQVJDSF9NVUxUSVBMQVRGT1JNLCBleGNlcHQgdGhlDQo+
-ID4gb3B0aW9ucyBmcm9tIEFSQ0hfTVVMVElfVjZfVjcgd2VyZSBjb3BpZWQgZGlyZWN0bHkgaW50
-byB0aGUgbmV3DQo+IEFSTV9TSU5HTEVfQVJNVjcuDQo+ID4NCj4gPiBBZGRpdGlvbmFsbHksIGV2
-ZXJ5d2hlcmUgQVJDSF9NVUxUSVBMQVRGT1JNIGV4aXN0ZWQgaW4gYnVpbGQgc2NyaXB0cywNCj4g
-PiBBUk1fU0lOR0xFX0FSTVY3IHdhcyBhZGRlZCBhbG9uZyBzaWRlIGl0IGluIG9yZGVyIHRvIHBy
-b2R1Y2Ugc2ltaWxhcg0KPiA+IHJlc3VsdHMuDQo+IA0KPiBDb3VsZCB3ZSB0cnkgdG8gYmUgYSBs
-aXR0bGUgc21hcnRlciB0aGFuIHRoaXMgYW5kIGlmIEFSQ0hfTVVMVElQTEFURk9STSBpcw0KPiBz
-ZWxlY3RlZCBidXQgb25seSBvbmUgcGxhdGZvcm0gYmVuZWF0aCBpcyB3ZSBhdXRvbWF0aWNhbGx5
-IHNlbGVjdA0KPiBBUk1fU0lOR0xFX0FSTVY3ICh0aGlzIG1heSByZXF1aXJlIEtjb25maWcgaGFj
-a2VyeSk/DQoNCk1vbnRocyBhZ28gSSBzcGVudCBob3VycyBvbiB0cnlpbmcgdG8gZ2V0IHRoZSBj
-dXJyZW50IGtidWlsZCBzeXN0ZW0gdG8gZG8NCnRoYXQgYW5kIG5vdGhpbmcgSSBjYW1lIHVwIHdp
-dGggd291bGQgd29yay4gSXQncyBzaW1wbHkgbm90IGRlc2lnbmVkIHRoYXQNCndheS4NCg0KSSB0
-aGluayB0aGUgY2xvc2VzdCBJIG1pZ2h0IGhhdmUgY29tZSB3YXMgdG8gcHVycG9zZWx5IGJyZWFr
-IHRoZSBidWlsZA0KaWYgbW9yZSB0aGVuIDEgd2FzIHNlbGVjdCwgYnV0IHRoYXQgc3RpbGwgZGlk
-bid0IHN0b3AgeW91IGZyb20gbWFraW5nDQp0aGUgc2VsZWN0aW9uLg0KDQpJZiBzb21lb25lIHNt
-YXJ0ZXIgdGhhbiBtZSBoYXMgYSB3YXkgdG8gZG8gKG5vdCBqdXN0IGFuIGlkZWEuLi5JIHJlY2Vp
-dmVkDQpsb3RzIG9mIGlkZWFzIGJ1dCBub25lIG9mIHRoZW0gd29ya2VkKSwgSSdkIGJlIGhhcHB5
-IHRvIGhlYXIgaXQuDQoNCg0KDQo+IEkgc2VlIHZhbHVlIGluIHdoYXQgeW91IGFyZSBkb2luZywg
-YnV0IEkgZG9uJ3QgdGhpbmsgcHVsbGluZyB0aGUgcGxhdGZvcm1zDQo+IG91dCBvZiB0aGUgbWVu
-dSBsaWtlIHdoYXQgeW91IGRvIGluIHRoZSBzdWJzZXF1ZW50IHBhdGNoIGlzIGxvb2tpbmcgbmlj
-ZQ0KPiBhcyBhbiB1c2VyL2NvbmZpZ3VyYXRvci4NCg0KV2hhdCBJIHdhcyB0cnlpbmcgdG8gZG8g
-KGFuZCB3aGF0IHdhcyBhbHJlYWR5IHJlbW92ZWQgZnJvbSBLY29uZmlncykgd2FzDQp0byBhdm9p
-ZCBoYXZpbmcgYSBkdXBsaWNhdGUgc2V0IG9mIGNvbmZpZ3MgZm9yIGVhY2ggU09DOiBvbmUgZm9y
-IHNpbmdsZSBhbmQNCm9uZSBmb3IgbXVsdGkuDQoNCg0KI0knbSB0cnlpbmcgdG8gZ2V0IGF3YXkg
-ZnJvbSBtYW51YWxseSBoYWNraW5nIHRoZXNlIEtjb25maWcgZmlsZXMgZXZlcnkgdGltZQ0KYSBu
-ZXcga2VybmVsIGlzIHJlbGVhc2VkLg0KDQoNCkNocmlzDQoNCg==
+Creates a new ARM_SINGLE_ARMV7 option as an alternative ARCH_MULTIPLATFORM.
+
+ARM_SINGLE_ARMV7 is very similar to ARCH_MULTIPLATFORM, except the options
+from ARCH_MULTI_V6_V7 were copied directly into the new ARM_SINGLE_ARMV7.
+
+Additionally, everywhere ARCH_MULTIPLATFORM existed in build scripts,
+ARM_SINGLE_ARMV7 was added along side it in order to produce similar
+results.
+
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ arch/arm/Kconfig          | 18 ++++++++++++++++++
+ arch/arm/Kconfig.debug    |  6 ++++--
+ arch/arm/Makefile         |  5 +++++
+ arch/arm/kernel/devtree.c |  3 ++-
+ 4 files changed, 29 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index bf8d86d..36107e7 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -317,6 +317,24 @@ config ARCH_MMAP_RND_BITS_MAX
+ 	default 15 if PAGE_OFFSET=0x80000000
+ 	default 16
+ 
++config ARM_SINGLE_ARMV7
++	bool "ARMv7 based single platforms"
++	depends on MMU
++	select ARM_HAS_SG_CHAIN
++	select ARM_PATCH_PHYS_VIRT if !XIP_KERNEL
++	select AUTO_ZRELADDR
++	select CLKSRC_OF
++	select COMMON_CLK
++	select CPU_V7
++	select GENERIC_CLOCKEVENTS
++	select MIGHT_HAVE_PCI
++	select MULTI_IRQ_HANDLER
++	select PCI_DOMAINS if PCI
++	select SPARSE_IRQ
++	select USE_OF
++	select HAVE_SMP
++	select MIGHT_HAVE_CACHE_L2X0
++
+ #
+ # The "ARM system type" choice list is ordered alphabetically by option
+ # text.  Please add new entries in the option alphabetic order.
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index d83f7c3..31db9e3 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -1694,7 +1694,8 @@ config DEBUG_UART_8250_FLOW_CONTROL
+ 
+ config DEBUG_UNCOMPRESS
+ 	bool
+-	depends on ARCH_MULTIPLATFORM || PLAT_SAMSUNG || ARM_SINGLE_ARMV7M
++	depends on ARCH_MULTIPLATFORM || PLAT_SAMSUNG || ARM_SINGLE_ARMV7M || \
++		   ARM_SINGLE_ARMV7
+ 	default y if DEBUG_LL && !DEBUG_OMAP2PLUS_UART && \
+ 		     (!DEBUG_TEGRA_UART || !ZBOOT_ROM) && \
+ 		     !DEBUG_BRCMSTB_UART
+@@ -1712,7 +1713,8 @@ config DEBUG_UNCOMPRESS
+ config UNCOMPRESS_INCLUDE
+ 	string
+ 	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
+-					PLAT_SAMSUNG || ARM_SINGLE_ARMV7M
++					PLAT_SAMSUNG || ARM_SINGLE_ARMV7M || \
++					ARM_SINGLE_ARMV7
+ 	default "mach/uncompress.h"
+ 
+ config EARLY_PRINTK
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index ab30cc6..c9809b6 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -255,12 +255,16 @@ endif
+ ifeq ($(CONFIG_ARCH_MULTIPLATFORM),y)
+ MACHINE  :=
+ endif
++ifeq ($(CONFIG_ARM_SINGLE_ARMV7),y)
++MACHINE  :=
++endif
+ 
+ machdirs := $(patsubst %,arch/arm/mach-%/,$(machine-y))
+ platdirs := $(patsubst %,arch/arm/plat-%/,$(sort $(plat-y)))
+ 
+ ifneq ($(CONFIG_ARCH_MULTIPLATFORM),y)
+ ifneq ($(CONFIG_ARM_SINGLE_ARMV7M),y)
++ifneq ($(CONFIG_ARM_SINGLE_ARMV7),y)
+ ifeq ($(KBUILD_SRC),)
+ KBUILD_CPPFLAGS += $(patsubst %,-I%include,$(machdirs) $(platdirs))
+ else
+@@ -268,6 +272,7 @@ KBUILD_CPPFLAGS += $(patsubst %,-I$(srctree)/%include,$(machdirs) $(platdirs))
+ endif
+ endif
+ endif
++endif
+ 
+ export	TEXT_OFFSET GZFLAGS MMUEXT
+ 
+diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+index f676feb..26cbc29 100644
+--- a/arch/arm/kernel/devtree.c
++++ b/arch/arm/kernel/devtree.c
+@@ -220,7 +220,8 @@ const struct machine_desc * __init setup_machine_fdt(unsigned int dt_phys)
+ {
+ 	const struct machine_desc *mdesc, *mdesc_best = NULL;
+ 
+-#if defined(CONFIG_ARCH_MULTIPLATFORM) || defined(CONFIG_ARM_SINGLE_ARMV7M)
++#if defined(CONFIG_ARCH_MULTIPLATFORM) || defined(CONFIG_ARM_SINGLE_ARMV7M) || \
++    defined(CONFIG_ARM_SINGLE_ARMV7)
+ 	DT_MACHINE_START(GENERIC_DT, "Generic DT based system")
+ 		.l2c_aux_val = 0x0,
+ 		.l2c_aux_mask = ~0x0,
+-- 
+2.10.1
