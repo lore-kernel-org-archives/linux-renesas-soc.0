@@ -1,75 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40372 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753806AbdBGLGk (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:36273 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751111AbdBIDxh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 06:06:40 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
+        Wed, 8 Feb 2017 22:53:37 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-arm-kernel@lists.infradead.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC 1/4] mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
-Date: Tue,  7 Feb 2017 12:06:26 +0100
-Message-Id: <20170207110629.2441-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
-References: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 0/2] ARM: ARMv7 (with MMU) XIP without ARCH_MULTIPLATFORM
+Date: Wed,  8 Feb 2017 22:30:42 -0500
+Message-Id: <20170209033044.19513-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Don't use hardcoded values.
+The basic idea of this series is to introduce a top level ARM_SINGLE_ARMV7 that
+can be selected instead of ARCH_MULTIPLATFORM for the purpose of being able to
+select XIP_KERNEL.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc.h     | 4 ++++
- drivers/mmc/host/tmio_mmc_pio.c | 6 +++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ARM_SINGLE_ARMV7 is not selected directly, but rather by first selecting a
+specific SOC family (as opposed to the multiplatform option), then the SoC
+family will select ARM_SINGLE_ARMV7.
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 2b349d48fb9a8a..b20b451ad90daa 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -50,6 +50,10 @@
- #define CTL_CLK_AND_WAIT_CTL 0x138
- #define CTL_RESET_SDIO 0x1e0
- 
-+/* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
-+#define TMIO_STOP_STP		BIT(0)
-+#define TMIO_STOP_SEC		BIT(8)
-+
- /* Definitions for values the CTRL_STATUS register can take. */
- #define TMIO_STAT_CMDRESPEND    BIT(0)
- #define TMIO_STAT_DATAEND       BIT(2)
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 6b789a739d4dfe..ad2840e1bfae51 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -340,7 +340,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 
- 	/* CMD12 is handled by hardware */
- 	if (cmd->opcode == MMC_STOP_TRANSMISSION && !cmd->arg) {
--		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x001);
-+		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
- 		return 0;
- 	}
- 
-@@ -367,7 +367,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 	if (data) {
- 		c |= DATA_PRESENT;
- 		if (data->blocks > 1) {
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x100);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_SEC);
- 			c |= TRANSFER_MULTI;
- 
- 			/*
-@@ -554,7 +554,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 
- 	if (stop) {
- 		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x000);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 		else
- 			BUG();
- 	}
+At that point, an individual SOC device can selected which then allows them to
+select XIP_KERNEL if they want to.
+
+It is up to the SoC familiies to determine if XIP and/or ARM_SINGLE_ARMV7 makes
+sence.
+
+
+For this series, the Renesas SoCs allow ARM_SINGLE_ARMV7.
+
+Particulary, the Renesas RZ/A1 (ARCH_R7S72100) was tested with both XIP_KERNEL=y
+and XIP_KERNEL=n.
+
+System Type  --->
+	[*] MMU-based Paged Memory Management Support
+	-*- ARMv7 based single platforms
+	    ARM system type (Renesas ARM SoCs)
+	[*] Renesas ARM SoCs  --->
+		[*]   RZ/A1H (R7S72100)
+
+
+For me, I was able to come up with a .config that would produce the same
+defconfig as it did before this patch series proving that ARCH_MULTIPLATFORM is
+just a method in grouping configs together that could normally be selected
+individually.
+
+
+I would say maybe the only other thing we could add is a XIP_CAPABLE config
+that is set only by each individual SoC. Then users can only select
+XIP_KERNEL for SoCs that actually have a chance at working.
+
+Something like:
+
+[ arch/arm/mach-shmobile/Kconfig ]
+config ARCH_R7S72100
+	bool "RZ/A1H (R7S72100)"
+	select PM
+	select PM_GENERIC_DOMAINS
+	select SYS_SUPPORTS_SH_MTU2
+	select RENESAS_OSTM
+	select XIP_CAPABLE
+
+
+[ arch/arm/Kconifg ]
+config XIP_KERNEL
+	bool "Kernel Execute-In-Place from ROM"
+	depends on !ARM_LPAE && !ARCH_MULTIPLATFORM && XIP_CAPABLE
+
+
+
+Chris Brandt (2):
+  ARM: add ARM_SINGLE_ARMV7 as config option
+  ARM: shmobile: add renesas soc as a top level selection
+
+ arch/arm/Kconfig               | 22 ++++++++++++++++++++++
+ arch/arm/Kconfig.debug         |  6 ++++--
+ arch/arm/Makefile              |  5 +++++
+ arch/arm/kernel/devtree.c      |  3 ++-
+ arch/arm/mach-shmobile/Kconfig |  2 +-
+ 5 files changed, 34 insertions(+), 4 deletions(-)
+
 -- 
-2.11.0
+2.10.1
