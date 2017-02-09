@@ -1,88 +1,91 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=zE3d=ZY=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Subject: [PATCH 1/2] tests: Add basic stress testing
-Date: Sat, 11 Feb 2017 14:43:05 +0000
-Message-Id: <1486824186-26450-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1486824186-26450-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1486824186-26450-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from newton.telenet-ops.be ([195.130.132.45]:37924 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752003AbdBIKT4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 9 Feb 2017 05:19:56 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 3vJvFw67GxzMyYhP
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Feb 2017 11:19:48 +0100 (CET)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: dts: renesas: Switch from ARCH_SHMOBILE_MULTI to ARCH_RENESAS
+Date: Thu,  9 Feb 2017 11:18:48 +0100
+Message-Id: <1486635529-6636-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1486635529-6636-1-git-send-email-geert+renesas@glider.be>
+References: <1486635529-6636-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Commit 9b5ba0df4ea4 ("ARM: shmobile: Introduce ARCH_RENESAS") started
+the migration from ARCH_SHMOBILE_MULTI to ARCH_RENESAS.
+Update the Makefile to build DTBs for Renesas platforms to use the new
+symbol, and move the Renesas section to preserve sort order.
 
-Duplicate the functionality of vsp-unit-test-0001, to provide a set of
-work for the hardware to run, whilst we load the system using the
-'stress' utility.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- tests/vsp-unit-test-0022.sh | 55 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100755 tests/vsp-unit-test-0022.sh
+ arch/arm/boot/dts/Makefile | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/tests/vsp-unit-test-0022.sh b/tests/vsp-unit-test-0022.sh
-new file mode 100755
-index 000000000000..10230dffcc42
---- /dev/null
-+++ b/tests/vsp-unit-test-0022.sh
-@@ -0,0 +1,55 @@
-+#!/bin/sh
-+
-+#
-+# Test active pipeline, with high load on CPU/Memory/IO using 'stress'
-+#
-+# Test WPF packing in RGB mode. Use a RPF -> WPF pipeline with a fixed ARGB32
-+# format on the input and capture output frames in all RGB formats supported
-+# by the WPF.
-+#
-+
-+source vsp-lib.sh
-+
-+features="rpf.0 wpf.0"
-+formats="RGB332 ARGB555 XRGB555 RGB565 BGR24 RGB24 ABGR32 ARGB32 XBGR32 XRGB32"
-+
-+test_wpf_packing() {
-+	test_start "WPF packing in $format during stress testing"
-+
-+	pipe_configure rpf-wpf 0 0
-+	format_configure rpf-wpf 0 0 ARGB32 1024x768 $format
-+
-+	vsp_runner rpf.0 &
-+	vsp_runner wpf.0
-+
-+	local result=$(compare_frames)
-+
-+	test_complete $result
-+}
-+
-+exists() { type -t "$1" > /dev/null 2>&1; }
-+
-+test_main() {
-+	local format
-+
-+	if exists stress ; then
-+		STRESS=`which stress`
-+	else
-+		echo "$0: Stress test requires utility 'stress'"
-+		test_complete skip
-+		return
-+	fi
-+
-+	# Start stressing the system, as a background task
-+	$STRESS --cpu 8 --io 4 --vm 2 --vm-bytes 128M &
-+
-+	for format in $formats ; do
-+		test_wpf_packing $format
-+	done
-+
-+	# Recover the system. Stress launches multiple PIDs, so it's best to:
-+	killall -9 stress
-+}
-+
-+test_init $0 "$features"
-+test_run
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index d1b241e3cedb4d8d..625660fcc8720de4 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -672,6 +672,25 @@ dtb-$(CONFIG_ARCH_REALVIEW) += \
+ 	arm-realview-eb-a9mp-bbrevd.dtb \
+ 	arm-realview-pba8.dtb \
+ 	arm-realview-pbx-a9.dtb
++dtb-$(CONFIG_ARCH_RENESAS) += \
++	emev2-kzm9d.dtb \
++	r7s72100-genmai.dtb \
++	r7s72100-rskrza1.dtb \
++	r8a73a4-ape6evm.dtb \
++	r8a7740-armadillo800eva.dtb \
++	r8a7743-sk-rzg1m.dtb \
++	r8a7745-sk-rzg1e.dtb \
++	r8a7778-bockw.dtb \
++	r8a7779-marzen.dtb \
++	r8a7790-lager.dtb \
++	r8a7791-koelsch.dtb \
++	r8a7791-porter.dtb \
++	r8a7792-blanche.dtb \
++	r8a7792-wheat.dtb \
++	r8a7793-gose.dtb \
++	r8a7794-alt.dtb \
++	r8a7794-silk.dtb \
++	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rk1108-evb.dtb \
+ 	rk3036-evb.dtb \
+@@ -712,25 +731,6 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
+ 	s5pv210-smdkc110.dtb \
+ 	s5pv210-smdkv210.dtb \
+ 	s5pv210-torbreck.dtb
+-dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+-	emev2-kzm9d.dtb \
+-	r7s72100-genmai.dtb \
+-	r7s72100-rskrza1.dtb \
+-	r8a73a4-ape6evm.dtb \
+-	r8a7740-armadillo800eva.dtb \
+-	r8a7743-sk-rzg1m.dtb \
+-	r8a7745-sk-rzg1e.dtb \
+-	r8a7778-bockw.dtb \
+-	r8a7779-marzen.dtb \
+-	r8a7790-lager.dtb \
+-	r8a7791-koelsch.dtb \
+-	r8a7791-porter.dtb \
+-	r8a7792-blanche.dtb \
+-	r8a7792-wheat.dtb \
+-	r8a7793-gose.dtb \
+-	r8a7794-alt.dtb \
+-	r8a7794-silk.dtb \
+-	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_SOCFPGA) += \
+ 	socfpga_arria5_socdk.dtb \
+ 	socfpga_arria10_socdk_nand.dtb \
 -- 
-2.7.4
+1.9.1
