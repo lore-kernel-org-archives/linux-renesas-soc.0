@@ -1,105 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:33611 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752338AbdBIUCC (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:20928 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751096AbdBID6p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Feb 2017 15:02:02 -0500
-Received: by mail-qk0-f193.google.com with SMTP id 11so2189059qkl.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Feb 2017 12:01:31 -0800 (PST)
-Subject: Re: [PATCH 1/2] ARM: add ARM_SINGLE_ARMV7 as config option
-To: Chris Brandt <Chris.Brandt@renesas.com>,
+        Wed, 8 Feb 2017 22:58:45 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 1/2] ARM: add ARM_SINGLE_ARMV7 as config option
+Date: Thu, 9 Feb 2017 03:50:55 +0000
+Message-ID: <SG2PR06MB1165828CEDD6C06F6D1CBBF98A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170209033044.19513-1-chris.brandt@renesas.com>
  <20170209033044.19513-2-chris.brandt@renesas.com>
  <519f1f67-5cfc-db78-c2b7-6bb74b78f3c8@gmail.com>
- <SG2PR06MB1165828CEDD6C06F6D1CBBF98A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <5d90aff5-63b7-83a8-7529-2ac61ef82021@gmail.com>
-Date: Thu, 9 Feb 2017 11:53:43 -0800
+In-Reply-To: <519f1f67-5cfc-db78-c2b7-6bb74b78f3c8@gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1165828CEDD6C06F6D1CBBF98A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/08/2017 07:50 PM, Chris Brandt wrote:
-> Hello Florian,
-> 
-> On Wednesday, February 08, 2017, Florian Fainelli wrote:
->> On 02/08/2017 07:30 PM, Chris Brandt wrote:
->>> Creates a new ARM_SINGLE_ARMV7 option as an alternative
->> ARCH_MULTIPLATFORM.
->>>
->>> ARM_SINGLE_ARMV7 is very similar to ARCH_MULTIPLATFORM, except the
->>> options from ARCH_MULTI_V6_V7 were copied directly into the new
->> ARM_SINGLE_ARMV7.
->>>
->>> Additionally, everywhere ARCH_MULTIPLATFORM existed in build scripts,
->>> ARM_SINGLE_ARMV7 was added along side it in order to produce similar
->>> results.
->>
->> Could we try to be a little smarter than this and if ARCH_MULTIPLATFORM is
->> selected but only one platform beneath is we automatically select
->> ARM_SINGLE_ARMV7 (this may require Kconfig hackery)?
-> 
-> Months ago I spent hours on trying to get the current kbuild system to do
-> that and nothing I came up with would work. It's simply not designed that
-> way.
-> 
-> I think the closest I might have come was to purposely break the build
-> if more then 1 was select, but that still didn't stop you from making
-> the selection.
-> 
-> If someone smarter than me has a way to do (not just an idea...I received
-> lots of ideas but none of them worked), I'd be happy to hear it.
-
-I am definitively not a Kbuild expert, but it would almost necessarily
-require introduce some kind of new type in the Kconfig/Kbuild syntax
-that does something like that:
-
-- have a way to count the number of symbols that are selected and do a
-"if ARCH_MULTI_V6_V7" (or an arbitrary expression) this most likely
-should exist internally within Kconfig
-
-- introduce a new type of Kconfig type which is a "count", and gets
-assigned this value that we just counted, something that could look like
-this:
-
-count ARCH_MULTI_V6_V7_COUNT
-	tracks ARCH_MULTI_V6_V7
-
-All other typical Kconfig syntax thould then still apply and we could be
-doing something like:
-
-depends on ARCH_MULTI_V6_V7_COUNT=1 etc..
-
-So yeah, I am no better than whoever gave you indications better ;)
-
-> 
-> 
-> 
->> I see value in what you are doing, but I don't think pulling the platforms
->> out of the menu like what you do in the subsequent patch is looking nice
->> as an user/configurator.
-> 
-> What I was trying to do (and what was already removed from Kconfigs) was
-> to avoid having a duplicate set of configs for each SOC: one for single and
-> one for multi.
-> 
-> 
-> #I'm trying to get away from manually hacking these Kconfig files every time
-> a new kernel is released.
-
-Sure, that makes complete sense to me. FWIW, there is one particular
-case that I am interested that you solved which is allowing
-DEBUG_UNCOMPRESS to be set in our downstream kernel because we typically
-only enable BRCMSTB and nothing else.
--- 
-Florian
+SGVsbG8gRmxvcmlhbiwNCg0KT24gV2VkbmVzZGF5LCBGZWJydWFyeSAwOCwgMjAxNywgRmxvcmlh
+biBGYWluZWxsaSB3cm90ZToNCj4gT24gMDIvMDgvMjAxNyAwNzozMCBQTSwgQ2hyaXMgQnJhbmR0
+IHdyb3RlOg0KPiA+IENyZWF0ZXMgYSBuZXcgQVJNX1NJTkdMRV9BUk1WNyBvcHRpb24gYXMgYW4g
+YWx0ZXJuYXRpdmUNCj4gQVJDSF9NVUxUSVBMQVRGT1JNLg0KPiA+DQo+ID4gQVJNX1NJTkdMRV9B
+Uk1WNyBpcyB2ZXJ5IHNpbWlsYXIgdG8gQVJDSF9NVUxUSVBMQVRGT1JNLCBleGNlcHQgdGhlDQo+
+ID4gb3B0aW9ucyBmcm9tIEFSQ0hfTVVMVElfVjZfVjcgd2VyZSBjb3BpZWQgZGlyZWN0bHkgaW50
+byB0aGUgbmV3DQo+IEFSTV9TSU5HTEVfQVJNVjcuDQo+ID4NCj4gPiBBZGRpdGlvbmFsbHksIGV2
+ZXJ5d2hlcmUgQVJDSF9NVUxUSVBMQVRGT1JNIGV4aXN0ZWQgaW4gYnVpbGQgc2NyaXB0cywNCj4g
+PiBBUk1fU0lOR0xFX0FSTVY3IHdhcyBhZGRlZCBhbG9uZyBzaWRlIGl0IGluIG9yZGVyIHRvIHBy
+b2R1Y2Ugc2ltaWxhcg0KPiA+IHJlc3VsdHMuDQo+IA0KPiBDb3VsZCB3ZSB0cnkgdG8gYmUgYSBs
+aXR0bGUgc21hcnRlciB0aGFuIHRoaXMgYW5kIGlmIEFSQ0hfTVVMVElQTEFURk9STSBpcw0KPiBz
+ZWxlY3RlZCBidXQgb25seSBvbmUgcGxhdGZvcm0gYmVuZWF0aCBpcyB3ZSBhdXRvbWF0aWNhbGx5
+IHNlbGVjdA0KPiBBUk1fU0lOR0xFX0FSTVY3ICh0aGlzIG1heSByZXF1aXJlIEtjb25maWcgaGFj
+a2VyeSk/DQoNCk1vbnRocyBhZ28gSSBzcGVudCBob3VycyBvbiB0cnlpbmcgdG8gZ2V0IHRoZSBj
+dXJyZW50IGtidWlsZCBzeXN0ZW0gdG8gZG8NCnRoYXQgYW5kIG5vdGhpbmcgSSBjYW1lIHVwIHdp
+dGggd291bGQgd29yay4gSXQncyBzaW1wbHkgbm90IGRlc2lnbmVkIHRoYXQNCndheS4NCg0KSSB0
+aGluayB0aGUgY2xvc2VzdCBJIG1pZ2h0IGhhdmUgY29tZSB3YXMgdG8gcHVycG9zZWx5IGJyZWFr
+IHRoZSBidWlsZA0KaWYgbW9yZSB0aGVuIDEgd2FzIHNlbGVjdCwgYnV0IHRoYXQgc3RpbGwgZGlk
+bid0IHN0b3AgeW91IGZyb20gbWFraW5nDQp0aGUgc2VsZWN0aW9uLg0KDQpJZiBzb21lb25lIHNt
+YXJ0ZXIgdGhhbiBtZSBoYXMgYSB3YXkgdG8gZG8gKG5vdCBqdXN0IGFuIGlkZWEuLi5JIHJlY2Vp
+dmVkDQpsb3RzIG9mIGlkZWFzIGJ1dCBub25lIG9mIHRoZW0gd29ya2VkKSwgSSdkIGJlIGhhcHB5
+IHRvIGhlYXIgaXQuDQoNCg0KDQo+IEkgc2VlIHZhbHVlIGluIHdoYXQgeW91IGFyZSBkb2luZywg
+YnV0IEkgZG9uJ3QgdGhpbmsgcHVsbGluZyB0aGUgcGxhdGZvcm1zDQo+IG91dCBvZiB0aGUgbWVu
+dSBsaWtlIHdoYXQgeW91IGRvIGluIHRoZSBzdWJzZXF1ZW50IHBhdGNoIGlzIGxvb2tpbmcgbmlj
+ZQ0KPiBhcyBhbiB1c2VyL2NvbmZpZ3VyYXRvci4NCg0KV2hhdCBJIHdhcyB0cnlpbmcgdG8gZG8g
+KGFuZCB3aGF0IHdhcyBhbHJlYWR5IHJlbW92ZWQgZnJvbSBLY29uZmlncykgd2FzDQp0byBhdm9p
+ZCBoYXZpbmcgYSBkdXBsaWNhdGUgc2V0IG9mIGNvbmZpZ3MgZm9yIGVhY2ggU09DOiBvbmUgZm9y
+IHNpbmdsZSBhbmQNCm9uZSBmb3IgbXVsdGkuDQoNCg0KI0knbSB0cnlpbmcgdG8gZ2V0IGF3YXkg
+ZnJvbSBtYW51YWxseSBoYWNraW5nIHRoZXNlIEtjb25maWcgZmlsZXMgZXZlcnkgdGltZQ0KYSBu
+ZXcga2VybmVsIGlzIHJlbGVhc2VkLg0KDQoNCkNocmlzDQoNCg==
