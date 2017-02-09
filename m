@@ -1,92 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:53055 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751058AbdBJNN3 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41475 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932554AbdBIUV6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 08:13:29 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Chris Brandt <Chris.Brandt@renesas.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        Thu, 9 Feb 2017 15:21:58 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-renesas-soc@vger.kernel.org"
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+CC: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 1/2] ARM: add ARM_SINGLE_ARMV7 as config option
-Date: Fri, 10 Feb 2017 14:05:43 +0100
-Message-ID: <25202835.AdbHsoUg0y@wuerfel>
-In-Reply-To: <SG2PR06MB11650C805DD754EE5C9E56C78A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170209033044.19513-1-chris.brandt@renesas.com> <5d90aff5-63b7-83a8-7529-2ac61ef82021@gmail.com> <SG2PR06MB11650C805DD754EE5C9E56C78A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: RE: [PATCH 1/2] ARM: add ARM_SINGLE_ARMV7 as config option
+Date: Thu, 9 Feb 2017 20:21:43 +0000
+Message-ID: <SG2PR06MB11650C805DD754EE5C9E56C78A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170209033044.19513-1-chris.brandt@renesas.com>
+ <20170209033044.19513-2-chris.brandt@renesas.com>
+ <519f1f67-5cfc-db78-c2b7-6bb74b78f3c8@gmail.com>
+ <SG2PR06MB1165828CEDD6C06F6D1CBBF98A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <5d90aff5-63b7-83a8-7529-2ac61ef82021@gmail.com>
+In-Reply-To: <5d90aff5-63b7-83a8-7529-2ac61ef82021@gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thursday, February 9, 2017 8:21:43 PM CET Chris Brandt wrote:
-> On Thursday, February 09, 2017, Florian Fainelli worte:
-> > > I think the closest I might have come was to purposely break the build
-> > > if more then 1 was select, but that still didn't stop you from making
-> > > the selection.
-> > >
-> > > If someone smarter than me has a way to do (not just an idea...I
-> > received
-> > > lots of ideas but none of them worked), I'd be happy to hear it.
-> > 
-> > I am definitively not a Kbuild expert, but it would almost necessarily
-> > require introduce some kind of new type in the Kconfig/Kbuild syntax
-> > that does something like that:
-> > 
-> > - have a way to count the number of symbols that are selected and do a
-> > "if ARCH_MULTI_V6_V7" (or an arbitrary expression) this most likely
-> > should exist internally within Kconfig
-> > 
-> > - introduce a new type of Kconfig type which is a "count", and gets
-> > assigned this value that we just counted, something that could look like
-> > this:
-> > 
-> > count ARCH_MULTI_V6_V7_COUNT
-> >       tracks ARCH_MULTI_V6_V7
-> 
-> I did try the counting thing, but couldn't get it to work.
-> I admit though, I did stop when the next step was to create a new type
-> kind of thing that I could use for counting. That seemed to start going
-> down a deeper path than I was hoping for.
-
-I also couldn't come up with something working when I looked at this,
-and it wouldn't solve the related problem of platforms that we want to
-be able to use with or without MMU: You can't make the decision of
-whether allow an MMU based on the number of platforms since most
-platform options can only be offered depending on the setting of
-CONFIG_MMU.
-
-> However,
-> I am hesitant to go and try anything else because everything I've submitted
-> so far has been NACKed. The only thing Russell said he'd agree to is a top
-> level single-platform option. But, since that all got taken out, I assume
-> there's some resistance to putting it back in.
-
-And I really don't like adding new top-level for a platform here, it
-brings us back to the same problems we had before we moved most platforms
-to ARCH_MULTIPLATFORM, and it doesn't solve the remaining problems we still
-have:
-
-- In some platforms, the decision would have to be done on a per-board
-  level, as each board can have its memory at a different location
-  base on which chipselect line got connected to the RAM and NOR flash
-  respectively
-
-- Some (few) platforms actually have separate top-level Kconfig options
-  but are actually very closely related and you could have a kernel
-  for all of them even with !MMU and XIP_KERNEL. The most important
-  one here is ARM Versatile/Realview/Integrator/Vexpress that have
-  more in common than things we put behind a common Kconfig option in
-  other platforms.
-
-- CONFIG_DEBUG_UNCOMPRESS has a very similar requirements to
-  XIP_KERNEL and !MMU, and we currently allow it for any machine,
-  with a lot of flexibility in configuring that always breaks
-  running on any machine other than the one you are targetting.
-
-	Arnd
+T24gVGh1cnNkYXksIEZlYnJ1YXJ5IDA5LCAyMDE3LCBGbG9yaWFuIEZhaW5lbGxpIHdvcnRlOg0K
+PiA+IEkgdGhpbmsgdGhlIGNsb3Nlc3QgSSBtaWdodCBoYXZlIGNvbWUgd2FzIHRvIHB1cnBvc2Vs
+eSBicmVhayB0aGUgYnVpbGQNCj4gPiBpZiBtb3JlIHRoZW4gMSB3YXMgc2VsZWN0LCBidXQgdGhh
+dCBzdGlsbCBkaWRuJ3Qgc3RvcCB5b3UgZnJvbSBtYWtpbmcNCj4gPiB0aGUgc2VsZWN0aW9uLg0K
+PiA+DQo+ID4gSWYgc29tZW9uZSBzbWFydGVyIHRoYW4gbWUgaGFzIGEgd2F5IHRvIGRvIChub3Qg
+anVzdCBhbiBpZGVhLi4uSQ0KPiByZWNlaXZlZA0KPiA+IGxvdHMgb2YgaWRlYXMgYnV0IG5vbmUg
+b2YgdGhlbSB3b3JrZWQpLCBJJ2QgYmUgaGFwcHkgdG8gaGVhciBpdC4NCj4gDQo+IEkgYW0gZGVm
+aW5pdGl2ZWx5IG5vdCBhIEtidWlsZCBleHBlcnQsIGJ1dCBpdCB3b3VsZCBhbG1vc3QgbmVjZXNz
+YXJpbHkNCj4gcmVxdWlyZSBpbnRyb2R1Y2Ugc29tZSBraW5kIG9mIG5ldyB0eXBlIGluIHRoZSBL
+Y29uZmlnL0tidWlsZCBzeW50YXgNCj4gdGhhdCBkb2VzIHNvbWV0aGluZyBsaWtlIHRoYXQ6DQo+
+IA0KPiAtIGhhdmUgYSB3YXkgdG8gY291bnQgdGhlIG51bWJlciBvZiBzeW1ib2xzIHRoYXQgYXJl
+IHNlbGVjdGVkIGFuZCBkbyBhDQo+ICJpZiBBUkNIX01VTFRJX1Y2X1Y3IiAob3IgYW4gYXJiaXRy
+YXJ5IGV4cHJlc3Npb24pIHRoaXMgbW9zdCBsaWtlbHkNCj4gc2hvdWxkIGV4aXN0IGludGVybmFs
+bHkgd2l0aGluIEtjb25maWcNCj4gDQo+IC0gaW50cm9kdWNlIGEgbmV3IHR5cGUgb2YgS2NvbmZp
+ZyB0eXBlIHdoaWNoIGlzIGEgImNvdW50IiwgYW5kIGdldHMNCj4gYXNzaWduZWQgdGhpcyB2YWx1
+ZSB0aGF0IHdlIGp1c3QgY291bnRlZCwgc29tZXRoaW5nIHRoYXQgY291bGQgbG9vayBsaWtlDQo+
+IHRoaXM6DQo+IA0KPiBjb3VudCBBUkNIX01VTFRJX1Y2X1Y3X0NPVU5UDQo+IAl0cmFja3MgQVJD
+SF9NVUxUSV9WNl9WNw0KDQpJIGRpZCB0cnkgdGhlIGNvdW50aW5nIHRoaW5nLCBidXQgY291bGRu
+J3QgZ2V0IGl0IHRvIHdvcmsuDQpJIGFkbWl0IHRob3VnaCwgSSBkaWQgc3RvcCB3aGVuIHRoZSBu
+ZXh0IHN0ZXAgd2FzIHRvIGNyZWF0ZSBhIG5ldyB0eXBlDQpraW5kIG9mIHRoaW5nIHRoYXQgSSBj
+b3VsZCB1c2UgZm9yIGNvdW50aW5nLiBUaGF0IHNlZW1lZCB0byBzdGFydCBnb2luZw0KZG93biBh
+IGRlZXBlciBwYXRoIHRoYW4gSSB3YXMgaG9waW5nIGZvci4NCg0KSG93ZXZlciwNCkkgYW0gaGVz
+aXRhbnQgdG8gZ28gYW5kIHRyeSBhbnl0aGluZyBlbHNlIGJlY2F1c2UgZXZlcnl0aGluZyBJJ3Zl
+IHN1Ym1pdHRlZA0Kc28gZmFyIGhhcyBiZWVuIE5BQ0tlZC4gVGhlIG9ubHkgdGhpbmcgUnVzc2Vs
+bCBzYWlkIGhlJ2QgYWdyZWUgdG8gaXMgYSB0b3ANCmxldmVsIHNpbmdsZS1wbGF0Zm9ybSBvcHRp
+b24uIEJ1dCwgc2luY2UgdGhhdCBhbGwgZ290IHRha2VuIG91dCwgSSBhc3N1bWUNCnRoZXJlJ3Mg
+c29tZSByZXNpc3RhbmNlIHRvIHB1dHRpbmcgaXQgYmFjayBpbi4NCg0KDQpDaHJpcw0KDQo=
