@@ -1,73 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:17418 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751433AbdBJO7N (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36523 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751023AbdBJHJc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 09:59:13 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] ARM: shmobile: r7s72100: add restart handler
-Date: Fri, 10 Feb 2017 14:59:06 +0000
-Message-ID: <SG2PR06MB11657431F033ABBDE1D750F38A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170209191259.29774-1-chris.brandt@renesas.com>
- <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 10 Feb 2017 02:09:32 -0500
+Received: by mail-io0-f194.google.com with SMTP id q20so5043605ioi.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Feb 2017 23:09:24 -0800 (PST)
 MIME-Version: 1.0
+In-Reply-To: <20170209191259.29774-1-chris.brandt@renesas.com>
+References: <20170209191259.29774-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Feb 2017 08:09:22 +0100
+Message-ID: <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: r7s72100: add restart handler
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgRmVicnVhcnkgMTAsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiB3cm90ZToNCj4gPiAgc3RhdGljIGNvbnN0IGNoYXIgKmNvbnN0IHI3czcyMTAwX2JvYXJk
-c19jb21wYXRfZHRbXSBfX2luaXRjb25zdCA9IHsNCj4gPiAgICAgICAgICJyZW5lc2FzLHI3czcy
-MTAwIiwNCj4gPiAgICAgICAgIE5VTEwsDQo+ID4gQEAgLTI5LDQgKzU4LDUgQEAgRFRfTUFDSElO
-RV9TVEFSVChSN1M3MjEwMF9EVCwgIkdlbmVyaWMgUjdTNzIxMDANCj4gKEZsYXR0ZW5lZCBEZXZp
-Y2UgVHJlZSkiKQ0KPiA+ICAgICAgICAgLmluaXRfZWFybHkgICAgID0gc2htb2JpbGVfaW5pdF9k
-ZWxheSwNCj4gPiAgICAgICAgIC5pbml0X2xhdGUgICAgICA9IHNobW9iaWxlX2luaXRfbGF0ZSwN
-Cj4gPiAgICAgICAgIC5kdF9jb21wYXQgICAgICA9IHI3czcyMTAwX2JvYXJkc19jb21wYXRfZHQs
-DQo+ID4gKyAgICAgICAucmVzdGFydCAgICAgICAgPSByN3M3MjEwMF9yZXN0YXJ0LA0KPiA+ICBN
-QUNISU5FX0VORA0KPiANCj4gUGVyaGFwcyB1bnN1cnByaXNpbmdseSwgSSdkIHJlY29tbWVuZCB3
-cml0aW5nIGEgd2F0Y2hkb2cgZHJpdmVyIGluc3RlYWQuDQo+IGRyaXZlcnMvd2F0Y2hkb2cvcmVu
-ZXNhc193ZHQuYyAoY3VycmVudGx5IHN1cHBvcnRpbmcgUi1DYXIgR2VuMyBvbmx5KSBtYXkNCj4g
-c2VydmUgYXMgYW4gZXhhbXBsZS4NCg0KV2h5IGRvIHlvdSBndXlzIGFsd2F5cyBtYWtlIHRoaW5n
-cyBtb3JlIGRpZmZpY3VsdCBmb3IgbWUuLi4gOykNCg0KDQpUbyBiZSBjbGVhciwgeW91IGFyZSBy
-ZWNvbW1lbmRpbmcgSSBtYWtlIGEgV0RUIHRpbWVyIGRyaXZlciAoYW5kIG5vdA0KdXNlIC5yZXN0
-YXJ0KSBhbmQgdGhhdCB3aWxsIHJlc2V0IHRoZSBzeXN0ZW0/DQoNCk9yLCBtYWtlIGEgV0RUIGRy
-aXZlciBqdXN0IHNvIEkgY2FuIHN0ZWFsIHRoZSBiYXNlIGFkZHJlc3M/DQoNCk5vdGUgdGhhdCB0
-aGUgV0RUIHRpbWVvdXQgZm9yIHRoZSBSWi9BMSBpcyB0b28gc2hvcnQgaW4gbXkgb3Bpbmlvbiwg
-c28NCml0J3MgcmVhbGx5IG9ubHkgZ29vZCBmb3IgcmVzZXR0aW5nIHRoZSBzeXN0ZW0uDQoNCg0K
-PiBGcm9tIGFuIGVhcmxpZXIgZGlzY3Vzc2lvbiBkdXJpbmcgZGV2ZWxvcG1lbnQgb2YgdGhhdCBk
-cml2ZXI6DQo+IA0KPiB8IFRoZSBSV0RUIGV4aXN0cyBvbiB2YXJpb3VzIFJlbmVzYXMgU29Dcy4N
-Cj4gfCBGcm9tIGRpZ2dpbmcgaW50byB0aGUgZGF0YXNoZWV0cywgSSBoYWQgZGlzY292ZXJlZCB0
-d28gdmFyaWFudHMgYSB3aGlsZQ0KPiBnbzoNCj4gfCAgIDEuIDMyLWJpdCByZWdpc3RlcnMNCj4g
-fCAgICAgICAgYS4gUi1DYXIgR2VuMjogdXNpbmcgUlNUIGZvciByZXN0YXJ0aW5nDQo+IHwgICAg
-ICAgIGIuIFItTW9iaWxlIEFQRTY6IHVzaW5nIFNZU0MgZm9yIHJlc3RhcnRpbmcNCj4gfCAgIDIu
-IDgtYml0IHJlZ2lzdGVycyAoU0gtTW9iaWxlIEFQNC9BRzUsIFItTW9iaWxlIEExKQ0KPiB8DQo+
-IHwgVGhlIGRpZmZlcmVuY2VzIGFyZSBzbWFsbDogdGhlIHZhcmlhbnQgd2l0aCA4LWJpdCByZWdp
-c3RlcnMgaGFzIGENCj4gfCBzbWFsbGVyIG1heGltdW0gdGltZW91dCwgYW5kIG5vIG1hZ2ljIHZh
-bHVlIHRvIGJlIHN0b3JlZCBpbiB0aGUgdXBwZXINCj4gYml0cy4NCj4gfA0KPiB8IFdvbGZyYW0g
-ZGlzY292ZXJlZCB0aGUgdGhpcmQgdmFyaWFudCBpbiBSWi9BMUgsIHdoaWNoIGRpZmZlcnMgaW4N
-Cj4gfCByZWdpc3RlciBsYXlvdXQuDQo+IA0KPiBJSVJDLCBhcGFydCBmcm9tIHRoZSBkaWZmZXJl
-bnQgcmVnaXN0ZXIgbGF5b3V0LCBhY3R1YWwgb3BlcmF0aW9uIG9uIFJaL0ExSA0KPiBpcyBzaW1p
-bGFyIHRvIG90aGVyIFJlbmVzYXMgU29Dcy4gIERlcGVuZGluZyBvbiB0aGUgZGlmZmVyZW5jZXMs
-IHlvdSBtYXkNCj4gZGVjaWRlIHRvIHdyaXRlIGEgbmV3IGRyaXZlciBpbnN0ZWFkLCB0aG91Z2gu
-DQoNCk1vcmUgb3IgbGVzcyB0aGV5IGFsbCBkbyB0aGUgc2FtZSB0aGluZyAoYWxsIG9ubHkgaGF2
-ZSAzIHJlZ2lzdGVycykuDQpJIGd1ZXNzIHRoZSBkZWNpc2lvbiBjb21lcyBkb3duIHRvIHNpbmNl
-IHRoZSBmaWxlIG5hbWUgaXMgYWxyZWFkeQ0KInJlbmVzYXNfd2R0LmMiLCBkbyB3ZSBqdXN0IG1h
-a2UgdGhlIDEgZmlsZSB3b3JrIGZvciBhbGwgUmVuZXNhcyBTb0MNCmFuZCBub3QgYWRkIHlldCBh
-bm90aGVyIGZpbGUuDQpJdCBpcyBvbmx5IDMgcmVnaXN0ZXJzIHdlJ3JlIHRhbGtpbmcgYWJvdXQu
-Li5pdCdzIG5vdCBsaWtlIGl0J3MgZ29pbmcNCnRvIHR1cm4gaW50byBhbm90aGVyIHNoX3BmYy5j
-IGZpbGUuDQoNClF1ZXN0aW9uOiBSLUNhciBHZW4gMyBoYXMgMyB3YXRjaGRvZyB0aW1lcnM6DQog
-MS4gUkNMSyB3YXRjaGRvZyB0aW1lciAoUldEVCkNCiAyLiBXaW5kb3cgV2F0Y2hkb2cgVGltZXIg
-KFdXRFQpDQogMy4gU3lzdGVtIFdhdGNoZG9nDQoNCiMxIGFuZCAjMyBsb29rIGxpa2UgdGhleSBh
-cmUgdGhlIHNhbWUgdGhpbmcgKGV4Y2VwdCAjMyBpcyBlbmFibGVkIG9uIHBvd2VyDQpvbiByZXNl
-dCkuIFRoZSByZW5lc2FzX3dkdC5jIHVzZXMgdGhlIHJlZ2lzdGVyIG5hbWVzIGZyb20gIzEuDQpJ
-cyB0aGUgaWRlYSB0aGF0IHlvdSBvbmx5IHVzZSAjMyB0byBtYWtlIHN1cmUgeW91ciBzeXN0ZW1z
-IGJvb3RzIGFuZCBnZXQgaW50bw0KTGludXgsIHRoZW4gZnJvbSB0aGVyZSB5b3UgdXNlICMxIGFu
-ZCBzdG9wICMzIChoZW5jZSBubyBkcml2ZXIgaXMgbmVlZGVkKT8NCg0KSSBkb27igJl0IHNlZSB0
-aGUgcG9pbnQgb2YgaGF2aW5nIGFuICJvdmVyZmxvdyBpbnRlcnJ1cHQiIGVuYWJsZWQgaWYgdGhl
-IHN5c3RlbQ0KaXMgZ29pbmcgdG8gcmVzZXQgcmVnYXJkbGVzcy4NCg0KDQpDaHJpcw0KDQo=
+Hi Chris,
+
+On Thu, Feb 9, 2017 at 8:12 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add a simple restart handler which enables the watchdog timer with the
+> device reset option enabled. This is the only way SW can cause a reset on
+> this SoC.
+>
+> If someone has a board that needs more specific operations to be done
+> first, they can override this function in another file.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Thanks for your patch!
+
+> ---
+>  arch/arm/mach-shmobile/setup-r7s72100.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>
+> diff --git a/arch/arm/mach-shmobile/setup-r7s72100.c b/arch/arm/mach-shmobile/setup-r7s72100.c
+> index d46639f..cc6237e 100644
+> --- a/arch/arm/mach-shmobile/setup-r7s72100.c
+> +++ b/arch/arm/mach-shmobile/setup-r7s72100.c
+> @@ -15,11 +15,40 @@
+>   */
+>
+>  #include <linux/kernel.h>
+> +#include <linux/io.h>
+>
+>  #include <asm/mach/arch.h>
+>
+>  #include "common.h"
+>
+> +/*
+> + * This function is declared weak so if you need to do some board specific stuff
+> + * before the reset occurs, you can override this function.
+> + *
+> + * CAUTION: A reboot command doesn't 'sync' before this function
+> + * is called. See function reboot() in kernel/reboot.c
+> + */
+> +extern void __attribute__ ((weak)) r7s72100_restart(enum reboot_mode mode,
+> +                                                   const char *cmd)
+> +{
+> +#define WTCSR 0
+> +#define WTCNT 2
+> +#define WRCSR 4
+> +       void *base = ioremap(0xFCFE0000, 0x10);
+
+This base address should come from a watchdog device node in DT...
+
+> +       /* Dummy read (must read WRCSR:WOVF at least once before clearing) */
+> +       readw(base + WRCSR);
+> +
+> +       writew(0xA500, base + WRCSR);   /* Clear WOVF */
+> +       writew(0x5A5F, base + WRCSR);   /* Reset Enable */
+> +       writew(0x5A00, base + WTCNT);   /* Counter to 00 */
+> +       writew(0xA578, base + WTCSR);   /* Start timer */
+> +
+> +       /* Wait for WDT overflow */
+> +       while (1)
+> +               ;
+> +}
+> +
+>  static const char *const r7s72100_boards_compat_dt[] __initconst = {
+>         "renesas,r7s72100",
+>         NULL,
+> @@ -29,4 +58,5 @@ DT_MACHINE_START(R7S72100_DT, "Generic R7S72100 (Flattened Device Tree)")
+>         .init_early     = shmobile_init_delay,
+>         .init_late      = shmobile_init_late,
+>         .dt_compat      = r7s72100_boards_compat_dt,
+> +       .restart        = r7s72100_restart,
+>  MACHINE_END
+
+Perhaps unsurprisingly, I'd recommend writing a watchdog driver instead.
+drivers/watchdog/renesas_wdt.c (currently supporting R-Car Gen3 only) may
+serve as an example.
+
+>From an earlier discussion during development of that driver:
+
+| The RWDT exists on various Renesas SoCs.
+| From digging into the datasheets, I had discovered two variants a while go:
+|   1. 32-bit registers
+|        a. R-Car Gen2: using RST for restarting
+|        b. R-Mobile APE6: using SYSC for restarting
+|   2. 8-bit registers (SH-Mobile AP4/AG5, R-Mobile A1)
+|
+| The differences are small: the variant with 8-bit registers has a smaller
+| maximum timeout, and no magic value to be stored in the upper bits.
+|
+| Wolfram discovered the third variant in RZ/A1H, which differs in
+| register layout.
+
+IIRC, apart from the different register layout, actual operation on RZ/A1H
+is similar to other Renesas SoCs.  Depending on the differences, you may
+decide to write a new driver instead, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
