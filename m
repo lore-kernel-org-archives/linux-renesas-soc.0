@@ -1,100 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36004 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752157AbdBMKly (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:26597 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932069AbdBJTqX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 05:41:54 -0500
-Received: by mail-it0-f65.google.com with SMTP id f200so12673915itf.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Feb 2017 02:41:54 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11654A11A81D46A70DB1D1BF8A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Fri, 10 Feb 2017 14:46:23 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: shmobile: r7s72100: add restart handler
+Date: Fri, 10 Feb 2017 19:46:17 +0000
+Message-ID: <SG2PR06MB11654A11A81D46A70DB1D1BF8A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170209191259.29774-1-chris.brandt@renesas.com>
  <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
  <SG2PR06MB11657431F033ABBDE1D750F38A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com> <SG2PR06MB11654A11A81D46A70DB1D1BF8A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 Feb 2017 11:41:47 +0100
-Message-ID: <CAMuHMdUJjdhg1j=sgxGLoLh-h91hS6peKJC_eA0wHJx8NbdBZA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: r7s72100: add restart handler
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+ <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Fri, Feb 10, 2017 at 8:46 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Friday, February 10, 2017, Geert Uytterhoeven wrote:
->> Alternatively, you can write a restart driver (cfr.
->> drivers/power/reset/rmobile-reset.c) that binds against a
->> "renesas,r7s72100-wdt" device node, but doesn't implement watchdog
->> functionality.
->> You're gonna need DT bindings anyway.
->
-> I like that idea. That should take me no time at all.
-> Thank you.
->
-> Do you think I can still keep my 'weak function' idea in there??
->
->
-> extern void __attribute__ ((weak)) prepare_for_restart(void)
-> {
->         /* override to do board specific stuff */
-> }
->
-> static int renesas_wdt_reset_handler(struct notifier_block *this,
->                                  unsigned long mode, void *cmd)
-> {
->         pr_debug("%s %lu\n", __func__, mode);
->
->         prepare_for_restart();
->
->         /* set WDT for reset */
->         . . .
->
->         return NOTIFY_DONE;
-> }
-
-What do you want to use the board-specific function for?
-Have a board-specific reset handler, or do some preparatory cleanup?
-
-In case of the former, please write a separate driver that registers  a
-reset handler with a higher priority.
-In case of the latter, please use register_reboot_notifier() in the driver
-that needs it.
-
-> Or...do you think I can just use the rmobile-reset.c driver and
-> just add WDT to it?
->
-> Honestly, the only thing different will be rmobile_reset_handler().
-> I could make a rmobile_wdt_reset_handler() and I could just pass in
-> a different notifier_block depending on the DT.
->
-> What do you think?
-
-Given the small amount of code to add to the existing driver, and the sheer
-amount of boilerplate for writing a new driver, I'm inclined to say yes.
-But in the end, it's up to the subsystem maintainer to decide.
-
-> static const struct of_device_id rmobile_reset_of_match[] = {
->         { .compatible = "renesas,sysc-rmobile", },
->         { .compatible = "renesas,wdt-rmobile", },
-
-renesas,r7s72100-wdt
-
->         { /* sentinel */ }
-> };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgRmVicnVhcnkgMTAsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
+ZXZlbiB3cm90ZToNCj4gQWx0ZXJuYXRpdmVseSwgeW91IGNhbiB3cml0ZSBhIHJlc3RhcnQgZHJp
+dmVyIChjZnIuDQo+IGRyaXZlcnMvcG93ZXIvcmVzZXQvcm1vYmlsZS1yZXNldC5jKSB0aGF0IGJp
+bmRzIGFnYWluc3QgYQ0KPiAicmVuZXNhcyxyN3M3MjEwMC13ZHQiIGRldmljZSBub2RlLCBidXQg
+ZG9lc24ndCBpbXBsZW1lbnQgd2F0Y2hkb2cNCj4gZnVuY3Rpb25hbGl0eS4NCj4gWW91J3JlIGdv
+bm5hIG5lZWQgRFQgYmluZGluZ3MgYW55d2F5Lg0KDQpJIGxpa2UgdGhhdCBpZGVhLiBUaGF0IHNo
+b3VsZCB0YWtlIG1lIG5vIHRpbWUgYXQgYWxsLg0KVGhhbmsgeW91Lg0KDQpEbyB5b3UgdGhpbmsg
+SSBjYW4gc3RpbGwga2VlcCBteSAnd2VhayBmdW5jdGlvbicgaWRlYSBpbiB0aGVyZT8/DQoNCg0K
+ZXh0ZXJuIHZvaWQgX19hdHRyaWJ1dGVfXyAoKHdlYWspKSBwcmVwYXJlX2Zvcl9yZXN0YXJ0KHZv
+aWQpDQp7DQoJLyogb3ZlcnJpZGUgdG8gZG8gYm9hcmQgc3BlY2lmaWMgc3R1ZmYgKi8NCn0NCg0K
+c3RhdGljIGludCByZW5lc2FzX3dkdF9yZXNldF9oYW5kbGVyKHN0cnVjdCBub3RpZmllcl9ibG9j
+ayAqdGhpcywNCgkJCQkgdW5zaWduZWQgbG9uZyBtb2RlLCB2b2lkICpjbWQpDQp7DQoJcHJfZGVi
+dWcoIiVzICVsdVxuIiwgX19mdW5jX18sIG1vZGUpOw0KDQoJcHJlcGFyZV9mb3JfcmVzdGFydCgp
+Ow0KDQoJLyogc2V0IFdEVCBmb3IgcmVzZXQgKi8NCgkuIC4gLg0KDQoJcmV0dXJuIE5PVElGWV9E
+T05FOw0KfQ0KDQoNCg0KT3IuLi5kbyB5b3UgdGhpbmsgSSBjYW4ganVzdCB1c2UgdGhlIHJtb2Jp
+bGUtcmVzZXQuYyBkcml2ZXIgYW5kDQpqdXN0IGFkZCBXRFQgdG8gaXQ/DQoNCkhvbmVzdGx5LCB0
+aGUgb25seSB0aGluZyBkaWZmZXJlbnQgd2lsbCBiZSBybW9iaWxlX3Jlc2V0X2hhbmRsZXIoKS4N
+CkkgY291bGQgbWFrZSBhIHJtb2JpbGVfd2R0X3Jlc2V0X2hhbmRsZXIoKSBhbmQgSSBjb3VsZCBq
+dXN0IHBhc3MgaW4NCmEgZGlmZmVyZW50IG5vdGlmaWVyX2Jsb2NrIGRlcGVuZGluZyBvbiB0aGUg
+RFQuDQoNCldoYXQgZG8geW91IHRoaW5rPw0KDQpzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldmlj
+ZV9pZCBybW9iaWxlX3Jlc2V0X29mX21hdGNoW10gPSB7DQoJeyAuY29tcGF0aWJsZSA9ICJyZW5l
+c2FzLHN5c2Mtcm1vYmlsZSIsIH0sDQoJeyAuY29tcGF0aWJsZSA9ICJyZW5lc2FzLHdkdC1ybW9i
+aWxlIiwgfSwNCgl7IC8qIHNlbnRpbmVsICovIH0NCn07DQoNCg0KQ2hyaXMNCg0K
