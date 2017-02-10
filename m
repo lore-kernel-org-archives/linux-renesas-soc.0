@@ -1,67 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47546 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753170AbdBJPiL (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:17418 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751433AbdBJO7N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 10:38:11 -0500
-Date: Fri, 10 Feb 2017 16:38:04 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
+        Fri, 10 Feb 2017 09:59:13 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <Chris.Brandt@renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+CC: Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] ARM: shmobile: r7s72100: add restart handler
-Message-ID: <20170210153804.mvn4qqkyjv6i367p@ninjato>
+Subject: RE: [PATCH] ARM: shmobile: r7s72100: add restart handler
+Date: Fri, 10 Feb 2017 14:59:06 +0000
+Message-ID: <SG2PR06MB11657431F033ABBDE1D750F38A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170209191259.29774-1-chris.brandt@renesas.com>
  <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
- <SG2PR06MB11657431F033ABBDE1D750F38A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6febk4xnrwdc3vss"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---6febk4xnrwdc3vss
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> > #1 and #3 look like they are the same thing (except #3 is enabled on po=
-wer
-> > on reset). The renesas_wdt.c uses the register names from #1.
-> > Is the idea that you only use #3 to make sure your systems boots and ge=
-t into
-> > Linux, then from there you use #1 and stop #3 (hence no driver is neede=
-d)?
->=20
-> Isn't the SRWDT restricted to secure mode?
-
-Yes.
-
-
---6febk4xnrwdc3vss
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlid3lsACgkQFA3kzBSg
-KbZ5AQ/+N6uLxmrS9jZYF/Yvip/os7usJFYLWiBI7RynkeTbs1+ksoUfpkyaAdbg
-ou9JwFJqkOb496hobe4aeRQJsq5/zH68RvN4dGclGrfbvOGt2QiEASm0u9KoePUB
-VZ+dOi5WjQLAaHKS8gOieqiEnyLVVUgY6EFtTcZH/1ru1RcY4m+7wvJABWsgU/5p
-DR/tOb/Lfddj2PoBltAwmjll36RCot/PR/UQjqWwp+2H968zZG3AKMqXY6VgaO3z
-x1GoDtUJEnkjDi4+xr2qdPQC6RuQqeBRX/i5Y9vTvuREAwcaXHxtph7tX3YPt6rV
-kBWzHQSPZtijoEC2lGUemWmpYjh3iw1cuJ2wJ2KkdIbwmqDf3jDT798SD8y+nqmm
-Og+hPE4fwabTKqwbbb16I0U6D4TF5Q3twxOOBShRr8nROxYIU2gsmQcsQeoxB838
-1GtnQShKfDm2cu+AbR8q5OdtuSP9G4Zw3XogQXhhJv86uf/obZYJqMXd4aAPKDxT
-v4syVdsb/FHeZ3cKeV/iwIr7qDle9eh4UT22Ia3q6U62d2F8zfJjykTMwD3O4FGs
-YAdnvuyym9kJFl5PGOE9OziuHDy2CndooGGbNqie/8xuGCiaHKzvDVoKPNVmhlkW
-pGlQAFBxkr/pyqPOeNDZa8Om/YierVRSN/seer9gcvrNArX1cJI=
-=sHh0
------END PGP SIGNATURE-----
-
---6febk4xnrwdc3vss--
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgRmVicnVhcnkgMTAsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
+ZXZlbiB3cm90ZToNCj4gPiAgc3RhdGljIGNvbnN0IGNoYXIgKmNvbnN0IHI3czcyMTAwX2JvYXJk
+c19jb21wYXRfZHRbXSBfX2luaXRjb25zdCA9IHsNCj4gPiAgICAgICAgICJyZW5lc2FzLHI3czcy
+MTAwIiwNCj4gPiAgICAgICAgIE5VTEwsDQo+ID4gQEAgLTI5LDQgKzU4LDUgQEAgRFRfTUFDSElO
+RV9TVEFSVChSN1M3MjEwMF9EVCwgIkdlbmVyaWMgUjdTNzIxMDANCj4gKEZsYXR0ZW5lZCBEZXZp
+Y2UgVHJlZSkiKQ0KPiA+ICAgICAgICAgLmluaXRfZWFybHkgICAgID0gc2htb2JpbGVfaW5pdF9k
+ZWxheSwNCj4gPiAgICAgICAgIC5pbml0X2xhdGUgICAgICA9IHNobW9iaWxlX2luaXRfbGF0ZSwN
+Cj4gPiAgICAgICAgIC5kdF9jb21wYXQgICAgICA9IHI3czcyMTAwX2JvYXJkc19jb21wYXRfZHQs
+DQo+ID4gKyAgICAgICAucmVzdGFydCAgICAgICAgPSByN3M3MjEwMF9yZXN0YXJ0LA0KPiA+ICBN
+QUNISU5FX0VORA0KPiANCj4gUGVyaGFwcyB1bnN1cnByaXNpbmdseSwgSSdkIHJlY29tbWVuZCB3
+cml0aW5nIGEgd2F0Y2hkb2cgZHJpdmVyIGluc3RlYWQuDQo+IGRyaXZlcnMvd2F0Y2hkb2cvcmVu
+ZXNhc193ZHQuYyAoY3VycmVudGx5IHN1cHBvcnRpbmcgUi1DYXIgR2VuMyBvbmx5KSBtYXkNCj4g
+c2VydmUgYXMgYW4gZXhhbXBsZS4NCg0KV2h5IGRvIHlvdSBndXlzIGFsd2F5cyBtYWtlIHRoaW5n
+cyBtb3JlIGRpZmZpY3VsdCBmb3IgbWUuLi4gOykNCg0KDQpUbyBiZSBjbGVhciwgeW91IGFyZSBy
+ZWNvbW1lbmRpbmcgSSBtYWtlIGEgV0RUIHRpbWVyIGRyaXZlciAoYW5kIG5vdA0KdXNlIC5yZXN0
+YXJ0KSBhbmQgdGhhdCB3aWxsIHJlc2V0IHRoZSBzeXN0ZW0/DQoNCk9yLCBtYWtlIGEgV0RUIGRy
+aXZlciBqdXN0IHNvIEkgY2FuIHN0ZWFsIHRoZSBiYXNlIGFkZHJlc3M/DQoNCk5vdGUgdGhhdCB0
+aGUgV0RUIHRpbWVvdXQgZm9yIHRoZSBSWi9BMSBpcyB0b28gc2hvcnQgaW4gbXkgb3Bpbmlvbiwg
+c28NCml0J3MgcmVhbGx5IG9ubHkgZ29vZCBmb3IgcmVzZXR0aW5nIHRoZSBzeXN0ZW0uDQoNCg0K
+PiBGcm9tIGFuIGVhcmxpZXIgZGlzY3Vzc2lvbiBkdXJpbmcgZGV2ZWxvcG1lbnQgb2YgdGhhdCBk
+cml2ZXI6DQo+IA0KPiB8IFRoZSBSV0RUIGV4aXN0cyBvbiB2YXJpb3VzIFJlbmVzYXMgU29Dcy4N
+Cj4gfCBGcm9tIGRpZ2dpbmcgaW50byB0aGUgZGF0YXNoZWV0cywgSSBoYWQgZGlzY292ZXJlZCB0
+d28gdmFyaWFudHMgYSB3aGlsZQ0KPiBnbzoNCj4gfCAgIDEuIDMyLWJpdCByZWdpc3RlcnMNCj4g
+fCAgICAgICAgYS4gUi1DYXIgR2VuMjogdXNpbmcgUlNUIGZvciByZXN0YXJ0aW5nDQo+IHwgICAg
+ICAgIGIuIFItTW9iaWxlIEFQRTY6IHVzaW5nIFNZU0MgZm9yIHJlc3RhcnRpbmcNCj4gfCAgIDIu
+IDgtYml0IHJlZ2lzdGVycyAoU0gtTW9iaWxlIEFQNC9BRzUsIFItTW9iaWxlIEExKQ0KPiB8DQo+
+IHwgVGhlIGRpZmZlcmVuY2VzIGFyZSBzbWFsbDogdGhlIHZhcmlhbnQgd2l0aCA4LWJpdCByZWdp
+c3RlcnMgaGFzIGENCj4gfCBzbWFsbGVyIG1heGltdW0gdGltZW91dCwgYW5kIG5vIG1hZ2ljIHZh
+bHVlIHRvIGJlIHN0b3JlZCBpbiB0aGUgdXBwZXINCj4gYml0cy4NCj4gfA0KPiB8IFdvbGZyYW0g
+ZGlzY292ZXJlZCB0aGUgdGhpcmQgdmFyaWFudCBpbiBSWi9BMUgsIHdoaWNoIGRpZmZlcnMgaW4N
+Cj4gfCByZWdpc3RlciBsYXlvdXQuDQo+IA0KPiBJSVJDLCBhcGFydCBmcm9tIHRoZSBkaWZmZXJl
+bnQgcmVnaXN0ZXIgbGF5b3V0LCBhY3R1YWwgb3BlcmF0aW9uIG9uIFJaL0ExSA0KPiBpcyBzaW1p
+bGFyIHRvIG90aGVyIFJlbmVzYXMgU29Dcy4gIERlcGVuZGluZyBvbiB0aGUgZGlmZmVyZW5jZXMs
+IHlvdSBtYXkNCj4gZGVjaWRlIHRvIHdyaXRlIGEgbmV3IGRyaXZlciBpbnN0ZWFkLCB0aG91Z2gu
+DQoNCk1vcmUgb3IgbGVzcyB0aGV5IGFsbCBkbyB0aGUgc2FtZSB0aGluZyAoYWxsIG9ubHkgaGF2
+ZSAzIHJlZ2lzdGVycykuDQpJIGd1ZXNzIHRoZSBkZWNpc2lvbiBjb21lcyBkb3duIHRvIHNpbmNl
+IHRoZSBmaWxlIG5hbWUgaXMgYWxyZWFkeQ0KInJlbmVzYXNfd2R0LmMiLCBkbyB3ZSBqdXN0IG1h
+a2UgdGhlIDEgZmlsZSB3b3JrIGZvciBhbGwgUmVuZXNhcyBTb0MNCmFuZCBub3QgYWRkIHlldCBh
+bm90aGVyIGZpbGUuDQpJdCBpcyBvbmx5IDMgcmVnaXN0ZXJzIHdlJ3JlIHRhbGtpbmcgYWJvdXQu
+Li5pdCdzIG5vdCBsaWtlIGl0J3MgZ29pbmcNCnRvIHR1cm4gaW50byBhbm90aGVyIHNoX3BmYy5j
+IGZpbGUuDQoNClF1ZXN0aW9uOiBSLUNhciBHZW4gMyBoYXMgMyB3YXRjaGRvZyB0aW1lcnM6DQog
+MS4gUkNMSyB3YXRjaGRvZyB0aW1lciAoUldEVCkNCiAyLiBXaW5kb3cgV2F0Y2hkb2cgVGltZXIg
+KFdXRFQpDQogMy4gU3lzdGVtIFdhdGNoZG9nDQoNCiMxIGFuZCAjMyBsb29rIGxpa2UgdGhleSBh
+cmUgdGhlIHNhbWUgdGhpbmcgKGV4Y2VwdCAjMyBpcyBlbmFibGVkIG9uIHBvd2VyDQpvbiByZXNl
+dCkuIFRoZSByZW5lc2FzX3dkdC5jIHVzZXMgdGhlIHJlZ2lzdGVyIG5hbWVzIGZyb20gIzEuDQpJ
+cyB0aGUgaWRlYSB0aGF0IHlvdSBvbmx5IHVzZSAjMyB0byBtYWtlIHN1cmUgeW91ciBzeXN0ZW1z
+IGJvb3RzIGFuZCBnZXQgaW50bw0KTGludXgsIHRoZW4gZnJvbSB0aGVyZSB5b3UgdXNlICMxIGFu
+ZCBzdG9wICMzIChoZW5jZSBubyBkcml2ZXIgaXMgbmVlZGVkKT8NCg0KSSBkb27igJl0IHNlZSB0
+aGUgcG9pbnQgb2YgaGF2aW5nIGFuICJvdmVyZmxvdyBpbnRlcnJ1cHQiIGVuYWJsZWQgaWYgdGhl
+IHN5c3RlbQ0KaXMgZ29pbmcgdG8gcmVzZXQgcmVnYXJkbGVzcy4NCg0KDQpDaHJpcw0KDQo=
