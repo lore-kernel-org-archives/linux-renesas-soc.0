@@ -1,69 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35758 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbdBGKYB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 05:24:01 -0500
-Received: by mail-io0-f196.google.com with SMTP id m98so12378170iod.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Feb 2017 02:24:01 -0800 (PST)
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 1/5] vsp-lib: sort output frames correctly
+Date: Fri, 10 Feb 2017 11:21:35 +0200
+Message-ID: <2290131.RP55FYga1y@avalon>
+In-Reply-To: <f20a4abc8c18e8b3bb57dabf283f0eebbd220086.1486562055.git-series.kieran.bingham@ideasonboard.com>
+References: <cover.381fcf0d4db5fa66965cf3d2fca214970f22122b.1486562055.git-series.kieran.bingham@ideasonboard.com> <f20a4abc8c18e8b3bb57dabf283f0eebbd220086.1486562055.git-series.kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <148211399048.8020.7153630286323992170.sendpatchset@little-apple>
-References: <148211397261.8020.4659661835061990009.sendpatchset@little-apple> <148211399048.8020.7153630286323992170.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Feb 2017 11:23:59 +0100
-Message-ID: <CAMuHMdWAu+TgbPTSAyVSSA2UfJ_aX72dSnF6aiJmbxyxy-TJ1w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/02] arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+Hi Kieran,
 
-On Mon, Dec 19, 2016 at 3:19 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Hook up r8a7795 DMAC nodes to IPMMU-MP1, IPMMU-DS0 and IPMMU-DS1.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Thank you for the patch.
+
+On Wednesday 08 Feb 2017 14:03:56 Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> In the event of failed frames, or VSP_KEEP_FRAMES being set, the output
+> file names do not sort such that the reference frame is next to the
+> failed frame.
+> 
+> This can make comparing reference frames and the relevant output frames
+> tedious and difficult.
+> 
+> Re-arrange the output filenames such that the sort order will match the
+> option parameters correctly, followed by either the reference frame
+> identifier, or the frame number at the end of the filename string
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and pushed.
+
 > ---
->
->  Changes from V1:
->  - None
->
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi |   40 ++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
->
-> --- 0002/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi       2016-12-19 11:03:23.310607110 +0900
-> @@ -368,6 +368,14 @@
->                         power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
->                         #dma-cells = <1>;
->                         dma-channels = <16>;
-> +                       iommus = <&ipmmu_mp1 0>, <&ipmmu_mp1 1>,
-> +                              <&ipmmu_mp1 2>, <&ipmmu_mp1 3>,
-> +                              <&ipmmu_mp1 4>, <&ipmmu_mp1 5>,
-> +                              <&ipmmu_mp1 6>, <&ipmmu_mp1 7>,
-> +                              <&ipmmu_mp1 8>, <&ipmmu_mp1 9>,
-> +                              <&ipmmu_mp1 10>, <&ipmmu_mp1 11>,
-> +                              <&ipmmu_mp1 12>, <&ipmmu_mp1 13>,
-> +                              <&ipmmu_mp1 14>, <&ipmmu_mp1 15>;
+>  scripts/vsp-lib.sh | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+> index 1a356ec02374..5aff30217a27 100755
+> --- a/scripts/vsp-lib.sh
+> +++ b/scripts/vsp-lib.sh
+> @@ -278,12 +278,12 @@ compare_frames() {
+>  		}
+> 
+>  		if [ $match = "false" -o x$VSP_KEEP_FRAMES = x1 ] ; then
+> -			mv $frame ${0/.sh/}-$(basename 
+${frame/.bin/-$params.bin})
+> +			mv $frame ${0/.sh/}-$params-$(basename ${frame})
+>  		fi
+>  	done
+> 
+>  	if [ x$VSP_KEEP_FRAMES = x1 -o $result = "fail" ] ; then
+> -		mv ${frames_dir}ref-frame.bin ${0/.sh/}-ref-frame-$params.bin
+> +		mv ${frames_dir}ref-frame.bin ${0/.sh/}-$params-ref-frame.bin
+>  	else
+>  		rm -f ${frames_dir}ref-frame.bin
+>  		rm -f ${frames_dir}frame-*.bin
 
-For consistency, you may want to add these line just below the power-domains
-property (everywhere).
+-- 
+Regards,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
