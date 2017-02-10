@@ -1,101 +1,83 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 3/8] v4l: vsp1: Correct image partition parameters
-Date: Mon, 13 Feb 2017 23:45:44 +0200
-Message-ID: <114416250.ZaPfxRMJ64@avalon>
-In-Reply-To: <6d9f8e04ac314ef7a1ffdc10d079fcd30707a03a.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com> <6d9f8e04ac314ef7a1ffdc10d079fcd30707a03a.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <SRS0=Wi0l=ZX=ideasonboard.com=kieran.bingham+renesas@kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	kieran.bingham@ideasonboard.com
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 3/8] v4l: vsp1: Correct image partition parameters
+Date: Fri, 10 Feb 2017 20:27:31 +0000
+Message-Id: <6d9f8e04ac314ef7a1ffdc10d079fcd30707a03a.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+The image partition algorithm operates on the image dimensions as input
+into the WPF entity.
 
-Thank you for the patch.
+Correct this in the code, and document what defines the properties for
+the algorithm in the section header
 
-On Friday 10 Feb 2017 20:27:31 Kieran Bingham wrote:
-> The image partition algorithm operates on the image dimensions as input
-> into the WPF entity.
-> 
-> Correct this in the code, and document what defines the properties for
-> the algorithm in the section header
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_video.c | 12 ++++++++++--
+ drivers/media/platform/vsp1/vsp1_wpf.c   |  4 ++--
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-Nitpicking, this sentence lacks a period.
-
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/vsp1/vsp1_video.c | 12 ++++++++++--
->  drivers/media/platform/vsp1/vsp1_wpf.c   |  4 ++--
->  2 files changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
-> b/drivers/media/platform/vsp1/vsp1_video.c index be9c860b1c04..4ade958a1c9e
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
-> @@ -176,6 +176,14 @@ static int __vsp1_video_try_format(struct vsp1_video
-> *video,
-> 
->  /*
-> ---------------------------------------------------------------------------
-> -- * VSP1 Partition Algorithm support
-> + *
-> + * VSP hardware can have restrictions on image width dependent on the
-> hardware + * configuration of the pipeline. Adapting for these restrictions
-> is implemented + * via the partition algorithm.
-> + *
-> + * The partition windows and sizes are based on the output size of the WPF
-> + * before rotation, which is represented by the input parameters to the WPF
-> + * entity in our pipeline.
->   */
-> 
->  /**
-> @@ -196,7 +204,7 @@ static struct v4l2_rect vsp1_video_partition(struct
-> vsp1_pipeline *pipe,
-> 
->  	format = vsp1_entity_get_pad_format(&pipe->output->entity,
->  					    pipe->output->entity.config,
-> -					    RWPF_PAD_SOURCE);
-> +					    RWPF_PAD_SINK);
-> 
->  	/* A single partition simply processes the output size in full. */
->  	if (pipe->partitions <= 1) {
-> @@ -258,7 +266,7 @@ static void vsp1_video_pipeline_setup_partitions(struct
-> vsp1_pipeline *pipe)
-> 
->  	format = vsp1_entity_get_pad_format(&pipe->output->entity,
->  					    pipe->output->entity.config,
-> -					    RWPF_PAD_SOURCE);
-> +					    RWPF_PAD_SINK);
->  	div_size = format->width;
-> 
->  	/* Gen2 hardware doesn't require image partitioning. */
-> diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c
-> b/drivers/media/platform/vsp1/vsp1_wpf.c index 7c48f81cd5c1..ad67034e08e9
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_wpf.c
-> +++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-> @@ -218,8 +218,8 @@ static void wpf_configure(struct vsp1_entity *entity,
->  		const struct v4l2_pix_format_mplane *format = &wpf->format;
->  		struct vsp1_rwpf_memory mem = wpf->mem;
->  		unsigned int flip = wpf->flip.active;
-> -		unsigned int width = source_format->width;
-> -		unsigned int height = source_format->height;
-> +		unsigned int width = sink_format->width;
-> +		unsigned int height = sink_format->height;
->  		unsigned int offset;
-> 
->  		/*
-
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index be9c860b1c04..4ade958a1c9e 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -176,6 +176,14 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
+ 
+ /* -----------------------------------------------------------------------------
+  * VSP1 Partition Algorithm support
++ *
++ * VSP hardware can have restrictions on image width dependent on the hardware
++ * configuration of the pipeline. Adapting for these restrictions is implemented
++ * via the partition algorithm.
++ *
++ * The partition windows and sizes are based on the output size of the WPF
++ * before rotation, which is represented by the input parameters to the WPF
++ * entity in our pipeline.
+  */
+ 
+ /**
+@@ -196,7 +204,7 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
+ 
+ 	format = vsp1_entity_get_pad_format(&pipe->output->entity,
+ 					    pipe->output->entity.config,
+-					    RWPF_PAD_SOURCE);
++					    RWPF_PAD_SINK);
+ 
+ 	/* A single partition simply processes the output size in full. */
+ 	if (pipe->partitions <= 1) {
+@@ -258,7 +266,7 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+ 
+ 	format = vsp1_entity_get_pad_format(&pipe->output->entity,
+ 					    pipe->output->entity.config,
+-					    RWPF_PAD_SOURCE);
++					    RWPF_PAD_SINK);
+ 	div_size = format->width;
+ 
+ 	/* Gen2 hardware doesn't require image partitioning. */
+diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
+index 7c48f81cd5c1..ad67034e08e9 100644
+--- a/drivers/media/platform/vsp1/vsp1_wpf.c
++++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+@@ -218,8 +218,8 @@ static void wpf_configure(struct vsp1_entity *entity,
+ 		const struct v4l2_pix_format_mplane *format = &wpf->format;
+ 		struct vsp1_rwpf_memory mem = wpf->mem;
+ 		unsigned int flip = wpf->flip.active;
+-		unsigned int width = source_format->width;
+-		unsigned int height = source_format->height;
++		unsigned int width = sink_format->width;
++		unsigned int height = sink_format->height;
+ 		unsigned int offset;
+ 
+ 		/*
 -- 
-Regards,
-
-Laurent Pinchart
+git-series 0.9.1
