@@ -1,7 +1,7 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170210200009.112802237@cogentembedded.com>
-Date: Fri, 10 Feb 2017 22:59:58 +0300
+Message-Id: <20170210194521.832572814@cogentembedded.com>
+Date: Fri, 10 Feb 2017 22:45:02 +0300
 To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -14,7 +14,7 @@ Subject: [PATCH 1/1] media: platform: Renesas IMR driver
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Disposition: inline; filename=media-platform-Renesas-IMR-driver.patch
-Sender: linux-media-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The image renderer light extended 4 (IMR-LX4) or the distortion correction
