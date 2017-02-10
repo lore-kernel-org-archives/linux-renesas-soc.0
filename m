@@ -1,65 +1,134 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCHv2 3/5] logger: Log to the FTrace buffer if tracing is enabled
-Date: Mon, 13 Feb 2017 16:21:37 +0200
-Message-ID: <4577996.faKKJcSsZt@avalon>
-In-Reply-To: <1480627909-19207-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1480627909-19207-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH 4/5] vsp-lib: Support RPF frame cropping
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <cover.381fcf0d4db5fa66965cf3d2fca214970f22122b.1486562055.git-series.kieran.bingham@ideasonboard.com>
+ <a5a3445637837e9bca24ccc6585e40f52acbe069.1486562055.git-series.kieran.bingham@ideasonboard.com>
+ <31635178.gz5IoCATKn@avalon>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <de331872-8836-2212-9934-85896ee492c5@ideasonboard.com>
+Date: Fri, 10 Feb 2017 14:53:06 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <31635178.gz5IoCATKn@avalon>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Ooops, I left this on my screen, and have already sent the V2 anyway.
 
-Thank you for the patch.
+Hitting send for posterity.
 
-On Thursday 01 Dec 2016 21:31:47 Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> Extend the logger such that it will detect the tracing system, and also
-> append print statement to this ring buffer.
-> 
-> This provides the relevant logging output interspersed in the ftrace
-> logs for an effective solution to identifying the actions that caused
-> the traces to occur
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+--
+Kieran
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  scripts/logger.sh | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+On 10/02/17 09:20, Laurent Pinchart wrote:
+> Hi Kieran,
 > 
-> diff --git a/scripts/logger.sh b/scripts/logger.sh
-> index 8123f0c9f6e3..8412b0ba9a08 100755
-> --- a/scripts/logger.sh
-> +++ b/scripts/logger.sh
-> @@ -6,6 +6,17 @@ now() {
+> Thank you for the patch.
 > 
->  label=${1:+ [$1]}
+> On Wednesday 08 Feb 2017 14:03:59 Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>>
+>> Pass the optional '--crop (X,Y)/WxH' parameter through reference_frame
+>> allowing the input to be cropped for comparison
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>  scripts/vsp-lib.sh | 37 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 37 insertions(+)
+>>
+>> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+>> index 08bf8f36c582..42a4bb20d1be 100755
+>> --- a/scripts/vsp-lib.sh
+>> +++ b/scripts/vsp-lib.sh
+>> @@ -162,6 +162,9 @@ reference_frame() {
+>>  		vflip)
+>>  			[ x$value = x1 ] && options="$options --vflip"
+>>  			;;
+>> +		crop)
+>> +			options="$options --crop $value"
+>> +			;;
 > 
-> +TRACE_MARKER=/sys/kernel/debug/tracing/trace_marker
-> +if [ -e $TRACE_MARKER ]; then
-> +	extra_log_files=$TRACE_MARKER
-> +fi
-> +
->  while read line ; do
-> -	echo "$(now)$label $line"
-> +	newline="$(now)$label $line"
-> +
-> +	echo "$newline"
-> +
-> +	for f in $extra_log_files; do
-> +		echo "$newline" >> $f;
-> +	done;
->  done
+> Could you please keep the options sorted alphabetically ?
 
--- 
-Regards,
+Fixed,
 
-Laurent Pinchart
+> 
+>>  		esac
+>>  	done
+>>
+>> @@ -717,6 +720,40 @@ format_rpf_wpf() {
+>>  	__vsp_wpf_format=$5
+>>  }
+>>
+>> +format_crop_rpf_wpf() {
+>> +	local rpf=$1
+>> +	local wpf=$2
+>> +	local infmt=$(format_v4l2_to_mbus $3)
+>> +	local size=$4
+>> +	local outfmt=$(format_v4l2_to_mbus $5)
+>> +	local rpfcrop=$6
+>> +	local wpfcrop=$7
+>> +	local rpfoutsize=
+>> +	local outsize=
+>> +
+>> +	if [ x$rpfcrop != 'x' ] ; then
+> 
+> I don't think this will work properly. You want to test for the presence of an 
+> RPF crop argument. If it's absent, and the WPF crop argument is specified, WPF 
+> crop will be stored in $6, and will thus be assigned to $rpfcrop.
+
+Yes, you're correct.
+
+> 
+> I see two possible solutions. One of them is to make the RPF crop argument 
+> mandatory. After all, given the function name, one can expect RPF crop to be 
+> specified, otherwise the caller should use rpf-wpf, not crop-rpf-wpf. Another 
+> more versatile option would be to add RPF crop support to the existing 
+> format_rpf_wpf() crop function, and make both RPF and WPF crop optional. You 
+> could use named option for that (rcrop=... wcrop=...) or use a special value 
+> to indicate that an option should be skipped (for instance "- (0,0)/640x480" 
+> to set the WPF crop rectangle without setting the RPF crop rectangle).
+
+I think prefer named arguments over positional arguments in non-type-checked
+code such as this...
+
+Although I think I went down the 'fast' route of duplicating rpf-crop over
+adding named arguments. That's not a good enough reason not to do it though ...
+
+As there are no current users of the 'wpf' crop parameter, I've changed this to
+support --rpfcrop=... --wpfcrop=...
+
+
+> 
+>> +		rpfcrop="crop:$rpfcrop"
+>> +		rpfoutsize=$(echo $rpfcrop | sed 's/.*\///')
+>> +	else
+>> +		rpfoutsize=$size
+>> +	fi
+>> +
+>> +	if [ x$wpfcrop != 'x' ] ; then
+>> +		wpfcrop="crop:$wpfcrop"
+>> +		outsize=$(echo $wpfcrop | sed 's/.*\///')
+>> +	else
+>> +		outsize=$rpfoutsize
+>> +	fi
+>> +
+>> +	$mediactl -d $mdev -V "'$dev rpf.$rpf':0 [fmt:$infmt/$size $rpfcrop]"
+>> +	$mediactl -d $mdev -V "'$dev rpf.$rpf':1 [fmt:$infmt/$rpfoutsize]"
+>> +	$mediactl -d $mdev -V "'$dev wpf.$wpf':0 [fmt:$infmt/$rpfoutsize
+>> $wpfcrop]"
+>> +	$mediactl -d $mdev -V "'$dev wpf.$wpf':1 [fmt:$outfmt/$outsize]"
+>> +
+>> +	__vsp_rpf_format=$3
+>> +	__vsp_wpf_format=$5
+>> +}
+>> +
+>>  format_wpf() {
+>>  	local format=$(format_v4l2_to_mbus $1)
+>>  	local size=$2
+> 
+--
+Kieran
