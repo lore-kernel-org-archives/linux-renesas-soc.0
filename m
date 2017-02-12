@@ -1,48 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:36118 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932086AbdBHRWY (ORCPT
+Received: from sauhun.de ([89.238.76.85]:50545 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751142AbdBLLMf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Feb 2017 12:22:24 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
+        Sun, 12 Feb 2017 06:12:35 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] ARM: xip: disable PATCH_PHYS_VIRT for ARCH_MULTIPLATFORM when XIP
-Date: Wed,  8 Feb 2017 12:22:09 -0500
-Message-Id: <20170208172209.31673-1-chris.brandt@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/4] mmc: host: tmio: properly report status from autocmd12
+Date: Sun, 12 Feb 2017 12:12:23 +0100
+Message-Id: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since ARCH_MULTIPLATFORM explicitly selects ARM_PATCH_PHYS_VIRT, even
-though ARCH_MULTIPLATFORM has 'depends on !XIP_KERNEL', ARM_PATCH_PHYS_VIRT
-is still forcibly selected. The result is that PHYS_OFFSET depends on
-!ARM_PATCH_PHYS_VIRT. This means you cannot enter a physical RAM address
-for an XIP kernel and you cannot build.
+SDHI automatically sends CMD12 when the desired amount of data was transferred
+after multi block commands. However, the response from that CMD12 was never
+reported back to the mmc core, so that errors like ECC might go unnoticed. This
+series aims to fix that and clean up minor issues on the way when dealing with
+the autocmd12 feature. So far, I could only test that the success case was
+reported back to the MMC core [1]. An error case (like ECC) could not be
+created yet, but I will keep on trying. However, the initial flaw of the CMD12
+response not reported back is fixed with this series as the success case
+demonstrates. If an ECC error is not properly handled, it is a seperate issue
+anyway. So, I think this series could go in now. No pressure for 4.11, though.
+But would be nice, of course ;)
 
-Given that it is already clear in the Kconfig that ARM_PATCH_PHYS_VIRT and
-XIP_KERNEL do not go well together (read the help for ARM_PATCH_PHYS_VIRT),
-adding this condition to ARCH_MULTIPLATFORM is logical and will fix this
-build issue.
+The patches are based on mmc-next. A branch can be found here:
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index bf8d86d..c97bd2c 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -330,7 +330,7 @@ config ARCH_MULTIPLATFORM
- 	bool "Allow multiple platforms to be selected"
- 	depends on MMU
- 	select ARM_HAS_SG_CHAIN
--	select ARM_PATCH_PHYS_VIRT
-+	select ARM_PATCH_PHYS_VIRT if !XIP_KERNEL
- 	select AUTO_ZRELADDR
- 	select CLKSRC_OF
- 	select COMMON_CLK
+Thanks and all the best,
+
+   Wolfram
+
+[1] http://elinux.org/Tests:SDHI-autocmd12-responses
+
+
+Wolfram Sang (4):
+  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+  mmc: host: tmio: fix minor typos in a comment
+  mmc: host: tmio: don't BUG on unsupported stop commands
+  mmc: host: tmio: fill in response from auto cmd12
+
+ drivers/mmc/host/tmio_mmc.h     |  6 +++++-
+ drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
 -- 
-2.10.1
+2.11.0
