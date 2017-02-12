@@ -1,30 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39582 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751686AbdBMMk4 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:50566 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751159AbdBLLMg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 07:40:56 -0500
-Date: Mon, 13 Feb 2017 13:40:50 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 3/4] mmc: host: tmio: don't BUG on unsupported stop
- commands
-Message-ID: <20170213124050.GB29718@verge.net.au>
+        Sun, 12 Feb 2017 06:12:36 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/4] mmc: host: tmio: don't BUG on unsupported stop commands
+Date: Sun, 12 Feb 2017 12:12:26 +0100
+Message-Id: <20170212111227.1550-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
 References: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
- <20170212111227.1550-4-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170212111227.1550-4-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Feb 12, 2017 at 12:12:26PM +0100, Wolfram Sang wrote:
-> Halting the kernel on an unsupported stop command seems overkill, report
-> the error and say what we already did (due to autocmd12) instead.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Halting the kernel on an unsupported stop command seems overkill, report
+the error and say what we already did (due to autocmd12) instead.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index ad2840e1bfae51..b47dd9195fe3fe 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -553,10 +553,11 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
+ 	}
+ 
+ 	if (stop) {
+-		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
+-			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
+-		else
+-			BUG();
++		if (stop->opcode != MMC_STOP_TRANSMISSION || stop->arg)
++			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
++				stop->opcode, stop->arg);
++
++		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
+ 	}
+ 
+ 	schedule_work(&host->done);
+-- 
+2.11.0
