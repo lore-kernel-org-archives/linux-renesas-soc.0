@@ -1,143 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33004 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbdBBRKy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39290 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751153AbdBLMcI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 12:10:54 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3 6/7] serial: sh-sci: make RX FIFO parameters tunable via sysfs
-Date: Thu,  2 Feb 2017 18:10:19 +0100
-Message-Id: <1486055420-31595-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Sun, 12 Feb 2017 07:32:08 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/3] rcar-du: Enable fences support using atomic commit helper
+Date: Sun, 12 Feb 2017 14:32:26 +0200
+Message-Id: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
-only applicable to SCIFA and SCIFB).
+Hello,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+This patch series enables fences support in the rcar-du driver through
+switching to the atomic commit helper.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 17a2be3..5bbcb3b 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1055,6 +1055,66 @@ static void rx_fifo_timer_fn(unsigned long arg)
- 	scif_set_rtrg(port, 1);
- }
- 
-+static ssize_t rx_trigger_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+
-+	return sprintf(buf, "%d\n", sci->rx_trigger);
-+}
-+
-+static ssize_t rx_trigger_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf,
-+				size_t count)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+	long r;
-+
-+	if (kstrtol(buf, 0, &r) == -EINVAL)
-+		return -EINVAL;
-+	sci->rx_trigger = scif_set_rtrg(port, r);
-+	scif_set_rtrg(port, 1);
-+	return count;
-+}
-+
-+static DEVICE_ATTR(rx_fifo_trigger, 0644, rx_trigger_show, rx_trigger_store);
-+
-+static ssize_t rx_fifo_timeout_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+
-+	return sprintf(buf, "%d\n", sci->rx_fifo_timeout);
-+}
-+
-+static ssize_t rx_fifo_timeout_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf,
-+				size_t count)
-+{
-+	struct uart_port *port = dev_get_drvdata(dev);
-+	struct sci_port *sci = to_sci_port(port);
-+	long r;
-+
-+	if (kstrtol(buf, 0, &r) == -EINVAL)
-+		return -EINVAL;
-+	sci->rx_fifo_timeout = r;
-+	scif_set_rtrg(port, 1);
-+	if (r > 0)
-+		setup_timer(&sci->rx_fifo_timer, rx_fifo_timer_fn,
-+			    (unsigned long)sci);
-+	return count;
-+}
-+
-+static DEVICE_ATTR(rx_fifo_timeout, 0644, rx_fifo_timeout_show, rx_fifo_timeout_store);
-+
-+
- #ifdef CONFIG_SERIAL_SH_SCI_DMA
- static void sci_dma_tx_complete(void *arg)
- {
-@@ -2891,6 +2951,15 @@ static int sci_remove(struct platform_device *dev)
- 
- 	sci_cleanup_single(port);
- 
-+	if (port->port.fifosize > 1) {
-+		sysfs_remove_file(&dev->dev.kobj,
-+				  &dev_attr_rx_fifo_trigger.attr);
-+	}
-+	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB) {
-+		sysfs_remove_file(&dev->dev.kobj,
-+				  &dev_attr_rx_fifo_timeout.attr);
-+	}
-+
- 	return 0;
- }
- 
-@@ -3056,6 +3125,24 @@ static int sci_probe(struct platform_device *dev)
- 	if (ret)
- 		return ret;
- 
-+	if (sp->port.fifosize > 1) {
-+		ret = sysfs_create_file(&dev->dev.kobj,
-+				&dev_attr_rx_fifo_trigger.attr);
-+		if (ret)
-+			return ret;
-+	}
-+	if (sp->port.type == PORT_SCIFA || sp->port.type ==  PORT_SCIFB) {
-+		ret = sysfs_create_file(&dev->dev.kobj,
-+				&dev_attr_rx_fifo_timeout.attr);
-+		if (ret) {
-+			if (sp->port.fifosize > 1) {
-+				sysfs_remove_file(&dev->dev.kobj,
-+					&dev_attr_rx_fifo_trigger.attr);
-+			}
-+			return ret;
-+		}
-+	}
-+
- #ifdef CONFIG_SH_STANDARD_BIOS
- 	sh_bios_gdb_detach();
- #endif
+Patches 1/3 and 2/3 prepare the driver to handle CRTC events the way expected
+by the atomic commit helper. Patch 3/3 then replaces the custom atomic commit
+handler with the atomic commit helper, using a custom commit tail handler to
+support the driver-specific CRTC enable/disable and plane commit order.
+
+Patch 3/3 depends on the "[PATCH] drm: Constify drm_mode_config atomic helper
+private pointer" (merged in drm-misc) for proper compilation, and on
+"[PATCH v3 0/7] drm/atomic: Add accessor macros for all atomic state" (posted
+to the dri-devel mailing list) for proper runtime operation of asynchronous
+commits.
+
+Laurent Pinchart (3):
+  drm: rcar-du: Handle event when disabling CRTCs
+  drm: rcar-du: Clear handled event pointer in CRTC state
+  drm: rcar-du: Use DRM core's atomic commit helper
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 13 +++--
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c  | 99 ++++------------------------------
+ 2 files changed, 19 insertions(+), 93 deletions(-)
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
