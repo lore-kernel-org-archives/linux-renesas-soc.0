@@ -1,75 +1,61 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: How to get related device pointer via DT?
-Date: Wed, 15 Feb 2017 02:21:55 +0000
-Message-ID: <HK2PR06MB054824526D2975ADE8EA0405D85B0@HK2PR06MB0548.apcprd06.prod.outlook.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 1/4] vsp-lib: Filter non-filesystem regular characters
+Date: Sun, 12 Feb 2017 23:05:34 +0200
+Message-ID: <29741271.i3UgzBgdjd@avalon>
+In-Reply-To: <a6cd919063a1d5983be9dd24268881e23dc294aa.1486733302.git-series.kieran.bingham@ideasonboard.com>
+References: <cover.eec601d2240d67bb1b1cbcb6d8485e49a40ffee3.1486733302.git-series.kieran.bingham@ideasonboard.com> <a6cd919063a1d5983be9dd24268881e23dc294aa.1486733302.git-series.kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Hi Kieran,
 
-I would like to get a related device pointer on usb EHCI drivers (or USB fr=
-amework)
-because related device (e.g. OHCI or UHCI, called "companion controllers") =
-has to
-finish resuming. I discussed this topic with Alan:
-http://marc.info/?t=3D148653514200001&r=3D1&w=3D2
+Thank you for the patch.
 
-In PCI bus, USB framework already has such a feature in drivers/usb/core/hc=
-d-pci.c.
-However, in platform devices, we don't have it for now. So, I would like to=
- add it.
+On Friday 10 Feb 2017 13:30:05 Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Parameters can contain characters not suited to use in filenames.
+> 
+> Add '=','(', and ')' to the filtering, and replace with '_'
+> 
+> This reduces extra escaping, and quoting when working with the output
+> filenames of failed tests and VSP_KEEP_FRAMES=1
 
-Then, I have 2 ideas to get the related device pointer:
+I agree that some characters can increase the difficulty of handling file 
+names in scripts or on the command line by requiring escaping. I would prefer 
+fixing the scripts, but I'll accept this patch on the ground that the 
+information loss caused by replacing the =, ( and ) characters with _ will not 
+adversely affect our tests. If that turns out not to be true anymore in the 
+future I reserve the right to revert the patch and ask you to fix your scripts 
+:-)
 
-A) We add a new property "companion" as usb-generic.txt and EHCI node(s) ha=
-ve
-   such a property to bind a companion controller.
-B) We assume EHCI controller binds a companion controller if some resources
-   (irq or clock) are the same and it has a compatible strings as "generic-=
-[uo]hci"
-   for instance.
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> ---
+>  scripts/vsp-lib.sh | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+> index 8f2755b57519..9e5e57b8c4ba 100755
+> --- a/scripts/vsp-lib.sh
+> +++ b/scripts/vsp-lib.sh
+> @@ -258,6 +258,9 @@ compare_frames() {
+>  	local params=${args// /-}
+>  	params=${params:+-$params}
+>  	params=${params//\//_}
+> +	params=${params//=/_}
+> +	params=${params//(/_}
+> +	params=${params//)/_}
+>  	params=$in_fmt-$out_fmt-$size$params
+> 
+>  	if [ x$__vsp_pixel_perfect != xtrue ] ; then
 
-My environment is R-Car H3, and it has 3 EHCI and 3 OHCI controllers.
-For example (I only wrote channel 0 of EHCI and OHCI):
-		ehci0: usb@ee080100 {
-			compatible =3D "generic-ehci";
-			reg =3D <0 0xee080100 0 0x100>;
-			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-			clocks =3D <&cpg CPG_MOD 703>;
-			phys =3D <&usb2_phy0>;
-			phy-names =3D "usb";
-			power-domains =3D <&sysc R8A7795_PD_ALWAYS_ON>;
-			status =3D "disabled";
-		};
+-- 
+Regards,
 
-		ohci0: usb@ee080000 {
-			compatible =3D "generic-ohci";
-			reg =3D <0 0xee080000 0 0x100>;
-			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-			clocks =3D <&cpg CPG_MOD 703>;
-			phys =3D <&usb2_phy0>;
-			phy-names =3D "usb";
-			power-domains =3D <&sysc R8A7795_PD_ALWAYS_ON>;
-			status =3D "disabled";
-		};
-
-If my idea A), ehci0 will have companion =3D <&ohci>;
-If my idea B), no need to add any property.
-
-What do you think?
-Anyway, I will start to study DT programming :)
-
-Best regards,
-Yoshihiro Shimoda
-
+Laurent Pinchart
