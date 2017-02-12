@@ -1,110 +1,113 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=Wi0l=ZX=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 8/8] v4l: vsp1: Implement left edge partition algorithm overlap
-Date: Fri, 10 Feb 2017 20:27:36 +0000
-Message-Id: <19c6a7d542809dc814b5dfb11ba8ab737eab56f9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34213 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbdBLRfS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 12 Feb 2017 12:35:18 -0500
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFC] clk: renesas: r8a7796: Replace PLL3 multiplication setting
+Date: Mon, 13 Feb 2017 02:35:10 +0900
+Message-Id: <1486920910-3592-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Increase the overlap on the left edge to allow a margin to provide
-better image scaling
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+This patch replaces PLL3 multiplication setting for DDR clock frequency.
+
+  - After changes, new PLL3 multiplication setting:
+    MD19 MD17 : DDR clock frequency
+    -------------------------------
+      0    0  : DDR3200
+      0    1  : DDR2800
+      1    0  : DDR2400
+      1    1  : DDR1600
+
+  - Before changes, old PLL3 multiplication setting:
+    MD19 MD17 : DDR clock frequency
+    -------------------------------
+      0    0  : DDR3200
+      0    1  : DDR2133
+      1    0  : Prohibited setting
+      1    1  : DDR1600
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
- drivers/media/platform/vsp1/vsp1_rpf.c |  7 +++++-
- drivers/media/platform/vsp1/vsp1_uds.c | 39 ++++++++++++++++++++++++---
- 2 files changed, 42 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
-index 94541ab4ca36..d08cfd944b7b 100644
---- a/drivers/media/platform/vsp1/vsp1_rpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_rpf.c
-@@ -247,6 +247,13 @@ struct vsp1_partition_rect *rpf_partition(struct vsp1_entity *entity,
- 	/* Duplicate the target configuration to the RPF */
- 	partition->rpf = *dest;
+This patch is based on the clk-next branch of linux-clk tree.
+
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 11e084a..44110ae 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -214,20 +214,20 @@ enum clk_ids {
+  * 14 13 19 17	(MHz)
+  *-------------------------------------------------------------------
+  * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
+- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
+- * 0  0  1  0	Prohibited setting
++ * 0  0  0  1	16.66 x 1	x180	x192	x144	x168	x144
++ * 0  0  1  0	16.66 x 1	x180	x192	x144	x144	x144
+  * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
+  * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
+- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
+- * 0  1  1  0	Prohibited setting
++ * 0  1  0  1	20    x 1	x150	x160	x120	x140	x120
++ * 0  1  1  0	20    x 1	x150	x160	x120	x120	x120
+  * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
+  * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
+- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
+- * 1  0  1  0	Prohibited setting
++ * 1  0  0  1	25    x 1	x120	x128	x96	x112	x96
++ * 1  0  1  0	25    x 1	x120	x128	x96	x96	x96
+  * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
+  * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
+- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
+- * 1  1  1  0	Prohibited setting
++ * 1  1  0  1	33.33 / 2	x180	x192	x144	x168	x144
++ * 1  1  1  0	33.33 / 2	x180	x192	x144	x144	x144
+  * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
+@@ -238,20 +238,20 @@ enum clk_ids {
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+ 	/* EXTAL div	PLL1 mult	PLL3 mult */
+ 	{ 1,		192,		192,	},
+-	{ 1,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 1,		192,		168,	},
++	{ 1,		192,		144,	},
+ 	{ 1,		192,		192,	},
+ 	{ 1,		160,		160,	},
+-	{ 1,		160,		106,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 1,		160,		140,	},
++	{ 1,		160,		120,	},
+ 	{ 1,		160,		160,	},
+ 	{ 1,		128,		128,	},
+-	{ 1,		128,		84,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 1,		128,		112,	},
++	{ 1,		128,		96,	},
+ 	{ 1,		128,		128,	},
+ 	{ 2,		192,		192,	},
+-	{ 2,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 2,		192,		168,	},
++	{ 2,		192,		144,	},
+ 	{ 2,		192,		192,	},
+ };
  
-+	/*
-+	 * A partition offset, is a request for more input pixels, and a
-+	 * declaration that the consumer will clip excess.
-+	 */
-+	partition->rpf.width += dest->offset;
-+	partition->rpf.left -= dest->offset;
-+
- 	return &partition->rpf;
- }
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_uds.c b/drivers/media/platform/vsp1/vsp1_uds.c
-index 9c1fb7ef3c46..9ee476c8db59 100644
---- a/drivers/media/platform/vsp1/vsp1_uds.c
-+++ b/drivers/media/platform/vsp1/vsp1_uds.c
-@@ -81,6 +81,20 @@ static struct uds_phase uds_phase_calculation(int position, int start_phase,
- 	return phase;
- }
- 
-+static int uds_left_src_pixel(int pos, int start_phase, int ratio)
-+{
-+	struct uds_phase phase;
-+
-+	phase = uds_phase_calculation(pos, start_phase, ratio);
-+
-+	/* Renesas guard against odd values in these scale ratios here ? */
-+	if ((phase.mp == 2 && (phase.residual & 0x01)) ||
-+	    (phase.mp == 4 && (phase.residual & 0x03)))
-+		WARN_ON(1);
-+
-+	return phase.mp * (phase.prefilt_outpos + (phase.residual ? 1 : 0));
-+}
-+
- static int uds_start_phase(int pos, int start_phase, int ratio)
- {
- 	struct uds_phase phase;
-@@ -420,6 +434,8 @@ struct vsp1_partition_rect *uds_partition(struct vsp1_entity *entity,
- 	const struct v4l2_mbus_framefmt *input;
- 	unsigned int hscale;
- 	unsigned int image_start_phase = 0;
-+	unsigned int right_sink;
-+	unsigned int margin;
- 
- 	/* Initialise the partition state */
- 	partition->uds_sink = *dest;
-@@ -432,10 +448,25 @@ struct vsp1_partition_rect *uds_partition(struct vsp1_entity *entity,
- 
- 	hscale = uds_compute_ratio(input->width, output->width);
- 
--	partition->uds_sink.width = dest->width * input->width
--				  / output->width;
--	partition->uds_sink.left = dest->left * input->width
--				 / output->width;
-+	/* Handle 'left' edge of the partitions */
-+	if (partition_idx == 0) {
-+		margin = 0;
-+	} else {
-+		margin = hscale < 0x200 ? 32 : /* 8 <  scale */
-+			 hscale < 0x400 ? 16 : /* 4 <  scale <= 8 */
-+			 hscale < 0x800 ?  8 : /* 2 <  scale <= 4 */
-+					   4;  /* 1 <  scale <= 2, scale <= 1 */
-+	}
-+
-+	partition->uds_sink.left = uds_left_src_pixel(dest->left,
-+					image_start_phase, hscale);
-+
-+	partition->uds_sink.offset = margin;
-+
-+	right_sink = uds_left_src_pixel(dest->left + dest->width - 1,
-+					image_start_phase, hscale);
-+
-+	partition->uds_sink.width = right_sink - partition->uds_sink.left + 1;
- 
- 	partition->start_phase = uds_start_phase(partition->uds_source.left,
- 						 image_start_phase, hscale);
 -- 
-git-series 0.9.1
+1.9.1
