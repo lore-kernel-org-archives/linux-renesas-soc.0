@@ -1,64 +1,54 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=Wi0l=ZX=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 1/8] v4l: vsp1: Provide UDS register updates
-Date: Fri, 10 Feb 2017 20:27:29 +0000
-Message-Id: <bf28e7e9bf28ff60c505592072a234f8dd568f71.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39294 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751185AbdBLMcK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 12 Feb 2017 07:32:10 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/3] drm: rcar-du: Clear handled event pointer in CRTC state
+Date: Sun, 12 Feb 2017 14:32:28 +0200
+Message-Id: <20170212123229.18277-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide register definitions required for UDS phase and partition
-algorithm support
+The atomic commit helper requires drivers to clear the event pointer
+stored in the CRTC state when the event is handled. In preparation to
+using the helper, fix the driver.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_regs.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 47b1dee044fb..1ad819680e2f 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -388,6 +388,7 @@
- #define VI6_UDS_CTRL_NE_RCR		(1 << 18)
- #define VI6_UDS_CTRL_NE_GY		(1 << 17)
- #define VI6_UDS_CTRL_NE_BCB		(1 << 16)
-+#define VI6_UDS_CTRL_AMDSLH		(1 << 2)
- #define VI6_UDS_CTRL_TDIPC		(1 << 1)
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 04046c0faffd..7391dd95c733 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -501,16 +501,16 @@ static void rcar_du_crtc_disable(struct drm_crtc *crtc)
+ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
+ 				      struct drm_crtc_state *old_crtc_state)
+ {
+-	struct drm_pending_vblank_event *event = crtc->state->event;
+ 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+ 	struct drm_device *dev = rcrtc->crtc.dev;
+ 	unsigned long flags;
  
- #define VI6_UDS_SCALE			0x2304
-@@ -420,11 +421,24 @@
- #define VI6_UDS_PASS_BWIDTH_V_MASK	(0x7f << 0)
- #define VI6_UDS_PASS_BWIDTH_V_SHIFT	0
+-	if (event) {
++	if (crtc->state->event) {
+ 		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
  
-+#define VI6_UDS_HPHASE			0x2314
-+#define VI6_UDS_HPHASE_HSTP_MASK	(0xfff << 16)
-+#define VI6_UDS_HPHASE_HSTP_SHIFT	16
-+#define VI6_UDS_HPHASE_HEDP_MASK	(0xfff << 0)
-+#define VI6_UDS_HPHASE_HEDP_SHIFT	0
-+
- #define VI6_UDS_IPC			0x2318
- #define VI6_UDS_IPC_FIELD		(1 << 27)
- #define VI6_UDS_IPC_VEDP_MASK		(0xfff << 0)
- #define VI6_UDS_IPC_VEDP_SHIFT		0
+ 		spin_lock_irqsave(&dev->event_lock, flags);
+-		rcrtc->event = event;
++		rcrtc->event = crtc->state->event;
++		crtc->state->event = NULL;
+ 		spin_unlock_irqrestore(&dev->event_lock, flags);
+ 	}
  
-+#define VI6_UDS_HSZCLIP			0x231c
-+#define VI6_UDS_HSZCLIP_HCEN		(1 << 28)
-+#define VI6_UDS_HSZCLIP_HCL_OFST_MASK	(0x1ff << 16)
-+#define VI6_UDS_HSZCLIP_HCL_OFST_SHIFT	16
-+#define VI6_UDS_HSZCLIP_HCL_SIZE_MASK	(0x1fff << 0)
-+#define VI6_UDS_HSZCLIP_HCL_SIZE_SHIFT	0
-+
- #define VI6_UDS_CLIP_SIZE		0x2324
- #define VI6_UDS_CLIP_SIZE_HSIZE_MASK	(0x1fff << 16)
- #define VI6_UDS_CLIP_SIZE_HSIZE_SHIFT	16
 -- 
-git-series 0.9.1
+Regards,
+
+Laurent Pinchart
