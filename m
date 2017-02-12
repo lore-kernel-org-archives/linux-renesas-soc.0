@@ -1,90 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:13844 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751304AbdBOJN5 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39292 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751185AbdBLMcI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Feb 2017 04:13:57 -0500
-From: DongCV <cv-dong@jinso.co.jp>
-To: broonie@kernel.org, geert+renesas@glider.be,
-        linux-spi@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
-        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
-Subject: [PATCH] spi: rspi: Fixes bogus received byte and replaces "n" by "len" in commit 3be09be
-Date: Wed, 15 Feb 2017 18:12:44 +0900
-Message-Id: <1487149964-10904-1-git-send-email-cv-dong@jinso.co.jp>
+        Sun, 12 Feb 2017 07:32:08 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/3] drm: rcar-du: Handle event when disabling CRTCs
+Date: Sun, 12 Feb 2017 14:32:27 +0200
+Message-Id: <20170212123229.18277-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In qspi_transfer_in(), when receiving the last n (or len) bytes of data,
-1 bogus byte was written in the receive buffer.
-This code leads to a buffer overflow.
+The driver currently handles vblank events only when updating planes on
+a CRTC. The atomic update API however allows requesting an event when
+disabling a CRTC. This currently leads to event objects being leaked in
+the kernel and to events not being sent out. Fix it.
 
-"jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40000: 0x1900 instead
- jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40004: 0x000c instead"
-
-The error message above happens when trying to mount, unmount, and remount a jffs2-formatted device.
-This patch removed the bogus write and for clearer to use, here replaced "n" by "len" in
-qspi_transfer_in() and qspi_transfer_out() to fixes: 3be09bec42a800d4
-"spi: rspi: supports 32bytes buffer for DUAL and QUAD"
-
-Here is Geert's comments:
-
-"May I suggest the following:
-
-    spi: rspi: Fix bogus received byte in qspi_transfer_in()
-
-    When there are less than QSPI_BUFFER_SIZE remaining bytes to be received,
-    qspi_transfer_in() writes one bogus byte in the receive buffer, possibly
-    leading to a buffer overflow.
-
-    This can be reproduced by mounting, unmounting, and remounting a
-    jffs2-formatted device, causing lots of warnings like:
-
-        jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
-at 0x03b40000: 0x1900 instead
-
-    Remove the bogus write to fix this.
-
-It's also a good idea to add a Fixes tag:
-
-    Fixes: 3be09bec42a800d4 ("spi: rspi: supports 32bytes buffer for
-DUAL and QUAD")
-
-(the code was moved afterwards, but both the origin and the move were
- integrated in v4.10-rc1)."
-
-Signed-off-by: DongCV <cv-dong@jinso.co.jp>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/spi/spi-rspi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 9daf500..bc3c868 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -808,7 +808,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
- 			for (i = 0; i < len; i++)
- 				rspi_write_data(rspi, *tx++);
- 		} else {
--			ret = rspi_pio_transfer(rspi, tx, NULL, n);
-+			ret = rspi_pio_transfer(rspi, tx, NULL, len);
- 			if (ret < 0)
- 				return ret;
- 		}
-@@ -845,10 +845,9 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
- 			for (i = 0; i < len; i++)
- 				*rx++ = rspi_read_data(rspi);
- 		} else {
--			ret = rspi_pio_transfer(rspi, NULL, rx, n);
-+			ret = rspi_pio_transfer(rspi, NULL, rx, len);
- 			if (ret < 0)
- 				return ret;
--			*rx++ = ret;
- 		}
- 		n -= len;
- 	}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index edcbe2e3625d..04046c0faffd 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -488,6 +488,13 @@ static void rcar_du_crtc_disable(struct drm_crtc *crtc)
+ 	rcar_du_crtc_stop(rcrtc);
+ 	rcar_du_crtc_put(rcrtc);
+ 
++	spin_lock_irq(&crtc->dev->event_lock);
++	if (crtc->state->event) {
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++	}
++	spin_unlock_irq(&crtc->dev->event_lock);
++
+ 	rcrtc->outputs = 0;
+ }
+ 
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
