@@ -1,83 +1,164 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:34140 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751125AbdBXPGc (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40391 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751217AbdBLQEw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Feb 2017 10:06:32 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        meerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 0/4] iio: adc: Maxim max961x driver
-Date: Fri, 24 Feb 2017 16:05:52 +0100
-Message-Id: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
+        Sun, 12 Feb 2017 11:04:52 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        gregkh@linuxfoundation.org, wsa@the-dreams.de,
+        linux-serial@vger.kernel.org, magnus.damm@gmail.com,
+        sergei.shtylyov@cogentembedded.com
+Subject: Re: [PATCH v4 3/4] serial: sh-sci: make RX FIFO parameters tunable via sysfs
+Date: Sun, 12 Feb 2017 18:04:52 +0200
+Message-ID: <1794065.DucaPDu9pY@avalon>
+In-Reply-To: <1486118300-12633-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1486118300-12633-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Ulrich,
 
-This series adds driver and documentation for Maxim max9611/max9612
-high-side current sense amplifier with 12-bit ADC and I2c interface.
-It also registers two devices installed on VDD_0.8V and DVFS_0.8V lines
-in Renesas r87796 Salvator-X board.
+Thank you for the patch.
 
-The device provides several functionalities, and only some of them are
-currently supported by this driver.
-Particularly, the on-board op-amp and analog comparator are not currently
-supported.
+On Friday 03 Feb 2017 11:38:19 Ulrich Hecht wrote:
+> Allows tuning of the RX FIFO fill threshold and timeout. (The latter is
+> only applicable to SCIFA and SCIFB).
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/tty/serial/sh-sci.c | 87 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 4a165ed..f95a56c 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1055,6 +1055,66 @@ static void rx_fifo_timer_fn(unsigned long arg)
+>  	scif_set_rtrg(port, 1);
+>  }
+> 
+> +static ssize_t rx_trigger_show(struct device *dev,
+> +			       struct device_attribute *attr,
+> +			       char *buf)
+> +{
+> +	struct uart_port *port = dev_get_drvdata(dev);
+> +	struct sci_port *sci = to_sci_port(port);
+> +
+> +	return sprintf(buf, "%d\n", sci->rx_trigger);
+> +}
+> +
+> +static ssize_t rx_trigger_store(struct device *dev,
+> +				struct device_attribute *attr,
+> +				const char *buf,
+> +				size_t count)
+> +{
+> +	struct uart_port *port = dev_get_drvdata(dev);
+> +	struct sci_port *sci = to_sci_port(port);
+> +	long r;
+> +
+> +	if (kstrtol(buf, 0, &r) == -EINVAL)
+> +		return -EINVAL;
+> +	sci->rx_trigger = scif_set_rtrg(port, r);
+> +	scif_set_rtrg(port, 1);
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR(rx_fifo_trigger, 0644, rx_trigger_show,
+> rx_trigger_store); +
+> +static ssize_t rx_fifo_timeout_show(struct device *dev,
+> +			       struct device_attribute *attr,
+> +			       char *buf)
+> +{
+> +	struct uart_port *port = dev_get_drvdata(dev);
+> +	struct sci_port *sci = to_sci_port(port);
+> +
+> +	return sprintf(buf, "%d\n", sci->rx_fifo_timeout);
+> +}
+> +
+> +static ssize_t rx_fifo_timeout_store(struct device *dev,
+> +				struct device_attribute *attr,
+> +				const char *buf,
+> +				size_t count)
+> +{
+> +	struct uart_port *port = dev_get_drvdata(dev);
+> +	struct sci_port *sci = to_sci_port(port);
+> +	long r;
+> +
+> +	if (kstrtol(buf, 0, &r) == -EINVAL)
+> +		return -EINVAL;
+> +	sci->rx_fifo_timeout = r;
+> +	scif_set_rtrg(port, 1);
+> +	if (r > 0)
+> +		setup_timer(&sci->rx_fifo_timer, rx_fifo_timer_fn,
+> +			    (unsigned long)sci);
 
-A simplified integration schematic drawing is here reported:
+Where's the locking ?
 
- ----o----/\/\/-----o-------|LOAD|---
-     |    shunt     |
- ____|______________|___
- |  RS+            RS-  |
- |   |-----gain-----|   |
- |          |           |
- |          |           |
- |max961x   |->| ADC |===== I2c
- |______________________|
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR(rx_fifo_timeout, 0644, rx_fifo_timeout_show,
+> rx_fifo_timeout_store); +
+> +
+>  #ifdef CONFIG_SERIAL_SH_SCI_DMA
+>  static void sci_dma_tx_complete(void *arg)
+>  {
+> @@ -2886,6 +2946,15 @@ static int sci_remove(struct platform_device *dev)
+> 
+>  	sci_cleanup_single(port);
+> 
+> +	if (port->port.fifosize > 1) {
+> +		sysfs_remove_file(&dev->dev.kobj,
+> +				  &dev_attr_rx_fifo_trigger.attr);
+> +	}
+> +	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB) {
+> +		sysfs_remove_file(&dev->dev.kobj,
+> +				  &dev_attr_rx_fifo_timeout.attr);
+> +	}
 
+No need for curly braces.
 
-The device provides though its 12-bits ADC the following informations:
-- Common input voltage on RS+
-- Voltage drop between RS+ and RS- ends
-- Die temperature
+> +
+>  	return 0;
+>  }
+> 
+> @@ -3051,6 +3120,24 @@ static int sci_probe(struct platform_device *dev)
+>  	if (ret)
+>  		return ret;
+> 
+> +	if (sp->port.fifosize > 1) {
+> +		ret = sysfs_create_file(&dev->dev.kobj,
+> +				&dev_attr_rx_fifo_trigger.attr);
 
-All of the above ones are exposed though IIO with _raw and _scale values
-(plus _input for milli degree Celsius die temperature).
+You should use device_create_file for device attributes. Even better would be 
+to create an attribute group if possible.
 
->From the above values the driver calculates the current flowing between
-RS+ and RS- ends, using the shunt resistor value provided by device tree, and
-the power load. Again this values are exposed through _raw and _scale
-attributes, which I'm not completely sure it's acceptables as they are
-calculated values and not natively provided by the current sense amplifier.
-I would like to hear IIO people opinions on this, if they should be better
-exposed though some other attributes which are not _raw and _scale, or if
-their calculation should be completely left to userspace tools.
-
-Thanks
-   j
-
-Jacopo Mondi (4):
-  Documentation: dt-bindings: iio: Add max961x
-  iio: Documentation: Add max961x sysfs documentation
-  iio: adc: Add max9611/9612 ADC driver
-  arm64: dts: salvator-x: Add current sense amplifiers
-
- .../ABI/testing/sysfs-bus-iio-adc-max961x          |   5 +
- .../devicetree/bindings/iio/adc/max961x.txt        |  27 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  17 +
- drivers/iio/adc/Kconfig                            |  10 +
- drivers/iio/adc/Makefile                           |   1 +
- drivers/iio/adc/max961x.c                          | 648 +++++++++++++++++++++
- 6 files changed, 708 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max961x
- create mode 100644 Documentation/devicetree/bindings/iio/adc/max961x.txt
- create mode 100644 drivers/iio/adc/max961x.c
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	if (sp->port.type == PORT_SCIFA || sp->port.type ==  PORT_SCIFB) {
+> +		ret = sysfs_create_file(&dev->dev.kobj,
+> +				&dev_attr_rx_fifo_timeout.attr);
+> +		if (ret) {
+> +			if (sp->port.fifosize > 1) {
+> +				sysfs_remove_file(&dev->dev.kobj,
+> +					&dev_attr_rx_fifo_trigger.attr);
+> +			}
+> +			return ret;
+> +		}
+> +	}
+> +
+>  #ifdef CONFIG_SH_STANDARD_BIOS
+>  	sh_bios_gdb_detach();
+>  #endif
 
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
