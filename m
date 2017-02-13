@@ -1,110 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:35043 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932480AbdBVOZS (ORCPT
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:33923 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbdBMTqQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Feb 2017 09:25:18 -0500
-Date: Wed, 22 Feb 2017 08:25:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
+        Mon, 13 Feb 2017 14:46:16 -0500
+Received: by mail-wr0-f172.google.com with SMTP id o16so157952714wra.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Feb 2017 11:46:15 -0800 (PST)
+Subject: Re: [PATCH RESEND 1/1] media: platform: Renesas IMR driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+References: <20170211200207.273799464@cogentembedded.com>
+ <1770632.4GFlW6r2cg@avalon>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Konstantin Kozhevnikov
-        <Konstantin.Kozhevnikov@cogentembedded.com>
-Subject: Re: [PATCH RESEND 1/1] media: platform: Renesas IMR driver
-Message-ID: <20170222142515.i54xtgyvxysd2qsr@rob-hp-laptop>
-References: <20170211200207.273799464@cogentembedded.com>
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Konstantin Kozhevnikov <konstantin.kozhevnikov@cogentembedded.com>
+Message-ID: <15d3888d-e15c-db23-27b4-51d5e2840618@cogentembedded.com>
+Date: Mon, 13 Feb 2017 22:46:04 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170211200207.273799464@cogentembedded.com>
+In-Reply-To: <1770632.4GFlW6r2cg@avalon>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Feb 11, 2017 at 11:02:01PM +0300, Sergei Shtylyov wrote:
-> From: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
-> 
-> The image renderer light extended 4 (IMR-LX4) or the distortion correction
-> engine is a drawing processor with a simple  instruction system capable of
-> referencing data on an external memory as 2D texture data and performing
-> texture mapping and drawing with respect to any shape that is split into
-> triangular objects.
-> 
-> This V4L2 memory-to-memory device driver only supports image renderer found
-> in the R-Car gen3 SoCs; the R-Car gen2 support  can be added later...
-> 
-> [Sergei: merged 2 original patches, added the patch description, removed
-> unrelated parts,  added the binding document, ported the driver to the
-> modern kernel, renamed the UAPI header file and the guard  macros to match
-> the driver name, extended the copyrights, fixed up Kconfig prompt/depends/
-> help, made use of the BIT()/GENMASK() macros, sorted #include's, removed
-> leading  dots and fixed grammar in the comments, fixed up indentation to
-> use tabs where possible, renamed IMR_DLSR to IMR_DLPR to match the manual,
-> separated the register offset/bit #define's, removed *inline* from .c file,
-> fixed lines over 80 columns, removed useless parens, operators, casts,
-> braces, variables, #include's, (commented out) statements, and even
-> function, inserted empty line after desclaration, removed extra empty
-> lines, reordered some local variable desclarations, removed calls to
-> 4l2_err() on kmalloc() failure, fixed the error returned by imr_default(),
-> avoided code duplication in the IRQ handler, used '__packed' for the UAPI
-> structures, enclosed the macro parameters in parens, exchanged the values
-> of IMR_MAP_AUTO[SD]G macros.]
-> 
-> Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> This patch is against the 'media_tree.git' repo's 'master' branch.
-> 
->  Documentation/devicetree/bindings/media/rcar_imr.txt |   23 
->  drivers/media/platform/Kconfig                       |   13 
->  drivers/media/platform/Makefile                      |    1 
->  drivers/media/platform/rcar_imr.c                    | 1923 +++++++++++++++++++
->  include/uapi/linux/rcar_imr.h                        |   94 
->  5 files changed, 2054 insertions(+)
-> 
-> Index: media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-> ===================================================================
-> --- /dev/null
-> +++ media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-> @@ -0,0 +1,23 @@
-> +Renesas R-Car Image Renderer (Distortion Correction Engine)
-> +-----------------------------------------------------------
-> +
-> +The image renderer  or the distortion correction  engine is a drawing processor
-> +with a simple  instruction system capable of referencing data in external memory
-> +as  2D texture data and performing texture mapping and drawing with respect to
-> +any shape that is split into triangular objects.
+Hello Laurent,
 
-Please fix extra spaces in here.
+regarding your main question, I think the name "image renderer" is 
+misguiding. This IP-block has nothing to do with rendering per se, it is 
+rather an image processing module, designed specifically for image 
+undistortion (lens correction). We use that as a plain memory-to-memory 
+device, and it fits well into V4L2 framework. More complex 
+implementation (the one we thought of, but had no capacity to implement) 
+would allow integration of VIN (as well as other modules like 
+H.264/MPEG4 decoders) and IMR engines into a single processing pipeline 
+(so it would not look like a M2M device but would be a sort of 
+"smart-VIN"). From that perspective it is no more DRM device driver than 
+VSP, which resides in the same "drivers/platform/media" directory.
 
-> +
-> +Required properties:
-> +- compatible: must be "renesas,imr-lx4" for the image renderer light extended 4
-> +  (IMR-LX4)  found in the R-Car gen3 SoCs;
+Sincerely,
+Kostya
 
-Needs an SoC specific compatible string too.
-
-The description is above, so you just need to list the compatible 
-strings.
-
-> +- reg: offset and length of the register block;
-> +- interrupts: interrupt specifier;
-
-How many interrupts?
-
-> +- clocks: clock phandle and specifier pair.
-
-How many clocks?
-
-> +
-> +Example:
-> +
-> +	imr-lx4@fe860000 {
-> +		compatible = "renesas,imr-lx4";
-> +		reg = <0 0xfe860000 0 0x2000>;
-> +		interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&cpg CPG_MOD 823>;
-> +	};
+On 02/12/2017 06:51 PM, Laurent Pinchart wrote:
+> Hi Sergei,
+>
+> (CC'ing the dri-evel mailing list)
+>
+> Thank you for the patch.
+>
+> On Saturday 11 Feb 2017 23:02:01 Sergei Shtylyov wrote:
+>> From: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
+>>
+>> The image renderer light extended 4 (IMR-LX4) or the distortion correction
+>> engine is a drawing processor with a simple  instruction system capable of
+>> referencing data on an external memory as 2D texture data and performing
+>> texture mapping and drawing with respect to any shape that is split into
+>> triangular objects.
+>>
+>> This V4L2 memory-to-memory device driver only supports image renderer found
+>> in the R-Car gen3 SoCs; the R-Car gen2 support  can be added later...
+> Let's start with the main question : given that this is a rendering engine, it
+> looks like it should use the DRM subsystem.
+>
+>> [Sergei: merged 2 original patches, added the patch description, removed
+>> unrelated parts,  added the binding document, ported the driver to the
+>> modern kernel, renamed the UAPI header file and the guard  macros to match
+>> the driver name, extended the copyrights, fixed up Kconfig prompt/depends/
+>> help, made use of the BIT()/GENMASK() macros, sorted #include's, removed
+>> leading  dots and fixed grammar in the comments, fixed up indentation to
+>> use tabs where possible, renamed IMR_DLSR to IMR_DLPR to match the manual,
+>> separated the register offset/bit #define's, removed *inline* from .c file,
+>> fixed lines over 80 columns, removed useless parens, operators, casts,
+>> braces, variables, #include's, (commented out) statements, and even
+>> function, inserted empty line after desclaration, removed extra empty
+>> lines, reordered some local variable desclarations, removed calls to
+>> 4l2_err() on kmalloc() failure, fixed the error returned by imr_default(),
+>> avoided code duplication in the IRQ handler, used '__packed' for the UAPI
+>> structures, enclosed the macro parameters in parens, exchanged the values
+>> of IMR_MAP_AUTO[SD]G macros.]
+>>
+>> Signed-off-by: Konstantin Kozhevnikov
+>> <Konstantin.Kozhevnikov@cogentembedded.com> Signed-off-by: Sergei Shtylyov
+>> <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>> This patch is against the 'media_tree.git' repo's 'master' branch.
+>>
+>>   Documentation/devicetree/bindings/media/rcar_imr.txt |   23
+>>   drivers/media/platform/Kconfig                       |   13
+>>   drivers/media/platform/Makefile                      |    1
+>>   drivers/media/platform/rcar_imr.c                    | 1923 +++++++++++++++
+>>   include/uapi/linux/rcar_imr.h                        |   94
+>>   5 files changed, 2054 insertions(+)
