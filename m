@@ -1,96 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:61917 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753497AbdBGRKA (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:34669 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750903AbdBMNgp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 12:10:00 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Brad Mouring <brad.mouring@ni.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <rcochran@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/3] ARM: l2c: add pl310-no-sideband option
-Date: Tue,  7 Feb 2017 12:09:27 -0500
-Message-Id: <20170207170929.29525-2-chris.brandt@renesas.com>
-In-Reply-To: <20170207170929.29525-1-chris.brandt@renesas.com>
-References: <20170207170929.29525-1-chris.brandt@renesas.com>
+        Mon, 13 Feb 2017 08:36:45 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: shmobile: r7s72100: add restart handler
+Date: Mon, 13 Feb 2017 13:36:39 +0000
+Message-ID: <SG2PR06MB1165F2EB29FA896A3EC8B2038A590@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170209191259.29774-1-chris.brandt@renesas.com>
+ <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
+ <SG2PR06MB11657431F033ABBDE1D750F38A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com>
+ <SG2PR06MB11654A11A81D46A70DB1D1BF8A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdUJjdhg1j=sgxGLoLh-h91hS6peKJC_eA0wHJx8NbdBZA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUJjdhg1j=sgxGLoLh-h91hS6peKJC_eA0wHJx8NbdBZA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a PL310 is added to a system, but the sideband signals are not
-connected, some Cortex A9 optimizations cannot be used. In particular,
-enabling Full Line Zeros in the CA9 without sidebands connected will
-crash the system since the CA9 will expect the L2C to perform operations,
-yet the L2C never gets the commands.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- Documentation/devicetree/bindings/arm/l2c2x0.txt | 2 ++
- arch/arm/mm/cache-l2x0.c                         | 9 +++++++--
- 2 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.txt b/Documentation/devicetree/bindings/arm/l2c2x0.txt
-index 917199f..85046d2 100644
---- a/Documentation/devicetree/bindings/arm/l2c2x0.txt
-+++ b/Documentation/devicetree/bindings/arm/l2c2x0.txt
-@@ -90,6 +90,8 @@ Optional properties:
- - arm,standby-mode: L2 standby mode enable. Value <0> (forcibly disable),
-   <1> (forcibly enable), property absent (OS specific behavior,
-   preferably retain firmware settings)
-+- arm,pl310-no-sideband : disable all features that require sideband signals to
-+  be connected between the CPU and L2 (PL310 only).
- 
- Example:
- 
-diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-index 2290be3..c744ac4 100644
---- a/arch/arm/mm/cache-l2x0.c
-+++ b/arch/arm/mm/cache-l2x0.c
-@@ -57,6 +57,8 @@ static unsigned long sync_reg_offset = L2X0_CACHE_SYNC;
- 
- struct l2x0_regs l2x0_saved_regs;
- 
-+static bool l2x0_no_sideband;
-+
- /*
-  * Common code for all cache controllers.
-  */
-@@ -620,7 +622,7 @@ static void __init l2c310_enable(void __iomem *base, unsigned num_lock)
- 	u32 aux = l2x0_saved_regs.aux_ctrl;
- 
- 	if (rev >= L310_CACHE_ID_RTL_R2P0) {
--		if (cortex_a9) {
-+		if (cortex_a9 && !l2x0_no_sideband) {
- 			aux |= L310_AUX_CTRL_EARLY_BRESP;
- 			pr_info("L2C-310 enabling early BRESP for Cortex-A9\n");
- 		} else if (aux & L310_AUX_CTRL_EARLY_BRESP) {
-@@ -629,7 +631,7 @@ static void __init l2c310_enable(void __iomem *base, unsigned num_lock)
- 		}
- 	}
- 
--	if (cortex_a9) {
-+	if (cortex_a9 && !l2x0_no_sideband) {
- 		u32 aux_cur = readl_relaxed(base + L2X0_AUX_CTRL);
- 		u32 acr = get_auxcr();
- 
-@@ -1200,6 +1202,9 @@ static void __init l2c310_of_parse(const struct device_node *np,
- 		*aux_mask &= ~L2C_AUX_CTRL_PARITY_ENABLE;
- 	}
- 
-+	if (of_property_read_bool(np, "arm,pl310-no-sideband"))
-+		l2x0_no_sideband = true;
-+
- 	prefetch = l2x0_saved_regs.prefetch_ctrl;
- 
- 	ret = of_property_read_u32(np, "arm,double-linefill", &val);
--- 
-2.10.1
+SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgRmVicnVhcnkgMTMsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
+ZXZlbiB3cm90ZTogDQo+ID4gc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgcm1vYmls
+ZV9yZXNldF9vZl9tYXRjaFtdID0gew0KPiA+ICAgICAgICAgeyAuY29tcGF0aWJsZSA9ICJyZW5l
+c2FzLHN5c2Mtcm1vYmlsZSIsIH0sDQo+ID4gICAgICAgICB7IC5jb21wYXRpYmxlID0gInJlbmVz
+YXMsd2R0LXJtb2JpbGUiLCB9LA0KPiANCj4gcmVuZXNhcyxyN3M3MjEwMC13ZHQNCg0KSSByZW1l
+bWJlciB3aHkgSSBzdWdnZXN0ZWQgInJlbmVzYXMsd2R0LXJtb2JpbGUiLg0KDQpJZiBJIHRob3Vn
+aHQgdGhpcyBXRFQgd2FzIGdvaW5nIHRvIGJlIHJldXNlZCBhZ2FpbiBpbiB0aGUgUlovQSBzZXJp
+ZXMsDQp3b3VsZG4ndCBpdCBtYWtlIHNlbnNlIHRvIGp1c3QgZ2l2ZSBpdCBhIGdlbmVyaWMgbmFt
+ZSBpbnN0ZWFkIG9mZiBhDQpzcGVjaWZpYyBwYXJ0IG51bWJlcj8NCg0KQW5kIGhlbmNlICJyZW5l
+c2FzLHdkdC1ybW9iaWxlIiB3b3VsZCBiZSBhIGJldHRlciBuYW1lIHRoYW4gDQoicmVuZXNhcyxy
+N3M3MjEwMC13ZHQiLCAicmVuZXNhcyxyemEyLXdkdCIsICJyZW5lc2FzLHJ6YTMtd2R0IiwgZXRj
+Li4uID8NCg0KDQpPciwganVzdCBzdGljayB3aXRoIHRoZSBwYXJ0IG51bWJlciBhbmQgZG9uJ3Qg
+d29ycnkgYWJvdXQgaXQ/DQoNCg0KVGhhbmtzLA0KQ2hyaXMNCg0K
