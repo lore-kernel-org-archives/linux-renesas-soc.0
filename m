@@ -1,49 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39292 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751185AbdBLMcI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39322 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbdBMMJT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Feb 2017 07:32:08 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] drm: rcar-du: Handle event when disabling CRTCs
-Date: Sun, 12 Feb 2017 14:32:27 +0200
-Message-Id: <20170212123229.18277-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 13 Feb 2017 07:09:19 -0500
+Date: Mon, 13 Feb 2017 13:09:13 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH/RFC v3 net] ravb: unmap descriptors when freeing rings
+Message-ID: <20170213120912.GA24412@verge.net.au>
+References: <1485282073-16662-1-git-send-email-horms+renesas@verge.net.au>
+ <312867f0-f6dd-3c92-df09-fae72ea7405b@cogentembedded.com>
+ <CAMuHMdVzN_6tfjD1eYBLzrpynupo6C2hnLv6mm5UzcdSNzWtyQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVzN_6tfjD1eYBLzrpynupo6C2hnLv6mm5UzcdSNzWtyQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver currently handles vblank events only when updating planes on
-a CRTC. The atomic update API however allows requesting an event when
-disabling a CRTC. This currently leads to event objects being leaked in
-the kernel and to events not being sent out. Fix it.
+On Fri, Feb 10, 2017 at 02:52:50PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Jan 25, 2017 at 5:18 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > On 01/24/2017 09:21 PM, Simon Horman wrote:
+> >
+> >> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> >>
+> >> "swiotlb buffer is full" errors occur after repeated initialisation of a
+> >> device - f.e. suspend/resume or ip link set up/down. This is because
+> >> memory
+> >> mapped using dma_map_single() in ravb_ring_format() and ravb_start_xmit()
+> >> is not released.  Resolve this problem by unmapping descriptors when
+> >> freeing rings.
+> >
+> >
+> >    Could you look into the sh_eth driver which seems to have the same issue?
+> 
+> Indeed, after a few suspend/resume cycles on r8a7791/koelsch:
+> 
+> WARNING: CPU: 1 PID: 1699 at lib/dma-debug.c:517 add_dma_entry+0xfc/0x148
+> DMA-API: exceeded 7 overlapping mappings of cacheline 0x0000000001a827e3
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index edcbe2e3625d..04046c0faffd 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -488,6 +488,13 @@ static void rcar_du_crtc_disable(struct drm_crtc *crtc)
- 	rcar_du_crtc_stop(rcrtc);
- 	rcar_du_crtc_put(rcrtc);
- 
-+	spin_lock_irq(&crtc->dev->event_lock);
-+	if (crtc->state->event) {
-+		drm_crtc_send_vblank_event(crtc, crtc->state->event);
-+		crtc->state->event = NULL;
-+	}
-+	spin_unlock_irq(&crtc->dev->event_lock);
-+
- 	rcrtc->outputs = 0;
- }
- 
--- 
-Regards,
-
-Laurent Pinchart
+Thanks for confirming that. It matches my expectation after
+reading of the sh_eth code.
