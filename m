@@ -1,63 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:12994 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbdBOA0a (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36625 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751876AbdBMI0O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Feb 2017 19:26:30 -0500
-Message-ID: <58A3A031.3080307@jinso.co.jp>
-Date: Wed, 15 Feb 2017 09:26:25 +0900
-From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+        Mon, 13 Feb 2017 03:26:14 -0500
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: DongCV <cv-dong@jinso.co.jp>, Mark Brown <broonie@kernel.org>,
+In-Reply-To: <20170206124639.eoxom7dxspippjmg@sirena.org.uk>
+References: <1486342933-5307-1-git-send-email-cv-dong@jinso.co.jp> <20170206124639.eoxom7dxspippjmg@sirena.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Feb 2017 09:26:12 +0100
+Message-ID: <CAMuHMdW58idbkvxSAY5L7TK72Va-Rbs=oN44CyUosjP7ajsiGQ@mail.gmail.com>
+Subject: Re: [PATCH] spi: rspi: fix the bug related to mount/remount jffs2
+To: Mark Brown <broonie@kernel.org>
+Cc: DongCV <cv-dong@jinso.co.jp>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-spi <linux-spi@vger.kernel.org>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?UTF-8?B?RHVuZ++8muS6ug==?= =?UTF-8?B?44K9?=
-        <nv-dung@jinso.co.jp>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>
-Subject: Re: [PATCH] spi: rspi: fix the bug related to mount/remount jffs2
-References: <1486342933-5307-1-git-send-email-cv-dong@jinso.co.jp> <CAMuHMdUyA9+KLaD9rY9gYjxjZcQ1bWKoDhP25mEAdZTr7E0uwA@mail.gmail.com> <ed0b8422-8ab1-7d8d-318f-343e6e2de17d@jinso.co.jp> <CAMuHMdVDgjBF+c-z4=LH+PD00oiNFqhShQuZ0ELS0S4YpQ=npg@mail.gmail.com> <58A15724.1060901@jinso.co.jp> <CAMuHMdU4v=KszacVQ5GX-JVoov0TdfH=+fkpyC505eUWTGpEqg@mail.gmail.com>
-In-Reply-To: <CAMuHMdU4v=KszacVQ5GX-JVoov0TdfH=+fkpyC505eUWTGpEqg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        Cao Minh Hiep <cm-hiep@jinso.co.jp>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-Sorry for the delay.
-
-Thanks for your reply.
-
-
-> On Mon, Feb 13, 2017 at 7:50 AM, Hiep Cao Minh <cm-hiep@jinso.co.jp> wrote:
->> Sorry to bother you!
-> No, thank you for finally make me see my wrong reasoning!
+On Mon, Feb 6, 2017 at 1:46 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Mon, Feb 06, 2017 at 10:02:13AM +0900, DongCV wrote:
+>> From: Dong <cv-dong@jinso.co.jp>
+>>
+>> This patch fixes the output warning logs and data loss when
+>> performing mount/umount then remount the device with jffs2 format.
 >
->>> qspi_transfer_in() does:
->>>
->>>           while (n > 0) {
->>>                   len = qspi_set_receive_trigger(rspi, n);
->>>                   // len will be <= n
->> I agree. This is len = min value of n and 32.
->>>                   if (len == QSPI_BUFFER_SIZE) {
->>>                           // receive blocks of len bytes
->> Yes, This is len == 32 bytes
->>>                           ...
->>>                   } else {
->>>                           // receive n (not len) bytes
->> This is always n == len ( This case, len or n is always < 32)
->> Because this is the last n bytes should be received.
-> Right.
-> Doh, I must have missed that if "len < n", the first branch is always taken.
+> This is not a good changelog since it does not describe what the problem
+> with the driver is or how the change fixes it - it just says that there
+> is a problem.
 >
->>>                           ret = rspi_pio_transfer(rspi, NULL, rx, n);
-> It would have been clearer to use "len" here instead of "n".
-I agree, Dong will update your suggestion at the patch.
+>> This is the warning logs when performing mount/umount then remount the device with jffs2 format:
+>> "root@linaro-naro:~# mount -t jffs2 /dev/mtdblock2 /mnt/media
+>> [ 3839.928013] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40000: 0x1900 instead
+>> [ 3839.956515] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40004: 0x000c instead
+>
+> Please think hard before including long log messages in upstream
+> reports, they often contain almost no useful information relative to
+> their size so often obscure the relevant content in your message.  Some
+> subset is usually much better (eg, "produces lots of errors like X"
+> here).
 
-Thank you.
-Hiep.
+May I suggest the following:
+
+    spi: rspi: Fix bogus received byte in qspi_transfer_in()
+
+    When there are less than QSPI_BUFFER_SIZE remaining bytes to be received,
+    qspi_transfer_in() writes one bogus byte in the receive buffer, possibly
+    leading to a buffer overflow.
+
+    This can be reproduced by mounting, unmounting, and remounting a
+    jffs2-formatted device, causing lots of warnings like:
+
+        jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+at 0x03b40000: 0x1900 instead
+
+    Remove the bogus write to fix this.
+
+It's also a good idea to add a Fixes tag:
+
+    Fixes: 3be09bec42a800d4 ("spi: rspi: supports 32bytes buffer for
+DUAL and QUAD")
+
+(the code was moved afterwards, but both the origin and the move were
+ integrated in v4.10-rc1).
+
+Finally:
+
+    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
