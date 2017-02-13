@@ -1,44 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:24526 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752134AbdBMS0H (ORCPT
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:33810 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751808AbdBMUpR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:26:07 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/3] power: reset: add reset for renesas r7s72100
-Date: Mon, 13 Feb 2017 13:25:29 -0500
-Message-Id: <20170213182532.4042-1-chris.brandt@renesas.com>
+        Mon, 13 Feb 2017 15:45:17 -0500
+Received: by mail-ot0-f195.google.com with SMTP id 73so13480510otj.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Feb 2017 12:45:16 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20170210163908.GL27312@n2100.armlinux.org.uk>
+References: <20170209033044.19513-1-chris.brandt@renesas.com>
+ <5d90aff5-63b7-83a8-7529-2ac61ef82021@gmail.com> <SG2PR06MB11650C805DD754EE5C9E56C78A450@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <25202835.AdbHsoUg0y@wuerfel> <20170210163908.GL27312@n2100.armlinux.org.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 13 Feb 2017 21:45:15 +0100
+Message-ID: <CAK8P3a352qqynDUGPXVFfn3Yu2+qZr9F1WkWCEqpj_YM61WgJg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: add ARM_SINGLE_ARMV7 as config option
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some Renesas SoCs do not have a reset register and the only way to do a SW
-controlled reset is to use the watchdog timer.
+On Fri, Feb 10, 2017 at 5:39 PM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
 
-Additionally, since all the WDT timeout options are so quick, a system
-reset is about the only thing it's good for.
-For example, the longest WDT overflow you can get with a RZ/A1 (R7S72100)
-with its 8-bit wide counter is 125ms.
+>
+>> - Some (few) platforms actually have separate top-level Kconfig options
+>>   but are actually very closely related and you could have a kernel
+>>   for all of them even with !MMU and XIP_KERNEL. The most important
+>>   one here is ARM Versatile/Realview/Integrator/Vexpress that have
+>>   more in common than things we put behind a common Kconfig option in
+>>   other platforms.
+>
+> If you think that Versatile + Realview + Integrator + Vexpress should
+> be lumped into one kernel image for !MMU and XIP_KERNEL then you're
+> wrong - from what I remember, their RAM and flash locations are quite
+> different which rules it out.
 
+They are not all the same, but the locations are not split according to
+the platform names either. The early realview platforms are like versatile
+here, while later realview platforms have the alias plus more, and vexpress
+has it in two other places depending on the generation.
 
-Chris Brandt (3):
-  power: reset: Add Renesas reset driver
-  dt-bindings: power: reset: add document for renesas-reset driver
-  ARM: dts: r7s72100: Add reset handler
+I misremembered vexpress and thought that it was like the later
+realview, but at least versatile and realview are basically the same
+thing (the story with NOR flash is similar).
 
- .../bindings/power/reset/renesas-reset.txt         |  15 +++
- arch/arm/boot/dts/r7s72100.dtsi                    |   5 +
- drivers/power/reset/Kconfig                        |   9 ++
- drivers/power/reset/Makefile                       |   1 +
- drivers/power/reset/renesas-reset.c                | 103 +++++++++++++++++++++
- 5 files changed, 133 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/reset/renesas-reset.txt
- create mode 100644 drivers/power/reset/renesas-reset.c
+>> - CONFIG_DEBUG_UNCOMPRESS has a very similar requirements to
+>>   XIP_KERNEL and !MMU, and we currently allow it for any machine,
+>>   with a lot of flexibility in configuring that always breaks
+>>   running on any machine other than the one you are targetting.
+>
+> Right, but that's debug, not core kernel configuration.
 
--- 
-2.10.1
+I have not yet seen any argument why that is an important distinction, i.e.
+what is the downside of letting users just turn the MMU and XIP options
+on and off without changing everything else, other than this having been
+the default in the past?
+
+Obviously you won't be able to boot on machines when configured for
+a different physical address (for RAM, flash or uart), but even that is
+no change from what we have on the NOMMU platforms: on any of them
+you have to manually type the address when configuring your kernel
+for a given target and change it again when you want to run on another
+board that doesn't share the exact address.
+
+     Arnd
