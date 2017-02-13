@@ -1,52 +1,137 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:32807 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbdBAMiq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 07:38:46 -0500
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 2/4] v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
+Date: Mon, 13 Feb 2017 21:23:51 +0200
+Message-ID: <9209013.DxhxRJN60N@avalon>
+In-Reply-To: <1478283570-19688-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1478283570-19688-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <1485442460-18339-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1485442460-18339-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Feb 2017 13:38:44 +0100
-Message-ID: <CAMuHMdXDr-docSsx8WMto7_5yJL1kL3bsPXxezL8Or3r+WVdqQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm64: dts: m3ulcb: Update memory node to 2 GiB map
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 3:54 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
->
-> This patch updates memory region:
->
->   - After changes, the new map of the m3ulcb board on R8A7796 SoC
->     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
->     Bank1: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
->
->   - Before changes, the old map looked like this:
->     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Hi Kieran,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for the patch.
 
-Gr{oetje,eeting}s,
+On Friday 04 Nov 2016 18:19:28 Kieran Bingham wrote:
+> Separate the code change from the function move so that code changes can
+> be clearly identified. This commit has no functional change.
+> 
+> The partition algorithm functions will be changed, and
+> vsp1_video_partition() will call vsp1_video_pipeline_setup_partitions().
+> To prepare for that, move the function without any code change.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-                        Geert
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+(assuming I don't conclude in my review of patches 3/4 and 4/4 that this isn't 
+needed :-))
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  drivers/media/platform/vsp1/vsp1_video.c | 74 ++++++++++++++---------------
+>  1 file changed, 37 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
+> b/drivers/media/platform/vsp1/vsp1_video.c index d1d3413c6fdf..6d43c02bbc56
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_video.c
+> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> @@ -175,43 +175,6 @@ static int __vsp1_video_try_format(struct vsp1_video
+> *video, * VSP1 Partition Algorithm support
+>   */
+> 
+> -static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline
+> *pipe) -{
+> -	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
+> -	const struct v4l2_mbus_framefmt *format;
+> -	struct vsp1_entity *entity;
+> -	unsigned int div_size;
+> -
+> -	/*
+> -	 * Partitions are computed on the size before rotation, use the format
+> -	 * at the WPF sink.
+> -	 */
+> -	format = vsp1_entity_get_pad_format(&pipe->output->entity,
+> -					    pipe->output->entity.config,
+> -					    RWPF_PAD_SINK);
+> -	div_size = format->width;
+> -
+> -	/* Gen2 hardware doesn't require image partitioning. */
+> -	if (vsp1->info->gen == 2) {
+> -		pipe->div_size = div_size;
+> -		pipe->partitions = 1;
+> -		return;
+> -	}
+> -
+> -	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+> -		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
+> -
+> -		if (entity->ops->max_width) {
+> -			entity_max = entity->ops->max_width(entity, pipe);
+> -			if (entity_max)
+> -				div_size = min(div_size, entity_max);
+> -		}
+> -	}
+> -
+> -	pipe->div_size = div_size;
+> -	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+> -}
+> -
+>  /**
+>   * vsp1_video_partition - Calculate the active partition output window
+>   *
+> @@ -286,6 +249,43 @@ static struct v4l2_rect vsp1_video_partition(struct
+> vsp1_pipeline *pipe, return partition;
+>  }
+> 
+> +static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline
+> *pipe) +{
+> +	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
+> +	const struct v4l2_mbus_framefmt *format;
+> +	struct vsp1_entity *entity;
+> +	unsigned int div_size;
+> +
+> +	/*
+> +	 * Partitions are computed on the size before rotation, use the format
+> +	 * at the WPF sink.
+> +	 */
+> +	format = vsp1_entity_get_pad_format(&pipe->output->entity,
+> +					    pipe->output->entity.config,
+> +					    RWPF_PAD_SINK);
+> +	div_size = format->width;
+> +
+> +	/* Gen2 hardware doesn't require image partitioning. */
+> +	if (vsp1->info->gen == 2) {
+> +		pipe->div_size = div_size;
+> +		pipe->partitions = 1;
+> +		return;
+> +	}
+> +
+> +	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+> +		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
+> +
+> +		if (entity->ops->max_width) {
+> +			entity_max = entity->ops->max_width(entity, pipe);
+> +			if (entity_max)
+> +				div_size = min(div_size, entity_max);
+> +		}
+> +	}
+> +
+> +	pipe->div_size = div_size;
+> +	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+> +}
+> +
+>  /*
+> ---------------------------------------------------------------------------
+> -- * Pipeline Management
+>   */
+
+-- 
+Regards,
+
+Laurent Pinchart
