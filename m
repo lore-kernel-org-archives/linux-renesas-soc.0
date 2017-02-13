@@ -3,77 +3,58 @@ Return-Path: <laurent.pinchart@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: kieran.bingham@ideasonboard.com
-Subject: [PATCH] scripts: bin2png: Support conversion of all files in a directory
-Date: Mon, 13 Feb 2017 16:15:22 +0200
-Message-Id: <20170213141522.11545-1-laurent.pinchart@ideasonboard.com>
+Subject: [PATCH] scripts: Add statistics to test suite runner
+Date: Mon, 13 Feb 2017 15:26:46 +0200
+Message-Id: <20170213132646.10599-1-laurent.pinchart@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the first argument is a directory name instead of a file name,
-convert all test script output binaries in that directory.
+Print the number of passed, failed and skipped tests.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- scripts/bin2png.sh | 41 ++++++++++++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 13 deletions(-)
+ scripts/vsp-tests.sh | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/bin2png.sh b/scripts/bin2png.sh
-index 2563e87d4187..90fdfb077715 100755
---- a/scripts/bin2png.sh
-+++ b/scripts/bin2png.sh
-@@ -1,25 +1,40 @@
- #!/bin/sh
+diff --git a/scripts/vsp-tests.sh b/scripts/vsp-tests.sh
+index 6a10f70ca35c..1ed81713e5c5 100755
+--- a/scripts/vsp-tests.sh
++++ b/scripts/vsp-tests.sh
+@@ -21,9 +21,17 @@ KERNEL_VERSION=`uname -r`
+ run_test() {
+ 	local script=$1
+ 	local iteration=$2
++	local IFS="$(printf '\n\t')"
  
--FILE="$1"
-+FILE=${1:-.}
- 
--PNM=${FILE/.bin/.pnm}
--PNG=${FILE/.bin/.png}
-+convert_image() {
-+	local file=$1
-+	local pnm=${file/%bin/pnm}
-+	local png=${file/%bin/png}
- 
--fmt=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\1|' | tr '[:lower:]' '[:upper:]')
--size=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\2|')
-+	local format=$(echo $file | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\1|' | tr '[:lower:]' '[:upper:]')
-+	local size=$(echo $file   | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\2|')
- 
--case $fmt in
-+	case $format in
- 	yuv*|yvu*)
--		fmt=$(echo $fmt | tr 'M' 'P')
-+		format=$(echo $format | tr 'M' 'P')
- 		;;
- 	nv*)
--		fmt=$(echo $fmt | tr -d 'M')
-+		format=$(echo $format | tr -d 'M')
- 		;;
- 	*rgb*)
--		fmt=$(echo $fmt | tr -d 'AX')
-+		format=$(echo $format | tr -d 'AX')
- 		;;
--esac
-+	esac
- 
--raw2rgbpnm -s $size -f $fmt $FILE $PNM && \
--	convert $PNM $PNG
--rm $PNM
-+	raw2rgbpnm -f $format -s $size $file $pnm && \
-+		convert $pnm $png
-+	rm $pnm
-+}
+ 	echo "- $script"
+-	./$script
 +
-+if [ -d $FILE ] ; then
-+	if [ $(ls $FILE/vsp-unit-test-00*-*frame*.bin 2>/dev/null | wc -l) != 0 ] ; then
-+		for f in $FILE/vsp-unit-test-00*-*frame*.bin ; do
-+			convert_image $f
-+		done
-+	fi
-+elif [ -f $FILE ] ; then
-+	convert_image $FILE
-+else
-+	echo "Usage: $0 <file or directory>"
-+fi
++	local output=$(./$script 2>&1 | tee /proc/self/fd/2)
++	for line in $output ; do
++		(echo "$line" | grep -q 'fail$') && num_fail=$((num_fail+1))
++		(echo "$line" | grep -q 'pass$') && num_pass=$((num_pass+1))
++		(echo "$line" | grep -q 'skipped$') && num_skip=$((num_skip+1))
++		num_test=$((num_test+1))
++	done
+ 
+ 	if [ $(ls *.bin 2>/dev/null | wc -l) != 0 ] ; then
+ 		local dir=$KERNEL_VERSION/test-$script/$iteration/
+@@ -36,9 +44,16 @@ run_test() {
+ run_suite() {
+ 	echo "--- Test loop $1 ---"
+ 
++	num_fail=0
++	num_pass=0
++	num_skip=0
++	num_test=0
++
+ 	for test in vsp-unit-test*.sh; do
+ 		run_test $test $1
+ 	done;
++
++	echo "$num_test tests: $num_pass passed, $num_fail failed, $num_skip skipped"
+ }
+ 
+ for loop in `seq 1 1 $1`; do
 -- 
 Regards,
 
