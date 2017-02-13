@@ -1,55 +1,56 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] power: reset: add reset for renesas r7s72100
-Date: Thu, 16 Feb 2017 12:23:17 -0500
-Message-Id: <20170216172320.10897-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:53470 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751472AbdBMSDv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 13 Feb 2017 13:03:51 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/4] mmc: host: tmio: properly report status from autocmd12
+Date: Mon, 13 Feb 2017 19:03:38 +0100
+Message-Id: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some Renesas SoCs do not have a reset register and the only way to do a SW
-controlled reset is to use the watchdog timer.
+New in V2:
+* Fix some more comments in patch 2.
+* Add Simon's tags
 
-Additionally, since all the WDT timeout options are so quick, a system
-reset is about the only thing it's good for.
-For example, the longest WDT overflow you can get with a RZ/A1 (R7S72100)
-with its 8-bit wide counter is 125ms.
+SDHI automatically sends CMD12 when the desired amount of data was transferred
+after multi block commands. However, the response from that CMD12 was never
+reported back to the mmc core, so that errors like ECC might go unnoticed. This
+series aims to fix that and clean up minor issues on the way when dealing with
+the autocmd12 feature. So far, I could only test that the success case was
+reported back to the MMC core [1]. An error case (like ECC) could not be
+created yet, but I will keep on trying. However, the initial flaw of the CMD12
+response not reported back is fixed with this series as the success case
+demonstrates. If an ECC error is not properly handled, it is a seperate issue
+anyway. So, I think this series could go in now. No pressure for 4.11, though.
+But would be nice, of course ;)
 
-v2:
-* added to renesas-wdt.txt instead of creating a new file
-* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
-* changed "renesas,wdt-reset" to "renesas,rza-wdt"
-* added "renesas,rza-wdt" as a fallback
-* added interupt property (even though it is not used)
-* added clocks property
-* changed hard coded register values to defines
-* added msleep to while(1) loop
-* removed unnecessary #include files
-* added Reviewed-by: Geert Uytterhoeven for renesas-reset.c
+The patches are based on mmc-next as of today. A branch can be found here:
 
-Chris Brandt (3):
-  power: reset: Add Renesas reset driver
-  watchdog: renesas-wdt: add support for rza
-  ARM: dts: r7s72100: Add reset handler
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp
 
- .../devicetree/bindings/watchdog/renesas-wdt.txt   |   4 +-
- arch/arm/boot/dts/r7s72100.dtsi                    |   7 ++
- drivers/power/reset/Kconfig                        |   9 ++
- drivers/power/reset/Makefile                       |   1 +
- drivers/power/reset/renesas-reset.c                | 112 +++++++++++++++++++++
- 5 files changed, 132 insertions(+), 1 deletion(-)
- create mode 100644 drivers/power/reset/renesas-reset.c
+Thanks and all the best,
+
+   Wolfram
+
+[1] http://elinux.org/Tests:SDHI-autocmd12-responses
+
+
+Wolfram Sang (4):
+  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+  mmc: host: tmio: fix minor typos in comments
+  mmc: host: tmio: don't BUG on unsupported stop commands
+  mmc: host: tmio: fill in response from auto cmd12
+
+ drivers/mmc/host/tmio_mmc.h     | 10 +++++++---
+ drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
+ 2 files changed, 17 insertions(+), 9 deletions(-)
 
 -- 
-2.10.1
-
-
+2.11.0
