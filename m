@@ -1,45 +1,51 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: kieran.bingham@ideasonboard.com
-Subject: [PATCH] vsp-lib: Fix reference frame generation for HSV input formats
-Date: Mon, 13 Feb 2017 17:46:56 +0200
-Message-Id: <20170213154656.30363-1-laurent.pinchart@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:53495 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751850AbdBMSDw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 13 Feb 2017 13:03:52 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 3/4] mmc: host: tmio: don't BUG on unsupported stop commands
+Date: Mon, 13 Feb 2017 19:03:41 +0100
+Message-Id: <20170213180342.26172-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
+References: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-gen-image doesn't support processing HSV input frames. Fortunately the
-HSV tests don't require it either, when they take an HSV input frame
-they just pass it straight to the WPF. We can thus set the input format
-to RGB for reference frame generation.
+Halting the kernel on an unsupported stop command seems overkill, report
+the error and say what we already did (due to autocmd12) instead.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- scripts/vsp-lib.sh | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mmc/host/tmio_mmc_pio.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
-index ae9683cffab6..695e081bf34d 100755
---- a/scripts/vsp-lib.sh
-+++ b/scripts/vsp-lib.sh
-@@ -103,6 +103,16 @@ reference_frame() {
- 	local alpha=
- 	local options=
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index ad2840e1bfae51..b47dd9195fe3fe 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -553,10 +553,11 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
+ 	}
  
-+	# gen-image doesn't support processing HSV input images. The good news
-+	# is that the HSV tests that take HSV images as inputs don't need to
-+	# perform any processing. We can set the input format to RGB for HSB
-+	# reference frame generation.
-+	case $in_format in
-+	HSV24 | HSV32)
-+		in_format=ARGB32
-+		;;
-+	esac
+ 	if (stop) {
+-		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
+-			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
+-		else
+-			BUG();
++		if (stop->opcode != MMC_STOP_TRANSMISSION || stop->arg)
++			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
++				stop->opcode, stop->arg);
 +
- 	# Start with the input format to compute the alpha value being used by
- 	# the RPF after unpacking. Keep in sync with generate_input_frame.
- 	case $in_format in
++		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
+ 	}
+ 
+ 	schedule_work(&host->done);
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
