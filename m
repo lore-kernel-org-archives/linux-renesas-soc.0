@@ -1,54 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:44897 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750827AbdBTVFW (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:24526 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752134AbdBMS0H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 16:05:22 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH] ASoC: rsnd: check return value of init function
-Date: Mon, 20 Feb 2017 22:05:07 +0100
-Message-Id: <20170220210514.12090-1-wsa+renesas@sang-engineering.com>
+        Mon, 13 Feb 2017 13:26:07 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 0/3] power: reset: add reset for renesas r7s72100
+Date: Mon, 13 Feb 2017 13:25:29 -0500
+Message-Id: <20170213182532.4042-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently, this function cannot fail for the ADG case. Still, let's
-apply defensive programming techniques to make sure we fail gracefully
-whenever rsnd_mod_init() gets extended with another failure case.
-Reported by Coverity (CID 1397893).
+Some Renesas SoCs do not have a reset register and the only way to do a SW
+controlled reset is to use the watchdog timer.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- sound/soc/sh/rcar/adg.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Additionally, since all the WDT timeout options are so quick, a system
+reset is about the only thing it's good for.
+For example, the longest WDT overflow you can get with a RZ/A1 (R7S72100)
+with its 8-bit wide counter is 125ms.
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 85a33ac0a5c443..54146f66538c18 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -564,6 +564,7 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 	struct rsnd_adg *adg;
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	struct device_node *np = dev->of_node;
-+	int ret;
- 
- 	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
- 	if (!adg) {
-@@ -571,8 +572,10 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 		return -ENOMEM;
- 	}
- 
--	rsnd_mod_init(priv, &adg->mod, &adg_ops,
-+	ret = rsnd_mod_init(priv, &adg->mod, &adg_ops,
- 		      NULL, NULL, 0, 0);
-+	if (ret)
-+		return ret;
- 
- 	rsnd_adg_get_clkin(priv, adg);
- 	rsnd_adg_get_clkout(priv, adg);
+
+Chris Brandt (3):
+  power: reset: Add Renesas reset driver
+  dt-bindings: power: reset: add document for renesas-reset driver
+  ARM: dts: r7s72100: Add reset handler
+
+ .../bindings/power/reset/renesas-reset.txt         |  15 +++
+ arch/arm/boot/dts/r7s72100.dtsi                    |   5 +
+ drivers/power/reset/Kconfig                        |   9 ++
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/renesas-reset.c                | 103 +++++++++++++++++++++
+ 5 files changed, 133 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/reset/renesas-reset.txt
+ create mode 100644 drivers/power/reset/renesas-reset.c
+
 -- 
-2.11.0
+2.10.1
