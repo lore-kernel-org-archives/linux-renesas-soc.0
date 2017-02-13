@@ -1,55 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7485 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932193AbdBPPiE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39779 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751808AbdBMND4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 10:38:04 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Brad Mouring <brad.mouring@ni.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <rcochran@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 2/3] ARM: shmobile: r7s72100: Enable L2 cache
-Date: Thu, 16 Feb 2017 10:37:25 -0500
-Message-Id: <20170216153726.22919-3-chris.brandt@renesas.com>
-In-Reply-To: <20170216153726.22919-1-chris.brandt@renesas.com>
-References: <20170216153726.22919-1-chris.brandt@renesas.com>
+        Mon, 13 Feb 2017 08:03:56 -0500
+Date: Mon, 13 Feb 2017 14:03:39 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        magnus.damm@gmail.com
+Subject: Re: [PATCH v2 3/4] arm64: renesas: r8a7796 dtsi: Add all HSCIF nodes
+Message-ID: <20170213130339.GD29718@verge.net.au>
+References: <1481129088-22026-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1481129088-22026-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1b13b1aa-5acb-263b-5720-21f99744da0e@cogentembedded.com>
+ <20170213120136.GC8737@verge.net.au>
+ <28166972-c0fe-00f8-5d3e-0e482dfc06f7@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28166972-c0fe-00f8-5d3e-0e482dfc06f7@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Even though L2C is specified in the DT, you still need to add the aux
-settings in the machine_desc.
+On Mon, Feb 13, 2017 at 03:06:21PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 2/13/2017 3:01 PM, Simon Horman wrote:
+> 
+> >>>Add the device nodes for all HSCIF serial ports, incl. clocks, and
+> >>>clock domain.
+> >>
+> >>   Not power domain?
+> >>
+> >>>Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> >>>Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>>---
+> >>>arch/arm64/boot/dts/renesas/r8a7796.dtsi | 70 ++++++++++++++++++++++++++++++++
+> >>>1 file changed, 70 insertions(+)
+> >>>
+> >>>diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> >>>index 7bf0f2f..c508e0f 100644
+> >>>--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> >>>+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> >>>@@ -421,6 +421,76 @@
+> >>>			};
+> >>>		};
+> >>>
+> >>>+		hscif0: serial@e6540000 {
+> >>>+			compatible = "renesas,hscif-r8a7796",
+> >>>+				     "renesas,rcar-gen3-hscif",
+> >>>+				     "renesas,hscif";
+> >>>+			reg = <0 0xe6540000 0 96>;
+> >>
+> >>   0xc0?
+> >
+> >Do you mean 96 should be 0xc0 (= 192 = 2 * 96) ?
+> 
+>    Oops! 0x60, of course.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* removed dummy l2c_write_sec function
----
- arch/arm/mach-shmobile/setup-r7s72100.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks,
 
-diff --git a/arch/arm/mach-shmobile/setup-r7s72100.c b/arch/arm/mach-shmobile/setup-r7s72100.c
-index d46639f..319ca95 100644
---- a/arch/arm/mach-shmobile/setup-r7s72100.c
-+++ b/arch/arm/mach-shmobile/setup-r7s72100.c
-@@ -26,6 +26,8 @@ static const char *const r7s72100_boards_compat_dt[] __initconst = {
- };
- 
- DT_MACHINE_START(R7S72100_DT, "Generic R7S72100 (Flattened Device Tree)")
-+	.l2c_aux_val    = 0,
-+	.l2c_aux_mask   = ~0,
- 	.init_early	= shmobile_init_delay,
- 	.init_late	= shmobile_init_late,
- 	.dt_compat	= r7s72100_boards_compat_dt,
--- 
-2.10.1
+I queued up this patch after
+- s/clock domain/power domain/ in changelog
+- Updating to use 0x60 as you suggest above.
+
+> >If so, perhaps the r8a7795 needs updating too?
+
+Thanks, I'll see about sending an update.
