@@ -1,99 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f194.google.com ([209.85.210.194]:33018 "EHLO
-        mail-wj0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752200AbdBCKid (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:60060 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752232AbdBMOLb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Feb 2017 05:38:33 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        gregkh@linuxfoundation.org
-Cc: wsa@the-dreams.de, linux-serial@vger.kernel.org,
-        magnus.damm@gmail.com, sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v4 1/4] serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF
-Date: Fri,  3 Feb 2017 11:38:17 +0100
-Message-Id: <1486118300-12633-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 13 Feb 2017 09:11:31 -0500
+Date: Mon, 13 Feb 2017 15:11:27 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 2/4] mmc: host: tmio: fix minor typos in a comment
+Message-ID: <20170213141127.GB1445@katana>
+References: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
+ <20170212111227.1550-3-wsa+renesas@sang-engineering.com>
+ <20170213123943.GA29718@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
+Content-Disposition: inline
+In-Reply-To: <20170213123943.GA29718@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sets reasonable trigger defaults for the various SCIF variants.
-Also corrects the FIFO size for SH7705-style ports.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+--VrqPEDrXMn8OVzN4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 050d028..520e344 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -148,6 +148,7 @@ struct sci_port {
- 	struct timer_list		rx_timer;
- 	unsigned int			rx_timeout;
- #endif
-+	int				rx_trigger;
- 
- 	bool has_rtscts;
- 	bool autorts;
-@@ -450,7 +451,7 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 			[SCFCR]		= { 0x18, 16 },
- 			[SCFDR]		= { 0x1c, 16 },
- 		},
--		.fifosize = 16,
-+		.fifosize = 64,
- 		.overrun_reg = SCxSR,
- 		.overrun_mask = SCIFA_ORER,
- 		.sampling_rate_mask = SCI_SR(16),
-@@ -2062,6 +2063,7 @@ static void sci_reset(struct uart_port *port)
- {
- 	const struct plat_sci_reg *reg;
- 	unsigned int status;
-+	struct sci_port *s = to_sci_port(port);
- 
- 	do {
- 		status = serial_port_in(port, SCxSR);
-@@ -2081,6 +2083,9 @@ static void sci_reset(struct uart_port *port)
- 		status &= ~(SCLSR_TO | SCLSR_ORER);
- 		serial_port_out(port, SCLSR, status);
- 	}
-+
-+	if (s->rx_trigger > 1)
-+		scif_set_rtrg(port, s->rx_trigger);
- }
- 
- static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
-@@ -2615,6 +2620,28 @@ static int sci_init_single(struct platform_device *dev,
- 	if (unlikely(sci_port->params == NULL))
- 		return -EINVAL;
- 
-+	switch (p->type) {
-+	case PORT_SCIFB:
-+		sci_port->rx_trigger = 48;
-+		break;
-+	case PORT_HSCIF:
-+		sci_port->rx_trigger = 64;
-+		break;
-+	case PORT_SCIFA:
-+		sci_port->rx_trigger = 32;
-+		break;
-+	case PORT_SCIF:
-+		if (p->regtype == SCIx_SH7705_SCIF_REGTYPE)
-+			/* RX triggering not implemented for this IP */
-+			sci_port->rx_trigger = 1;
-+		else
-+			sci_port->rx_trigger = 8;
-+		break;
-+	default:
-+		sci_port->rx_trigger = 1;
-+		break;
-+	}
-+
- 	/* SCIFA on sh7723 and sh7724 need a custom sampling rate that doesn't
- 	 * match the SoC datasheet, this should be investigated. Let platform
- 	 * data override the sampling rate for now.
--- 
-2.7.4
+
+> > -/* Definitions for values the CTRL_STATUS register can take. */
+> > +/* Definitions for values the CTL_STATUS register can take */
+> >  #define TMIO_STAT_CMDRESPEND    BIT(0)
+> >  #define TMIO_STAT_DATAEND       BIT(2)
+> >  #define TMIO_STAT_CARD_REMOVE   BIT(3)
+>=20
+> Is a similar update for CTRL_STATUS2 appropriate a few lines further down?
+
+Yes, and SDIO_STATUS as well. Will fix and resend. Thanks!
+
+
+--VrqPEDrXMn8OVzN4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYob6PAAoJEBQN5MwUoCm2F8sQAIQMAUG8LhStvp5nY5Ng1lX6
+2Pkv7dDJINgPo7qpdYkM4A5u8n1Vlb/W44DmhLfhHX1TM36lCmIF+9mQud7R7OYA
+/hh2ew4xFhhJKqiOmbaYcVijaeIPOa88m8r+T7ADNVxGNdEwq65VZyirzeEq+3AZ
+AIxiUs28w/KHU6rTEou/GgRYcBcrNhwwp8PS1SCcG4GhAyHxTIxjRDN4FchykLqP
+7Z8NHpwG0cozp3Q9qyP8/1qDI7SzrYHictd7pYSbD9vDYCqGg8hi3mUZt0OSo4jH
+Hb+OCgLpltQEDt37a9cS7coLUK/GefMMBQFiA4FMBo+Sf4eoJMCxstxWFtHU8XNf
+chYGlREZhsS/Cilp4QIQENibiKgBQQH5+Ep3yC/wjPQZ/aN6q49CT4K9BgoCYgaO
+bCWaEnzQhiz0MJMftJeWBsVuuKevY2FXKKG4fD5neA28Q/cPLze+4v2GCwFAuqX6
+HbUcxUMzwjFfClqHX+ssRvtDXMNM99Fv8KPgOfVZPXFpClhK24cHQtuEBADBlqBD
+qIk/rh1yKIjD8M5uzne5q6GoAn1WrPeuoxo8hPQgzCeOxEqi48dAiJikfQHnzSH8
+OKQLFxdo+Ywje/81xr+rTLTuqAdWfDiieCs3ALF85yRIGSvuLuT9DHzhilX69xi2
+9huHjFJ6o0mGRJJv5SeK
+=V4Sh
+-----END PGP SIGNATURE-----
+
+--VrqPEDrXMn8OVzN4--
