@@ -1,69 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33022 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbdBBRKz (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33204 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752228AbdBMNK1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 12:10:55 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org
-Cc: linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        sergei.shtylyov@cogentembedded.com, gregkh@linuxfoundation.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3 7/7] arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
-Date: Thu,  2 Feb 2017 18:10:20 +0100
-Message-Id: <1486055420-31595-8-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1486055420-31595-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 13 Feb 2017 08:10:27 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170213130531.GE29718@verge.net.au>
+References: <1486118300-12633-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1486118300-12633-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20170208105426.GE26982@verge.net.au> <CAO3366ykrZnVCPGra6+Ba70+KA=ZrbBhuei0R7yULsQXMkdj+Q@mail.gmail.com>
+ <20170213130531.GE29718@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Feb 2017 14:10:25 +0100
+Message-ID: <CAMuHMdUpXaZ1Piiig7g0xiAd=mC18AN2zT095GB8t-NURyzSUw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
+To: Simon Horman <horms@verge.net.au>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enables the SCIF hooked up to the DEBUG1 connector.
+Hi Simon,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On Mon, Feb 13, 2017 at 2:05 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Feb 08, 2017 at 12:19:55PM +0100, Ulrich Hecht wrote:
+>> On Wed, Feb 8, 2017 at 11:54 AM, Simon Horman <horms@verge.net.au> wrote:
+>> > On Fri, Feb 03, 2017 at 11:38:20AM +0100, Ulrich Hecht wrote:
+>> >> Enables the SCIF hooked up to the DEBUG1 connector.
+>> >>
+>> >> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+>> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> >
+>> > Hi Ulrich,
+>> >
+>> > could you clarify the dependency of this patch on earlier ones in the
+>> > series. Is it safe to queue this up independently of the other patches?
+>>
+>> It does not actually depend on the other patches. I think I included
+>> it here because I used that port for testing. Should be safe.
+>
+> Thanks but I dont' seem to have scif1 in r8a7796.dtsi.
+> Should this patch be updated to use hscif1 which is (now) present in
+> r8a7796.dtsi?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index c3e0b9e..6370b17 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -18,6 +18,7 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		serial1 = &scif1;
- 		ethernet0 = &avb;
- 	};
- 
-@@ -113,6 +114,11 @@
- 		function = "avb";
- 	};
- 
-+	scif1_pins: scif1 {
-+		groups = "scif1_data_a", "scif1_ctrl";
-+		function = "scif1";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
-@@ -240,6 +246,14 @@
- 	status = "okay";
- };
- 
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+Nah, you just need
+
+[PATCH v2 2/3] arm64: renesas: r8a7796: Add all SCIF nodes
+
+first :-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
