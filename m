@@ -1,72 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:58565 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751652AbdBMLu1 (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36004 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752157AbdBMKly (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 06:50:27 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] ARM: shmobile: r7s72100: add restart handler
-Date: Mon, 13 Feb 2017 11:50:22 +0000
-Message-ID: <SG2PR06MB1165B96344754F9BF3725C798A590@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Mon, 13 Feb 2017 05:41:54 -0500
+Received: by mail-it0-f65.google.com with SMTP id f200so12673915itf.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Feb 2017 02:41:54 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11654A11A81D46A70DB1D1BF8A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170209191259.29774-1-chris.brandt@renesas.com>
  <CAMuHMdVhbpfsLEn3Ke5f93AhaOnS4TSJC+QpY8xdtT1MNejVJA@mail.gmail.com>
  <SG2PR06MB11657431F033ABBDE1D750F38A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com>
- <SG2PR06MB11654A11A81D46A70DB1D1BF8A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdUJjdhg1j=sgxGLoLh-h91hS6peKJC_eA0wHJx8NbdBZA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUJjdhg1j=sgxGLoLh-h91hS6peKJC_eA0wHJx8NbdBZA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <CAMuHMdXp-V393uR_-vhDSZyiXTD-+WxeNuchAK89YNKz+yPWdg@mail.gmail.com> <SG2PR06MB11654A11A81D46A70DB1D1BF8A440@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Feb 2017 11:41:47 +0100
+Message-ID: <CAMuHMdUJjdhg1j=sgxGLoLh-h91hS6peKJC_eA0wHJx8NbdBZA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: r7s72100: add restart handler
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgRmVicnVhcnkgMTMsIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiB3cm90ZToNCj4gT24gRnJpLCBGZWIgMTAsIDIwMTcgYXQgODo0NiBQTSwgQ2hyaXMgQnJh
-bmR0IDxDaHJpcy5CcmFuZHRAcmVuZXNhcy5jb20+DQo+IHdyb3RlOg0KPiA+IE9uIEZyaWRheSwg
-RmVicnVhcnkgMTAsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPj4gQWx0ZXJu
-YXRpdmVseSwgeW91IGNhbiB3cml0ZSBhIHJlc3RhcnQgZHJpdmVyIChjZnIuDQo+ID4+IGRyaXZl
-cnMvcG93ZXIvcmVzZXQvcm1vYmlsZS1yZXNldC5jKSB0aGF0IGJpbmRzIGFnYWluc3QgYQ0KPiA+
-PiAicmVuZXNhcyxyN3M3MjEwMC13ZHQiIGRldmljZSBub2RlLCBidXQgZG9lc24ndCBpbXBsZW1l
-bnQgd2F0Y2hkb2cNCj4gPj4gZnVuY3Rpb25hbGl0eS4NCj4gPj4gWW91J3JlIGdvbm5hIG5lZWQg
-RFQgYmluZGluZ3MgYW55d2F5Lg0KPiA+DQo+ID4gSSBsaWtlIHRoYXQgaWRlYS4gVGhhdCBzaG91
-bGQgdGFrZSBtZSBubyB0aW1lIGF0IGFsbC4NCj4gPiBUaGFuayB5b3UuDQo+ID4NCj4gPiBEbyB5
-b3UgdGhpbmsgSSBjYW4gc3RpbGwga2VlcCBteSAnd2VhayBmdW5jdGlvbicgaWRlYSBpbiB0aGVy
-ZT8/DQo+ID4NCj4gPg0KPiA+IGV4dGVybiB2b2lkIF9fYXR0cmlidXRlX18gKCh3ZWFrKSkgcHJl
-cGFyZV9mb3JfcmVzdGFydCh2b2lkKSB7DQo+ID4gICAgICAgICAvKiBvdmVycmlkZSB0byBkbyBi
-b2FyZCBzcGVjaWZpYyBzdHVmZiAqLyB9DQo+ID4NCj4gPiBzdGF0aWMgaW50IHJlbmVzYXNfd2R0
-X3Jlc2V0X2hhbmRsZXIoc3RydWN0IG5vdGlmaWVyX2Jsb2NrICp0aGlzLA0KPiA+ICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcgbW9kZSwgdm9pZCAqY21kKSB7
-DQo+ID4gICAgICAgICBwcl9kZWJ1ZygiJXMgJWx1XG4iLCBfX2Z1bmNfXywgbW9kZSk7DQo+ID4N
-Cj4gPiAgICAgICAgIHByZXBhcmVfZm9yX3Jlc3RhcnQoKTsNCj4gPg0KPiA+ICAgICAgICAgLyog
-c2V0IFdEVCBmb3IgcmVzZXQgKi8NCj4gPiAgICAgICAgIC4gLiAuDQo+ID4NCj4gPiAgICAgICAg
-IHJldHVybiBOT1RJRllfRE9ORTsNCj4gPiB9DQo+IA0KPiBXaGF0IGRvIHlvdSB3YW50IHRvIHVz
-ZSB0aGUgYm9hcmQtc3BlY2lmaWMgZnVuY3Rpb24gZm9yPw0KPiBIYXZlIGEgYm9hcmQtc3BlY2lm
-aWMgcmVzZXQgaGFuZGxlciwgb3IgZG8gc29tZSBwcmVwYXJhdG9yeSBjbGVhbnVwPw0KPiANCj4g
-SW4gY2FzZSBvZiB0aGUgZm9ybWVyLCBwbGVhc2Ugd3JpdGUgYSBzZXBhcmF0ZSBkcml2ZXIgdGhh
-dCByZWdpc3RlcnMgIGENCj4gcmVzZXQgaGFuZGxlciB3aXRoIGEgaGlnaGVyIHByaW9yaXR5Lg0K
-PiBJbiBjYXNlIG9mIHRoZSBsYXR0ZXIsIHBsZWFzZSB1c2UgcmVnaXN0ZXJfcmVib290X25vdGlm
-aWVyKCkgaW4gdGhlIGRyaXZlcg0KPiB0aGF0IG5lZWRzIGl0Lg0KDQpPbiBteSBib2FyZCAodGhl
-IFJTSyksIEkgZG9uJ3QgcmVhbGx5IGNhcmUuIEkgd2FzIHRoaW5raW5nIG1vcmUgYWJvdXQNCm90
-aGVyIHVzZXJzIGJvYXJkcy4gSW4gb3RoZXIgd29yZHMsIHdoYXQgc2hvdWxkIEkgdGVsbCB0aGVt
-IHdoYXQgdGhleQ0Kc2hvdWxkIGRvPw0KSSB3aWxsIHN1Z2dlc3QgeW91ciByZWNvbW1lbmRhdGlv
-bnMgYWJvdmUgKG5vdCBpbmNsdWRlIHRoZSB3ZWFrIG1vZGlmaWVyKS4NCg0KDQo+ID4gT3IuLi5k
-byB5b3UgdGhpbmsgSSBjYW4ganVzdCB1c2UgdGhlIHJtb2JpbGUtcmVzZXQuYyBkcml2ZXIgYW5k
-IGp1c3QNCj4gPiBhZGQgV0RUIHRvIGl0Pw0KPiA+DQo+ID4gSG9uZXN0bHksIHRoZSBvbmx5IHRo
-aW5nIGRpZmZlcmVudCB3aWxsIGJlIHJtb2JpbGVfcmVzZXRfaGFuZGxlcigpLg0KPiA+IEkgY291
-bGQgbWFrZSBhIHJtb2JpbGVfd2R0X3Jlc2V0X2hhbmRsZXIoKSBhbmQgSSBjb3VsZCBqdXN0IHBh
-c3MgaW4gYQ0KPiA+IGRpZmZlcmVudCBub3RpZmllcl9ibG9jayBkZXBlbmRpbmcgb24gdGhlIERU
-Lg0KPiA+DQo+ID4gV2hhdCBkbyB5b3UgdGhpbms/DQo+IA0KPiBHaXZlbiB0aGUgc21hbGwgYW1v
-dW50IG9mIGNvZGUgdG8gYWRkIHRvIHRoZSBleGlzdGluZyBkcml2ZXIsIGFuZCB0aGUNCj4gc2hl
-ZXIgYW1vdW50IG9mIGJvaWxlcnBsYXRlIGZvciB3cml0aW5nIGEgbmV3IGRyaXZlciwgSSdtIGlu
-Y2xpbmVkIHRvIHNheQ0KPiB5ZXMuDQo+IEJ1dCBpbiB0aGUgZW5kLCBpdCdzIHVwIHRvIHRoZSBz
-dWJzeXN0ZW0gbWFpbnRhaW5lciB0byBkZWNpZGUuDQo+IA0KPiA+IHN0YXRpYyBjb25zdCBzdHJ1
-Y3Qgb2ZfZGV2aWNlX2lkIHJtb2JpbGVfcmVzZXRfb2ZfbWF0Y2hbXSA9IHsNCj4gPiAgICAgICAg
-IHsgLmNvbXBhdGlibGUgPSAicmVuZXNhcyxzeXNjLXJtb2JpbGUiLCB9LA0KPiA+ICAgICAgICAg
-eyAuY29tcGF0aWJsZSA9ICJyZW5lc2FzLHdkdC1ybW9iaWxlIiwgfSwNCj4gDQo+IHJlbmVzYXMs
-cjdzNzIxMDAtd2R0DQoNCk9LLiBUaGFua3MhDQoNCg0KQ2hyaXMNCg0K
+Hi Chris,
+
+On Fri, Feb 10, 2017 at 8:46 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Friday, February 10, 2017, Geert Uytterhoeven wrote:
+>> Alternatively, you can write a restart driver (cfr.
+>> drivers/power/reset/rmobile-reset.c) that binds against a
+>> "renesas,r7s72100-wdt" device node, but doesn't implement watchdog
+>> functionality.
+>> You're gonna need DT bindings anyway.
+>
+> I like that idea. That should take me no time at all.
+> Thank you.
+>
+> Do you think I can still keep my 'weak function' idea in there??
+>
+>
+> extern void __attribute__ ((weak)) prepare_for_restart(void)
+> {
+>         /* override to do board specific stuff */
+> }
+>
+> static int renesas_wdt_reset_handler(struct notifier_block *this,
+>                                  unsigned long mode, void *cmd)
+> {
+>         pr_debug("%s %lu\n", __func__, mode);
+>
+>         prepare_for_restart();
+>
+>         /* set WDT for reset */
+>         . . .
+>
+>         return NOTIFY_DONE;
+> }
+
+What do you want to use the board-specific function for?
+Have a board-specific reset handler, or do some preparatory cleanup?
+
+In case of the former, please write a separate driver that registers  a
+reset handler with a higher priority.
+In case of the latter, please use register_reboot_notifier() in the driver
+that needs it.
+
+> Or...do you think I can just use the rmobile-reset.c driver and
+> just add WDT to it?
+>
+> Honestly, the only thing different will be rmobile_reset_handler().
+> I could make a rmobile_wdt_reset_handler() and I could just pass in
+> a different notifier_block depending on the DT.
+>
+> What do you think?
+
+Given the small amount of code to add to the existing driver, and the sheer
+amount of boilerplate for writing a new driver, I'm inclined to say yes.
+But in the end, it's up to the subsystem maintainer to decide.
+
+> static const struct of_device_id rmobile_reset_of_match[] = {
+>         { .compatible = "renesas,sysc-rmobile", },
+>         { .compatible = "renesas,wdt-rmobile", },
+
+renesas,r7s72100-wdt
+
+>         { /* sentinel */ }
+> };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
