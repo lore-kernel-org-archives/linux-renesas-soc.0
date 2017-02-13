@@ -1,102 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:47586 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753451AbdBGOo2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 09:44:28 -0500
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cb70M-0001Dc-Nq
-        for linux-renesas-soc@vger.kernel.org; Tue, 07 Feb 2017 15:44:26 +0100
-Received: from geert by ramsan with local (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1cb70U-0002Bi-PL
-        for linux-renesas-soc@vger.kernel.org; Tue, 07 Feb 2017 15:44:34 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2017-02-07-v4.10-rc7
-Date: Tue,  7 Feb 2017 15:44:34 +0100
-Message-Id: <1486478674-8376-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCHv2 3/5] logger: Log to the FTrace buffer if tracing is enabled
+Date: Mon, 13 Feb 2017 16:21:37 +0200
+Message-ID: <4577996.faKKJcSsZt@avalon>
+In-Reply-To: <1480627909-19207-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1480627909-19207-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2017-02-07-v4.10-rc7 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi Kieran,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Thank you for the patch.
 
-Today's version is based on renesas-devel-20170206-v4.10-rc7.
+On Thursday 01 Dec 2016 21:31:47 Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Extend the logger such that it will detect the tracing system, and also
+> append print statement to this ring buffer.
+> 
+> This provides the relevant logging output interspersed in the ftrace
+> logs for an effective solution to identifying the actions that caused
+> the traces to occur
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Included branches with driver code:
-  - https://git.ragnatech.se/linux#for-renesas-drivers
-  - topic/ipmmu-multi-arch-v6
-  - topic/r8a7795-ipmmu-v2-rebased4
-  - topic/r8a7796-ipmmu-v1-rebased4
-  - topic/r8a7795-ipmmu-integration-v2-rebased2
-  - topic/r8a7795-es2-v1-rebased7
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/suspend-resume-race
-  - topic/drm-du-hdmi-2017-01-10-rebased1
-  - topic/renesas-cpg-mssr-reset-dts-v1
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Included fixes:
-  - serial: sh-sci: Fix early deassertion of dedicated RTS
-  - serial: sh-sci: Fix hang in sci_reset()
-  - iommu/ipmmu-vmsa: Convert to iommu_register_instance()
-  - Revert "PM / Domains: Fix asynchronous execution of *noirq() callbacks"
-  - Revert "serial: sh-sci: make RX FIFO parameters tunable via sysfs"
-  - Revert "serial: sh-sci: SCIFA/B RX FIFO software timeout"
-  - Revert "serial: sh-sci: increase RX FIFO trigger defaults for (H)SCIF"
+> ---
+>  scripts/logger.sh | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/logger.sh b/scripts/logger.sh
+> index 8123f0c9f6e3..8412b0ba9a08 100755
+> --- a/scripts/logger.sh
+> +++ b/scripts/logger.sh
+> @@ -6,6 +6,17 @@ now() {
+> 
+>  label=${1:+ [$1]}
+> 
+> +TRACE_MARKER=/sys/kernel/debug/tracing/trace_marker
+> +if [ -e $TRACE_MARKER ]; then
+> +	extra_log_files=$TRACE_MARKER
+> +fi
+> +
+>  while read line ; do
+> -	echo "$(now)$label $line"
+> +	newline="$(now)$label $line"
+> +
+> +	echo "$newline"
+> +
+> +	for f in $extra_log_files; do
+> +		echo "$newline" >> $f;
+> +	done;
+>  done
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+-- 
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
