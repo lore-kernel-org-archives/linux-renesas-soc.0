@@ -1,58 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36890 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934222AbdBQPai (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 10:30:38 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] arm64: dts: r8a7796: Add Secondary CPU Cores
-Date: Fri, 17 Feb 2017 16:30:32 +0100
-Message-Id: <1487345435-1088-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: kieran.bingham@ideasonboard.com
+Subject: [PATCH] scripts: bin2png: Support conversion of all files in a directory
+Date: Mon, 13 Feb 2017 16:15:22 +0200
+Message-Id: <20170213141522.11545-1-laurent.pinchart@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+When the first argument is a directory name instead of a file name,
+convert all test script output binaries in that directory.
 
-This patch series adds the second Cortex-A57 CPU core, and the
-Cortex-A53 L2 cache-controller and CPU nodes on the Renesas R-Car M3-W
-SoC to its DTS file.
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ scripts/bin2png.sh | 41 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-Note that these patches add hardware description; actual enabling of the
-CPU depends on the PSCI firmware.
-
-With the current firmware version (v2.16.0), only the CA57 CPU cores are
-enabled, hence the last patch does not introduce undeterministic
-scheduling behavior due to migration between big and LITTLE cores.
-
-Tested on r8a7796/salvator-x, with CPU hot(un)plug and system suspend.
-
-Thanks for applying!
-
-Geert Uytterhoeven (2):
-  arm64: dts: r8a7796: Add CA53 L2 cache-controller node
-  arm64: dts: r8a7796: Add Cortex-A53 CPU cores
-
-Takeshi Kihara (1):
-  arm64: dts: r8a7796: Add Cortex-A57 CPU cores
-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 64 +++++++++++++++++++++++++++++---
- 1 file changed, 58 insertions(+), 6 deletions(-)
-
+diff --git a/scripts/bin2png.sh b/scripts/bin2png.sh
+index 2563e87d4187..90fdfb077715 100755
+--- a/scripts/bin2png.sh
++++ b/scripts/bin2png.sh
+@@ -1,25 +1,40 @@
+ #!/bin/sh
+ 
+-FILE="$1"
++FILE=${1:-.}
+ 
+-PNM=${FILE/.bin/.pnm}
+-PNG=${FILE/.bin/.png}
++convert_image() {
++	local file=$1
++	local pnm=${file/%bin/pnm}
++	local png=${file/%bin/png}
+ 
+-fmt=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\1|' | tr '[:lower:]' '[:upper:]')
+-size=$(echo $FILE | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\2|')
++	local format=$(echo $file | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\1|' | tr '[:lower:]' '[:upper:]')
++	local size=$(echo $file   | sed -e 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\2|')
+ 
+-case $fmt in
++	case $format in
+ 	yuv*|yvu*)
+-		fmt=$(echo $fmt | tr 'M' 'P')
++		format=$(echo $format | tr 'M' 'P')
+ 		;;
+ 	nv*)
+-		fmt=$(echo $fmt | tr -d 'M')
++		format=$(echo $format | tr -d 'M')
+ 		;;
+ 	*rgb*)
+-		fmt=$(echo $fmt | tr -d 'AX')
++		format=$(echo $format | tr -d 'AX')
+ 		;;
+-esac
++	esac
+ 
+-raw2rgbpnm -s $size -f $fmt $FILE $PNM && \
+-	convert $PNM $PNG
+-rm $PNM
++	raw2rgbpnm -f $format -s $size $file $pnm && \
++		convert $pnm $png
++	rm $pnm
++}
++
++if [ -d $FILE ] ; then
++	if [ $(ls $FILE/vsp-unit-test-00*-*frame*.bin 2>/dev/null | wc -l) != 0 ] ; then
++		for f in $FILE/vsp-unit-test-00*-*frame*.bin ; do
++			convert_image $f
++		done
++	fi
++elif [ -f $FILE ] ; then
++	convert_image $FILE
++else
++	echo "Usage: $0 <file or directory>"
++fi
 -- 
-1.9.1
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
