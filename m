@@ -1,65 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:60060 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752232AbdBMOLb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39555 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752576AbdBMMj4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 09:11:31 -0500
-Date: Mon, 13 Feb 2017 15:11:27 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mon, 13 Feb 2017 07:39:56 -0500
+Date: Mon, 13 Feb 2017 13:39:43 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [PATCH 2/4] mmc: host: tmio: fix minor typos in a comment
-Message-ID: <20170213141127.GB1445@katana>
+Message-ID: <20170213123943.GA29718@verge.net.au>
 References: <20170212111227.1550-1-wsa+renesas@sang-engineering.com>
  <20170212111227.1550-3-wsa+renesas@sang-engineering.com>
- <20170213123943.GA29718@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170213123943.GA29718@verge.net.au>
+In-Reply-To: <20170212111227.1550-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Sun, Feb 12, 2017 at 12:12:25PM +0100, Wolfram Sang wrote:
+> Making sure we match the actual register name.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/mmc/host/tmio_mmc.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+> index b20b451ad90daa..8a4e99ffe64eb1 100644
+> --- a/drivers/mmc/host/tmio_mmc.h
+> +++ b/drivers/mmc/host/tmio_mmc.h
+> @@ -54,7 +54,7 @@
+>  #define TMIO_STOP_STP		BIT(0)
+>  #define TMIO_STOP_SEC		BIT(8)
+>  
+> -/* Definitions for values the CTRL_STATUS register can take. */
+> +/* Definitions for values the CTL_STATUS register can take */
+>  #define TMIO_STAT_CMDRESPEND    BIT(0)
+>  #define TMIO_STAT_DATAEND       BIT(2)
+>  #define TMIO_STAT_CARD_REMOVE   BIT(3)
 
---VrqPEDrXMn8OVzN4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> > -/* Definitions for values the CTRL_STATUS register can take. */
-> > +/* Definitions for values the CTL_STATUS register can take */
-> >  #define TMIO_STAT_CMDRESPEND    BIT(0)
-> >  #define TMIO_STAT_DATAEND       BIT(2)
-> >  #define TMIO_STAT_CARD_REMOVE   BIT(3)
->=20
-> Is a similar update for CTRL_STATUS2 appropriate a few lines further down?
-
-Yes, and SDIO_STATUS as well. Will fix and resend. Thanks!
-
-
---VrqPEDrXMn8OVzN4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYob6PAAoJEBQN5MwUoCm2F8sQAIQMAUG8LhStvp5nY5Ng1lX6
-2Pkv7dDJINgPo7qpdYkM4A5u8n1Vlb/W44DmhLfhHX1TM36lCmIF+9mQud7R7OYA
-/hh2ew4xFhhJKqiOmbaYcVijaeIPOa88m8r+T7ADNVxGNdEwq65VZyirzeEq+3AZ
-AIxiUs28w/KHU6rTEou/GgRYcBcrNhwwp8PS1SCcG4GhAyHxTIxjRDN4FchykLqP
-7Z8NHpwG0cozp3Q9qyP8/1qDI7SzrYHictd7pYSbD9vDYCqGg8hi3mUZt0OSo4jH
-Hb+OCgLpltQEDt37a9cS7coLUK/GefMMBQFiA4FMBo+Sf4eoJMCxstxWFtHU8XNf
-chYGlREZhsS/Cilp4QIQENibiKgBQQH5+Ep3yC/wjPQZ/aN6q49CT4K9BgoCYgaO
-bCWaEnzQhiz0MJMftJeWBsVuuKevY2FXKKG4fD5neA28Q/cPLze+4v2GCwFAuqX6
-HbUcxUMzwjFfClqHX+ssRvtDXMNM99Fv8KPgOfVZPXFpClhK24cHQtuEBADBlqBD
-qIk/rh1yKIjD8M5uzne5q6GoAn1WrPeuoxo8hPQgzCeOxEqi48dAiJikfQHnzSH8
-OKQLFxdo+Ywje/81xr+rTLTuqAdWfDiieCs3ALF85yRIGSvuLuT9DHzhilX69xi2
-9huHjFJ6o0mGRJJv5SeK
-=V4Sh
------END PGP SIGNATURE-----
-
---VrqPEDrXMn8OVzN4--
+Is a similar update for CTRL_STATUS2 appropriate a few lines further down?
