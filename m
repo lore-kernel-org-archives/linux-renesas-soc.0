@@ -1,59 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:35130 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934578AbdBQRAm (ORCPT
+Received: from lb3-smtp-cloud6.xs4all.net ([194.109.24.31]:44392 "EHLO
+        lb3-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750975AbdBMMkP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 12:00:42 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-Date: Fri, 17 Feb 2017 18:00:31 +0100
-Message-Id: <1487350832-29820-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487350832-29820-1-git-send-email-geert+renesas@glider.be>
-References: <1487350832-29820-1-git-send-email-geert+renesas@glider.be>
+        Mon, 13 Feb 2017 07:40:15 -0500
+Subject: Re: [PATCH v3 3/7] media: i2c: max2175: Add MAX2175 support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, crope@iki.fi
+References: <1486479757-32128-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1486479757-32128-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <af2baebb-96af-728d-8801-5fe8e2eadca8@xs4all.nl>
+Date: Mon, 13 Feb 2017 13:40:07 +0100
+MIME-Version: 1.0
+In-Reply-To: <1486479757-32128-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Hi Ramesh,
 
->From PSCI v1.0, Suspend-to-RAM is supported via SYSTEM_SUSPEND PSCI
-function call. Hence, upgrade PSCI version for R-Car H3 to support
-Suspend-to-RAM.
+A few little nitpicks:
 
-The Suspend-to-RAM is highly dependent on ARM Trusted Firwmare support
-since necessary callback functions will be registered after a query
-to ARM Trusted Firmware about SYSTEM_SUSPEND support.
+On 02/07/2017 04:02 PM, Ramesh Shanmugasundaram wrote:
+> This patch adds driver support for the MAX2175 chip. This is Maxim
+> Integrated's RF to Bits tuner front end chip designed for software-defined
+> radio solutions. This driver exposes the tuner as a sub-device instance
+> with standard and custom controls to configure the device.
+> 
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+>  Documentation/media/v4l-drivers/index.rst   |    1 +
+>  Documentation/media/v4l-drivers/max2175.rst |   60 ++
+>  drivers/media/i2c/Kconfig                   |    4 +
+>  drivers/media/i2c/Makefile                  |    2 +
+>  drivers/media/i2c/max2175/Kconfig           |    8 +
+>  drivers/media/i2c/max2175/Makefile          |    4 +
+>  drivers/media/i2c/max2175/max2175.c         | 1438 +++++++++++++++++++++++++++
+>  drivers/media/i2c/max2175/max2175.h         |  108 ++
+>  8 files changed, 1625 insertions(+)
+>  create mode 100644 Documentation/media/v4l-drivers/max2175.rst
+>  create mode 100644 drivers/media/i2c/max2175/Kconfig
+>  create mode 100644 drivers/media/i2c/max2175/Makefile
+>  create mode 100644 drivers/media/i2c/max2175/max2175.c
+>  create mode 100644 drivers/media/i2c/max2175/max2175.h
+> 
 
-Since PSCI v1.0 is backward compatible with PSCI v0.2, CPU Hotplug and
-CPUIdle should be able to work normally with this change.
+<snip>
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Khiem: I've updated your email address.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +
+> +static const struct v4l2_ctrl_config max2175_i2s_en = {
+> +	.ops = &max2175_ctrl_ops,
+> +	.id = V4L2_CID_MAX2175_I2S_ENABLE,
+> +	.name = "I2S Enable",
+> +	.type = V4L2_CTRL_TYPE_BOOLEAN,
+> +	.min = 0,
+> +	.max = 1,
+> +	.step = 1,
+> +	.def = 1,
+> +};
+> +
+> +/*
+> + * HSLS value control LO freq adjacent location configuration.
+> + * Refer to Documentation/media/v4l-drivers/max2175 for more details.
+> + */
+> +static const struct v4l2_ctrl_config max2175_hsls = {
+> +	.ops = &max2175_ctrl_ops,
+> +	.id = V4L2_CID_MAX2175_HSLS,
+> +	.name = "HSLS above/below desired",
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 98cd42f586b5fd62..4eae2d471d41ee55 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -29,7 +29,7 @@
- 	};
- 
- 	psci {
--		compatible = "arm,psci-0.2";
-+		compatible = "arm,psci-1.0";
- 		method = "smc";
- 	};
- 
--- 
-1.9.1
+The convention is that the descriptions of controls follow the English 'title' rules
+w.r.t. caps. See v4l2-ctrls.c.
+
+This would become: "HSLS Above/Below Desired".
+
+> +	.type = V4L2_CTRL_TYPE_INTEGER,
+
+Shouldn't this be a boolean control?
+
+> +	.min = 0,
+> +	.max = 1,
+> +	.step = 1,
+> +	.def = 1,
+> +};
+> +
+> +/*
+> + * Rx modes below are a set of preset configurations that decides the tuner's
+> + * sck and sample rate of transmission. They are separate for EU & NA regions.
+> + * Refer to Documentation/media/v4l-drivers/max2175 for more details.
+> + */
+> +static const char * const max2175_ctrl_eu_rx_modes[] = {
+> +	[MAX2175_EU_FM_1_2]	= "EU FM 1.2",
+> +	[MAX2175_DAB_1_2]	= "DAB 1.2",
+> +};
+> +
+> +static const char * const max2175_ctrl_na_rx_modes[] = {
+> +	[MAX2175_NA_FM_1_0]	= "NA FM 1.0",
+> +	[MAX2175_NA_FM_2_0]	= "NA FM 2.0",
+> +};
+> +
+> +static const struct v4l2_ctrl_config max2175_eu_rx_mode = {
+> +	.ops = &max2175_ctrl_ops,
+> +	.id = V4L2_CID_MAX2175_RX_MODE,
+> +	.name = "RX MODE",
+
+MODE -> Mode.
+
+> +	.type = V4L2_CTRL_TYPE_MENU,
+> +	.max = ARRAY_SIZE(max2175_ctrl_eu_rx_modes) - 1,
+> +	.def = 0,
+> +	.qmenu = max2175_ctrl_eu_rx_modes,
+> +};
+> +
+> +static const struct v4l2_ctrl_config max2175_na_rx_mode = {
+> +	.ops = &max2175_ctrl_ops,
+> +	.id = V4L2_CID_MAX2175_RX_MODE,
+> +	.name = "RX MODE",
+
+Ditto.
+
+> +	.type = V4L2_CTRL_TYPE_MENU,
+> +	.max = ARRAY_SIZE(max2175_ctrl_na_rx_modes) - 1,
+> +	.def = 0,
+> +	.qmenu = max2175_ctrl_na_rx_modes,
+> +};
+> +
+
+Regards,
+
+	Hans
