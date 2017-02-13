@@ -1,58 +1,126 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:37211 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932674AbdBPRYC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 12:24:02 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/3] ARM: dts: r7s72100: Add reset handler
-Date: Thu, 16 Feb 2017 12:23:20 -0500
-Message-Id: <20170216172320.10897-4-chris.brandt@renesas.com>
-In-Reply-To: <20170216172320.10897-1-chris.brandt@renesas.com>
-References: <20170216172320.10897-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 3/4] v4l: vsp1: Calculate partition sizes at stream start.
+Date: Mon, 13 Feb 2017 23:21:58 +0200
+Message-ID: <3804080.QOE9vPlxB7@avalon>
+In-Reply-To: <1478283570-19688-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1478283570-19688-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For the RZ/A1, the only way to do a reset is to overflow the WDT.
+Hi Kieran,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
-* changed "renesas,wdt-reset" to "renesas,rza-wdt"
-* added interupt property (even though it is not used)
-* added clocks property
----
- arch/arm/boot/dts/r7s72100.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thank you for the patch.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 614ba79..88d9840 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -371,6 +371,13 @@
- 			<0xe8202000 0x1000>;
- 	};
- 
-+	wdt: timer@fcfe0000 {
-+		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
-+		reg = <0xfcfe0000 0x6>;
-+		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&p0_clk>;
-+	};
-+
- 	i2c0: i2c@fcfee000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+On Friday 04 Nov 2016 18:19:29 Kieran Bingham wrote:
+> Previously the active window and partition sizes for each partition is
+
+s/is/were/
+
+> calculated for each partition every frame. This data is constant and
+> only needs to be calculated once at the start of the stream.
+> 
+> Extend the vsp1_pipe object to store the maximum number of partitions
+> possible and pre-calculate the partition sizes into this table.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/vsp1/vsp1_pipe.h  | 6 ++++++
+>  drivers/media/platform/vsp1/vsp1_video.c | 8 ++++++--
+>  2 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
+> b/drivers/media/platform/vsp1/vsp1_pipe.h index f181949824c9..3af96c4ea244
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+> @@ -20,6 +20,9 @@
+> 
+>  #include <media/media-entity.h>
+> 
+> +/* Max Video Width / Min Partition Size = 8190/128 */
+> +#define VSP1_PIPE_MAX_PARTITIONS 64
+> +
+>  struct vsp1_dl_list;
+>  struct vsp1_rwpf;
+> 
+> @@ -81,7 +84,9 @@ enum vsp1_pipeline_state {
+>   * @dl: display list associated with the pipeline
+>   * @div_size: The maximum allowed partition size for the pipeline
+>   * @partitions: The number of partitions used to process one frame
+> + * @partition: The current partition for configuration to process
+>   * @current_partition: The partition number currently being configured
+> + * @part_table: The pre-calculated partitions used by the pipeline
+>   */
+>  struct vsp1_pipeline {
+>  	struct media_pipeline pipe;
+> @@ -116,6 +121,7 @@ struct vsp1_pipeline {
+>  	unsigned int partitions;
+>  	struct v4l2_rect partition;
+>  	unsigned int current_partition;
+> +	struct v4l2_rect part_table[VSP1_PIPE_MAX_PARTITIONS];
+
+That's an extra 1kB or kmalloc'ed data. I'd prefer allocating it dynamically 
+as needed.
+
+>  };
+> 
+>  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
+> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
+> b/drivers/media/platform/vsp1/vsp1_video.c index 6d43c02bbc56..c4a8c30df108
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_video.c
+> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> @@ -255,6 +255,7 @@ static void vsp1_video_pipeline_setup_partitions(struct
+> vsp1_pipeline *pipe) const struct v4l2_mbus_framefmt *format;
+>  	struct vsp1_entity *entity;
+>  	unsigned int div_size;
+> +	int i;
+
+i can never be negative, you can make it an unsigned int.
+
+Apart from that,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  	/*
+>  	 * Partitions are computed on the size before rotation, use the format
+> @@ -269,6 +270,7 @@ static void vsp1_video_pipeline_setup_partitions(struct
+> vsp1_pipeline *pipe) if (vsp1->info->gen == 2) {
+>  		pipe->div_size = div_size;
+>  		pipe->partitions = 1;
+> +		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
+>  		return;
+>  	}
+> 
+> @@ -284,6 +286,9 @@ static void vsp1_video_pipeline_setup_partitions(struct
+> vsp1_pipeline *pipe)
+> 
+>  	pipe->div_size = div_size;
+>  	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+> +
+> +	for (i = 0; i < pipe->partitions; i++)
+> +		pipe->part_table[i] = vsp1_video_partition(pipe, div_size, i);
+>  }
+> 
+>  /* ------------------------------------------------------------------------
+> @@ -355,8 +360,7 @@ static void vsp1_video_pipeline_run_partition(struct
+> vsp1_pipeline *pipe, {
+>  	struct vsp1_entity *entity;
+> 
+> -	pipe->partition = vsp1_video_partition(pipe, pipe->div_size,
+> -					       pipe->current_partition);
+> +	pipe->partition = pipe->part_table[pipe->current_partition];
+> 
+>  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+>  		if (entity->ops->configure)
+
 -- 
-2.10.1
+Regards,
+
+Laurent Pinchart
