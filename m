@@ -1,44 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:44189 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbdBOKvZ (ORCPT
+Received: from sauhun.de ([89.238.76.85]:53478 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752099AbdBMSD4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Feb 2017 05:51:25 -0500
-From: DongCV <cv-dong@jinso.co.jp>
-To: broonie@kernel.org, geert+renesas@glider.be,
-        linux-spi@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
-        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
-Subject: [PATCH 0/2 v4] spi: rspi: Fixes bogus received byte and replaces "n" by "len"
-Date: Wed, 15 Feb 2017 19:50:50 +0900
-Message-Id: <1487155852-12102-1-git-send-email-cv-dong@jinso.co.jp>
+        Mon, 13 Feb 2017 13:03:56 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 1/4] mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+Date: Mon, 13 Feb 2017 19:03:39 +0100
+Message-Id: <20170213180342.26172-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
+References: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mark,
-Cc: Geert, Sergei
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc.h     | 4 ++++
+ drivers/mmc/host/tmio_mmc_pio.c | 6 +++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-Thanks for your comments and advices.
-
-I separated my patch into two patches as you've shown me.
-These patches fix: 3be09bec42a800d4 "spi: rspi: supports 32bytes 
-buffer for DUAL and QUAD". One of them is to fix bogus received byte 
-into qspi_transfer_in(), and other is to replace "n" by "len" bytes of 
-data in qspi_transfer_in()and qspi_transfer_out().
-These patches were tested at v4.10-rc8 on Renesas Gen2 Lager board.
-
-Please consider these patches to Renesas Rcar family.
-Thank you.
-Jinso/Dong.
-
-DongCV (2):
-  spi: rspi: Fixes bogus received byte in qspi_transfer_in()
-  spi: rspi: Replaces "n" by "len" in qspi_transfer_in() and
-    qspi_transfer_out()
-
- drivers/spi/spi-rspi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 2b349d48fb9a8a..b20b451ad90daa 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -50,6 +50,10 @@
+ #define CTL_CLK_AND_WAIT_CTL 0x138
+ #define CTL_RESET_SDIO 0x1e0
+ 
++/* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
++#define TMIO_STOP_STP		BIT(0)
++#define TMIO_STOP_SEC		BIT(8)
++
+ /* Definitions for values the CTRL_STATUS register can take. */
+ #define TMIO_STAT_CMDRESPEND    BIT(0)
+ #define TMIO_STAT_DATAEND       BIT(2)
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 6b789a739d4dfe..ad2840e1bfae51 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -340,7 +340,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+ 
+ 	/* CMD12 is handled by hardware */
+ 	if (cmd->opcode == MMC_STOP_TRANSMISSION && !cmd->arg) {
+-		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x001);
++		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
+ 		return 0;
+ 	}
+ 
+@@ -367,7 +367,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+ 	if (data) {
+ 		c |= DATA_PRESENT;
+ 		if (data->blocks > 1) {
+-			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x100);
++			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_SEC);
+ 			c |= TRANSFER_MULTI;
+ 
+ 			/*
+@@ -554,7 +554,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
+ 
+ 	if (stop) {
+ 		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
+-			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x000);
++			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
+ 		else
+ 			BUG();
+ 	}
 -- 
-1.9.1
+2.11.0
