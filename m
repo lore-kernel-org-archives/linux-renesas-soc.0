@@ -1,56 +1,253 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:53470 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751472AbdBMSDv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:03:51 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 0/4] mmc: host: tmio: properly report status from autocmd12
-Date: Mon, 13 Feb 2017 19:03:38 +0100
-Message-Id: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 6/8] v4l: vsp1: Allow entities to participate in the partition algorithm
+Date: Tue, 14 Feb 2017 01:03 +0200
+Message-ID: <2604379.hM6Gc3I8W8@avalon>
+In-Reply-To: <1775251.033ku1xShs@avalon>
+References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com> <be9e5af279f5adb4d1c3ada3c9402ce202aff5c4.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com> <1775251.033ku1xShs@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-New in V2:
-* Fix some more comments in patch 2.
-* Add Simon's tags
+Hi Kieran,
 
-SDHI automatically sends CMD12 when the desired amount of data was transferred
-after multi block commands. However, the response from that CMD12 was never
-reported back to the mmc core, so that errors like ECC might go unnoticed. This
-series aims to fix that and clean up minor issues on the way when dealing with
-the autocmd12 feature. So far, I could only test that the success case was
-reported back to the MMC core [1]. An error case (like ECC) could not be
-created yet, but I will keep on trying. However, the initial flaw of the CMD12
-response not reported back is fixed with this series as the success case
-demonstrates. If an ECC error is not properly handled, it is a seperate issue
-anyway. So, I think this series could go in now. No pressure for 4.11, though.
-But would be nice, of course ;)
+A few more things.
 
-The patches are based on mmc-next as of today. A branch can be found here:
+On Tuesday 14 Feb 2017 00:51:10 Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Friday 10 Feb 2017 20:27:34 Kieran Bingham wrote:
+> > The configuration of the pipeline, and entities directly affects the
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp
+s/,//
 
-Thanks and all the best,
+> > inputs required to each entity for the partition algorithm. Thus it
+> > makes sense to involve those entities in the decision making process.
+> > 
+> > Extend the entity ops API to provide an optional '.partition' call. This
 
-   Wolfram
+s/call/operation/
 
-[1] http://elinux.org/Tests:SDHI-autocmd12-responses
+> > allows entities which may effect the partition window, to process based
 
+s/which/that/
+s/,//
+s/process/proceed/ ?
 
-Wolfram Sang (4):
-  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
-  mmc: host: tmio: fix minor typos in comments
-  mmc: host: tmio: don't BUG on unsupported stop commands
-  mmc: host: tmio: fill in response from auto cmd12
+> > on their configuration.
+> > 
+> > Entities implementing this operation must return their required input
+> > parameters, which will be passed down the chain.
 
- drivers/mmc/host/tmio_mmc.h     | 10 +++++++---
- drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
- 2 files changed, 17 insertions(+), 9 deletions(-)
+s/down the chain/up the pipeline/
+
+> > This creates a process
+> > whereby each entity describes what is required to satisfy the required
+> > output to it's predecessor in the pipeline.
+
+s/it's/its/
+
+> > 
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  drivers/media/platform/vsp1/vsp1_entity.h |  8 ++++-
+> >  drivers/media/platform/vsp1/vsp1_pipe.c   | 22 ++++++++++++-
+> >  drivers/media/platform/vsp1/vsp1_pipe.h   | 35 +++++++++++++++++--
+> >  drivers/media/platform/vsp1/vsp1_rpf.c    | 33 +++++++++---------
+> >  drivers/media/platform/vsp1/vsp1_sru.c    | 29 +++++++++++++++-
+> >  drivers/media/platform/vsp1/vsp1_uds.c    | 45 ++++++++++++++++++++++--
+> >  drivers/media/platform/vsp1/vsp1_video.c  | 32 ++++++++++-------
+> >  drivers/media/platform/vsp1/vsp1_wpf.c    | 29 +++++++++++----
+> >  8 files changed, 195 insertions(+), 38 deletions(-)
+> 
+> [snip]
+> 
+> > diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c
+> > b/drivers/media/platform/vsp1/vsp1_pipe.c index 280ba0804699..16f2eada54d5
+> > 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> > @@ -331,6 +331,28 @@ void vsp1_pipeline_propagate_alpha(struct
+> > vsp1_pipeline *pipe, vsp1_uds_set_alpha(pipe->uds, dl, alpha);
+> > 
+> >  }
+> > 
+> > +/*
+> > + * Propagate the partition calculations through the pipeline
+> > + *
+> > + * Work backwards through the pipe, allowing each entity to update
+> > + * the partition parameters based on it's configuration, and the entity
+> 
+> s/it's/its/
+> 
+> > + * connected to it's source. Each entity must produce the partition
+> 
+> Ditto.
+> 
+> > + * required for the next entity in the routing.
+> 
+> Maybe "for the previous entity in the pipeline" ?
+> 
+> > + */
+> > +void vsp1_pipeline_propagate_partition(struct vsp1_pipeline *pipe,
+> > +				       struct vsp1_partition *partition,
+> > +				       unsigned int index,
+> > +				       struct vsp1_partition_rect *rect)
+> > +{
+> > +	struct vsp1_entity *entity;
+> > +
+> > +	list_for_each_entry_reverse(entity, &pipe->entities, list_pipe) {
+> > +		if (entity->ops->partition)
+> > +			rect = entity->ops->partition(entity, pipe, partition,
+> > +						      index, rect);
+> 
+> How about modifying the rect argument in place ? I think that would simplify
+> the code.
+> 
+> > +	}
+> > +}
+> > +
+> > 
+> >  void vsp1_pipelines_suspend(struct vsp1_device *vsp1)
+> >  {
+> >  
+> >  	unsigned long flags;
+> > 
+> > diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
+> > b/drivers/media/platform/vsp1/vsp1_pipe.h index 6494c4c75023..718ca0a5eca7
+> > 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_pipe.h
+> > +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+> > @@ -60,11 +60,32 @@ enum vsp1_pipeline_state {
+> > 
+> >  };
+> >  
+> >  /*
+> > 
+> > + * struct vsp1_partition_rect
+> > + *
+> > + * replicates struct v4l2_rect, but with an offset to apply
+> > + */
+> > +struct vsp1_partition_rect {
+> 
+> Let's name this vsp1_partition_window, as that's what it describes.
+> 
+> > +	__s32   left;
+> > +	__s32   top;
+> > +	__u32   width;
+> > +	__u32   height;
+> > +	__u32   offset;
+
+The offset isn't set to a value other than 0 in this patch, I would add it in 
+patch 8/8.
+
+> > +};
+> > +
+> > +/*
+> > 
+> >   * struct vsp1_partition - A description of each partition slice
+> >   performed
+> > 
+> > by HW
+> > - * @dest: The position and dimension of this partition in the destination
+> > image
+> > + * @rpf: The RPF partition window configuration
+> > + * @uds_sink: The UDS input partition window configuration
+> > + * @uds_source: The UDS output partition window configuration
+> > + * @sru: The SRU partition window configuration
+> > + * @wpf: The WPF partition window configuration
+> > 
+> >   */
+> >  
+> >  struct vsp1_partition {
+> > 
+> > -	struct v4l2_rect dest;
+> > +	struct vsp1_partition_rect rpf;
+> > +	struct vsp1_partition_rect uds_sink;
+> > +	struct vsp1_partition_rect uds_source;
+> > +	struct vsp1_partition_rect sru;
+> > +	struct vsp1_partition_rect wpf;
+> > 
+> >  };
+> >  
+> >  /*
+> > 
+> > @@ -117,6 +138,11 @@ struct vsp1_pipeline {
+> > 
+> >  	struct vsp1_entity *uds;
+> >  	struct vsp1_entity *uds_input;
+> > 
+> > +	/*
+> > +	 * The order of this list should be representative of the order and
+> 
+> I'd say it "must be identical to the order of the entities in the pipeline".
+> > +	 * routing of the the pipeline, as it is assumed by the partition
+> > +	 * algorithm that we can walk this list in sequence.
+> > +	 */
+> > 
+> >  	struct list_head entities;
+> >  	
+> >  	struct vsp1_dl_list *dl;
+> > 
+> > @@ -139,6 +165,11 @@ void vsp1_pipeline_frame_end(struct vsp1_pipeline
+> > *pipe); void vsp1_pipeline_propagate_alpha(struct vsp1_pipeline *pipe,
+> > 
+> >  				   struct vsp1_dl_list *dl, unsigned int
+> 
+> alpha);
+> 
+> > +void vsp1_pipeline_propagate_partition(struct vsp1_pipeline *pipe,
+> > +				       struct vsp1_partition *partition,
+> > +				       unsigned int index,
+> > +				       struct vsp1_partition_rect *rect);
+> > +
+> > 
+> >  void vsp1_pipelines_suspend(struct vsp1_device *vsp1);
+> >  void vsp1_pipelines_resume(struct vsp1_device *vsp1);
+> > 
+> > diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c
+> > b/drivers/media/platform/vsp1/vsp1_rpf.c index df380a237118..94541ab4ca36
+> > 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_rpf.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+> 
+> [snip]
+> 
+> > +/*
+> > + * Perform RPF specific calculations for the Partition Algorithm
+> 
+> Is the "Partition Algorithm" such an almighty power that it requires caps ?
+> 
+> :-) I think I'd drop the comment, the operation kerneldoc in vsp1_entity.h
+> 
+> should be enough.
+> 
+> > + */
+> > +struct vsp1_partition_rect *rpf_partition(struct vsp1_entity *entity,
+> 
+> This function should be static. Same comment for the other modules.
+> 
+> > +					  struct vsp1_pipeline *pipe,
+> > +					  struct vsp1_partition *partition,
+> > +					  unsigned int partition_idx,
+> > +					  struct vsp1_partition_rect *dest)
+> > +{
+> > +	/* Duplicate the target configuration to the RPF */
+> > +	partition->rpf = *dest;
+> > +
+> > +	return &partition->rpf;
+> > +}
+> 
+> [snip]
 
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
