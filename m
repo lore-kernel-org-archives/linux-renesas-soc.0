@@ -1,118 +1,62 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Subject: [PATCH v2] v4l: vsp1: Fix RPF/WPF U/V order in 3-planar formats on Gen3
-Date: Tue, 14 Feb 2017 04:45:00 +0200
-Message-Id: <20170214024500.19633-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35313 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbdBMPB4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 13 Feb 2017 10:01:56 -0500
+Received: by mail-it0-f68.google.com with SMTP id 203so13902882ith.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Feb 2017 07:01:56 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFpvm9ODxBxEM8+8jHJUMJ03--SUCXnDUrq7dfHxOMuMUw@mail.gmail.com>
+References: <20170212112740.4dq5uqkmgeodmbsy@ninjato> <CAMuHMdWWDxznf-ZWYL3qxqXV7LwC-y+yRcQWrdq8TSwGqvc=aw@mail.gmail.com>
+ <CAPDyKFpvm9ODxBxEM8+8jHJUMJ03--SUCXnDUrq7dfHxOMuMUw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Feb 2017 16:01:54 +0100
+Message-ID: <CAMuHMdU6Xe6MTqYdkW9skaoEkOvMk=N487moKSNu32VrpnvneQ@mail.gmail.com>
+Subject: Re: [PULL REQUEST] renesas/topic/sdhi-autocmd12-resp for renesas drivers
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RPF and WPF U/V order bits have no effect for 3-planar formats on
-Gen3 hardware. Swap the U and V planes addresses manually instead in
-that case.
+Hi Ulf,
 
-Fixes: b915bd24a034 ("[media] v4l: vsp1: Add tri-planar memory formats support")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_rpf.c | 43 ++++++++++++++++++++--------------
- drivers/media/platform/vsp1/vsp1_wpf.c |  9 +++++++
- 2 files changed, 35 insertions(+), 17 deletions(-)
+On Mon, Feb 13, 2017 at 3:33 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 13 February 2017 at 11:04, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> Hi Wolfram,
+>>
+>> On Sun, Feb 12, 2017 at 12:27 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>>> here is a topic branch for renesas-drivers to report back autocmd12
+>>> responses for SDHI. It is based on mmc/next. Please pull.
+>>>
+>>> Kind regards,
+>>>
+>>>    Wolfram
+>
+> Hi Wolfram,
+>
+> I don't get it, why did you send this pull request to Geert and not me?
+>
+> I rather pick all mmc changes via my mmc tree, to avoid conflicts etc
+> - unless there are some specific reasons to not. Are there?
 
-Changes since v1:
+Sorry for confusing you. Wolfram sent a pull request to me, as I maintain the
+renesas-drivers tree, which is an integration tree for kernel work related to
+Renesas SoCs. It was not intended to be pulled by you as-is.
 
-- Fix the U/V order issue on RPF in addition to WPF
+I've just put you in CC because of your rebasing activity.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
-index b2e34a800ffa..1d0944f308ae 100644
---- a/drivers/media/platform/vsp1/vsp1_rpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_rpf.c
-@@ -72,7 +72,8 @@ static void rpf_configure(struct vsp1_entity *entity,
- 	}
- 
- 	if (params == VSP1_ENTITY_PARAMS_PARTITION) {
--		unsigned int offsets[2];
-+		struct vsp1_device *vsp1 = rpf->entity.vsp1;
-+		struct vsp1_rwpf_memory mem = rpf->mem;
- 		struct v4l2_rect crop;
- 
- 		/*
-@@ -120,22 +121,30 @@ static void rpf_configure(struct vsp1_entity *entity,
- 			       (crop.width << VI6_RPF_SRC_ESIZE_EHSIZE_SHIFT) |
- 			       (crop.height << VI6_RPF_SRC_ESIZE_EVSIZE_SHIFT));
- 
--		offsets[0] = crop.top * format->plane_fmt[0].bytesperline
--			   + crop.left * fmtinfo->bpp[0] / 8;
--
--		if (format->num_planes > 1)
--			offsets[1] = crop.top * format->plane_fmt[1].bytesperline
--				   + crop.left / fmtinfo->hsub
--				   * fmtinfo->bpp[1] / 8;
--		else
--			offsets[1] = 0;
--
--		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_Y,
--			       rpf->mem.addr[0] + offsets[0]);
--		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C0,
--			       rpf->mem.addr[1] + offsets[1]);
--		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C1,
--			       rpf->mem.addr[2] + offsets[1]);
-+		mem.addr[0] += crop.top * format->plane_fmt[0].bytesperline
-+			     + crop.left * fmtinfo->bpp[0] / 8;
-+
-+		if (format->num_planes > 1) {
-+			unsigned int offset;
-+
-+			offset = crop.top * format->plane_fmt[1].bytesperline
-+			       + crop.left / fmtinfo->hsub
-+			       * fmtinfo->bpp[1] / 8;
-+			mem.addr[1] += offset;
-+			mem.addr[2] += offset;
-+		}
-+
-+		/*
-+		 * On Gen3 hardware the SPUVS bit has no effect on 3-planar
-+		 * formats. Swap the U and V planes manually in that case.
-+		 */
-+		if (vsp1->info->gen == 3 && format->num_planes == 3 &&
-+		    fmtinfo->swap_uv)
-+			swap(mem.addr[1], mem.addr[2]);
-+
-+		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
-+		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
-+		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
- 		return;
- 	}
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 7c48f81cd5c1..052a83e2d489 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -216,6 +216,7 @@ static void wpf_configure(struct vsp1_entity *entity,
- 
- 	if (params == VSP1_ENTITY_PARAMS_PARTITION) {
- 		const struct v4l2_pix_format_mplane *format = &wpf->format;
-+		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
- 		struct vsp1_rwpf_memory mem = wpf->mem;
- 		unsigned int flip = wpf->flip.active;
- 		unsigned int width = source_format->width;
-@@ -281,6 +282,14 @@ static void wpf_configure(struct vsp1_entity *entity,
- 			}
- 		}
- 
-+		/*
-+		 * On Gen3 hardware the SPUVS bit has no effect on 3-planar
-+		 * formats. Swap the U and V planes manually in that case.
-+		 */
-+		if (vsp1->info->gen == 3 && format->num_planes == 3 &&
-+		    fmtinfo->swap_uv)
-+			swap(mem.addr[1], mem.addr[2]);
-+
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_Y, mem.addr[0]);
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C0, mem.addr[1]);
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C1, mem.addr[2]);
--- 
-Regards,
+I hope this makes it clearer.
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
