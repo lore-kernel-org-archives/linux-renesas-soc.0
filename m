@@ -1,45 +1,114 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34734 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbdBAMfg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 07:35:36 -0500
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCHv2 1/5] scripts: Test suite runner
+Date: Mon, 13 Feb 2017 15:15:21 +0200
+Message-ID: <2726053.1024cW3CuZ@avalon>
+In-Reply-To: <1480627909-19207-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1480627909-19207-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <1485442449-18300-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1485442449-18300-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Feb 2017 13:35:34 +0100
-Message-ID: <CAMuHMdVONMQRvJBKSVAxKMy1FNM1-Z6RvHVEU3hdRtR57M+2Kw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] arm64: dts: m3ulcb: enable I2C
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 3:54 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
->
-> This supports I2C2 bus on M3ULCB board
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Hi Kieran,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for the patch.
 
-Gr{oetje,eeting}s,
+On Thursday 01 Dec 2016 21:31:45 Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Provide a utility script to execute all vsp unit tests, as well
+> as the option to execute multiple iterations of the suite.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> ---
+> v2
+> - remove spurious uses of ';'
+> - fix output logging
+> 
+>  scripts/vsp-tests.sh | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
+> 1 file changed, 49 insertions(+)
+>  create mode 100755 scripts/vsp-tests.sh
+> 
+> diff --git a/scripts/vsp-tests.sh b/scripts/vsp-tests.sh
+> new file mode 100755
+> index 000000000000..8b21176ccc09
+> --- /dev/null
+> +++ b/scripts/vsp-tests.sh
+> @@ -0,0 +1,49 @@
+> +#!/bin/sh
+> +
+> +##
+> +## VSP Tests runner
+> +##
+> +## Automatically execute all vsp-unit tests
+> +## Move test failure results to a specific folder for
+> +## the running kernel version
+> +##
+> +## An argument can be provided to specify the number of
+> +## iterations to perform
+> +##
+> +## usage:
+> +##  ./vsp-tests.sh <n>
+> +##
+> +##   n: Number of iterations to execute test suite
+> +##
+> +
+> +KERNEL_VERSION=`uname -r`
+> +
+> +run_test() {
+> +	echo $1
 
-                        Geert
+I would print "- $1" to make the output easier to read.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +	./$1
+> +
+> +	if [ $(ls *.bin 2>/dev/null | wc -l) != 0 ]
+> +	then
+> +		RESULTS_DIR=$KERNEL_VERSION/test-$1/$2/
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Let's make local variables local.
+
+> +
+> +		echo "Moving *.bin to $RESULTS_DIR"
+
+I would remove this message, it doesn't add much value.
+
+> +		mkdir -p $RESULTS_DIR
+> +		mv *.bin $RESULTS_DIR
+> +		for f in $RESULTS_DIR/*.bin
+> +		do
+> +			./bin2png.sh "$f"
+> +		done
+
+Converting binary files to png on the target would slow down the tests. How 
+about performing the conversion on the host instead ?
+
+> +	fi
+> +}
+> +
+> +run_suite() {
+> +	echo "Test loop $1"
+
+How about "--- Test loop $1 ---" here for the same reason as above ?
+
+No need to resubmit, I'll fix while applying.
+
+> +
+> +	for test in vsp-unit-test*.sh; do
+> +		run_test $test $1;
+> +	done;
+> +}
+> +
+> +for loop in `seq 1 1 $1`; do
+> +	run_suite $loop
+> +done;
+
+-- 
+Regards,
+
+Laurent Pinchart
