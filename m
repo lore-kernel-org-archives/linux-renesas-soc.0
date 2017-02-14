@@ -1,59 +1,118 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:23906 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbdBOHeV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Feb 2017 02:34:21 -0500
-From: DongCV <cv-dong@jinso.co.jp>
-To: broonie@kernel.org, geert+renesas@glider.be,
-        linux-spi@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
-        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
-Subject: [PATCH v3] spi: rspi: Fix bogus received byte in qspi_transfer_in()
-Date: Wed, 15 Feb 2017 16:33:55 +0900
-Message-Id: <1487144035-9075-1-git-send-email-cv-dong@jinso.co.jp>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	kieran.bingham@ideasonboard.com
+Subject: [PATCH v2] v4l: vsp1: Fix RPF/WPF U/V order in 3-planar formats on Gen3
+Date: Tue, 14 Feb 2017 04:45:00 +0200
+Message-Id: <20170214024500.19633-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In qspi_transfer_in(), when receiving the last n (or len) bytes of data,
-n(or len) bogus bytes were written in the receive buffer,
-This code leads to the following error that related to jffs2 format
-when trying to mount, unmount, and remount a jffs2-formatted device.
-Remove the bogus write to fix this.
+The RPF and WPF U/V order bits have no effect for 3-planar formats on
+Gen3 hardware. Swap the U and V planes addresses manually instead in
+that case.
 
-"jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40000: 0x1900 instead
- jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40004: 0x000c instead"
-
-Signed-off-by: DongCV <cv-dong@jinso.co.jp>
+Fixes: b915bd24a034 ("[media] v4l: vsp1: Add tri-planar memory formats support")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/spi/spi-rspi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/platform/vsp1/vsp1_rpf.c | 43 ++++++++++++++++++++--------------
+ drivers/media/platform/vsp1/vsp1_wpf.c |  9 +++++++
+ 2 files changed, 35 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 9daf500..bc3c868 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -808,7 +808,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
- 			for (i = 0; i < len; i++)
- 				rspi_write_data(rspi, *tx++);
- 		} else {
--			ret = rspi_pio_transfer(rspi, tx, NULL, n);
-+			ret = rspi_pio_transfer(rspi, tx, NULL, len);
- 			if (ret < 0)
- 				return ret;
- 		}
-@@ -845,10 +845,9 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
- 			for (i = 0; i < len; i++)
- 				*rx++ = rspi_read_data(rspi);
- 		} else {
--			ret = rspi_pio_transfer(rspi, NULL, rx, n);
-+			ret = rspi_pio_transfer(rspi, NULL, rx, len);
- 			if (ret < 0)
- 				return ret;
--			*rx++ = ret;
- 		}
- 		n -= len;
+Changes since v1:
+
+- Fix the U/V order issue on RPF in addition to WPF
+
+diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
+index b2e34a800ffa..1d0944f308ae 100644
+--- a/drivers/media/platform/vsp1/vsp1_rpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+@@ -72,7 +72,8 @@ static void rpf_configure(struct vsp1_entity *entity,
  	}
+ 
+ 	if (params == VSP1_ENTITY_PARAMS_PARTITION) {
+-		unsigned int offsets[2];
++		struct vsp1_device *vsp1 = rpf->entity.vsp1;
++		struct vsp1_rwpf_memory mem = rpf->mem;
+ 		struct v4l2_rect crop;
+ 
+ 		/*
+@@ -120,22 +121,30 @@ static void rpf_configure(struct vsp1_entity *entity,
+ 			       (crop.width << VI6_RPF_SRC_ESIZE_EHSIZE_SHIFT) |
+ 			       (crop.height << VI6_RPF_SRC_ESIZE_EVSIZE_SHIFT));
+ 
+-		offsets[0] = crop.top * format->plane_fmt[0].bytesperline
+-			   + crop.left * fmtinfo->bpp[0] / 8;
+-
+-		if (format->num_planes > 1)
+-			offsets[1] = crop.top * format->plane_fmt[1].bytesperline
+-				   + crop.left / fmtinfo->hsub
+-				   * fmtinfo->bpp[1] / 8;
+-		else
+-			offsets[1] = 0;
+-
+-		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_Y,
+-			       rpf->mem.addr[0] + offsets[0]);
+-		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C0,
+-			       rpf->mem.addr[1] + offsets[1]);
+-		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C1,
+-			       rpf->mem.addr[2] + offsets[1]);
++		mem.addr[0] += crop.top * format->plane_fmt[0].bytesperline
++			     + crop.left * fmtinfo->bpp[0] / 8;
++
++		if (format->num_planes > 1) {
++			unsigned int offset;
++
++			offset = crop.top * format->plane_fmt[1].bytesperline
++			       + crop.left / fmtinfo->hsub
++			       * fmtinfo->bpp[1] / 8;
++			mem.addr[1] += offset;
++			mem.addr[2] += offset;
++		}
++
++		/*
++		 * On Gen3 hardware the SPUVS bit has no effect on 3-planar
++		 * formats. Swap the U and V planes manually in that case.
++		 */
++		if (vsp1->info->gen == 3 && format->num_planes == 3 &&
++		    fmtinfo->swap_uv)
++			swap(mem.addr[1], mem.addr[2]);
++
++		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
++		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
++		vsp1_rpf_write(rpf, dl, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
+index 7c48f81cd5c1..052a83e2d489 100644
+--- a/drivers/media/platform/vsp1/vsp1_wpf.c
++++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+@@ -216,6 +216,7 @@ static void wpf_configure(struct vsp1_entity *entity,
+ 
+ 	if (params == VSP1_ENTITY_PARAMS_PARTITION) {
+ 		const struct v4l2_pix_format_mplane *format = &wpf->format;
++		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
+ 		struct vsp1_rwpf_memory mem = wpf->mem;
+ 		unsigned int flip = wpf->flip.active;
+ 		unsigned int width = source_format->width;
+@@ -281,6 +282,14 @@ static void wpf_configure(struct vsp1_entity *entity,
+ 			}
+ 		}
+ 
++		/*
++		 * On Gen3 hardware the SPUVS bit has no effect on 3-planar
++		 * formats. Swap the U and V planes manually in that case.
++		 */
++		if (vsp1->info->gen == 3 && format->num_planes == 3 &&
++		    fmtinfo->swap_uv)
++			swap(mem.addr[1], mem.addr[2]);
++
+ 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_Y, mem.addr[0]);
+ 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C0, mem.addr[1]);
+ 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C1, mem.addr[2]);
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
