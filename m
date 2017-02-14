@@ -2,12 +2,12 @@ Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
 Return-Path: <laurent.pinchart@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCHv2 5/5] tests: Test suspend/resume on active pipelines
-Date: Mon, 13 Feb 2017 16:38:03 +0200
-Message-ID: <1527749.7T5MCaUHYd@avalon>
-In-Reply-To: <1480627909-19207-6-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1480627909-19207-6-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] v4l: vsp1: Repair suspend resume operations for video pipelines
+Date: Tue, 14 Feb 2017 02:57:41 +0200
+Message-ID: <2636151.pr0fsBy4LR@avalon>
+In-Reply-To: <8f5f1d1a0102c4c5713950d062077f65e38b6b93.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com> <8f5f1d1a0102c4c5713950d062077f65e38b6b93.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -17,157 +17,233 @@ Hi Kieran,
 
 Thank you for the patch.
 
-On Thursday 01 Dec 2016 21:31:49 Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+On Friday 06 Jan 2017 12:15:30 Kieran Bingham wrote:
+> When a suspend/resume action is taken, the pipeline is reset and never
+> reconfigured.
 > 
-> Provide a test to verify the hardware completes a functional test whilst
-> performing a suspend resume cycle in parallel. Make use of the
-> /sys/power/pm_test functionality provided by CONFIG_PM_DEBUG to perform
-> the testing
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
+> To correct this, we establish a new flag pipe->configured and utilise
+> this to establish when we write a full configuration set to the current
+> display list.
+
+As discussed face to face, I think a better approach would be to cache the 
+display list instead of recomputing it a resume time. However, given that this 
+will require more work, I could be convinced to merge this patch in the 
+meantime. Let's check in a couple of weeks whether we will have moved forward 
+with display list caching in time for v4.12, and merge this patch otherwise.
+
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > ---
-> v2:
+>  drivers/media/platform/vsp1/vsp1_drv.c   |  4 ++-
+>  drivers/media/platform/vsp1/vsp1_pipe.c  |  1 +-
+>  drivers/media/platform/vsp1/vsp1_pipe.h  |  2 +-
+>  drivers/media/platform/vsp1/vsp1_video.c | 56 ++++++++++---------------
+>  4 files changed, 31 insertions(+), 32 deletions(-)
 > 
-> - removed format iteration loop
-> - modified test reporting to be once per 'suspend mode'
-> - verify the pm_test mode is available, or skip
+> diff --git a/drivers/media/platform/vsp1/vsp1_drv.c
+> b/drivers/media/platform/vsp1/vsp1_drv.c index aa237b48ad55..d596cdead1c1
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drv.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drv.c
+> @@ -413,6 +413,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1)
 > 
->  tests/vsp-unit-test-0020.sh | 97 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100755 tests/vsp-unit-test-0020.sh
+>  int vsp1_reset_wpf(struct vsp1_device *vsp1, unsigned int index)
+>  {
+> +	struct vsp1_rwpf *wpf = vsp1->wpf[index];
+>  	unsigned int timeout;
+>  	u32 status;
 > 
-> diff --git a/tests/vsp-unit-test-0020.sh b/tests/vsp-unit-test-0020.sh
-> new file mode 100755
-> index 000000000000..c9e6b79e5d06
-> --- /dev/null
-> +++ b/tests/vsp-unit-test-0020.sh
-> @@ -0,0 +1,97 @@
-> +#!/bin/sh
+> @@ -429,6 +430,9 @@ int vsp1_reset_wpf(struct vsp1_device *vsp1, unsigned
+> int index) usleep_range(1000, 2000);
+>  	}
+> 
+> +	if (wpf->pipe)
+> +		wpf->pipe->configured = false;
 > +
-> +#
-> +# Test power-management suspend/resume whilst pipelines are active
-> +#
-> +# Utilise the basic RPF->WPF packing test case as a measure that the
-> hardware +# is operable while we perform test suspend and resume, and
-> verify that it is +# still successful even with a suspend resume cycle in
-> the middle of the test. +#
+>  	if (!timeout) {
+>  		dev_err(vsp1->dev, "failed to reset wpf.%u\n", index);
+>  		return -ETIMEDOUT;
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c
+> b/drivers/media/platform/vsp1/vsp1_pipe.c index 280ba0804699..c568db193fba
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> @@ -216,6 +216,7 @@ void vsp1_pipeline_init(struct vsp1_pipeline *pipe)
+> 
+>  	INIT_LIST_HEAD(&pipe->entities);
+>  	pipe->state = VSP1_PIPELINE_STOPPED;
+> +	pipe->configured = false;
+>  }
+> 
+>  /* Must be called with the pipe irqlock held. */
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
+> b/drivers/media/platform/vsp1/vsp1_pipe.h index ac4ad2655551..fff122b4874d
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+> @@ -61,6 +61,7 @@ enum vsp1_pipeline_state {
+>   * @pipe: the media pipeline
+>   * @irqlock: protects the pipeline state
+>   * @state: current state
+> + * @configured: true if the pipeline has been set up for video streaming
+>   * @wq: wait queue to wait for state change completion
+>   * @frame_end: frame end interrupt handler
+>   * @lock: protects the pipeline use count and stream count
+> @@ -86,6 +87,7 @@ struct vsp1_pipeline {
+> 
+>  	spinlock_t irqlock;
+>  	enum vsp1_pipeline_state state;
+> +	bool configured;
+>  	wait_queue_head_t wq;
+> 
+>  	void (*frame_end)(struct vsp1_pipeline *pipe);
+> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
+> b/drivers/media/platform/vsp1/vsp1_video.c index 938ecc2766ed..414303442e7c
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_video.c
+> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> @@ -355,18 +355,14 @@ static void vsp1_video_frame_end(struct vsp1_pipeline
+> *pipe, pipe->buffers_ready |= 1 << video->pipe_index;
+>  }
+> 
+> -static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
+> +static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe,
+> +				     struct vsp1_dl_list *dl)
+>  {
+>  	struct vsp1_entity *entity;
+> 
+>  	/* Determine this pipelines sizes for image partitioning support. */
+>  	vsp1_video_pipeline_setup_partitions(pipe);
+> 
+> -	/* Prepare the display list. */
+> -	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
+> -	if (!pipe->dl)
+> -		return -ENOMEM;
+> -
+>  	if (pipe->uds) {
+>  		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
+> 
+> @@ -386,13 +382,15 @@ static int vsp1_video_setup_pipeline(struct
+> vsp1_pipeline *pipe) }
+> 
+>  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+> -		vsp1_entity_route_setup(entity, pipe->dl);
+> +		vsp1_entity_route_setup(entity, dl);
+> 
+>  		if (entity->ops->configure)
+> -			entity->ops->configure(entity, pipe, pipe->dl,
+> +			entity->ops->configure(entity, pipe, dl,
+>  					       VSP1_ENTITY_PARAMS_INIT);
+>  	}
+> 
+> +	pipe->configured = true;
 > +
-> +source vsp-lib.sh
+>  	return 0;
+>  }
+> 
+> @@ -415,9 +413,16 @@ static void vsp1_video_pipeline_run(struct
+> vsp1_pipeline *pipe) {
+>  	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
+>  	struct vsp1_entity *entity;
+> +	struct vsp1_dl_list *dl;
+> 
+> -	if (!pipe->dl)
+> -		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
+> +	dl = vsp1_dl_list_get(pipe->output->dlm);
+> +	if (!dl) {
+> +		dev_err(vsp1->dev, "Failed to obtain a dl list\n");
+> +		return;
+> +	}
 > +
-> +features="rpf.0 wpf.0"
-> +
-> +# These can be extracted from /sys/power/pm_test
-> +suspend_modes="freezer devices platform processors core"
-> +
-> +# This extended function performs the same
-> +# as it's non-extended name-sake - but runs the pipeline
-> +# for 300 frames. The suspend action occurs between frame #150~#200
-> +
-> +test_extended_wpf_packing() {
-> +	pipe_configure rpf-wpf 0 0
-> +	format_configure rpf-wpf 0 0 ARGB32 1024x768 $format
-> +
-> +	vsp_runner rpf.0 --count=300 &
-> +	vsp_runner wpf.0 --count=300 --skip=297
-> +
-> +	local result=$(compare_frames)
-> +
-> +	test_complete $result
-
-This will result in test_complete being called twice. You probably want
-
-        [ x$result == xpass ] && return 0 || return 1
-
-as in patch 4/5.
-
-> +}
-> +
-> +test_hw_pipe() {
-> +	local format
-> +
-> +	for format in $formats ; do
-
-The formats variable isn't defined, I think you can just get rid of the loop 
-and call test_extended_wpf_packing just once.
-
-> +		test_extended_wpf_packing RGB24
-> +	done
-> +}
-> +
-> +test_suspend_resume() {
-> +	local result
-> +	local test_pid
-> +
-> +	test_start "Testing active pipeline suspend/resume in suspend:$mode"
-> +
-> +	# Verify the test is available
-> +	grep -q $mode /sys/power/pm_test
-> +	if [ $? != 0 ]; then
-> +		test_complete skip
-> +		return
-> +	fi
-> +
-> +	# Set the hardware running in parallel while we suspend
-> +	test_hw_pipe &
-> +	test_pid=$!
-> +
-> +	# Make sure the pipeline has time to start
-> +	sleep 1
-> +
-> +	# Set the test mode
-> +	echo $mode > /sys/power/pm_test
-> +
-> +	# Comence suspend
-
-s/Comence/Commence/
-
-> +	# The pm_test framework will automatically resume after 5 seconds
-> +	echo mem > /sys/power/state
-> +
-> +	# Wait for the pipeline to complete
-> +	wait $test_pid
-> +	result=$?
-> +
-> +	if [ $result == 0 ]; then
-> +		test_complete pass
-> +	else
-> +		test_complete fail
-> +	fi
-> +}
-> +
-> +test_main() {
-> +	local mode;
-
-No need for the trailing ;
-
-> +	local suspend_test_failures
-
-This variablee is unused.
-
-> +
-> +	# Check for pm-suspend test option
-> +	if [ ! -e /sys/power/pm_test ] ; then
-> +		echo "$0: Suspend Resume testing requires CONFIG_PM_DEBUG"
-> +		test_complete skip
-
-You haven't called test_start so you shouldn't call test_complete.
-
-Some of those comments apply to patch 4/5 too.
-
-There's no need to resubmit, I'll fix this while applying.
-
-> +		return
-> +	fi;
-> +
-> +	for mode in $suspend_modes ; do
-> +		test_suspend_resume $mode
-> +	done;
-> +}
-> +
-> +test_init $0 "$features"
-> +test_run
+> +	if (!pipe->configured)
+> +		vsp1_video_setup_pipeline(pipe, dl);
+> 
+>  	/*
+>  	 * Start with the runtime parameters as the configure operation can
+> @@ -426,45 +431,43 @@ static void vsp1_video_pipeline_run(struct
+> vsp1_pipeline *pipe) */
+>  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+>  		if (entity->ops->configure)
+> -			entity->ops->configure(entity, pipe, pipe->dl,
+> +			entity->ops->configure(entity, pipe, dl,
+>  					       VSP1_ENTITY_PARAMS_RUNTIME);
+>  	}
+> 
+>  	/* Run the first partition */
+>  	pipe->current_partition = 0;
+> -	vsp1_video_pipeline_run_partition(pipe, pipe->dl);
+> +	vsp1_video_pipeline_run_partition(pipe, dl);
+> 
+>  	/* Process consecutive partitions as necessary */
+>  	for (pipe->current_partition = 1;
+>  	     pipe->current_partition < pipe->partitions;
+>  	     pipe->current_partition++) {
+> -		struct vsp1_dl_list *dl;
+> +		struct vsp1_dl_list *child;
+> 
+>  		/*
+>  		 * Partition configuration operations will utilise
+>  		 * the pipe->current_partition variable to determine
+>  		 * the work they should complete.
+>  		 */
+> -		dl = vsp1_dl_list_get(pipe->output->dlm);
+> +		child = vsp1_dl_list_get(pipe->output->dlm);
+> 
+>  		/*
+>  		 * An incomplete chain will still function, but output only
+>  		 * the partitions that had a dl available. The frame end
+>  		 * interrupt will be marked on the last dl in the chain.
+>  		 */
+> -		if (!dl) {
+> +		if (!child) {
+>  			dev_err(vsp1->dev, "Failed to obtain a dl list. Frame 
+will be
+> incomplete\n"); break;
+>  		}
+> 
+> -		vsp1_video_pipeline_run_partition(pipe, dl);
+> -		vsp1_dl_list_add_chain(pipe->dl, dl);
+> +		vsp1_video_pipeline_run_partition(pipe, child);
+> +		vsp1_dl_list_add_chain(dl, child);
+>  	}
+> 
+>  	/* Complete, and commit the head display list. */
+> -	vsp1_dl_list_commit(pipe->dl);
+> -	pipe->dl = NULL;
+> -
+> +	vsp1_dl_list_commit(dl);
+>  	vsp1_pipeline_run(pipe);
+>  }
+> 
+> @@ -799,18 +802,10 @@ static int vsp1_video_start_streaming(struct vb2_queue
+> *vq, unsigned int count) struct vsp1_pipeline *pipe = video->rwpf->pipe;
+>  	bool start_pipeline = false;
+>  	unsigned long flags;
+> -	int ret;
+> 
+>  	mutex_lock(&pipe->lock);
+> -	if (pipe->stream_count == pipe->num_inputs) {
+> -		ret = vsp1_video_setup_pipeline(pipe);
+> -		if (ret < 0) {
+> -			mutex_unlock(&pipe->lock);
+> -			return ret;
+> -		}
+> -
+> +	if (pipe->stream_count == pipe->num_inputs)
+>  		start_pipeline = true;
+> -	}
+> 
+>  	pipe->stream_count++;
+>  	mutex_unlock(&pipe->lock);
+> @@ -855,9 +850,6 @@ static void vsp1_video_stop_streaming(struct vb2_queue
+> *vq) ret = vsp1_pipeline_stop(pipe);
+>  		if (ret == -ETIMEDOUT)
+>  			dev_err(video->vsp1->dev, "pipeline stop timeout\n");
+> -
+> -		vsp1_dl_list_put(pipe->dl);
+> -		pipe->dl = NULL;
+>  	}
+>  	mutex_unlock(&pipe->lock);
 
 -- 
 Regards,
