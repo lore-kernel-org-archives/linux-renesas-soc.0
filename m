@@ -1,53 +1,114 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39294 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751185AbdBLMcK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Feb 2017 07:32:10 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3] drm: rcar-du: Clear handled event pointer in CRTC state
-Date: Sun, 12 Feb 2017 14:32:28 +0200
-Message-Id: <20170212123229.18277-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] v4l: vsp1: Prevent multiple streamon race commencing pipeline early
+Date: Tue, 14 Feb 2017 02:25:34 +0200
+Message-ID: <2882411.slzxzAmkTH@avalon>
+In-Reply-To: <d510ad628ee135c12e7b5050ddd5606e573cf01a.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com> <d510ad628ee135c12e7b5050ddd5606e573cf01a.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The atomic commit helper requires drivers to clear the event pointer
-stored in the CRTC state when the event is handled. In preparation to
-using the helper, fix the driver.
+Hi Kieran,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 04046c0faffd..7391dd95c733 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -501,16 +501,16 @@ static void rcar_du_crtc_disable(struct drm_crtc *crtc)
- static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
- 				      struct drm_crtc_state *old_crtc_state)
- {
--	struct drm_pending_vblank_event *event = crtc->state->event;
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
- 	struct drm_device *dev = rcrtc->crtc.dev;
- 	unsigned long flags;
- 
--	if (event) {
-+	if (crtc->state->event) {
- 		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
- 
- 		spin_lock_irqsave(&dev->event_lock, flags);
--		rcrtc->event = event;
-+		rcrtc->event = crtc->state->event;
-+		crtc->state->event = NULL;
- 		spin_unlock_irqrestore(&dev->event_lock, flags);
- 	}
- 
+On Friday 06 Jan 2017 12:15:28 Kieran Bingham wrote:
+> With multiple inputs through the BRU it is feasible for the streams to
+> race each other at stream-on.
+> 
+> Multiple VIDIOC_STREAMON calls racing each other could have process
+> N-1 skipping over the pipeline setup section and then start the pipeline
+> early, if videobuf2 has already enqueued buffers to the driver for
+> process N but not called the .start_streaming() operation yet
+> 
+> In the case of the video pipelines, this
+> can present two serious issues.
+> 
+>  1) A null-dereference if the pipe->dl is committed at the same time as
+>     the vsp1_video_setup_pipeline() is processing
+> 
+>  2) A hardware hang, where a display list is committed without having
+>     called vsp1_video_setup_pipeline() first
+> 
+> Repair this issue, by ensuring that only the stream which configures the
+> pipeline is able to start it.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> 
+> ---
+> 
+> v4:
+>  - Revert and rework back to v1 implementation style
+>  - Provide detailed comments on the race
+> 
+> v3:
+>  - Move 'flag reset' to be inside the vsp1_reset_wpf() function call
+>  - Tidy up the wpf->pipe reference for the configured flag
+> 
+> To test this race, I have used the vsp-unit-test-0007.sh from Laurent's
+> VSP-Tests [0] in iteration. Without this patch, failures can be seen be
+> seen anywhere up to the 150 iterations mark.
+> 
+> With this patch in place, tests have successfully iterated over 1500
+> loops.
+> 
+> The function affected by this change appears to have been around since
+> v4.6-rc2-105-g351bbf99f245 and thus could be included in stable trees
+> from that point forward. The issue may have been prevalent before that
+> but the solution would need reworking for earlier version.
+> 
+> [0] http://git.ideasonboard.com/renesas/vsp-tests.git
+> ---
+>  drivers/media/platform/vsp1/vsp1_video.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
+> b/drivers/media/platform/vsp1/vsp1_video.c index e6592b576ca3..f7dc249eb398
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_video.c
+> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> @@ -797,6 +797,7 @@ static int vsp1_video_start_streaming(struct vb2_queue
+> *vq, unsigned int count) {
+>  	struct vsp1_video *video = vb2_get_drv_priv(vq);
+>  	struct vsp1_pipeline *pipe = video->rwpf->pipe;
+> +	bool start_pipeline = false;
+>  	unsigned long flags;
+>  	int ret;
+> 
+> @@ -807,11 +808,23 @@ static int vsp1_video_start_streaming(struct vb2_queue
+> *vq, unsigned int count) mutex_unlock(&pipe->lock);
+>  			return ret;
+>  		}
+> +
+> +		start_pipeline = true;
+>  	}
+> 
+>  	pipe->stream_count++;
+>  	mutex_unlock(&pipe->lock);
+> 
+> +	/*
+> +	 * vsp1_pipeline_ready() is not sufficient to establish that all 
+streams
+> +	 * are prepared and the pipeline is configured, as multiple streams
+> +	 * can race through streamon with buffers already queued; Therefore we
+> +	 * don't even attempt to start the pipeline until the last stream has
+> +	 * called through here.
+> +	 */
+> +	if (!start_pipeline)
+> +		return 0;
+> +
+>  	spin_lock_irqsave(&pipe->irqlock, flags);
+>  	if (vsp1_pipeline_ready(pipe))
+>  		vsp1_video_pipeline_run(pipe);
+
 -- 
 Regards,
 
