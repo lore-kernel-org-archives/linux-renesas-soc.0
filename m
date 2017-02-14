@@ -1,55 +1,50 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        meerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: salvator-x: Add current sense amplifiers
-Date: Fri, 24 Feb 2017 16:05:56 +0100
-Message-Id: <1487948756-25172-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, crope@iki.fi,
+        chris.paterson2@renesas.com, geert+renesas@glider.be,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/7] Add V4L2 SDR (DRIF & MAX2175) driver
+Date: Tue, 14 Feb 2017 15:42:53 +0200
+Message-ID: <3113698.4oBLQ9QWl0@avalon>
+In-Reply-To: <fe15c9ed-be08-c954-5891-c42ec7584b46@xs4all.nl>
+References: <1486479757-32128-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com> <fe15c9ed-be08-c954-5891-c42ec7584b46@xs4all.nl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for two Maxim max961x current sense amplifiers
-sensing VDD_08 and DVFS_08 lines.
+Hi Hans,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+On Monday 13 Feb 2017 13:46:08 Hans Verkuil wrote:
+> On 02/07/2017 04:02 PM, Ramesh Shanmugasundaram wrote:
+> > Hi Media, DT maintainers, All,
+> > 
+> > This patch set contains two drivers
+> > 
+> >  - Renesas R-Car Digital Radio Interface (DRIF) driver
+> >  - Maxim's MAX2175 RF to Bits tuner driver
+> > 
+> > These patches were based on top of media-tree repo
+> > commit: 47b037a0512d9f8675ec2693bed46c8ea6a884ab
+> > 
+> > These two drivers combined together expose a V4L2 SDR device that is
+> > compliant with the V4L2 framework [1]. Agreed review comments are
+> > incorporated in this series.
+> > 
+> > The rcar_drif device is modelled using "renesas,bonding" property. The
+> > discussion on this property is available here [2].
+> Other than the single comment I had it all looks good. Once I have Acks for
+> the bindings and from Laurent for the rcar part I can merge it.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index fd05c2b..c533aef 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -261,6 +261,23 @@
- 	status = "okay";
- };
- 
-+&i2c4 {
-+	status = "okay";
-+
-+	csa_vdd: max9611_vdd@7c {
-+		compatible = "maxim,max961x";
-+		reg = <0x7c>;
-+
-+		shunt-resistor = <5000>;
-+	};
-+
-+	csa_dvfs: max9611_dvfs@7f {
-+		compatible = "maxim,max961x";
-+		reg = <0x7f>;
-+		shunt-resistor = <5000>;
-+	};
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
+Just FYI, I won't have time to review this before March at the earliest.
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
 
