@@ -1,52 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34966 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751210AbdBOIVb (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:33524 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752868AbdBNVDH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Feb 2017 03:21:31 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170214210301.620322370@cogentembedded.com>
-References: <20170214210301.620322370@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 15 Feb 2017 09:21:29 +0100
-Message-ID: <CAMuHMdUuTvrGUmgAFmoYJ4OrL5VXCWc+37KQ7E3ad0PVMPSwgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64: dts: r8a7795: add IMR-LX4 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 14 Feb 2017 16:03:07 -0500
+Received: by mail-lf0-f42.google.com with SMTP id x1so72331969lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Feb 2017 13:03:07 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170214210301.620322370@cogentembedded.com>
+Date: Wed, 15 Feb 2017 00:02:53 +0300
+To: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
         Konstantin Kozhevnikov
-        <Konstantin.Kozhevnikov@cogentembedded.com>
-Content-Type: text/plain; charset=UTF-8
+        <Konstantin.Kozhevnikov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 1/1] arm64: dts: r8a7795: add IMR-LX4 support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=arm64-dts-r8a7795-add-IMR-LX4-support.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 14, 2017 at 10:02 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the IMR-LX4 devices in the R8A7795 device tree.
->
-> Based on the original (and large) patch by Konstantin Kozhevnikov
-> <Konstantin.Kozhevnikov@cogentembedded.com>.
->
-> Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe the IMR-LX4 devices in the R8A7795 device tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on the original (and large) patch by Konstantin Kozhevnikov
+<Konstantin.Kozhevnikov@cogentembedded.com>.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+This patch is against the 'renesas-devel-20170213-v4.10-rc8' tag of Simon
+Horman's 'renesas.git' repo.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |   32 +++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1419,6 +1419,38 @@
+ 			status = "disabled";
+ 		};
+ 
++		imr-lx4@fe860000 {
++			compatible = "renesas,imr-lx4";
++			reg = <0 0xfe860000 0 0x2000>;
++			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 823>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++		};
++
++		imr-lx4@fe870000 {
++			compatible = "renesas,imr-lx4";
++			reg = <0 0xfe870000 0 0x2000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 822>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++		};
++
++		imr-lx4@fe880000 {
++			compatible = "renesas,imr-lx4";
++			reg = <0 0xfe880000 0 0x2000>;
++			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 821>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++		};
++
++		imr-lx4@fe890000 {
++			compatible = "renesas,imr-lx4";
++			reg = <0 0xfe890000 0 0x2000>;
++			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 820>;
++			power-domains = <&sysc R8A7795_PD_A3VC>;
++		};
++
+ 		vspbc: vsp@fe920000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfe920000 0 0x8000>;
