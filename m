@@ -1,36 +1,57 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=o/Yn=ZV=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Subject: [PATCH 0/5] vsp-tests: Implement RPF cropping tests
-Date: Wed,  8 Feb 2017 14:03:55 +0000
-Message-Id: <cover.381fcf0d4db5fa66965cf3d2fca214970f22122b.1486562055.git-series.kieran.bingham@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33638 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752128AbdBNIiJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 14 Feb 2017 03:38:09 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170213184405.5657-1-chris.brandt@renesas.com>
+References: <20170213184405.5657-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Feb 2017 09:38:07 +0100
+Message-ID: <CAMuHMdUm6-FQSuQYt_h2M21QZLz4UbMxPss8mv2ACWCa6rwfCA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: mstp: ensure register writes complete
+To: Chris Brandt <chris.brandt@renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Hi Chris,
 
-Update the gen-image utility such that it can crop the image at input,
-and provide tests to ensure that the output of the RPF is as we expect.
+On Mon, Feb 13, 2017 at 7:44 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> When there is no status bit, it is possible for the clock enable/disable
+> operation to have not completed by the time the driver code resumes
+> execution. This is due to the fact that write operations are sometimes
+> queued and delayed internally. Doing a read ensures the write operations
+> has completed.
+>
+> Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-The first patch in the series, reformats the output filenames such that
-frames, and the correct reference frame are in the correct sort order in
-the filesystem. This helps with comparing the output in case of errors
+Thanks!
 
-Kieran Bingham (5):
-  vsp-lib: sort output frames correctly
-  vsp-lib: Filter non-filesystem regular characters
-  gen-image: Implement option to parse an input crop
-  vsp-lib: Support RPF frame cropping
-  tests: Add RPF cropping test
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- scripts/vsp-lib.sh          |  44 ++++++++++++++-
- src/gen-image.c             | 106 +++++++++++++++++++++++++++++++++++++-
- tests/vsp-unit-test-0021.sh |  39 ++++++++++++++-
- 3 files changed, 187 insertions(+), 2 deletions(-)
- create mode 100755 tests/vsp-unit-test-0021.sh
+I've regression-tested your patch on R-Car Gen1 (r8a7778/bock-w), which
+also doesn't have status bits for some module clocks, and its SPI FLASH
+is still identified.
 
-base-commit: 067d210716b282f7e5ecede5a33c7f7fdabd1358
--- 
-git-series 0.9.1
+Mike/Stephen: As this is a fix, can you please take it directly?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
