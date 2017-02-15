@@ -1,160 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:33136 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754670AbdBGPif (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:44189 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751780AbdBOKvZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 10:38:35 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc: Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4] arm64: Add support for DMA_ATTR_FORCE_CONTIGUOUS to IOMMU
-Date: Tue,  7 Feb 2017 16:38:36 +0100
-Message-Id: <1486481916-1892-1-git-send-email-geert+renesas@glider.be>
+        Wed, 15 Feb 2017 05:51:25 -0500
+From: DongCV <cv-dong@jinso.co.jp>
+To: broonie@kernel.org, geert+renesas@glider.be,
+        linux-spi@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
+        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
+Subject: [PATCH 0/2 v4] spi: rspi: Fixes bogus received byte and replaces "n" by "len"
+Date: Wed, 15 Feb 2017 19:50:50 +0900
+Message-Id: <1487155852-12102-1-git-send-email-cv-dong@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for allocating physically contiguous DMA buffers on arm64
-systems with an IOMMU.  This can be useful when two or more devices
-with different memory requirements are involved in buffer sharing.
+Hi Mark,
+Cc: Geert, Sergei
 
-Note that as this uses the CMA allocator, setting the
-DMA_ATTR_FORCE_CONTIGUOUS attribute has a runtime-dependency on
-CONFIG_DMA_CMA, just like on arm32.
+Thanks for your comments and advices.
 
-For arm64 systems using swiotlb, no changes are needed to support the
-allocation of physically contiguous DMA buffers:
-  - swiotlb always uses physically contiguous buffers (up to
-    IO_TLB_SEGSIZE = 128 pages),
-  - arm64's __dma_alloc_coherent() already calls
-    dma_alloc_from_contiguous() when CMA is available.
+I separated my patch into two patches as you've shown me.
+These patches fix: 3be09bec42a800d4 "spi: rspi: supports 32bytes 
+buffer for DUAL and QUAD". One of them is to fix bogus received byte 
+into qspi_transfer_in(), and other is to replace "n" by "len" bytes of 
+data in qspi_transfer_in()and qspi_transfer_out().
+These patches were tested at v4.10-rc8 on Renesas Gen2 Lager board.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v4:
-  - Replace dma_to_phys()/phys_to_page() by vmalloc_to_page(), to pass
-    the correct page pointer to dma_release_from_contiguous().
-    Note that the latter doesn't scream when passed a wrong pointer, but
-    just returns false.  While this makes life easier for callers who
-    may want to call another deallocator, it makes it harder catching
-    bugs.
+Please consider these patches to Renesas Rcar family.
+Thank you.
+Jinso/Dong.
 
-v3:
-  - Add Acked-by,
-  - Update comment to "one of _4_ things",
-  - Call dma_alloc_from_contiguous() and iommu_dma_map_page() directly,
-    as suggested by Robin Murphy,
+DongCV (2):
+  spi: rspi: Fixes bogus received byte in qspi_transfer_in()
+  spi: rspi: Replaces "n" by "len" in qspi_transfer_in() and
+    qspi_transfer_out()
 
-v2:
-  - New, handle dispatching in the arch (arm64) code, as requested by
-    Robin Murphy.
----
- arch/arm64/mm/dma-mapping.c | 63 ++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 48 insertions(+), 15 deletions(-)
+ drivers/spi/spi-rspi.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 351f7595cb3ebdb9..fb76e82c90edd514 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -584,20 +584,7 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
- 	 */
- 	gfp |= __GFP_ZERO;
- 
--	if (gfpflags_allow_blocking(gfp)) {
--		struct page **pages;
--		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
--
--		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
--					handle, flush_page);
--		if (!pages)
--			return NULL;
--
--		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
--					      __builtin_return_address(0));
--		if (!addr)
--			iommu_dma_free(dev, pages, iosize, handle);
--	} else {
-+	if (!gfpflags_allow_blocking(gfp)) {
- 		struct page *page;
- 		/*
- 		 * In atomic context we can't remap anything, so we'll only
-@@ -621,6 +608,45 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
- 				__free_from_pool(addr, size);
- 			addr = NULL;
- 		}
-+	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-+		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-+		struct page *page;
-+
-+		page = dma_alloc_from_contiguous(dev, size >> PAGE_SHIFT,
-+						 get_order(size));
-+		if (!page)
-+			return NULL;
-+
-+		*handle = iommu_dma_map_page(dev, page, 0, iosize, ioprot);
-+		if (iommu_dma_mapping_error(dev, *handle)) {
-+			dma_release_from_contiguous(dev, page,
-+						    size >> PAGE_SHIFT);
-+			return NULL;
-+		}
-+		if (!coherent)
-+			__dma_flush_area(page_to_virt(page), iosize);
-+
-+		addr = dma_common_contiguous_remap(page, size, VM_USERMAP,
-+						   prot,
-+						   __builtin_return_address(0));
-+		if (!addr) {
-+			iommu_dma_unmap_page(dev, *handle, iosize, 0, attrs);
-+			dma_release_from_contiguous(dev, page,
-+						    size >> PAGE_SHIFT);
-+		}
-+	} else {
-+		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-+		struct page **pages;
-+
-+		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
-+					handle, flush_page);
-+		if (!pages)
-+			return NULL;
-+
-+		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
-+					      __builtin_return_address(0));
-+		if (!addr)
-+			iommu_dma_free(dev, pages, iosize, handle);
- 	}
- 	return addr;
- }
-@@ -632,7 +658,8 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
- 
- 	size = PAGE_ALIGN(size);
- 	/*
--	 * @cpu_addr will be one of 3 things depending on how it was allocated:
-+	 * @cpu_addr will be one of 4 things depending on how it was allocated:
-+	 * - A remapped array of pages for contiguous allocations.
- 	 * - A remapped array of pages from iommu_dma_alloc(), for all
- 	 *   non-atomic allocations.
- 	 * - A non-cacheable alias from the atomic pool, for atomic
-@@ -644,6 +671,12 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
- 	if (__in_atomic_pool(cpu_addr, size)) {
- 		iommu_dma_unmap_page(dev, handle, iosize, 0, 0);
- 		__free_from_pool(cpu_addr, size);
-+	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-+		struct page *page = vmalloc_to_page(cpu_addr);
-+
-+		iommu_dma_unmap_page(dev, handle, iosize, 0, attrs);
-+		dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT);
-+		dma_common_free_remap(cpu_addr, size, VM_USERMAP);
- 	} else if (is_vmalloc_addr(cpu_addr)){
- 		struct vm_struct *area = find_vm_area(cpu_addr);
- 
 -- 
 1.9.1
