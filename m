@@ -1,63 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:43152 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964821AbdBQXOB (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:12994 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbdBOA0a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 18:14:01 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC] mmc: core: check also R1 response for stop commands
-Date: Sat, 18 Feb 2017 00:13:54 +0100
-Message-Id: <20170217231354.7441-1-wsa+renesas@sang-engineering.com>
+        Tue, 14 Feb 2017 19:26:30 -0500
+Message-ID: <58A3A031.3080307@jinso.co.jp>
+Date: Wed, 15 Feb 2017 09:26:25 +0900
+From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: DongCV <cv-dong@jinso.co.jp>, Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?B?RHVuZ++8muS6ug==?= =?UTF-8?B?44K9?=
+        <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>
+Subject: Re: [PATCH] spi: rspi: fix the bug related to mount/remount jffs2
+References: <1486342933-5307-1-git-send-email-cv-dong@jinso.co.jp> <CAMuHMdUyA9+KLaD9rY9gYjxjZcQ1bWKoDhP25mEAdZTr7E0uwA@mail.gmail.com> <ed0b8422-8ab1-7d8d-318f-343e6e2de17d@jinso.co.jp> <CAMuHMdVDgjBF+c-z4=LH+PD00oiNFqhShQuZ0ELS0S4YpQ=npg@mail.gmail.com> <58A15724.1060901@jinso.co.jp> <CAMuHMdU4v=KszacVQ5GX-JVoov0TdfH=+fkpyC505eUWTGpEqg@mail.gmail.com>
+In-Reply-To: <CAMuHMdU4v=KszacVQ5GX-JVoov0TdfH=+fkpyC505eUWTGpEqg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Introduce a helper function to not only check the error value but also
-error bits of a R1 response. Use the helper for the stop command.
+Hi Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Sorry for the delay.
 
-So, here is a first draft of what we talked about recenlty. Let me know what
-you think...
+Thanks for your reply.
 
- drivers/mmc/core/block.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 985477cdcb3ea4..b96477b689e457 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -1292,9 +1292,18 @@ static inline void mmc_apply_rel_rw(struct mmc_blk_request *brq,
- 	 R1_ADDRESS_ERROR |	/* Misaligned address */		\
- 	 R1_BLOCK_LEN_ERROR |	/* Transferred block length incorrect */\
- 	 R1_WP_VIOLATION |	/* Tried to write to protected block */	\
-+	 R1_CARD_ECC_FAILED |	/* Card ECC failed */			\
- 	 R1_CC_ERROR |		/* Card controller error */		\
- 	 R1_ERROR)		/* General/unknown error */
- 
-+static bool mmc_blk_has_cmd_err(struct mmc_command *cmd)
-+{
-+	if (!cmd->error && cmd->resp[0] & CMD_ERRORS)
-+		cmd->error = -EIO;
-+
-+	return cmd->error;
-+}
-+
- static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
- 					     struct mmc_async_req *areq)
- {
-@@ -1316,7 +1325,7 @@ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
- 	 * stop.error indicates a problem with the stop command.  Data
- 	 * may have been transferred, or may still be transferring.
- 	 */
--	if (brq->sbc.error || brq->cmd.error || brq->stop.error ||
-+	if (brq->sbc.error || brq->cmd.error || mmc_blk_has_cmd_err(&brq->stop) ||
- 	    brq->data.error) {
- 		switch (mmc_blk_cmd_recovery(card, req, brq, &ecc_err, &gen_err)) {
- 		case ERR_RETRY:
--- 
-2.11.0
+> On Mon, Feb 13, 2017 at 7:50 AM, Hiep Cao Minh <cm-hiep@jinso.co.jp> wrote:
+>> Sorry to bother you!
+> No, thank you for finally make me see my wrong reasoning!
+>
+>>> qspi_transfer_in() does:
+>>>
+>>>           while (n > 0) {
+>>>                   len = qspi_set_receive_trigger(rspi, n);
+>>>                   // len will be <= n
+>> I agree. This is len = min value of n and 32.
+>>>                   if (len == QSPI_BUFFER_SIZE) {
+>>>                           // receive blocks of len bytes
+>> Yes, This is len == 32 bytes
+>>>                           ...
+>>>                   } else {
+>>>                           // receive n (not len) bytes
+>> This is always n == len ( This case, len or n is always < 32)
+>> Because this is the last n bytes should be received.
+> Right.
+> Doh, I must have missed that if "len < n", the first branch is always taken.
+>
+>>>                           ret = rspi_pio_transfer(rspi, NULL, rx, n);
+> It would have been clearer to use "len" here instead of "n".
+I agree, Dong will update your suggestion at the patch.
+
+Thank you.
+Hiep.
