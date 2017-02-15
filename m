@@ -1,24 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 20 Feb 2017 18:44:06 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Matthew Giassa <matthew@giassa.net>
-Cc: wsa@the-dreams.de, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: Re: [PATCH] *Updating complex macros for checkpatch.
-Message-ID: <20170220174406.GA28077@kroah.com>
-References: <1487611252-25698-1-git-send-email-matthew@giassa.net>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35264 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbdBOIbq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 15 Feb 2017 03:31:46 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1487611252-25698-1-git-send-email-matthew@giassa.net>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170213210619.208900184@cogentembedded.com>
+References: <20170213210619.208900184@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Feb 2017 09:31:44 +0100
+Message-ID: <CAMuHMdUoEG7XYUUKugmhFtpLZggSOQ=5tkRh9yZUT5yPpn+i1Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7795: add IMR clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Konstantin Kozhevnikov
+        <Konstantin.Kozhevnikov@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 20, 2017 at 09:20:52AM -0800, Matthew Giassa wrote:
-> Signed-off-by: Matthew Giassa <matthew@giassa.net>
-> ---
->  drivers/staging/ks7010/ks_wlan_ioctl.h | 80 +++++++++++++++++-----------------
->  1 file changed, 41 insertions(+), 39 deletions(-)
+On Mon, Feb 13, 2017 at 10:06 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the IMR[0-3] clocks to the R8A7795 CPG/MSSR driver.
+>
+> Based on the original (and large) patch by Konstantin Kozhevnikov
+> <Konstantin.Kozhevnikov@cogentembedded.com>.
+>
+> Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-I can't take patches without any changelog text :(
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I cannot verify the parent clocks for H3 ES1.x, but they match the parent clocks
+for the VSPs.
+
+Will queue in clk-renesas-for-v4.12.
+
+> ---
+> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+>
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> Index: linux/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> ===================================================================
+> --- linux.orig/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ linux/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -208,6 +208,10 @@ static const struct mssr_mod_clk r8a7795
+>         DEF_MOD("vin0",                  811,   R8A7795_CLK_S2D1),
+>         DEF_MOD("etheravb",              812,   R8A7795_CLK_S3D2),
+>         DEF_MOD("sata0",                 815,   R8A7795_CLK_S3D2),
+> +       DEF_MOD("imr3",                  820,   R8A7795_CLK_S2D1),
+> +       DEF_MOD("imr2",                  821,   R8A7795_CLK_S2D1),
+> +       DEF_MOD("imr1",                  822,   R8A7795_CLK_S2D1),
+> +       DEF_MOD("imr0",                  823,   R8A7795_CLK_S2D1),
+>         DEF_MOD("gpio7",                 905,   R8A7795_CLK_CP),
+>         DEF_MOD("gpio6",                 906,   R8A7795_CLK_CP),
+>         DEF_MOD("gpio5",                 907,   R8A7795_CLK_CP),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
