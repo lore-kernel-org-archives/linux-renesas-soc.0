@@ -1,75 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:53478 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752099AbdBMSD4 (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:33705 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752091AbdBOMR5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:03:56 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 1/4] mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
-Date: Mon, 13 Feb 2017 19:03:39 +0100
-Message-Id: <20170213180342.26172-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
-References: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
+        Wed, 15 Feb 2017 07:17:57 -0500
+Received: by mail-lf0-f53.google.com with SMTP id x1so80152870lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Feb 2017 04:17:56 -0800 (PST)
+Subject: Re: [PATCH 1/2] spi: rspi: Fixes bogus received byte in
+ qspi_transfer_in()
+To: DongCV <cv-dong@jinso.co.jp>, broonie@kernel.org,
+        geert+renesas@glider.be, linux-spi@vger.kernel.org
+References: <1487155852-12102-1-git-send-email-cv-dong@jinso.co.jp>
+ <1487155852-12102-2-git-send-email-cv-dong@jinso.co.jp>
+Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
+        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f54e33bf-a320-54c9-c4b2-2db3ded0e99e@cogentembedded.com>
+Date: Wed, 15 Feb 2017 15:17:52 +0300
+MIME-Version: 1.0
+In-Reply-To: <1487155852-12102-2-git-send-email-cv-dong@jinso.co.jp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc.h     | 4 ++++
- drivers/mmc/host/tmio_mmc_pio.c | 6 +++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+On 02/15/2017 01:50 PM, DongCV wrote:
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 2b349d48fb9a8a..b20b451ad90daa 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -50,6 +50,10 @@
- #define CTL_CLK_AND_WAIT_CTL 0x138
- #define CTL_RESET_SDIO 0x1e0
- 
-+/* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
-+#define TMIO_STOP_STP		BIT(0)
-+#define TMIO_STOP_SEC		BIT(8)
-+
- /* Definitions for values the CTRL_STATUS register can take. */
- #define TMIO_STAT_CMDRESPEND    BIT(0)
- #define TMIO_STAT_DATAEND       BIT(2)
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 6b789a739d4dfe..ad2840e1bfae51 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -340,7 +340,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 
- 	/* CMD12 is handled by hardware */
- 	if (cmd->opcode == MMC_STOP_TRANSMISSION && !cmd->arg) {
--		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x001);
-+		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
- 		return 0;
- 	}
- 
-@@ -367,7 +367,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 	if (data) {
- 		c |= DATA_PRESENT;
- 		if (data->blocks > 1) {
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x100);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_SEC);
- 			c |= TRANSFER_MULTI;
- 
- 			/*
-@@ -554,7 +554,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 
- 	if (stop) {
- 		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x000);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 		else
- 			BUG();
- 	}
--- 
-2.11.0
+> In qspi_transfer_in(), when receiving the last n (or len) bytes of data,
+> one bogus byte was written in the receive buffer.
+> This code leads to a buffer overflow.
+>
+> "jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+> at 0x03b40000: 0x1900 instead
+> jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+> at 0x03b40004: 0x000c instead"
+>
+> The error message above happens when trying to mount, unmount,
+> and remount a jffs2-formatted device.
+> This patch removed the bogus write to fixes: 3be09bec42a800d4
+> "spi: rspi: supports 32bytes buffer for DUAL and QUAD"
+
+    You were just asked to add the following tag to the patch (e.g. before 
+your signoff):
+
+Fixes: 3be09bec42a8 ("spi: rspi: supports 32bytes buffer for DUAL and QUAD")
+
+This simplifies the propagation of the patch to the -stable releases...
+
+> And here is Geert's comment:
+>
+> "spi: rspi: Fix bogus received byte in qspi_transfer_in()
+> When there are less than QSPI_BUFFER_SIZE remaining bytes to be received,
+> qspi_transfer_in() writes one bogus byte in the receive buffer, possibly
+> leading to a buffer overflow.
+> This can be reproduced by mounting, unmounting, and remounting a
+> jffs2-formatted device, causing lots of warnings like:
+>
+> "jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+> at 0x03b40000: 0x1900 instead"
+>
+> Remove the bogus write to fix this. "
+
+    I don't think effectively duplicating your patch description makes sense here.
+
+> Signed-off-by: DongCV <cv-dong@jinso.co.jp>
+
+    Need full name here.
+
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[...]
+
+MBR, Sergei
