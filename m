@@ -1,73 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59919 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751664AbdBAImT (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:45672 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751338AbdBOWVa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 03:42:19 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Wed, 15 Feb 2017 17:21:30 -0500
+Date: Wed, 15 Feb 2017 23:21:25 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 5/5] arm64: dts: r8a7796: salvator-x: Fix EthernetAVB PHY timing
-Date: Wed,  1 Feb 2017 09:42:04 +0100
-Message-Id: <1485938524-9322-6-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
-References: <1485938524-9322-1-git-send-email-horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/topic/sdhi-dma-sync for renesas drivers
+Message-ID: <20170215222121.GA3243@katana>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Set PHY rxc-skew-ps to 1500 and all other values to their default values.
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is intended to to address failures in the case of 1Gbps communication
-using the by salvator-x board with the KSZ9031RNX phy. This has been
-reported to occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
+Hi Geert,
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+in case, we decide to include this patch despite not being tested for
+the original SDIO case, here is a formal pull request.
 
----
-v1 [Simon Horman]
-* Do not set values to defaults, omit them and let the driver set the defaults
-* Rewrote changelog
+Kind regards,
 
-  N.B. The communications failures have been reported by the BSP team,
-       however I did not observe them during testing with a
-       salvator-x/M3-W-ES1.0
+   Wolfram
 
-       My test-case was to bring up the system using NFS root and
-       run: netperf -H <HOST>
 
-v0 [Kazuya Mizuguchi]
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+The following changes since commit 391a542fe891d6dac49fa7fc2422651e54af1d42:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 61f4662db497..93ed23ab71bb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -172,18 +172,7 @@
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
--		rxc-skew-ps = <900>;
--		rxdv-skew-ps = <0>;
--		rxd0-skew-ps = <0>;
--		rxd1-skew-ps = <0>;
--		rxd2-skew-ps = <0>;
--		rxd3-skew-ps = <0>;
--		txc-skew-ps = <900>;
--		txen-skew-ps = <0>;
--		txd0-skew-ps = <0>;
--		txd1-skew-ps = <0>;
--		txd2-skew-ps = <0>;
--		txd3-skew-ps = <0>;
-+		rxc-skew-ps = <1500>;
- 		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
--- 
-2.7.0.rc3.207.g0ac5344
+  mmc: Adding AUTO_BKOPS_EN bit set for Auto BKOPS support (2017-02-13 13:21:08 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-dma-sync
+
+for you to fetch changes up to 2ea4d49db87684a27026922b73119d9b69c46074:
+
+  mmc: host: tmio: ensure end of DMA and SD access are in sync (2017-02-15 23:17:55 +0100)
+
+----------------------------------------------------------------
+Wolfram Sang (1):
+      mmc: host: tmio: ensure end of DMA and SD access are in sync
+
+ drivers/mmc/host/tmio_mmc.h     |  2 +-
+ drivers/mmc/host/tmio_mmc_dma.c | 70 +++++++++++++++++++++++++++--------------
+ drivers/mmc/host/tmio_mmc_pio.c |  4 +--
+ 3 files changed, 49 insertions(+), 27 deletions(-)
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYpNRhAAoJEBQN5MwUoCm28R0P/0nMT1JHoNVBoSqwBAnqxE4X
+t/wz27C6DfDMcLqhAkaFWan5bHq8kFygNrf8YcBcpdHGR7Rpfh4zm1P9LnYCCObQ
+nEy6tzcN1nK8X6THwlLgPwWD35gk7HBUkXE+ZMhIR1pI3MEMkr4e16+Ob9zGjb/c
+zuDqhBeo4hDSHNdsdtqcrMFdozHNIimkIToNP87g2diAi2VGaNKu4Df6DzlTrC3P
+9qmGORyM0jTW2bZ+Rs0vF3O9JzUk2Ah+cVi2aWTklwejZ2p0e3xviYNuUlYVfGZH
+YH64MgGtotjE9rQ+eBSJ6ByxTy9aeWx4gg0zuyMuV99cAEQ0eeqEh5ARS7JNeSZa
+d0SB3IzzpOFw2zB13dLHAPxK7l3/jWaMT94gPYlsAaNGgJDsgiULf6vJHpFyBVUH
+A3RQIHiW+un98iidHFS04YKS2eViDn7HbuMvqGDOwAdXZ8dvQlsaXTiFGfUxZQzP
+2u8cvsPE9VLdMZzUxn54fsY+pe++NntZGhx9l9M5YDDX0ouPOS9unXZB2iP73fSn
+vxF/MddZpZvRwDVZ2szrwhuyqvKxAm7eLWh5VyCpEtRuxZgYsVgZ2oeJwuaNcp8F
+QPjtAq/FVWuXiPKfeAEw/eJhry/AQZhDWL8KMWzfnApVzDhLBR5AVpnQLkmyS0Te
+HFBP09Ix1IBX8xbOYZ9J
+=xcih
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
