@@ -1,48 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:57764 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754738AbdBGPNb (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34253 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbdBOIAq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 10:13:31 -0500
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v3 1/7] media: v4l2-ctrls: Reserve controls for MAX217X
-Date: Tue,  7 Feb 2017 15:02:31 +0000
-Message-Id: <1486479757-32128-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1486479757-32128-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1486479757-32128-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+        Wed, 15 Feb 2017 03:00:46 -0500
+MIME-Version: 1.0
+In-Reply-To: <1487144035-9075-1-git-send-email-cv-dong@jinso.co.jp>
+References: <1487144035-9075-1-git-send-email-cv-dong@jinso.co.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Feb 2017 09:00:45 +0100
+Message-ID: <CAMuHMdVKe3yqgXSpS+RrGHAo_fVWoJgO7=5t1jZasTxBiMNa8Q@mail.gmail.com>
+Subject: Re: [PATCH v3] spi: rspi: Fix bogus received byte in qspi_transfer_in()
+To: DongCV <cv-dong@jinso.co.jp>
+Cc: Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        Cao Minh Hiep <cm-hiep@jinso.co.jp>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reserve controls for MAX217X RF to Bits tuner family. These hybrid
-radio receiver chips are highly programmable and hence reserving 32
-controls.
+Hi Dong,
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- include/uapi/linux/v4l2-controls.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks for the update!
 
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 0d2e1e0..83b28b4 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -180,6 +180,11 @@ enum v4l2_colorfx {
-  * We reserve 16 controls for this driver. */
- #define V4L2_CID_USER_TC358743_BASE		(V4L2_CID_USER_BASE + 0x1080)
- 
-+/* The base for the max217x driver controls.
-+ * We reserve 32 controls for this driver
-+ */
-+#define V4L2_CID_USER_MAX217X_BASE		(V4L2_CID_USER_BASE + 0x1090)
-+
- /* MPEG-class control IDs */
- /* The MPEG controls are applicable to all codec controls
-  * and the 'MPEG' part of the define is historical */
--- 
-1.9.1
+On Wed, Feb 15, 2017 at 8:33 AM, DongCV <cv-dong@jinso.co.jp> wrote:
+> In qspi_transfer_in(), when receiving the last n (or len) bytes of data,
+> n(or len) bogus bytes were written in the receive buffer,
+
+1 bogus byte was written
+
+And I think you should mention this is a buffer overflow, as this has security
+implications (see also "Fixes" below).
+
+> This code leads to the following error that related to jffs2 format
+> when trying to mount, unmount, and remount a jffs2-formatted device.
+> Remove the bogus write to fix this.
+
+You forgot to mention that you replaced "n" by "len", to improve readability.
+
+> "jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40000: 0x1900 instead
+>  jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found at 0x03b40004: 0x000c instead"
+>
+> Signed-off-by: DongCV <cv-dong@jinso.co.jp>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Please add
+
+    Fixes: 3be09bec42a800d4 ("spi: rspi: supports 32bytes buffer for
+DUAL and QUAD")
+
+so the stable team knows which stable kernel version this needs backporting to.
+
+> ---
+>  drivers/spi/spi-rspi.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+> index 9daf500..bc3c868 100644
+> --- a/drivers/spi/spi-rspi.c
+> +++ b/drivers/spi/spi-rspi.c
+> @@ -808,7 +808,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
+>                         for (i = 0; i < len; i++)
+>                                 rspi_write_data(rspi, *tx++);
+>                 } else {
+> -                       ret = rspi_pio_transfer(rspi, tx, NULL, n);
+> +                       ret = rspi_pio_transfer(rspi, tx, NULL, len);
+>                         if (ret < 0)
+>                                 return ret;
+>                 }
+> @@ -845,10 +845,9 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+>                         for (i = 0; i < len; i++)
+>                                 *rx++ = rspi_read_data(rspi);
+>                 } else {
+> -                       ret = rspi_pio_transfer(rspi, NULL, rx, n);
+> +                       ret = rspi_pio_transfer(rspi, NULL, rx, len);
+>                         if (ret < 0)
+>                                 return ret;
+> -                       *rx++ = ret;
+>                 }
+>                 n -= len;
+>         }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
