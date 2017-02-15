@@ -1,108 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:18666 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751287AbdBULBx (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36857 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbdBOJVV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Feb 2017 06:01:53 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/2] usb: of: add functions to bind a companion controller
-Date: Tue, 21 Feb 2017 19:59:47 +0900
-Message-ID: <1487674788-12599-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1487674788-12599-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1487674788-12599-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 15 Feb 2017 04:21:21 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170213182532.4042-4-chris.brandt@renesas.com>
+References: <20170213182532.4042-1-chris.brandt@renesas.com> <20170213182532.4042-4-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Feb 2017 10:21:19 +0100
+Message-ID: <CAMuHMdWBRJeU+f_Bn9pFPU1_LRG6WHSie8a0v+_qxKftujWAzw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: r7s72100: Add reset handler
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-EHCI controllers will have a companion controller. However, on platform
-bus, there was difficult to bind them in previous code. So, this
-patch adds helper functions to bind them using a "companion" property.
+On Mon, Feb 13, 2017 at 7:25 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> For the RZ/A1, the only way to do a reset is to overflow the WDT.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index 614ba79..6fb4ef4 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -371,6 +371,11 @@
+>                         <0xe8202000 0x1000>;
+>         };
+>
+> +       wdt: timer@fcfe0000 {
+> +               compatible = "renesas,r7s72100-reset", "renesas,wdt-reset";
+> +               reg = <0xfcfe0000 0x6>;
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/generic.txt |  1 +
- drivers/usb/core/of.c                             | 23 +++++++++++++++++++++++
- include/linux/usb/of.h                            |  5 +++++
- 3 files changed, 29 insertions(+)
+No clocks property, pointing to p0_clk?
+No interrupts property?
+Yes, those should be documented in the bindings, too.
 
-diff --git a/Documentation/devicetree/bindings/usb/generic.txt b/Documentation/devicetree/bindings/usb/generic.txt
-index bfadeb1..0a74ab8 100644
---- a/Documentation/devicetree/bindings/usb/generic.txt
-+++ b/Documentation/devicetree/bindings/usb/generic.txt
-@@ -22,6 +22,7 @@ Optional properties:
- 			property is used if any real OTG features(HNP/SRP/ADP)
- 			is enabled, if ADP is required, otg-rev should be
- 			0x0200 or above.
-+ - companion: phandle of a companion
-  - hnp-disable: tells OTG controllers we want to disable OTG HNP, normally HNP
- 			is the basic function of real OTG except you want it
- 			to be a srp-capable only B device.
-diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
-index 3de4f88..d787f19 100644
---- a/drivers/usb/core/of.c
-+++ b/drivers/usb/core/of.c
-@@ -18,6 +18,7 @@
-  */
- 
- #include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/usb/of.h>
- 
- /**
-@@ -46,3 +47,25 @@ struct device_node *usb_of_get_child_node(struct device_node *parent,
- }
- EXPORT_SYMBOL_GPL(usb_of_get_child_node);
- 
-+/**
-+ * usb_of_get_companion_dev - Find the companion device
-+ * @dev: the device pointer to find a companion
-+ *
-+ * Find the companion device from platform bus.
-+ *
-+ * Return: On success, a pointer to the companion device, %NULL on failure.
-+ */
-+struct device *usb_of_get_companion_dev(struct device *dev)
-+{
-+	struct device_node *node;
-+	struct platform_device *pdev = NULL;
-+
-+	node = of_parse_phandle(dev->of_node, "companion", 0);
-+	if (node)
-+		pdev = of_find_device_by_node(node);
-+
-+	of_node_put(node);
-+
-+	return pdev ? &pdev->dev : NULL;
-+}
-+EXPORT_SYMBOL_GPL(usb_of_get_companion_dev);
-diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
-index 5ff9032..4031f47 100644
---- a/include/linux/usb/of.h
-+++ b/include/linux/usb/of.h
-@@ -18,6 +18,7 @@ int of_usb_update_otg_caps(struct device_node *np,
- 			struct usb_otg_caps *otg_caps);
- struct device_node *usb_of_get_child_node(struct device_node *parent,
- 			int portnum);
-+struct device *usb_of_get_companion_dev(struct device *dev);
- #else
- static inline enum usb_dr_mode
- of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
-@@ -38,6 +39,10 @@ static inline int of_usb_update_otg_caps(struct device_node *np,
- {
- 	return NULL;
- }
-+static inline struct device *usb_of_get_companion_dev(struct device *dev)
-+{
-+	return NULL;
-+}
- #endif
- 
- #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB_SUPPORT)
--- 
-1.9.1
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
