@@ -1,74 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:33705 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752091AbdBOMR5 (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:49902 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751735AbdBOKvS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Feb 2017 07:17:57 -0500
-Received: by mail-lf0-f53.google.com with SMTP id x1so80152870lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Feb 2017 04:17:56 -0800 (PST)
-Subject: Re: [PATCH 1/2] spi: rspi: Fixes bogus received byte in
- qspi_transfer_in()
-To: DongCV <cv-dong@jinso.co.jp>, broonie@kernel.org,
-        geert+renesas@glider.be, linux-spi@vger.kernel.org
-References: <1487155852-12102-1-git-send-email-cv-dong@jinso.co.jp>
- <1487155852-12102-2-git-send-email-cv-dong@jinso.co.jp>
+        Wed, 15 Feb 2017 05:51:18 -0500
+From: DongCV <cv-dong@jinso.co.jp>
+To: broonie@kernel.org, geert+renesas@glider.be,
+        linux-spi@vger.kernel.org
 Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
         ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
         nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f54e33bf-a320-54c9-c4b2-2db3ded0e99e@cogentembedded.com>
-Date: Wed, 15 Feb 2017 15:17:52 +0300
-MIME-Version: 1.0
-In-Reply-To: <1487155852-12102-2-git-send-email-cv-dong@jinso.co.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/2] spi: rspi: Fixes bogus received byte in qspi_transfer_in()
+Date: Wed, 15 Feb 2017 19:50:51 +0900
+Message-Id: <1487155852-12102-2-git-send-email-cv-dong@jinso.co.jp>
+In-Reply-To: <1487155852-12102-1-git-send-email-cv-dong@jinso.co.jp>
+References: <1487155852-12102-1-git-send-email-cv-dong@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/15/2017 01:50 PM, DongCV wrote:
+In qspi_transfer_in(), when receiving the last n (or len) bytes of data,
+one bogus byte was written in the receive buffer.
+This code leads to a buffer overflow.
 
-> In qspi_transfer_in(), when receiving the last n (or len) bytes of data,
-> one bogus byte was written in the receive buffer.
-> This code leads to a buffer overflow.
->
-> "jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
-> at 0x03b40000: 0x1900 instead
-> jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
-> at 0x03b40004: 0x000c instead"
->
-> The error message above happens when trying to mount, unmount,
-> and remount a jffs2-formatted device.
-> This patch removed the bogus write to fixes: 3be09bec42a800d4
-> "spi: rspi: supports 32bytes buffer for DUAL and QUAD"
+"jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found 
+at 0x03b40000: 0x1900 instead
+jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found 
+at 0x03b40004: 0x000c instead"
 
-    You were just asked to add the following tag to the patch (e.g. before 
-your signoff):
+The error message above happens when trying to mount, unmount,
+and remount a jffs2-formatted device.
+This patch removed the bogus write to fixes: 3be09bec42a800d4
+"spi: rspi: supports 32bytes buffer for DUAL and QUAD"
 
-Fixes: 3be09bec42a8 ("spi: rspi: supports 32bytes buffer for DUAL and QUAD")
+And here is Geert's comment:
 
-This simplifies the propagation of the patch to the -stable releases...
+"spi: rspi: Fix bogus received byte in qspi_transfer_in()
+When there are less than QSPI_BUFFER_SIZE remaining bytes to be received,
+qspi_transfer_in() writes one bogus byte in the receive buffer, possibly
+leading to a buffer overflow.
+This can be reproduced by mounting, unmounting, and remounting a
+jffs2-formatted device, causing lots of warnings like:
 
-> And here is Geert's comment:
->
-> "spi: rspi: Fix bogus received byte in qspi_transfer_in()
-> When there are less than QSPI_BUFFER_SIZE remaining bytes to be received,
-> qspi_transfer_in() writes one bogus byte in the receive buffer, possibly
-> leading to a buffer overflow.
-> This can be reproduced by mounting, unmounting, and remounting a
-> jffs2-formatted device, causing lots of warnings like:
->
-> "jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
-> at 0x03b40000: 0x1900 instead"
->
-> Remove the bogus write to fix this. "
+"jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+at 0x03b40000: 0x1900 instead"
 
-    I don't think effectively duplicating your patch description makes sense here.
+Remove the bogus write to fix this. "
 
-> Signed-off-by: DongCV <cv-dong@jinso.co.jp>
+Signed-off-by: DongCV <cv-dong@jinso.co.jp>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/spi/spi-rspi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-    Need full name here.
-
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 9daf500..2ee1301 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -848,7 +848,6 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			ret = rspi_pio_transfer(rspi, NULL, rx, n);
+ 			if (ret < 0)
+ 				return ret;
+-			*rx++ = ret;
+ 		}
+ 		n -= len;
+ 	}
+-- 
+1.9.1
