@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:52258 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932193AbdBPPiH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 16 Feb 2017 10:38:07 -0500
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -13,12 +18,12 @@ To: Simon Horman <horms+renesas@verge.net.au>,
 Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 3/3] ARM: dts: r7s72100: add l2 cache
-Date: Thu, 16 Feb 2017 11:17:42 -0500
-Message-Id: <20170216161742.29320-4-chris.brandt@renesas.com>
-In-Reply-To: <20170216161742.29320-1-chris.brandt@renesas.com>
-References: <20170216161742.29320-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v3 3/3] ARM: dts: r7s72100: add l2 cache
+Date: Thu, 16 Feb 2017 10:37:26 -0500
+Message-Id: <20170216153726.22919-4-chris.brandt@renesas.com>
+In-Reply-To: <20170216153726.22919-1-chris.brandt@renesas.com>
+References: <20170216153726.22919-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Note that early-bresp-disable and full-line-zero-disable are required
@@ -68,5 +73,3 @@ index 614ba79..ed62e19 100644
  		#size-cells = <0>;
 -- 
 2.10.1
-
-
