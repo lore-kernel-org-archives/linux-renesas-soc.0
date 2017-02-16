@@ -1,45 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36849 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932374AbdBQK16 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:52680 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932721AbdBPRYD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 05:27:58 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170216172320.10897-3-chris.brandt@renesas.com>
-References: <20170216172320.10897-1-chris.brandt@renesas.com> <20170216172320.10897-3-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 17 Feb 2017 11:27:56 +0100
-Message-ID: <CAMuHMdWH69WZrZP3c5S_QN+bn9GvC+LPWLmy0zs908d3w+1KHA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] watchdog: renesas-wdt: add support for rza
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>,
+        Thu, 16 Feb 2017 12:24:03 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Wim Van Sebroeck <wim@iguana.be>,
         Guenter Roeck <linux@roeck-us.net>,
         Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 2/3] watchdog: renesas-wdt: add support for rza
+Date: Thu, 16 Feb 2017 12:23:19 -0500
+Message-Id: <20170216172320.10897-3-chris.brandt@renesas.com>
+In-Reply-To: <20170216172320.10897-1-chris.brandt@renesas.com>
+References: <20170216172320.10897-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 16, 2017 at 6:23 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Describe the WDT hardware in the RZ/A series.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Describe the WDT hardware in the RZ/A series.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+v2:
+* added to renesas-wdt.txt instead of creating a new file
+* changed commit title
+* added "renesas,rza-wdt" as a fallback
+* added interrupts property
+---
+ Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+index da24e31..9e306af 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+@@ -2,10 +2,11 @@ Renesas Watchdog Timer (WDT) Controller
+ 
+ Required properties:
+ - compatible : Should be "renesas,<soctype>-wdt", and
+-	       "renesas,rcar-gen3-wdt" as fallback.
++	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
+ 	       Examples with soctypes are:
+ 	         - "renesas,r8a7795-wdt" (R-Car H3)
+ 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
++	         - "renesas,r7s72100-wdt" (RZ/A1)
+ 
+   When compatible with the generic version, nodes must list the SoC-specific
+   version corresponding to the platform first, followed by the generic
+@@ -17,6 +18,7 @@ Required properties:
+ Optional properties:
+ - timeout-sec : Contains the watchdog timeout in seconds
+ - power-domains : the power domain the WDT belongs to
++- interrupts: Some WDTs have an interrupt when used in interval timer mode
+ 
+ Examples:
+ 
+-- 
+2.10.1
