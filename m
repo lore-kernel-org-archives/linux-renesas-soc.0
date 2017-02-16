@@ -1,180 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:57130 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750851AbdBBNXZ (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:9176 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932386AbdBPQTC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 08:23:25 -0500
-Subject: Re: [PATCH v3] arm64: Add support for DMA_ATTR_FORCE_CONTIGUOUS to
- IOMMU
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <1485861178-22694-1-git-send-email-geert+renesas@glider.be>
-Cc: Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thu, 16 Feb 2017 11:19:02 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Brad Mouring <brad.mouring@ni.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Cochran <rcochran@linutronix.de>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, iommu@lists.linux-foundation.org
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <30026398-c5d3-1806-33b6-ba2b59ec2703@arm.com>
-Date: Thu, 2 Feb 2017 13:15:53 +0000
-MIME-Version: 1.0
-In-Reply-To: <1485861178-22694-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4 1/3] ARM: l2c: allow CA9 optimizations to be disabled
+Date: Thu, 16 Feb 2017 11:17:40 -0500
+Message-Id: <20170216161742.29320-2-chris.brandt@renesas.com>
+In-Reply-To: <20170216161742.29320-1-chris.brandt@renesas.com>
+References: <20170216161742.29320-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+If a PL310 is added to a system, but the sideband signals are not
+connected, some Cortex A9 optimizations cannot be used. In particular,
+enabling Full Line of Zeros in the CA9 without sidebands connected will
+crash the system since the CA9 will expect the L2C to perform operations,
+yet the L2C never gets the commands. Early BRESP also does not work
+without sideband signals.
 
-On 31/01/17 11:12, Geert Uytterhoeven wrote:
-> Add support for allocating physically contiguous DMA buffers on arm64
-> systems with an IOMMU.  This can be useful when two or more devices
-> with different memory requirements are involved in buffer sharing.
-> 
-> Note that as this uses the CMA allocator, setting the
-> DMA_ATTR_FORCE_CONTIGUOUS attribute has a runtime-dependency on
-> CONFIG_DMA_CMA, just like on arm32.
-> 
-> For arm64 systems using swiotlb, no changes are needed to support the
-> allocation of physically contiguous DMA buffers:
->   - swiotlb always uses physically contiguous buffers (up to
->     IO_TLB_SEGSIZE = 128 pages),
->   - arm64's __dma_alloc_coherent() already calls
->     dma_alloc_from_contiguous() when CMA is available.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
-> v3:
->   - Add Acked-by,
->   - Update comment to "one of _4_ things",
->   - Call dma_alloc_from_contiguous() and iommu_dma_map_page() directly,
->     as suggested by Robin Murphy,
-> 
-> v2:
->   - New, handle dispatching in the arch (arm64) code, as requested by
->     Robin Murphy.
-> ---
->  arch/arm64/mm/dma-mapping.c | 63 ++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 48 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-> index 1d7d5d2881db7c19..b314256fcee028ce 100644
-> --- a/arch/arm64/mm/dma-mapping.c
-> +++ b/arch/arm64/mm/dma-mapping.c
-> @@ -577,20 +577,7 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
->  	 */
->  	gfp |= __GFP_ZERO;
->  
-> -	if (gfpflags_allow_blocking(gfp)) {
-> -		struct page **pages;
-> -		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-> -
-> -		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
-> -					handle, flush_page);
-> -		if (!pages)
-> -			return NULL;
-> -
-> -		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
-> -					      __builtin_return_address(0));
-> -		if (!addr)
-> -			iommu_dma_free(dev, pages, iosize, handle);
-> -	} else {
-> +	if (!gfpflags_allow_blocking(gfp)) {
->  		struct page *page;
->  		/*
->  		 * In atomic context we can't remap anything, so we'll only
-> @@ -614,6 +601,45 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
->  				__free_from_pool(addr, size);
->  			addr = NULL;
->  		}
-> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-> +		struct page *page;
-> +
-> +		page = dma_alloc_from_contiguous(dev, size >> PAGE_SHIFT,
-> +						 get_order(size));
-> +		if (!page)
-> +			return NULL;
-> +
-> +		*handle = iommu_dma_map_page(dev, page, 0, iosize, ioprot);
-> +		if (iommu_dma_mapping_error(dev, *handle)) {
-> +			dma_release_from_contiguous(dev, page,
-> +						    size >> PAGE_SHIFT);
-> +			return NULL;
-> +		}
-> +		if (!coherent)
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+v3:
+* changed l2x0_bresp_dis to l2x0_bresp_disable
+* changed l2x0_flz_dis to l2x0_flz_disable
+v2:
+* split "arm,pl310-no-sideband" into "arm,early-bresp-disable" and
+  "arm,full-line-zero-disable"
+---
+ Documentation/devicetree/bindings/arm/l2c2x0.txt |  3 +++
+ arch/arm/mm/cache-l2x0.c                         | 13 +++++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-I think we might be able to return early if coherent here, as the
-non-IOMMU __dma_alloc() does. We still need a (cacheable) remap in the
-normal coherent case to make whatever pages iommu_dma_alloc() scrapes
-together appear contiguous, but that obviously isn't a concern here.
-However, I'm not entirely confident that that wouldn't break (or at
-least further complicate) the already-horrible "what the hell is this?"
-logic in __iommu_free_attrs() below, so I'm inclined to leave it as-is.
-
-> +			__dma_flush_area(page_to_virt(page), iosize);
-> +
-> +		addr = dma_common_contiguous_remap(page, size, VM_USERMAP,
-> +						   prot,
-> +						   __builtin_return_address(0));
-> +		if (!addr) {
-> +			iommu_dma_unmap_page(dev, *handle, iosize, 0, attrs);
-> +			dma_release_from_contiguous(dev, page,
-> +						    size >> PAGE_SHIFT);
-> +		}
-> +	} else {
-> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-> +		struct page **pages;
-> +
-> +		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
-> +					handle, flush_page);
-> +		if (!pages)
-> +			return NULL;
-> +
-> +		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
-> +					      __builtin_return_address(0));
-> +		if (!addr)
-> +			iommu_dma_free(dev, pages, iosize, handle);
->  	}
->  	return addr;
->  }
-> @@ -625,7 +651,8 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
->  
->  	size = PAGE_ALIGN(size);
->  	/*
-> -	 * @cpu_addr will be one of 3 things depending on how it was allocated:
-> +	 * @cpu_addr will be one of 4 things depending on how it was allocated:
-> +	 * - A remapped array of pages for contiguous allocations.
->  	 * - A remapped array of pages from iommu_dma_alloc(), for all
->  	 *   non-atomic allocations.
->  	 * - A non-cacheable alias from the atomic pool, for atomic
-> @@ -637,6 +664,12 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
->  	if (__in_atomic_pool(cpu_addr, size)) {
->  		iommu_dma_unmap_page(dev, handle, iosize, 0, 0);
->  		__free_from_pool(cpu_addr, size);
-> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-> +		struct page *page = phys_to_page(dma_to_phys(dev, handle));
-
-handle is the IOVA returned by the original iommu_dma_map_page() call,
-so I can't see this working very well. I was about to naively suggest
-virt_to_page(cpu_addr), except of course cpu_addr isn't going to be a
-linear map address :(
-
-I think that works out to another argument in favour of not trying to
-skip the remap when coherent, since that would mean we can consistently
-rely on vmalloc_to_page(cpu_addr) here, and everything *should* be OK
-(crosses fingers...)
-
-Robin.
-
-> +
-> +		iommu_dma_unmap_page(dev, handle, iosize, 0, attrs);
-> +		dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT);
-> +		dma_common_free_remap(cpu_addr, size, VM_USERMAP);
->  	} else if (is_vmalloc_addr(cpu_addr)){
->  		struct vm_struct *area = find_vm_area(cpu_addr);
->  
-> 
+diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.txt b/Documentation/devicetree/bindings/arm/l2c2x0.txt
+index 917199f..d9650c1 100644
+--- a/Documentation/devicetree/bindings/arm/l2c2x0.txt
++++ b/Documentation/devicetree/bindings/arm/l2c2x0.txt
+@@ -90,6 +90,9 @@ Optional properties:
+ - arm,standby-mode: L2 standby mode enable. Value <0> (forcibly disable),
+   <1> (forcibly enable), property absent (OS specific behavior,
+   preferably retain firmware settings)
++- arm,early-bresp-disable : Disable the CA9 optimization Early BRESP (PL310)
++- arm,full-line-zero-disable : Disable the CA9 optimization Full line of zero
++  write (PL310)
+ 
+ Example:
+ 
+diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+index 2290be3..808efbb 100644
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -57,6 +57,9 @@ static unsigned long sync_reg_offset = L2X0_CACHE_SYNC;
+ 
+ struct l2x0_regs l2x0_saved_regs;
+ 
++static bool l2x0_bresp_disable;
++static bool l2x0_flz_disable;
++
+ /*
+  * Common code for all cache controllers.
+  */
+@@ -620,7 +623,7 @@ static void __init l2c310_enable(void __iomem *base, unsigned num_lock)
+ 	u32 aux = l2x0_saved_regs.aux_ctrl;
+ 
+ 	if (rev >= L310_CACHE_ID_RTL_R2P0) {
+-		if (cortex_a9) {
++		if (cortex_a9 && !l2x0_bresp_disable) {
+ 			aux |= L310_AUX_CTRL_EARLY_BRESP;
+ 			pr_info("L2C-310 enabling early BRESP for Cortex-A9\n");
+ 		} else if (aux & L310_AUX_CTRL_EARLY_BRESP) {
+@@ -629,7 +632,7 @@ static void __init l2c310_enable(void __iomem *base, unsigned num_lock)
+ 		}
+ 	}
+ 
+-	if (cortex_a9) {
++	if (cortex_a9 && !l2x0_flz_disable) {
+ 		u32 aux_cur = readl_relaxed(base + L2X0_AUX_CTRL);
+ 		u32 acr = get_auxcr();
+ 
+@@ -1200,6 +1203,12 @@ static void __init l2c310_of_parse(const struct device_node *np,
+ 		*aux_mask &= ~L2C_AUX_CTRL_PARITY_ENABLE;
+ 	}
+ 
++	if (of_property_read_bool(np, "arm,early-bresp-disable"))
++		l2x0_bresp_disable = true;
++
++	if (of_property_read_bool(np, "arm,full-line-zero-disable"))
++		l2x0_flz_disable = true;
++
+ 	prefetch = l2x0_saved_regs.prefetch_ctrl;
+ 
+ 	ret = of_property_read_u32(np, "arm,double-linefill", &val);
+-- 
+2.10.1
