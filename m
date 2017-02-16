@@ -1,61 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46268 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753355AbdBTROV (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35612 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933015AbdBPTFW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 12:14:21 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 7/7] arm: dts: genmai: Add user led device nodes
-Date: Mon, 20 Feb 2017 18:13:08 +0100
-Message-Id: <1487610788-6939-8-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 16 Feb 2017 14:05:22 -0500
+From: Mark Brown <broonie@kernel.org>
+To: DongCV <cv-dong@jinso.co.jp>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        geert+renesas@glider.be, linux-spi@vger.kernel.org,
+        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
+        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp,
+        linux-spi@vger.kernel.org
+In-Reply-To: <1487155852-12102-3-git-send-email-cv-dong@jinso.co.jp>
+Message-Id: <E1ceRMd-0007vG-Uw@debutante>
+Date: Thu, 16 Feb 2017 19:05:11 +0000
+Subject: Applied "spi: rspi: Replaces "n" by "len" in qspi_transfer_*()" to the spi tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for user leds on Genmai board.
+The patch
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+   spi: rspi: Replaces "n" by "len" in qspi_transfer_*()
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From ad16d4a83ddc86151b4a6efe257ba74eb30f9f8e Mon Sep 17 00:00:00 2001
+From: DongCV <cv-dong@jinso.co.jp>
+Date: Wed, 15 Feb 2017 19:50:52 +0900
+Subject: [PATCH] spi: rspi: Replaces "n" by "len" in qspi_transfer_*()
+
+This patch replaced "n" by "len" bytes of data in qspi_transfer_in() and
+qspi_transfer_out() function. This will make improving readability.
+
+Signed-off-by: DongCV <cv-dong@jinso.co.jp>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/spi/spi-rspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 467a8a1..162e63d 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Genmai";
-@@ -34,6 +35,19 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 	};
-+
-+	leds {
-+		status = "okay";
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led2 {
-+			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
- 
- &pinctrl {
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 2ee130138066..bc3c8686f4d9 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -808,7 +808,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			for (i = 0; i < len; i++)
+ 				rspi_write_data(rspi, *tx++);
+ 		} else {
+-			ret = rspi_pio_transfer(rspi, tx, NULL, n);
++			ret = rspi_pio_transfer(rspi, tx, NULL, len);
+ 			if (ret < 0)
+ 				return ret;
+ 		}
+@@ -845,7 +845,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			for (i = 0; i < len; i++)
+ 				*rx++ = rspi_read_data(rspi);
+ 		} else {
+-			ret = rspi_pio_transfer(rspi, NULL, rx, n);
++			ret = rspi_pio_transfer(rspi, NULL, rx, len);
+ 			if (ret < 0)
+ 				return ret;
+ 		}
 -- 
-2.7.4
+2.11.0
