@@ -1,38 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-he1eur01on0114.outbound.protection.outlook.com ([104.47.0.114]:12039
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753297AbdBVHfR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Feb 2017 02:35:17 -0500
-From: "Baumann, Christoph (C.)" <cbaumann@visteon.com>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: USB-OTG on RCar Gen2 i.e. renesas_usbhs
-Date: Wed, 22 Feb 2017 07:35:09 +0000
-Message-ID: <8b04d669-a19f-aae2-2b61-1a4ac62e2ffd@visteon.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6865F1428E176B4C8391AE0289BE6C95@eurprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Peter Chen <hzpeterchen@gmail.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "frowand.list@gmail.com" <frowand.list@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: RE: How to get related device pointer via DT?
+Date: Thu, 16 Feb 2017 10:26:47 +0000
+Message-ID: <HK2PR06MB0548854946E440AAEFABD526D85A0@HK2PR06MB0548.apcprd06.prod.outlook.com>
+References: <HK2PR06MB054824526D2975ADE8EA0405D85B0@HK2PR06MB0548.apcprd06.prod.outlook.com>
+ <20170215100136.GB26227@b29397-desktop>
+In-Reply-To: <20170215100136.GB26227@b29397-desktop>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgYWxsLA0KDQpyZWNlbnRseSBJIG5vdGljZWQgYSBzdHJhbmdlIGJlaGF2aW91ciBvZiB0aGUg
-T1RHIGZlYXR1cmUuDQpXaGVuIGNvbm5lY3RpbmcgYW4gQXBwbGUgZGV2aWNlIHVzaW5nIENhclBs
-YXksIHdoaWNoIGltcGxpZXMgT1RHIHJlc3AuIA0KR2FkZ2V0IG1vZGUsIHRoZXJlIGFyZSBJUlEg
-YnVyc3RzIG9ic2VydmFibGUuDQpTb21ldGhpbmcgYXJvdW5kIG9uZSBJUlEgcGVyIH4xMHVzIGZv
-ciAzMG1zLiBFc3BlY2lhbGx5IGlmIHRoZSBzeXN0ZW0gaXMgDQphbHJlYWR5IHdlbGwgb2NjdXBp
-ZWQgdGhpcyBjYXVzZXMgaml0dGVycyBhbmQgZGVsYXlzLg0KDQpJcyB0aGVyZSBhIGtub3duIGlz
-c3VlIG9yIHN1Z2dlc3Rpb25zIGxpa2UgaW5jcmVhc2luZyBkZWZhdWx0IGJ1ZmZlciANCnNpemVz
-IGluIHJlbmVzYXNfdXNiaHMvcGlwZS5jLT51c2Joc3Bfc2V0dXBfcGlwZWJ1ZmYoKT8NCg0KDQoN
-Ck1pdCBmcmV1bmRsaWNoZW4gR3LDvMOfZW4gLyBLaW5kIHJlZ2FyZHMNCkNocmlzdG9waCBCYXVt
-YW5uDQoNCi0tDQpTZW5pb3IgU29mdHdhcmUgRW5naW5lZXIsIFZpc3Rlb24gRWxlY3Ryb25pY3Mg
-R2VybWFueQ0KQW4gZGVyIFJhdW1mYWJyaWsgMzNiLCA3NjIyNyBLYXJsc3J1aGUsIEdlcm1hbnkN
-ClBob25lOiArNDkgKDApIDcyMSA0NzY2IDE3NTQgICAgIEY6ICs0OSAoMCk3MjEgNDc2NiAxMzMz
-DQpFbWFpbDogY2JhdW1hbm5AdmlzdGVvbi5jb20NCg0KVmlzdGVvbiBFbGVjdHJvbmljcyBHZXJt
-YW55IEdtYkgsIFZpc3Rlb25zdHIgNC0xMCwgNTAxNzAgS2VycGVuLCBHZXJtYW55DQpNYW5hZ2Vt
-ZW50IEJvYXJkOiBNaWNoYWVsIFNjb3R0IEJvb3RoLCBKZW5zIFRpbGxuZXIsIErDvHJnZW4gRMO2
-cnINClJlZy46IENvbG9nbmUsIEhSQiA3ODI2OSwgVkFULUlEIE51bW1lcjogREUgMjk0IDE5NCA4
-MDI=
+Hi Peter,
+
+> From: Peter Chen
+> Sent: Wednesday, February 15, 2017 7:02 PM
+>=20
+> On Wed, Feb 15, 2017 at 02:21:55AM +0000, Yoshihiro Shimoda wrote:
+< snip >
+> > If my idea A), ehci0 will have companion =3D <&ohci>;
+> > If my idea B), no need to add any property.
+> >
+> > What do you think?
+> > Anyway, I will start to study DT programming :)
+> >
+>=20
+> From my point, idea A is better. It seems you have similar idea when you
+> tried Dual-role framework before. [1]
+>=20
+> [1] https://patchwork.kernel.org/patch/9169745/
+
+Thank you for the comment!
+Yes, I remember this. So, I will make patches using idea A.
+
+Best regards,
+Yoshihiro Shimoda
+
+> --
+>=20
+> Best Regards,
+> Peter Chen
