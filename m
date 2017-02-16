@@ -1,134 +1,226 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34163 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751452AbdBNJbl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Feb 2017 04:31:41 -0500
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "crope@iki.fi" <crope@iki.fi>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 6/7] dt-bindings: media: Add Renesas R-Car DRIF binding
+Date: Thu, 16 Feb 2017 11:02:55 +0000
+Message-ID: <HK2PR06MB0545DC72450687BA47610DA6C35A0@HK2PR06MB0545.apcprd06.prod.outlook.com>
+References: <1486479757-32128-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1486479757-32128-7-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <20170215170919.lxmqryjxdo3uxil2@rob-hp-laptop>
+In-Reply-To: <20170215170919.lxmqryjxdo3uxil2@rob-hp-laptop>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 Feb 2017 10:31:38 +0100
-Message-ID: <CAMuHMdVf-NT_6oGQVba_QgFuW-fZMBDF1CtidfxSxnCr8+BGHg@mail.gmail.com>
-Subject: PCI / PM: Crashes in PME scan during system suspend
-To: Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Yinghai Lu <yinghai@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
+Hi Rob,
 
-Laurent Pinchart reported that r8a7790/Lager crashes during suspend tests.
+Thank you for the review comments.
 
-I managed to reproduce the issue on r8a7791/koelsch:
-  - It only happens during suspend tests, after writing either "platform"
-    or "processors" to /sys/power/pm_test,
-  - It does not (or is less likely) to happen during full system suspend
-    ("core" or "none").
+> Subject: Re: [PATCH v3 6/7] dt-bindings: media: Add Renesas R-Car DRIF
+> binding
+>=20
+> On Tue, Feb 07, 2017 at 03:02:36PM +0000, Ramesh Shanmugasundaram wrote:
+> > Add binding documentation for Renesas R-Car Digital Radio Interface
+> > (DRIF) controller.
+> >
+> > Signed-off-by: Ramesh Shanmugasundaram
+> > <ramesh.shanmugasundaram@bp.renesas.com>
+> > ---
+> >  .../devicetree/bindings/media/renesas,drif.txt     | 186
+> +++++++++++++++++++++
+> >  1 file changed, 186 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/media/renesas,drif.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > b/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > new file mode 100644
+> > index 0000000..6315609
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > @@ -0,0 +1,186 @@
+> > +Renesas R-Car Gen3 Digital Radio Interface controller (DRIF)
+> > +------------------------------------------------------------
+> > +
+> > +R-Car Gen3 DRIF is a SPI like receive only slave device. A general
+> > +representation of DRIF interfacing with a master device is shown below=
+.
+> > +
+> > ++---------------------+                +---------------------+
+> > +|                     |-----SCK------->|CLK                  |
+> > +|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
+> > +|                     |-----SD0------->|D0                   |
+> > +|                     |-----SD1------->|D1                   |
+> > ++---------------------+                +---------------------+
+> > +
+> > +As per the datasheet, each DRIF channel (drifn) is made up of two
+> > +internal channels (drifn0 & drifn1). These two internal channels
+> > +share the common CLK & SYNC. Each internal channel has its own
+> > +dedicated resources like irq, dma channels, address space & clock.
+> > +This internal split is not visible to the external master device.
+> > +
+> > +The device tree model represents each internal channel as a separate
+> node.
+> > +The internal channels sharing the CLK & SYNC are tied together by
+> > +their phandles using a new property called "renesas,bonding". For the
+> > +rest of the documentation, unless explicitly stated, the word channel
+> > +implies an internal channel.
+> > +
+> > +When both internal channels are enabled they need to be managed
+> > +together as one (i.e.) they cannot operate alone as independent
+> > +devices. Out of the two, one of them needs to act as a primary device
+> > +that accepts common properties of both the internal channels. This
+> > +channel is identified by a new property called "renesas,primary-bond".
+> > +
+> > +To summarize,
+> > +   - When both the internal channels that are bonded together are
+> enabled,
+> > +     the zeroth channel is selected as primary-bond. This channels
+> accepts
+> > +     properties common to all the members of the bond.
+> > +   - When only one of the bonded channels need to be enabled, the
+> property
+> > +     "renesas,bonding" or "renesas,primary-bond" will have no effect.
+> That
+> > +     enabled channel can act alone as any other independent device.
+> > +
+> > +Required properties of an internal channel:
+> > +-------------------------------------------
+> > +- compatible: "renesas,r8a7795-drif" if DRIF controller is a part of
+> R8A7795 SoC.
+> > +	      "renesas,rcar-gen3-drif" for a generic R-Car Gen3 compatible
+> device.
+> > +	      When compatible with the generic version, nodes must list the
+> > +	      SoC-specific version corresponding to the platform first
+> > +	      followed by the generic version.
+> > +- reg: offset and length of that channel.
+> > +- interrupts: associated with that channel.
+> > +- clocks: phandle and clock specifier of that channel.
+> > +- clock-names: clock input name string: "fck".
+> > +- dmas: phandles to the DMA channels.
+> > +- dma-names: names of the DMA channel: "rx".
+> > +- renesas,bonding: phandle to the other channel.
+> > +
+> > +Optional properties of an internal channel:
+> > +-------------------------------------------
+> > +- power-domains: phandle to the respective power domain.
+> > +
+> > +Required properties of an internal channel when:
+> > +	- It is the only enabled channel of the bond (or)
+> > +	- If it acts as primary among enabled bonds
+> > +--------------------------------------------------------
+> > +- pinctrl-0: pin control group to be used for this channel.
+> > +- pinctrl-names: must be "default".
+> > +- renesas,primary-bond: empty property indicating the channel acts as
+> primary
+> > +			among the bonded channels.
+> > +- port: child port node of a channel that defines the local and remote
+> > +	endpoints. The remote endpoint is assumed to be a third party tuner
+> > +	device endpoint.
+> > +
+> > +Optional endpoint property:
+> > +---------------------------
+> > +- renesas,sync-active  : Indicates sync signal polarity, 0/1 for
+> low/high
+> > +			 respectively. This property maps to SYNCAC bit in the
+> > +			 hardware manual. The default is 1 (active high)
+>=20
+> Why does this belong in the endpoint? I'd prefer to not have vendor
+> specific properties in endpoints. Is this a property of the tuner or DRIF=
+?
 
-More investigation shows this happens when the PME scan runs, once per
-second.  During PME scan, the PCI host bridge (rcar-pci) registers are
-accessed while the host bridge's module clock has already been disabled,
-leading to a crash.
+This property is similar to the properties in Documentation/devicetree/bind=
+ings/media/video-interfaces.txt (e.g. hsync-active, vsync-active).Hence, La=
+urent & Hans suggested this to be defined as an endpoint property and try t=
+o standardize it.
 
-With "core" or "none", system suspend also disables timers, and thus the
-workqueue handling PME scan no longer runs.  I believe the issue can still
-happen, as there's a small window between disabling module clocks and
-disabling timers.
+I think I see your point. As endpoint properties can be defined on both end=
+points, having a vendor specific property is a problem with a third party t=
+uner. We could remove the vendor tag and make it  a generic property "sync-=
+active", if you are OK with it?=20
 
-Lukas' patch "[PATCH v2] PCI: pciehp: Don't enable PME on runtime suspend"
-(http://lkml.iu.edu/hypermail/linux/kernel/1702.0/03245.html) is not
-sufficient to fix the issue.
+This property can be defined for both tuner and DRIF. However, it would mos=
+tly be a constant in the case of tuner because as per I2S spec, transmitter=
+ WS (sync) changes from high->low & low->high always. Only DRIF allows the =
+option to latch when WS high->low or low->high - both cases.
 
-Note that the issue was not introduced by commit 68db9bc81436 ("PCI:
-pciehp: Add runtime PM support for PCIe hotplug ports"):  I managed to
-trigger it on 68db9bc81436^ too, albeit not at first try.
+In a traditional use case it is always WS high->low latching to get the fir=
+st data. However, with DRIF & MAX2175 combo, our latest investigations reve=
+al that latching when WS low->high provided better synchronization on all c=
+ases. There is no loss of data by doing this. Hence, it would be nice to re=
+tain this as a configurable property.
 
-Do you have a clue?
-Shall I bisect it? I have no idea when the issue appeared first, or if it ever
-worked.
-Thanks!
+Please advice.
 
-How to reproduce:
 
-# echo 0 > /sys/module/printk/parameters/console_suspend
-# echo platform > /sys/power/pm_test    # Or "processors"
-# echo mem > /sys/power/state
+>=20
+> > +
+> > +Example
+> > +--------
+> > +
+> > +SoC common dtsi file
+> > +
+> > +		drif00: rif@e6f40000 {
+> > +			compatible =3D "renesas,r8a7795-drif",
+> > +				     "renesas,rcar-gen3-drif";
+> > +			reg =3D <0 0xe6f40000 0 0x64>;
+> > +			interrupts =3D <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks =3D <&cpg CPG_MOD 515>;
+> > +			clock-names =3D "fck";
+> > +			dmas =3D <&dmac1 0x20>, <&dmac2 0x20>;
+> > +			dma-names =3D "rx", "rx";
+> > +			power-domains =3D <&sysc R8A7795_PD_ALWAYS_ON>;
+> > +			renesas,bonding =3D <&drif01>;
+> > +			status =3D "disabled";
+>=20
+> Don't put "status" in examples.
 
-Make sure CONFIG_PCI_RCAR_GEN2 and CONFIG_USB_OHCI_HCD_PCI are
-enabled.
+OK. Will note this down for future patches. Will be corrected in the next v=
+ersion.
 
-PM: Syncing filesystems ... [   38.566237] done.
-PM: Preparing system for sleep (mem)
-Freezing user space processes ... [   38.579813] (elapsed 0.001 seconds) done.
-Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-PM: Suspending system (mem)
-PM: suspend of devices complete after 152.456 msecs
-PM: late suspend of devices complete after 2.809 msecs
-PM: noirq suspend of devices complete after 29.863 msecs
-suspend debug: Waiting for 5 second(s).
-Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
-pgd = c0003000
-[00000000] *pgd=80000040004003, *pmd=00000000
-Internal error: : 1211 [#1] SMP ARM
-Modules linked in:
-CPU: 1 PID: 20 Comm: kworker/1:1 Not tainted
-4.9.0-rc1-koelsch-00011-g68db9bc814362e7f #3383
-Hardware name: Generic R8A7791 (Flattened Device Tree)
-Workqueue: events pci_pme_list_scan
-task: eb56e140 task.stack: eb58e000
-PC is at pci_generic_config_read+0x64/0x6c
-LR is at rcar_pci_cfg_base+0x64/0x84
-pc : [<c041d7b4>]    lr : [<c04309a0>]    psr: 600d0093
-sp : eb58fe98  ip : c041d750  fp : 00000008
-r10: c0e2283c  r9 : 00000000  r8 : 600d0013
-r7 : 00000008  r6 : eb58fed6  r5 : 00000002  r4 : eb58feb4
-r3 : 00000000  r2 : 00000044  r1 : 00000008  r0 : 00000000
-Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 30c5387d  Table: 6a9f6c80  DAC: 55555555
-Process kworker/1:1 (pid: 20, stack limit = 0xeb58e210)
-Stack: (0xeb58fe98 to 0xeb590000)
-fe80:                                                       00000002 00000044
-fea0: eb6f5800 c041d9b0 eb58feb4 00000008 00000044 00000000 eb78a000 eb78a000
-fec0: 00000044 00000000 eb9aff00 c0424bf0 eb78a000 00000000 eb78a000 c0e22830
-fee0: ea8a6fc0 c0424c5c eaae79c0 c0424ce0 eb55f380 c0e22838 eb9a9800 c0235fbc
-ff00: eb55f380 c0e22838 eb55f380 eb9a9800 eb9a9800 eb58e000 eb9a9824 c0e02100
-ff20: eb55f398 c02366c4 eb56e140 eb5631c0 00000000 eb55f380 c023641c 00000000
-ff40: 00000000 00000000 00000000 c023a928 cd105598 00000000 40506a34 eb55f380
-ff60: 00000000 00000000 dead4ead ffffffff ffffffff eb58ff74 eb58ff74 00000000
-ff80: 00000000 dead4ead ffffffff ffffffff eb58ff90 eb58ff90 eb58ffac eb5631c0
-ffa0: c023a844 00000000 00000000 c0206d68 00000000 00000000 00000000 00000000
-ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 3a81336c 10ccd1dd
-[<c041d7b4>] (pci_generic_config_read) from [<c041d9b0>]
-(pci_bus_read_config_word+0x58/0x80)
-[<c041d9b0>] (pci_bus_read_config_word) from [<c0424bf0>]
-(pci_check_pme_status+0x34/0x78)
-[<c0424bf0>] (pci_check_pme_status) from [<c0424c5c>] (pci_pme_wakeup+0x28/0x54)
-[<c0424c5c>] (pci_pme_wakeup) from [<c0424ce0>] (pci_pme_list_scan+0x58/0xb4)
-[<c0424ce0>] (pci_pme_list_scan) from [<c0235fbc>]
-(process_one_work+0x1bc/0x308)
-[<c0235fbc>] (process_one_work) from [<c02366c4>] (worker_thread+0x2a8/0x3e0)
-[<c02366c4>] (worker_thread) from [<c023a928>] (kthread+0xe4/0xfc)
-[<c023a928>] (kthread) from [<c0206d68>] (ret_from_fork+0x14/0x2c)
-Code: ea000000 e5903000 f57ff04f e3a00000 (e5843000)
----[ end trace 667d43ba3aa9e589 ]---
+>=20
+> > +		};
+> > +
+> > +		drif01: rif@e6f50000 {
+> > +			compatible =3D "renesas,r8a7795-drif",
+> > +				     "renesas,rcar-gen3-drif";
+> > +			reg =3D <0 0xe6f50000 0 0x64>;
+> > +			interrupts =3D <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks =3D <&cpg CPG_MOD 514>;
+> > +			clock-names =3D "fck";
+> > +			dmas =3D <&dmac1 0x22>, <&dmac2 0x22>;
+> > +			dma-names =3D "rx", "rx";
+> > +			power-domains =3D <&sysc R8A7795_PD_ALWAYS_ON>;
+> > +			renesas,bonding =3D <&drif00>;
+> > +			status =3D "disabled";
+> > +		};
+> > +
+> > +
+> > +Board specific dts file
+>=20
+> Chip vs. board in not relevant to the binding doc. Please combine them
+> here in your example.
 
-Gr{oetje,eeting}s,
+Will do.
 
-                        Geert
+Thanks,
+Ramesh
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>=20
+> Rob
