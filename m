@@ -1,44 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39290 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751153AbdBLMcI (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61892 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752878AbdBPCtG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Feb 2017 07:32:08 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/3] rcar-du: Enable fences support using atomic commit helper
-Date: Sun, 12 Feb 2017 14:32:26 +0200
-Message-Id: <20170212123229.18277-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 15 Feb 2017 21:49:06 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "Brad Mouring" <brad.mouring@ni.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Cochran <rcochran@linutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 1/3] ARM: l2c: add pl310-no-sideband option
+Date: Thu, 16 Feb 2017 02:48:59 +0000
+Message-ID: <PS1PR06MB1162C067E31C504C865AB7C08A5A0@PS1PR06MB1162.apcprd06.prod.outlook.com>
+References: <20170207170929.29525-1-chris.brandt@renesas.com>
+ <20170207170929.29525-2-chris.brandt@renesas.com>
+ <20170215221426.e3dk4zzmhgfuplti@rob-hp-laptop>
+In-Reply-To: <20170215221426.e3dk4zzmhgfuplti@rob-hp-laptop>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On Wednesday, February 15, 2017, Rob Herring wrote:
+> On Tue, Feb 07, 2017 at 12:09:27PM -0500, Chris Brandt wrote:
+> > If a PL310 is added to a system, but the sideband signals are not
+> > connected, some Cortex A9 optimizations cannot be used. In particular,
+> > enabling Full Line Zeros in the CA9 without sidebands connected will
+> > crash the system since the CA9 will expect the L2C to perform
+> > operations, yet the L2C never gets the commands.
+>=20
+> I assume you are talking about just the AxUSER signals, not the AxCACHE
+> signals too. That would be really broken. IIRC, the other AxUSER signals
+> are just hints and no connection would not be a problem. This is the only
+> one that requires coordination with enabling/disabling in the core.
 
-This patch series enables fences support in the rcar-du driver through
-switching to the atomic commit helper.
+Yes, just the AxUSER, hence none of the "2.5.5 Cortex-A9 optimizations" wor=
+k.
+Well, except "Store buffer device limitation" because that doesn't use side=
+band
+signals.
 
-Patches 1/3 and 2/3 prepare the driver to handle CRTC events the way expected
-by the atomic commit helper. Patch 3/3 then replaces the custom atomic commit
-handler with the atomic commit helper, using a custom commit tail handler to
-support the driver-specific CRTC enable/disable and plane commit order.
+Like you mentioned, having 'Early BRESP' enabled but not used doesn't hurt
+anything. I was just blocking that so it would print out that it was enable=
+d
+and give users false hope (not that they are looking at the boot log that c=
+losely
+anyway.) FLZ is the killer.
 
-Patch 3/3 depends on the "[PATCH] drm: Constify drm_mode_config atomic helper
-private pointer" (merged in drm-misc) for proper compilation, and on
-"[PATCH v3 0/7] drm/atomic: Add accessor macros for all atomic state" (posted
-to the dri-devel mailing list) for proper runtime operation of asynchronous
-commits.
 
-Laurent Pinchart (3):
-  drm: rcar-du: Handle event when disabling CRTCs
-  drm: rcar-du: Clear handled event pointer in CRTC state
-  drm: rcar-du: Use DRM core's atomic commit helper
+> I think this should follow existing feature properties and explicitly
+> disable the specific properties rather than have this indirection.
 
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 13 +++--
- drivers/gpu/drm/rcar-du/rcar_du_kms.c  | 99 ++++------------------------------
- 2 files changed, 19 insertions(+), 93 deletions(-)
+I can change the code to:
 
--- 
-Regards,
+  "arm,early-bresp-disable"
+  "arm,fill-line-zero-disable"
 
-Laurent Pinchart
+
+As I said, blocking BRESP is only for keeping the log message from coming o=
+ut.
+If it's preferred to not block anything that doesn't break anything, I can =
+just
+add "arm,fill-line-zero-disable" only. Just let me know.
+
+
+Chris
