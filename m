@@ -1,82 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:45140 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932113AbdBPOZ4 (ORCPT
+Received: from mail-it0-f47.google.com ([209.85.214.47]:36958 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754721AbdBPNvl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 09:25:56 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Sebastian Reichel <sre@kernel.org>,
+        Thu, 16 Feb 2017 08:51:41 -0500
+MIME-Version: 1.0
+In-Reply-To: <PS1PR06MB1162A82F35F00D18D5D22FC08A5B0@PS1PR06MB1162.apcprd06.prod.outlook.com>
+References: <20170213182532.4042-1-chris.brandt@renesas.com>
+ <20170213182532.4042-3-chris.brandt@renesas.com> <CAMuHMdWdiosERjUm3ZxZiZL90_4j+CrNm9RU9GaPft7AXbN8kA@mail.gmail.com>
+ <PS1PR06MB1162A82F35F00D18D5D22FC08A5B0@PS1PR06MB1162.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 16 Feb 2017 14:51:40 +0100
+Message-ID: <CAMuHMdVUdU4J+cg7V-rMK63TkEKJp_Nyxh=+34rdtuo1wGUNRw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: power: reset: add document for
+ renesas-reset driver
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 2/3] dt-bindings: power: reset: add document for
- renesas-reset driver
-Date: Thu, 16 Feb 2017 14:25:48 +0000
-Message-ID: <PS1PR06MB1162A78E638609BAB38A652C8A5A0@PS1PR06MB1162.apcprd06.prod.outlook.com>
-References: <20170213182532.4042-1-chris.brandt@renesas.com>
- <20170213182532.4042-3-chris.brandt@renesas.com>
- <CAMuHMdWdiosERjUm3ZxZiZL90_4j+CrNm9RU9GaPft7AXbN8kA@mail.gmail.com>
- <PS1PR06MB1162A82F35F00D18D5D22FC08A5B0@PS1PR06MB1162.apcprd06.prod.outlook.com>
- <CAMuHMdVUdU4J+cg7V-rMK63TkEKJp_Nyxh=+34rdtuo1wGUNRw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVUdU4J+cg7V-rMK63TkEKJp_Nyxh=+34rdtuo1wGUNRw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBGZWJydWFyeSAxNiwgMjAxNywgR2VlcnQgVXl0dGVy
-aG9ldmVuIHdyb3RlOg0KPiBPbiBXZWQsIEZlYiAxNSwgMjAxNyBhdCA2OjMzIFBNLCBDaHJpcyBC
-cmFuZHQgPENocmlzLkJyYW5kdEByZW5lc2FzLmNvbT4NCj4gd3JvdGU6DQo+ID4gT24gVHVlc2Rh
-eSwgRmVicnVhcnkgMTQsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPj4gPiAr
-UmVxdWlyZWQgcHJvcGVydGllczoNCj4gPj4gPiArICAtIGNvbXBhdGlibGU6IG11c3QgYmUgb25l
-IG9yIG1vcmUgb2YgdGhlIGZvbGxvd2luZzoNCj4gPj4gPiArICAgIC0gInJlbmVzYXMscjdzNzIx
-MDAtcmVzZXQiIGZvciB0aGUgcjdzNzIxMDAgU29DDQo+ID4+ID4gKyAgICAtICJyZW5lc2FzLHdk
-dC1yZXNldCINCj4gPj4gPiArICAgICAgICAgICAgICAgIFRoaXMgaXMgYSBmYWxsYmFjayBmb3Ig
-dGhlIGFib3ZlIHJlbmVzYXMsKi1yZXNldA0KPiA+PiA+ICtlbnRyaWVzDQo+ID4+DQo+ID4+IFBs
-ZWFzZSB1c2UgInJlbmVzYXMscjdzNzIxMDAtd2R0Ii4gRFQgZGVzY3JpYmVzIHRoZSBoYXJkd2Fy
-ZQ0KPiA+PiAod2F0Y2hkb2cpLCBub3QgdGhlIHNvZnR3YXJlIHBvbGljeSAodXNlIGl0IGZvciBy
-ZXNldCBvbmx5LCBhcyBhIG1heC4NCj4gPj4gdGltZW91dCBvZiAxMjUgbXMgaXMgdG9vIHNob3J0
-IGZvciBhIHVzYWJsZSB3YXRjaGRvZykuDQo+ID4NCj4gPiBJIGhhZCBhIGxvb2sgYXQ6DQo+ID4N
-Cj4gPiAgIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy93YXRjaGRvZy9yZW5lc2Fz
-LXdkdC50eHQNCj4gPg0KPiA+IFdoaWNoIGhhczoNCj4gPg0KPiA+IFJlcXVpcmVkIHByb3BlcnRp
-ZXM6DQo+ID4gLSBjb21wYXRpYmxlIDogU2hvdWxkIGJlICJyZW5lc2FzLDxzb2N0eXBlPi13ZHQi
-LCBhbmQNCj4gPiAgICAgICAgICAgICAgICAicmVuZXNhcyxyY2FyLWdlbjMtd2R0IiBhcyBmYWxs
-YmFjay4NCj4gPiAgICAgICAgICAgICAgICBFeGFtcGxlcyB3aXRoIHNvY3R5cGVzIGFyZToNCj4g
-PiAgICAgICAgICAgICAgICAgIC0gInJlbmVzYXMscjhhNzc5NS13ZHQiIChSLUNhciBIMykNCj4g
-PiAgICAgICAgICAgICAgICAgIC0gInJlbmVzYXMscjhhNzc5Ni13ZHQiIChSLUNhciBNMy1XKQ0K
-PiA+DQo+ID4NCj4gPiBTbyBpbiBteSAncmVuZXNhcy1yZXNldC50eHQnIHNob3VsZCBJIGRvOg0K
-PiANCj4gQXMgInJlc2V0IiBpcyBzb2Z0d2FyZSBwb2xpY3ksIHBlcmhhcHMgeW91IHNob3VsZCBp
-bnN0ZWFkIGV4dGVuZCB0aGUNCj4gZXhpc3RpbmcgYmluZGluZyBkb2N1bWVudA0KPiBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvd2F0Y2hkb2cvcmVuZXNhcy13ZHQudHh0Pw0KPiAN
-Cj4gTm90aGluZyBzYXlzIHlvdSBoYXZlIHRvIHVzZSB0aGUgc2FtZSBMaW51eCBkcml2ZXIgZm9y
-IFItQ2FyIEdlbjMgYW5kDQo+IFJaL0ExLg0KDQpUaGF0IGlzIHdoYXQgSSB3YXMgdGhpbmtpbmcg
-YXMgd2VsbC4gSWYgSSdtIGp1c3Qgc3VwcG9zZWQgdG8gZG9jdW1lbnQgaGFyZHdhcmUsDQpJIG1p
-Z2h0IGFzIHdlbGwgZ3JvdXAgaXQgaW4gdGhlIHNhbWUgZmlsZS4uLmJ1dCB0aGVuIGluIFNXIHVz
-ZSBpdCBmb3Igc29tZXRoaW5nDQpjb21wbGV0ZWx5IGRpZmZlcmVudCAocmVzZXQgaW5zdGVhZCBv
-ZiBpdHMgV0RUIGZ1bmN0aW9uYWxpdHkpDQoNCj4gPiBBLiAicmVuZXNhcyxyN3M3MjEwMC13ZHQi
-LCAicmVuZXNhcyxyei13ZHQiDQo+IA0KPiBQbGVhc2UgZG9uJ3QgdXNlIHBsYWluICJyeiIsIGFz
-IFJaL0EsIFJaL0csIGFuZCBSWi9UIGFyZSBjb21wbGV0ZWx5DQo+IGRpZmZlcmVudCBiZWFzdHMu
-DQoNCllhLCBJJ20gc3R1Y2sgb24gYSBuYW1lIGhlcmUuIEludGVybmFsbHksIHRoZXkgZG9uJ3Qg
-cmVhbGx5IGhhdmUgZGVmaW5lZCBJUCBibG9jaw0KbmFtZSBmb3IgdGhlICI4LWJpdCBXRFQgdGhh
-dCBjYW4gYWxzbyBiZSB1c2VkIGFzIGEgc2ltcGxlIHRpbWVyIi4gSSBrbm93IHRoaXMNCldEVCB3
-YXMgYWxzbyB1c2VkIGluIFNINEEgZGV2aWNlcyBsaWtlIFNINzc1NyBhbmQgU0g3NzU4Lg0KDQo+
-ID4gICBvciBqdXN0Og0KPiA+DQo+ID4gQi4gInJlbmVzYXMscjdzNzIxMDAtd2R0IiAgIChubyBm
-YWxsYmFjaywgY2hhbmdlIHRoZSBkcml2ZXIgdG8gYWRkIG5ldw0KPiBTb0NzKQ0KPiANCj4gRG8g
-eW91IGtub3cgaWYgZnV0dXJlIFJaL0EgU29DcyB3aWxsIHVzZSB0aGUgZXhhY3Qgc2FtZSB0eXBl
-IG9mIFdEVD8NCg0KWWVzLCBSWi9BMiB3aWxsIGZvciBzdXJlLiBJIGFzc3VtZSBpdCB3b3VsZCBh
-bHNvIGJlIHVzZWQgZm9yIGFueSBSWi9BMysgYmVjYXVzZQ0KaXQncyBlYXN5IHRvIGhvb2sgdXAg
-ZnJvbSBhIEhXIHBlcnNwZWN0aXZlIChpZiBJIHJlbWVtYmVyIGNvcnJlY3RseSkuIEFsdGhvdWdo
-LA0KSSB3YW50IHRoZW0gdG8gZXh0ZW5kIHRoZSBjb3VudGVyIGZyb20gOC1iaXQgdG8gMTYtYml0
-LiAxMjVtcyBpcyByaWRpY3Vsb3VzbHkNCnRvbyBzaG9ydCENCg0KPiBJZiB5ZXMsIHlvdSBjYW4g
-ZG9jdW1lbnQgYm90aCAicmVuZXNhcyxyN3M3MjEwMC13ZHQiIGFuZCAicmVuZXNhcyxyemEtd2R0
-IiwNCj4gYW5kIGxldCB0aGUgZHJpdmVyIG1hdGNoIGFnYWluc3QgdGhlIGxhdHRlci4NCg0KSSdt
-IGdvaW5nIHRvIGdvIHdpdGggdGhhdC4NCklmIHRoZSB0aW1lb3V0IGRvZXMgZXZlciBnZXQgZXh0
-ZW5kZWQgYW5kIGl0IGRvZXMgYmVjb21lIHVzZWZ1bCB0byBiZSB1c2VkDQphcyBhbiBhY3R1YWwg
-d2F0Y2hkb2csIEknbGwgY3JlYXRlIGEgbmV3IGRyaXZlciBvciBzb21ldGhpbmcuDQoNCg0KQXMg
-YWx3YXlzLCB0aGFuayB5b3UgZm9yIHlvdXIgcmVwbGllcyENCg0KDQpDaHJpcw0KDQo=
+Hi Chris,
+
+On Wed, Feb 15, 2017 at 6:33 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Tuesday, February 14, 2017, Geert Uytterhoeven wrote:
+>> > +Required properties:
+>> > +  - compatible: must be one or more of the following:
+>> > +    - "renesas,r7s72100-reset" for the r7s72100 SoC
+>> > +    - "renesas,wdt-reset"
+>> > +                This is a fallback for the above renesas,*-reset
+>> > +entries
+>>
+>> Please use "renesas,r7s72100-wdt". DT describes the hardware (watchdog),
+>> not the software policy (use it for reset only, as a max. timeout of 125
+>> ms is too short for a usable watchdog).
+>
+> I had a look at:
+>
+>   Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+>
+> Which has:
+>
+> Required properties:
+> - compatible : Should be "renesas,<soctype>-wdt", and
+>                "renesas,rcar-gen3-wdt" as fallback.
+>                Examples with soctypes are:
+>                  - "renesas,r8a7795-wdt" (R-Car H3)
+>                  - "renesas,r8a7796-wdt" (R-Car M3-W)
+>
+>
+> So in my 'renesas-reset.txt' should I do:
+
+As "reset" is software policy, perhaps you should instead extend the existing
+binding document Documentation/devicetree/bindings/watchdog/renesas-wdt.txt?
+
+Nothing says you have to use the same Linux driver for R-Car Gen3 and
+RZ/A1.
+
+> A. "renesas,r7s72100-wdt", "renesas,rz-wdt"
+
+Please don't use plain "rz", as RZ/A, RZ/G, and RZ/T are completely different
+beasts.
+
+>
+>   or just:
+>
+> B. "renesas,r7s72100-wdt"   (no fallback, change the driver to add new SoCs)
+
+Do you know if future RZ/A SoCs will use the exact same type of WDT?
+If yes, you can document both "renesas,r7s72100-wdt" and "renesas,rza-wdt",
+and let the driver match against the latter.
+Else I'd just document and match against "renesas,r7s72100-wdt".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
