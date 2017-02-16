@@ -1,124 +1,102 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=Wi0l=ZX=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 5/8] v4l: vsp1: Operate on partition struct data directly
-Date: Fri, 10 Feb 2017 20:27:33 +0000
-Message-Id: <1f4036763d2d29bf9b2a0d8f39942155e493b343.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35618 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933097AbdBPTFX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 16 Feb 2017 14:05:23 -0500
+From: Mark Brown <broonie@kernel.org>
+To: DongCV <cv-dong@jinso.co.jp>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        geert+renesas@glider.be, linux-spi@vger.kernel.org,
+        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        ryusuke.sakato.bx@renesas.com, linux-renesas-soc@vger.kernel.org,
+        nv-dung@jinso.co.jp, h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp,
+        linux-spi@vger.kernel.org
+In-Reply-To: <1486342933-5307-1-git-send-email-cv-dong@jinso.co.jp>
+Message-Id: <E1ceRMg-0007wK-V0@debutante>
+Date: Thu, 16 Feb 2017 19:05:14 +0000
+Subject: Applied "spi: rspi: Fixes bogus received byte in qspi_transfer_in()" to the spi tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When generating the partition windows, operate directly on the partition
-struct rather than copying and duplicating the processed data
+The patch
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+   spi: rspi: Fixes bogus received byte in qspi_transfer_in()
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 7264abc7000d601726aefb05189ea524ee3995ba Mon Sep 17 00:00:00 2001
+From: DongCV <cv-dong@jinso.co.jp>
+Date: Wed, 15 Feb 2017 19:50:51 +0900
+Subject: [PATCH] spi: rspi: Fixes bogus received byte in qspi_transfer_in()
+
+In qspi_transfer_in(), when receiving the last n (or len) bytes of data,
+one bogus byte was written in the receive buffer.
+This code leads to a buffer overflow.
+
+"jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+at 0x03b40000: 0x1900 instead
+jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+at 0x03b40004: 0x000c instead"
+
+The error message above happens when trying to mount, unmount,
+and remount a jffs2-formatted device.
+This patch removed the bogus write to fixes: 3be09bec42a800d4
+"spi: rspi: supports 32bytes buffer for DUAL and QUAD"
+
+And here is Geert's comment:
+
+"spi: rspi: Fix bogus received byte in qspi_transfer_in()
+When there are less than QSPI_BUFFER_SIZE remaining bytes to be received,
+qspi_transfer_in() writes one bogus byte in the receive buffer, possibly
+leading to a buffer overflow.
+This can be reproduced by mounting, unmounting, and remounting a
+jffs2-formatted device, causing lots of warnings like:
+
+"jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 not found
+at 0x03b40000: 0x1900 instead"
+
+Remove the bogus write to fix this. "
+
+Signed-off-by: DongCV <cv-dong@jinso.co.jp>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/vsp1/vsp1_video.c | 43 ++++++++++++-------------
- 1 file changed, 21 insertions(+), 22 deletions(-)
+ drivers/spi/spi-rspi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index a978508a4993..5f1886bfad26 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -189,17 +189,17 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
- /**
-  * vsp1_video_partition - Calculate the active partition output window
-  *
-+ * @partition: The active partition data
-  * @div_size: pre-determined maximum partition division size
-  * @index: partition index
-  *
-- * Returns a v4l2_rect describing the partition window.
-+ * Generates the output partitioning positions.
-  */
--static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
--					     unsigned int div_size,
--					     unsigned int index)
-+static void vsp1_video_partition(struct vsp1_pipeline *pipe,
-+				 struct vsp1_partition *partition,
-+				 unsigned int div_size, unsigned int index)
- {
- 	const struct v4l2_mbus_framefmt *format;
--	struct v4l2_rect partition;
- 	unsigned int modulus;
- 
- 	format = vsp1_entity_get_pad_format(&pipe->output->entity,
-@@ -208,18 +208,19 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
- 
- 	/* A single partition simply processes the output size in full. */
- 	if (pipe->partitions <= 1) {
--		partition.left = 0;
--		partition.top = 0;
--		partition.width = format->width;
--		partition.height = format->height;
--		return partition;
-+		partition->dest.left = 0;
-+		partition->dest.top = 0;
-+		partition->dest.width = format->width;
-+		partition->dest.height = format->height;
-+
-+		return;
- 	}
- 
- 	/* Initialise the partition with sane starting conditions. */
--	partition.left = index * div_size;
--	partition.top = 0;
--	partition.width = div_size;
--	partition.height = format->height;
-+	partition->dest.left = index * div_size;
-+	partition->dest.top = 0;
-+	partition->dest.width = div_size;
-+	partition->dest.height = format->height;
- 
- 	modulus = format->width % div_size;
- 
-@@ -242,18 +243,16 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
- 		if (modulus < div_size / 2) {
- 			if (index == partitions - 1) {
- 				/* Halve the penultimate partition. */
--				partition.width = div_size / 2;
-+				partition->dest.width = div_size / 2;
- 			} else if (index == partitions) {
- 				/* Increase the final partition. */
--				partition.width = (div_size / 2) + modulus;
--				partition.left -= div_size / 2;
-+				partition->dest.width = div_size / 2 + modulus;
-+				partition->dest.left -= div_size / 2;
- 			}
- 		} else if (index == partitions) {
--			partition.width = modulus;
-+			partition->dest.width = modulus;
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 9daf50031737..2ee130138066 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -848,7 +848,6 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 			ret = rspi_pio_transfer(rspi, NULL, rx, n);
+ 			if (ret < 0)
+ 				return ret;
+-			*rx++ = ret;
  		}
+ 		n -= len;
  	}
--
--	return partition;
- }
- 
- static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
-@@ -274,7 +273,7 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 		struct vsp1_partition *partition = &pipe->part_table[0];
- 
- 		pipe->partitions = 1;
--		partition->dest = vsp1_video_partition(pipe, div_size, 0);
-+		vsp1_video_partition(pipe, partition, div_size, 0);
- 
- 		return;
- 	}
-@@ -294,7 +293,7 @@ static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
- 	for (i = 0; i < pipe->partitions; i++) {
- 		struct vsp1_partition *partition = &pipe->part_table[i];
- 
--		partition->dest = vsp1_video_partition(pipe, div_size, i);
-+		vsp1_video_partition(pipe, partition, div_size, i);
- 	}
- }
- 
 -- 
-git-series 0.9.1
+2.11.0
