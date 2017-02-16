@@ -1,121 +1,247 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:49046 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752334AbdBPIoJ (ORCPT
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:34874 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751583AbdBPI2Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 03:44:09 -0500
-Date: Thu, 16 Feb 2017 09:44:07 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thu, 16 Feb 2017 03:28:25 -0500
+Received: by mail-qt0-f169.google.com with SMTP id x49so8226920qtc.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Feb 2017 00:28:25 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20170215180541.8614-1-wsa+renesas@sang-engineering.com>
+References: <20170215180541.8614-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 16 Feb 2017 09:28:24 +0100
+Message-ID: <CAPDyKFotpgrUHtTYQ9QQfzQ0pY6=MtU2JEDAjPX=wh50k=qGjA@mail.gmail.com>
+Subject: Re: [RFC] mmc: host: tmio: ensure end of DMA and SD access are in sync
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: Re: [RFC] mmc: host: tmio: ensure end of DMA and SD access are in
- sync
-Message-ID: <20170216084406.GB1443@katana>
-References: <20170215180541.8614-1-wsa+renesas@sang-engineering.com>
- <CAPDyKFotpgrUHtTYQ9QQfzQ0pY6=MtU2JEDAjPX=wh50k=qGjA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFotpgrUHtTYQ9QQfzQ0pY6=MtU2JEDAjPX=wh50k=qGjA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 15 February 2017 at 19:05, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> The current code assumes that DMA is finished before SD access end is
+> flagged. Thus, it schedules the 'dma_complete' tasklet in the SD card
+> interrupt routine when DATAEND is set. The assumption is not safe,
+> though. Even by mounting an SD card, it can be seen that sometimes DMA
+> complete is first, sometimes DATAEND. It seems they are usually close
+> enough timewise to not cause problems. However, a customer reported that
+> with CMD53 sometimes things really break apart. As a result, the BSP has
+> a patch which introduces flags for both events and makes sure both flags
+> are set before scheduling the tasklet. The customer accepted the patch,
+> yet it doesn't seem a proper upstream solution to me.
+>
+> This patch refactors the code to replace the tasklet with already
+> existing and more lightweight mechanisms. First of all, we set the
+> callback in a DMA descriptor to automatically get notified when DMA is
+> done. In the callback, we then use a completion to make sure the SD
+> access has already ended. Then, we proceed as before.
 
---yNb1oOkm5a9FJOVX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I have similar experience and a HW behaviour. Your reasoning seems
+correct to me.
 
-On Thu, Feb 16, 2017 at 09:28:24AM +0100, Ulf Hansson wrote:
-> On 15 February 2017 at 19:05, Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > The current code assumes that DMA is finished before SD access end is
-> > flagged. Thus, it schedules the 'dma_complete' tasklet in the SD card
-> > interrupt routine when DATAEND is set. The assumption is not safe,
-> > though. Even by mounting an SD card, it can be seen that sometimes DMA
-> > complete is first, sometimes DATAEND. It seems they are usually close
-> > enough timewise to not cause problems. However, a customer reported that
-> > with CMD53 sometimes things really break apart. As a result, the BSP has
-> > a patch which introduces flags for both events and makes sure both flags
-> > are set before scheduling the tasklet. The customer accepted the patch,
-> > yet it doesn't seem a proper upstream solution to me.
-> >
-> > This patch refactors the code to replace the tasklet with already
-> > existing and more lightweight mechanisms. First of all, we set the
-> > callback in a DMA descriptor to automatically get notified when DMA is
-> > done. In the callback, we then use a completion to make sure the SD
-> > access has already ended. Then, we proceed as before.
->=20
-> I have similar experience and a HW behaviour. Your reasoning seems
-> correct to me.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> I tried various synchronization approaches and liked this one best.
+>
+> There are a couple of reasons this patch is RFC:
+>
+> The #ifdef's need to go but are handy for now.
+>
+> More testing is needed. While it worked fine for me writing terrabytes to
+> different cards (still trying to break the wear-levelling), broader testing
+> with different workloads and use-cases is largely welcome. I specifically
+> couldn't test with CMD53 (SDIO) which originally caused the problem for the
+> customer because that seems not working with my Gen2 board. I tried to fix SDIO
+> on Gen2 as a side-task but didn't find anything obvious on a glimpse. SDIO
+> works with my Gen3 boards but for that we don't have DMA upstream yet.
+> Upstreaming Gen3 DMA will need some bigger DMA refactoring, so it might be
+> worth waiting until the refactoring is done. In a nutshell, there are
+> dependency issues currently.
+>
+> So, calling for early review here. And opinions how to proceed. I am not sure
+> we want this in renesas-drivers until the SDIO functionality has been verified?
+> Because it is the reason this patch exists in the first place :)
 
-Great. Thanks for the review!
+If there are no regressions, we could consider this as a nice
+clean-up, instead of waiting for the dependencies to be resolved.
 
-> > So, calling for early review here. And opinions how to proceed. I am no=
-t sure
-> > we want this in renesas-drivers until the SDIO functionality has been v=
-erified?
-> > Because it is the reason this patch exists in the first place :)
->=20
-> If there are no regressions, we could consider this as a nice
-> clean-up, instead of waiting for the dependencies to be resolved.
+Did you run some performance test?
 
-Fine with me. I feel much more comfortable with your experience backing
-up ours.
+>
+> The branch is here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-dma-sync
+>
+> The test description is here:
+>
+> http://elinux.org/Tests:SDHI-DMA-Sync
+>
+> Cheers and thanks,
+>
+>    Wolfram
+>
+>
+>  drivers/mmc/host/tmio_mmc.h     |  2 +-
+>  drivers/mmc/host/tmio_mmc_dma.c | 71 +++++++++++++++++++++++++++--------------
+>  drivers/mmc/host/tmio_mmc_pio.c |  4 +--
+>  3 files changed, 50 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+> index 2b349d48fb9a8a..891d400d2a7cf2 100644
+> --- a/drivers/mmc/host/tmio_mmc.h
+> +++ b/drivers/mmc/host/tmio_mmc.h
+> @@ -137,7 +137,7 @@ struct tmio_mmc_host {
+>         bool                    force_pio;
+>         struct dma_chan         *chan_rx;
+>         struct dma_chan         *chan_tx;
+> -       struct tasklet_struct   dma_complete;
+> +       struct completion       dma_dataend;
+>         struct tasklet_struct   dma_issue;
 
->=20
-> Did you run some performance test?
+The next step would be to convert the driver to a use threaded IRQ
+handler in favour of the dma_issue tasklet. That should also work,
+right!? :-)
 
-The throughput numbers of 'dd' are exactly the same. But maybe I could
-run one or two more tests with specifically testing that.
+>         struct scatterlist      bounce_sg;
+>         u8                      *bounce_buf;
+> diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/tmio_mmc_dma.c
+> index fa8a936a3d9ba1..d2b6aed644f361 100644
+> --- a/drivers/mmc/host/tmio_mmc_dma.c
+> +++ b/drivers/mmc/host/tmio_mmc_dma.c
+> @@ -43,6 +44,43 @@ void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
+>         tmio_mmc_enable_dma(host, true);
+>  }
+>
+> +static void tmio_mmc_dma_callback(void *arg)
+> +{
+> +       struct tmio_mmc_host *host = arg;
+> +
+> +#ifdef DEBUG
+> +       u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
+> +
+> +       dev_dbg(&host->pdev->dev, "DMA complete (0x%08x)\n", status);
+> +#endif
+> +
+> +       wait_for_completion(&host->dma_dataend);
+> +
+> +#ifdef DEBUG
+> +       status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
+> +
+> +       dev_dbg(&host->pdev->dev, "DATAEND complete (0x%08x)\n", status);
+> +#endif
+> +
+> +       spin_lock_irq(&host->lock);
+> +
+> +       if (!host->data)
+> +               goto out;
+> +
+> +       if (host->data->flags & MMC_DATA_READ)
+> +               dma_unmap_sg(host->chan_rx->device->dev,
+> +                            host->sg_ptr, host->sg_len,
+> +                            DMA_FROM_DEVICE);
+> +       else
+> +               dma_unmap_sg(host->chan_tx->device->dev,
+> +                            host->sg_ptr, host->sg_len,
+> +                            DMA_TO_DEVICE);
+> +
+> +       tmio_mmc_do_data_irq(host);
+> +out:
+> +       spin_unlock_irq(&host->lock);
+> +}
+> +
+>  static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
+>  {
+>         struct scatterlist *sg = host->sg_ptr, *sg_tmp;
+> @@ -88,6 +126,10 @@ static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
+>                         DMA_DEV_TO_MEM, DMA_CTRL_ACK);
+>
+>         if (desc) {
+> +               reinit_completion(&host->dma_dataend);
+> +               desc->callback = tmio_mmc_dma_callback;
+> +               desc->callback_param = host;
+> +
+>                 cookie = dmaengine_submit(desc);
+>                 if (cookie < 0) {
+>                         desc = NULL;
+> @@ -162,6 +204,10 @@ static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
+>                         DMA_MEM_TO_DEV, DMA_CTRL_ACK);
+>
+>         if (desc) {
+> +               reinit_completion(&host->dma_dataend);
+> +               desc->callback = tmio_mmc_dma_callback;
+> +               desc->callback_param = host;
+> +
+>                 cookie = dmaengine_submit(desc);
+>                 if (cookie < 0) {
+>                         desc = NULL;
+> @@ -221,29 +267,6 @@ static void tmio_mmc_issue_tasklet_fn(unsigned long priv)
+>                 dma_async_issue_pending(chan);
+>  }
+>
+> -static void tmio_mmc_tasklet_fn(unsigned long arg)
+> -{
+> -       struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
+> -
+> -       spin_lock_irq(&host->lock);
+> -
+> -       if (!host->data)
+> -               goto out;
+> -
+> -       if (host->data->flags & MMC_DATA_READ)
+> -               dma_unmap_sg(host->chan_rx->device->dev,
+> -                            host->sg_ptr, host->sg_len,
+> -                            DMA_FROM_DEVICE);
+> -       else
+> -               dma_unmap_sg(host->chan_tx->device->dev,
+> -                            host->sg_ptr, host->sg_len,
+> -                            DMA_TO_DEVICE);
+> -
+> -       tmio_mmc_do_data_irq(host);
+> -out:
+> -       spin_unlock_irq(&host->lock);
+> -}
+> -
+>  void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdata)
+>  {
+>         /* We can only either use DMA for both Tx and Rx or not use it at all */
+> @@ -306,7 +329,7 @@ void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdat
+>                 if (!host->bounce_buf)
+>                         goto ebouncebuf;
+>
+> -               tasklet_init(&host->dma_complete, tmio_mmc_tasklet_fn, (unsigned long)host);
+> +               init_completion(&host->dma_dataend);
+>                 tasklet_init(&host->dma_issue, tmio_mmc_issue_tasklet_fn, (unsigned long)host);
+>         }
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+> index 6b789a739d4dfe..c41f2252945eb7 100644
+> --- a/drivers/mmc/host/tmio_mmc_pio.c
+> +++ b/drivers/mmc/host/tmio_mmc_pio.c
+> @@ -596,11 +596,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
+>
+>                 if (done) {
+>                         tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+> -                       tasklet_schedule(&host->dma_complete);
+> +                       complete(&host->dma_dataend);
+>                 }
+>         } else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
+>                 tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+> -               tasklet_schedule(&host->dma_complete);
+> +               complete(&host->dma_dataend);
+>         } else {
+>                 tmio_mmc_do_data_irq(host);
+>                 tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
+> --
+> 2.11.0
+>
+> --
 
-> > index 2b349d48fb9a8a..891d400d2a7cf2 100644
-> > --- a/drivers/mmc/host/tmio_mmc.h
-> > +++ b/drivers/mmc/host/tmio_mmc.h
-> > @@ -137,7 +137,7 @@ struct tmio_mmc_host {
-> >         bool                    force_pio;
-> >         struct dma_chan         *chan_rx;
-> >         struct dma_chan         *chan_tx;
-> > -       struct tasklet_struct   dma_complete;
-> > +       struct completion       dma_dataend;
-> >         struct tasklet_struct   dma_issue;
->=20
-> The next step would be to convert the driver to a use threaded IRQ
-> handler in favour of the dma_issue tasklet. That should also work,
-> right!? :-)
-
-I'll check. I also identified this tasklet as the next target but I
-haven't actually looked into it yet.
-
-Thanks for looking into it right away,
-
-   Wolfram
-
-
---yNb1oOkm5a9FJOVX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYpWZWAAoJEBQN5MwUoCm23XQQAKgdFalP3KL3OvJcEEkBdx/0
-mzcL4o/miDPlceC6yGXhrL8J8EkhY22NFdxZy37UbA/0OkoTg6hjLlwGwhX0MGQa
-CfMRLclSuSHP/4Z9duKXiAZxGOoo94Krj19YEDdpBaBg8ire3BXrI0cZUMgGGSr8
-gST9ZOdNHvgzPOl5wL2OSSMIDmG6DBQyTXzUAwzyvo56JM1q+/r3kakX6We5it4c
-bG9MWJzgm1C7vruk++r9Do/GKpIG7V4cBVQ1ZddctVxDnQtbuqMJFHh3Bw+b1Q8X
-ItUof0EIEn+Cc+Fpy98K+bV8sj0PDmVP0A61jf1/jIGb9o56lKyQuwVeHNw6mZ4g
-+AaIK3zxZi0u111xb0+eVdj9eV6kMMNI7IJ6wd/HHhNlehJFs5qWD4o09Tv2jurn
-/ROdQPI/utFijOxb+/9jnqr0M9qHoQVZ4wyMFkDvnShXe2rhq4j95YfHuVvU18xG
-5fyejkzeeNJENP54/J4b70S9puqx87XYmXWyDnuyZ3iFSVcPBO+VoQo41kOOq8Zp
-afuc7+IeXBges0fGEYMA2fobxbRzRSoEBsaDAY8vKXT5fTh4/Lay1nUUyq6DI4/c
-rjlkVjpLhKWOwbgEwTDkeaaK6lSolDJ0PzgPfpALsb5sl9HBLhKXRKyunQWGyt2Z
-M6kENOwez4Z9HSVyFk5Q
-=NZs1
------END PGP SIGNATURE-----
-
---yNb1oOkm5a9FJOVX--
+Kind regards
+Uffe
