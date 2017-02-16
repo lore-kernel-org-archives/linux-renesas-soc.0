@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:24186 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:7485 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932359AbdBPQTB (ORCPT
+        by vger.kernel.org with ESMTP id S932123AbdBPPiB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 11:19:01 -0500
+        Thu, 16 Feb 2017 10:38:01 -0500
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -18,9 +18,9 @@ To: Simon Horman <horms+renesas@verge.net.au>,
 Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 0/3] ARM: l2c: add l2c support for RZ/A1
-Date: Thu, 16 Feb 2017 11:17:39 -0500
-Message-Id: <20170216161742.29320-1-chris.brandt@renesas.com>
+Subject: [PATCH v3 0/3] ARM: l2c: add l2c support for RZ/A1
+Date: Thu, 16 Feb 2017 10:37:23 -0500
+Message-Id: <20170216153726.22919-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -36,10 +36,6 @@ yet the L2C never gets the commands.
 
 This series adds the option to not enable anything in the PL310 that
 uses sidebands, and then adds L2C support to the RZ/A1 DT.
-
-v4:
-* changed l2x0_bresp_dis to l2x0_bresp_disable
-* changed l2x0_flz_dis to l2x0_flz_disable
 
 v3:
 * split "arm,pl310-no-sideband" into "arm,early-bresp-disable" and
