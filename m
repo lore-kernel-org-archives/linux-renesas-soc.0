@@ -1,49 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40382 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753832AbdBGLGl (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34564 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934589AbdBQRAm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 06:06:41 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC 3/4] mmc: host: tmio: don't BUG on unsupported stop commands
-Date: Tue,  7 Feb 2017 12:06:28 +0100
-Message-Id: <20170207110629.2441-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
-References: <20170207110629.2441-1-wsa+renesas@sang-engineering.com>
+        Fri, 17 Feb 2017 12:00:42 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] arm64: dts: renesas: Upgrade to PSCI v1.0 to support Suspend-to-RAM
+Date: Fri, 17 Feb 2017 18:00:30 +0100
+Message-Id: <1487350832-29820-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Halting the kernel on an unsupported stop command seems overkill, report
-the error and say what we already did (due to autocmd12) instead.
+	Hi Simon, Magnus,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc_pio.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+This patch series upgrades the version of the PSCI firmware, as
+advertised in DT on Renesas R-Car Gen3 systems, from v0.2 to v1.0.
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index ad2840e1bfae51..b47dd9195fe3fe 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -553,10 +553,11 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	}
- 
- 	if (stop) {
--		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
--		else
--			BUG();
-+		if (stop->opcode != MMC_STOP_TRANSMISSION || stop->arg)
-+			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
-+				stop->opcode, stop->arg);
-+
-+		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 	}
- 
- 	schedule_work(&host->done);
+Note that this series does not have any runtime effects: as of PSCI
+v0.2, PSCI provides a VERSION API.  Hence Linux always detected the
+actual version, regardless of what was stated in DT, and enabled v1.0
+features like system suspend:
+
+    PSCIv1.0 detected in firmware.
+
+However, it is better to have the real hardware^H^H^H^H^H^H^H^Hfirmware
+description in DT.
+
+Tested on Salvator-X (both H3 and M3-W) with firmware v2.16.0, but I do
+have old boot logs showing that PSCIv1.0 has been detected for a long
+time.
+
+Thanks for applying!
+
+Khiem Nguyen (2):
+  arm64: dts: r8a7795: Upgrade to PSCI v1.0 to support Suspend-to-RAM
+  arm64: dts: r8a7796: Upgrade to PSCI v1.0 to support Suspend-to-RAM
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
 -- 
-2.11.0
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
