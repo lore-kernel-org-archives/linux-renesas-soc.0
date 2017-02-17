@@ -1,114 +1,78 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCHv2 1/5] scripts: Test suite runner
-Date: Mon, 13 Feb 2017 15:15:21 +0200
-Message-ID: <2726053.1024cW3CuZ@avalon>
-In-Reply-To: <1480627909-19207-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1480627909-19207-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1480627909-19207-2-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:42967 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934211AbdBQSZl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Feb 2017 13:25:41 -0500
+Date: Fri, 17 Feb 2017 19:25:33 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/topic/sdhi-dma-sync-v2 for renesas drivers
+Message-ID: <20170217182516.n45yom44bosgb57j@ninjato>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="truxekrak72yzuul"
+Content-Disposition: inline
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
 
-Thank you for the patch.
+--truxekrak72yzuul
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thursday 01 Dec 2016 21:31:45 Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> Provide a utility script to execute all vsp unit tests, as well
-> as the option to execute multiple iterations of the suite.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> ---
-> v2
-> - remove spurious uses of ';'
-> - fix output logging
-> 
->  scripts/vsp-tests.sh | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 49 insertions(+)
->  create mode 100755 scripts/vsp-tests.sh
-> 
-> diff --git a/scripts/vsp-tests.sh b/scripts/vsp-tests.sh
-> new file mode 100755
-> index 000000000000..8b21176ccc09
-> --- /dev/null
-> +++ b/scripts/vsp-tests.sh
-> @@ -0,0 +1,49 @@
-> +#!/bin/sh
-> +
-> +##
-> +## VSP Tests runner
-> +##
-> +## Automatically execute all vsp-unit tests
-> +## Move test failure results to a specific folder for
-> +## the running kernel version
-> +##
-> +## An argument can be provided to specify the number of
-> +## iterations to perform
-> +##
-> +## usage:
-> +##  ./vsp-tests.sh <n>
-> +##
-> +##   n: Number of iterations to execute test suite
-> +##
-> +
-> +KERNEL_VERSION=`uname -r`
-> +
-> +run_test() {
-> +	echo $1
+Hi Geert,
 
-I would print "- $1" to make the output easier to read.
+since Ulf thinks this patch is a good idea, please pull this updated
+branch (debug removed) into renesas/drivers. The branch is based on
+mmc/next as of today.
 
-> +	./$1
-> +
-> +	if [ $(ls *.bin 2>/dev/null | wc -l) != 0 ]
-> +	then
-> +		RESULTS_DIR=$KERNEL_VERSION/test-$1/$2/
+Kind regards,
 
-Let's make local variables local.
+   Wolfram
 
-> +
-> +		echo "Moving *.bin to $RESULTS_DIR"
 
-I would remove this message, it doesn't add much value.
+The following changes since commit 8c7cdbf9272c300dc093da3c62fa3b4bc6dc960e:
 
-> +		mkdir -p $RESULTS_DIR
-> +		mv *.bin $RESULTS_DIR
-> +		for f in $RESULTS_DIR/*.bin
-> +		do
-> +			./bin2png.sh "$f"
-> +		done
+  mmc: core: add mmc prefix for blk_fixups (2017-02-15 11:34:27 +0100)
 
-Converting binary files to png on the target would slow down the tests. How 
-about performing the conversion on the host instead ?
+are available in the git repository at:
 
-> +	fi
-> +}
-> +
-> +run_suite() {
-> +	echo "Test loop $1"
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-dma-sync-v2
 
-How about "--- Test loop $1 ---" here for the same reason as above ?
+for you to fetch changes up to f4af9bf51003a285e58a272e27e551658bab1b28:
 
-No need to resubmit, I'll fix while applying.
+  mmc: host: tmio: ensure end of DMA and SD access are in sync (2017-02-17 18:43:28 +0100)
 
-> +
-> +	for test in vsp-unit-test*.sh; do
-> +		run_test $test $1;
-> +	done;
-> +}
-> +
-> +for loop in `seq 1 1 $1`; do
-> +	run_suite $loop
-> +done;
+----------------------------------------------------------------
+Wolfram Sang (1):
+      mmc: host: tmio: ensure end of DMA and SD access are in sync
 
--- 
-Regards,
+ drivers/mmc/host/tmio_mmc.h     |  2 +-
+ drivers/mmc/host/tmio_mmc_dma.c | 58 ++++++++++++++++++++++++-----------------
+ drivers/mmc/host/tmio_mmc_pio.c |  4 +--
+ 3 files changed, 37 insertions(+), 27 deletions(-)
 
-Laurent Pinchart
+--truxekrak72yzuul
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlinP/oACgkQFA3kzBSg
+KbYOTw/+IzAfRQioEJWMRMzHt+y/yz5p2hPzYAoqp2xRn4Cl7PZK+tHErvyw6bAz
+gWD6vagDubxeEnCUV8rP7PtnGhHPW3uLAuRSvIUsIxCTc6LI8xxnV1/cnj/rDfUR
+Cy/yCOqhJhes5pAfV/WIuvkAZCzUcwwM3h+B1jUlpdE2qtWg8idJJ7vUsnNcEBvf
+jRfpc+wTmpNBtF78dGO1RUuFxq+n9mtY7JrtYBvKJ41vMQ4y7O2R9HhLyPlUO8Sc
+gIisA1FlBvFiCArvoqwUhexn+JTRGH+ErsOLsJQhCDO9Ldz8YBJxoW+Y2YfnzrdM
+w3XWMIj+0BoJaddOSP3tZhQA1BhvpHcIQUOR7Pw/HKKCKT2ZHv2Jg7LK+inPlxg/
+4w35zxyUAdGoxvYq0TMv0EVtbirAFb/Iq2BbmQdWVweu/gKlUYOqmObBEzs2k7mG
+FJUFbYwteqkPzzJXCNP016f/2Vwy9caCz7O8uKP34RHvxwld0F/Uo/f8ybe3q4X9
+7V0+Jm+B9WshK+KMwYla6qCGrHmIcUV+f0yQWRyh3vqSHdQJS9Z4Q2Ro4JGM4uRc
+wXsDr+d8bVxpC8r4UulyXvZBONrzSBti1aI6uAY+y1qzTG3y45boAicExvuiEpp2
+ZEr3mWBg0Kd8j2EX6/S8sTNoyZ6xqtaFHwYHC05+q9Am9ZNibms=
+=qUqP
+-----END PGP SIGNATURE-----
+
+--truxekrak72yzuul--
