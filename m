@@ -1,75 +1,171 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:52258 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932193AbdBPPiH (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:53510 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932674AbdBQMJk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 10:38:07 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
+        Fri, 17 Feb 2017 07:09:40 -0500
+Subject: Re: [PATCH v4] arm64: Add support for DMA_ATTR_FORCE_CONTIGUOUS to
+ IOMMU
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <1486481916-1892-1-git-send-email-geert+renesas@glider.be>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Brad Mouring <brad.mouring@ni.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <rcochran@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 3/3] ARM: dts: r7s72100: add l2 cache
-Date: Thu, 16 Feb 2017 10:37:26 -0500
-Message-Id: <20170216153726.22919-4-chris.brandt@renesas.com>
-In-Reply-To: <20170216153726.22919-1-chris.brandt@renesas.com>
-References: <20170216153726.22919-1-chris.brandt@renesas.com>
+        linux-renesas-soc@vger.kernel.org, iommu@lists.linux-foundation.org
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <d5bc031c-e6c1-d0a1-b77a-2ef2b6e22bf5@arm.com>
+Date: Fri, 17 Feb 2017 12:09:35 +0000
+MIME-Version: 1.0
+In-Reply-To: <1486481916-1892-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Note that early-bresp-disable and full-line-zero-disable are required
-because the sideband signals between the CPU and L2C were not connected
-in this SoC.
+On 07/02/17 15:38, Geert Uytterhoeven wrote:
+> Add support for allocating physically contiguous DMA buffers on arm64
+> systems with an IOMMU.  This can be useful when two or more devices
+> with different memory requirements are involved in buffer sharing.
+> 
+> Note that as this uses the CMA allocator, setting the
+> DMA_ATTR_FORCE_CONTIGUOUS attribute has a runtime-dependency on
+> CONFIG_DMA_CMA, just like on arm32.
+> 
+> For arm64 systems using swiotlb, no changes are needed to support the
+> allocation of physically contiguous DMA buffers:
+>   - swiotlb always uses physically contiguous buffers (up to
+>     IO_TLB_SEGSIZE = 128 pages),
+>   - arm64's __dma_alloc_coherent() already calls
+>     dma_alloc_from_contiguous() when CMA is available.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-* split "arm,pl310-no-sideband" into "arm,early-bresp-disable" and
-  "arm,full-line-zero-disable"
-v2:
-* added "arm,pl310-no-sideband"
----
- arch/arm/boot/dts/r7s72100.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+I think this looks about as good as it ever could now :)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 614ba79..ed62e19 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -180,6 +180,7 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
- 			clock-frequency = <400000000>;
-+			next-level-cache = <&L2>;
- 		};
- 	};
- 
-@@ -371,6 +372,16 @@
- 			<0xe8202000 0x1000>;
- 	};
- 
-+	L2: cache-controller@3ffff000 {
-+		compatible = "arm,pl310-cache";
-+		reg = <0x3ffff000 0x1000>;
-+		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+		arm,early-bresp-disable;
-+		arm,full-line-zero-disable;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
- 	i2c0: i2c@fcfee000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.10.1
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+Thanks,
+Robin.
+
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> v4:
+>   - Replace dma_to_phys()/phys_to_page() by vmalloc_to_page(), to pass
+>     the correct page pointer to dma_release_from_contiguous().
+>     Note that the latter doesn't scream when passed a wrong pointer, but
+>     just returns false.  While this makes life easier for callers who
+>     may want to call another deallocator, it makes it harder catching
+>     bugs.
+> 
+> v3:
+>   - Add Acked-by,
+>   - Update comment to "one of _4_ things",
+>   - Call dma_alloc_from_contiguous() and iommu_dma_map_page() directly,
+>     as suggested by Robin Murphy,
+> 
+> v2:
+>   - New, handle dispatching in the arch (arm64) code, as requested by
+>     Robin Murphy.
+> ---
+>  arch/arm64/mm/dma-mapping.c | 63 ++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 48 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+> index 351f7595cb3ebdb9..fb76e82c90edd514 100644
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+> @@ -584,20 +584,7 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
+>  	 */
+>  	gfp |= __GFP_ZERO;
+>  
+> -	if (gfpflags_allow_blocking(gfp)) {
+> -		struct page **pages;
+> -		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
+> -
+> -		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
+> -					handle, flush_page);
+> -		if (!pages)
+> -			return NULL;
+> -
+> -		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
+> -					      __builtin_return_address(0));
+> -		if (!addr)
+> -			iommu_dma_free(dev, pages, iosize, handle);
+> -	} else {
+> +	if (!gfpflags_allow_blocking(gfp)) {
+>  		struct page *page;
+>  		/*
+>  		 * In atomic context we can't remap anything, so we'll only
+> @@ -621,6 +608,45 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
+>  				__free_from_pool(addr, size);
+>  			addr = NULL;
+>  		}
+> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
+> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
+> +		struct page *page;
+> +
+> +		page = dma_alloc_from_contiguous(dev, size >> PAGE_SHIFT,
+> +						 get_order(size));
+> +		if (!page)
+> +			return NULL;
+> +
+> +		*handle = iommu_dma_map_page(dev, page, 0, iosize, ioprot);
+> +		if (iommu_dma_mapping_error(dev, *handle)) {
+> +			dma_release_from_contiguous(dev, page,
+> +						    size >> PAGE_SHIFT);
+> +			return NULL;
+> +		}
+> +		if (!coherent)
+> +			__dma_flush_area(page_to_virt(page), iosize);
+> +
+> +		addr = dma_common_contiguous_remap(page, size, VM_USERMAP,
+> +						   prot,
+> +						   __builtin_return_address(0));
+> +		if (!addr) {
+> +			iommu_dma_unmap_page(dev, *handle, iosize, 0, attrs);
+> +			dma_release_from_contiguous(dev, page,
+> +						    size >> PAGE_SHIFT);
+> +		}
+> +	} else {
+> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
+> +		struct page **pages;
+> +
+> +		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
+> +					handle, flush_page);
+> +		if (!pages)
+> +			return NULL;
+> +
+> +		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
+> +					      __builtin_return_address(0));
+> +		if (!addr)
+> +			iommu_dma_free(dev, pages, iosize, handle);
+>  	}
+>  	return addr;
+>  }
+> @@ -632,7 +658,8 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+>  
+>  	size = PAGE_ALIGN(size);
+>  	/*
+> -	 * @cpu_addr will be one of 3 things depending on how it was allocated:
+> +	 * @cpu_addr will be one of 4 things depending on how it was allocated:
+> +	 * - A remapped array of pages for contiguous allocations.
+>  	 * - A remapped array of pages from iommu_dma_alloc(), for all
+>  	 *   non-atomic allocations.
+>  	 * - A non-cacheable alias from the atomic pool, for atomic
+> @@ -644,6 +671,12 @@ static void __iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+>  	if (__in_atomic_pool(cpu_addr, size)) {
+>  		iommu_dma_unmap_page(dev, handle, iosize, 0, 0);
+>  		__free_from_pool(cpu_addr, size);
+> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
+> +		struct page *page = vmalloc_to_page(cpu_addr);
+> +
+> +		iommu_dma_unmap_page(dev, handle, iosize, 0, attrs);
+> +		dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT);
+> +		dma_common_free_remap(cpu_addr, size, VM_USERMAP);
+>  	} else if (is_vmalloc_addr(cpu_addr)){
+>  		struct vm_struct *area = find_vm_area(cpu_addr);
+>  
+> 
