@@ -1,25 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:39773 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933336AbdBQNtl (ORCPT
+Received: from bh-25.webhostbox.net ([208.91.199.152]:53511 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932742AbdBQKGH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 08:49:41 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Wim Van Sebroeck <wim@iguana.be>,
-        Sebastian Reichel <sre@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Simon Horman" <horms@verge.net.au>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
-Subject: RE: [PATCH v2 1/3] power: reset: Add Renesas reset driver
-Date: Fri, 17 Feb 2017 13:49:34 +0000
-Message-ID: <SG2PR06MB11659AB2F7D659FF1AB8FEDB8A5D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+        Fri, 17 Feb 2017 05:06:07 -0500
+Subject: Re: [PATCH v2 1/3] power: reset: Add Renesas reset driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 References: <20170216172320.10897-1-chris.brandt@renesas.com>
  <20170216172320.10897-2-chris.brandt@renesas.com>
  <20170216182644.GA17814@roeck-us.net>
@@ -28,54 +14,128 @@ References: <20170216172320.10897-1-chris.brandt@renesas.com>
  <PS1PR06MB11622077DE4673C1879C05278A5D0@PS1PR06MB1162.apcprd06.prod.outlook.com>
  <55cf087f-aa70-3660-1186-af9b9b20376d@roeck-us.net>
  <CAMuHMdUChhntL0Mw2CY7au87WHj11nBi+0Q2mWSi+RcYpHXgAQ@mail.gmail.com>
- <fb92af5b-6ed8-ef52-d1d1-4615b5026738@roeck-us.net>
-In-Reply-To: <fb92af5b-6ed8-ef52-d1d1-4615b5026738@roeck-us.net>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <fb92af5b-6ed8-ef52-d1d1-4615b5026738@roeck-us.net>
+Date: Fri, 17 Feb 2017 02:06:03 -0800
 MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUChhntL0Mw2CY7au87WHj11nBi+0Q2mWSi+RcYpHXgAQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR8O8bnRlciBhbmQgR2VlcnQsDQoNCkNhdGNoaW5nIHVwIG9uIHRoZSBzdWJqZWN0IChiZWNh
-dXNlIEkgd2FzIHNsZWVwaW5nIGhlcmUgaW4gdGhlIFVTLi4uKQ0KDQoNCk9uIEZyaWRheSwgRmVi
-cnVhcnkgMTcsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPiBGV0lXLCB0aGUg
-d2F0Y2hkb2cgc3Vic3lzdGVtIHNob3VsZCBzdXBwb3J0IHRoYXQgZWFzaWx5LCBldmVuIHdpdGgg
-MTI1DQo+ID4gbXMgaGFyZHdhcmUgdGltZW91dC4gV2UgYWRkZWQgdGhhdCBjYXBhYmlsaXR5IGZv
-ciB0aGF0IHZlcnkgcHVycG9zZS4NCj4gPiBUaGF0IHdvdWxkIG9ubHkgZmFpbCBpZiB0aGUgc3lz
-dGVtIGlzIHN0dWNrIHdpdGggaW50ZXJydXB0cyBkaXNhYmxlZA0KPiA+IGZvciBtb3JlIHRoYW4g
-MTI1IG1zLCB3aGljaCBzZWVtcyB1bmxpa2VseS4gSSB0aGluayB0aGUgZ3BpbyB3YXRjaGRvZw0K
-PiA+IG9uIHNvbWUgc3lzdGVtcyBoYXMgYSBzaW1pbGFyIGxvdyBoYXJkd2FyZSB0aW1lb3V0Lg0K
-PiANCj4gSSBhbHNvIHRob3VnaHQgMTI1bXMgd2FzIGEgYml0IHNob3J0LCBidXQgSSdtIGhhcHB5
-IHRvIGJlIHByb3ZlbiB3cm9uZyENCj4gTGV0J3MgbWFrZSBhIHJlYWwgd2F0Y2hkb2cgZHJpdmVy
-IGluc3RlYWQgOy0pDQoNCk9LLCBJJ2xsIHNlZSBhYm91dCBzd2l0Y2hpbmcgb3ZlciB0byBhIHJl
-YWwgd2F0Y2hkb2cgZHJpdmVyLiBBcyBsb25nIGFzIEkNCmNhbiBnZXQgbXkgcmVzZXQgaGFuZGxl
-ciwgSSdsbCBiZSBoYXBweS4NCg0KQmVzaWRlcywgaWYgSSBnZXQgdGhlIDgtYml0IGNvdW50ZXIg
-cmVnaXN0ZXIgY2hhbmdlZCB0byAxNi1iaXQgKGEgdXNlZnVsDQpXRFQpLCB0aGVuIEkgYWxyZWFk
-eSBoYXZlIGEgV0RUIG1hZGUuDQoNClRoZSBnb29kIHRoaW5nIGlzIHRoYXQgdGhlIERUIGJpbmRp
-bmcgd2lsbCBzdGF5IGV4YWN0bHkgdGhlIHNhbWUsIEkganVzdA0KbmVlZCBhIG5ldyBkcml2ZXIu
-DQoNCkZXSVcsIGlmIEkgd2FzIG1ha2luZyBhIHJlYWwgcHJvZHVjdCBJIHdvdWxkIGFsd2F5cyBo
-YXZlIGEgV0RUIHJ1bm5pbmcgKGJ1dA0Kd2l0aCBhIDEtMyBzZWNvbmQgdGltZW91dCBqdXN0IHRv
-IG1ha2Ugc3VyZSBJIHdhcyBjb21wbGV0ZWx5IGRlYWQpLg0KDQojIHNpZGUgbm90ZSwgSSB0ZWxs
-IHBlb3BsZSB0byBzZXQgdXAgYSBETUEgd2l0aCBhIHRpbWVyIHRyaWdnZXIgYW5kDQphdXRvbWF0
-aWNhbGx5IGZlZWQgdGhlIFdEVCB0aGF0IHdheSwgdGhlbiB0aGV5IGNhbiBzZXQgdGhlIERNQSBj
-b3VudCB0bw0Kd2hhdGV2ZXIgZmFpbHNhZmUgdGltZW91dCB0aGV5IHdhbnQuIE5vdCBzdXJlIGlm
-IEkgY291bGQgc3VibWl0IHRoYXQga2luZA0Kb2YgaGFja2VyeSBpbiBhbiB1cHN0cmVhbSBkcml2
-ZXIuDQoNCg0KPiA+Pj4gSSBrbm93IEdlZXJ0J3Mgc3VnZ2VzdGlvbiB3YXMgaW4gcmVmZXJlbmNl
-IHRvIHNhdmluZyBwb3dlci4uLmJ1dCBpbg0KPiA+Pj4gcmVhbGl0eSBpdCdzIHByb2JhYmx5IG5l
-Z2xpZ2libGUgd2hlbiB3ZSBhcmUgdGFsa2luZyBhYm91dCA3Ljd1cy4NCj4gPj4+IFRoZSByZWJv
-b3QgaXMgZ29pbmcgdG8gYXV0b21hdGljYWxseSBzaHV0IG9mZiBhbGwgdGhlIHBlcmlwaGVyYWxz
-DQo+ID4+PiBjbG9ja3MgYXMgd2VsbC4NCj4gPj4NCj4gPj4gTWF5YmUgdWRlbGF5KDEwKTsgd291
-bGQgaGF2ZSBiZWVuIG1vcmUgYWNjZXB0YWJsZSAoYW5kIGFwcHJvcHJpYXRlKS4NCj4gPg0KPiA+
-IEluc2lkZSB0aGUgd2hpbGUgKDEpIGxvb3A/IFRoYXQncyB0aGUgc2FtZSBhcyBhIHBsYWluICJ3
-aGlsZSAoMSkgOyINCj4gPiA7LSkgT3IganVzdCB1ZGVsYXkoMTApIGFuZCByZXR1cm4sIHdpdGgg
-dGhlIGxhdHRlciBuZXZlciBoYXBwZW5pbmcgaWYNCj4gPiBldmVyeXRoaW5nIGdvZXMgd2VsbD8g
-VGhlbiB0aGUgbmV4dCByZXN0YXJ0IGhhbmRsZXIgd2lsbCBiZSB0cmllZCwgaWYNCj4gYXZhaWxh
-YmxlLg0KPiA+DQo+IA0KPiBUaGF0IGlzIHdoYXQgSSBtZWFudC4gT3IgdXNlIHVkZWxheSgyMCkg
-dG8gYmUgb24gdGhlIHNhZmUgc2lkZS4NCg0KT0suIFNvdW5kcyBsaWtlIHdlIGFncmVlIG9uOg0K
-DQoJLyogU3RhcnQgdGltZXIgKi8NCgl3cml0ZXcoV1RDU1JfTUFHSUMgfCBXVFNDUl9XVCB8IFdU
-U0NSX1RNRSwgYmFzZSArIFdUQ1NSKTsNCg0KCS8qIFdhaXQgZm9yIFdEVCBvdmVyZmxvdyAocmVz
-ZXQpICovDQoJVWRlbGF5KDIwKTsNCg0KCXJldHVybiBOT1RJRllfRE9ORTsNCn0NCg0KDQpGWUks
-IEknbGwgYmUgYXQgRUxDIG5leHQgd2Vlaywgc28gSSBtaWdodCBub3QgZ2V0IHRvIHRoaXMgdW50
-aWwgYWZ0ZXIgdGhlbi4NCg0KVGhhbmtzIGZvciB0aGUgZGlzY3Vzc2lvbi4NCg0KQ2hlZXJzDQoN
-CkNocmlzDQo=
+On 02/17/2017 12:09 AM, Geert Uytterhoeven wrote:
+> Hi Günter,
+>
+> On Fri, Feb 17, 2017 at 5:45 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 02/16/2017 06:00 PM, Chris Brandt wrote:
+>>> On Thursday, February 16, 2017, Guenter Roeck wrote:
+>>> If this WDT had a timeout longer than 125ms, I would make a real watchdog
+>>> driver
+>>> out of it. But at the moment, it just serves as the only way to reset the
+>>> chip.
+>>> Historically, this was the only way to reset a SH4 device...and we just
+>>> lived
+>>> with that fact. When Renesas moved from SH4 to ARM, a lot of the design
+>>> teams
+>>> just kept the same philosophy (and copied the HW blocks they knew already
+>>> worked)
+>>
+>> FWIW, the watchdog subsystem should support that easily, even with 125 ms
+>> hardware
+>> timeout. We added that capability for that very purpose. That would only
+>> fail if
+>> the system is stuck with interrupts disabled for more than 125 ms, which
+>> seems
+>> unlikely. I think the gpio watchdog on some systems has a similar low
+>> hardware
+>> timeout.
+>
+> I also thought 125ms was a bit short, but I'm happy to be proven wrong!
+> Let's make a real watchdog driver instead ;-)
+>
+>>>>>>> v2: * changed DT bindings from 'wdt-reset' to 'rza-wdt' * changed
+>>>>>>> hard coded register values to defines * added msleep to while(1)
+>>>>>>> loop
+>>>>>>
+>>>>>> Sure you can sleep here ?
+>>>>>
+>>>>> As per Geert's review:
+>>>>>
+>>>>> On Wednesday, February 15, 2017, Geert Uytterhoeven wrote:
+>>>>>>>
+>>>>>>> + +       /* Wait for WDT overflow */ +       while (1)
+>>>>
+>>>> +               ;
+>>>>>>
+>>>>>> This burns CPU, and thus power, albeit for a very short time.
+>>>>>> Perhaps add an msleep() to the loop body?
+>>>>>
+>>>>> Note that you only have 7.7us before the restart occurs, so probably
+>>>>> not much sleeping will be going on.
+>>>>>
+>>>> Let me rephrase my question. Is it guaranteed that you _can_ sleep in
+>>>> this
+>>>> function, or in other words that it is guaranteed that interrupts are
+>>>> enabled ?
+>>>
+>>> Hmm, I'm not sure if will actually 'sleep' or not. Regardless, interrupts
+>>> or not,
+>>> in 7.7us, the internal reset circuit is going to get triggered and the
+>>> whole system
+>>> is going to reboot not matter what is going on.
+>>>
+>>
+>> That isn't the point, really. You might get a WARN blob if msleep() is
+>> called
+>> with interrupts disabled, but of course you won't really see that because it
+>> can
+>> not be displayed in 7.7 us.
+>
+> If it's not 100% guaranteed that we cannot sleep, we should not use msleep(),
+> and stick to busy waiting.
+> On ARM, we could also use wfi().
+>
+>>> I know Geert's suggestion was in reference to saving power...but in
+>>> reality it's
+>>> probably negligible when we are talking about 7.7us. The reboot is going
+>>> to
+>>> automatically shut off all the peripherals clocks as well.
+>>
+>> Maybe udelay(10); would have been more acceptable (and appropriate).
+>
+> Inside the while (1) loop? That's the same as a plain "while (1) ;" ;-)
+> Or just udelay(10) and return, with the latter never happening if everything
+> goes well? Then the next restart handler will be tried, if available.
+>
+
+That is what I meant. Or use udelay(20) to be on the safe side.
+
+Guenter
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
