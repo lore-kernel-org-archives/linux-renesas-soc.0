@@ -1,33 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:35622 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750830AbdAQQh4 (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34971 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932374AbdBQK31 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 11:37:56 -0500
-Received: by mail-vk0-f66.google.com with SMTP id 23so11512405vkc.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jan 2017 08:37:56 -0800 (PST)
+        Fri, 17 Feb 2017 05:29:27 -0500
 MIME-Version: 1.0
-From: Jithin T Raj <lovelinuxdeeply@gmail.com>
-Date: Tue, 17 Jan 2017 21:57:39 +0530
-Message-ID: <CAAMGra7wFPcm9kBci02hH5SVTud2mx3C4u8A0h7=hnsgdowCJw@mail.gmail.com>
-Subject: what VSPD Means
-To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart+renesas@ideasonboard.com
+In-Reply-To: <20170216172320.10897-4-chris.brandt@renesas.com>
+References: <20170216172320.10897-1-chris.brandt@renesas.com> <20170216172320.10897-4-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Feb 2017 11:29:25 +0100
+Message-ID: <CAMuHMdVMBo9fNMTqz_XdU27FF5TX98r-OE5pJ5atJ1s4XLxcTw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] ARM: dts: r7s72100: Add reset handler
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-hi all,
-      I am on a small research on VSPD in kernel.. I googled it a lot
-but couldn't get a clear explanation..In my knowledge , it is a memory
-to memory maped video processing engine..It can directly interact to
-DU etc...But I came accross to know that v4l2 in linux supports
-VSPD...is v4l2 a driver?...hopping for your reply
+On Thu, Feb 16, 2017 at 6:23 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> For the RZ/A1, the only way to do a reset is to overflow the WDT.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
-                        --- Come    Let's enjoy the world of Open Source  ---
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best regards,
-Stuvart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
