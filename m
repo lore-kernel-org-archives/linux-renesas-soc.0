@@ -1,43 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35215 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751284AbdB0C1u (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36892 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934315AbdBQPai (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 26 Feb 2017 21:27:50 -0500
-From: Matthew Giassa <matthew@giassa.net>
-To: wsa@the-dreams.de
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        Matthew Giassa <matthew@giassa.net>
-Subject: [PATCHv3 3/4] Removing mixed spaces/hard-tabs in the alignment indentation to appease checkpatch.
-Date: Sun, 26 Feb 2017 18:00:21 -0800
-Message-Id: <1488160822-18751-4-git-send-email-matthew@giassa.net>
-In-Reply-To: <1488160822-18751-3-git-send-email-matthew@giassa.net>
-References: <1487650805-30520-1-git-send-email-matthew@giassa.net>
- <1488160822-18751-1-git-send-email-matthew@giassa.net>
- <1488160822-18751-2-git-send-email-matthew@giassa.net>
- <1488160822-18751-3-git-send-email-matthew@giassa.net>
+        Fri, 17 Feb 2017 10:30:38 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: dts: r8a7796: Add Cortex-A53 CPU cores
+Date: Fri, 17 Feb 2017 16:30:35 +0100
+Message-Id: <1487345435-1088-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1487345435-1088-1-git-send-email-geert+renesas@glider.be>
+References: <1487345435-1088-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
----
- drivers/staging/ks7010/ks_wlan_ioctl.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patch adds Cortex-A53 CPU cores of R8A7796 SoC, and sets a total of
+6 cores (2 x Cortex-A57 + 4 x Cortex-A53).
 
-diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
-index 0aa402d..9f71f01 100644
---- a/drivers/staging/ks7010/ks_wlan_ioctl.h
-+++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
-@@ -20,8 +20,8 @@
- /*					(SIOCIWFIRSTPRIV + 2) */
- #define KS_WLAN_GET_FIRM_VERSION	(SIOCIWFIRSTPRIV + 3)
- #ifdef WPS
--#define KS_WLAN_SET_WPS_ENABLE 		(SIOCIWFIRSTPRIV + 4)
--#define KS_WLAN_GET_WPS_ENABLE 		(SIOCIWFIRSTPRIV + 5)
-+#define KS_WLAN_SET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 4)
-+#define KS_WLAN_GET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 5)
- #define KS_WLAN_SET_WPS_PROBE_REQ	(SIOCIWFIRSTPRIV + 6)
- #endif
- #define KS_WLAN_GET_EEPROM_CKSUM	(SIOCIWFIRSTPRIV + 7)
+Based on a patch by Takeshi Kihara in the BSP.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 46 ++++++++++++++++++++++++++++----
+ 1 file changed, 41 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index d848e94d7282e5aa..b902917d47ad5663 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -55,6 +55,42 @@
+ 			enable-method = "psci";
+ 		};
+ 
++		a53_0: cpu@100 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x100>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA53_CPU0>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
++		a53_1: cpu@101 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x101>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA53_CPU1>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
++		a53_2: cpu@102 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x102>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA53_CPU2>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
++		a53_3: cpu@103 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x103>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA53_CPU3>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
+ 		L2_CA57: cache-controller@0 {
+ 			compatible = "cache";
+ 			reg = <0>;
+@@ -117,7 +153,7 @@
+ 			      <0x0 0xf1040000 0 0x20000>,
+ 			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+-					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+@@ -127,13 +163,13 @@
+ 		timer {
+ 			compatible = "arm,armv8-timer";
+ 			interrupts = <GIC_PPI 13
+-					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 14
+-					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 11
+-					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 10
+-					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
+ 
+ 		wdt0: watchdog@e6020000 {
 -- 
-2.7.4
+1.9.1
