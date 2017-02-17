@@ -1,14 +1,20 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH 2/3] arm64: dts: r8a7796: Add CA53 L2 cache-controller
- node
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35458 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934090AbdBQUkW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Feb 2017 15:40:22 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXd=u4hdRsfqt5o7-PQ=F4352oj3U3sivACVHv756BYcw@mail.gmail.com>
 References: <1487345435-1088-1-git-send-email-geert+renesas@glider.be>
  <1487345435-1088-3-git-send-email-geert+renesas@glider.be>
- <05e43b97-eaa3-f1df-1fc8-b7bab05cc89c@arm.com>
- <CAMuHMdXd=u4hdRsfqt5o7-PQ=F4352oj3U3sivACVHv756BYcw@mail.gmail.com>
- <CAMuHMdV1JqRV6AqQDbMQNrkcDpzfUq7DU4NXVvTeCiSeW1-NYw@mail.gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+ <05e43b97-eaa3-f1df-1fc8-b7bab05cc89c@arm.com> <CAMuHMdXd=u4hdRsfqt5o7-PQ=F4352oj3U3sivACVHv756BYcw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Feb 2017 21:40:20 +0100
+Message-ID: <CAMuHMdV1JqRV6AqQDbMQNrkcDpzfUq7DU4NXVvTeCiSeW1-NYw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: r8a7796: Add CA53 L2 cache-controller node
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -16,74 +22,63 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         Rob Herring <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <36fbfe05-5e17-c520-d024-6ae0cbb2e833@arm.com>
-Date: Mon, 20 Feb 2017 10:18:48 +0000
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV1JqRV6AqQDbMQNrkcDpzfUq7DU4NXVvTeCiSeW1-NYw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
-
-On 17/02/17 20:40, Geert Uytterhoeven wrote:
-> On Fri, Feb 17, 2017 at 8:07 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Fri, Feb 17, 2017 at 6:51 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>> On 17/02/17 15:30, Geert Uytterhoeven wrote:
->>>> Add a device node for the Cortex-A53 L2 cache-controller.
->>>>
->>>> The L2 cache for the Cortex-A53 CPU cores is 512 KiB large (organized as
->>>> 32 KiB x 16 ways).
->>>>
->>>> Extracted from a patch by Takeshi Kihara in the BSP.
->>>>
->>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>> ---
->>>>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
->>>> index 6c0a65abf9fd09eb..d848e94d7282e5aa 100644
->>>> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
->>>> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
->>>> @@ -62,6 +62,14 @@
->>>>                       cache-unified;
->>>>                       cache-level = <2>;
->>>>               };
->>>> +
->>>> +             L2_CA53: cache-controller@100 {
->>>> +                     compatible = "cache";
->>>> +                     reg = <0x100>;
+On Fri, Feb 17, 2017 at 8:07 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Feb 17, 2017 at 6:51 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> On 17/02/17 15:30, Geert Uytterhoeven wrote:
+>>> Add a device node for the Cortex-A53 L2 cache-controller.
 >>>
->>> Is this not integrated L2 cache ? IIUC reg is MPIDR of the cpu and
->>> representing it as cache controller with some reg value doesn't sound
->>> correct IMO.
+>>> The L2 cache for the Cortex-A53 CPU cores is 512 KiB large (organized as
+>>> 32 KiB x 16 ways).
+>>>
+>>> Extracted from a patch by Takeshi Kihara in the BSP.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+>>> index 6c0a65abf9fd09eb..d848e94d7282e5aa 100644
+>>> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+>>> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+>>> @@ -62,6 +62,14 @@
+>>>                       cache-unified;
+>>>                       cache-level = <2>;
+>>>               };
+>>> +
+>>> +             L2_CA53: cache-controller@100 {
+>>> +                     compatible = "cache";
+>>> +                     reg = <0x100>;
 >>
->> So this should be cache-controller-1, without a reg property?
-> 
-> BTW, that means the advice from https://lkml.org/lkml/2016/3/8/80:
-> 
-> | Just add a reg property. The values should probably match the MPIDR in
-> | some way (e.g. 0 and 100).
-> 
-> was wrong, and we should fix all cache-controller nodes that got "fixed"?
-> 
+>> Is this not integrated L2 cache ? IIUC reg is MPIDR of the cpu and
+>> representing it as cache controller with some reg value doesn't sound
+>> correct IMO.
+>
+> So this should be cache-controller-1, without a reg property?
 
-OK. IMO it's cpu peripheral which has no mmio similar to architected
-timers that are accessed via system registers. So representing them with
-reg = mpidr sounds not correct. If DT maintainers are OK with such
-representation, it should be fine but better to document it.
+BTW, that means the advice from https://lkml.org/lkml/2016/3/8/80:
 
-> Having better DT documentation for caches on ARM would be nice...
-> There's only a (too) minimalist example in
-> Documentation/devicetree/bindings/arm/cpu-capacity.txt
-> 
+| Just add a reg property. The values should probably match the MPIDR in
+| some way (e.g. 0 and 100).
 
-Agreed as I mentioned above.
+was wrong, and we should fix all cache-controller nodes that got "fixed"?
 
--- 
-Regards,
-Sudeep
+Having better DT documentation for caches on ARM would be nice...
+There's only a (too) minimalist example in
+Documentation/devicetree/bindings/arm/cpu-capacity.txt
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
