@@ -1,61 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:34564 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934589AbdBQRAm (ORCPT
+Received: from sauhun.de ([89.238.76.85]:43152 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964821AbdBQXOB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 12:00:42 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-Date: Fri, 17 Feb 2017 18:00:30 +0100
-Message-Id: <1487350832-29820-1-git-send-email-geert+renesas@glider.be>
+        Fri, 17 Feb 2017 18:14:01 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC] mmc: core: check also R1 response for stop commands
+Date: Sat, 18 Feb 2017 00:13:54 +0100
+Message-Id: <20170217231354.7441-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Introduce a helper function to not only check the error value but also
+error bits of a R1 response. Use the helper for the stop command.
 
-This patch series upgrades the version of the PSCI firmware, as
-advertised in DT on Renesas R-Car Gen3 systems, from v0.2 to v1.0.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Note that this series does not have any runtime effects: as of PSCI
-v0.2, PSCI provides a VERSION API.  Hence Linux always detected the
-actual version, regardless of what was stated in DT, and enabled v1.0
-features like system suspend:
+So, here is a first draft of what we talked about recenlty. Let me know what
+you think...
 
-    PSCIv1.0 detected in firmware.
+ drivers/mmc/core/block.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-However, it is better to have the real hardware^H^H^H^H^H^H^H^Hfirmware
-description in DT.
-
-Tested on Salvator-X (both H3 and M3-W) with firmware v2.16.0, but I do
-have old boot logs showing that PSCIv1.0 has been detected for a long
-time.
-
-Thanks for applying!
-
-Khiem Nguyen (2):
-  arm64: dts: r8a7795: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-  arm64: dts: r8a7796: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index 985477cdcb3ea4..b96477b689e457 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -1292,9 +1292,18 @@ static inline void mmc_apply_rel_rw(struct mmc_blk_request *brq,
+ 	 R1_ADDRESS_ERROR |	/* Misaligned address */		\
+ 	 R1_BLOCK_LEN_ERROR |	/* Transferred block length incorrect */\
+ 	 R1_WP_VIOLATION |	/* Tried to write to protected block */	\
++	 R1_CARD_ECC_FAILED |	/* Card ECC failed */			\
+ 	 R1_CC_ERROR |		/* Card controller error */		\
+ 	 R1_ERROR)		/* General/unknown error */
+ 
++static bool mmc_blk_has_cmd_err(struct mmc_command *cmd)
++{
++	if (!cmd->error && cmd->resp[0] & CMD_ERRORS)
++		cmd->error = -EIO;
++
++	return cmd->error;
++}
++
+ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
+ 					     struct mmc_async_req *areq)
+ {
+@@ -1316,7 +1325,7 @@ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
+ 	 * stop.error indicates a problem with the stop command.  Data
+ 	 * may have been transferred, or may still be transferring.
+ 	 */
+-	if (brq->sbc.error || brq->cmd.error || brq->stop.error ||
++	if (brq->sbc.error || brq->cmd.error || mmc_blk_has_cmd_err(&brq->stop) ||
+ 	    brq->data.error) {
+ 		switch (mmc_blk_cmd_recovery(card, req, brq, &ecc_err, &gen_err)) {
+ 		case ERR_RETRY:
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
