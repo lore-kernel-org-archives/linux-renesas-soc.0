@@ -1,45 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:44881 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751127AbdBTU7b (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36890 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934222AbdBQPai (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 15:59:31 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH] ASoC: rsnd: drop useles self-assignments
-Date: Mon, 20 Feb 2017 21:58:34 +0100
-Message-Id: <20170220205858.10799-1-wsa+renesas@sang-engineering.com>
+        Fri, 17 Feb 2017 10:30:38 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] arm64: dts: r8a7796: Add Secondary CPU Cores
+Date: Fri, 17 Feb 2017 16:30:32 +0100
+Message-Id: <1487345435-1088-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Coverity reported (CID 1397992) this self-assignment. I think the code
-stays readable even with the assignments removed.
+	Hi Simon, Magnus,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- sound/soc/sh/rcar/core.c | 2 --
- 1 file changed, 2 deletions(-)
+This patch series adds the second Cortex-A57 CPU core, and the
+Cortex-A53 L2 cache-controller and CPU nodes on the Renesas R-Car M3-W
+SoC to its DTS file.
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 47b370cb2d3b3a..24adb3cc17aa63 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -674,12 +674,10 @@ static int rsnd_soc_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	/* set clock inversion */
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
- 	case SND_SOC_DAIFMT_NB_IF:
--		rdai->bit_clk_inv =  rdai->bit_clk_inv;
- 		rdai->frm_clk_inv = !rdai->frm_clk_inv;
- 		break;
- 	case SND_SOC_DAIFMT_IB_NF:
- 		rdai->bit_clk_inv = !rdai->bit_clk_inv;
--		rdai->frm_clk_inv =  rdai->frm_clk_inv;
- 		break;
- 	case SND_SOC_DAIFMT_IB_IF:
- 		rdai->bit_clk_inv = !rdai->bit_clk_inv;
+Note that these patches add hardware description; actual enabling of the
+CPU depends on the PSCI firmware.
+
+With the current firmware version (v2.16.0), only the CA57 CPU cores are
+enabled, hence the last patch does not introduce undeterministic
+scheduling behavior due to migration between big and LITTLE cores.
+
+Tested on r8a7796/salvator-x, with CPU hot(un)plug and system suspend.
+
+Thanks for applying!
+
+Geert Uytterhoeven (2):
+  arm64: dts: r8a7796: Add CA53 L2 cache-controller node
+  arm64: dts: r8a7796: Add Cortex-A53 CPU cores
+
+Takeshi Kihara (1):
+  arm64: dts: r8a7796: Add Cortex-A57 CPU cores
+
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 64 +++++++++++++++++++++++++++++---
+ 1 file changed, 58 insertions(+), 6 deletions(-)
+
 -- 
-2.11.0
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
