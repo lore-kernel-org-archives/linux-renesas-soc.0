@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:39773 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933336AbdBQNtl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Feb 2017 08:49:41 -0500
 From: Chris Brandt <Chris.Brandt@renesas.com>
 To: Guenter Roeck <linux@roeck-us.net>,
         Geert Uytterhoeven <geert@linux-m68k.org>
@@ -13,8 +18,8 @@ CC: Wim Van Sebroeck <wim@iguana.be>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
 Subject: RE: [PATCH v2 1/3] power: reset: Add Renesas reset driver
-Date: Wed, 22 Feb 2017 13:35:12 +0000
-Message-ID: <SG2PR06MB11650D5EE485C0F44A77E0EA8A500@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Date: Fri, 17 Feb 2017 13:49:34 +0000
+Message-ID: <SG2PR06MB11659AB2F7D659FF1AB8FEDB8A5D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20170216172320.10897-1-chris.brandt@renesas.com>
  <20170216172320.10897-2-chris.brandt@renesas.com>
  <20170216182644.GA17814@roeck-us.net>
@@ -22,37 +27,55 @@ References: <20170216172320.10897-1-chris.brandt@renesas.com>
  <20170216222014.GA29672@roeck-us.net>
  <PS1PR06MB11622077DE4673C1879C05278A5D0@PS1PR06MB1162.apcprd06.prod.outlook.com>
  <55cf087f-aa70-3660-1186-af9b9b20376d@roeck-us.net>
-In-Reply-To: <55cf087f-aa70-3660-1186-af9b9b20376d@roeck-us.net>
+ <CAMuHMdUChhntL0Mw2CY7au87WHj11nBi+0Q2mWSi+RcYpHXgAQ@mail.gmail.com>
+ <fb92af5b-6ed8-ef52-d1d1-4615b5026738@roeck-us.net>
+In-Reply-To: <fb92af5b-6ed8-ef52-d1d1-4615b5026738@roeck-us.net>
 Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Geert and Guenter,
-
-On Thursday, February 16, 2017, Guenter Roeck wrote:
-> FWIW, the watchdog subsystem should support that easily, even with 125 ms
-> hardware timeout. We added that capability for that very purpose. That
-> would only fail if the system is stuck with interrupts disabled for more
-> than 125 ms, which seems unlikely. I think the gpio watchdog on some
-> systems has a similar low hardware timeout.
-
-
-While I'm going to try that for the RZ/A1, I have a question for you guys
-(or anyone else that has an opinion about end applications)
-
-
-If I were going to make a request to the chip designers to make the timeout=
- longer
-for the next RZ/A chip, what would be a good max timeout for common Linux a=
-pplications?
-
-Looking through the drivers in the watchdog directly, I see default timeout=
-s of 20,
-30, 60, and 120 seconds.
-
-Thank you,
-Chris
-
+SGkgR8O8bnRlciBhbmQgR2VlcnQsDQoNCkNhdGNoaW5nIHVwIG9uIHRoZSBzdWJqZWN0IChiZWNh
+dXNlIEkgd2FzIHNsZWVwaW5nIGhlcmUgaW4gdGhlIFVTLi4uKQ0KDQoNCk9uIEZyaWRheSwgRmVi
+cnVhcnkgMTcsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPiBGV0lXLCB0aGUg
+d2F0Y2hkb2cgc3Vic3lzdGVtIHNob3VsZCBzdXBwb3J0IHRoYXQgZWFzaWx5LCBldmVuIHdpdGgg
+MTI1DQo+ID4gbXMgaGFyZHdhcmUgdGltZW91dC4gV2UgYWRkZWQgdGhhdCBjYXBhYmlsaXR5IGZv
+ciB0aGF0IHZlcnkgcHVycG9zZS4NCj4gPiBUaGF0IHdvdWxkIG9ubHkgZmFpbCBpZiB0aGUgc3lz
+dGVtIGlzIHN0dWNrIHdpdGggaW50ZXJydXB0cyBkaXNhYmxlZA0KPiA+IGZvciBtb3JlIHRoYW4g
+MTI1IG1zLCB3aGljaCBzZWVtcyB1bmxpa2VseS4gSSB0aGluayB0aGUgZ3BpbyB3YXRjaGRvZw0K
+PiA+IG9uIHNvbWUgc3lzdGVtcyBoYXMgYSBzaW1pbGFyIGxvdyBoYXJkd2FyZSB0aW1lb3V0Lg0K
+PiANCj4gSSBhbHNvIHRob3VnaHQgMTI1bXMgd2FzIGEgYml0IHNob3J0LCBidXQgSSdtIGhhcHB5
+IHRvIGJlIHByb3ZlbiB3cm9uZyENCj4gTGV0J3MgbWFrZSBhIHJlYWwgd2F0Y2hkb2cgZHJpdmVy
+IGluc3RlYWQgOy0pDQoNCk9LLCBJJ2xsIHNlZSBhYm91dCBzd2l0Y2hpbmcgb3ZlciB0byBhIHJl
+YWwgd2F0Y2hkb2cgZHJpdmVyLiBBcyBsb25nIGFzIEkNCmNhbiBnZXQgbXkgcmVzZXQgaGFuZGxl
+ciwgSSdsbCBiZSBoYXBweS4NCg0KQmVzaWRlcywgaWYgSSBnZXQgdGhlIDgtYml0IGNvdW50ZXIg
+cmVnaXN0ZXIgY2hhbmdlZCB0byAxNi1iaXQgKGEgdXNlZnVsDQpXRFQpLCB0aGVuIEkgYWxyZWFk
+eSBoYXZlIGEgV0RUIG1hZGUuDQoNClRoZSBnb29kIHRoaW5nIGlzIHRoYXQgdGhlIERUIGJpbmRp
+bmcgd2lsbCBzdGF5IGV4YWN0bHkgdGhlIHNhbWUsIEkganVzdA0KbmVlZCBhIG5ldyBkcml2ZXIu
+DQoNCkZXSVcsIGlmIEkgd2FzIG1ha2luZyBhIHJlYWwgcHJvZHVjdCBJIHdvdWxkIGFsd2F5cyBo
+YXZlIGEgV0RUIHJ1bm5pbmcgKGJ1dA0Kd2l0aCBhIDEtMyBzZWNvbmQgdGltZW91dCBqdXN0IHRv
+IG1ha2Ugc3VyZSBJIHdhcyBjb21wbGV0ZWx5IGRlYWQpLg0KDQojIHNpZGUgbm90ZSwgSSB0ZWxs
+IHBlb3BsZSB0byBzZXQgdXAgYSBETUEgd2l0aCBhIHRpbWVyIHRyaWdnZXIgYW5kDQphdXRvbWF0
+aWNhbGx5IGZlZWQgdGhlIFdEVCB0aGF0IHdheSwgdGhlbiB0aGV5IGNhbiBzZXQgdGhlIERNQSBj
+b3VudCB0bw0Kd2hhdGV2ZXIgZmFpbHNhZmUgdGltZW91dCB0aGV5IHdhbnQuIE5vdCBzdXJlIGlm
+IEkgY291bGQgc3VibWl0IHRoYXQga2luZA0Kb2YgaGFja2VyeSBpbiBhbiB1cHN0cmVhbSBkcml2
+ZXIuDQoNCg0KPiA+Pj4gSSBrbm93IEdlZXJ0J3Mgc3VnZ2VzdGlvbiB3YXMgaW4gcmVmZXJlbmNl
+IHRvIHNhdmluZyBwb3dlci4uLmJ1dCBpbg0KPiA+Pj4gcmVhbGl0eSBpdCdzIHByb2JhYmx5IG5l
+Z2xpZ2libGUgd2hlbiB3ZSBhcmUgdGFsa2luZyBhYm91dCA3Ljd1cy4NCj4gPj4+IFRoZSByZWJv
+b3QgaXMgZ29pbmcgdG8gYXV0b21hdGljYWxseSBzaHV0IG9mZiBhbGwgdGhlIHBlcmlwaGVyYWxz
+DQo+ID4+PiBjbG9ja3MgYXMgd2VsbC4NCj4gPj4NCj4gPj4gTWF5YmUgdWRlbGF5KDEwKTsgd291
+bGQgaGF2ZSBiZWVuIG1vcmUgYWNjZXB0YWJsZSAoYW5kIGFwcHJvcHJpYXRlKS4NCj4gPg0KPiA+
+IEluc2lkZSB0aGUgd2hpbGUgKDEpIGxvb3A/IFRoYXQncyB0aGUgc2FtZSBhcyBhIHBsYWluICJ3
+aGlsZSAoMSkgOyINCj4gPiA7LSkgT3IganVzdCB1ZGVsYXkoMTApIGFuZCByZXR1cm4sIHdpdGgg
+dGhlIGxhdHRlciBuZXZlciBoYXBwZW5pbmcgaWYNCj4gPiBldmVyeXRoaW5nIGdvZXMgd2VsbD8g
+VGhlbiB0aGUgbmV4dCByZXN0YXJ0IGhhbmRsZXIgd2lsbCBiZSB0cmllZCwgaWYNCj4gYXZhaWxh
+YmxlLg0KPiA+DQo+IA0KPiBUaGF0IGlzIHdoYXQgSSBtZWFudC4gT3IgdXNlIHVkZWxheSgyMCkg
+dG8gYmUgb24gdGhlIHNhZmUgc2lkZS4NCg0KT0suIFNvdW5kcyBsaWtlIHdlIGFncmVlIG9uOg0K
+DQoJLyogU3RhcnQgdGltZXIgKi8NCgl3cml0ZXcoV1RDU1JfTUFHSUMgfCBXVFNDUl9XVCB8IFdU
+U0NSX1RNRSwgYmFzZSArIFdUQ1NSKTsNCg0KCS8qIFdhaXQgZm9yIFdEVCBvdmVyZmxvdyAocmVz
+ZXQpICovDQoJVWRlbGF5KDIwKTsNCg0KCXJldHVybiBOT1RJRllfRE9ORTsNCn0NCg0KDQpGWUks
+IEknbGwgYmUgYXQgRUxDIG5leHQgd2Vlaywgc28gSSBtaWdodCBub3QgZ2V0IHRvIHRoaXMgdW50
+aWwgYWZ0ZXIgdGhlbi4NCg0KVGhhbmtzIGZvciB0aGUgZGlzY3Vzc2lvbi4NCg0KQ2hlZXJzDQoN
+CkNocmlzDQo=
