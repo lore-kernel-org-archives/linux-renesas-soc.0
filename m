@@ -1,57 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34099 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750936AbdBTIix (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:33346 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbdBRVkR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 03:38:53 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170218213936.142813519@cogentembedded.com>
-References: <20170218213936.142813519@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 20 Feb 2017 09:38:39 +0100
-Message-ID: <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sat, 18 Feb 2017 16:40:17 -0500
+Received: by mail-lf0-f51.google.com with SMTP id x1so35420531lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 18 Feb 2017 13:39:41 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170218213936.142813519@cogentembedded.com>
+Date: Sun, 19 Feb 2017 00:39:26 +0300
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=clk-renesas-cpg-mssr-r8a7796-add-IMR-clocks.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Add the IMR[0-1] clocks to the R8A7796 CPG/MSSR driver.
 
-On Sat, Feb 18, 2017 at 10:39 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the IMR[0-1] clocks to the R8A7796 CPG/MSSR driver.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
 
-> --- linux.orig/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -179,6 +179,8 @@ static const struct mssr_mod_clk r8a7796
->         DEF_MOD("vin1",                  810,   R8A7796_CLK_S0D2),
->         DEF_MOD("vin0",                  811,   R8A7796_CLK_S0D2),
->         DEF_MOD("etheravb",              812,   R8A7796_CLK_S0D6),
-> +       DEF_MOD("imr1",                  822,   R8A7796_CLK_S2D1),
-> +       DEF_MOD("imr0",                  823,   R8A7796_CLK_S2D1),
+ drivers/clk/renesas/r8a7796-cpg-mssr.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-According to R-Car Gen3 Hardware Users Manual Rev.0.53E, the parent
-clock is S0D2, like on H3 ES2.0.
-
-Will queue in clk-renesas-for-v4.12 with corrected parent clock.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
+===================================================================
+--- linux.orig/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -179,6 +179,8 @@ static const struct mssr_mod_clk r8a7796
+ 	DEF_MOD("vin1",			 810,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vin0",			 811,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
++	DEF_MOD("imr1",			 822,	R8A7796_CLK_S2D1),
++	DEF_MOD("imr0",			 823,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio5",		 907,	R8A7796_CLK_S3D4),
