@@ -1,137 +1,70 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 2/4] v4l: vsp1: Move vsp1_video_pipeline_setup_partitions() function
-Date: Mon, 13 Feb 2017 21:23:51 +0200
-Message-ID: <9209013.DxhxRJN60N@avalon>
-In-Reply-To: <1478283570-19688-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1478283570-19688-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34106 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751031AbdBSR6Y (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 19 Feb 2017 12:58:24 -0500
+Received: by mail-lf0-f53.google.com with SMTP id o140so26400751lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 19 Feb 2017 09:58:23 -0800 (PST)
+Subject: Re: [PATCH 1/1] arm64: dts: r8a7795: add IMR-LX4 support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+References: <20170214210301.620322370@cogentembedded.com>
+ <3f007932-d120-b0c0-2080-ce8eeb9418af@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Konstantin Kozhevnikov
+        <Konstantin.Kozhevnikov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <d685231a-4509-7728-0f68-29d13703db27@cogentembedded.com>
+Date: Sun, 19 Feb 2017 20:58:19 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <3f007932-d120-b0c0-2080-ce8eeb9418af@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+On 02/15/2017 12:45 PM, Sergei Shtylyov wrote:
 
-Thank you for the patch.
+>> Describe the IMR-LX4 devices in the R8A7795 device tree.
+>>
+>> Based on the original (and large) patch by Konstantin Kozhevnikov
+>> <Konstantin.Kozhevnikov@cogentembedded.com>.
+>>
+>> Signed-off-by: Konstantin Kozhevnikov
+>> <Konstantin.Kozhevnikov@cogentembedded.com>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>> This patch is against the 'renesas-devel-20170213-v4.10-rc8' tag of Simon
+>> Horman's 'renesas.git' repo.
+>
+>    The binding was documented in the IMR driver patch. I don't expect it to
+> change even if the driver would be rewritten for DRM.
+>
+> [...]
+>> Index: renesas/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> ===================================================================
+>> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> +++ renesas/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> @@ -1419,6 +1419,38 @@
+>>              status = "disabled";
+>>          };
+>>
+>> +        imr-lx4@fe860000 {
+>> +            compatible = "renesas,imr-lx4";
+>
+>    The manual seems to suggest that IMR-LX4 devicec are different between 7795
 
-On Friday 04 Nov 2016 18:19:28 Kieran Bingham wrote:
-> Separate the code change from the function move so that code changes can
-> be clearly identified. This commit has no functional change.
-> 
-> The partition algorithm functions will be changed, and
-> vsp1_video_partition() will call vsp1_video_pipeline_setup_partitions().
-> To prepare for that, move the function without any code change.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+    Devices, of course. :-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> and 7796 SoCs, so we may need SoC specific compatibility. I'll look into this...
 
-(assuming I don't conclude in my review of patches 3/4 and 4/4 that this isn't 
-needed :-))
+    Found no difference between 7795/7796 (other than performance).
 
-> ---
->  drivers/media/platform/vsp1/vsp1_video.c | 74 ++++++++++++++---------------
->  1 file changed, 37 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
-> b/drivers/media/platform/vsp1/vsp1_video.c index d1d3413c6fdf..6d43c02bbc56
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
-> @@ -175,43 +175,6 @@ static int __vsp1_video_try_format(struct vsp1_video
-> *video, * VSP1 Partition Algorithm support
->   */
-> 
-> -static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline
-> *pipe) -{
-> -	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
-> -	const struct v4l2_mbus_framefmt *format;
-> -	struct vsp1_entity *entity;
-> -	unsigned int div_size;
-> -
-> -	/*
-> -	 * Partitions are computed on the size before rotation, use the format
-> -	 * at the WPF sink.
-> -	 */
-> -	format = vsp1_entity_get_pad_format(&pipe->output->entity,
-> -					    pipe->output->entity.config,
-> -					    RWPF_PAD_SINK);
-> -	div_size = format->width;
-> -
-> -	/* Gen2 hardware doesn't require image partitioning. */
-> -	if (vsp1->info->gen == 2) {
-> -		pipe->div_size = div_size;
-> -		pipe->partitions = 1;
-> -		return;
-> -	}
-> -
-> -	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-> -		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
-> -
-> -		if (entity->ops->max_width) {
-> -			entity_max = entity->ops->max_width(entity, pipe);
-> -			if (entity_max)
-> -				div_size = min(div_size, entity_max);
-> -		}
-> -	}
-> -
-> -	pipe->div_size = div_size;
-> -	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
-> -}
-> -
->  /**
->   * vsp1_video_partition - Calculate the active partition output window
->   *
-> @@ -286,6 +249,43 @@ static struct v4l2_rect vsp1_video_partition(struct
-> vsp1_pipeline *pipe, return partition;
->  }
-> 
-> +static void vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline
-> *pipe) +{
-> +	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
-> +	const struct v4l2_mbus_framefmt *format;
-> +	struct vsp1_entity *entity;
-> +	unsigned int div_size;
-> +
-> +	/*
-> +	 * Partitions are computed on the size before rotation, use the format
-> +	 * at the WPF sink.
-> +	 */
-> +	format = vsp1_entity_get_pad_format(&pipe->output->entity,
-> +					    pipe->output->entity.config,
-> +					    RWPF_PAD_SINK);
-> +	div_size = format->width;
-> +
-> +	/* Gen2 hardware doesn't require image partitioning. */
-> +	if (vsp1->info->gen == 2) {
-> +		pipe->div_size = div_size;
-> +		pipe->partitions = 1;
-> +		return;
-> +	}
-> +
-> +	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-> +		unsigned int entity_max = VSP1_VIDEO_MAX_WIDTH;
-> +
-> +		if (entity->ops->max_width) {
-> +			entity_max = entity->ops->max_width(entity, pipe);
-> +			if (entity_max)
-> +				div_size = min(div_size, entity_max);
-> +		}
-> +	}
-> +
-> +	pipe->div_size = div_size;
-> +	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
-> +}
-> +
->  /*
-> ---------------------------------------------------------------------------
-> -- * Pipeline Management
->   */
-
--- 
-Regards,
-
-Laurent Pinchart
+MBR, Sergei
