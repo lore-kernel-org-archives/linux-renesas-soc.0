@@ -1,53 +1,81 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Subject: [PATCH] v4l: vsp1: Fix WPF U/V order in 3-planar formats on Gen3
-Date: Mon, 13 Feb 2017 01:17:53 +0200
-Message-Id: <20170212231753.30397-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/6] alarmtimer: Postpone wake-up source registration until really available
+Date: Mon, 20 Feb 2017 21:33:24 +0100
+Message-Id: <1487622809-25127-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The WPF U/V order bit has no effect for 3-planar formats on Gen3
-hardware. Swap the U and V planes manually instead in that case.
+Currently the alarmtimer registers a wake-up source unconditionally,
+regardless of the system having a (wake-up capable) RTC or not.
+To fix this, postpone registration until a wake-up capable RTC device is
+added.
 
-Fixes: b915bd24a034 ("[media] v4l: vsp1: Add tri-planar memory formats support")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+After this, the alarmtimer no longer shows up in
+/sys/kernel/debug/wakeup_sources, unless it is available for real.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/vsp1/vsp1_wpf.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ kernel/time/alarmtimer.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-This makes the vsp-unit-test-0002.sh test pass on both H2 and H3.
-
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 7c48f81cd5c1..052a83e2d489 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -216,6 +216,7 @@ static void wpf_configure(struct vsp1_entity *entity,
+diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+index e6dc9a538efa2116..5e0ce78607da5b5d 100644
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -82,6 +82,7 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ {
+ 	unsigned long flags;
+ 	struct rtc_device *rtc = to_rtc_device(dev);
++	struct wakeup_source *__ws;
  
- 	if (params == VSP1_ENTITY_PARAMS_PARTITION) {
- 		const struct v4l2_pix_format_mplane *format = &wpf->format;
-+		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
- 		struct vsp1_rwpf_memory mem = wpf->mem;
- 		unsigned int flip = wpf->flip.active;
- 		unsigned int width = source_format->width;
-@@ -281,6 +282,14 @@ static void wpf_configure(struct vsp1_entity *entity,
- 			}
- 		}
+ 	if (rtcdev)
+ 		return -EBUSY;
+@@ -91,13 +92,20 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ 	if (!device_may_wakeup(rtc->dev.parent))
+ 		return -1;
  
-+		/*
-+		 * On Gen3 hardware the SPUVS bit has no effect on 3-planar
-+		 * formats. Swap the U and V planes manually in that case.
-+		 */
-+		if (vsp1->info->gen == 3 && format->num_planes == 3 &&
-+		    fmtinfo->swap_uv)
-+			swap(mem.addr[1], mem.addr[2]);
++	__ws = wakeup_source_register("alarmtimer");
 +
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_Y, mem.addr[0]);
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C0, mem.addr[1]);
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C1, mem.addr[2]);
+ 	spin_lock_irqsave(&rtcdev_lock, flags);
+ 	if (!rtcdev) {
+ 		rtcdev = rtc;
+ 		/* hold a reference so it doesn't go away */
+ 		get_device(dev);
++		ws = __ws;
++		__ws = NULL;
+ 	}
+ 	spin_unlock_irqrestore(&rtcdev_lock, flags);
++
++	wakeup_source_unregister(__ws);
++
+ 	return 0;
+ }
+ 
+@@ -908,7 +916,6 @@ static int __init alarmtimer_init(void)
+ 		error = PTR_ERR(pdev);
+ 		goto out_drv;
+ 	}
+-	ws = wakeup_source_register("alarmtimer");
+ 	return 0;
+ 
+ out_drv:
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
