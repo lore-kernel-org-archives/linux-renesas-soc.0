@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:33781 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752726AbdBUSyw (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:36630 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751889AbdBTUMA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Feb 2017 13:54:52 -0500
-Received: by mail-lf0-f50.google.com with SMTP id l12so31544014lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Feb 2017 10:54:51 -0800 (PST)
+        Mon, 20 Feb 2017 15:12:00 -0500
+Received: by mail-lf0-f47.google.com with SMTP id b80so18115983lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Feb 2017 12:11:59 -0800 (PST)
 Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 References: <20170218213936.142813519@cogentembedded.com>
@@ -16,8 +16,8 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1b4f2247-d3cf-fcab-deaa-045db17a43bd@cogentembedded.com>
-Date: Tue, 21 Feb 2017 21:54:47 +0300
+Message-ID: <b66b04dc-44d4-216f-54aa-1db01a84bcb9@cogentembedded.com>
+Date: Mon, 20 Feb 2017 23:11:56 +0300
 MIME-Version: 1.0
 In-Reply-To: <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
@@ -45,12 +45,11 @@ On 02/20/2017 11:38 AM, Geert Uytterhoeven wrote:
 > According to R-Car Gen3 Hardware Users Manual Rev.0.53E, the parent
 > clock is S0D2, like on H3 ES2.0.
 
-    Not S0D4? I'd expect that what they call "register access" to be 
-controlled by the MSSR bits...
+    I only have 0.51E here, doesn't seem to contain much of the clock info...
 
 > Will queue in clk-renesas-for-v4.12 with corrected parent clock.
 
-    So, what have you used for 7795 and 7796?
+    Thank you!
 
 > Gr{oetje,eeting}s,
 >
