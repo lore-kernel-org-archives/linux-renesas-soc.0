@@ -1,177 +1,122 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:46618 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752144AbdBMS0I (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:26:08 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/3] power: reset: Add Renesas reset driver
-Date: Mon, 13 Feb 2017 13:25:30 -0500
-Message-Id: <20170213182532.4042-2-chris.brandt@renesas.com>
-In-Reply-To: <20170213182532.4042-1-chris.brandt@renesas.com>
-References: <20170213182532.4042-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 1/2] usb: of: add functions to bind a companion controller
+Date: Mon, 20 Feb 2017 16:35:10 +0900
+Message-ID: <1487576111-29287-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1487576111-29287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1487576111-29287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some Renesas SoCs do not have a reset register and the only way to do a SW
-controlled reset is to use the watchdog timer. Additionally, since all the
-WDT timeout options are so quick, a system reset is about the only thing
-it's good for.
+EHCI controllers will have a companion controller. However, on platform
+bus, there was difficult to bind them in previous code. So, this
+patch adds helper functions to bind them using a "companion" property.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/power/reset/Kconfig         |   9 ++++
- drivers/power/reset/Makefile        |   1 +
- drivers/power/reset/renesas-reset.c | 103 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 113 insertions(+)
- create mode 100644 drivers/power/reset/renesas-reset.c
+ Documentation/devicetree/bindings/usb/generic.txt |  1 +
+ drivers/usb/core/of.c                             | 36 +++++++++++++++++++++++
+ include/linux/usb/of.h                            | 10 +++++++
+ 3 files changed, 47 insertions(+)
 
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index b8caccc..e3100c9 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -130,6 +130,15 @@ config POWER_RESET_QNAP
+diff --git a/Documentation/devicetree/bindings/usb/generic.txt b/Documentation/devicetree/bindings/usb/generic.txt
+index bfadeb1..0a74ab8 100644
+--- a/Documentation/devicetree/bindings/usb/generic.txt
++++ b/Documentation/devicetree/bindings/usb/generic.txt
+@@ -22,6 +22,7 @@ Optional properties:
+ 			property is used if any real OTG features(HNP/SRP/ADP)
+ 			is enabled, if ADP is required, otg-rev should be
+ 			0x0200 or above.
++ - companion: phandle of a companion
+  - hnp-disable: tells OTG controllers we want to disable OTG HNP, normally HNP
+ 			is the basic function of real OTG except you want it
+ 			to be a srp-capable only B device.
+diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
+index 3de4f88..033530b 100644
+--- a/drivers/usb/core/of.c
++++ b/drivers/usb/core/of.c
+@@ -18,6 +18,7 @@
+  */
  
- 	  Say Y if you have a QNAP NAS.
+ #include <linux/of.h>
++#include <linux/of_platform.h>
+ #include <linux/usb/of.h>
  
-+config POWER_RESET_RENESAS
-+	tristate "Renesas WDT reset driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on HAS_IOMEM
-+	help
-+	  Reboot support for Renesas SoCs with WDT reset.
-+	  Some Renesas SoCs do not have a reset register and the only way
-+	  to do a SW controlled reset is to use the watchdog timer.
-+
- config POWER_RESET_RESTART
- 	bool "Restart power-off driver"
- 	help
-diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-index 11dae3b..a78a56c 100644
---- a/drivers/power/reset/Makefile
-+++ b/drivers/power/reset/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
- obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
- obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
- obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
-+obj-$(CONFIG_POWER_RESET_RENESAS) += renesas-reset.o
- obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
- obj-$(CONFIG_POWER_RESET_ST) += st-poweroff.o
- obj-$(CONFIG_POWER_RESET_VERSATILE) += arm-versatile-reboot.o
-diff --git a/drivers/power/reset/renesas-reset.c b/drivers/power/reset/renesas-reset.c
-new file mode 100644
-index 0000000..dede029
---- /dev/null
-+++ b/drivers/power/reset/renesas-reset.c
-@@ -0,0 +1,103 @@
-+/*
-+ * Renesas WDT Reset Driver
+ /**
+@@ -46,3 +47,38 @@ struct device_node *usb_of_get_child_node(struct device_node *parent,
+ }
+ EXPORT_SYMBOL_GPL(usb_of_get_child_node);
+ 
++/**
++ * usb_of_has_companion - To get if the device has a companion device
++ * @dev: the device pointer to get if it has a companion
 + *
-+ * Copyright (C) 2017 Renesas Electronics America, Inc.
-+ * Copyright (C) 2017 Chris Brandt
-+ *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file "COPYING" in the main directory of this archive
-+ * for more details.
-+ *
-+ * based on rmobile-reset.c
++ * This function gets if the device has a companion property.
 + *
 + */
-+
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/printk.h>
-+#include <linux/reboot.h>
-+
-+/* Watchdog Timer Registers */
-+#define WTCSR 0
-+#define WTCNT 2
-+#define WRCSR 4
-+
-+static void __iomem *base;
-+
-+static int wdt_reset_handler(struct notifier_block *this,
-+			     unsigned long mode, void *cmd)
++bool usb_of_has_companion(struct device *dev)
 +{
-+	pr_debug("%s %lu\n", __func__, mode);
-+
-+	/* Dummy read (must read WRCSR:WOVF at least once before clearing) */
-+	readw(base + WRCSR);
-+
-+	writew(0xA500, base + WRCSR);	/* Clear WOVF */
-+	writew(0x5A5F, base + WRCSR);	/* Reset Enable */
-+	writew(0x5A00, base + WTCNT);	/* Counter to 00 */
-+	writew(0xA578, base + WTCSR);	/* Start timer */
-+
-+	/* Wait for WDT overflow */
-+	while (1)
-+		;
-+
-+	return NOTIFY_DONE;
++	return !!of_find_property(dev->of_node, "companion", NULL);
 +}
++EXPORT_SYMBOL_GPL(usb_of_has_companion);
 +
-+static struct notifier_block wdt_reset_nb = {
-+	.notifier_call = wdt_reset_handler,
-+	.priority = 192,
-+};
-+
-+static int wdt_reset_probe(struct platform_device *pdev)
++/**
++ * usb_of_get_companion_dev - Find the companion device
++ * @dev: the device pointer to find a companion
++ *
++ * Find the companion device from platform bus.
++ *
++ * Return: On success, a pointer to the companion device, %NULL on failure.
++ */
++struct device *usb_of_get_companion_dev(struct device *dev)
 +{
-+	int error;
++	struct device_node *node;
++	struct platform_device *pdev = NULL;
 +
-+	base = of_iomap(pdev->dev.of_node, 0);
-+	if (!base)
-+		return -ENODEV;
++	node = of_parse_phandle(dev->of_node, "companion", 0);
++	if (node)
++		pdev = of_find_device_by_node(node);
 +
-+	error = register_restart_handler(&wdt_reset_nb);
-+	if (error) {
-+		dev_err(&pdev->dev,
-+			"cannot register restart handler (err=%d)\n", error);
-+		goto fail_unmap;
-+	}
++	of_node_put(node);
 +
-+	return 0;
-+
-+fail_unmap:
-+	iounmap(base);
-+	return error;
++	return pdev ? &pdev->dev : NULL;
 +}
-+
-+static int wdt_reset_remove(struct platform_device *pdev)
++EXPORT_SYMBOL_GPL(usb_of_get_companion_dev);
+diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
+index 5ff9032..a5c7885 100644
+--- a/include/linux/usb/of.h
++++ b/include/linux/usb/of.h
+@@ -18,6 +18,8 @@ int of_usb_update_otg_caps(struct device_node *np,
+ 			struct usb_otg_caps *otg_caps);
+ struct device_node *usb_of_get_child_node(struct device_node *parent,
+ 			int portnum);
++bool usb_of_has_companion(struct device *dev);
++struct device *usb_of_get_companion_dev(struct device *dev);
+ #else
+ static inline enum usb_dr_mode
+ of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
+@@ -38,6 +40,14 @@ static inline int of_usb_update_otg_caps(struct device_node *np,
+ {
+ 	return NULL;
+ }
++static inline bool usb_of_has_companion(struct device *dev)
 +{
-+	unregister_restart_handler(&wdt_reset_nb);
-+	iounmap(base);
-+	return 0;
++	return false;
 +}
-+
-+static const struct of_device_id wdt_reset_of_match[] = {
-+	{ .compatible = "renesas,wdt-reset", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, wdt_reset_of_match);
-+
-+static struct platform_driver wdt_reset_driver = {
-+	.probe = wdt_reset_probe,
-+	.remove = wdt_reset_remove,
-+	.driver = {
-+		.name = "wdt_reset",
-+		.of_match_table = wdt_reset_of_match,
-+	},
-+};
-+
-+module_platform_driver(wdt_reset_driver);
-+
-+MODULE_DESCRIPTION("Renesas WDT Reset Driver");
-+MODULE_AUTHOR("Chris Brandt <chris.brandt@renesas.com>");
-+MODULE_LICENSE("GPL v2");
++static inline struct device *usb_of_get_companion_dev(struct device *dev)
++{
++	return NULL;
++}
+ #endif
+ 
+ #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB_SUPPORT)
 -- 
-2.10.1
+1.9.1
+
