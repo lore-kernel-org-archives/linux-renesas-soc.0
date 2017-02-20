@@ -1,124 +1,66 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56546 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750826AbdBTXlw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Feb 2017 18:41:52 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 3/4] v4l: vsp1: Calculate partition sizes at stream start.
-Date: Mon, 13 Feb 2017 23:21:58 +0200
-Message-ID: <3804080.QOE9vPlxB7@avalon>
-In-Reply-To: <1478283570-19688-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com> <1478283570-19688-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com
+Subject: Re: [PATCH v2 0/3] r8a7793 Gose video input support
+Date: Tue, 21 Feb 2017 01:42:15 +0200
+Message-ID: <3952799.qV1GSftN8A@avalon>
+In-Reply-To: <20161020084911.GH4612@verge.net.au>
+References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com> <20161020084911.GH4612@verge.net.au>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi Ulrich,
 
-Thank you for the patch.
+On Thursday 20 Oct 2016 10:49:11 Simon Horman wrote:
+> On Tue, Oct 18, 2016 at 05:02:20PM +0200, Ulrich Hecht wrote:
+> > Hi!
+> > 
+> > This is a by-the-datasheet implementation of analog and digital video
+> > input on the Gose board.
+> > 
+> > I have tried to address all concerns raised by reviewers, with the
+> > exception of the composite input patch, which has been left as is for
+> > now.
+> > 
+> > CU
+> > Uli
+> > 
+> > 
+> > Changes since v1:
+> > - r8a7793.dtsi: added VIN2
+> > - modeled HDMI decoder input/output and connector
+> > - added "renesas,rcar-gen2-vin" compat strings
+> > - removed unnecessary "remote" node and aliases
+> > - set ADV7612 interrupt to GP4_2
+> > 
+> > Ulrich Hecht (3):
+> >   ARM: dts: r8a7793: Enable VIN0-VIN2
+> 
+> I have queued up the above patch with Laurent and Geert's tags.
+> 
+> >   ARM: dts: gose: add HDMI input
+> >   ARM: dts: gose: add composite video input
+> 
+> Please address the review of the above two patches and repost.
 
-On Friday 04 Nov 2016 18:19:29 Kieran Bingham wrote:
-> Previously the active window and partition sizes for each partition is
+Could you please do so ? Feedback on 2/3 should be easy to handle. For 3/3, 
+you might need to ping the DT maintainers.
 
-s/is/were/
-
-> calculated for each partition every frame. This data is constant and
-> only needs to be calculated once at the start of the stream.
-> 
-> Extend the vsp1_pipe object to store the maximum number of partitions
-> possible and pre-calculate the partition sizes into this table.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/vsp1/vsp1_pipe.h  | 6 ++++++
->  drivers/media/platform/vsp1/vsp1_video.c | 8 ++++++--
->  2 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
-> b/drivers/media/platform/vsp1/vsp1_pipe.h index f181949824c9..3af96c4ea244
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
-> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-> @@ -20,6 +20,9 @@
-> 
->  #include <media/media-entity.h>
-> 
-> +/* Max Video Width / Min Partition Size = 8190/128 */
-> +#define VSP1_PIPE_MAX_PARTITIONS 64
-> +
->  struct vsp1_dl_list;
->  struct vsp1_rwpf;
-> 
-> @@ -81,7 +84,9 @@ enum vsp1_pipeline_state {
->   * @dl: display list associated with the pipeline
->   * @div_size: The maximum allowed partition size for the pipeline
->   * @partitions: The number of partitions used to process one frame
-> + * @partition: The current partition for configuration to process
->   * @current_partition: The partition number currently being configured
-> + * @part_table: The pre-calculated partitions used by the pipeline
->   */
->  struct vsp1_pipeline {
->  	struct media_pipeline pipe;
-> @@ -116,6 +121,7 @@ struct vsp1_pipeline {
->  	unsigned int partitions;
->  	struct v4l2_rect partition;
->  	unsigned int current_partition;
-> +	struct v4l2_rect part_table[VSP1_PIPE_MAX_PARTITIONS];
-
-That's an extra 1kB or kmalloc'ed data. I'd prefer allocating it dynamically 
-as needed.
-
->  };
-> 
->  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
-> b/drivers/media/platform/vsp1/vsp1_video.c index 6d43c02bbc56..c4a8c30df108
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
-> @@ -255,6 +255,7 @@ static void vsp1_video_pipeline_setup_partitions(struct
-> vsp1_pipeline *pipe) const struct v4l2_mbus_framefmt *format;
->  	struct vsp1_entity *entity;
->  	unsigned int div_size;
-> +	int i;
-
-i can never be negative, you can make it an unsigned int.
-
-Apart from that,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
->  	/*
->  	 * Partitions are computed on the size before rotation, use the format
-> @@ -269,6 +270,7 @@ static void vsp1_video_pipeline_setup_partitions(struct
-> vsp1_pipeline *pipe) if (vsp1->info->gen == 2) {
->  		pipe->div_size = div_size;
->  		pipe->partitions = 1;
-> +		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
->  		return;
->  	}
-> 
-> @@ -284,6 +286,9 @@ static void vsp1_video_pipeline_setup_partitions(struct
-> vsp1_pipeline *pipe)
-> 
->  	pipe->div_size = div_size;
->  	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
-> +
-> +	for (i = 0; i < pipe->partitions; i++)
-> +		pipe->part_table[i] = vsp1_video_partition(pipe, div_size, i);
->  }
-> 
->  /* ------------------------------------------------------------------------
-> @@ -355,8 +360,7 @@ static void vsp1_video_pipeline_run_partition(struct
-> vsp1_pipeline *pipe, {
->  	struct vsp1_entity *entity;
-> 
-> -	pipe->partition = vsp1_video_partition(pipe, pipe->div_size,
-> -					       pipe->current_partition);
-> +	pipe->partition = pipe->part_table[pipe->current_partition];
-> 
->  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
->  		if (entity->ops->configure)
+> >  arch/arm/boot/dts/r8a7793-gose.dts | 100 +++++++++++++++++++++++++++++++
+> >  arch/arm/boot/dts/r8a7793.dtsi     |  27 ++++++++++
+> >  2 files changed, 127 insertions(+)
 
 -- 
 Regards,
