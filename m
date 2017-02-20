@@ -1,51 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33594 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755967AbdBQI4V (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:33763 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751082AbdBTVbf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 03:56:21 -0500
-Received: by mail-it0-f66.google.com with SMTP id e137so1730399itc.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Feb 2017 00:56:21 -0800 (PST)
+        Mon, 20 Feb 2017 16:31:35 -0500
+Received: by mail-lf0-f48.google.com with SMTP id l12so18178855lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Feb 2017 13:31:34 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170220213129.182097269@cogentembedded.com>
+Date: Tue, 21 Feb 2017 00:31:12 +0300
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] arm64: dts: r8a7796: add IMR-LX4 support
 MIME-Version: 1.0
-In-Reply-To: <20160118054834.22156.56150.sendpatchset@little-apple>
-References: <20160118054817.22156.6531.sendpatchset@little-apple> <20160118054834.22156.56150.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 17 Feb 2017 09:56:20 +0100
-Message-ID: <CAMuHMdVvpgQHEVtjBoCT4s2=Mez5vsm36st82mmCcQrzvhbciQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC 02/02] arm64: dts: Salvator-X: Enable 4 GiB of RAM
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=arm64-dts-r8a7796-add-IMR-LX4-support.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+Describe the IMR-LX4 devices in the R8A7796 device tree.
 
-On Mon, Jan 18, 2016 at 6:48 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Enable all the on-board memory for the r8a7795 Salvator-X board.
->
-> Not for upstream merge. Needs to be ordered with firmware update
-> to avoid overly complex dependencies.
->
-> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Any chance we can get a real SoB?
-Not-so-recent firmware already enables the memory in U-Boot anyway.
+---
+This patch is against the 'renesas-devel-20170217-v4.10-rc8' tag of Simon
+Horman's 'renesas.git' repo.
 
-Thanks!
+The IMR-LX4 binding was documented in the IMR driver patch; I don't expect it
+to  change  even if the driver  would be  rewritten  for DRM...
 
-Gr{oetje,eeting}s,
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -904,5 +904,21 @@
+ 				};
+ 			};
+ 		};
++
++		imr-lx4@fe860000 {
++			compatible = "renesas,imr-lx4";
++			reg = <0 0xfe860000 0 0x2000>;
++			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 823>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++		};
++
++		imr-lx4@fe870000 {
++			compatible = "renesas,imr-lx4";
++			reg = <0 0xfe870000 0 0x2000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 822>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++		};
+ 	};
+ };
