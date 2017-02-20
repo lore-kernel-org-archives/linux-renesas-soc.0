@@ -1,77 +1,113 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:58426 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751596AbdBUKuO (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Feb 2017 05:50:14 -0500
-Subject: Re: [PATCH/RFC 4/6] drivers: firmware: psci: Fix non-PMIC wake-up if
- SYSTEM_SUSPEND cuts power
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
- <1487622809-25127-5-git-send-email-geert+renesas@glider.be>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
         Lina Iyer <lina.iyer@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <bed72738-93c7-c0da-d6c7-383d6881dbdd@arm.com>
-Date: Tue, 21 Feb 2017 10:50:03 +0000
-MIME-Version: 1.0
-In-Reply-To: <1487622809-25127-5-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 4/6] drivers: firmware: psci: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts power
+Date: Mon, 20 Feb 2017 21:33:27 +0100
+Message-Id: <1487622809-25127-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Nothing in the PSCI specification requires the SoC to remain powered and
+to support wake-up sources when suspended using SYSTEM_SUSPEND.
+If the firmware implements the PSCI SYSTEM_SUSPEND operation by cutting
+power to the SoC, the only possibly wake-up sources are thus the ones
+connected to the PMIC.
 
+Document and add support for an "arm,psci-system-suspend-is-power-down"
+DT property, so Linux uses a different suspend method when other wake-up
+sources (e.g. wake on LAN, UART or GPIO) are enabled.
 
-On 20/02/17 20:33, Geert Uytterhoeven wrote:
-> Nothing in the PSCI specification requires the SoC to remain powered and
-> to support wake-up sources when suspended using SYSTEM_SUSPEND.
-> If the firmware implements the PSCI SYSTEM_SUSPEND operation by cutting
-> power to the SoC, the only possibly wake-up sources are thus the ones
-> connected to the PMIC.
-> 
-> Document and add support for an "arm,psci-system-suspend-is-power-down"
-> DT property, so Linux uses a different suspend method when other wake-up
-> sources (e.g. wake on LAN, UART or GPIO) are enabled.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/arm/psci.txt | 11 +++++++++++
->  drivers/firmware/psci.c                        | 13 ++++++++++---
->  2 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
-> index a2c4f1d524929bb7..16e390ecb7531028 100644
-> --- a/Documentation/devicetree/bindings/arm/psci.txt
-> +++ b/Documentation/devicetree/bindings/arm/psci.txt
-> @@ -68,6 +68,17 @@ state nodes, as per bindings in [1]) must specify the following properties:
->  		Definition: power_state parameter to pass to the PSCI
->  			    suspend call.
->  
-> + - arm,psci-system-suspend-is-power-down
-> +		Nothing in the PSCI specification requires the SoC to remain
-> +		powered and to support wake-up sources when suspended using
-> +		SYSTEM_SUSPEND.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/arm/psci.txt | 11 +++++++++++
+ drivers/firmware/psci.c                        | 13 ++++++++++---
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-Again, yes SoC can be powered down but you give no reasons why this is
-useful other than help you to hack around to implement suspend_ops. As
-suggested please try using freeze_ops.
-
-After commit a94e502c22b6 ("cpuidle: dt: assign ->enter_freeze to same
-as ->enter callback function"), you can enter suspend-to-idle(a.k.a
-freeze state) on all platforms using ARM DT cpuidle driver.
-
+diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
+index a2c4f1d524929bb7..16e390ecb7531028 100644
+--- a/Documentation/devicetree/bindings/arm/psci.txt
++++ b/Documentation/devicetree/bindings/arm/psci.txt
+@@ -68,6 +68,17 @@ state nodes, as per bindings in [1]) must specify the following properties:
+ 		Definition: power_state parameter to pass to the PSCI
+ 			    suspend call.
+ 
++ - arm,psci-system-suspend-is-power-down
++		Nothing in the PSCI specification requires the SoC to remain
++		powered and to support wake-up sources when suspended using
++		SYSTEM_SUSPEND.
++		If your firmware implements the PSCI SYSTEM_SUSPEND operation
++		by cutting power to the SoC, the only possibly wake-up sources
++		are thus the ones connected to the PMIC.  In such case you
++		should specify this property, so the operating system is aware
++		it should use a different suspend method when other wake-up
++		sources (e.g. wake on LAN, UART or GPIO) are enabled.
++
+ Example:
+ 
+ Case 1: PSCI v0.1 only.
+diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+index 13b4d50bb3577384..0a74c23fd5fe043e 100644
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -20,6 +20,7 @@
+ #include <linux/linkage.h>
+ #include <linux/of.h>
+ #include <linux/pm.h>
++#include <linux/pm_wakeup.h>
+ #include <linux/printk.h>
+ #include <linux/psci.h>
+ #include <linux/reboot.h>
+@@ -86,6 +87,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
+ 
+ static u32 psci_cpu_suspend_feature;
+ static bool psci_suspend_mem_supported;
++static bool psci_system_suspend_is_power_down;
+ 
+ static inline bool psci_has_ext_power_state(void)
+ {
+@@ -440,12 +442,14 @@ static int psci_system_suspend_valid(suspend_state_t state)
+ static int psci_system_suspend_enter(suspend_state_t state)
+ {
+ 	switch (state) {
++	case PM_SUSPEND_MEM:
++		if (!psci_system_suspend_is_power_down ||
++		    !wakeup_source_available())
++			return cpu_suspend(0, psci_system_suspend);
++		/* fall through */
+ 	case PM_SUSPEND_STANDBY:
+ 		cpu_do_idle();
+ 		break;
+-
+-	case PM_SUSPEND_MEM:
+-		return cpu_suspend(0, psci_system_suspend);
+ 	}
+ 
+ 	return 0;
+@@ -596,6 +600,9 @@ static int __init psci_0_2_init(struct device_node *np)
+ 	 */
+ 	err = psci_probe();
+ 
++	psci_system_suspend_is_power_down = of_property_read_bool(np,
++		"arm,psci-system-suspend-is-power-down");
++
+ out_put_node:
+ 	of_node_put(np);
+ 	return err;
 -- 
-Regards,
-Sudeep
+2.7.4
