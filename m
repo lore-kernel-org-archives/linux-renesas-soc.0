@@ -1,112 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40818 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753893AbdBGODe (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40325 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753286AbdBTROV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 09:03:34 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2] watchdog: softdog: make pretimeout support a compile option
-Date: Tue,  7 Feb 2017 15:03:29 +0100
-Message-Id: <20170207140329.31459-1-wsa+renesas@sang-engineering.com>
+        Mon, 20 Feb 2017 12:14:21 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 6/7] arm: dts: genmai: Add RIIC2 pin group
+Date: Mon, 20 Feb 2017 18:13:07 +0100
+Message-Id: <1487610788-6939-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It occurred to me that the panic pretimeout governor will stall the
-softdog, because it is purely software which simply breaks when the
-kernel panics. Testing governors with the softdog on the other hand is
-really useful, so make this feature a compile time option which nees to
-be enabled explicitly. This also removes the overhead if pretimeout
-support is not used because it will now be compiled away (saving ~10% on
-ARM32).
+Add pin configuration subnode for RIIC2 interface.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
+ arch/arm/boot/dts/r7s72100-genmai.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Change since V1:
-
-* use IS_DEFINED as if-conditions, removing the need for #ifdef
-
-I have to admit that this result is better readable and what the compiler
-compiles away is sufficient.
-
- drivers/watchdog/Kconfig   |  8 ++++++++
- drivers/watchdog/softdog.c | 21 +++++++++++++--------
- 2 files changed, 21 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index acb00b53a5207b..70726ce3d166e8 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -71,6 +71,14 @@ config SOFT_WATCHDOG
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called softdog.
- 
-+config SOFT_WATCHDOG_PRETIMEOUT
-+	bool "Software watchdog pretimeout governor support"
-+	depends on SOFT_WATCHDOG && WATCHDOG_PRETIMEOUT_GOV
-+	help
-+	  Enable this if you want to use pretimeout governors with the software
-+	  watchdog. Be aware that governors might affect the watchdog because it
-+	  is purely software, e.g. the panic governor will stall it!
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index f7be440..467a8a1 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -43,6 +43,12 @@
+ 		renesas,pins = <PIN(3, 0) 6>,
+ 			       <PIN(3, 2) (4 | INPUT_EN)>;
+ 	};
 +
- config DA9052_WATCHDOG
- 	tristate "Dialog DA9052 Watchdog"
- 	depends on PMIC_DA9052
-diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
-index c7bdc986dca1c2..7983029852ab0d 100644
---- a/drivers/watchdog/softdog.c
-+++ b/drivers/watchdog/softdog.c
-@@ -87,11 +87,13 @@ static int softdog_ping(struct watchdog_device *w)
- 	if (!mod_timer(&softdog_ticktock, jiffies + (w->timeout * HZ)))
- 		__module_get(THIS_MODULE);
- 
--	if (w->pretimeout)
--		mod_timer(&softdog_preticktock, jiffies +
--			  (w->timeout - w->pretimeout) * HZ);
--	else
--		del_timer(&softdog_preticktock);
-+	if (IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT)) {
-+		if (w->pretimeout)
-+			mod_timer(&softdog_preticktock, jiffies +
-+				  (w->timeout - w->pretimeout) * HZ);
-+		else
-+			del_timer(&softdog_preticktock);
-+	}
- 
- 	return 0;
- }
-@@ -101,15 +103,15 @@ static int softdog_stop(struct watchdog_device *w)
- 	if (del_timer(&softdog_ticktock))
- 		module_put(THIS_MODULE);
- 
--	del_timer(&softdog_preticktock);
-+	if (IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT))
-+		del_timer(&softdog_preticktock);
- 
- 	return 0;
- }
- 
- static struct watchdog_info softdog_info = {
- 	.identity = "Software Watchdog",
--	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE |
--		   WDIOF_PRETIMEOUT,
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
++	i2c2_pins: i2c2 {
++		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
++		renesas,pins = <PIN(1, 4) (1 | INPUT_EN)>,
++			       <PIN(1, 5) (1 | INPUT_EN)>;
++	};
  };
  
- static const struct watchdog_ops softdog_ops = {
-@@ -134,6 +136,9 @@ static int __init softdog_init(void)
- 	watchdog_set_nowayout(&softdog_dev, nowayout);
- 	watchdog_stop_on_reboot(&softdog_dev);
+ &extal_clk {
+@@ -61,6 +67,9 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
  
-+	if (IS_ENABLED(CONFIG_SOFT_WATCHDOG_PRETIMEOUT))
-+		softdog_info.options |= WDIOF_PRETIMEOUT;
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_pins>;
 +
- 	ret = watchdog_register_device(&softdog_dev);
- 	if (ret)
- 		return ret;
+ 	eeprom@50 {
+ 		compatible = "renesas,24c128";
+ 		reg = <0x50>;
 -- 
-2.11.0
+2.7.4
