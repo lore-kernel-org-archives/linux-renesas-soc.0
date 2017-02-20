@@ -1,40 +1,59 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1485442486-18427-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1485442486-18427-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Feb 2017 14:05:06 +0100
-Message-ID: <CAMuHMdXGKsB9z4mjOSdQ7yViM9sw0FoJt3EoczdTRuNgNwdXxg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] arm64: dts: m3ulcb: enable HS200 for eMMC
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:57049 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753381AbdBTROV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Feb 2017 12:14:21 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 5/7] arm: dts: genmai: Add SCIF2 pin group
+Date: Mon, 20 Feb 2017 18:13:06 +0100
+Message-Id: <1487610788-6939-6-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 3:54 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
->
-> This supports HS200 mode for eMMC on M3ULCB board
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Add pin configuration subnode for SCIF2 serial debug interface.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm/boot/dts/r7s72100-genmai.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 118a8e2..f7be440 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -36,6 +36,15 @@
+ 	};
+ };
+ 
++&pinctrl {
++
++	scif2_pins: serial2 {
++		/* P3_0 as TxD2; P3_2 as RxD2 */
++		renesas,pins = <PIN(3, 0) 6>,
++			       <PIN(3, 2) (4 | INPUT_EN)>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <13330000>;
+ };
+@@ -60,6 +69,9 @@
+ };
+ 
+ &scif2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif2_pins>;
++
+ 	status = "okay";
+ };
+ 
+-- 
+2.7.4
