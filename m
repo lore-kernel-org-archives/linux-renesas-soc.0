@@ -1,47 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:53504 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751472AbdBMSDw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:03:52 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 4/4] mmc: host: tmio: fill in response from auto cmd12
-Date: Mon, 13 Feb 2017 19:03:42 +0100
-Message-Id: <20170213180342.26172-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
-References: <20170213180342.26172-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH] vsp-lib: Fix reference frame generation for HSV input
+ formats
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-renesas-soc@vger.kernel.org
+References: <20170213154656.30363-1-laurent.pinchart@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <1db398d2-8b72-1bb9-66fb-b6c47ba9c7a4@ideasonboard.com>
+Date: Mon, 20 Feb 2017 10:46:15 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170213154656.30363-1-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-After we received the dataend interrupt, R1 response register carries
-the value from the automatically generated stop command. Report that
-info back to the MMC block layer, so we will be notified in case of e.g.
-ECC errors which happened during the last transfer.
+Hi Laurent,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc_pio.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 13/02/17 15:46, Laurent Pinchart wrote:
+> gen-image doesn't support processing HSV input frames. Fortunately the
+> HSV tests don't require it either, when they take an HSV input frame
+> they just pass it straight to the WPF. We can thus set the input format
+> to RGB for reference frame generation.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  scripts/vsp-lib.sh | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+> index ae9683cffab6..695e081bf34d 100755
+> --- a/scripts/vsp-lib.sh
+> +++ b/scripts/vsp-lib.sh
+> @@ -103,6 +103,16 @@ reference_frame() {
+>  	local alpha=
+>  	local options=
+>  
+> +	# gen-image doesn't support processing HSV input images. The good news
+> +	# is that the HSV tests that take HSV images as inputs don't need to
+> +	# perform any processing. We can set the input format to RGB for HSB
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index b47dd9195fe3fe..a08db28b0100d6 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -557,6 +557,9 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
- 				stop->opcode, stop->arg);
- 
-+		/* fill in response from auto CMD12 */
-+		stop->resp[0] = sd_ctrl_read16_and_16_as_32(host, CTL_RESPONSE);
-+
- 		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 	}
- 
--- 
-2.11.0
+s/HSB/HSV/
+
+> +	# reference frame generation.
+> +	case $in_format in
+> +	HSV24 | HSV32)
+> +		in_format=ARGB32
+> +		;;
+> +	esac
+> +
+>  	# Start with the input format to compute the alpha value being used by
+>  	# the RPF after unpacking. Keep in sync with generate_input_frame.
+>  	case $in_format in
+
+With that,
+
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
