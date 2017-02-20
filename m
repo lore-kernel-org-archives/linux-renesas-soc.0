@@ -1,72 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:35108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752441AbdBCVHo (ORCPT
+Received: from slow1-d.mail.gandi.net ([217.70.178.86]:60379 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752707AbdBTRTu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Feb 2017 16:07:44 -0500
-Date: Fri, 3 Feb 2017 15:07:40 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        Roy Zang <tie-fei.zang@freescale.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Minghuan Lian <minghuan.Lian@freescale.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Shailendra Verma <shailendra.v@samsung.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Mingkai Hu <mingkai.hu@freescale.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1 0/4] PCI: Use of_device_get_match_data() to simplify
- probe
-Message-ID: <20170203210740.GC24162@bhelgaas-glaptop.roam.corp.google.com>
-References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Mon, 20 Feb 2017 12:19:50 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Renesas RZ/A1 pin and gpio controller
+Date: Mon, 20 Feb 2017 18:13:01 +0100
+Message-Id: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 31, 2017 at 02:19:51PM -0600, Bjorn Helgaas wrote:
-> This turned into much ado about nothing, but Shailendra's hisi patch
-> prompted similar cleanups in other drivers.  It's a minor simplification,
-> but I think worth doing consistently across drivers.
-> 
-> Basically this is Geert's observation that when the driver probe function
-> is called only as a result of matching something in <match_table>, a
-> subsequent of_match_device(<match_table>, dev) call should never fail.
-> 
-> Therefore, instead of this:
-> 
->   struct of_device_id *match;
-> 
->   match = of_match_device(<match_table>, dev);
->   ... = match->data;
-> 
-> we can do this:
-> 
->   ... = of_device_get_match_data(dev);
-> 
-> ---
-> 
-> Bjorn Helgaas (3):
->       PCI: iproc: Use of_device_get_match_data() to simplify probe
->       PCI: layerscape: Use of_device_get_match_data() to simplify probe
->       PCI: rcar: Use of_device_get_match_data() to simplify probe
-> 
-> Shailendra Verma (1):
->       PCI: hisi: Use of_device_get_match_data() to simplify probe
-> 
-> 
->  drivers/pci/host/pci-layerscape.c      |    7 +------
->  drivers/pci/host/pcie-hisi.c           |    8 +++-----
->  drivers/pci/host/pcie-iproc-platform.c |    7 +------
->  drivers/pci/host/pcie-rcar.c           |    7 +------
->  4 files changed, 6 insertions(+), 23 deletions(-)
+Hello,
+   this is the first submission of combined GPIO and pin controller driver
+for Renesas RZ/A1 SoC.
 
-I applied these to pci/host-layerscape, pci/host-hisi, pci/host-iproc,
-pci/host-rcar for v4.11.
+Compared to my RFC series on the same subject, this new implementation
+supports a single SoC. If more devices with a similar pin controller will
+arrive later, we will consider supporting them through this driver.
+
+The series adds the driver itself and register the pincontroller in dtsi.
+The pin controller hardware supports 12 ports, each of them is also a gpio
+controller.
+
+The series makes use of pinctrl and pinmux generic function currently
+available in Linus Walleij's linux-pinctrl.git tree.
+
+Testing done veryfing functionalities of hardware modules enabled in device
+tree (SCIF2 for serial output, RIIC for accessing an internal eeprom chip and
+user visible leds).
+Gpio have been also verified using a i2c-gpio device in place of the native
+RIIC one to access the same eeprom device.
+
+Thanks
+   j
+
+Jacopo Mondi (7):
+  pinctrl: Renesas RZ/A1 pin and gpio controller
+  Documentation: devicetree: bindings: Add RZ/A1 pinctrl binding
+    documentation
+  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+  arm: dts: r7s72100: Add pin controller node
+  arm: dts: genmai: Add SCIF2 pin group
+  arm: dts: genmai: Add RIIC2 pin group
+  arm: dts: genmai: Add user led device nodes
+
+ .../bindings/pinctrl/renesas,rza1-pinctrl.txt      |  114 +++
+ arch/arm/boot/dts/r7s72100-genmai.dts              |   35 +
+ arch/arm/boot/dts/r7s72100.dtsi                    |   81 ++
+ drivers/pinctrl/Kconfig                            |   10 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-rza1.c                     | 1026 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |   30 +
+ 7 files changed, 1297 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rza1.c
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+
+-- 
+2.7.4
