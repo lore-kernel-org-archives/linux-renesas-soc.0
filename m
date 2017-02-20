@@ -1,92 +1,49 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=Wi0l=ZX=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/8] v4l: vsp1: Track the SRU entity in the pipeline
-Date: Fri, 10 Feb 2017 20:27:30 +0000
-Message-Id: <8ad9d316c05ab254b65ad5230fb9232325e783ec.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 5/6] arm64: dts: r8a7795: Fix non-PMIC wake-up sources
+Date: Mon, 20 Feb 2017 21:33:28 +0100
+Message-Id: <1487622809-25127-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The UDS and other entities are already tracked directly through the
-pipeline object. To follow the design pattern, and allow us to reference
-the SRU convert the usage of 'sru_found'
+The PSCI firmware on boards equipped with an R-Car H3 SoC implements the
+PSCI SYSTEM_SUSPEND operation by cutting power to the SoC.  Hence the
+only possibly wake-up sources are the ones connected to the PMIC, unless
+the "arm,psci-system-suspend-is-power-down" property is specified.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/vsp1/vsp1_pipe.h  |  2 ++
- drivers/media/platform/vsp1/vsp1_video.c | 11 ++++++++---
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index bc419ef48d8d..5aa31143ce59 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -76,6 +76,7 @@ enum vsp1_pipeline_state {
-  * @output: WPF at the output of the pipeline
-  * @bru: BRU entity, if present
-  * @lif: LIF entity, if present
-+ * @sru: SRU entity, if present
-  * @uds: UDS entity, if present
-  * @uds_input: entity at the input of the UDS, if the UDS is present
-  * @entities: list of entities in the pipeline
-@@ -104,6 +105,7 @@ struct vsp1_pipeline {
- 	struct vsp1_rwpf *output;
- 	struct vsp1_entity *bru;
- 	struct vsp1_entity *lif;
-+	struct vsp1_entity *sru;
- 	struct vsp1_entity *uds;
- 	struct vsp1_entity *uds_input;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index f05a9c4dd3b60c82..cf43e9c7cab224b2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -31,6 +31,7 @@
+ 	psci {
+ 		compatible = "arm,psci-0.2";
+ 		method = "smc";
++		arm,psci-system-suspend-is-power-down;
+ 	};
  
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index e2f242e7f0fa..be9c860b1c04 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -473,7 +473,6 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
- 	struct vsp1_entity *entity;
- 	struct media_pad *pad;
- 	bool bru_found = false;
--	bool sru_found = false;
- 	int ret;
- 
- 	ret = media_entity_enum_init(&ent_enum, &input->entity.vsp1->media_dev);
-@@ -523,6 +522,12 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
- 		if (entity->type == VSP1_ENTITY_SRU) {
- 			struct vsp1_sru *sru = to_sru(&entity->subdev);
- 
-+			/* SRU can't be chained. */
-+			if (pipe->sru) {
-+				ret = -EPIPE;
-+				goto out;
-+			}
-+
- 			/*
- 			 * Gen3 partition algorithm restricts SRU double-scaled
- 			 * resolution if it is connected after a UDS entity
-@@ -530,7 +535,7 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
- 			if (vsp1->info->gen == 3 && pipe->uds)
- 				sru->force_identity_mode = true;
- 
--			sru_found = true;
-+			pipe->sru = entity;
- 		}
- 
- 		if (entity->type == VSP1_ENTITY_UDS) {
-@@ -546,7 +551,7 @@ static int vsp1_video_pipeline_build_branch(struct vsp1_pipeline *pipe,
- 			 * SRU on Gen3 will always engage the partition
- 			 * algorithm
- 			 */
--			if (vsp1->info->gen == 3 && sru_found) {
-+			if (vsp1->info->gen == 3 && pipe->sru) {
- 				ret = -EPIPE;
- 				goto out;
- 			}
+ 	cpus {
 -- 
-git-series 0.9.1
+2.7.4
+
