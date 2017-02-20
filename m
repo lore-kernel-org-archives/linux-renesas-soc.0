@@ -1,113 +1,137 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 4/6] drivers: firmware: psci: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts power
-Date: Mon, 20 Feb 2017 21:33:27 +0100
-Message-Id: <1487622809-25127-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:36267 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751068AbdBTSSM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Feb 2017 13:18:12 -0500
+From: Matthew Giassa <matthew@giassa.net>
+To: wsa@the-dreams.de
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        Matthew Giassa <matthew@giassa.net>
+Subject: [PATCH] *Updating complex macros for checkpatch.
+Date: Mon, 20 Feb 2017 09:20:52 -0800
+Message-Id: <1487611252-25698-1-git-send-email-matthew@giassa.net>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Nothing in the PSCI specification requires the SoC to remain powered and
-to support wake-up sources when suspended using SYSTEM_SUSPEND.
-If the firmware implements the PSCI SYSTEM_SUSPEND operation by cutting
-power to the SoC, the only possibly wake-up sources are thus the ones
-connected to the PMIC.
-
-Document and add support for an "arm,psci-system-suspend-is-power-down"
-DT property, so Linux uses a different suspend method when other wake-up
-sources (e.g. wake on LAN, UART or GPIO) are enabled.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Matthew Giassa <matthew@giassa.net>
 ---
- Documentation/devicetree/bindings/arm/psci.txt | 11 +++++++++++
- drivers/firmware/psci.c                        | 13 ++++++++++---
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ drivers/staging/ks7010/ks_wlan_ioctl.h | 80 +++++++++++++++++-----------------
+ 1 file changed, 41 insertions(+), 39 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
-index a2c4f1d524929bb7..16e390ecb7531028 100644
---- a/Documentation/devicetree/bindings/arm/psci.txt
-+++ b/Documentation/devicetree/bindings/arm/psci.txt
-@@ -68,6 +68,17 @@ state nodes, as per bindings in [1]) must specify the following properties:
- 		Definition: power_state parameter to pass to the PSCI
- 			    suspend call.
- 
-+ - arm,psci-system-suspend-is-power-down
-+		Nothing in the PSCI specification requires the SoC to remain
-+		powered and to support wake-up sources when suspended using
-+		SYSTEM_SUSPEND.
-+		If your firmware implements the PSCI SYSTEM_SUSPEND operation
-+		by cutting power to the SoC, the only possibly wake-up sources
-+		are thus the ones connected to the PMIC.  In such case you
-+		should specify this property, so the operating system is aware
-+		it should use a different suspend method when other wake-up
-+		sources (e.g. wake on LAN, UART or GPIO) are enabled.
-+
- Example:
- 
- Case 1: PSCI v0.1 only.
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index 13b4d50bb3577384..0a74c23fd5fe043e 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -20,6 +20,7 @@
- #include <linux/linkage.h>
- #include <linux/of.h>
- #include <linux/pm.h>
-+#include <linux/pm_wakeup.h>
- #include <linux/printk.h>
- #include <linux/psci.h>
- #include <linux/reboot.h>
-@@ -86,6 +87,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
- 
- static u32 psci_cpu_suspend_feature;
- static bool psci_suspend_mem_supported;
-+static bool psci_system_suspend_is_power_down;
- 
- static inline bool psci_has_ext_power_state(void)
- {
-@@ -440,12 +442,14 @@ static int psci_system_suspend_valid(suspend_state_t state)
- static int psci_system_suspend_enter(suspend_state_t state)
- {
- 	switch (state) {
-+	case PM_SUSPEND_MEM:
-+		if (!psci_system_suspend_is_power_down ||
-+		    !wakeup_source_available())
-+			return cpu_suspend(0, psci_system_suspend);
-+		/* fall through */
- 	case PM_SUSPEND_STANDBY:
- 		cpu_do_idle();
- 		break;
+diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
+index 84554b6..00eec18 100644
+--- a/drivers/staging/ks7010/ks_wlan_ioctl.h
++++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
+@@ -1,6 +1,6 @@
+ /*
+  *   Driver for KeyStream 11b/g wireless LAN
+- *   
++ *
+  *   Copyright (c) 2005-2008 KeyStream Corp.
+  *   Copyright (C) 2009 Renesas Technology Corp.
+  *
+@@ -8,60 +8,62 @@
+  *   it under the terms of the GNU General Public License version 2 as
+  *   published by the Free Software Foundation.
+  */
 -
--	case PM_SUSPEND_MEM:
--		return cpu_suspend(0, psci_system_suspend);
- 	}
+ #ifndef _KS_WLAN_IOCTL_H
+ #define _KS_WLAN_IOCTL_H
  
- 	return 0;
-@@ -596,6 +600,9 @@ static int __init psci_0_2_init(struct device_node *np)
- 	 */
- 	err = psci_probe();
+ #include <linux/wireless.h>
+-/* The low order bit identify a SET (0) or a GET (1) ioctl.  */
++/* The low order bit identify a SET (0) or a GET (1) ioctl. */
  
-+	psci_system_suspend_is_power_down = of_property_read_bool(np,
-+		"arm,psci-system-suspend-is-power-down");
+-/*					SIOCIWFIRSTPRIV+0 */
+-/* former KS_WLAN_GET_DRIVER_VERSION	SIOCIWFIRSTPRIV+1 */
+-/*					SIOCIWFIRSTPRIV+2 */
+-#define KS_WLAN_GET_FIRM_VERSION	SIOCIWFIRSTPRIV+3
++/*					(SIOCIWFIRSTPRIV + 0) */
++/* Former KS_WLAN_GET_DRIVER_VERSION	(SIOCIWFIRSTPRIV + 1) */
++/*					(SIOCIWFIRSTPRIV + 2) */
++#define KS_WLAN_GET_FIRM_VERSION	(SIOCIWFIRSTPRIV + 3)
+ #ifdef WPS
+-#define KS_WLAN_SET_WPS_ENABLE 		SIOCIWFIRSTPRIV+4
+-#define KS_WLAN_GET_WPS_ENABLE 		SIOCIWFIRSTPRIV+5
+-#define KS_WLAN_SET_WPS_PROBE_REQ	SIOCIWFIRSTPRIV+6
++#define KS_WLAN_SET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 4)
++#define KS_WLAN_GET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 5)
++#define KS_WLAN_SET_WPS_PROBE_REQ	(SIOCIWFIRSTPRIV + 6)
+ #endif
+-#define KS_WLAN_GET_EEPROM_CKSUM	SIOCIWFIRSTPRIV+7
+-#define KS_WLAN_SET_PREAMBLE		SIOCIWFIRSTPRIV+8
+-#define KS_WLAN_GET_PREAMBLE		SIOCIWFIRSTPRIV+9
+-#define KS_WLAN_SET_POWER_SAVE		SIOCIWFIRSTPRIV+10
+-#define KS_WLAN_GET_POWER_SAVE		SIOCIWFIRSTPRIV+11
+-#define KS_WLAN_SET_SCAN_TYPE		SIOCIWFIRSTPRIV+12
+-#define KS_WLAN_GET_SCAN_TYPE		SIOCIWFIRSTPRIV+13
+-#define KS_WLAN_SET_RX_GAIN		SIOCIWFIRSTPRIV+14
+-#define KS_WLAN_GET_RX_GAIN		SIOCIWFIRSTPRIV+15
+-#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV+16	/* unused */
+-//#define KS_WLAN_SET_REGION            SIOCIWFIRSTPRIV+17
+-#define KS_WLAN_SET_BEACON_LOST		SIOCIWFIRSTPRIV+18
+-#define KS_WLAN_GET_BEACON_LOST		SIOCIWFIRSTPRIV+19
++#define KS_WLAN_GET_EEPROM_CKSUM	(SIOCIWFIRSTPRIV + 7)
++#define KS_WLAN_SET_PREAMBLE		(SIOCIWFIRSTPRIV + 8)
++#define KS_WLAN_GET_PREAMBLE		(SIOCIWFIRSTPRIV + 9)
++#define KS_WLAN_SET_POWER_SAVE		(SIOCIWFIRSTPRIV + 10)
++#define KS_WLAN_GET_POWER_SAVE		(SIOCIWFIRSTPRIV + 11)
++#define KS_WLAN_SET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 12)
++#define KS_WLAN_GET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 13)
++#define KS_WLAN_SET_RX_GAIN		(SIOCIWFIRSTPRIV + 14)
++#define KS_WLAN_GET_RX_GAIN		(SIOCIWFIRSTPRIV + 15)
++#define KS_WLAN_HOSTT			(SIOCIWFIRSTPRIV + 16)	/* unused */
++/*#define KS_WLAN_SET_REGION            (SIOCIWFIRSTPRIV + 17) */
++#define KS_WLAN_SET_BEACON_LOST		(SIOCIWFIRSTPRIV + 18)
++#define KS_WLAN_GET_BEACON_LOST		(SIOCIWFIRSTPRIV + 19)
+ 
+-#define KS_WLAN_SET_TX_GAIN		SIOCIWFIRSTPRIV+20
+-#define KS_WLAN_GET_TX_GAIN		SIOCIWFIRSTPRIV+21
++#define KS_WLAN_SET_TX_GAIN		(SIOCIWFIRSTPRIV + 20)
++#define KS_WLAN_GET_TX_GAIN		(SIOCIWFIRSTPRIV + 21)
+ 
+-/* for KS7010 */
+-#define KS_WLAN_SET_PHY_TYPE		SIOCIWFIRSTPRIV+22
+-#define KS_WLAN_GET_PHY_TYPE		SIOCIWFIRSTPRIV+23
+-#define KS_WLAN_SET_CTS_MODE		SIOCIWFIRSTPRIV+24
+-#define KS_WLAN_GET_CTS_MODE		SIOCIWFIRSTPRIV+25
+-/*					SIOCIWFIRSTPRIV+26 */
+-/*					SIOCIWFIRSTPRIV+27 */
+-#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV+28	/* sleep mode */
+-#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV+29	/* sleep mode */
+-/*					SIOCIWFIRSTPRIV+30 */
+-/*					SIOCIWFIRSTPRIV+31 */
++/* For KS7010. */
++#define KS_WLAN_SET_PHY_TYPE		(SIOCIWFIRSTPRIV + 22)
++#define KS_WLAN_GET_PHY_TYPE		(SIOCIWFIRSTPRIV + 23)
++#define KS_WLAN_SET_CTS_MODE		(SIOCIWFIRSTPRIV + 24)
++#define KS_WLAN_GET_CTS_MODE		(SIOCIWFIRSTPRIV + 25)
++/*					(SIOCIWFIRSTPRIV + 26) */
++/*					(SIOCIWFIRSTPRIV + 27) */
++#define KS_WLAN_SET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 28)	/* sleep mode */
++#define KS_WLAN_GET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 29)	/* sleep mode */
++/*					(SIOCIWFIRSTPRIV + 30) */
++/*					(SIOCIWFIRSTPRIV + 31) */
+ 
+ #ifdef __KERNEL__
+ 
+ #include "ks_wlan.h"
+ #include <linux/netdevice.h>
+ 
+-int ks_wlan_read_config_file(struct ks_wlan_private *priv);
+-int ks_wlan_setup_parameter(struct ks_wlan_private *priv,
+-		             unsigned int commit_flag);
++int ks_wlan_read_config_file(
++		struct ks_wlan_private *priv);
++int ks_wlan_setup_parameter(
++		struct ks_wlan_private *priv,
++		unsigned int commit_flag);
+ 
+ #endif /* __KERNEL__ */
+ 
+ #endif /* _KS_WLAN_IOCTL_H */
 +
- out_put_node:
- 	of_node_put(np);
- 	return err;
 -- 
 2.7.4
