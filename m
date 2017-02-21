@@ -1,13 +1,14 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts
- power
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
- <69ab75a1-2e04-19e2-d1ad-12ca1cfc7625@arm.com>
- <CAMuHMdWjseO3XSOH2XCbM411Aj12RpdZZbHkpfFUfej58myz5Q@mail.gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+MIME-Version: 1.0
+In-Reply-To: <69ab75a1-2e04-19e2-d1ad-12ca1cfc7625@arm.com>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be> <69ab75a1-2e04-19e2-d1ad-12ca1cfc7625@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Feb 2017 17:21:06 +0100
+Message-ID: <CAMuHMdWjseO3XSOH2XCbM411Aj12RpdZZbHkpfFUfej58myz5Q@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts power
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Lina Iyer <lina.iyer@linaro.org>,
@@ -23,131 +24,75 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <445b2f49-5d15-30af-a431-1c4edcd049a4@arm.com>
-Date: Tue, 21 Feb 2017 16:45:13 +0000
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWjseO3XSOH2XCbM411Aj12RpdZZbHkpfFUfej58myz5Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Sudeep,
 
-On 21/02/17 16:21, Geert Uytterhoeven wrote:
-> Hi Sudeep,
-> 
-> On Tue, Feb 21, 2017 at 11:38 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> On 20/02/17 20:33, Geert Uytterhoeven wrote:
->>> This patch series adds support for using non-PMIC wake-up sources on the
->>> Renesas R-Car Gen3 (H3 or M3-W) Salvator-X development boards.
->>>
->>> Nothing in the PSCI specification requires the SoC to remain powered and
->>> to support wake-up sources when suspended using SYSTEM_SUSPEND.
->>> If the firmware implements the PSCI SYSTEM_SUSPEND operation by cutting
->>> power to the SoC, the only possibly wake-up sources are thus the ones
->>> connected to the PMIC.
+On Tue, Feb 21, 2017 at 11:38 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> On 20/02/17 20:33, Geert Uytterhoeven wrote:
+>> This patch series adds support for using non-PMIC wake-up sources on the
+>> Renesas R-Car Gen3 (H3 or M3-W) Salvator-X development boards.
 >>
->> OK, but I don't see any issue with that. That's exactly how it works on
-> 
-> How do you use other wake-up sources, like wake on LAN, UART or GPIO?
-> 
+>> Nothing in the PSCI specification requires the SoC to remain powered and
+>> to support wake-up sources when suspended using SYSTEM_SUSPEND.
+>> If the firmware implements the PSCI SYSTEM_SUSPEND operation by cutting
+>> power to the SoC, the only possibly wake-up sources are thus the ones
+>> connected to the PMIC.
+>
+> OK, but I don't see any issue with that. That's exactly how it works on
 
->From wakeup source configuration/management perspective, s2ram and
-s2idle are exactly same.
+How do you use other wake-up sources, like wake on LAN, UART or GPIO?
 
->> ARM Juno platform. The SoC is powered down.
-> 
-> Good to hear this is not limited to Renesas platforms, so there's a common
-> problem to solve.
-> 
+> ARM Juno platform. The SoC is powered down.
 
-No, there's no problem to solve. Firmware should enter deepest sleep
-state in the system with SYSTEM_SUSPEND from which it can wakeup of course.
+Good to hear this is not limited to Renesas platforms, so there's a common
+problem to solve.
 
->>> To allow other wake-up sources, this patch series documents and adds
->>> support for an "arm,psci-system-suspend-is-power-down" DT property, so
->>
->> NACK, you don't need any such properties.
-> 
-> If this is true for all PSCI platforms, there's indeed no need for such a
-> property, and drivers/firmware/psci.c should default to this case.
-> 
+>> To allow other wake-up sources, this patch series documents and adds
+>> support for an "arm,psci-system-suspend-is-power-down" DT property, so
+>
+> NACK, you don't need any such properties.
 
-Cool.
+If this is true for all PSCI platforms, there's indeed no need for such a
+property, and drivers/firmware/psci.c should default to this case.
 
->>> Linux uses a different suspend method when other wake-up sources (e.g.
->>> wake on LAN, UART or GPIO) are enabled.  Hence the user no longer has to
->>> manually restrict "mem" suspend to "s2idle" or "shallow" states using:
->>
->> Have you explored suspend-to-idle instead ? It looks like thats exactly
->> what you are doing in this patch set. You also get low latency for free
->> as it just enters the deepest idle state on all CPUs instead of
->> hotplugging out all the secondaries.
-> 
-> Yes, cfr. "s2idle" above.
-> The user can specify to use "s2idle" manually:
-> 
->     $ echo s2idle > /sys/power/mem_sleep # or "shallow"
-> 
+>> Linux uses a different suspend method when other wake-up sources (e.g.
+>> wake on LAN, UART or GPIO) are enabled.  Hence the user no longer has to
+>> manually restrict "mem" suspend to "s2idle" or "shallow" states using:
+>
+> Have you explored suspend-to-idle instead ? It looks like thats exactly
+> what you are doing in this patch set. You also get low latency for free
+> as it just enters the deepest idle state on all CPUs instead of
+> hotplugging out all the secondaries.
 
-This looks like custom file for me.
-IIUC, the standard sysfs file for the system PM state is:
-	/sys/power/state
-1. s2ram:
-	$ echo mem > /sys/power/state
-2. s2idle
-	$ echo freeze > /sys/power/state
+Yes, cfr. "s2idle" above.
+The user can specify to use "s2idle" manually:
 
-> However, how to handle this automatically, e.g. by a distro?
+    $ echo s2idle > /sys/power/mem_sleep # or "shallow"
 
-As above
+However, how to handle this automatically, e.g. by a distro?
+On most other platforms, userspace can just do e.g.
 
-> On most other platforms, userspace can just do e.g.
-> 
->     ethtool -s eth0 wol g
-> 
+    ethtool -s eth0 wol g
 
-That should work.
+to enable wake-on-LAN, and suspend to the deepest supported state using:
 
-> to enable wake-on-LAN, and suspend to the deepest supported state using:
-> 
->     echo mem > /sys/power/state
-> 
+    echo mem > /sys/power/state
 
-This will work only if PSCI SYSTEM_SUPEND is implemented. If the SoC
-can't wakeup if it's powered down, then it should not use that state
-to implement SYSTEM_SUSPEND in PSCI firmware or just return the
-SYSTEM_SUSPEND feature is not implemented in which case "freeze" is the
-next available state to enter.
+On systems where PSCI SYSTEM_SUSPEND powers down the SoC, userspace must
+make sure to configure to use "s2idle" (or "shallow) instead, else the
+configured wake-up sources won't work.
+I want Linux to handle this automatically.
 
-Just botching whatever shallow state you can enter on a particular SoC
-into standard "mem" state sounds *horrible* to me.
+Gr{oetje,eeting}s,
 
-> On systems where PSCI SYSTEM_SUSPEND powers down the SoC, userspace must
-> make sure to configure to use "s2idle" (or "shallow) instead, else the
-> configured wake-up sources won't work.
+                        Geert
 
-That's perfect. I was worried that user-space is not doing that. So to
-summarize, PSCI firmware either:
-1. enters a sane and resumable state in SYSTEM_SUSPEND api
-or
-2. just don't implement SYSTEM_SYSTEM. Use the cpuidle+s2idle framework
-   in Linux to enter the deepest idle state.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You literally need no extra work to enter this "freeze" state if the
-CPU_SUSPEND in PSCI can enter the deepest idle state you want to enter
-in this "s2idle" you are referring so far.
-Just start with:
-
-	$ cat /sys/power/state
-
-and you should see "freeze" there, if not that's the first thing to
-check provided the platform has cpuidle working.
-
-Hope this helps.
-
--- 
-Regards,
-Sudeep
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
