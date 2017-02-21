@@ -1,25 +1,19 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33591 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932120AbdBVNrm (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Feb 2017 08:47:42 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3caf0f3f-76e5-cb1e-7c0f-87ed5e1c2b86@arm.com>
+In-Reply-To: <20170221172012.GD8605@leverpostej>
 References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
  <1487622809-25127-4-git-send-email-geert+renesas@glider.be>
  <20170221110712.GB5021@amd> <de2a15d4-9ac2-9ba9-a47a-eacbf478f601@arm.com>
- <CAMuHMdVmu4AYZ6MZHd79N2-2gELR6s3oZ46UnEszCfLvHymY1w@mail.gmail.com> <3caf0f3f-76e5-cb1e-7c0f-87ed5e1c2b86@arm.com>
+ <CAMuHMdVmu4AYZ6MZHd79N2-2gELR6s3oZ46UnEszCfLvHymY1w@mail.gmail.com> <20170221172012.GD8605@leverpostej>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Feb 2017 14:47:39 +0100
-Message-ID: <CAMuHMdU0fTtEXN9k477e3S-UUMNhd=U4_r0VOcyA1TGEgA5rmA@mail.gmail.com>
+Date: Tue, 21 Feb 2017 19:06:04 +0100
+Message-ID: <CAMuHMdX_pot+=rJfY1Kor4gYD4CgBYivngzCLwV36LELx+AA5Q@mail.gmail.com>
 Subject: Re: [PATCH/RFC 3/6] drivers: firmware: psci: Implement shallow
  suspend mode
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Pavel Machek <pavel@ucw.cz>,
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Pavel Machek <pavel@ucw.cz>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
         Lina Iyer <lina.iyer@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -34,57 +28,53 @@ Cc: Pavel Machek <pavel@ucw.cz>,
         Linux PM list <linux-pm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sudeep,
+Hi Mark,
 
-On Tue, Feb 21, 2017 at 6:22 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On 21/02/17 16:32, Geert Uytterhoeven wrote:
+On Tue, Feb 21, 2017 at 6:20 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Tue, Feb 21, 2017 at 05:32:50PM +0100, Geert Uytterhoeven wrote:
 >> On Tue, Feb 21, 2017 at 12:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>> On 21/02/17 11:07, Pavel Machek wrote:
->>>>> Enable support for "shallow" suspend mode, also known as "Standby" or
->>>>> "Power-On Suspend".
->>>>>
->>>>> As secondary CPU cores are taken offline, "shallow" suspend mode saves
->>>>> slightly more power than "s2idle", but less than "deep" suspend mode.
->>>>> However, unlike "deep" suspend mode, "shallow" suspend mode can be used
->>>>> regardless of the presence of support for PSCI_SYSTEM_SUSPEND, which is
->>>>> an optional API in PSCI v1.0.
->>>>
->>>> If system supports "shallow" suspend, why does not PSCI implement it?
->>>
->>> Yes it can, and IIUC it already does on this platform with CPU_SUSPEND.
->>> All it now needs is just to use existing "freeze" suspend mode in Linux.
+>> > On 21/02/17 11:07, Pavel Machek wrote:
+>> >>> Enable support for "shallow" suspend mode, also known as "Standby" or
+>> >>> "Power-On Suspend".
+>> >>>
+>> >>> As secondary CPU cores are taken offline, "shallow" suspend mode saves
+>> >>> slightly more power than "s2idle", but less than "deep" suspend mode.
+>> >>> However, unlike "deep" suspend mode, "shallow" suspend mode can be used
+>> >>> regardless of the presence of support for PSCI_SYSTEM_SUSPEND, which is
+>> >>> an optional API in PSCI v1.0.
+>> >>
+>> >> If system supports "shallow" suspend, why does not PSCI implement it?
+>> >
+>> > Yes it can, and IIUC it already does on this platform with CPU_SUSPEND.
+>> > All it now needs is just to use existing "freeze" suspend mode in Linux.
 >>
 >> How can Linux know if using "deep" suspend will allow to wake-up the system
 >> according to configured wake-up sources, or not?
 >
-> I am not sure if we have such selective configuration of wakeup source
-> implemented in Linux.
+> My understanding is that if a device can wake the system from
+> PSCI_SYSTEM_SUSPEND, it should be described in the DT as a wakeup source
+> [1]. So we should be able to determine the set of devices which can wake
+> the system from a suspend. We shouldn't assume that other devices can
+> (though I don't precisely what we do currently).
 >
-> ACPI specification has some provisions where each device can state if it
-> can specify device state in each system sleeping state that can wake the
-> system.
->
-> DT has no mechanism today to express this relations. I had brought up
-> this discussion in plumbers(2015). Refer slide 7 in [0]
->
-> And the way you are trying to do that is not correct IMO especially
-> making it just PSCI specific.
->
->> Note that "it will not, ever" is an accepted answer.
->
-> IIUC, it's not implemented today. I can't talk about future ;), but your
+> Otherwise, where PSCI_CPU_SUSPEND, we'd expect that most devices
+> (barring cpu-local timers) can wake up CPUs, and hence the system, by
+> raising an interrupt.
 
-Good, so there's no need for the DT property, and drivers/firmware/psci.c
-should aways call do_cpu_idle() instead of PSCI SYSTEM_SUSPEND if any
-other wake-up sources are configured?
+> [1] Documentation/devicetree/bindings/power/wakeup-source.txt
 
-That follows the principle of least surprise: it doesn't leave the user with
-a system that won't wake up the way he configured it to wake up.
+"wakeup-source" in DT is used as a mix of hardware description and software
+policy.  E.g. some keys on a keyboard may have it, others don't, while there's
+not always a technical reason for that.
 
-> proposal is horrible hack.
+Also, it doesn't specify from which suspend state it can wake-up.
+
+On top of that, the Linux PM subsystem allows to configure wakeup by writing
+"enabled" to a device's "wakeup" file in sysfs.  Or you can use ethtool for
+Wake-on-LAN.
 
 Gr{oetje,eeting}s,
 
