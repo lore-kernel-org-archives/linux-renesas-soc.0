@@ -1,113 +1,101 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51322 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752816AbdBUPBc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 21 Feb 2017 10:01:32 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cgBwW-0006xB-Tw
+        for linux-renesas-soc@vger.kernel.org; Tue, 21 Feb 2017 16:01:28 +0100
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1cgBwW-0004Lx-Rp
+        for linux-renesas-soc@vger.kernel.org; Tue, 21 Feb 2017 16:01:28 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 3/6] drivers: firmware: psci: Implement shallow suspend mode
-Date: Mon, 20 Feb 2017 21:33:26 +0100
-Message-Id: <1487622809-25127-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2017-02-21-v4.10
+Date: Tue, 21 Feb 2017 16:01:28 +0100
+Message-Id: <1487689288-16692-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for "shallow" suspend mode, also known as "Standby" or
-"Power-On Suspend".
+I have pushed renesas-drivers-2017-02-21-v4.10 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-As secondary CPU cores are taken offline, "shallow" suspend mode saves
-slightly more power than "s2idle", but less than "deep" suspend mode.
-However, unlike "deep" suspend mode, "shallow" suspend mode can be used
-regardless of the presence of support for PSCI_SYSTEM_SUSPEND, which is
-an optional API in PSCI v1.0.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-List the available system suspend modes:
+Today's version is based on renesas-devel-20170217-v4.10-rc8.
 
-    $ cat /sys/power/mem_sleep
-    s2idle shallow [deep]
+Included branches with driver code:
+  - clk-renesas-for-v4.12
+  - https://git.ragnatech.se/linux#for-renesas-drivers
+  - topic/r8a7795-es2-v1-rebased7
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/suspend-resume-race
+  - topic/drm-du-hdmi-2017-01-10-rebased2
+  - topic/renesas-cpg-mssr-reset-dts-v1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#refs/tags/vsp1/pa-phases-2017-02-10
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/sdhi-autocmd12-resp
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/sdhi-dma-sync-v2
+  - git://linuxtv.org/pinchartl/media.git#drm/next/du
+  - topic/dma-attr-force-contiguous-v4-rebased1
 
-Suspend to "shallow" mode:
+Included fixes:
+  - serial: sh-sci: Fix early deassertion of dedicated RTS
+  - serial: sh-sci: Fix hang in sci_reset()
+  - Revert "arm64: renesas: r8a7796: Enable SCIF DMA"
+  - arm64: renesas: r8a7796: Enable SCIF DMA
 
-    $ echo shallow > /sys/power/mem_sleep
-    $ echo mem > /sys/power/state
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/firmware/psci.c | 32 +++++++++++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index 493a56a4cfc4a836..13b4d50bb3577384 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -85,6 +85,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
- 				PSCI_1_0_EXT_POWER_STATE_TYPE_MASK)
- 
- static u32 psci_cpu_suspend_feature;
-+static bool psci_suspend_mem_supported;
- 
- static inline bool psci_has_ext_power_state(void)
- {
-@@ -422,13 +423,36 @@ static int psci_system_suspend(unsigned long unused)
- 			      __pa_symbol(cpu_resume), 0, 0);
- }
- 
-+static int psci_system_suspend_valid(suspend_state_t state)
-+{
-+	switch (state) {
-+	case PM_SUSPEND_STANDBY:
-+		return true;
-+
-+	case PM_SUSPEND_MEM:
-+		return psci_suspend_mem_supported;
-+
-+	default:
-+		return false;
-+	}
-+}
-+
- static int psci_system_suspend_enter(suspend_state_t state)
- {
--	return cpu_suspend(0, psci_system_suspend);
-+	switch (state) {
-+	case PM_SUSPEND_STANDBY:
-+		cpu_do_idle();
-+		break;
-+
-+	case PM_SUSPEND_MEM:
-+		return cpu_suspend(0, psci_system_suspend);
-+	}
-+
-+	return 0;
- }
- 
- static const struct platform_suspend_ops psci_suspend_ops = {
--	.valid          = suspend_valid_only_mem,
-+	.valid          = psci_system_suspend_valid,
- 	.enter          = psci_system_suspend_enter,
- };
- 
-@@ -442,7 +466,9 @@ static void __init psci_init_system_suspend(void)
- 	ret = psci_features(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND));
- 
- 	if (ret != PSCI_RET_NOT_SUPPORTED)
--		suspend_set_ops(&psci_suspend_ops);
-+		psci_suspend_mem_supported = true;
-+
-+	suspend_set_ops(&psci_suspend_ops);
- }
- 
- static void __init psci_init_cpu_suspend(void)
--- 
-2.7.4
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
