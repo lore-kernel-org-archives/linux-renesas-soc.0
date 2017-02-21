@@ -1,179 +1,157 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:42952 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934536AbdBQSWz (ORCPT
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:38692 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751512AbdBUKqL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 13:22:55 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2] mmc: host: tmio: ensure end of DMA and SD access are in sync
-Date: Fri, 17 Feb 2017 19:22:41 +0100
-Message-Id: <20170217182241.11489-1-wsa+renesas@sang-engineering.com>
+        Tue, 21 Feb 2017 05:46:11 -0500
+Subject: Re: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+From: jacopo mondi <jacopo@jmondi.org>
+Message-ID: <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
+Date: Tue, 21 Feb 2017 11:46:03 +0100
+MIME-Version: 1.0
+In-Reply-To: <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current code assumes that DMA is finished before SD access end is
-flagged. Thus, it schedules the 'dma_complete' tasklet in the SD card
-interrupt routine when DATAEND is set. The assumption is not safe,
-though. Even by mounting an SD card, it can be seen that sometimes DMA
-complete is first, sometimes DATAEND. It seems they are usually close
-enough timewise to not cause problems. However, a customer reported that
-with CMD53 sometimes things really break apart. As a result, the BSP has
-a patch which introduces flags for both events and makes sure both flags
-are set before scheduling the tasklet. The customer accepted the patch,
-yet it doesn't seem a proper upstream solution to me.
+Hello,
+     self-review to save you all some time
 
-This patch refactors the code to replace the tasklet with already
-existing and more lightweight mechanisms. First of all, we set the
-callback in a DMA descriptor to automatically get notified when DMA is
-done. In the callback, we then use a completion to make sure the SD
-access has already ended. Then, we proceed as before.
+On 20/02/2017 18:13, Jacopo Mondi wrote:
+> Add pin controller node with 12 gpio controller sub-nodes to
+> r7s72100 dtsi.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi | 81 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index 3dd427d..a77a431b 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -12,6 +12,7 @@
+>  #include <dt-bindings/clock/r7s72100-clock.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+I should move this to the board specific .dts file.
+It's not needed here.
 
-Changes since V1/RFC:
+>
+>  / {
+>  	compatible = "renesas,r7s72100";
+> @@ -171,6 +172,86 @@
+>  		};
+>  	};
+>
+> +	pinctrl: pinctrl@fcfe3000 {
+> +		compatible = "renesas,r7s72100-ports";
+> +
+> +		#pinctrl-cells = <1>;
+> +
+> +		reg = <0xfcfe3000 0x4248>;
+> +
+> +		port0: gpio@0 {
 
-* removed #ifdef DEBUG
-* rebased to latest mmc/next
-* did some more performance testing. Couldn't spot any difference
+Geert pointed out offline the if the node has a unit address, it needs a 
+"reg" property.
+I'll change all of these to portX: gpio-X {
 
- drivers/mmc/host/tmio_mmc.h     |  2 +-
- drivers/mmc/host/tmio_mmc_dma.c | 58 ++++++++++++++++++++++++-----------------
- drivers/mmc/host/tmio_mmc_pio.c |  4 +--
- 3 files changed, 37 insertions(+), 27 deletions(-)
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 0 16>;
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 2b349d48fb9a8a..891d400d2a7cf2 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -137,7 +137,7 @@ struct tmio_mmc_host {
- 	bool			force_pio;
- 	struct dma_chan		*chan_rx;
- 	struct dma_chan		*chan_tx;
--	struct tasklet_struct	dma_complete;
-+	struct completion	dma_dataend;
- 	struct tasklet_struct	dma_issue;
- 	struct scatterlist	bounce_sg;
- 	u8			*bounce_buf;
-diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/tmio_mmc_dma.c
-index fa8a936a3d9ba1..c7684fa91f1f9c 100644
---- a/drivers/mmc/host/tmio_mmc_dma.c
-+++ b/drivers/mmc/host/tmio_mmc_dma.c
-@@ -43,6 +43,31 @@ void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
- 	tmio_mmc_enable_dma(host, true);
- }
- 
-+static void tmio_mmc_dma_callback(void *arg)
-+{
-+	struct tmio_mmc_host *host = arg;
-+
-+	wait_for_completion(&host->dma_dataend);
-+
-+	spin_lock_irq(&host->lock);
-+
-+	if (!host->data)
-+		goto out;
-+
-+	if (host->data->flags & MMC_DATA_READ)
-+		dma_unmap_sg(host->chan_rx->device->dev,
-+			     host->sg_ptr, host->sg_len,
-+			     DMA_FROM_DEVICE);
-+	else
-+		dma_unmap_sg(host->chan_tx->device->dev,
-+			     host->sg_ptr, host->sg_len,
-+			     DMA_TO_DEVICE);
-+
-+	tmio_mmc_do_data_irq(host);
-+out:
-+	spin_unlock_irq(&host->lock);
-+}
-+
- static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
- {
- 	struct scatterlist *sg = host->sg_ptr, *sg_tmp;
-@@ -88,6 +113,10 @@ static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
- 			DMA_DEV_TO_MEM, DMA_CTRL_ACK);
- 
- 	if (desc) {
-+		reinit_completion(&host->dma_dataend);
-+		desc->callback = tmio_mmc_dma_callback;
-+		desc->callback_param = host;
-+
- 		cookie = dmaengine_submit(desc);
- 		if (cookie < 0) {
- 			desc = NULL;
-@@ -162,6 +191,10 @@ static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
- 			DMA_MEM_TO_DEV, DMA_CTRL_ACK);
- 
- 	if (desc) {
-+		reinit_completion(&host->dma_dataend);
-+		desc->callback = tmio_mmc_dma_callback;
-+		desc->callback_param = host;
-+
- 		cookie = dmaengine_submit(desc);
- 		if (cookie < 0) {
- 			desc = NULL;
-@@ -221,29 +254,6 @@ static void tmio_mmc_issue_tasklet_fn(unsigned long priv)
- 		dma_async_issue_pending(chan);
- }
- 
--static void tmio_mmc_tasklet_fn(unsigned long arg)
--{
--	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
--
--	spin_lock_irq(&host->lock);
--
--	if (!host->data)
--		goto out;
--
--	if (host->data->flags & MMC_DATA_READ)
--		dma_unmap_sg(host->chan_rx->device->dev,
--			     host->sg_ptr, host->sg_len,
--			     DMA_FROM_DEVICE);
--	else
--		dma_unmap_sg(host->chan_tx->device->dev,
--			     host->sg_ptr, host->sg_len,
--			     DMA_TO_DEVICE);
--
--	tmio_mmc_do_data_irq(host);
--out:
--	spin_unlock_irq(&host->lock);
--}
--
- void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdata)
- {
- 	/* We can only either use DMA for both Tx and Rx or not use it at all */
-@@ -306,7 +316,7 @@ void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdat
- 		if (!host->bounce_buf)
- 			goto ebouncebuf;
- 
--		tasklet_init(&host->dma_complete, tmio_mmc_tasklet_fn, (unsigned long)host);
-+		init_completion(&host->dma_dataend);
- 		tasklet_init(&host->dma_issue, tmio_mmc_issue_tasklet_fn, (unsigned long)host);
- 	}
- 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 6b789a739d4dfe..c41f2252945eb7 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -596,11 +596,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- 
- 		if (done) {
- 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
--			tasklet_schedule(&host->dma_complete);
-+			complete(&host->dma_dataend);
- 		}
- 	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
--		tasklet_schedule(&host->dma_complete);
-+		complete(&host->dma_dataend);
- 	} else {
- 		tmio_mmc_do_data_irq(host);
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
--- 
-2.11.0
+Not all ports have 16 pins available.
+This is one of the differences between different RZ/A1 SoC versions 
+(RZ/A1H, RZ/A1L etc)
+
+I'll change the number of pins to the actual available ones on each port 
+for r7s72100 (RZ/A1H)
+
+Thanks
+    j
+
+
+> +		};
+> +
+> +		port1: gpio@1 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 16 16>;
+> +		};
+> +
+> +		port2: gpio@2 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 32 16>;
+> +		};
+> +
+> +		port3: gpio@3 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 48 16>;
+> +		};
+> +
+> +		port4: gpio@4 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 64 16>;
+> +		};
+> +
+> +		port5: gpio@5 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 80 16>;
+> +		};
+> +
+> +		port6: gpio@6 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 96 16>;
+> +		};
+> +
+> +		port7: gpio@7 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 112 16>;
+> +		};
+> +
+> +		port8: gpio@8 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 128 16>;
+> +		};
+> +
+> +		port9: gpio@9 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 144 16>;
+> +		};
+> +
+> +		port10: gpio@10 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 160 16>;
+> +		};
+> +
+> +		port11: gpio@11 {
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pinctrl 0 176 16>;
+> +		};
+> +	};
+> +
+>  	scif0: serial@e8007000 {
+>  		compatible = "renesas,scif-r7s72100", "renesas,scif";
+>  		reg = <0xe8007000 64>;
+>
