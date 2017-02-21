@@ -1,43 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35887 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751555AbdBUQXv (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:58902 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751826AbdBULO3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Feb 2017 11:23:51 -0500
-MIME-Version: 1.0
-In-Reply-To: <08c5dcf3-9d7c-33ff-f801-8f94f630f49b@arm.com>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
- <1487622809-25127-4-git-send-email-geert+renesas@glider.be> <08c5dcf3-9d7c-33ff-f801-8f94f630f49b@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Feb 2017 17:23:48 +0100
-Message-ID: <CAMuHMdUAcRVLzDZCZucAt0agGZynQtqhWeh7yPaBrogCYhRW4g@mail.gmail.com>
+        Tue, 21 Feb 2017 06:14:29 -0500
 Subject: Re: [PATCH/RFC 3/6] drivers: firmware: psci: Implement shallow
  suspend mode
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Pavel Machek <pavel@ucw.cz>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+ <1487622809-25127-4-git-send-email-geert+renesas@glider.be>
+ <20170221110712.GB5021@amd>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Lina Iyer <lina.iyer@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <de2a15d4-9ac2-9ba9-a47a-eacbf478f601@arm.com>
+Date: Tue, 21 Feb 2017 11:14:16 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170221110712.GB5021@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sudeep,
 
-On Tue, Feb 21, 2017 at 11:42 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On 20/02/17 20:33, Geert Uytterhoeven wrote:
+
+On 21/02/17 11:07, Pavel Machek wrote:
+> Hi!
+> 
 >> Enable support for "shallow" suspend mode, also known as "Standby" or
 >> "Power-On Suspend".
 >>
@@ -46,35 +47,24 @@ On Tue, Feb 21, 2017 at 11:42 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
 >> However, unlike "deep" suspend mode, "shallow" suspend mode can be used
 >> regardless of the presence of support for PSCI_SYSTEM_SUSPEND, which is
 >> an optional API in PSCI v1.0.
->>
->> List the available system suspend modes:
->>
->>     $ cat /sys/power/mem_sleep
->>     s2idle shallow [deep]
->>
->> Suspend to "shallow" mode:
->>
->>     $ echo shallow > /sys/power/mem_sleep
->>     $ echo mem > /sys/power/state
->>
->
-> I don't have the links to such previous attempts handy, but we have
+> 
+> If system supports "shallow" suspend, why does not PSCI implement it?
+> 
 
-Don't worry, I did read earlier discussions about implementing shallow mode.
+Yes it can, and IIUC it already does on this platform with CPU_SUSPEND.
+All it now needs is just to use existing "freeze" suspend mode in Linux.
 
-> more elegant alternative options(suspend-to-idle) and any such attempts
-> to hack around the PSCI will be NACKed.
+> In the past, I was told PSCI will not turn into ACPI-like mess, and
+> that we'll be able to fix PSCI and will not have to work around its
+> problems in kernel :-(.
 
-"s2idle" does not power down secondary CPU cores, so this is an improvement.
-"deep" may not support configured wake-up sources, which is a bug.
+Can you be more elaborate on the mess you see on this Renesas platform.
 
-Gr{oetje,eeting}s,
+For me, it looks like this patch is attempting to *re-implement* the
+existing "suspend-to-idle" functionality. So IMO, this patch set is
+creating unnecessary mess giving an illusion that PSCI specification is
+broken.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Regards,
+Sudeep
