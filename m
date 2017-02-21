@@ -9,7 +9,6 @@ References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
  <445b2f49-5d15-30af-a431-1c4edcd049a4@arm.com>
  <CAMuHMdUS96tPJRqNxG6sJjvC0LN-FjCeKOm7Zg2V_qMeQ_1QSQ@mail.gmail.com>
  <81df65a9-d2f1-26df-a977-5265feba25a3@arm.com>
- <94167d3a-e005-3af0-d290-a1086684d570@arm.com>
 Cc: Sudeep Holla <sudeep.holla@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -28,10 +27,10 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
         Linux PM list <linux-pm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <3c8b3f2d-8604-f999-4208-a82f171b64f2@arm.com>
-Date: Tue, 21 Feb 2017 18:45:13 +0000
+Message-ID: <94167d3a-e005-3af0-d290-a1086684d570@arm.com>
+Date: Tue, 21 Feb 2017 18:27:59 +0000
 MIME-Version: 1.0
-In-Reply-To: <94167d3a-e005-3af0-d290-a1086684d570@arm.com>
+In-Reply-To: <81df65a9-d2f1-26df-a977-5265feba25a3@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,62 +38,54 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
 
-On 21/02/17 18:27, Sudeep Holla wrote:
+On 21/02/17 17:51, Sudeep Holla wrote:
 > 
 > 
-> On 21/02/17 17:51, Sudeep Holla wrote:
->>
->>
->> On 21/02/17 17:34, Geert Uytterhoeven wrote:
-> 
-> [...]
-> 
->>>
->>> The SoC can wake-up. It's just not guaranteed that it can wake-up using
->>> the wakeup-source configured from Linux. Which wakeup-sources are available
->>> depends on the actual PSCI implementation.  It's not specified by the PSCI
->>> specification.
->>>
->>>> Just botching whatever shallow state you can enter on a particular SoC
->>>> into standard "mem" state sounds *horrible* to me.
->>>
->>> That's more or less what /sys/power/mem_sleep does, though.
->>>
->>
->> OK, I will go through that in detail.
->>
-> 
-> OK, I went through the patch and the main intention is was added.
-> So I will begin by summarizing my understanding:
-> 
-> A new suspend interface(/sys/power/mem_sleep) is added to allow the
-> "mem" string in /sys/power/state to represent multiple things that can
-> be selected.
-> 
-> Before:
-> A. echo freeze > /sys/power/state ---> Enters s2idle
-> B. echo mem > /sys/power/state ---> Enters s2r(a.k.a now deep mem sleep)
-> 
-> After:
-> 1. echo freeze > /sys/power/state ---> Enters s2idle still same
-> 2. echo s2idle > /sys/power/mem_sleep
->    echo mem > /sys/power/state ---> Also enter s2idle
-> 3. echo deep > /sys/power/mem_sleep
->    echo mem > /sys/power/state ---> Also enter s2r(same as [B] above)
-> 
-> Please note I have carefully dropped standby/shallow as we will not
-> support that state on ARM64 platforms(refer previous discussions for the
-> same)
-> 
-> Now IIUC, you need 2 above. So, since this new interface allow mem to
-> mean "s2idle", we need to fix the core to register default suspend_ops
-> to achieve what you need. 
+> On 21/02/17 17:34, Geert Uytterhoeven wrote:
 
-I take this back, you have everything you need in place, nothing needs
-to be done. I just checked again. If I don't register PSCI suspend_ops,
-I still get mem in /sys/power/state with s2idle in /sys/power/mem_sleep
-which is exactly what we need. Again we don't support standby/shallow
-state on ARM64/PSCI.
+[...]
+
+>>
+>> The SoC can wake-up. It's just not guaranteed that it can wake-up using
+>> the wakeup-source configured from Linux. Which wakeup-sources are available
+>> depends on the actual PSCI implementation.  It's not specified by the PSCI
+>> specification.
+>>
+>>> Just botching whatever shallow state you can enter on a particular SoC
+>>> into standard "mem" state sounds *horrible* to me.
+>>
+>> That's more or less what /sys/power/mem_sleep does, though.
+>>
+> 
+> OK, I will go through that in detail.
+> 
+
+OK, I went through the patch and the main intention is was added.
+So I will begin by summarizing my understanding:
+
+A new suspend interface(/sys/power/mem_sleep) is added to allow the
+"mem" string in /sys/power/state to represent multiple things that can
+be selected.
+
+Before:
+A. echo freeze > /sys/power/state ---> Enters s2idle
+B. echo mem > /sys/power/state ---> Enters s2r(a.k.a now deep mem sleep)
+
+After:
+1. echo freeze > /sys/power/state ---> Enters s2idle still same
+2. echo s2idle > /sys/power/mem_sleep
+   echo mem > /sys/power/state ---> Also enter s2idle
+3. echo deep > /sys/power/mem_sleep
+   echo mem > /sys/power/state ---> Also enter s2r(same as [B] above)
+
+Please note I have carefully dropped standby/shallow as we will not
+support that state on ARM64 platforms(refer previous discussions for the
+same)
+
+Now IIUC, you need 2 above. So, since this new interface allow mem to
+mean "s2idle", we need to fix the core to register default suspend_ops
+to achieve what you need. And since I now better understand you problem,
+you get extra NACK for this series ;)
 
 -- 
 Regards,
