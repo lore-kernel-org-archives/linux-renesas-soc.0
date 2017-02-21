@@ -1,15 +1,10 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <69ab75a1-2e04-19e2-d1ad-12ca1cfc7625@arm.com>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be> <69ab75a1-2e04-19e2-d1ad-12ca1cfc7625@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Feb 2017 17:21:06 +0100
-Message-ID: <CAMuHMdWjseO3XSOH2XCbM411Aj12RpdZZbHkpfFUfej58myz5Q@mail.gmail.com>
-Subject: Re: [PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts power
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+Subject: Re: [PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts
+ power
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Lina Iyer <lina.iyer@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
@@ -17,82 +12,54 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
         Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <69ab75a1-2e04-19e2-d1ad-12ca1cfc7625@arm.com>
+Date: Tue, 21 Feb 2017 10:38:54 +0000
+MIME-Version: 1.0
+In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sudeep,
+Hi Geert,
 
-On Tue, Feb 21, 2017 at 11:38 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On 20/02/17 20:33, Geert Uytterhoeven wrote:
->> This patch series adds support for using non-PMIC wake-up sources on the
->> Renesas R-Car Gen3 (H3 or M3-W) Salvator-X development boards.
->>
->> Nothing in the PSCI specification requires the SoC to remain powered and
->> to support wake-up sources when suspended using SYSTEM_SUSPEND.
->> If the firmware implements the PSCI SYSTEM_SUSPEND operation by cutting
->> power to the SoC, the only possibly wake-up sources are thus the ones
->> connected to the PMIC.
->
-> OK, but I don't see any issue with that. That's exactly how it works on
+On 20/02/17 20:33, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> This patch series adds support for using non-PMIC wake-up sources on the
+> Renesas R-Car Gen3 (H3 or M3-W) Salvator-X development boards.
+> 
+> Nothing in the PSCI specification requires the SoC to remain powered and
+> to support wake-up sources when suspended using SYSTEM_SUSPEND.
+> If the firmware implements the PSCI SYSTEM_SUSPEND operation by cutting
+> power to the SoC, the only possibly wake-up sources are thus the ones
+> connected to the PMIC.
+> 
 
-How do you use other wake-up sources, like wake on LAN, UART or GPIO?
+OK, but I don't see any issue with that. That's exactly how it works on
+ARM Juno platform. The SoC is powered down.
 
-> ARM Juno platform. The SoC is powered down.
+> To allow other wake-up sources, this patch series documents and adds
+> support for an "arm,psci-system-suspend-is-power-down" DT property, so
 
-Good to hear this is not limited to Renesas platforms, so there's a common
-problem to solve.
+NACK, you don't need any such properties.
 
->> To allow other wake-up sources, this patch series documents and adds
->> support for an "arm,psci-system-suspend-is-power-down" DT property, so
->
-> NACK, you don't need any such properties.
+> Linux uses a different suspend method when other wake-up sources (e.g.
+> wake on LAN, UART or GPIO) are enabled.  Hence the user no longer has to
+> manually restrict "mem" suspend to "s2idle" or "shallow" states using:
+> 
 
-If this is true for all PSCI platforms, there's indeed no need for such a
-property, and drivers/firmware/psci.c should default to this case.
+Have you explored suspend-to-idle instead ? It looks like thats exactly
+what you are doing in this patch set. You also get low latency for free
+as it just enters the deepest idle state on all CPUs instead of
+hotplugging out all the secondaries.
 
->> Linux uses a different suspend method when other wake-up sources (e.g.
->> wake on LAN, UART or GPIO) are enabled.  Hence the user no longer has to
->> manually restrict "mem" suspend to "s2idle" or "shallow" states using:
->
-> Have you explored suspend-to-idle instead ? It looks like thats exactly
-> what you are doing in this patch set. You also get low latency for free
-> as it just enters the deepest idle state on all CPUs instead of
-> hotplugging out all the secondaries.
-
-Yes, cfr. "s2idle" above.
-The user can specify to use "s2idle" manually:
-
-    $ echo s2idle > /sys/power/mem_sleep # or "shallow"
-
-However, how to handle this automatically, e.g. by a distro?
-On most other platforms, userspace can just do e.g.
-
-    ethtool -s eth0 wol g
-
-to enable wake-on-LAN, and suspend to the deepest supported state using:
-
-    echo mem > /sys/power/state
-
-On systems where PSCI SYSTEM_SUSPEND powers down the SoC, userspace must
-make sure to configure to use "s2idle" (or "shallow) instead, else the
-configured wake-up sources won't work.
-I want Linux to handle this automatically.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Regards,
+Sudeep
