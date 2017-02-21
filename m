@@ -1,19 +1,11 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:58902 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751826AbdBULO3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Feb 2017 06:14:29 -0500
-Subject: Re: [PATCH/RFC 3/6] drivers: firmware: psci: Implement shallow
- suspend mode
-To: Pavel Machek <pavel@ucw.cz>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
- <1487622809-25127-4-git-send-email-geert+renesas@glider.be>
- <20170221110712.GB5021@amd>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 21 Feb 2017 12:07:12 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
         Lina Iyer <lina.iyer@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -24,47 +16,60 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <de2a15d4-9ac2-9ba9-a47a-eacbf478f601@arm.com>
-Date: Tue, 21 Feb 2017 11:14:16 +0000
+Subject: Re: [PATCH/RFC 3/6] drivers: firmware: psci: Implement shallow
+ suspend mode
+Message-ID: <20170221110712.GB5021@amd>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+ <1487622809-25127-4-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20170221110712.GB5021@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="i9LlY+UWpKt15+FH"
+Content-Disposition: inline
+In-Reply-To: <1487622809-25127-4-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
+--i9LlY+UWpKt15+FH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 21/02/17 11:07, Pavel Machek wrote:
-> Hi!
-> 
->> Enable support for "shallow" suspend mode, also known as "Standby" or
->> "Power-On Suspend".
->>
->> As secondary CPU cores are taken offline, "shallow" suspend mode saves
->> slightly more power than "s2idle", but less than "deep" suspend mode.
->> However, unlike "deep" suspend mode, "shallow" suspend mode can be used
->> regardless of the presence of support for PSCI_SYSTEM_SUSPEND, which is
->> an optional API in PSCI v1.0.
-> 
-> If system supports "shallow" suspend, why does not PSCI implement it?
-> 
+Hi!
 
-Yes it can, and IIUC it already does on this platform with CPU_SUSPEND.
-All it now needs is just to use existing "freeze" suspend mode in Linux.
+> Enable support for "shallow" suspend mode, also known as "Standby" or
+> "Power-On Suspend".
+>=20
+> As secondary CPU cores are taken offline, "shallow" suspend mode saves
+> slightly more power than "s2idle", but less than "deep" suspend mode.
+> However, unlike "deep" suspend mode, "shallow" suspend mode can be used
+> regardless of the presence of support for PSCI_SYSTEM_SUSPEND, which is
+> an optional API in PSCI v1.0.
 
-> In the past, I was told PSCI will not turn into ACPI-like mess, and
-> that we'll be able to fix PSCI and will not have to work around its
-> problems in kernel :-(.
+If system supports "shallow" suspend, why does not PSCI implement it?
 
-Can you be more elaborate on the mess you see on this Renesas platform.
+In the past, I was told PSCI will not turn into ACPI-like mess, and
+that we'll be able to fix PSCI and will not have to work around its
+problems in kernel :-(.
 
-For me, it looks like this patch is attempting to *re-implement* the
-existing "suspend-to-idle" functionality. So IMO, this patch set is
-creating unnecessary mess giving an illusion that PSCI specification is
-broken.
+Not your fault, Mark made those promises.
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
--- 
-Regards,
-Sudeep
+--i9LlY+UWpKt15+FH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlisH2AACgkQMOfwapXb+vL47QCeMEtnQeR77gPJgALoVZZgYNzi
+N7MAnjSylRHLAOXHzQ4x8iQfRP9DAR32
+=hO/e
+-----END PGP SIGNATURE-----
+
+--i9LlY+UWpKt15+FH--
