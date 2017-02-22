@@ -1,135 +1,67 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Matthew Giassa <matthew@giassa.net>
-To: wsa@the-dreams.de
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        Matthew Giassa <matthew@giassa.net>
-Subject: [PATCHv2] Checkpatch fixes for staging/drivers/ks7010.
-Date: Wed, 22 Feb 2017 13:52:58 -0800
-Message-Id: <1487800378-22557-1-git-send-email-matthew@giassa.net>
-In-Reply-To: <1487650805-30520-1-git-send-email-matthew@giassa.net>
-References: <1487650805-30520-1-git-send-email-matthew@giassa.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:43425 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754641AbdBVQdo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Feb 2017 11:33:44 -0500
+Date: Wed, 22 Feb 2017 07:28:15 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] power: reset: Add Renesas reset driver
+Message-ID: <20170222152815.GA23780@roeck-us.net>
+References: <20170216172320.10897-1-chris.brandt@renesas.com>
+ <20170216172320.10897-2-chris.brandt@renesas.com>
+ <20170216182644.GA17814@roeck-us.net>
+ <PS1PR06MB1162A4C12D144C321379E3028A5A0@PS1PR06MB1162.apcprd06.prod.outlook.com>
+ <20170216222014.GA29672@roeck-us.net>
+ <PS1PR06MB11622077DE4673C1879C05278A5D0@PS1PR06MB1162.apcprd06.prod.outlook.com>
+ <55cf087f-aa70-3660-1186-af9b9b20376d@roeck-us.net>
+ <SG2PR06MB11650D5EE485C0F44A77E0EA8A500@SG2PR06MB1165.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB11650D5EE485C0F44A77E0EA8A500@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Wrapping complex macros with parentheses.
-Adding extra spaces between macros and integer literals.
-Indentation changes to remove checkpatch warnings.
-Swapping out C++-style comments with C-style comments.
+On Wed, Feb 22, 2017 at 01:35:12PM +0000, Chris Brandt wrote:
+> Hello Geert and Guenter,
+> 
+> On Thursday, February 16, 2017, Guenter Roeck wrote:
+> > FWIW, the watchdog subsystem should support that easily, even with 125 ms
+> > hardware timeout. We added that capability for that very purpose. That
+> > would only fail if the system is stuck with interrupts disabled for more
+> > than 125 ms, which seems unlikely. I think the gpio watchdog on some
+> > systems has a similar low hardware timeout.
+> 
+> 
+> While I'm going to try that for the RZ/A1, I have a question for you guys
+> (or anyone else that has an opinion about end applications)
+> 
+> 
+> If I were going to make a request to the chip designers to make the timeout longer
+> for the next RZ/A chip, what would be a good max timeout for common Linux applications?
+> 
+> Looking through the drivers in the watchdog directly, I see default timeouts of 20,
+> 30, 60, and 120 seconds.
+> 
+30 and 60 are pretty common for default timeouts, though I personally think
+they are a bit long. If you want direct HW support, a maximum of 120 seconds
+should be sufficient though not really necessary anymore since the core
+supports virtual timeouts. A maximum of at least 30 seconds would be needed
+if the watchdog is supposed to run at boot time (ie if it is enabled by
+ROMMON/BIOS and kept running by the kernel).
 
-Signed-off-by: Matthew Giassa <matthew@giassa.net>
----
- drivers/staging/ks7010/ks_wlan_ioctl.h | 74 +++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
-index 84554b6..b0166c2 100644
---- a/drivers/staging/ks7010/ks_wlan_ioctl.h
-+++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
-@@ -1,6 +1,6 @@
- /*
-  *   Driver for KeyStream 11b/g wireless LAN
-- *
-+ *
-  *   Copyright (c) 2005-2008 KeyStream Corp.
-  *   Copyright (C) 2009 Renesas Technology Corp.
-  *
-@@ -8,50 +8,49 @@
-  *   it under the terms of the GNU General Public License version 2 as
-  *   published by the Free Software Foundation.
-  */
--
- #ifndef _KS_WLAN_IOCTL_H
- #define _KS_WLAN_IOCTL_H
-
- #include <linux/wireless.h>
--/* The low order bit identify a SET (0) or a GET (1) ioctl.  */
-+/* The low order bit identify a SET (0) or a GET (1) ioctl. */
-
--/*					SIOCIWFIRSTPRIV+0 */
--/* former KS_WLAN_GET_DRIVER_VERSION	SIOCIWFIRSTPRIV+1 */
--/*					SIOCIWFIRSTPRIV+2 */
--#define KS_WLAN_GET_FIRM_VERSION	SIOCIWFIRSTPRIV+3
-+/*					(SIOCIWFIRSTPRIV + 0) */
-+/* Former KS_WLAN_GET_DRIVER_VERSION	(SIOCIWFIRSTPRIV + 1) */
-+/*					(SIOCIWFIRSTPRIV + 2) */
-+#define KS_WLAN_GET_FIRM_VERSION	(SIOCIWFIRSTPRIV + 3)
- #ifdef WPS
--#define KS_WLAN_SET_WPS_ENABLE 		SIOCIWFIRSTPRIV+4
--#define KS_WLAN_GET_WPS_ENABLE 		SIOCIWFIRSTPRIV+5
--#define KS_WLAN_SET_WPS_PROBE_REQ	SIOCIWFIRSTPRIV+6
-+#define KS_WLAN_SET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 4)
-+#define KS_WLAN_GET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 5)
-+#define KS_WLAN_SET_WPS_PROBE_REQ	(SIOCIWFIRSTPRIV + 6)
- #endif
--#define KS_WLAN_GET_EEPROM_CKSUM	SIOCIWFIRSTPRIV+7
--#define KS_WLAN_SET_PREAMBLE		SIOCIWFIRSTPRIV+8
--#define KS_WLAN_GET_PREAMBLE		SIOCIWFIRSTPRIV+9
--#define KS_WLAN_SET_POWER_SAVE		SIOCIWFIRSTPRIV+10
--#define KS_WLAN_GET_POWER_SAVE		SIOCIWFIRSTPRIV+11
--#define KS_WLAN_SET_SCAN_TYPE		SIOCIWFIRSTPRIV+12
--#define KS_WLAN_GET_SCAN_TYPE		SIOCIWFIRSTPRIV+13
--#define KS_WLAN_SET_RX_GAIN		SIOCIWFIRSTPRIV+14
--#define KS_WLAN_GET_RX_GAIN		SIOCIWFIRSTPRIV+15
--#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV+16	/* unused */
--//#define KS_WLAN_SET_REGION            SIOCIWFIRSTPRIV+17
--#define KS_WLAN_SET_BEACON_LOST		SIOCIWFIRSTPRIV+18
--#define KS_WLAN_GET_BEACON_LOST		SIOCIWFIRSTPRIV+19
-+#define KS_WLAN_GET_EEPROM_CKSUM	(SIOCIWFIRSTPRIV + 7)
-+#define KS_WLAN_SET_PREAMBLE		(SIOCIWFIRSTPRIV + 8)
-+#define KS_WLAN_GET_PREAMBLE		(SIOCIWFIRSTPRIV + 9)
-+#define KS_WLAN_SET_POWER_SAVE		(SIOCIWFIRSTPRIV + 10)
-+#define KS_WLAN_GET_POWER_SAVE		(SIOCIWFIRSTPRIV + 11)
-+#define KS_WLAN_SET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 12)
-+#define KS_WLAN_GET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 13)
-+#define KS_WLAN_SET_RX_GAIN		(SIOCIWFIRSTPRIV + 14)
-+#define KS_WLAN_GET_RX_GAIN		(SIOCIWFIRSTPRIV + 15)
-+#define KS_WLAN_HOSTT			(SIOCIWFIRSTPRIV + 16) /* unused */
-+/*#define KS_WLAN_SET_REGION            (SIOCIWFIRSTPRIV + 17) */
-+#define KS_WLAN_SET_BEACON_LOST		(SIOCIWFIRSTPRIV + 18)
-+#define KS_WLAN_GET_BEACON_LOST		(SIOCIWFIRSTPRIV + 19)
-
--#define KS_WLAN_SET_TX_GAIN		SIOCIWFIRSTPRIV+20
--#define KS_WLAN_GET_TX_GAIN		SIOCIWFIRSTPRIV+21
-+#define KS_WLAN_SET_TX_GAIN		(SIOCIWFIRSTPRIV + 20)
-+#define KS_WLAN_GET_TX_GAIN		(SIOCIWFIRSTPRIV + 21)
-
--/* for KS7010 */
--#define KS_WLAN_SET_PHY_TYPE		SIOCIWFIRSTPRIV+22
--#define KS_WLAN_GET_PHY_TYPE		SIOCIWFIRSTPRIV+23
--#define KS_WLAN_SET_CTS_MODE		SIOCIWFIRSTPRIV+24
--#define KS_WLAN_GET_CTS_MODE		SIOCIWFIRSTPRIV+25
--/*					SIOCIWFIRSTPRIV+26 */
--/*					SIOCIWFIRSTPRIV+27 */
--#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV+28	/* sleep mode */
--#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV+29	/* sleep mode */
--/*					SIOCIWFIRSTPRIV+30 */
--/*					SIOCIWFIRSTPRIV+31 */
-+/* For KS7010. */
-+#define KS_WLAN_SET_PHY_TYPE		(SIOCIWFIRSTPRIV + 22)
-+#define KS_WLAN_GET_PHY_TYPE		(SIOCIWFIRSTPRIV + 23)
-+#define KS_WLAN_SET_CTS_MODE		(SIOCIWFIRSTPRIV + 24)
-+#define KS_WLAN_GET_CTS_MODE		(SIOCIWFIRSTPRIV + 25)
-+/*					(SIOCIWFIRSTPRIV + 26) */
-+/*					(SIOCIWFIRSTPRIV + 27) */
-+#define KS_WLAN_SET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 28) /* sleep mode */
-+#define KS_WLAN_GET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 29) /* sleep mode */
-+/*					(SIOCIWFIRSTPRIV + 30) */
-+/*					(SIOCIWFIRSTPRIV + 31) */
-
- #ifdef __KERNEL__
-
-@@ -60,8 +59,9 @@
-
- int ks_wlan_read_config_file(struct ks_wlan_private *priv);
- int ks_wlan_setup_parameter(struct ks_wlan_private *priv,
--		             unsigned int commit_flag);
-+			    unsigned int commit_flag);
-
- #endif /* __KERNEL__ */
-
- #endif /* _KS_WLAN_IOCTL_H */
-+
---
-2.7.4
+Hope this helps,
+Guenter
