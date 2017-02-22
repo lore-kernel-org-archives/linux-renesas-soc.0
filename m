@@ -1,40 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 0/2] usb: host: ehci-platform: fix usb 1.1 device is not connected in system resume
-Date: Mon, 20 Feb 2017 16:35:09 +0900
-Message-ID: <1487576111-29287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH/RFC 3/6] drivers: firmware: psci: Implement shallow
+ suspend mode
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+ <1487622809-25127-4-git-send-email-geert+renesas@glider.be>
+ <20170221110712.GB5021@amd> <de2a15d4-9ac2-9ba9-a47a-eacbf478f601@arm.com>
+ <CAMuHMdVmu4AYZ6MZHd79N2-2gELR6s3oZ46UnEszCfLvHymY1w@mail.gmail.com>
+ <3caf0f3f-76e5-cb1e-7c0f-87ed5e1c2b86@arm.com>
+ <CAMuHMdU0fTtEXN9k477e3S-UUMNhd=U4_r0VOcyA1TGEgA5rmA@mail.gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Pavel Machek <pavel@ucw.cz>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <a2e09969-3a67-6947-4dd8-2a153d1f48e7@arm.com>
+Date: Wed, 22 Feb 2017 14:35:37 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdU0fTtEXN9k477e3S-UUMNhd=U4_r0VOcyA1TGEgA5rmA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on Greg's usb.git / usb-next branch
-(the commit id = 0df8a3dbacb585bb9c8b2e55de43c6aac9d86488).
 
-This patch set is related to the following email threads:
- http://marc.info/?t=148653514200001&r=1&w=2
- http://marc.info/?t=148712534300005&r=1&w=2
 
-Since I'm not sure the helper functions can be in core/of.c,
-I sent the patch set as RFC. I guess if these functions are not needed
-to other codes, the functions should be into ehci-platform.c.
+On 22/02/17 13:47, Geert Uytterhoeven wrote:
+> Hi Sudeep,
+> 
+> On Tue, Feb 21, 2017 at 6:22 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
 
-Yoshihiro Shimoda (2):
-  usb: of: add functions to bind a companion controller
-  usb: host: ehci-platform: fix usb 1.1 device is not connected in
-    system resume
+[...]
 
- Documentation/devicetree/bindings/usb/generic.txt |  1 +
- drivers/usb/core/of.c                             | 36 +++++++++++++++++++++++
- drivers/usb/host/ehci-platform.c                  |  8 +++++
- include/linux/usb/of.h                            | 10 +++++++
- 4 files changed, 55 insertions(+)
+>>
+>> IIUC, it's not implemented today. I can't talk about future ;), but your
+> 
+> Good, so there's no need for the DT property, and drivers/firmware/psci.c
+> should aways call do_cpu_idle() instead of PSCI SYSTEM_SUSPEND if any
+> other wake-up sources are configured?
+> 
+
+No.
+
+> That follows the principle of least surprise: it doesn't leave the user with
+> a system that won't wake up the way he configured it to wake up.
+> 
+
+But he can still wake up with the "switch" so there's no surprise. He
+just need to better understand his system before playing with it ;)
 
 -- 
-1.9.1
-
+Regards,
+Sudeep
