@@ -1,60 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33826 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751202AbdBXN7h (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Feb 2017 08:59:37 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Dirk Behme <dirk.behme@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 2/2] arm64: dts: r8a7795: Add Cortex-A53 PMU node
-Date: Fri, 24 Feb 2017 14:59:28 +0100
-Message-Id: <1487944768-31983-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487944768-31983-1-git-send-email-geert+renesas@glider.be>
-References: <1487944768-31983-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 1/1] scripts: bin2png.sh: Fix POSIX shell compliance
+Date: Wed, 22 Feb 2017 19:38:42 +0200
+Message-ID: <30367151.ZUST0R0bSB@avalon>
+In-Reply-To: <1487778763-10482-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <20170213141522.11545-1-laurent.pinchart@ideasonboard.com> <1487778763-10482-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the performance monitor unit for the Cortex-A53 cores on the
-R8A7795 SoC.
+Hi Kieran,
 
-Extracted from a patch by Takeshi Kihara in the BSP.
+Thank you for the patch.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Wednesday 22 Feb 2017 15:52:43 Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> The string manipulations of the form ${VAR/search/replace} are not posix
+> compliant. Use string deletion, and append instead.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d8e70d75781acaa0..e0d70e5ad167a10d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -350,6 +350,18 @@
- 					     <&a57_3>;
- 		};
- 
-+		pmu_a53 {
-+			compatible = "arm,cortex-a53-pmu";
-+			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-affinity = <&a53_0>,
-+					     <&a53_1>,
-+					     <&a53_2>,
-+					     <&a53_3>;
-+		};
-+
- 		timer {
- 			compatible = "arm,armv8-timer";
- 			interrupts = <GIC_PPI 13
+Reviewed-by, applied and pushed.
+
+> ---
+>  scripts/bin2png.sh | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/scripts/bin2png.sh b/scripts/bin2png.sh
+> index 090f31fa992d..6422ee51bc33 100755
+> --- a/scripts/bin2png.sh
+> +++ b/scripts/bin2png.sh
+> @@ -4,8 +4,8 @@ FILE=${1:-.}
+> 
+>  convert_image() {
+>  	local file=$1
+> -	local pnm=${file/%bin/pnm}
+> -	local png=${file/%bin/png}
+> +	local pnm=${file%bin}pnm
+> +	local png=${file%bin}png
+> 
+>  	local format=$(echo $file | sed -e
+> 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\1|' | tr '[:lower:]'
+> '[:upper:]') local size=$(echo $file   | sed -e
+> 's|.*-\([[:alnum:]]*\)-\([0-9]*x[0-9]*\).*.bin|\2|')
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
