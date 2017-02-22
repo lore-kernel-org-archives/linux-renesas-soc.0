@@ -1,16 +1,20 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33485 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932211AbdBVNOo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Feb 2017 08:14:44 -0500
 MIME-Version: 1.0
-In-Reply-To: <35840771-e16f-d6fe-3a89-1b3f51f4a8f3@arm.com>
+In-Reply-To: <1975396.x0czmkNPOW@aspire.rjw.lan>
 References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
  <94167d3a-e005-3af0-d290-a1086684d570@arm.com> <3c8b3f2d-8604-f999-4208-a82f171b64f2@arm.com>
- <1975396.x0czmkNPOW@aspire.rjw.lan> <35840771-e16f-d6fe-3a89-1b3f51f4a8f3@arm.com>
+ <1975396.x0czmkNPOW@aspire.rjw.lan>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Feb 2017 14:38:59 +0100
-Message-ID: <CAMuHMdXpKrJn9NrkAarvMtytk9gHEFcRoZLCsWBFgriUCeWo=Q@mail.gmail.com>
+Date: Wed, 22 Feb 2017 14:14:42 +0100
+Message-ID: <CAMuHMdUWMN1ZyRn=eL6MQZeZHOf5zOC=njdnuL9-9CDS2h8CMQ@mail.gmail.com>
 Subject: Re: [PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts power
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -27,117 +31,73 @@ Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Linux PM list <linux-pm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sudeep,
+Hi Rafael,
 
-On Wed, Feb 22, 2017 at 12:03 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On 22/02/17 01:14, Rafael J. Wysocki wrote:
->> On Tuesday, February 21, 2017 06:45:13 PM Sudeep Holla wrote:
->
-> [...]
->
->>> I take this back, you have everything you need in place, nothing needs
->>> to be done. I just checked again. If I don't register PSCI suspend_ops,
->>> I still get mem in /sys/power/state with s2idle in /sys/power/mem_sleep
->>> which is exactly what we need. Again we don't support standby/shallow
->>> state on ARM64/PSCI.
+On Wed, Feb 22, 2017 at 2:14 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Tuesday, February 21, 2017 06:45:13 PM Sudeep Holla wrote:
+>> On 21/02/17 18:27, Sudeep Holla wrote:
+>> > On 21/02/17 17:51, Sudeep Holla wrote:
+>> >> On 21/02/17 17:34, Geert Uytterhoeven wrote:
+>> >>> That's more or less what /sys/power/mem_sleep does, though.
+>> >>
+>> >> OK, I will go through that in detail.
+>> >
+>> > OK, I went through the patch and the main intention is was added.
+>> > So I will begin by summarizing my understanding:
+>> >
+>> > A new suspend interface(/sys/power/mem_sleep) is added to allow the
+>> > "mem" string in /sys/power/state to represent multiple things that can
+>> > be selected.
+>> >
+>> > Before:
+>> > A. echo freeze > /sys/power/state ---> Enters s2idle
+>> > B. echo mem > /sys/power/state ---> Enters s2r(a.k.a now deep mem sleep)
+>> >
+>> > After:
+>> > 1. echo freeze > /sys/power/state ---> Enters s2idle still same
+>> > 2. echo s2idle > /sys/power/mem_sleep
+>> >    echo mem > /sys/power/state ---> Also enter s2idle
+>> > 3. echo deep > /sys/power/mem_sleep
+>> >    echo mem > /sys/power/state ---> Also enter s2r(same as [B] above)
+>> >
+>> > Please note I have carefully dropped standby/shallow as we will not
+>> > support that state on ARM64 platforms(refer previous discussions for the
+>> > same)
+>> >
+>> > Now IIUC, you need 2 above. So, since this new interface allow mem to
+>> > mean "s2idle", we need to fix the core to register default suspend_ops
+>> > to achieve what you need.
 >>
->> Except for one thing which may or may not be a concern here.
->>
->> Suspend to idle should only go into states in which all of the available wakeup
->> devices work.  If there are devices that cannot wake you up from a given state,
->> this isn't "idle" any more, is it?
->>
+>> I take this back, you have everything you need in place, nothing needs
+>> to be done. I just checked again. If I don't register PSCI suspend_ops,
+>> I still get mem in /sys/power/state with s2idle in /sys/power/mem_sleep
+>> which is exactly what we need. Again we don't support standby/shallow
+>> state on ARM64/PSCI.
 >
-> True. In this Renasas platform, since the platform doesn't have PSCI
-> system suspend, we can only support s2idle and not s2ram. In this case
-
-Not correct: this Renesas platform does have PSCI system suspend.
-So s2ram "works" (it suspends the system, which can be resumed by a switch)
-
-> we don't ask platform to enter some system state whereas we suspend all
-> the devices(leaving wakeup capable devices active) and ask platform to
-> enter deepest idle state on all the CPUs. I still don't understand the
-> issue Geert is facing.
-
-PSCI system suspend does not support wake-up sources configured from Linux.
-Hence I cannot use PSCI system suspend if any wake-up sources have been
-configured from Linux, and I expect to be able to use them for wake-up.
-
-> Geert, so far you have failed to explain what's different from the new
-> state you are adding and the existing s2idle.
-
-I did explain, cfr.:
-  1. The power consumption figures in the cover letter:
-      - shallow:    8.4 W   6.2 W   (secondary CPU cores off)
-  2. The description for patch 3/6:
-        As secondary CPU cores are taken offline, "shallow" suspend mode saves
-        slightly more power than "s2idle", but less than "deep" suspend mode.
-        However, unlike "deep" suspend mode, "shallow" suspend mode can be used
-        regardless of the presence of support for PSCI_SYSTEM_SUSPEND, which is
-        an optional API in PSCI v1.0.
-
->> As for the device wakeup disable/enable interface, it is for controlling
->> whether or not a given device should be allowed to generate wakeup signals at
->> all.
->>
->> The information on what states a given device can wake up the system from is
->> platform-specific and generally would need to be taken into consideration at
->> the platform level.
+> Except for one thing which may or may not be a concern here.
 >
-> Exactly, that's what I am trying to convince Geert ;)
+> Suspend to idle should only go into states in which all of the available wakeup
+> devices work.  If there are devices that cannot wake you up from a given state,
+> this isn't "idle" any more, is it?
 
-So, how does the communication of wake-up sources happens between PSCI
-and Linux?
+Indeed. And I have no problem with handling wake-up sources from Linux,
+as Linux knows how to handle them.
 
-Perhaps, I didn't make myself clear. Let's summarize:
-  1. On Renesas R-Car Gen3 platforms, PSCI SYSTEM_SUSPEND is implemented,
-  2. On these platforms, PSCI SYSTEM_SUSPEND powers down the SoC, and supports
-     wake-up from PMIC only,
-  3. If the user wants to use a different wake-up source, these other
-wake-up sources fail
-     to wake up the system from PSCI SYSTEM_SUSPEND.,
-  4. Patch 3/6 adds a new "shallow" state, as it allows to save more
-power (the difference
-     may be due to suboptimal cpuidle platform support on R-Car Gen3, though),
-  5. Patch 4/6 makes the system use the new "shallow" state iff
-       a. the user has configured other wake-up sources, and
-       b. DT advertises that PSCI will power down the SoC on SYSTEM_SUSPEND,
-     hence other wake-up sources now work as expected.
+> As for the device wakeup disable/enable interface, it is for controlling
+> whether or not a given device should be allowed to generate wakeup signals at
+> all.
 
-(If you're so against implementing the "shallow" state, it's a red herring,
- and that patch can be dropped.  Patch 4/6 can be trivially modified, as
- all it does is call cpu_do_idle() instead).
+OK. So it's not guaranteed that it will actually work...
 
-E.g. on non-PSCI platforms with an Ethernet driver that supports
-Wake-on-LAN, I can do:
+> The information on what states a given device can wake up the system from is
+> platform-specific and generally would need to be taken into consideration at
+> the platform level.
 
-        ethtool -s eth0 wol g
-        echo mem > /sys/power/state
-
-and be sure that the system can be woken up by sending a WoL MagicPacket.
-
-On PSCI systems, the above may work, or may not work. And there's no way to
-find out (in an automated way) whether it will work or not.
-
-If it doesn't work, the user has to configure his system (manually) to
-not use "mem" state.
-Since v4.10-rc1, that can be done using e.g.
-
-    echo s2idle > /sys/power/mem_sleep
-
-and my patches make that automatic (for a new "shallow" state instead
-of "s2idle", though).
-
-So all of this is a usability issue, and a nightmare for userspace
-that wants to treat
-different platforms in a generic way (e.g. for distros).
-
-I hope this time it's clear what I want to achieve, and how.
-
-Thanks!
+So that's PSCI on arm64?
+But the PSCI specification doesn't handle that.
 
 Gr{oetje,eeting}s,
 
