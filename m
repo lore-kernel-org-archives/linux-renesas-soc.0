@@ -1,113 +1,94 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34213 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751313AbdBLRfS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Feb 2017 12:35:18 -0500
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts
+ power
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
+ <94167d3a-e005-3af0-d290-a1086684d570@arm.com>
+ <3c8b3f2d-8604-f999-4208-a82f171b64f2@arm.com>
+ <1975396.x0czmkNPOW@aspire.rjw.lan>
+ <35840771-e16f-d6fe-3a89-1b3f51f4a8f3@arm.com>
+ <CAMuHMdXpKrJn9NrkAarvMtytk9gHEFcRoZLCsWBFgriUCeWo=Q@mail.gmail.com>
+ <f649d707-8b0a-5ca9-b021-93ae8cf66b33@arm.com>
+ <CAMuHMdVTEbqEocYwu=KW_uXpykYkVwUgSJBnLvQp_Epn8Pjp1g@mail.gmail.com>
+ <CAMuHMdX3_Vjw2NNTE1XnQkuKS=7YDA4eccEFO1pAZkjw_4q9cg@mail.gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC] clk: renesas: r8a7796: Replace PLL3 multiplication setting
-Date: Mon, 13 Feb 2017 02:35:10 +0900
-Message-Id: <1486920910-3592-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <aaf6b786-3c7e-7323-57b7-db7fc6dc8b3f@arm.com>
+Date: Thu, 23 Feb 2017 15:58:31 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdX3_Vjw2NNTE1XnQkuKS=7YDA4eccEFO1pAZkjw_4q9cg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Geert,
 
-This patch replaces PLL3 multiplication setting for DDR clock frequency.
+On 23/02/17 15:34, Geert Uytterhoeven wrote:
+> Hi Sudeep,
+> 
+> On Thu, Feb 23, 2017 at 4:26 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Feb 22, 2017 at 3:32 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>> On 22/02/17 13:38, Geert Uytterhoeven wrote:
+>>>> On Wed, Feb 22, 2017 at 12:03 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>>>   4. Patch 3/6 adds a new "shallow" state, as it allows to save more
+>>>> power (the difference may be due to suboptimal cpuidle platform support on R-Car Gen3, though),
+>>>
+>>> Why can't you do that in s2idle mode. Please give me the difference
+>>> between your shallow state and s2idle state, not just power numbers
+>>> but the actual state of CPUs and the devices in the system.
+>>
+>> From the Linux side, there's not much difference, except that the secondary
+>> CPU cores are disabled.  As that is handled by PSCI, the difference may be
+>> in the PSCI implementation.  I will have to check that...
+>>
+>> On these SoCs, the individual CPU cores and the SCU/L2 are in separate
+>> (nested) power areas.  Perhaps these power areas are turned off when
+>> disabling the CPU cores, but not when suspending them.
+> 
+> BTW, I don't care much about the extra state.
+> 
 
-  - After changes, new PLL3 multiplication setting:
-    MD19 MD17 : DDR clock frequency
-    -------------------------------
-      0    0  : DDR3200
-      0    1  : DDR2800
-      1    0  : DDR2400
-      1    1  : DDR1600
+Then stop caring about extra power usage too ;). Seriously this is not a
+valid argument.
 
-  - Before changes, old PLL3 multiplication setting:
-    MD19 MD17 : DDR clock frequency
-    -------------------------------
-      0    0  : DDR3200
-      0    1  : DDR2133
-      1    0  : Prohibited setting
-      1    1  : DDR1600
+>>>> E.g. on non-PSCI platforms with an Ethernet driver that supports
+>>>> Wake-on-LAN, I can do:
+>>>>
+>>>>         ethtool -s eth0 wol g
+>>>>         echo mem > /sys/power/state
+>>>>
+>>>> and be sure that the system can be woken up by sending a WoL MagicPacket.
+>>>
+>>> Still possible with s2idle if CPU_SUSPEND is correctly implemented by
+>>> the platform.
+>>
+>> Sure. But not automatic, as it needs fiddling with mem_sleep.
+> 
+> I do care about this, as it affects user experience.
+> 
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+Again when you have both "deep" and "standby" suspend states as per your
+patch set, user has to choose one. No escape from that.
 
-This patch is based on the clk-next branch of linux-clk tree.
-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 11e084a..44110ae 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -214,20 +214,20 @@ enum clk_ids {
-  * 14 13 19 17	(MHz)
-  *-------------------------------------------------------------------
-  * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
-- * 0  0  1  0	Prohibited setting
-+ * 0  0  0  1	16.66 x 1	x180	x192	x144	x168	x144
-+ * 0  0  1  0	16.66 x 1	x180	x192	x144	x144	x144
-  * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
-  * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
-- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
-- * 0  1  1  0	Prohibited setting
-+ * 0  1  0  1	20    x 1	x150	x160	x120	x140	x120
-+ * 0  1  1  0	20    x 1	x150	x160	x120	x120	x120
-  * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
-  * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
-- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
-- * 1  0  1  0	Prohibited setting
-+ * 1  0  0  1	25    x 1	x120	x128	x96	x112	x96
-+ * 1  0  1  0	25    x 1	x120	x128	x96	x96	x96
-  * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
-  * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
-- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
-- * 1  1  1  0	Prohibited setting
-+ * 1  1  0  1	33.33 / 2	x180	x192	x144	x168	x144
-+ * 1  1  1  0	33.33 / 2	x180	x192	x144	x144	x144
-  * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
-@@ -238,20 +238,20 @@ enum clk_ids {
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- 	/* EXTAL div	PLL1 mult	PLL3 mult */
- 	{ 1,		192,		192,	},
--	{ 1,		192,		128,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 1,		192,		168,	},
-+	{ 1,		192,		144,	},
- 	{ 1,		192,		192,	},
- 	{ 1,		160,		160,	},
--	{ 1,		160,		106,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 1,		160,		140,	},
-+	{ 1,		160,		120,	},
- 	{ 1,		160,		160,	},
- 	{ 1,		128,		128,	},
--	{ 1,		128,		84,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 1,		128,		112,	},
-+	{ 1,		128,		96,	},
- 	{ 1,		128,		128,	},
- 	{ 2,		192,		192,	},
--	{ 2,		192,		128,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 2,		192,		168,	},
-+	{ 2,		192,		144,	},
- 	{ 2,		192,		192,	},
- };
- 
 -- 
-1.9.1
+Regards,
+Sudeep
