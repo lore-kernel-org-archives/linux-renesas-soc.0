@@ -1,56 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42510 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751312AbdBXPuw (ORCPT
+Received: from www381.your-server.de ([78.46.137.84]:55728 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbdBXPd3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Feb 2017 10:50:52 -0500
+        Fri, 24 Feb 2017 10:33:29 -0500
 Subject: Re: [PATCH 1/4] Documentation: dt-bindings: iio: Add max961x
 To: Geert Uytterhoeven <geert@linux-m68k.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
 References: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
  <1487948756-25172-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWjtRZpjGi8BPkDGKGPr5uBr5jsjLi80COUDruZLuTXfQ@mail.gmail.com>
+ <CAMuHMdU9UL9ZyiPJqtTTNS=KOScu6M3c7jQgD1vZ+gTiTCAYMA@mail.gmail.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
+        Hartmut Knaack <knaack.h@gmx.de>, meerw@pmeerw.net,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Peter Meerwald <pmeerw@pmeerw.net>
-From: jacopo mondi <jacopo@jmondi.org>
-Message-ID: <a489f2fc-4d15-42cc-fdcc-b41f60b4638a@jmondi.org>
-Date: Fri, 24 Feb 2017 16:50:44 +0100
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <64ed3cde-7627-eb60-c507-b68447012502@metafoo.de>
+Date: Fri, 24 Feb 2017 16:33:16 +0100
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWjtRZpjGi8BPkDGKGPr5uBr5jsjLi80COUDruZLuTXfQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAMuHMdU9UL9ZyiPJqtTTNS=KOScu6M3c7jQgD1vZ+gTiTCAYMA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-On 24/02/2017 16:29, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> [fixed Peter Meerwald's address]
->
+On 02/24/2017 04:22 PM, Geert Uytterhoeven wrote:
 > On Fri, Feb 24, 2017 at 4:05 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->> Add device tree bindings documentation for Maxim max961x current sense
->> amplifier.
->>
->> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> ---
->>  .../devicetree/bindings/iio/adc/max961x.txt        | 27 ++++++++++++++++++++++
->>  1 file changed, 27 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/iio/adc/max961x.txt
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/max961x.txt b/Documentation/devicetree/bindings/iio/adc/max961x.txt
->> new file mode 100644
->> index 0000000..abbc6c4
 >> --- /dev/null
 >> +++ b/Documentation/devicetree/bindings/iio/adc/max961x.txt
 >> @@ -0,0 +1,27 @@
@@ -62,42 +42,14 @@ On 24/02/2017 16:29, Geert Uytterhoeven wrote:
 >> +
 >> +Required properties
 >> +  - compatible: Should be "maxim,max961x"
->
-> I'ts not a good idea to use wildcards in compatible values.
-> Ask yourself: is this valid for any (future) value of "x"?
->
-
-I suspect you already know the answer here :)
-
-> Hence please use "maxim,max9611" or "maxim,max9612".
-> The only difference between these two is a noninverting vs. inverting
-> input-to-output configuration. Does the driver need to care?
-
-No, not right now, as the inverting/non-inverting output is on the 
-op-amp/comparator side, which is currently not supported by this driver.
-
-Instead of using one or the other, should we use both, as long as it 
-does not makes any difference from driver perspective?
-
-Thanks
-   j
-
-
->
 >> +  - reg: The 7-bits long I2c address of the device
 >> +  - shunt-resistor: Resistor value, in uOhm, of the current sense shunt
 >> +                   resistor.
->
+> 
 > shunt-resistor-micro-ohms?
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
->
+
+I'll take this one further:
+
+maxim,shunt-resistor-micro-ohms?
+
+Although there is precedence for just 'shunt-resistor' in the ina2xx bindings.
