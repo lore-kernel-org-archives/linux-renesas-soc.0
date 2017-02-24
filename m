@@ -1,118 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:64630 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751189AbdBHCmh (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:38060 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751084AbdBXN7e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 21:42:37 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] i2c: riic: correctly finish transfers
-Date: Tue,  7 Feb 2017 21:41:22 -0500
-Message-Id: <20170208024122.13116-1-chris.brandt@renesas.com>
+        Fri, 24 Feb 2017 08:59:34 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Dirk Behme <dirk.behme@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 0/2] arm64: dts: r8a7795: Add Cortex-A53 CPU cores and PMU
+Date: Fri, 24 Feb 2017 14:59:26 +0100
+Message-Id: <1487944768-31983-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This fixes the condition where the controller has not fully completed its
-final transfer and leaves the bus and controller in a undesirable state.
+	Hi Simon, Magnus,
 
-At the end of the last transmitted byte, the existing driver would just
-signal for a STOP condition to be transmitted then immediately signal
-completion. However, the full STOP procedure might not have fully taken
-place by the time the runtime PM shuts off the peripheral clock, leaving
-the bus in a suspended state.
+This patch series adds the Cortex-A53 CPU cores and PMU on the Renesas
+R-Car H3 SoC to its DTS file.
 
-Alternatively, the STOP condition on the bus may have completed, but when
-the next transaction is requested by the upper layer, not all the
-necessary register cleanup was finished from the last transfer which made
-the driver return BUS BUSY when it really wasn't.
+Note that these patches describes the hardware; actual enabling of the
+CPU depends on the PSCI firmware.
 
-This patch now makes all transmit and receive transactions wait for the
-STOP condition to fully complete before signaling a completed transaction.
-With this new method, runtime PM no longer seems to be an issue.
+With the current firmware version (v2.16.0), only the CA57 CPU cores are
+enabled, hence these patches do not introduce undeterministic scheduling
+behavior due to migration between big and LITTLE cores.
 
-Fixes: 310c18a41450 ("i2c: riic: add driver")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/i2c/busses/i2c-riic.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+Changes compared to v3:
+  - Drop bogus links from the pmu_a57 node to the CA53 nodes,
+  - Add Cortex-A53 PMU node.
 
-diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 6263ea8..8f11d34 100644
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -80,6 +80,7 @@
- #define ICIER_TEIE	0x40
- #define ICIER_RIE	0x20
- #define ICIER_NAKIE	0x10
-+#define ICIER_SPIE	0x08
- 
- #define ICSR2_NACKF	0x10
- 
-@@ -216,11 +217,10 @@ static irqreturn_t riic_tend_isr(int irq, void *data)
- 		return IRQ_NONE;
- 	}
- 
--	if (riic->is_last || riic->err)
-+	if (riic->is_last || riic->err) {
-+		riic_clear_set_bit(riic, 0, ICIER_SPIE, RIIC_ICIER);
- 		writeb(ICCR2_SP, riic->base + RIIC_ICCR2);
--
--	writeb(0, riic->base + RIIC_ICIER);
--	complete(&riic->msg_done);
-+	}
- 
- 	return IRQ_HANDLED;
- }
-@@ -240,13 +240,13 @@ static irqreturn_t riic_rdrf_isr(int irq, void *data)
- 
- 	if (riic->bytes_left == 1) {
- 		/* STOP must come before we set ACKBT! */
--		if (riic->is_last)
-+		if (riic->is_last) {
-+			riic_clear_set_bit(riic, 0, ICIER_SPIE, RIIC_ICIER);
- 			writeb(ICCR2_SP, riic->base + RIIC_ICCR2);
-+		}
- 
- 		riic_clear_set_bit(riic, 0, ICMR3_ACKBT, RIIC_ICMR3);
- 
--		writeb(0, riic->base + RIIC_ICIER);
--		complete(&riic->msg_done);
- 	} else {
- 		riic_clear_set_bit(riic, ICMR3_ACKBT, 0, RIIC_ICMR3);
- 	}
-@@ -259,6 +259,21 @@ static irqreturn_t riic_rdrf_isr(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static irqreturn_t riic_stop_isr(int irq, void *data)
-+{
-+	struct riic_dev *riic = data;
-+
-+	/* read back registers to confirm writes have fully propagated */
-+	writeb(0, riic->base + RIIC_ICSR2);
-+	readb(riic->base + RIIC_ICSR2);
-+	writeb(0, riic->base + RIIC_ICIER);
-+	readb(riic->base + RIIC_ICIER);
-+
-+	complete(&riic->msg_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static u32 riic_func(struct i2c_adapter *adap)
- {
- 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-@@ -326,6 +341,7 @@ static struct riic_irq_desc riic_irqs[] = {
- 	{ .res_num = 0, .isr = riic_tend_isr, .name = "riic-tend" },
- 	{ .res_num = 1, .isr = riic_rdrf_isr, .name = "riic-rdrf" },
- 	{ .res_num = 2, .isr = riic_tdre_isr, .name = "riic-tdre" },
-+	{ .res_num = 3, .isr = riic_stop_isr, .name = "riic-stop" },
- 	{ .res_num = 5, .isr = riic_tend_isr, .name = "riic-nack" },
- };
- 
+Tested on r8a7795/salvator-x, with CPU hot(un)plug and system suspend.
+
+Thanks for applying!
+
+Geert Uytterhoeven (2):
+  arm64: dts: r8a7795: Add Cortex-A53 CPU cores
+  arm64: dts: r8a7795: Add Cortex-A53 PMU node
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 +++++++++++++++++++++++++++++---
+ 1 file changed, 53 insertions(+), 5 deletions(-)
+
 -- 
-2.10.1
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
