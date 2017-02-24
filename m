@@ -1,87 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46003 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbdBBJZs (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:39942 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbdBXNua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 04:25:48 -0500
-Date: Thu, 2 Feb 2017 10:25:41 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        Minghuan Lian <minghuan.Lian@freescale.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Mingkai Hu <mingkai.hu@freescale.com>,
-        Roy Zang <tie-fei.zang@freescale.com>,
-        Shailendra Verma <shailendra.v@samsung.com>
-Subject: Re: [PATCH 1 4/4] PCI: rcar: Use of_device_get_match_data() to
- simplify probe
-Message-ID: <20170202092541.GM21831@verge.net.au>
-References: <20170131201400.27605.56002.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20170131202020.27605.39560.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170131202020.27605.39560.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Fri, 24 Feb 2017 08:50:30 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] arm64: dts: r8a7796: Upgrade to PSCI v1.0 to support Suspend-to-RAM
+Date: Fri, 24 Feb 2017 14:49:14 +0100
+Message-Id: <1487944154-31435-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1487944154-31435-1-git-send-email-geert+renesas@glider.be>
+References: <1487944154-31435-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 31, 2017 at 02:20:20PM -0600, Bjorn Helgaas wrote:
-> This is a DT-only driver, so the only way to call rcar_pcie_probe() is to
-> match an entry in rcar_pcie_of_match[], so of_id cannot be NULL.
-> 
-> Furthermore, of_id->data can only be NULL if an rcar_pcie_of_match[] entry
-> has a NULL .data member.  That's a driver defect, and we don't want to
-> return -EINVAL, which is easy to ignore.  We'd rather take the NULL pointer
-> dereference so we notice the problem and fix it.
-> 
-> Use of_device_get_match_data() to retrieve the hw_init_fn pointer.  No
-> functional change intended.
-> 
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+>From PSCI v1.0, Suspend-to-RAM is supported via SYSTEM_SUSPEND PSCI
+function call. Hence, upgrade PSCI version for R-Car M3-W to support
+Suspend-to-RAM.
 
-> ---
->  drivers/pci/host/pcie-rcar.c |    7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index aca85be101f8..b3b6d5273347 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -1125,7 +1125,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct rcar_pcie *pcie;
->  	unsigned int data;
-> -	const struct of_device_id *of_id;
->  	int err;
->  	int (*hw_init_fn)(struct rcar_pcie *);
->  
-> @@ -1149,11 +1148,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	if (err)
->  		return err;
->  
-> -	of_id = of_match_device(rcar_pcie_of_match, dev);
-> -	if (!of_id || !of_id->data)
-> -		return -EINVAL;
-> -	hw_init_fn = of_id->data;
-> -
->  	pm_runtime_enable(dev);
->  	err = pm_runtime_get_sync(dev);
->  	if (err < 0) {
-> @@ -1162,6 +1156,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	}
->  
->  	/* Failure to get a link might just be that no cards are inserted */
-> +	hw_init_fn = of_device_get_match_data(dev);
->  	err = hw_init_fn(pcie);
->  	if (err) {
->  		dev_info(dev, "PCIe link down\n");
-> 
+The Suspend-to-RAM is highly dependent on ARM Trusted Firwmare support
+since necessary callback functions will be registered after a query
+to ARM Trusted Firmware about SYSTEM_SUSPEND support.
+
+Since PSCI v1.0 is backward compatible with PSCI v0.2, CPU Hotplug and
+CPUIdle should be able to work normally with this change.
+
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Keep "arm,psci-0.2"]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Khiem: I've updated your email address.
+
+v2:
+  - Keep "arm,psci-0.2".
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index e664456490ec0cc7..4985274b3c5f4a06 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -29,7 +29,7 @@
+ 	};
+ 
+ 	psci {
+-		compatible = "arm,psci-0.2";
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+ 	};
+ 
+-- 
+2.7.4
