@@ -1,70 +1,100 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=Wi0l=ZX=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/8] v4l: vsp1: Partition phase developments
-Date: Fri, 10 Feb 2017 20:27:28 +0000
-Message-Id: <cover.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758327.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:46403 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751231AbdBYQEo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 25 Feb 2017 11:04:44 -0500
+Subject: Re: [PATCH 1/4] Documentation: dt-bindings: iio: Add max961x
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487948756-25172-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdU9UL9ZyiPJqtTTNS=KOScu6M3c7jQgD1vZ+gTiTCAYMA@mail.gmail.com>
+ <64ed3cde-7627-eb60-c507-b68447012502@metafoo.de>
+ <a67f7cf1-b676-5306-9e3d-4768a6e53357@jmondi.org>
+ <a0217564-0730-16f2-491f-86ea3561dc2e@kernel.org>
+ <CAMuHMdUzT5gSoXEyDeaKSdKBaT4jEVCKOSChxdR0bbniaz_qvA@mail.gmail.com>
+Cc: jacopo mondi <jacopo@jmondi.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hartmut Knaack <knaack.h@gmx.de>, meerw@pmeerw.net,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <5a02d05b-0626-cac5-a378-d83d9ff41fa1@kernel.org>
+Date: Sat, 25 Feb 2017 15:56:12 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUzT5gSoXEyDeaKSdKBaT4jEVCKOSChxdR0bbniaz_qvA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series presents ongoing work with the scaler partition algorithm.
+On 25/02/17 15:34, Geert Uytterhoeven wrote:
+> Hi Jonathan,
+> 
+> On Sat, Feb 25, 2017 at 4:19 PM, Jonathan Cameron <jic23@kernel.org> wrote:
+>> On 24/02/17 15:48, jacopo mondi wrote:
+>>> On 24/02/2017 16:33, Lars-Peter Clausen wrote:
+>>>> On 02/24/2017 04:22 PM, Geert Uytterhoeven wrote:
+>>>>> On Fri, Feb 24, 2017 at 4:05 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/iio/adc/max961x.txt
+>>>>>> @@ -0,0 +1,27 @@
+>>>>>> +* Maxim max9611/max9612 current sense amplifier with 12-bits ADC interface
+>>>>>> +
+>>>>>> +Maxim max9611/max9612 is an high-side current sense amplifier with integrated
+>>>>>> +12-bits ADC communicating over I2c bus.
+>>>>>> +The device node for this driver shall be a child of a I2c controller.
+>>>>>> +
+>>>>>> +Required properties
+>>>>>> +  - compatible: Should be "maxim,max961x"
+>>>>>> +  - reg: The 7-bits long I2c address of the device
+>>>>>> +  - shunt-resistor: Resistor value, in uOhm, of the current sense shunt
+>>>>>> +                   resistor.
+>>>>>
+>>>>> shunt-resistor-micro-ohms?
+>>>>
+>>>> I'll take this one further:
+>>>>
+>>>> maxim,shunt-resistor-micro-ohms?
+>>>>
+>>>> Although there is precedence for just 'shunt-resistor' in the ina2xx bindings.
+>>>>
+>>>
+>>> And that's where I took "inspiration" from :)
+>> Which raises another open question.  Why IIO rather than hwmon like the ina2xx?
+> 
+> Actually we have both drivers/hwmon/ina2xx.c and drivers/iio/adc/ina2xx-adc.c.
+Oops,. I'd forgotten about that.
 
-It is based upon the previous partition algorithm improvements submission [0]
-This series has been pushed to a tag [1] for convenience in testing.
-
-Patches 1-3, provide fixes and additions to the register definitions needed for
-controlling the phases of the UDS.
-
-Patches 4 and 5 rework the partition data configuration storage, opening the
-path for Patch 6 to implement a new entity operation API. This new '.partition'
-operation gives each entity an opportunity to adapt the partition data based on
-its configuration.
-
-A new helper function "vsp1_pipeline_propagate_partition()" is provided by the
-vsp1_pipe to walk the pipeline in reverse, with each entity having the
-opportunity to define it's input requirements to the predecessors.
-
-Partition data is stored somewhat inefficiently in this series, whilst the
-process is established and can be considered for improvement later.
-
-Patch 7 begins the implementation of calculating the phase values in the UDS,
-and applying them in the VI6_UDS_HPHASE register appropriately. Phase
-calculations have been established from the partition algorithm pseudo code
-provided by renesas, although the 'end phase' is always set as 0 in this code,
-it is yet to be determined if this has an effect.
-
-Finally Patch 8, begins to allow the UDS entity to perform extra overlap at the
-partition borders to provide the filters with the required data to generate
-clean transitions from one partition to the next.
-
-[0] https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg08631.html
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/pa-phases-2017-02-10
-
-Kieran Bingham (8):
-  v4l: vsp1: Provide UDS register updates
-  v4l: vsp1: Track the SRU entity in the pipeline
-  v4l: vsp1: Correct image partition parameters
-  v4l: vsp1: Move partition rectangles to struct
-  v4l: vsp1: Operate on partition struct data directly
-  v4l: vsp1: Allow entities to participate in the partition algorithm
-  v4l: vsp1: Calculate UDS phase for partitions
-  v4l: vsp1: Implement left edge partition algorithm overlap
-
- drivers/media/platform/vsp1/vsp1_entity.h |   8 +-
- drivers/media/platform/vsp1/vsp1_pipe.c   |  22 ++++-
- drivers/media/platform/vsp1/vsp1_pipe.h   |  49 +++++++-
- drivers/media/platform/vsp1/vsp1_regs.h   |  14 ++-
- drivers/media/platform/vsp1/vsp1_rpf.c    |  40 +++---
- drivers/media/platform/vsp1/vsp1_sru.c    |  29 +++++-
- drivers/media/platform/vsp1/vsp1_uds.c    | 144 ++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_video.c  |  82 ++++++++-----
- drivers/media/platform/vsp1/vsp1_wpf.c    |  34 +++--
- 9 files changed, 364 insertions(+), 58 deletions(-)
-
-base-commit: 0c3b6ad6a559391f367879fd4be6d2d85625bd5a
--- 
-git-series 0.9.1
+Need that discussion to happen though before I take it into IIO though.
+> 
+>> Whether we are better going for the existing binding without units, or
+>> 'fixing' that is a question for the device tree maintainers.  I guess that
+>> one snuck through.
+> 
+> ltc4151 uses shunt-resistor-micro-ohms.
+> sgtl5000 uses micbias-resistor-k-ohms.
+> 
+> So there's precedence for everything ;-)
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
