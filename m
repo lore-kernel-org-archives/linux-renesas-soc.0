@@ -1,61 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7485 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932123AbdBPPiB (ORCPT
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:46405 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751324AbdBYQEo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 10:38:01 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Brad Mouring <brad.mouring@ni.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <rcochran@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 0/3] ARM: l2c: add l2c support for RZ/A1
-Date: Thu, 16 Feb 2017 10:37:23 -0500
-Message-Id: <20170216153726.22919-1-chris.brandt@renesas.com>
+        Sat, 25 Feb 2017 11:04:44 -0500
+Subject: Re: [PATCH 2/4] iio: Documentation: Add max961x sysfs documentation
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
+        laurent.pinchart@ideasonboard.com, knaack.h@gmx.de,
+        lars@metafoo.de, meerw@pmeerw.net, robh+dt@kernel.org,
+        mark.rutland@arm.com
+References: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487948756-25172-3-git-send-email-jacopo+renesas@jmondi.org>
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <56b35a65-a23d-68ac-17d6-cf46f9352ab7@kernel.org>
+Date: Sat, 25 Feb 2017 15:54:45 +0000
+MIME-Version: 1.0
+In-Reply-To: <1487948756-25172-3-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PL310 in the Renesas RZ/A1 SoC (R7S72100) does not have the sideband
-signals connected between the CPU and L2C. According the PL310 TRM,
-sideband signals are optional.
+On 24/02/17 15:05, Jacopo Mondi wrote:
+> Add documentation for max961x driver.
+> The only attribute to document is the current sense shunt resistor
+> value.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Interestingly generic as it only applies to some of the channels.
+We might need to have the channel where it is effecting the output specified in the
+name, even if we end up with several repeats of the same thing for different
+computed channels.
 
-If a PL310 is added to a system, but the sideband signals are not
-connected, some Cortex A9 optimizations cannot be used. In particular,
-enabling Full Line Zeros in the CA9 without sidebands connected will
-crash the system since the CA9 will expect the L2C to perform operations,
-yet the L2C never gets the commands.
-
-This series adds the option to not enable anything in the PL310 that
-uses sidebands, and then adds L2C support to the RZ/A1 DT.
-
-v3:
-* split "arm,pl310-no-sideband" into "arm,early-bresp-disable" and
-  "arm,full-line-zero-disable"
-
-v2:
-* Added "arm,pl310-no-sideband" to cache-l2x0.c instead of hacking in a
-  dummy l2c_write_sec function to keep FLZ from being enabled.
-
-
-Chris Brandt (3):
-  ARM: l2c: allow CA9 optimizations to be disabled
-  ARM: shmobile: r7s72100: Enable L2 cache
-  ARM: dts: r7s72100: add l2 cache
-
- Documentation/devicetree/bindings/arm/l2c2x0.txt |  3 +++
- arch/arm/boot/dts/r7s72100.dtsi                  | 11 +++++++++++
- arch/arm/mach-shmobile/setup-r7s72100.c          |  2 ++
- arch/arm/mm/cache-l2x0.c                         | 13 +++++++++++--
- 4 files changed, 27 insertions(+), 2 deletions(-)
-
--- 
-2.10.1
+Jonathan
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio-adc-max961x | 5 +++++
+>  1 file changed, 5 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max961x
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max961x b/Documentation/ABI/testing/sysfs-bus-iio-adc-max961x
+> new file mode 100644
+> index 0000000..dbd5e75
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max961x
+> @@ -0,0 +1,5 @@
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_shunt_resistor
+> +Date:		February 2017
+> +KernelVersion:	4.10
+> +Contact:	linux-iio@vger.kernel.org
+> +Description: 	The value of the shunt resistor in micro Ohms.
+> 
