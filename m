@@ -1,2150 +1,720 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170210194521.832572814@cogentembedded.com>
-Date: Fri, 10 Feb 2017 22:45:02 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Konstantin Kozhevnikov
-        <Konstantin.Kozhevnikov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/1] media: platform: Renesas IMR driver
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:43034 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751510AbdB0Hrq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 27 Feb 2017 02:47:46 -0500
+Subject: Re: [PATCH 3/4] iio: adc: Add max9611/9612 ADC driver
+To: Jonathan Cameron <jic23@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
+        laurent.pinchart@ideasonboard.com, knaack.h@gmx.de,
+        lars@metafoo.de, meerw@pmeerw.net, robh+dt@kernel.org,
+        mark.rutland@arm.com
+References: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487948756-25172-4-git-send-email-jacopo+renesas@jmondi.org>
+ <61af9d83-ec8f-33f9-52b5-feb50b399edd@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+From: jacopo mondi <jacopo@jmondi.org>
+Message-ID: <09d7a846-caa5-711f-7602-ea84ff8bdda8@jmondi.org>
+Date: Mon, 27 Feb 2017 08:45:49 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=media-platform-Renesas-IMR-driver.patch
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <61af9d83-ec8f-33f9-52b5-feb50b399edd@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The image renderer light extended 4 (IMR-LX4) or the distortion correction
-engine is a drawing processor with a simple  instruction system capable of
-referencing data on an external memory as 2D texture data and performing
-texture mapping and drawing with respect to any shape that is split into
-triangular objects.
+Hi Jonathan,
+    thanks for review
 
-This V4L2 memory-to-memory device driver only supports image renderer found
-in the R-Car gen3 SoCs; the R-Car gen2 support  can be added later...
+On 25/02/2017 16:53, Jonathan Cameron wrote:
+> On 24/02/17 15:05, Jacopo Mondi wrote:
+>> Add iio driver for Maxim max9611/9612 current-sense amplifiers with
+>> 12-bits ADC.
+> Data sheet link always good
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> I'm going to respond to the cover letter wrt to providing dynamic scales
+> and offsets in a moment as you raised the question there.
+>
+> Otherwise, various bits and bobs inline.
+>
+> Interesting part to handle as it can read a lot of values that are useful only
+> after some magic calculations are done.
+>
+> Jonathan
+>> ---
+>>  drivers/iio/adc/Kconfig   |  10 +
+>>  drivers/iio/adc/Makefile  |   1 +
+>>  drivers/iio/adc/max961x.c | 648 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 659 insertions(+)
+>>  create mode 100644 drivers/iio/adc/max961x.c
+>>
+>> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+>> index dedae7a..f86026a 100644
+>> --- a/drivers/iio/adc/Kconfig
+>> +++ b/drivers/iio/adc/Kconfig
+>> @@ -354,6 +354,16 @@ config MAX1363
+>>  	  To compile this driver as a module, choose M here: the module will be
+>>  	  called max1363.
+>>
+>> +config	MAX961x
+>> +	tristate "Maxim max9611/9612 ADC driver"
+>> +	depends on I2C
+>> +	help
+>> +	  Say yes here to build support for Maxim max9611/9612 current sense
+>> +	  amplifiers with 12-bits ADC interface.
+>> +
+>> +	  To compile this driver as a module, choose M here: the module will be
+>> +	  called max961x.
+>> +
+>>  config MCP320X
+>>  	tristate "Microchip Technology MCP3x01/02/04/08"
+>>  	depends on SPI
+>> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+>> index d001262..ff19250 100644
+>> --- a/drivers/iio/adc/Makefile
+>> +++ b/drivers/iio/adc/Makefile
+>> @@ -34,6 +34,7 @@ obj-$(CONFIG_LTC2485) += ltc2485.o
+>>  obj-$(CONFIG_MAX1027) += max1027.o
+>>  obj-$(CONFIG_MAX11100) += max11100.o
+>>  obj-$(CONFIG_MAX1363) += max1363.o
+>> +obj-$(CONFIG_MAX961x) += max961x.o
+>>  obj-$(CONFIG_MCP320X) += mcp320x.o
+>>  obj-$(CONFIG_MCP3422) += mcp3422.o
+>>  obj-$(CONFIG_MEDIATEK_MT6577_AUXADC) += mt6577_auxadc.o
+>> diff --git a/drivers/iio/adc/max961x.c b/drivers/iio/adc/max961x.c
+>> new file mode 100644
+>> index 0000000..a544e69
+>> --- /dev/null
+>> +++ b/drivers/iio/adc/max961x.c
+>> @@ -0,0 +1,648 @@
+>> +/*
+>> + * iio/adc/max961x.c
+>> + *
+>> + * Maxim max9611/9612 high side current sense amplifier with
+>> + * 12-bit ADC interface.
+>> + *
+>> + * Copyright (C) 2017 Jacopo Mondi
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +/*
+>> + * This driver supports input common-mode voltage, current-sense
+>> + * amplifier with programmable gains and die temperature reading from
+>> + * Maxim max9611/9612.
+>> + * Op-amp, analog comparator, and watchdog functionalities are not
+>> + * supported by this driver.
+>> + */
+>> +
+>> +#include <linux/delay.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/iio/iio.h>
+>> +#include <linux/iio/sysfs.h>
+>> +#include <linux/module.h>
+>> +
+>> +#define DRIVER_NAME "max961x"
+>> +
+>> +/* max961x register addresses */
+> Prefix these with MAX9611_ to avoid possible clashes in future.
+>
 
-[Sergei: merged 2 original patches, added the patch description, removed
-unrelated parts,  added the binding document, ported the driver to the
-modern kernel, renamed the UAPI header file and the guard  macros to match
-the driver name, extended the copyrights, fixed up Kconfig prompt/depends/
-help, made use of the BIT()/GENMASK() macros, sorted #include's, removed
-leading  dots and fixed grammar in the comments, fixed up indentation to
-use tabs where possible, renamed IMR_DLSR to IMR_DLPR to match the manual,
-separated the register offset/bit #define's, removed *inline* from .c file,
-fixed lines over 80 columns, removed useless parens, operators, casts,
-braces, variables, #include's, (commented out) statements, and even
-function, inserted empty line after desclaration, removed extra empty
-lines, reordered some local variable desclarations, removed calls to
-4l2_err() on kmalloc() failure, fixed the error returned by imr_default(),
-avoided code duplication in the IRQ handler, used '__packed' for the UAPI
-structures, enclosed the macro parameters in parens, exchanged the values
-of IMR_MAP_AUTO[SD]G macros.]
+I initially did, then removed that to counterbalance my tendency to be a 
+bit verbose in naming stuff.
 
-Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I'll use the MAX9611_ prefix where appropriate
 
----
-This patch is against the 'media_tree.git' repo's 'master' branch.
+>> +#define REG_CSA_DATA			0x00
+[snip
+>> +	  .info_mask_separate	= BIT(IIO_CHAN_INFO_RAW) |
+>> +				  BIT(IIO_CHAN_INFO_SCALE) |
+> The only cases we normally allow bother raw and processed output in
+> are ones where we are supporting some defunct (i.e. wrong usage) in the
+> userspace ABI.  So drop the processed path please.
 
- Documentation/devicetree/bindings/media/rcar_imr.txt |   23 
- drivers/media/platform/Kconfig                       |   13 
- drivers/media/platform/Makefile                      |    1 
- drivers/media/platform/rcar_imr.c                    | 1923 +++++++++++++++++++
- include/uapi/linux/rcar_imr.h                        |   94 
- 5 files changed, 2054 insertions(+)
+Will do
 
-Index: media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-===================================================================
---- /dev/null
-+++ media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-@@ -0,0 +1,23 @@
-+Renesas R-Car Image Renderer (Distortion Correction Engine)
-+-----------------------------------------------------------
-+
-+The image renderer  or the distortion correction  engine is a drawing processor
-+with a simple  instruction system capable of referencing data in external memory
-+as  2D texture data and performing texture mapping and drawing with respect to
-+any shape that is split into triangular objects.
-+
-+Required properties:
-+- compatible: must be "renesas,imr-lx4" for the image renderer light extended 4
-+  (IMR-LX4)  found in the R-Car gen3 SoCs;
-+- reg: offset and length of the register block;
-+- interrupts: interrupt specifier;
-+- clocks: clock phandle and specifier pair.
-+
-+Example:
-+
-+	imr-lx4@fe860000 {
-+		compatible = "renesas,imr-lx4";
-+		reg = <0 0xfe860000 0 0x2000>;
-+		interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 823>;
-+	};
-Index: media_tree/drivers/media/platform/Kconfig
-===================================================================
---- media_tree.orig/drivers/media/platform/Kconfig
-+++ media_tree/drivers/media/platform/Kconfig
-@@ -399,6 +399,19 @@ config VIDEO_RENESAS_FCP
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called rcar-fcp.
- 
-+config VIDEO_RENESAS_IMR
-+	tristate "Renesas Image Renderer (Distortion Correction Engine)"
-+	depends on VIDEO_DEV && VIDEO_V4L2
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	select VIDEOBUF2_DMA_CONTIG
-+	select V4L2_MEM2MEM_DEV
-+	---help---
-+	  This is a V4L2 driver for the Renesas Image Renderer Light Extended 4
-+	  (IMR-LX4).
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called rcar_imr.
-+
- config VIDEO_RENESAS_VSP1
- 	tristate "Renesas VSP1 Video Processing Engine"
- 	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-Index: media_tree/drivers/media/platform/Makefile
-===================================================================
---- media_tree.orig/drivers/media/platform/Makefile
-+++ media_tree/drivers/media/platform/Makefile
-@@ -52,6 +52,7 @@ obj-$(CONFIG_SOC_CAMERA)		+= soc_camera/
- obj-$(CONFIG_VIDEO_RENESAS_FCP) 	+= rcar-fcp.o
- obj-$(CONFIG_VIDEO_RENESAS_FDP1)	+= rcar_fdp1.o
- obj-$(CONFIG_VIDEO_RENESAS_JPU) 	+= rcar_jpu.o
-+obj-$(CONFIG_VIDEO_RENESAS_IMR) 	+= rcar_imr.o
- obj-$(CONFIG_VIDEO_RENESAS_VSP1)	+= vsp1/
- 
- obj-y	+= omap/
-Index: media_tree/drivers/media/platform/rcar_imr.c
-===================================================================
---- /dev/null
-+++ media_tree/drivers/media/platform/rcar_imr.c
-@@ -0,0 +1,1923 @@
-+/*
-+ * rcar_imr.c -- R-Car IMR-LX4 Driver
-+ *
-+ * Copyright (C) 2015-2017 Cogent Embedded, Inc. <source@cogentembedded.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/rcar_imr.h>
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-fh.h>
-+#include <media/v4l2-ioctl.h>
-+#include <media/v4l2-mem2mem.h>
-+#include <media/videobuf2-dma-contig.h>
-+
-+#define DRV_NAME		"rcar_imr"
-+
-+/*******************************************************************************
-+ * Module parameters
-+ ******************************************************************************/
-+
-+static int debug;
-+module_param(debug, int, 0644);
-+MODULE_PARM_DESC(debug, "Debug level (0-4)");
-+
-+/*******************************************************************************
-+ * Local type definitions
-+ ******************************************************************************/
-+
-+/* configuration data */
-+struct imr_cfg {
-+	/* display-list main program data */
-+	void			*dl_vaddr;
-+	dma_addr_t		dl_dma_addr;
-+	u32			dl_size;
-+	u32			dl_start_offset;
-+
-+	/* pointers to the source/destination planes */
-+	u32			*src_pa_ptr[2];
-+	u32			*dst_pa_ptr[2];
-+
-+	/* subpixel destination coordinates space */
-+	int			dst_subpixel;
-+
-+	/* reference counter */
-+	u32			refcount;
-+
-+	/* identifier (for debug output) */
-+	u32			id;
-+};
-+
-+struct imr_buffer {
-+	/* standard M2M buffer descriptor */
-+	struct v4l2_m2m_buffer	buf;
-+
-+	/* pointer to mesh configuration for processing */
-+	struct imr_cfg		*cfg;
-+};
-+
-+struct imr_q_data {
-+	/* latched pixel format */
-+	struct v4l2_pix_format	fmt;
-+
-+	/* current format flags */
-+	u32			flags;
-+};
-+
-+struct imr_format_info {
-+	char			*name;
-+	u32			fourcc;
-+	u32			flags;
-+};
-+
-+/* per-device data */
-+struct imr_device {
-+	struct device		*dev;
-+	struct clk		*clock;
-+	void __iomem		*mmio;
-+	int			irq;
-+	struct mutex		mutex;
-+	spinlock_t		lock;
-+
-+	struct v4l2_device	v4l2_dev;
-+	struct video_device	video_dev;
-+	struct v4l2_m2m_dev	*m2m_dev;
-+	void			*alloc_ctx;
-+
-+	/*
-+	 * do we need that counter really? framework counts fh structures
-+	 * for us - tbd
-+	 */
-+	int			refcount;
-+
-+	/* should we include media-dev? likely, no - tbd */
-+};
-+
-+/* per file-handle context */
-+struct imr_ctx {
-+	struct v4l2_fh		fh;
-+	struct imr_device	*imr;
-+	struct v4l2_m2m_ctx	*m2m_ctx;
-+	struct imr_q_data	queue[2];
-+
-+	/* current job configuration */
-+	struct imr_cfg		*cfg;
-+
-+	/* frame sequence counter */
-+	u32			sequence;
-+
-+	/* cropping parameters (in pixels) */
-+	u16			crop[4];
-+
-+	/* number of active configurations (debugging) */
-+	u32			cfg_num;
-+};
-+
-+/*******************************************************************************
-+ * IMR registers
-+ ******************************************************************************/
-+
-+#define IMR_CR			0x08
-+#define IMR_SR			0x0C
-+#define IMR_SRCR		0x10
-+#define IMR_ICR			0x14
-+#define IMR_IMR			0x18
-+#define IMR_DLSP		0x1C
-+#define IMR_DLPR		0x20
-+#define IMR_DLSAR		0x30
-+#define IMR_DSAR		0x34
-+#define IMR_SSAR		0x38
-+#define IMR_DSTR		0x3C
-+#define IMR_SSTR		0x40
-+#define IMR_DSOR		0x50
-+#define IMR_CMRCR		0x54
-+#define IMR_CMRCSR		0x58
-+#define IMR_CMRCCR		0x5C
-+#define IMR_TRIMR		0x60
-+#define IMR_TRIMSR		0x64
-+#define IMR_TRIMCR		0x68
-+#define IMR_TRICR		0x6C
-+#define IMR_UVDPOR		0x70
-+#define IMR_SUSR		0x74
-+#define IMR_SVSR		0x78
-+#define IMR_XMINR		0x80
-+#define IMR_YMINR		0x84
-+#define IMR_XMAXR		0x88
-+#define IMR_YMAXR		0x8C
-+#define IMR_AMXSR		0x90
-+#define IMR_AMYSR		0x94
-+#define IMR_AMXOR		0x98
-+#define IMR_AMYOR		0x9C
-+#define IMR_CPDPOR		0xD0
-+#define IMR_CMRCR2		0xE4
-+#define IMR_CMRCSR2		0xE8
-+#define IMR_CMRCCR2		0xEC
-+
-+#define IMR_CR_RS		BIT(0)
-+#define IMR_CR_SWRST		BIT(15)
-+
-+#define IMR_SR_TRA		BIT(0)
-+#define IMR_SR_IER		BIT(1)
-+#define IMR_SR_INT		BIT(2)
-+#define IMR_SR_REN		BIT(5)
-+
-+#define IMR_ICR_TRAEN		BIT(0)
-+#define IMR_ICR_IEREN		BIT(1)
-+#define IMR_ICR_INTEN		BIT(2)
-+
-+#define IMR_CMR_LUCE		BIT(1)
-+#define IMR_CMR_CLCE		BIT(2)
-+#define IMR_CMR_DUV_SHIFT	3
-+#define IMR_CMR_DUV		GENMASK(4, 3)
-+#define IMR_CMR_SUV_SHIFT	5
-+#define IMR_CMR_SUV		GENMASK(6, 5)
-+#define IMR_CMR_YISM		BIT(7)
-+#define IMR_CMR_DY10		BIT(8)
-+#define IMR_CMR_DY12		BIT(9)
-+#define IMR_CMR_SY10		BIT(11)
-+#define IMR_CMR_SY12		BIT(12)
-+#define IMR_CMR_YCM		BIT(14)
-+#define IMR_CMR_CP16E		BIT(15)
-+
-+#define IMR_TRIM_TME		BIT(0)
-+#define IMR_TRIM_BFE		BIT(1)
-+#define IMR_TRIM_AUTODG		BIT(2)
-+#define IMR_TRIM_AUTOSG		BIT(3)
-+#define IMR_TRIM_DYDXM		BIT(4)
-+#define IMR_TRIM_DUDVM		BIT(5)
-+#define IMR_TRIM_TCM		BIT(6)
-+
-+#define IMR_TRIC_YCFORM		BIT(31)
-+
-+#define IMR_CMR2_LUTE		BIT(0)
-+#define IMR_CMR2_YUV422E	BIT(2)
-+#define IMR_CMR2_YUV422FORM	BIT(5)
-+#define IMR_CMR2_UVFORM		BIT(6)
-+#define IMR_CMR2_TCTE		BIT(12)
-+#define IMR_CMR2_DCTE		BIT(15)
-+
-+/*******************************************************************************
-+ * Auxiliary helpers
-+ ******************************************************************************/
-+
-+static struct imr_ctx *fh_to_ctx(struct v4l2_fh *fh)
-+{
-+	return container_of(fh, struct imr_ctx, fh);
-+}
-+
-+static struct imr_buffer *to_imr_buffer(struct vb2_v4l2_buffer *vbuf)
-+{
-+	struct v4l2_m2m_buffer *b = container_of(vbuf, struct v4l2_m2m_buffer,
-+						 vb);
-+
-+	return container_of(b, struct imr_buffer, buf);
-+}
-+
-+/*******************************************************************************
-+ * Local constant definition
-+ ******************************************************************************/
-+
-+#define IMR_F_Y8		BIT(0)
-+#define IMR_F_Y10		BIT(1)
-+#define IMR_F_Y12		BIT(2)
-+#define IMR_F_UV8		BIT(3)
-+#define IMR_F_UV10		BIT(4)
-+#define IMR_F_UV12		BIT(5)
-+#define IMR_F_PLANAR		BIT(6)
-+#define IMR_F_INTERLEAVED	BIT(7)
-+#define IMR_F_PLANES_MASK	(BIT(8) - 1)
-+#define IMR_F_UV_SWAP		BIT(8)
-+#define IMR_F_YUV_SWAP		BIT(9)
-+
-+/* get common planes bits */
-+static u32 __imr_flags_common(u32 iflags, u32 oflags)
-+{
-+	return iflags & oflags & IMR_F_PLANES_MASK;
-+}
-+
-+static const struct imr_format_info imr_lx4_formats[] = {
-+	{
-+		.name	= "YUV 4:2:2 semiplanar (NV16)",
-+		.fourcc	= V4L2_PIX_FMT_NV16,
-+		.flags	= IMR_F_Y8 | IMR_F_UV8 | IMR_F_PLANAR,
-+	},
-+	{
-+		.name	= "YVU 4:2:2 semiplanar (NV61)",
-+		.fourcc	= V4L2_PIX_FMT_NV61,
-+		.flags	= IMR_F_Y8 | IMR_F_UV8 | IMR_F_PLANAR | IMR_F_UV_SWAP,
-+	},
-+	{
-+		.name	= "YUV 4:2:2 interleaved (YUYV)",
-+		.fourcc	= V4L2_PIX_FMT_YUYV,
-+		.flags	= IMR_F_Y8 | IMR_F_UV8,
-+	},
-+	{
-+		.name	= "YUV 4:2:2 interleaved (UYVY)",
-+		.fourcc	= V4L2_PIX_FMT_UYVY,
-+		.flags	= IMR_F_Y8 | IMR_F_UV8 | IMR_F_YUV_SWAP,
-+	},
-+	{
-+		.name	= "YUV 4:2:2 interleaved (YVYU)",
-+		.fourcc	= V4L2_PIX_FMT_YVYU,
-+		.flags	= IMR_F_Y8 | IMR_F_UV8 | IMR_F_UV_SWAP,
-+	},
-+	{
-+		.name	= "YUV 4:2:2 interleaved (UYVY)",
-+		.fourcc	= V4L2_PIX_FMT_VYUY,
-+		.flags	= IMR_F_Y8 | IMR_F_UV8 | IMR_F_UV_SWAP | IMR_F_YUV_SWAP,
-+	},
-+	{
-+		.name	= "Greyscale 8-bit",
-+		.fourcc	= V4L2_PIX_FMT_GREY,
-+		.flags	= IMR_F_Y8 | IMR_F_PLANAR,
-+	},
-+	{
-+		.name	= "Greyscale 10-bit",
-+		.fourcc	= V4L2_PIX_FMT_Y10,
-+		.flags	= IMR_F_Y8 | IMR_F_Y10 | IMR_F_PLANAR,
-+	},
-+	{
-+		.name	= "Greyscale 12-bit",
-+		.fourcc	= V4L2_PIX_FMT_Y12,
-+		.flags	= IMR_F_Y8 | IMR_F_Y10 | IMR_F_Y12 | IMR_F_PLANAR,
-+	},
-+	{
-+		.name	= "Chrominance UV 8-bit",
-+		.fourcc	= V4L2_PIX_FMT_UV8,
-+		.flags	= IMR_F_UV8 | IMR_F_PLANAR,
-+	},
-+};
-+
-+/* mesh configuration constructor */
-+static struct imr_cfg *imr_cfg_create(struct imr_ctx *ctx,
-+				      u32 dl_size, u32 dl_start)
-+{
-+	struct imr_device	*imr = ctx->imr;
-+	struct imr_cfg		*cfg;
-+
-+	/* allocate configuration descriptor */
-+	cfg = kmalloc(sizeof(*cfg), GFP_KERNEL);
-+	if (!cfg)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* allocate contiguous memory for a display list */
-+	cfg->dl_vaddr = dma_alloc_writecombine(imr->dev, dl_size,
-+					       &cfg->dl_dma_addr, GFP_KERNEL);
-+	if (!cfg->dl_vaddr) {
-+		v4l2_err(&imr->v4l2_dev,
-+			 "failed to allocate %u bytes for a DL\n", dl_size);
-+		kfree(cfg);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	cfg->dl_size = dl_size;
-+	cfg->dl_start_offset = dl_start;
-+	cfg->refcount = 1;
-+	cfg->id = ctx->sequence;
-+
-+	/* for debugging purposes, advance number of active configurations */
-+	ctx->cfg_num++;
-+
-+	return cfg;
-+}
-+
-+/* add reference to the current configuration */
-+static inline struct imr_cfg *imr_cfg_ref(struct imr_ctx *ctx)
-+{
-+	struct imr_cfg *cfg = ctx->cfg;
-+
-+	BUG_ON(!cfg);
-+	cfg->refcount++;
-+	return cfg;
-+}
-+
-+/* mesh configuration destructor */
-+static void imr_cfg_unref(struct imr_ctx *ctx, struct imr_cfg *cfg)
-+{
-+	struct imr_device *imr = ctx->imr;
-+
-+	/* no atomicity is required as operation is locked with device mutex */
-+	if (!cfg || --cfg->refcount)
-+		return;
-+
-+	/* release memory allocated for a display list */
-+	if (cfg->dl_vaddr)
-+		dma_free_writecombine(imr->dev, cfg->dl_size, cfg->dl_vaddr,
-+				      cfg->dl_dma_addr);
-+
-+	/* destroy the configuration structure */
-+	kfree(cfg);
-+
-+	/* decrement number of active configurations (debugging) */
-+	WARN_ON(!ctx->cfg_num--);
-+}
-+
-+/*******************************************************************************
-+ * Context processing queue
-+ ******************************************************************************/
-+
-+static int imr_queue_setup(struct vb2_queue *vq,
-+			   unsigned int *nbuffers, unsigned int *nplanes,
-+			   unsigned int sizes[], struct device *alloc_ctxs[])
-+{
-+	struct imr_ctx		*ctx = vb2_get_drv_priv(vq);
-+	struct imr_q_data	*q_data = &ctx->queue
-+					[V4L2_TYPE_IS_OUTPUT(vq->type) ? 0 : 1];
-+	int			w = q_data->fmt.width;
-+	int			h = q_data->fmt.height;
-+
-+	/* we use only single-plane formats */
-+	*nplanes = 1;
-+
-+	/* specify plane size */
-+	switch (q_data->fmt.pixelformat) {
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_VYUY:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_Y10:
-+	case V4L2_PIX_FMT_Y16:
-+		sizes[0] = w * h * 2;
-+		break;
-+
-+	case V4L2_PIX_FMT_UV8:
-+	case V4L2_PIX_FMT_GREY:
-+		sizes[0] = w * h;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	/* specify default allocator */
-+	alloc_ctxs[0] = ctx->imr->alloc_ctx;
-+
-+	return 0;
-+}
-+
-+static int imr_buf_prepare(struct vb2_buffer *vb)
-+{
-+	/*
-+	 * unclear yet if we want to prepare a buffer somehow
-+	 * (cache invalidation? - tbd)
-+	 */
-+	return 0;
-+}
-+
-+static void imr_buf_queue(struct vb2_buffer *vb)
-+{
-+	struct vb2_v4l2_buffer	*vbuf = to_vb2_v4l2_buffer(vb);
-+	struct vb2_queue	*q = vb->vb2_queue;
-+	struct imr_ctx		*ctx = vb2_get_drv_priv(q);
-+
-+	WARN_ON_ONCE(!mutex_is_locked(&ctx->imr->mutex));
-+
-+	v4l2_dbg(3, debug, &ctx->imr->v4l2_dev,
-+		 "%sput buffer <0x%08llx> submitted\n",
-+		 q->is_output ? "in" : "out",
-+		 (u64)vb2_dma_contig_plane_dma_addr(vb, 0));
-+
-+	/*
-+	 * for input buffer, put current configuration pointer
-+	 * (add reference)
-+	 */
-+	if (q->is_output)
-+		to_imr_buffer(vbuf)->cfg = imr_cfg_ref(ctx);
-+
-+	v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
-+}
-+
-+static void imr_buf_finish(struct vb2_buffer *vb)
-+{
-+	struct vb2_v4l2_buffer	*vbuf = to_vb2_v4l2_buffer(vb);
-+	struct vb2_queue	*q = vb->vb2_queue;
-+	struct imr_ctx		*ctx = vb2_get_drv_priv(q);
-+
-+	WARN_ON(!mutex_is_locked(&ctx->imr->mutex));
-+
-+	/* any special processing of completed buffer? - tbd */
-+	v4l2_dbg(3, debug, &ctx->imr->v4l2_dev,
-+		 "%sput buffer <0x%08llx> done\n", q->is_output ? "in" : "out",
-+		 (u64)vb2_dma_contig_plane_dma_addr(vb, 0));
-+
-+	/* unref configuration pointer as needed */
-+	if (q->is_output)
-+		imr_cfg_unref(ctx, to_imr_buffer(vbuf)->cfg);
-+}
-+
-+static int imr_start_streaming(struct vb2_queue *vq, unsigned int count)
-+{
-+	struct imr_ctx *ctx = vb2_get_drv_priv(vq);
-+
-+	v4l2_dbg(1, debug, &ctx->imr->v4l2_dev, "%s streaming started\n",
-+		 V4L2_TYPE_IS_OUTPUT(vq->type) ? "output" : "capture");
-+	return 0;
-+}
-+
-+static void imr_stop_streaming(struct vb2_queue *vq)
-+{
-+	struct imr_ctx		*ctx = vb2_get_drv_priv(vq);
-+	unsigned long		flags;
-+	struct vb2_v4l2_buffer	*vb;
-+
-+	spin_lock_irqsave(&ctx->imr->lock, flags);
-+
-+	/* purge all buffers from a queue */
-+	if (V4L2_TYPE_IS_OUTPUT(vq->type)) {
-+		while ((vb = v4l2_m2m_src_buf_remove(ctx->m2m_ctx)) != NULL)
-+			v4l2_m2m_buf_done(vb, VB2_BUF_STATE_ERROR);
-+	} else {
-+		while ((vb = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx)) != NULL)
-+			v4l2_m2m_buf_done(vb, VB2_BUF_STATE_ERROR);
-+	}
-+
-+	spin_unlock_irqrestore(&ctx->imr->lock, flags);
-+
-+	v4l2_dbg(1, debug, &ctx->imr->v4l2_dev, "%s streaming stopped\n",
-+		 V4L2_TYPE_IS_OUTPUT(vq->type) ? "output" : "capture");
-+}
-+
-+/* buffer queue operations */
-+static struct vb2_ops imr_qops = {
-+	.queue_setup	= imr_queue_setup,
-+	.buf_prepare	= imr_buf_prepare,
-+	.buf_queue	= imr_buf_queue,
-+	.buf_finish	= imr_buf_finish,
-+	.start_streaming    = imr_start_streaming,
-+	.stop_streaming	= imr_stop_streaming,
-+	.wait_prepare	= vb2_ops_wait_prepare,
-+	.wait_finish	= vb2_ops_wait_finish,
-+};
-+
-+/* M2M device processing queue initialization */
-+static int imr_queue_init(void *priv, struct vb2_queue *src_vq,
-+			  struct vb2_queue *dst_vq)
-+{
-+	struct imr_ctx	*ctx = priv;
-+	int		ret;
-+
-+	memset(src_vq, 0, sizeof(*src_vq));
-+	src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+	src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-+	src_vq->drv_priv = ctx;
-+	src_vq->buf_struct_size = sizeof(struct imr_buffer);
-+	src_vq->ops = &imr_qops;
-+	src_vq->mem_ops = &vb2_dma_contig_memops;
-+	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-+	src_vq->lock = &ctx->imr->mutex;
-+	ret = vb2_queue_init(src_vq);
-+	if (ret)
-+		return ret;
-+
-+	memset(dst_vq, 0, sizeof(*dst_vq));
-+	dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+	dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-+	dst_vq->drv_priv = ctx;
-+	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
-+	dst_vq->ops = &imr_qops;
-+	dst_vq->mem_ops = &vb2_dma_contig_memops;
-+	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-+	dst_vq->lock = &ctx->imr->mutex;
-+	return vb2_queue_init(dst_vq);
-+}
-+
-+/*******************************************************************************
-+ * Display list commands
-+ ******************************************************************************/
-+
-+/* display list opcodes */
-+#define IMR_OP_TRI(n)		((0x8A << 24) | ((n) & 0xFFFF))
-+#define IMR_OP_LINE(n)		((0x8B << 24) | ((n) & 0xFFFF))
-+#define IMR_OP_NOP(n)		((0x80 << 24) | ((n) & 0xFFFF))
-+#define IMR_OP_TRAP		((0x8F << 24))
-+#define IMR_OP_WTL(add, n)	((0x81 << 24) | (((add) / 4) << 16) | \
-+				 ((n) & 0xFFFF))
-+#define IMR_OP_WTS(add, data)	((0x82 << 24) | (((add) / 4) << 16) | \
-+				 ((data) & 0xFFFF))
-+#define IMR_OP_WTL2(add, n)	((0x83 << 24) | (((add) / 4) << 10) | \
-+				 ((n) & 0x3FF))
-+#define IMR_OP_INT		((0x88 << 24))
-+#define IMR_OP_SYNCM		((0x86 << 24))
-+#define IMR_OP_GOSUB		((0x8C << 24))
-+#define IMR_OP_RET		((0x8D << 24))
-+
-+/*******************************************************************************
-+ * Operation type decoding helpers
-+ ******************************************************************************/
-+
-+static u16 __imr_auto_sg_dg_tcm(u32 type)
-+{
-+	return	(type & IMR_MAP_AUTOSG ? IMR_TRIM_AUTOSG :
-+		(type & IMR_MAP_AUTODG ? IMR_TRIM_AUTODG : 0)) |
-+		(type & IMR_MAP_TCM ? IMR_TRIM_TCM : 0);
-+}
-+
-+static u16 __imr_uvdp(u32 type)
-+{
-+	return __IMR_MAP_UVDPOR(type) | (type & IMR_MAP_DDP ? BIT(8) : 0);
-+}
-+
-+static inline u16 __imr_cpdp(u32 type)
-+{
-+	return (__IMR_MAP_YLDPO(type) << 8) | (__IMR_MAP_UBDPO(type) << 4) |
-+		__IMR_MAP_VRDPO(type);
-+}
-+
-+static u16 __imr_luce(u32 type)
-+{
-+	return type & IMR_MAP_LUCE ? IMR_CMR_LUCE : 0;
-+}
-+
-+static u16 __imr_clce(u32 type)
-+{
-+	return type & IMR_MAP_CLCE ? IMR_CMR_CLCE : 0;
-+}
-+
-+/*******************************************************************************
-+ * Type A (absolute coordinates of source/destination) mapping
-+ ******************************************************************************/
-+
-+/* return size of the subroutine for type "a" mapping */
-+static u32 imr_tri_type_a_get_length(struct imr_mesh *mesh, int item_size)
-+{
-+	return ((mesh->columns * (item_size / 2) + 1) * (mesh->rows - 1) + 1) *
-+		sizeof(u32);
-+}
-+
-+/* set a mesh rows * columns using absolute coordinates */
-+static u32 *imr_tri_set_type_a(u32 *dl, void *map, struct imr_mesh *mesh,
-+			       int item_size)
-+{
-+	int rows = mesh->rows;
-+	int columns = mesh->columns;
-+	u32 stride = item_size * columns;
-+	int i, j;
-+
-+	/* convert lattice into set of stripes */
-+	for (i = 0; i < rows - 1; i++) {
-+		*dl++ = IMR_OP_TRI(columns * 2);
-+		for (j = 0; j < columns; j++) {
-+			memcpy((void *)dl, map, item_size);
-+			memcpy((void *)dl + item_size, map + stride, item_size);
-+			dl += item_size / 2;
-+			map += item_size;
-+		}
-+	}
-+
-+	*dl++ = IMR_OP_RET;
-+	return dl;
-+}
-+
-+/*******************************************************************************
-+ * Type B mapping (automatically generated source or destination coordinates)
-+ ******************************************************************************/
-+
-+/* calculate length of a type "b" mapping */
-+static u32 imr_tri_type_b_get_length(struct imr_mesh *mesh, int item_size)
-+{
-+	return ((mesh->columns * (item_size / 2) + 2) * (mesh->rows - 1) + 4) *
-+		sizeof(u32);
-+}
-+
-+/* set an auto-generated mesh n * m for a source/destination */
-+static u32 *imr_tri_set_type_b(u32 *dl, void *map, struct imr_mesh *mesh,
-+			       int item_size)
-+{
-+	int rows = mesh->rows;
-+	int columns = mesh->columns;
-+	int stride = item_size * columns;
-+	int x0 = mesh->x0;
-+	int y0 = mesh->y0;
-+	int dx = mesh->dx;
-+	int dy = mesh->dy;
-+	int i, j;
-+
-+	/* set mesh configuration */
-+	*dl++ = IMR_OP_WTS(IMR_AMXSR, dx);
-+	*dl++ = IMR_OP_WTS(IMR_AMYSR, dy);
-+
-+	/* origin by "x" coordinate is the same across all rows */
-+	*dl++ = IMR_OP_WTS(IMR_AMXOR, x0);
-+
-+	/* convert lattice into set of stripes */
-+	for (i = 0; i < rows - 1; i++, y0 += dy) {
-+		/* set origin by "y" coordinate for a current row */
-+		*dl++ = IMR_OP_WTS(IMR_AMYOR, y0);
-+		*dl++ = IMR_OP_TRI(2 * columns);
-+
-+		/* fill single row */
-+		for (j = 0; j < columns; j++) {
-+			memcpy((void *)dl, map, item_size);
-+			memcpy((void *)dl + item_size, map + stride, item_size);
-+			dl += item_size / 2;
-+			map += item_size;
-+		}
-+	}
-+
-+	*dl++ = IMR_OP_RET;
-+	return dl;
-+}
-+
-+/*******************************************************************************
-+ * Type C mapping (vertex-buffer-object)
-+ ******************************************************************************/
-+
-+/* calculate length of a type "c" mapping */
-+static u32 imr_tri_type_c_get_length(struct imr_vbo *vbo, int item_size)
-+{
-+	return ((4 + 3 * item_size) * vbo->num + 4);
-+}
-+
-+/* set a VBO mapping using absolute coordinates */
-+static u32 *imr_tri_set_type_c(u32 *dl, void *map, struct imr_vbo *vbo,
-+			       int item_size)
-+{
-+	int num = vbo->num;
-+	int i;
-+
-+	/* prepare list of triangles to draw */
-+	for (i = 0; i < num; i++) {
-+		*dl++ = IMR_OP_TRI(3);
-+		memcpy((void *)dl, map, 3 * item_size);
-+		dl += 3 * item_size / 4;
-+		map += 3 * item_size;
-+	}
-+
-+	*dl++ = IMR_OP_RET;
-+	return dl;
-+}
-+
-+/*******************************************************************************
-+ * DL program creation
-+ ******************************************************************************/
-+
-+/* return length of a DL main program */
-+static u32 imr_dl_program_length(struct imr_ctx *ctx)
-+{
-+	u32 iflags = ctx->queue[0].flags;
-+	u32 oflags = ctx->queue[1].flags;
-+	u32 cflags = __imr_flags_common(iflags, oflags);
-+
-+	/* check if formats are compatible */
-+	if (((iflags & IMR_F_PLANAR) && !(oflags & IMR_F_PLANAR)) || !cflags) {
-+		v4l2_err(&ctx->imr->v4l2_dev,
-+			 "formats are incompatible: if=%x, of=%x, cf=%x\n",
-+			 iflags, oflags, cflags);
-+		return 0;
-+	}
-+
-+	/*
-+	 * maximal possible length of the program is 27 32-bits words;
-+	 * round up to 32
-+	 */
-+	return 32 << 2;
-+}
-+
-+/* setup DL for Y/YUV planar/interleaved processing */
-+static void imr_dl_program_setup(struct imr_ctx *ctx, struct imr_cfg *cfg,
-+				 u32 type, u32 *dl, u32 subaddr)
-+{
-+	u32 iflags = ctx->queue[0].flags;
-+	u32 oflags = ctx->queue[1].flags;
-+	u32 cflags = __imr_flags_common(iflags, oflags);
-+	u16 src_y_fmt = (iflags & IMR_F_Y12 ? IMR_CMR_SY12 :
-+			 (iflags & IMR_F_Y10 ? IMR_CMR_SY10 : 0));
-+	u16 src_uv_fmt = (iflags & IMR_F_UV12 ? 2 :
-+			  (iflags & IMR_F_UV10 ? 1 : 0)) << IMR_CMR_SUV_SHIFT;
-+	u16 dst_y_fmt = (cflags & IMR_F_Y12 ? IMR_CMR_DY12 :
-+			 (cflags & IMR_F_Y10 ? IMR_CMR_DY10 : 0));
-+	u16 dst_uv_fmt = (cflags & IMR_F_UV12 ? 2 :
-+			  (cflags & IMR_F_UV10 ? 1 : 0)) << IMR_CMR_DUV_SHIFT;
-+	int w = ctx->queue[0].fmt.width;
-+	int h = ctx->queue[0].fmt.height;
-+	int W = ctx->queue[1].fmt.width;
-+	int H = ctx->queue[1].fmt.height;
-+
-+	v4l2_dbg(2, debug, &ctx->imr->v4l2_dev,
-+		 "setup %u*%u -> %u*%u mapping (type=%x)\n", w, h, W, H, type);
-+
-+	/* set triangle mode register from user-supplied descriptor */
-+	*dl++ = IMR_OP_WTS(IMR_TRIMCR, 0xFFFF);
-+
-+	/* set automatic source / destination coordinates generation flags */
-+	*dl++ = IMR_OP_WTS(IMR_TRIMSR, __imr_auto_sg_dg_tcm(type) |
-+			   IMR_TRIM_BFE | IMR_TRIM_TME);
-+
-+	/* set source / destination coordinate precision */
-+	*dl++ = IMR_OP_WTS(IMR_UVDPOR, __imr_uvdp(type));
-+
-+	/* set luminance/chromacity correction parameters precision */
-+	*dl++ = IMR_OP_WTS(IMR_CPDPOR, __imr_cpdp(type));
-+
-+	/* reset rendering mode registers */
-+	*dl++ = IMR_OP_WTS(IMR_CMRCCR, 0xFFFF);
-+	*dl++ = IMR_OP_WTS(IMR_CMRCCR2, 0xFFFF);
-+
-+	/* set source/destination addresses of Y/UV plane */
-+	*dl++ = IMR_OP_WTL(IMR_DSAR, 2);
-+	cfg->dst_pa_ptr[0] = dl++;
-+	cfg->src_pa_ptr[0] = dl++;
-+
-+	/* select planar/interleaved mode basing on input format */
-+	if (iflags & IMR_F_PLANAR) {
-+		/* planar input means planar output; set Y-plane precision */
-+		if (cflags & IMR_F_Y8) {
-+			/*
-+			 * setup Y-plane processing: YCM=0, SY/DY=xx,
-+			 * SUV/DUV=0
-+			 */
-+			*dl++ = IMR_OP_WTS(IMR_CMRCSR, src_y_fmt | src_uv_fmt |
-+					   dst_y_fmt | dst_uv_fmt |
-+					   __imr_luce(type));
-+
-+			/*
-+			 * set source/destination strides basing on Y-plane
-+			 * precision
-+			 */
-+			*dl++ = IMR_OP_WTS(IMR_DSTR,
-+					   W << (cflags & IMR_F_Y10 ? 1 : 0));
-+			*dl++ = IMR_OP_WTS(IMR_SSTR,
-+					   w << (iflags & IMR_F_Y10 ? 1 : 0));
-+		} else {
-+			/* setup UV-plane processing only */
-+			*dl++ = IMR_OP_WTS(IMR_CMRCSR, IMR_CMR_YCM |
-+					   src_uv_fmt | dst_uv_fmt |
-+					   __imr_clce(type));
-+
-+			/*
-+			 * set source/destination strides basing on UV-plane
-+			 * precision
-+			 */
-+			*dl++ = IMR_OP_WTS(IMR_DSTR,
-+					   W << (cflags & IMR_F_UV10 ? 1 : 0));
-+			*dl++ = IMR_OP_WTS(IMR_SSTR,
-+					   w << (iflags & IMR_F_UV10 ? 1 : 0));
-+		}
-+	} else {
-+		u16 src_fmt = (iflags & IMR_F_UV_SWAP ? IMR_CMR2_UVFORM : 0) |
-+			      (iflags & IMR_F_YUV_SWAP ?
-+			       IMR_CMR2_YUV422FORM : 0);
-+		u32 dst_fmt = (oflags & IMR_F_YUV_SWAP ? IMR_TRIC_YCFORM : 0);
-+
-+		/* interleaved input; output is either interleaved or planar */
-+		*dl++ = IMR_OP_WTS(IMR_CMRCSR2, IMR_CMR2_YUV422E | src_fmt);
-+
-+		/* destination is always YUYV or UYVY */
-+		*dl++ = IMR_OP_WTL(IMR_TRICR, 1);
-+		*dl++ = dst_fmt;
-+
-+		/* set precision of Y/UV planes and required correction */
-+		*dl++ = IMR_OP_WTS(IMR_CMRCSR, src_y_fmt | src_uv_fmt |
-+				   dst_y_fmt | dst_uv_fmt | __imr_clce(type) |
-+				   __imr_luce(type));
-+
-+		/* set source stride basing on precision (2 or 4 bytes/pixel) */
-+		*dl++ = IMR_OP_WTS(IMR_SSTR, w << (iflags & IMR_F_Y10 ? 2 : 1));
-+
-+		/* if output is planar, put the offset value */
-+		if (oflags & IMR_F_PLANAR) {
-+			/* specify offset of a destination UV plane */
-+			*dl++ = IMR_OP_WTL(IMR_DSOR, 1);
-+			*dl++ = W * H;
-+
-+			/*
-+			 * destination stride is 1 or 2 bytes/pixel
-+			 * (same for both Y and UV planes)
-+			 */
-+			*dl++ = IMR_OP_WTS(IMR_DSTR,
-+					   W << (cflags & IMR_F_Y10 ? 1 : 0));
-+		} else {
-+			/*
-+			 * destination stride if 2 or 4 bytes/pixel
-+			 * (Y and UV planes interleaved)
-+			 */
-+			*dl++ = IMR_OP_WTS(IMR_DSTR,
-+					   W << (cflags & IMR_F_Y10 ? 2 : 1));
-+		}
-+	}
-+
-+	/*
-+	 * set source width/height of Y/UV plane
-+	 * (for Y plane upper part of SUSR is ignored)
-+	 */
-+	*dl++ = IMR_OP_WTL(IMR_SUSR, 2);
-+	*dl++ = ((w - 2) << 16) | (w - 1);
-+	*dl++ = h - 1;
-+
-+	/* invoke subroutine for triangles drawing */
-+	*dl++ = IMR_OP_GOSUB;
-+	*dl++ = subaddr;
-+
-+	/* if we have a planar output with both Y and UV planes available */
-+	if ((cflags & (IMR_F_PLANAR | IMR_F_Y8 | IMR_F_UV8)) ==
-+	    (IMR_F_PLANAR | IMR_F_Y8 | IMR_F_UV8)) {
-+		/* select UV-plane processing mode; put sync before switching */
-+		*dl++ = IMR_OP_SYNCM;
-+
-+		/* setup UV-plane source/destination addresses */
-+		*dl++ = IMR_OP_WTL(IMR_DSAR, 2);
-+		cfg->dst_pa_ptr[1] = dl++;
-+		cfg->src_pa_ptr[1] = dl++;
-+
-+		/* select correction mode */
-+		*dl++ = IMR_OP_WTS(IMR_CMRCSR, IMR_CMR_YCM | __imr_clce(type));
-+
-+		/* luminance correction bit must be cleared (if it was set) */
-+		*dl++ = IMR_OP_WTS(IMR_CMRCCR, IMR_CMR_LUCE);
-+
-+		/* draw triangles */
-+		*dl++ = IMR_OP_GOSUB;
-+		*dl++ = subaddr;
-+	} else {
-+		/*
-+		 * clear pointers to the source/destination UV-planes addresses
-+		 */
-+		cfg->src_pa_ptr[1] = cfg->dst_pa_ptr[1] = NULL;
-+	}
-+
-+	/* signal completion of the operation */
-+	*dl++ = IMR_OP_SYNCM;
-+	*dl++ = IMR_OP_TRAP;
-+}
-+
-+/*******************************************************************************
-+ * Mapping specification processing
-+ ******************************************************************************/
-+
-+/* set mapping data (function called with video device lock held) */
-+static int imr_ioctl_map(struct imr_ctx *ctx, struct imr_map_desc *desc)
-+{
-+	struct imr_device	*imr = ctx->imr;
-+	struct imr_mesh		*mesh;
-+	struct imr_vbo		*vbo;
-+	struct imr_cfg		*cfg;
-+	void			*buf, *map;
-+	u32                     type;
-+	u32			length, item_size;
-+	u32			tri_length;
-+	void			*dl_vaddr;
-+	u32			dl_size;
-+	u32			dl_start_offset;
-+	dma_addr_t		dl_dma_addr;
-+	int			ret = 0;
-+
-+	/* read remainder of data into temporary buffer */
-+	length = desc->size;
-+	buf = kmalloc(length, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	/* copy mesh data */
-+	if (copy_from_user(buf, (void __user *)desc->data, length)) {
-+		v4l2_err(&imr->v4l2_dev,
-+			 "failed to read %u bytes of mapping specification\n",
-+			 length);
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	type = desc->type;
-+
-+	/* mesh item size calculation */
-+	item_size = (type & IMR_MAP_LUCE ? 4 : 0) +
-+		    (type & IMR_MAP_CLCE ? 4 : 0);
-+
-+	/* calculate the length of a display list */
-+	if (type & IMR_MAP_MESH) {
-+		/* assure we have proper mesh descriptor */
-+		if (length < sizeof(struct imr_mesh)) {
-+			v4l2_err(&imr->v4l2_dev,
-+				 "invalid mesh specification size: %u\n",
-+				 length);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		mesh = (struct imr_mesh *)buf;
-+		length -= sizeof(struct imr_mesh);
-+		map = buf + sizeof(struct imr_mesh);
-+
-+		if (type & (IMR_MAP_AUTODG | IMR_MAP_AUTOSG)) {
-+			/* source / destination vertex size is 4 bytes */
-+			item_size += 4;
-+
-+			/*
-+			 * mapping is given using automatic generation pattern;
-+			 * check size
-+			 */
-+			if (mesh->rows * mesh->columns * item_size != length) {
-+				v4l2_err(&imr->v4l2_dev,
-+					 "invalid mesh size: %u*%u*%u != %u\n",
-+					 mesh->rows, mesh->columns, item_size,
-+					 length);
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			/* calculate size of triangles drawing subroutine */
-+			tri_length = imr_tri_type_b_get_length(mesh, item_size);
-+		} else {
-+			/* source / destination vertes size if 8 bytes */
-+			item_size += 8;
-+
-+			/* mapping is done with absolute coordinates */
-+			if (mesh->rows * mesh->columns * item_size != length) {
-+				v4l2_err(&imr->v4l2_dev,
-+					 "invalid mesh size: %u*%u*%u != %u\n",
-+					 mesh->rows, mesh->columns, item_size,
-+					 length);
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			/* calculate size of triangles drawing subroutine */
-+			tri_length = imr_tri_type_a_get_length(mesh, item_size);
-+		}
-+	} else {
-+		/* assure we have proper VBO descriptor */
-+		if (length < sizeof(struct imr_vbo)) {
-+			v4l2_err(&imr->v4l2_dev,
-+				 "invalid vbo specification size: %u\n",
-+				 length);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		/* make sure there is no automatic-generation flags */
-+		if (type & (IMR_MAP_AUTODG | IMR_MAP_AUTOSG)) {
-+			v4l2_err(&imr->v4l2_dev,
-+				 "invalid auto-dg/sg flags: 0x%x\n", type);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		vbo = (struct imr_vbo *)buf;
-+		length -= sizeof(struct imr_vbo);
-+		map = buf + sizeof(struct imr_vbo);
-+
-+		/* vertex is given with absolute coordinates */
-+		item_size += 8;
-+
-+		/* check the length is sane */
-+		if (length != vbo->num * 3 * item_size) {
-+			v4l2_err(&imr->v4l2_dev,
-+				 "invalid vbo size: %u*%u*3 != %u\n", vbo->num,
-+				 item_size, length);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		/* calculate size of trangles drawing subroutine */
-+		tri_length = imr_tri_type_c_get_length(vbo, item_size);
-+	}
-+
-+	/* DL main program shall start with 8-byte aligned address */
-+	dl_start_offset = (tri_length + 7) & ~7;
-+
-+	/* calculate main routine length */
-+	dl_size = imr_dl_program_length(ctx);
-+	if (!dl_size) {
-+		v4l2_err(&imr->v4l2_dev, "format configuration error\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* we use a single display list, with TRI subroutine prepending MAIN */
-+	dl_size += dl_start_offset;
-+
-+	/* unref current configuration (will not be used by subsequent jobs) */
-+	imr_cfg_unref(ctx, ctx->cfg);
-+
-+	/* create new configuration */
-+	ctx->cfg = cfg = imr_cfg_create(ctx, dl_size, dl_start_offset);
-+	if (IS_ERR(cfg)) {
-+		ret = PTR_ERR(cfg);
-+		v4l2_err(&imr->v4l2_dev,
-+			 "failed to create configuration: %d\n", ret);
-+		goto out;
-+	}
-+
-+	/* get pointer to the new display list */
-+	dl_vaddr = cfg->dl_vaddr;
-+	dl_dma_addr = cfg->dl_dma_addr;
-+
-+	/* prepare a triangles drawing subroutine */
-+	if (type & IMR_MAP_MESH) {
-+		if (type & (IMR_MAP_AUTOSG | IMR_MAP_AUTODG))
-+			imr_tri_set_type_b(dl_vaddr, map, mesh, item_size);
-+		else
-+			imr_tri_set_type_a(dl_vaddr, map, mesh, item_size);
-+	} else {
-+		imr_tri_set_type_c(dl_vaddr, map, vbo, item_size);
-+	}
-+
-+	/* prepare main DL-program */
-+	imr_dl_program_setup(ctx, cfg, type, dl_vaddr + dl_start_offset,
-+			     (u32)dl_dma_addr);
-+
-+	/* update cropping parameters */
-+	cfg->dst_subpixel = (type & IMR_MAP_DDP ? 2 : 0);
-+
-+	/* display list updated successfully */
-+	v4l2_dbg(2, debug, &ctx->imr->v4l2_dev,
-+		 "display-list created: #%u[%08X]:%u[%u]\n",
-+		 cfg->id, (u32)dl_dma_addr, dl_size, dl_start_offset);
-+
-+	if (debug >= 4)
-+		print_hex_dump_bytes("DL-", DUMP_PREFIX_OFFSET,
-+				     dl_vaddr + dl_start_offset,
-+				     dl_size  - dl_start_offset);
-+
-+out:
-+	/* release interim buffer */
-+	kfree(buf);
-+
-+	return ret;
-+}
-+
-+/*******************************************************************************
-+ * V4L2 I/O controls
-+ ******************************************************************************/
-+
-+/* test for a format supported */
-+static int __imr_try_fmt(struct imr_ctx *ctx, struct v4l2_format *f)
-+{
-+	struct v4l2_pix_format	*pix = &f->fmt.pix;
-+	u32			fourcc = pix->pixelformat;
-+	int			i;
-+
-+	/*
-+	 * both output and capture interface have the same set of
-+	 * supported formats
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(imr_lx4_formats); i++) {
-+		if (fourcc == imr_lx4_formats[i].fourcc) {
-+			/* fix-up format specification as needed */
-+			pix->field = V4L2_FIELD_NONE;
-+
-+			v4l2_dbg(1, debug, &ctx->imr->v4l2_dev,
-+				 "format request: '%c%c%c%c', %dx%d\n",
-+				 (fourcc >> 0)	& 0xff,	(fourcc >> 8)  & 0xff,
-+				 (fourcc >> 16) & 0xff, (fourcc >> 24) & 0xff,
-+				 pix->width, pix->height);
-+
-+			/* verify source/destination image dimensions */
-+			if (V4L2_TYPE_IS_OUTPUT(f->type))
-+				v4l_bound_align_image(&pix->width, 128, 2048, 7,
-+						      &pix->height, 16, 2048, 1,
-+						      0);
-+			else
-+				v4l_bound_align_image(&pix->width,  64, 2048, 6,
-+						      &pix->height, 16, 2048, 1,
-+						      0);
-+
-+			return i;
-+		}
-+	}
-+
-+	v4l2_err(&ctx->imr->v4l2_dev,
-+		 "unsupported format request: '%c%c%c%c'\n",
-+		 (fourcc >> 0)  & 0xff, (fourcc >> 8)  & 0xff,
-+		 (fourcc >> 16) & 0xff, (fourcc >> 24) & 0xff);
-+
-+	return -EINVAL;
-+}
-+
-+/* capabilities query */
-+static int imr_querycap(struct file *file, void *priv,
-+			struct v4l2_capability *cap)
-+{
-+	strlcpy(cap->driver, DRV_NAME, sizeof(cap->driver));
-+	strlcpy(cap->card, DRV_NAME, sizeof(cap->card));
-+	strlcpy(cap->bus_info, DRV_NAME, sizeof(cap->bus_info));
-+
-+	cap->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT |
-+		V4L2_CAP_VIDEO_M2M | V4L2_CAP_STREAMING;
-+
-+	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
-+
-+	return 0;
-+}
-+
-+/* enumerate supported formats */
-+static int imr_enum_fmt(struct file *file, void *priv, struct v4l2_fmtdesc *f)
-+{
-+	/* no distinction between output/capture formats */
-+	if (f->index < ARRAY_SIZE(imr_lx4_formats)) {
-+		const struct imr_format_info *fmt = &imr_lx4_formats[f->index];
-+
-+		strlcpy(f->description, fmt->name, sizeof(f->description));
-+		f->pixelformat = fmt->fourcc;
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+/* retrieve current queue format; operation is locked ? */
-+static int imr_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
-+{
-+	struct imr_ctx		*ctx = fh_to_ctx(priv);
-+	struct imr_q_data	*q_data;
-+	struct vb2_queue	*vq;
-+
-+	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-+	if (!vq)
-+		return -EINVAL;
-+
-+	q_data = &ctx->queue[V4L2_TYPE_IS_OUTPUT(f->type) ? 0 : 1];
-+
-+	/* processing is locked? tbd */
-+	f->fmt.pix = q_data->fmt;
-+
-+	return 0;
-+}
-+
-+/* test particular format; operation is not locked */
-+static int imr_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
-+{
-+	struct imr_ctx		*ctx = fh_to_ctx(priv);
-+	struct vb2_queue	*vq;
-+
-+	/* make sure we have a queue of particular type */
-+	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-+	if (!vq)
-+		return -EINVAL;
-+
-+	/* test if format is supported (adjust as appropriate) */
-+	return __imr_try_fmt(ctx, f) >= 0 ? 0 : -EINVAL;
-+}
-+
-+/* apply queue format; operation is locked ? */
-+static int imr_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
-+{
-+	struct imr_ctx		*ctx = fh_to_ctx(priv);
-+	struct imr_q_data	*q_data;
-+	struct vb2_queue	*vq;
-+	int			i;
-+
-+	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-+	if (!vq)
-+		return -EINVAL;
-+
-+	/* check if queue is busy */
-+	if (vb2_is_busy(vq))
-+		return -EBUSY;
-+
-+	/* test if format is supported (adjust as appropriate) */
-+	i = __imr_try_fmt(ctx, f);
-+	if (i < 0)
-+		return -EINVAL;
-+
-+	/* format is supported; save current format in a queue-specific data */
-+	q_data = &ctx->queue[V4L2_TYPE_IS_OUTPUT(f->type) ? 0 : 1];
-+
-+	/* processing is locked? tbd */
-+	q_data->fmt = f->fmt.pix;
-+	q_data->flags = imr_lx4_formats[i].flags;
-+
-+	/* set default crop factors */
-+	if (!V4L2_TYPE_IS_OUTPUT(f->type)) {
-+		ctx->crop[0] = 0;
-+		ctx->crop[1] = f->fmt.pix.width - 1;
-+		ctx->crop[2] = 0;
-+		ctx->crop[3] = f->fmt.pix.height - 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int imr_reqbufs(struct file *file, void *priv,
-+		       struct v4l2_requestbuffers *reqbufs)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(priv);
-+
-+	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
-+}
-+
-+static int imr_querybuf(struct file *file, void *priv, struct v4l2_buffer *buf)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(priv);
-+
-+	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
-+}
-+
-+static int imr_qbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(priv);
-+
-+	/* operation is protected with a queue lock */
-+	WARN_ON(!mutex_is_locked(&ctx->imr->mutex));
-+
-+	/* verify the configuration is complete */
-+	if (!V4L2_TYPE_IS_OUTPUT(buf->type) && !ctx->cfg) {
-+		v4l2_err(&ctx->imr->v4l2_dev,
-+			 "stream configuration is not complete\n");
-+		return -EINVAL;
-+	}
-+
-+	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
-+}
-+
-+static int imr_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(priv);
-+
-+	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
-+}
-+
-+static int imr_expbuf(struct file *file, void *priv,
-+		      struct v4l2_exportbuffer *eb)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(priv);
-+
-+	return v4l2_m2m_expbuf(file, ctx->m2m_ctx, eb);
-+}
-+
-+static int imr_streamon(struct file *file, void *priv, enum v4l2_buf_type type)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(priv);
-+
-+	/* context is prepared for a streaming */
-+	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
-+}
-+
-+static int imr_streamoff(struct file *file, void *priv, enum v4l2_buf_type type)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(priv);
-+
-+	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
-+}
-+
-+static int imr_g_crop(struct file *file, void *priv, struct v4l2_crop *cr)
-+{
-+	struct imr_ctx  *ctx = fh_to_ctx(priv);
-+
-+	/* subpixel resolution of output buffer is not counted here */
-+	cr->c.left = ctx->crop[0];
-+	cr->c.top  = ctx->crop[2];
-+	cr->c.width  = ctx->crop[1] - ctx->crop[0];
-+	cr->c.height = ctx->crop[3] - ctx->crop[2];
-+
-+	return 0;
-+}
-+
-+static int imr_s_crop(struct file *file, void *priv, const struct v4l2_crop *cr)
-+{
-+	struct imr_ctx	*ctx = fh_to_ctx(priv);
-+	int		x0 = cr->c.left;
-+	int		y0 = cr->c.top;
-+	int		x1 = x0 + cr->c.width;
-+	int		y1 = y0 + cr->c.height;
-+
-+	if (x0 < 0 || x1 >= 2048 || y0 < 0 || y1 >= 2048) {
-+		v4l2_err(&ctx->imr->v4l2_dev, "invalid cropping: %d/%d/%d/%d\n",
-+			 x0, x1, y0, y1);
-+		return -EINVAL;
-+	}
-+
-+	/* subpixel resolution of output buffer is not counted here */
-+	ctx->crop[0] = x0;
-+	ctx->crop[1] = x1;
-+	ctx->crop[2] = y0;
-+	ctx->crop[3] = y1;
-+
-+	return 0;
-+}
-+
-+/* customized I/O control processing */
-+static long imr_default(struct file *file, void *fh, bool valid_prio,
-+			unsigned int cmd,  void *arg)
-+{
-+	struct imr_ctx *ctx = fh_to_ctx(fh);
-+
-+	switch (cmd) {
-+	case VIDIOC_IMR_MESH:
-+		/* set mesh data */
-+		return imr_ioctl_map(ctx, arg);
-+
-+	default:
-+		return -ENOTTY;
-+	}
-+}
-+
-+static const struct v4l2_ioctl_ops imr_ioctl_ops = {
-+	.vidioc_querycap		= imr_querycap,
-+
-+	.vidioc_enum_fmt_vid_cap	= imr_enum_fmt,
-+	.vidioc_enum_fmt_vid_out	= imr_enum_fmt,
-+	.vidioc_g_fmt_vid_cap		= imr_g_fmt,
-+	.vidioc_g_fmt_vid_out		= imr_g_fmt,
-+	.vidioc_try_fmt_vid_cap		= imr_try_fmt,
-+	.vidioc_try_fmt_vid_out		= imr_try_fmt,
-+	.vidioc_s_fmt_vid_cap		= imr_s_fmt,
-+	.vidioc_s_fmt_vid_out		= imr_s_fmt,
-+
-+	.vidioc_reqbufs			= imr_reqbufs,
-+	.vidioc_querybuf		= imr_querybuf,
-+	.vidioc_qbuf			= imr_qbuf,
-+	.vidioc_dqbuf			= imr_dqbuf,
-+	.vidioc_expbuf			= imr_expbuf,
-+	.vidioc_streamon		= imr_streamon,
-+	.vidioc_streamoff		= imr_streamoff,
-+
-+	.vidioc_g_crop			= imr_g_crop,
-+	.vidioc_s_crop			= imr_s_crop,
-+
-+	.vidioc_default			= imr_default,
-+};
-+
-+/*******************************************************************************
-+ * Generic device file operations
-+ ******************************************************************************/
-+
-+static int imr_open(struct file *file)
-+{
-+	struct imr_device	*imr = video_drvdata(file);
-+	struct video_device	*vfd = video_devdata(file);
-+	struct imr_ctx		*ctx;
-+	int			ret;
-+
-+	/* allocate processing context associated with given instance */
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	/* initialize per-file-handle structure */
-+	v4l2_fh_init(&ctx->fh, vfd);
-+	file->private_data = &ctx->fh;
-+	v4l2_fh_add(&ctx->fh);
-+
-+	/* set default source / destination formats - need that? */
-+	ctx->imr = imr;
-+	ctx->queue[0].fmt.pixelformat = 0;
-+	ctx->queue[1].fmt.pixelformat = 0;
-+
-+	/* set default cropping parameters */
-+	ctx->crop[1] = ctx->crop[3] = 0x3FF;
-+
-+	/* initialize M2M processing context */
-+	ctx->m2m_ctx = v4l2_m2m_ctx_init(imr->m2m_dev, ctx, imr_queue_init);
-+	if (IS_ERR(ctx->m2m_ctx)) {
-+		ret = PTR_ERR(ctx->m2m_ctx);
-+		goto v4l_prepare_rollback;
-+	}
-+
-+	/* lock access to global device data */
-+	if (mutex_lock_interruptible(&imr->mutex)) {
-+		ret = -ERESTARTSYS;
-+		goto v4l_prepare_rollback;
-+	}
-+
-+	/* bring-up device as needed */
-+	if (imr->refcount == 0) {
-+		ret = clk_prepare_enable(imr->clock);
-+		if (ret < 0)
-+			goto device_prepare_rollback;
-+	}
-+
-+	imr->refcount++;
-+
-+	mutex_unlock(&imr->mutex);
-+
-+	v4l2_dbg(1, debug, &imr->v4l2_dev, "IMR device opened (refcount=%u)\n",
-+		 imr->refcount);
-+
-+	return 0;
-+
-+device_prepare_rollback:
-+	/* unlock global device data */
-+	mutex_unlock(&imr->mutex);
-+
-+v4l_prepare_rollback:
-+	/* destroy context */
-+	v4l2_fh_del(&ctx->fh);
-+	v4l2_fh_exit(&ctx->fh);
-+	kfree(ctx);
-+
-+	return ret;
-+}
-+
-+static int imr_release(struct file *file)
-+{
-+	struct imr_ctx		*ctx = fh_to_ctx(file->private_data);
-+	struct imr_device	*imr = video_drvdata(file);
-+
-+	/* I don't need to get a device-scope lock here really - tbd */
-+	mutex_lock(&imr->mutex);
-+
-+	/* destroy M2M device processing context */
-+	v4l2_m2m_ctx_release(ctx->m2m_ctx);
-+	v4l2_fh_del(&ctx->fh);
-+	v4l2_fh_exit(&ctx->fh);
-+
-+	/* drop active configuration as needed */
-+	imr_cfg_unref(ctx, ctx->cfg);
-+
-+	/* make sure there are no more active configs */
-+	WARN_ON(ctx->cfg_num);
-+
-+	/* destroy context data */
-+	kfree(ctx);
-+
-+	/* disable hardware operation */
-+	if (--imr->refcount == 0)
-+		clk_disable_unprepare(imr->clock);
-+
-+	mutex_unlock(&imr->mutex);
-+
-+	v4l2_dbg(1, debug, &imr->v4l2_dev, "closed device instance\n");
-+
-+	return 0;
-+}
-+
-+static unsigned int imr_poll(struct file *file, struct poll_table_struct *wait)
-+{
-+	struct imr_ctx		*ctx = fh_to_ctx(file->private_data);
-+	struct imr_device	*imr = video_drvdata(file);
-+	unsigned int		res;
-+
-+	if (mutex_lock_interruptible(&imr->mutex))
-+		return -ERESTARTSYS;
-+
-+	res = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
-+	mutex_unlock(&imr->mutex);
-+
-+	return res;
-+}
-+
-+static int imr_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	struct imr_device	*imr = video_drvdata(file);
-+	struct imr_ctx		*ctx = fh_to_ctx(file->private_data);
-+	int			ret;
-+
-+	/* should we protect all M2M operations with mutex? - tbd */
-+	if (mutex_lock_interruptible(&imr->mutex))
-+		return -ERESTARTSYS;
-+
-+	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
-+
-+	mutex_unlock(&imr->mutex);
-+
-+	return ret;
-+}
-+
-+static const struct v4l2_file_operations imr_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= imr_open,
-+	.release	= imr_release,
-+	.poll		= imr_poll,
-+	.mmap		= imr_mmap,
-+	.unlocked_ioctl	= video_ioctl2,
-+};
-+
-+/*******************************************************************************
-+ * M2M device interface
-+ ******************************************************************************/
-+
-+/* job execution function */
-+static void imr_device_run(void *priv)
-+{
-+	struct imr_ctx		*ctx = priv;
-+	struct imr_device	*imr = ctx->imr;
-+	struct vb2_buffer	*src_buf, *dst_buf;
-+	u32			src_addr,  dst_addr;
-+	unsigned long		flags;
-+	struct imr_cfg		*cfg;
-+
-+	v4l2_dbg(3, debug, &imr->v4l2_dev, "run next job...\n");
-+
-+	/* protect access to internal device state */
-+	spin_lock_irqsave(&imr->lock, flags);
-+
-+	/* retrieve input/output buffers */
-+	src_buf = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
-+	dst_buf = v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
-+
-+	/* take configuration pointer associated with input buffer */
-+	cfg = to_imr_buffer(to_vb2_v4l2_buffer(src_buf))->cfg;
-+
-+	/* cancel software reset state as needed */
-+	iowrite32(0, imr->mmio + IMR_CR);
-+
-+	/* set cropping data with respect to destination sub-pixel mode */
-+	iowrite32(ctx->crop[0] << cfg->dst_subpixel, imr->mmio + IMR_XMINR);
-+	iowrite32(ctx->crop[1] << cfg->dst_subpixel, imr->mmio + IMR_XMAXR);
-+	iowrite32(ctx->crop[2] << cfg->dst_subpixel, imr->mmio + IMR_YMINR);
-+	iowrite32(ctx->crop[3] << cfg->dst_subpixel, imr->mmio + IMR_YMAXR);
-+
-+	/*
-+	 * adjust source/destination parameters of the program
-+	 * (interleaved/semiplanar)
-+	 */
-+	*cfg->src_pa_ptr[0] = src_addr =
-+		(u32)vb2_dma_contig_plane_dma_addr(src_buf, 0);
-+	*cfg->dst_pa_ptr[0] = dst_addr =
-+		(u32)vb2_dma_contig_plane_dma_addr(dst_buf, 0);
-+
-+	/* adjust source/destination parameters of the UV-plane as needed */
-+	if (cfg->src_pa_ptr[1] && cfg->dst_pa_ptr[1]) {
-+		*cfg->src_pa_ptr[1] = src_addr +
-+			ctx->queue[0].fmt.width * ctx->queue[0].fmt.height;
-+		*cfg->dst_pa_ptr[1] = dst_addr +
-+			ctx->queue[1].fmt.width * ctx->queue[1].fmt.height;
-+	}
-+
-+	v4l2_dbg(3, debug, &imr->v4l2_dev,
-+		 "process buffer-pair 0x%08x:0x%08x\n",
-+		 *cfg->src_pa_ptr[0], *cfg->dst_pa_ptr[0]);
-+
-+	/* force clearing of status register bits */
-+	iowrite32(0x7, imr->mmio + IMR_SRCR);
-+
-+	/* unmask/enable interrupts */
-+	iowrite32(ioread32(imr->mmio + IMR_ICR) |
-+		  (IMR_ICR_TRAEN | IMR_ICR_IEREN | IMR_ICR_INTEN),
-+		  imr->mmio + IMR_ICR);
-+	iowrite32(ioread32(imr->mmio + IMR_IMR) &
-+		  ~(IMR_ICR_TRAEN | IMR_ICR_IEREN | IMR_ICR_INTEN),
-+		  imr->mmio + IMR_IMR);
-+
-+	/* set display list address */
-+	iowrite32(cfg->dl_dma_addr + cfg->dl_start_offset,
-+		  imr->mmio + IMR_DLSAR);
-+
-+	/*
-+	 * explicitly flush any pending write operations
-+	 * (don't need that, I guess)
-+	 */
-+	wmb();
-+
-+	/* start rendering operation */
-+	iowrite32(IMR_CR_RS, imr->mmio + IMR_CR);
-+
-+	/* timestamp input buffer */
-+	src_buf->timestamp = ktime_get_ns();
-+
-+	/* unlock device access */
-+	spin_unlock_irqrestore(&imr->lock, flags);
-+
-+	v4l2_dbg(1, debug, &imr->v4l2_dev,
-+		 "rendering started: status=%x, DLSAR=0x%08x, DLPR=0x%08x\n",
-+		 ioread32(imr->mmio + IMR_SR), ioread32(imr->mmio + IMR_DLSAR),
-+		 ioread32(imr->mmio + IMR_DLPR));
-+}
-+
-+/* check whether a job is ready for execution */
-+static int imr_job_ready(void *priv)
-+{
-+	/* no specific requirements on the job readiness */
-+	return 1;
-+}
-+
-+/* abort currently processed job */
-+static void imr_job_abort(void *priv)
-+{
-+	struct imr_ctx		*ctx = priv;
-+	struct imr_device	*imr = ctx->imr;
-+	unsigned long		flags;
-+
-+	/* protect access to internal device state */
-+	spin_lock_irqsave(&imr->lock, flags);
-+
-+	/*
-+	 * make sure current job is still current (may get finished by
-+	 * interrupt already)
-+	 */
-+	if (v4l2_m2m_get_curr_priv(imr->m2m_dev) == ctx) {
-+		v4l2_dbg(1, debug, &imr->v4l2_dev,
-+			 "abort job: status=%x, DLSAR=0x%08x, DLPR=0x%08x\n",
-+			 ioread32(imr->mmio + IMR_SR),
-+			 ioread32(imr->mmio + IMR_DLSAR),
-+			 ioread32(imr->mmio + IMR_DLPR));
-+
-+		/*
-+		 * resetting the module while operation is active may lead to
-+		 * hw-stall
-+		 */
-+		spin_unlock_irqrestore(&imr->lock, flags);
-+	} else {
-+		spin_unlock_irqrestore(&imr->lock, flags);
-+		v4l2_dbg(1, debug, &imr->v4l2_dev,
-+			 "job has completed already\n");
-+	}
-+}
-+
-+/* M2M interface definition */
-+static struct v4l2_m2m_ops imr_m2m_ops = {
-+	.device_run	= imr_device_run,
-+	.job_ready	= imr_job_ready,
-+	.job_abort	= imr_job_abort,
-+};
-+
-+/*******************************************************************************
-+ * Interrupt handling
-+ ******************************************************************************/
-+
-+static irqreturn_t imr_irq_handler(int irq, void *data)
-+{
-+	struct imr_device	*imr = data;
-+	struct vb2_v4l2_buffer	*src_buf, *dst_buf;
-+	bool			finish = false;
-+	u32			status;
-+	struct imr_ctx		*ctx;
-+
-+	/* check and ack interrupt status */
-+	status = ioread32(imr->mmio + IMR_SR);
-+	iowrite32(status, imr->mmio + IMR_SRCR);
-+	if (!(status & (IMR_SR_INT | IMR_SR_IER | IMR_SR_TRA))) {
-+		v4l2_err(&imr->v4l2_dev, "spurious interrupt: %x\n", status);
-+		return IRQ_NONE;
-+	}
-+
-+	/* protect access to current context */
-+	spin_lock(&imr->lock);
-+
-+	/* get current job context (may have been cancelled already) */
-+	ctx = v4l2_m2m_get_curr_priv(imr->m2m_dev);
-+	if (!ctx) {
-+		v4l2_dbg(3, debug, &imr->v4l2_dev, "no active job\n");
-+		goto handled;
-+	}
-+
-+	/* remove buffers (may have been removed already?) */
-+	src_buf = v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
-+	dst_buf = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
-+	if (!src_buf || !dst_buf) {
-+		v4l2_dbg(3, debug, &imr->v4l2_dev,
-+			 "no buffers associated with current context\n");
-+		goto handled;
-+	}
-+
-+	finish = true;
-+
-+	/* check for a TRAP interrupt indicating completion of current DL */
-+	if (status & IMR_SR_TRA) {
-+		/* operation completed normally; timestamp output buffer */
-+		dst_buf->vb2_buf.timestamp = ktime_get_ns();
-+		if (src_buf->flags & V4L2_BUF_FLAG_TIMECODE)
-+			dst_buf->timecode = src_buf->timecode;
-+		dst_buf->flags = src_buf->flags &
-+			(V4L2_BUF_FLAG_TIMECODE | V4L2_BUF_FLAG_KEYFRAME |
-+			 V4L2_BUF_FLAG_PFRAME | V4L2_BUF_FLAG_BFRAME |
-+			 V4L2_BUF_FLAG_TSTAMP_SRC_MASK);
-+		dst_buf->sequence = src_buf->sequence = ctx->sequence++;
-+		v4l2_m2m_buf_done(src_buf, VB2_BUF_STATE_DONE);
-+		v4l2_m2m_buf_done(dst_buf, VB2_BUF_STATE_DONE);
-+
-+		v4l2_dbg(3, debug, &imr->v4l2_dev,
-+			 "buffers <0x%08x,0x%08x> done\n",
-+			(u32)vb2_dma_contig_plane_dma_addr
-+				(&src_buf->vb2_buf, 0),
-+			(u32)vb2_dma_contig_plane_dma_addr
-+				(&dst_buf->vb2_buf, 0));
-+	} else {
-+		/*
-+		 * operation completed in error; no way to understand
-+		 * what exactly went wrong
-+		 */
-+		v4l2_m2m_buf_done(src_buf, VB2_BUF_STATE_ERROR);
-+		v4l2_m2m_buf_done(dst_buf, VB2_BUF_STATE_ERROR);
-+
-+		v4l2_dbg(3, debug, &imr->v4l2_dev,
-+			 "buffers <0x%08x,0x%08x> done in error\n",
-+			 (u32)vb2_dma_contig_plane_dma_addr
-+				(&src_buf->vb2_buf, 0),
-+			 (u32)vb2_dma_contig_plane_dma_addr
-+				(&dst_buf->vb2_buf, 0));
-+	}
-+
-+handled:
-+	spin_unlock(&imr->lock);
-+
-+	/* finish current job (and start any pending) */
-+	if (finish)
-+		v4l2_m2m_job_finish(imr->m2m_dev, ctx->m2m_ctx);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*******************************************************************************
-+ * Device probing / removal interface
-+ ******************************************************************************/
-+
-+static int imr_probe(struct platform_device *pdev)
-+{
-+	struct imr_device	*imr;
-+	struct resource		*res;
-+	int			ret;
-+
-+	imr = devm_kzalloc(&pdev->dev, sizeof(*imr), GFP_KERNEL);
-+	if (!imr)
-+		return -ENOMEM;
-+
-+	mutex_init(&imr->mutex);
-+	spin_lock_init(&imr->lock);
-+	imr->dev = &pdev->dev;
-+
-+	/* memory-mapped registers */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	imr->mmio = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(imr->mmio))
-+		return PTR_ERR(imr->mmio);
-+
-+	/* interrupt service routine registration */
-+	imr->irq = ret = platform_get_irq(pdev, 0);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "cannot find IRQ\n");
-+		return ret;
-+	}
-+
-+	ret = devm_request_irq(&pdev->dev, imr->irq, imr_irq_handler, 0,
-+			       dev_name(&pdev->dev), imr);
-+	if (ret) {
-+		dev_err(&pdev->dev, "cannot claim IRQ %d\n", imr->irq);
-+		return ret;
-+	}
-+
-+	imr->clock = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(imr->clock)) {
-+		dev_err(&pdev->dev, "cannot get clock\n");
-+		return PTR_ERR(imr->clock);
-+	}
-+
-+	/* create v4l2 device */
-+	ret = v4l2_device_register(&pdev->dev, &imr->v4l2_dev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register v4l2 device\n");
-+		return ret;
-+	}
-+
-+	/* create mem2mem device handle */
-+	imr->m2m_dev = v4l2_m2m_init(&imr_m2m_ops);
-+	if (IS_ERR(imr->m2m_dev)) {
-+		v4l2_err(&imr->v4l2_dev, "Failed to init mem2mem device\n");
-+		ret = PTR_ERR(imr->m2m_dev);
-+		goto device_register_rollback;
-+	}
-+
-+	strlcpy(imr->video_dev.name, dev_name(&pdev->dev),
-+		sizeof(imr->video_dev.name));
-+	imr->video_dev.fops         = &imr_fops;
-+	imr->video_dev.ioctl_ops    = &imr_ioctl_ops;
-+	imr->video_dev.minor        = -1;
-+	imr->video_dev.release      = video_device_release_empty;
-+	imr->video_dev.lock         = &imr->mutex;
-+	imr->video_dev.v4l2_dev     = &imr->v4l2_dev;
-+	imr->video_dev.vfl_dir      = VFL_DIR_M2M;
-+
-+	ret = video_register_device(&imr->video_dev, VFL_TYPE_GRABBER, -1);
-+	if (ret) {
-+		v4l2_err(&imr->v4l2_dev, "Failed to register video device\n");
-+		goto m2m_init_rollback;
-+	}
-+
-+	video_set_drvdata(&imr->video_dev, imr);
-+	platform_set_drvdata(pdev, imr);
-+
-+	v4l2_info(&imr->v4l2_dev,
-+		  "IMR device (pdev: %d) registered as /dev/video%d\n",
-+		  pdev->id, imr->video_dev.num);
-+
-+	return 0;
-+
-+m2m_init_rollback:
-+	v4l2_m2m_release(imr->m2m_dev);
-+
-+device_register_rollback:
-+	v4l2_device_unregister(&imr->v4l2_dev);
-+
-+	return ret;
-+}
-+
-+static int imr_remove(struct platform_device *pdev)
-+{
-+	struct imr_device *imr = platform_get_drvdata(pdev);
-+
-+	video_unregister_device(&imr->video_dev);
-+	v4l2_m2m_release(imr->m2m_dev);
-+	v4l2_device_unregister(&imr->v4l2_dev);
-+
-+	return 0;
-+}
-+
-+/*******************************************************************************
-+ * Power management
-+ ******************************************************************************/
-+
-+#ifdef CONFIG_PM_SLEEP
-+
-+/* device suspend hook; clock control only - tbd */
-+static int imr_pm_suspend(struct device *dev)
-+{
-+	struct imr_device *imr = dev_get_drvdata(dev);
-+
-+	WARN_ON(mutex_is_locked(&imr->mutex));
-+
-+	if (imr->refcount == 0)
-+		return 0;
-+
-+	clk_disable_unprepare(imr->clock);
-+
-+	return 0;
-+}
-+
-+/* device resume hook; clock control only */
-+static int imr_pm_resume(struct device *dev)
-+{
-+	struct imr_device *imr = dev_get_drvdata(dev);
-+
-+	WARN_ON(mutex_is_locked(&imr->mutex));
-+
-+	if (imr->refcount == 0)
-+		return 0;
-+
-+	clk_prepare_enable(imr->clock);
-+
-+	return 0;
-+}
-+
-+#endif  /* CONFIG_PM_SLEEP */
-+
-+/* power management callbacks */
-+static const struct dev_pm_ops imr_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(imr_pm_suspend, imr_pm_resume)
-+};
-+
-+/* device table */
-+static const struct of_device_id imr_of_match[] = {
-+	{ .compatible = "renesas,imr-lx4" },
-+	{ },
-+};
-+
-+/* platform driver interface */
-+static struct platform_driver imr_platform_driver = {
-+	.probe		= imr_probe,
-+	.remove		= imr_remove,
-+	.driver		= {
-+		.owner		= THIS_MODULE,
-+		.name		= "imr",
-+		.pm		= &imr_pm_ops,
-+		.of_match_table = imr_of_match,
-+	},
-+};
-+
-+module_platform_driver(imr_platform_driver);
-+
-+MODULE_ALIAS("imr");
-+MODULE_AUTHOR("Cogent Embedded Inc. <sources@cogentembedded.com>");
-+MODULE_DESCRIPTION("Renesas IMR-LX4 Driver");
-+MODULE_LICENSE("GPL");
-Index: media_tree/include/uapi/linux/rcar_imr.h
-===================================================================
---- /dev/null
-+++ media_tree/include/uapi/linux/rcar_imr.h
-@@ -0,0 +1,94 @@
-+/*
-+ * rcar_imr.h -- R-Car IMR-LX4 Driver UAPI
-+ *
-+ * Copyright (C) 2016-2017 Cogent Embedded, Inc. <source@cogentembedded.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __RCAR_IMR_H
-+#define __RCAR_IMR_H
-+
-+#include <linux/videodev2.h>
-+
-+/*******************************************************************************
-+ * Mapping specification descriptor
-+ ******************************************************************************/
-+
-+struct imr_map_desc {
-+	/* mapping types */
-+	u32			type;
-+
-+	/* total size of the mesh structure */
-+	u32			size;
-+
-+	/* map-specific user-pointer */
-+	void			*data;
-+} __packed;
-+
-+/* regular mesh specification */
-+#define IMR_MAP_MESH		(1 << 0)
-+
-+/* auto-generated source coordinates */
-+#define IMR_MAP_AUTOSG		(1 << 1)
-+
-+/* auto-generated destination coordinates */
-+#define IMR_MAP_AUTODG		(1 << 2)
-+
-+/* luminance correction flag */
-+#define IMR_MAP_LUCE		(1 << 3)
-+
-+/* chromacity correction flag */
-+#define IMR_MAP_CLCE		(1 << 4)
-+
-+/* vertex clockwise-mode order */
-+#define IMR_MAP_TCM		(1 << 5)
-+
-+/* source coordinate decimal point position bit index */
-+#define __IMR_MAP_UVDPOR_SHIFT	8
-+#define __IMR_MAP_UVDPOR(v)	(((v) >> __IMR_MAP_UVDPOR_SHIFT) & 0x7)
-+#define IMR_MAP_UVDPOR(n)	(((n) & 0x7) << __IMR_MAP_UVDPOR_SHIFT)
-+
-+/* destination coordinate sub-pixel mode */
-+#define IMR_MAP_DDP		(1 << 11)
-+
-+/* luminance correction offset decimal point position */
-+#define __IMR_MAP_YLDPO_SHIFT	12
-+#define __IMR_MAP_YLDPO(v)	(((v) >> __IMR_MAP_YLDPO_SHIFT) & 0x7)
-+#define IMR_MAP_YLDPO(n)	(((n) & 0x7) << __IMR_MAP_YLDPO_SHIFT)
-+
-+/* chromacity (U) correction offset decimal point position */
-+#define __IMR_MAP_UBDPO_SHIFT	15
-+#define __IMR_MAP_UBDPO(v)	(((v) >> __IMR_MAP_UBDPO_SHIFT) & 0x7)
-+#define IMR_MAP_UBDPO(n)	(((n) & 0x7) << __IMR_MAP_UBDPO_SHIFT)
-+
-+/* chromacity (V) correction offset decimal point position */
-+#define __IMR_MAP_VRDPO_SHIFT	18
-+#define __IMR_MAP_VRDPO(v)	(((v) >> __IMR_MAP_VRDPO_SHIFT) & 0x7)
-+#define IMR_MAP_VRDPO(n)	(((n) & 0x7) << __IMR_MAP_VRDPO_SHIFT)
-+
-+/* regular mesh specification */
-+struct imr_mesh {
-+	/* rectangular mesh size */
-+	u16			rows, columns;
-+
-+	/* mesh parameters */
-+	u16			x0, y0, dx, dy;
-+} __packed;
-+
-+/* VBO descriptor */
-+struct imr_vbo {
-+	/* number of triangles */
-+	u16			num;
-+} __packed;
-+
-+/*******************************************************************************
-+ * Private IOCTL codes
-+ ******************************************************************************/
-+
-+#define VIDIOC_IMR_MESH _IOW('V', BASE_VIDIOC_PRIVATE + 0, struct imr_map_desc)
-+
-+#endif /* __RCAR_IMR_H */
+>
+>> +				  BIT(IIO_CHAN_INFO_PROCESSED),
+>> +	  .address		= MAX961x_CHAN_TEMPERATURE,
+>> +	},
+>> +	{ /* [1] common voltage input */
+>> +	  .type			= IIO_VOLTAGE,
+>> +	  .info_mask_separate	= BIT(IIO_CHAN_INFO_RAW) |
+>> +				  BIT(IIO_CHAN_INFO_SCALE) |
+>> +				  BIT(IIO_CHAN_INFO_OFFSET),
+>> +	  .address		= MAX961x_CHAN_VOLTAGE_INPUT,
+>> +	  .channel		= MAX961x_CHAN_VOLTAGE_INPUT,
+> For the channel it would be easier to read perhaps if you just put
+> the 0 in directly here.
+>> +	  .indexed		= 1,
+>> +	},
+>> +	{ /* [2] current sense amplifier voltage output */
+>> +	  .type			= IIO_VOLTAGE,
+>> +	  .info_mask_separate	= BIT(IIO_CHAN_INFO_RAW) |
+>> +				  BIT(IIO_CHAN_INFO_SCALE) |
+>> +				  BIT(IIO_CHAN_INFO_OFFSET),
+>> +	  .address		= MAX961x_CHAN_VOLTAGE_SENSE,
+>> +	  .channel		= MAX961x_CHAN_VOLTAGE_SENSE,
+>> +	  .indexed		= 1,
+>> +	},
+>
+> As you say, the next one is a computed channel.
+>> +	{ /* [3] load current measurement */
+>> +	  .type			= IIO_CURRENT,
+>> +	  .info_mask_separate	= BIT(IIO_CHAN_INFO_RAW) |
+>> +				  BIT(IIO_CHAN_INFO_SCALE),
+>> +	  .address		= MAX961x_CHAN_CURRENT_LOAD,
+>> +	},
+> As is this one.
 
+It's not clear to me if the fact of being a "computed channel" implies I 
+have to use a different channel type to expose it (and, what channel 
+type should I use in place of _RAW and _SCALE).
+Please not my question is independent on the auto-gain discussion 
+started in response the patch series cover letter.
+
+>> +	{ /* [4] load current measurement */
+>> +	  .type			= IIO_POWER,
+>> +	  .info_mask_separate	= BIT(IIO_CHAN_INFO_RAW) |
+>> +				  BIT(IIO_CHAN_INFO_SCALE),
+>> +	  .address		= MAX961x_CHAN_POWER_LOAD,
+>> +	},
+>> +};
+>> +
+>> +static int max961x_reg_read(struct max961x_dev *max961x, u8 reg, u16 *val)
+>> +{
+> I'm not convinced this particular wrapper adds anything.
+> I'd be tempted to just use the i2c read directly as needed rather than
+> bounce through this.
+>
+
+I would say "inline it then", but I'm not sure trying to outsmart 
+complier is desirable.
+
+>> +	int ret;
+>> +
+>> +	ret = i2c_smbus_read_word_swapped(max961x->i2c_client, reg);
+>> +	if (ret < 0) {
+>> +		dev_err(max961x->dev, "i2c read word from 0x%2x failed\n",
+>> +			reg);
+>> +		return ret;
+>> +	}
+>> +
+>> +	*val = ret;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int max961x_reg_write(struct max961x_dev *max961x, u8 reg, u8 val)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = i2c_smbus_write_byte_data(max961x->i2c_client, reg, val);
+>> +	if (ret) {
+>> +		dev_err(max961x->dev, "i2c write byte failed: 0x%2x - 0x%2x\n",
+>> +			reg, val);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* FIXME: need a delay here to make register configuration
+>> +	 *	  stabilize. 1 msec at least, from empirical testing.
+> Why fixme?  Sounds like it really needs to be the case to me!
+>
+> Also, fix up your multiline comment syntax please.
+
+It's a FIXME as I found that out after some testing, I'm not sure about 
+the root cause yet.
+But yes, it's required to have driver work properly, so I'll drop this
+
+>> +	 */
+>> +	usleep_range(1000, 2000);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * max961x_read_single() - read a single vale from ADC interface
+>> + *
+>> + * Data registers are 16 bit long, spread between two 8 bit registers
+>> + * with consecutive addresses.
+>> + * Configure ADC mux first, then read register at address "reg_addr".
+>> + * The smbus_read_word routine asks for 16 bits and the ADC is kind enough
+>> + * to return values from "reg_addr" and "reg_addr + 1" consecutively.
+>> + *
+>> + * @max961x: max961x device
+>> + * @selector: index for mux and register configuration
+>> + * @raw_val: the value returned from ADC
+>> + */
+>> +static int max961x_read_single(struct max961x_dev *max961x,
+>> +			       enum max961x_conf_ids selector,
+>> +			       u16 *raw_val)
+>> +{
+>> +	int ret;
+>> +
+>> +	u8 mux_conf = max961x_conf[selector][0] & MUX_MASK;
+>> +	u8 reg_addr = max961x_conf[selector][1];
+>> +
+> You have no lockign around these various sequences.
+> Nothing prevents multiple sysfs reads at the same time so you definitely
+> want to prevent this stuff from running concurrently.
+>
+> A mutex should do the job, either at this low level or up in the calling
+> functions.
+
+I had verified the i2c_smbus_  functions where protected by their own 
+mutexes and thought that was enough.
+But yes, read and writes here shall be protected as well. Will re-add 
+mutex back then
+
+
+>> +	ret = max961x_reg_write(max961x, REG_CTRL1, mux_conf);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = max961x_reg_read(max961x, reg_addr, raw_val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * max961x_read_csa_voltage() - read current sense amplifier output voltage
+>> + *
+>> + * Current sense amplifier output voltage is read through a configurable
+>> + * 1x, 4x or 8x gain.
+>> + * Start with plain 1x gain, and adjust gain control properly until a
+>> + * meaningful value is read from ADC output.
+>> + *
+>> + * @max961x: max961x device
+>> + * @adc_raw: raw value read from ADC output
+>> + * @csa_gain: gain configuration option selector
+>> + */
+>> +static int max961x_read_csa_voltage(struct max961x_dev *max961x,
+>> +				    u16 *adc_raw,
+>> +				    enum max961x_csa_gain *csa_gain)
+>> +{
+>> +	int ret;
+>> +	unsigned int i;
+>> +	enum max961x_conf_ids gain_selectors[] = {
+>> +		CONF_SENSE_1x,
+>> +		CONF_SENSE_4x,
+>> +		CONF_SENSE_8x
+>> +	};
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(gain_selectors); ++i) {
+>> +		ret = max961x_read_single(max961x, gain_selectors[i], adc_raw);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		if (*adc_raw > 0) {
+>> +			*csa_gain = gain_selectors[i];
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+>> +	return -EIO;
+>> +}
+>> +
+>> +static int max961x_read_raw(struct iio_dev *indio_dev,
+>> +			    struct iio_chan_spec const *chan,
+>> +			    int *val, int *val2, long mask)
+>> +{
+>> +	int ret;
+>> +	u16 adc_data;
+>> +	enum max961x_csa_gain gain_selector;
+>> +	unsigned int *csa_gain;
+>> +	struct max961x_dev *dev = iio_priv(indio_dev);
+>> +
+>> +	switch (mask) {
+>> +	case IIO_CHAN_INFO_RAW:
+>> +		switch (chan->address) {
+>> +		case MAX961x_CHAN_TEMPERATURE:
+>> +			ret = max961x_read_single(dev, CONF_TEMP,
+>> +						  &adc_data);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			*val = TEMP_RAW(adc_data);
+>> +
+>> +			return IIO_VAL_INT;
+>> +
+>> +		case MAX961x_CHAN_VOLTAGE_INPUT:
+>> +			ret = max961x_read_single(dev, CONF_IN_VOLT,
+>> +						  &adc_data);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			*val = MAX961x_VOLTAGE_RAW(adc_data);
+>> +
+>> +			return IIO_VAL_INT;
+>> +
+>> +		case MAX961x_CHAN_VOLTAGE_SENSE:
+>> +			ret = max961x_read_csa_voltage(dev, &adc_data,
+>> +						       &gain_selector);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			*val = MAX961x_VOLTAGE_RAW(adc_data);
+>> +
+>> +			return IIO_VAL_INT;
+>> +
+>> +		case MAX961x_CHAN_CURRENT_LOAD:
+>> +			/* raw (nV): raw * LSB (nV) */
+>> +			ret = max961x_read_csa_voltage(dev, &adc_data,
+>> +						       &gain_selector);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			csa_gain = max961x_gain_conf[gain_selector];
+>> +
+>> +			*val = MAX961x_VOLTAGE_RAW(adc_data) *
+>> +			       csa_gain[CSA_GAIN_LSB_nV];
+>> +
+>> +			return IIO_VAL_INT;
+>> +
+>> +		case MAX961x_CHAN_POWER_LOAD:
+>> +			/* raw (mV): raw * LSB (mV) */
+>> +			ret = max961x_read_single(dev, CONF_IN_VOLT,
+>> +						  &adc_data);
+>> +
+>> +			*val = MAX961x_VOLTAGE_RAW(adc_data) *
+>> +			       CIM_VOLTAGE_LSB_mV;
+>> +
+>> +			return IIO_VAL_INT;
+>> +		}
+>> +
+>> +	case IIO_CHAN_INFO_SCALE:
+>> +		switch (chan->address) {
+>> +
+>> +		case MAX961x_CHAN_TEMPERATURE:
+>> +			/* processed (C): raw * scale (C) */
+>> +			*val = TEMP_SCALE_NUM;
+>> +			*val2 = TEMP_SCALE_DIV;
+>> +
+>> +			return IIO_VAL_FRACTIONAL;
+>> +
+>> +		case MAX961x_CHAN_VOLTAGE_INPUT:
+>> +			/* processed (mV): raw * scale_mV */
+> Err, I'm confused.  We read adc_data then do nothing with it?
+
+leftover, sorry about this...
+
+>> +			ret = max961x_read_single(dev, CONF_IN_VOLT,
+>> +						  &adc_data);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			*val = CIM_VOLTAGE_LSB_mV;
+>> +
+>> +			return IIO_VAL_INT;
+>> +
+>> +		case MAX961x_CHAN_VOLTAGE_SENSE:
+>> +			/* processed (mV): raw (mV) * (scale (nV) / 10^6) */
+>> +			ret = max961x_read_csa_voltage(dev, &adc_data,
+>> +						       &gain_selector);
+>> +			if (ret)
+>> +				return ret;
+> As with the offset below, this is a non starter to my mind as we have
+> no way of knowing it was the 'same' gain value.  That has to be the case
+> or we'll get all sorts of horrible instabilities in apparent output as
+> we pass from one gain setting to another.
+
+Let's keep discussing this in response to the cover letter
+
+>> +
+>> +			csa_gain = max961x_gain_conf[gain_selector];
+>> +
+>> +			*val = csa_gain[CSA_GAIN_LSB_nV];
+>> +			*val2 = 1000000;
+>> +
+>> +			return IIO_VAL_FRACTIONAL;
+>> +
+>> +		case MAX961x_CHAN_CURRENT_LOAD:
+>> +			/* processed (mA): raw (nV)  / scale (uOhm)  */
+>> +			*val = 1;
+>> +			*val2 = dev->shunt_resistor_uOhm;
+>> +
+>> +			return IIO_VAL_FRACTIONAL;
+>> +
+>> +		case MAX961x_CHAN_POWER_LOAD:
+>> +			/* processed (mW): raw (mV) * (scale (mA) / 1000) */
+>> +			ret = max961x_read_csa_voltage(dev, &adc_data,
+>> +						       &gain_selector);
+> Again, nothing says the gain_selector value is the one used when we
+> took the measurement (or will be if we take it in future) so we can't do
+> it this way.  Either we need to remove the computed value and provide
+> enough info to userspace to allow it to do the job, or we need to ensure
+> that the kernel data manipulation doesn't allow for any instabilities around
+> gain transitions.
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			csa_gain = max961x_gain_conf[gain_selector];
+>> +
+>> +			/* val = (nV / uOhm) = mA */
+>> +			*val = MAX961x_VOLTAGE_RAW(adc_data) *
+>> +			       csa_gain[CSA_GAIN_LSB_nV];
+>> +			*val /= dev->shunt_resistor_uOhm;
+>> +
+>> +			*val2 = 1000;
+>> +
+>> +			return IIO_VAL_FRACTIONAL;
+>> +		}
+>> +
+>> +	case IIO_CHAN_INFO_OFFSET:
+>> +		switch (chan->address) {
+>> +		case MAX961x_CHAN_VOLTAGE_INPUT:
+>> +			*val = CIM_VOLTAGE_OFFSET_RAW;
+>> +
+>> +			return IIO_VAL_INT;
+>> +
+>> +		case MAX961x_CHAN_VOLTAGE_SENSE:
+> Interesting. Nothing here ensures the reported scale is correct for
+> the reading we are looking it up for which is an issue.
+>
+> For a compound value - i.e. one where the userspace interpretation is
+> dependent on several different readings (the classic being light sensors
+> where illuminance is often computed from two different light sensing
+> elementents) we tend to hide the complexity by doing it in kernel.
+>
+> So my gut feeling is this should be hidden away.  That should ensure
+> the value used is the correct one as well.
+>
+>> +			ret = max961x_read_csa_voltage(dev, &adc_data,
+>> +						       &gain_selector);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			*val = max961x_gain_conf[gain_selector]
+>> +						[CSA_GAIN_OFFS_RAW];
+>> +			*val2 = 1000;
+>> +
+>> +			return IIO_VAL_FRACTIONAL;
+>> +		}
+>> +
+>
+> As stated above, please drop this as userspace can do this trivially from
+> the raw and scale provided.
+
+I agree that the offset may not match values returned from _raw and 
+_scale (because of the auto-gain selection), but how can userspace 
+retrieve offset from _raw and _scale if not opening the device datasheet?
+
+>> +	case IIO_CHAN_INFO_PROCESSED:
+>> +		/* processed (mC): raw * LSB (mC) */
+>> +		if (chan->address != MAX961x_CHAN_TEMPERATURE)
+>> +			return -EINVAL;
+>> +
+>> +		ret = max961x_read_single(dev, CONF_TEMP,
+>> +					  &adc_data);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		*val = TEMP_RAW(adc_data) * TEMP_LSB_mC;
+>> +
+>> +		return IIO_VAL_INT;
+>> +	}
+>> +
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +static ssize_t max961x_shunt_resistor_show(struct device *dev,
+>> +					   struct device_attribute *attr,
+>> +					   char *buf)
+>> +{
+>> +	struct max961x_dev *max961x = iio_priv(dev_to_iio_dev(dev));
+>> +
+>> +	return sprintf(buf, "%d\n", max961x->shunt_resistor_uOhm);
+>> +}
+>> +
+>> +static IIO_DEVICE_ATTR(in_shunt_resistor, S_IRUGO,
+>> +		       max961x_shunt_resistor_show, NULL, 0);
+>> +
+>> +static struct attribute *max961x_attributes[] = {
+>> +	&iio_dev_attr_in_shunt_resistor.dev_attr.attr,
+>> +	NULL,
+>> +};
+>> +
+>> +static const struct attribute_group max961x_attribute_group = {
+>> +	.attrs = max961x_attributes,
+>> +};
+>> +
+>> +static const struct iio_info indio_info = {
+>> +	.driver_module	= THIS_MODULE,
+>> +	.read_raw	= max961x_read_raw,
+>> +	.attrs		= &max961x_attribute_group,
+>> +};
+>> +
+>> +static int max961x_init(struct max961x_dev *max961x)
+>> +{
+>> +	int ret;
+>> +	u16 regval;
+>> +	struct i2c_client *client = max961x->i2c_client;
+>> +
+>> +	if (!i2c_check_functionality(client->adapter,
+>> +				     I2C_FUNC_SMBUS_WRITE_BYTE	|
+>> +				     I2C_FUNC_SMBUS_READ_WORD_DATA)) {
+>> +		dev_err(max961x->dev,
+>> +			"I2c adapter does not support smbus write_byte and "\
+> Whilst it'll break the 80 char limit by quite a way, it's preferable to do that
+> than to break the ability of someone to grep for an error message.  So keep
+> this on one line please.
+
+I'll make this less verbose.
+
+>> +			"read_word_data functionalities. Aborting probe.\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	max961x_reg_write(max961x, REG_CTRL1, MUX_TEMPERATURE);
+>> +	max961x_reg_write(max961x, REG_CTRL2, 0);
+>> +
+>> +	/* Make sure die temperature is in range to test communications. */
+>> +	regval = 0;
+>> +	ret = max961x_reg_read(max961x, REG_TEMP_DATA, &regval);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	regval = regval & ~TEMP_MASK;
+>> +	if ((regval > TEMP_MAX_RAW_POS &&
+>> +	     regval < TEMP_MIN_RAW_NEG) ||
+>> +	     regval > TEMP_MAX_RAW_NEG) {
+>> +		dev_err(max961x->dev,
+>> +			"In-valid value received from ADC 0x%4x: aborting\n",
+>> +			regval);
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	/* Mux shall be zeroed back before applying other configurations */
+>> +	max961x_reg_write(max961x, REG_CTRL1, 0);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int max961x_probe(struct i2c_client *client,
+>> +			 const struct i2c_device_id *id)
+>> +{
+>> +	int ret;
+>> +	struct max961x_dev *max961x;
+>> +	struct iio_dev *indio_dev;
+>> +	struct device_node *of_node = client->dev.of_node;
+>> +	unsigned int of_shunt;
+>> +	const char * const shunt_res_prop = "shunt-resistor";
+>> +
+>> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*max961x));
+>> +	if (IS_ERR(indio_dev))
+>> +		return PTR_ERR(indio_dev);
+>> +
+>> +	i2c_set_clientdata(client, indio_dev);
+>> +
+>> +	max961x		= iio_priv(indio_dev);
+>> +	max961x->dev	= &client->dev;
+>> +	max961x->i2c_client = client;
+>> +
+>> +	ret = of_property_read_u32(of_node, shunt_res_prop, &of_shunt);
+>> +	if (ret) {
+>> +		dev_err(&client->dev,
+>> +			"Missing %s property for %s node\n",
+>> +			shunt_res_prop, of_node->full_name);
+>> +		return ret;
+>> +	}
+>> +	max961x->shunt_resistor_uOhm = of_shunt;
+>> +
+>> +	ret = max961x_init(max961x);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	indio_dev->dev.parent	= &client->dev;
+>> +	indio_dev->dev.of_node	= client->dev.of_node;
+>> +	indio_dev->name		= DRIVER_NAME;
+>> +	indio_dev->modes	= INDIO_DIRECT_MODE;
+>> +	indio_dev->info		= &indio_info;
+>> +	indio_dev->channels	= max961x_channels;
+>> +	indio_dev->num_channels	= ARRAY_SIZE(max961x_channels);
+>> +
+>> +	ret = devm_iio_device_register(&client->dev, indio_dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	dev_info(&client->dev, "%s: probed\n", DRIVER_NAME);
+> This one is always hotly debated.  To my mind, this provides
+> no information, but if you are particularly attached to it I don't
+> really mind.  If not, then return devm_iio_* directly.
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int max961x_remove(struct i2c_client *client)
+>> +{
+>> +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+>> +
+>> +	iio_device_unregister(indio_dev);
+> If all you have in a remove function is a call to iio_device_unregister
+> my immediate thought is could you use devm_iio_device_register.
+>
+> Ah, you are.  Double unregister!  If you are using the devm form of register
+> it will be unregistered automatically as part of the removal of the
+> underlying struct device.  Thus you don't need to do it explicitly.
+>
+> Thus you can drop this remove function completely as it should be
+> empty.
+
+Uh that's bad. I added the remove just before sending this out and tried 
+to insert remove the module a couple of time without visible issues (I 
+guess a double unregister fails silently then)
+I'll drop this...
+
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id max961x_of_table[] = {
+>> +	{.compatible = "maxim,max961x"},
+> Already been raised in the bindings reviews, but you shouldn't
+> use wild cards in compatible strings.
+>
+> Actually as it almost always goes wrong, you shouldn't used them
+> for naming of anything.  Pick a part and use that were you
+> currently have max961x throughout the driver.
+>
+> i.e. max9611_of_table etc.
+>
+> Avoids possible issues down the line when maxim decide to
+> release something incompatible and call it a max9619..
+
+I'll use max9611 everywhere I can, and add 2 "compatible" entries for 
+both max9611 and max9612.
+
+Thanks
+    j
+
+
+>> +	{ },
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(of, max961x_of_table);
+>> +
+>> +static struct i2c_driver max961x_driver = {
+>> +	.driver = {
+>> +		   .name = DRIVER_NAME,
+>> +		   .owner = THIS_MODULE,
+>> +		   .of_match_table = max961x_of_table,
+>> +	},
+>> +	.probe = max961x_probe,
+>> +	.remove = max961x_remove,
+>> +};
+>> +module_i2c_driver(max961x_driver);
+>> +
+>> +MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org>");
+>> +MODULE_DESCRIPTION("Maxim max9611/12 current sense amplifier with 12bit ADC");
+>> +MODULE_LICENSE("GPL v2");
+>>
+>
