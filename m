@@ -1,49 +1,43 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 5/6] arm64: dts: r8a7795: Fix non-PMIC wake-up sources
-Date: Mon, 20 Feb 2017 21:33:28 +0100
-Message-Id: <1487622809-25127-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-References: <1487622809-25127-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35215 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbdB0C1u (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 26 Feb 2017 21:27:50 -0500
+From: Matthew Giassa <matthew@giassa.net>
+To: wsa@the-dreams.de
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        Matthew Giassa <matthew@giassa.net>
+Subject: [PATCHv3 3/4] Removing mixed spaces/hard-tabs in the alignment indentation to appease checkpatch.
+Date: Sun, 26 Feb 2017 18:00:21 -0800
+Message-Id: <1488160822-18751-4-git-send-email-matthew@giassa.net>
+In-Reply-To: <1488160822-18751-3-git-send-email-matthew@giassa.net>
+References: <1487650805-30520-1-git-send-email-matthew@giassa.net>
+ <1488160822-18751-1-git-send-email-matthew@giassa.net>
+ <1488160822-18751-2-git-send-email-matthew@giassa.net>
+ <1488160822-18751-3-git-send-email-matthew@giassa.net>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PSCI firmware on boards equipped with an R-Car H3 SoC implements the
-PSCI SYSTEM_SUSPEND operation by cutting power to the SoC.  Hence the
-only possibly wake-up sources are the ones connected to the PMIC, unless
-the "arm,psci-system-suspend-is-power-down" property is specified.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/ks7010/ks_wlan_ioctl.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index f05a9c4dd3b60c82..cf43e9c7cab224b2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -31,6 +31,7 @@
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
-+		arm,psci-system-suspend-is-power-down;
- 	};
- 
- 	cpus {
+diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
+index 0aa402d..9f71f01 100644
+--- a/drivers/staging/ks7010/ks_wlan_ioctl.h
++++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
+@@ -20,8 +20,8 @@
+ /*					(SIOCIWFIRSTPRIV + 2) */
+ #define KS_WLAN_GET_FIRM_VERSION	(SIOCIWFIRSTPRIV + 3)
+ #ifdef WPS
+-#define KS_WLAN_SET_WPS_ENABLE 		(SIOCIWFIRSTPRIV + 4)
+-#define KS_WLAN_GET_WPS_ENABLE 		(SIOCIWFIRSTPRIV + 5)
++#define KS_WLAN_SET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 4)
++#define KS_WLAN_GET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 5)
+ #define KS_WLAN_SET_WPS_PROBE_REQ	(SIOCIWFIRSTPRIV + 6)
+ #endif
+ #define KS_WLAN_GET_EEPROM_CKSUM	(SIOCIWFIRSTPRIV + 7)
 -- 
 2.7.4
-
