@@ -1,38 +1,46 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: [PATCH v3 4/8] v4l: vsp1: Fix HGO and HGT routing register addresses
-Date: Tue, 28 Feb 2017 17:56:44 +0200
-Message-Id: <20170228155648.12051-5-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170228155648.12051-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170228155648.12051-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH] v4l: vsp1: Disable HSV formats on Gen3 hardware
+Date: Wed,  1 Mar 2017 01:08:13 +0200
+Message-Id: <20170228230813.21848-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The addresses are incorrect, fix them.
+While all VSP instances can process HSV internally, on Gen3 hardware
+reading or writing HSV24 or HSV32 from/to memory causes the device to
+hang. Disable those pixel formats on Gen3 hardware.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_regs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_pipe.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 47b1dee044fb..61369e267667 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -328,8 +328,8 @@
- #define VI6_DPR_ROUTE_RT_MASK		(0x3f << 0)
- #define VI6_DPR_ROUTE_RT_SHIFT		0
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+index 3f1acf68dc6e..35364f594e19 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.c
++++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+@@ -157,9 +157,15 @@ const struct vsp1_format_info *vsp1_get_format_info(struct vsp1_device *vsp1,
+ {
+ 	unsigned int i;
  
--#define VI6_DPR_HGO_SMPPT		0x2050
--#define VI6_DPR_HGT_SMPPT		0x2054
-+#define VI6_DPR_HGO_SMPPT		0x2054
-+#define VI6_DPR_HGT_SMPPT		0x2058
- #define VI6_DPR_SMPPT_TGW_MASK		(7 << 8)
- #define VI6_DPR_SMPPT_TGW_SHIFT		8
- #define VI6_DPR_SMPPT_PT_MASK		(0x3f << 0)
+-	/* Special case, the VYUY format is supported on Gen2 only. */
+-	if (vsp1->info->gen != 2 && fourcc == V4L2_PIX_FMT_VYUY)
+-		return NULL;
++	/* Special case, the VYUY and HSV formats are supported on Gen2 only. */
++	if (vsp1->info->gen != 2) {
++		switch (fourcc) {
++		case V4L2_PIX_FMT_VYUY:
++		case V4L2_PIX_FMT_HSV24:
++		case V4L2_PIX_FMT_HSV32:
++			return NULL;
++		}
++	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(vsp1_video_formats); ++i) {
+ 		const struct vsp1_format_info *info = &vsp1_video_formats[i];
 -- 
 Regards,
 
