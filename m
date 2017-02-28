@@ -1,60 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:38060 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbdBXN7e (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44710 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751810AbdB1PJJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Feb 2017 08:59:34 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Dirk Behme <dirk.behme@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/2] arm64: dts: r8a7795: Add Cortex-A53 CPU cores and PMU
-Date: Fri, 24 Feb 2017 14:59:26 +0100
-Message-Id: <1487944768-31983-1-git-send-email-geert+renesas@glider.be>
+        Tue, 28 Feb 2017 10:09:09 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Subject: [PATCH v2 0/3] Renesas R-Car VSP1 rotation support
+Date: Tue, 28 Feb 2017 17:03:17 +0200
+Message-Id: <20170228150320.10104-1-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Hello everybody,
 
-This patch series adds the Cortex-A53 CPU cores and PMU on the Renesas
-R-Car H3 SoC to its DTS file.
+This patch series implement support for rotation in the VSP1 driver. It
+contains an update of the rotation support part of the "[PATCH 00/13]
+Renesas R-Car VSP: Scaling and rotation support on Gen3" series.
 
-Note that these patches describes the hardware; actual enabling of the
-CPU depends on the PSCI firmware.
+Patch 1/3 starts by fixing the multi-line comment style through the whole
+driver to avoid adding new offenders in patch 3/3.
 
-With the current firmware version (v2.16.0), only the CA57 CPU cores are
-enabled, hence these patches do not introduce undeterministic scheduling
-behavior due to migration between big and LITTLE cores.
+Patch 2/3 is to biggest addition since v1. It clarifies interactions between
+formats, controls and buffers in the V4L2 API documentation. The proposal is
+based on an IRC meeting held on 2016-09-15 in the #v4l channel on freenode
+which I have tried to translate as accurately as possible into documentation.
 
-Changes compared to v3:
-  - Drop bogus links from the pmu_a57 node to the CA53 nodes,
-  - Add Cortex-A53 PMU node.
+Patch 3/3 implements rotation support in the vsp1 driver. Beside being rebased
+on top of the current vsp1/next branch, it has mostly been kept unchanged
+compared to v1.
 
-Tested on r8a7795/salvator-x, with CPU hot(un)plug and system suspend.
+For your convenience the code is available at
 
-Thanks for applying!
+	git://linuxtv.org/pinchartl/media.git vsp1-rotation-v2-20170228
 
-Geert Uytterhoeven (2):
-  arm64: dts: r8a7795: Add Cortex-A53 CPU cores
-  arm64: dts: r8a7795: Add Cortex-A53 PMU node
+Laurent Pinchart (3):
+  v4l: vsp1: Fix multi-line comment style
+  v4l: Clearly document interactions between formats, controls and
+    buffers
+  v4l: vsp1: wpf: Implement rotation support
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 58 +++++++++++++++++++++++++++++---
- 1 file changed, 53 insertions(+), 5 deletions(-)
+ Documentation/media/uapi/v4l/buffer.rst   |  88 ++++++++++++
+ drivers/media/platform/vsp1/vsp1_bru.c    |  27 ++--
+ drivers/media/platform/vsp1/vsp1_dl.c     |  27 ++--
+ drivers/media/platform/vsp1/vsp1_drm.c    |  21 ++-
+ drivers/media/platform/vsp1/vsp1_drv.c    |  12 +-
+ drivers/media/platform/vsp1/vsp1_entity.c |   9 +-
+ drivers/media/platform/vsp1/vsp1_hsit.c   |   3 +-
+ drivers/media/platform/vsp1/vsp1_lif.c    |   6 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |   9 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c    |  11 +-
+ drivers/media/platform/vsp1/vsp1_rwpf.c   |  11 +-
+ drivers/media/platform/vsp1/vsp1_rwpf.h   |   3 +-
+ drivers/media/platform/vsp1/vsp1_sru.c    |   3 +-
+ drivers/media/platform/vsp1/vsp1_uds.c    |   3 +-
+ drivers/media/platform/vsp1/vsp1_video.c  |  45 +++++--
+ drivers/media/platform/vsp1/vsp1_wpf.c    | 215 +++++++++++++++++++++++-------
+ 16 files changed, 382 insertions(+), 111 deletions(-)
 
 -- 
-2.7.4
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
