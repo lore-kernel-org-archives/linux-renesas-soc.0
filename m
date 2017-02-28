@@ -1,118 +1,81 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:47478 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751055AbdB1WZC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 28 Feb 2017 17:25:02 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] v4l: vsp1: Remove redundant pipe->dl usage from drm
-Date: Tue, 14 Feb 2017 02:32:20 +0200
-Message-ID: <3425555.AA2EBS2zFK@avalon>
-In-Reply-To: <920ab93c049e3887510ee030082dc81e64bd760c.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.4df11e0fa078e5cc8bc8f668951249cca0fd3d7f.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com> <920ab93c049e3887510ee030082dc81e64bd760c.1483704413.git-series.kieran.bingham+renesas@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: Re: [PATCH v2 3/3] v4l: vsp1: wpf: Implement rotation support
+Date: Wed, 01 Mar 2017 00:23:04 +0200
+Message-ID: <2151035.IRLLozJt72@avalon>
+In-Reply-To: <20170228211334.GC3220@valkosipuli.retiisi.org.uk>
+References: <20170228150320.10104-1-laurent.pinchart+renesas@ideasonboard.com> <20170228150320.10104-4-laurent.pinchart+renesas@ideasonboard.com> <20170228211334.GC3220@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi Sakari,
 
-Thank you for the patch.
+On Tuesday 28 Feb 2017 23:13:34 Sakari Ailus wrote:
+> On Tue, Feb 28, 2017 at 05:03:20PM +0200, Laurent Pinchart wrote:
+> > Some WPF instances, on Gen3 devices, can perform 90=B0 rotation whe=
+n
+> > writing frames to memory. Implement support for this using the
+> > V4L2_CID_ROTATE control.
+> >=20
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >=20
+> >  drivers/media/platform/vsp1/vsp1_rpf.c   |   2 +-
+> >  drivers/media/platform/vsp1/vsp1_rwpf.c  |   5 +
+> >  drivers/media/platform/vsp1/vsp1_rwpf.h  |   3 +-
+> >  drivers/media/platform/vsp1/vsp1_video.c |  12 +-
+> >  drivers/media/platform/vsp1/vsp1_wpf.c   | 205 ++++++++++++++++++-=
+-------
+> >  5 files changed, 175 insertions(+), 52 deletions(-)
 
-On Friday 06 Jan 2017 12:15:31 Kieran Bingham wrote:
-> The pipe->dl is used only inside vsp1_du_atomic_flush(), and can be
-> obtained and stored locally to simplify the code.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+[snip]
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h
+> > b/drivers/media/platform/vsp1/vsp1_rwpf.h index
+> > 1c98aff3da5d..b4ffc38f48af 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_rwpf.h
+> > +++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
+> > @@ -56,9 +56,10 @@ struct vsp1_rwpf {
+> >=20
+> >  =09struct {
+> >  =09=09spinlock_t lock;
+> > -=09=09struct v4l2_ctrl *ctrls[2];
+> > +=09=09struct v4l2_ctrl *ctrls[3];
+>=20
+> At least what comes to this patch --- having a field for each control=
+ would
+> look much nicer in the code. Is there a particular reason for having =
+an
+> array with all the controls in it?
 
-As I still have issues with patch 3/4, I propose moving this one earlier in 
-the series.
+Not really. I need to put the three controls in a cluster, so I stored =
+them in=20
+an array to make sure they would be properly contiguous in memory. I ca=
+n also=20
+use three separate pointers, it shouldn't hurt.
 
-> ---
->  drivers/media/platform/vsp1/vsp1_drm.c  | 20 ++++++++++----------
->  drivers/media/platform/vsp1/vsp1_pipe.h |  2 --
->  2 files changed, 10 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
-> b/drivers/media/platform/vsp1/vsp1_drm.c index b4b583f7137a..d7ec980300dd
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -220,9 +220,6 @@ void vsp1_du_atomic_begin(struct device *dev)
->  	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
-> 
->  	vsp1->drm->num_inputs = pipe->num_inputs;
-> -
-> -	/* Prepare the display list. */
-> -	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
->  }
->  EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
-> 
-> @@ -426,10 +423,14 @@ void vsp1_du_atomic_flush(struct device *dev)
->  	struct vsp1_pipeline *pipe = &vsp1->drm->pipe;
->  	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
->  	struct vsp1_entity *entity;
-> +	struct vsp1_dl_list *dl;
->  	unsigned long flags;
->  	unsigned int i;
->  	int ret;
-> 
-> +	/* Prepare the display list. */
-> +	dl = vsp1_dl_list_get(pipe->output->dlm);
-> +
->  	/* Count the number of enabled inputs and sort them by Z-order. */
->  	pipe->num_inputs = 0;
-> 
-> @@ -484,26 +485,25 @@ void vsp1_du_atomic_flush(struct device *dev)
->  			struct vsp1_rwpf *rpf = to_rwpf(&entity->subdev);
-> 
->  			if (!pipe->inputs[rpf->entity.index]) {
-> -				vsp1_dl_list_write(pipe->dl, entity->route-
->reg,
-> +				vsp1_dl_list_write(dl, entity->route->reg,
->  						   VI6_DPR_NODE_UNUSED);
->  				continue;
->  			}
->  		}
-> 
-> -		vsp1_entity_route_setup(entity, pipe->dl);
-> +		vsp1_entity_route_setup(entity, dl);
-> 
->  		if (entity->ops->configure) {
-> -			entity->ops->configure(entity, pipe, pipe->dl,
-> +			entity->ops->configure(entity, pipe, dl,
->  					       VSP1_ENTITY_PARAMS_INIT);
-> -			entity->ops->configure(entity, pipe, pipe->dl,
-> +			entity->ops->configure(entity, pipe, dl,
->  					       VSP1_ENTITY_PARAMS_RUNTIME);
-> -			entity->ops->configure(entity, pipe, pipe->dl,
-> +			entity->ops->configure(entity, pipe, dl,
->  					       VSP1_ENTITY_PARAMS_PARTITION);
->  		}
->  	}
-> 
-> -	vsp1_dl_list_commit(pipe->dl);
-> -	pipe->dl = NULL;
-> +	vsp1_dl_list_commit(dl);
-> 
->  	/* Start or stop the pipeline if needed. */
->  	if (!vsp1->drm->num_inputs && pipe->num_inputs) {
-> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
-> b/drivers/media/platform/vsp1/vsp1_pipe.h index fff122b4874d..e59bef2653f6
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
-> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-> @@ -108,8 +108,6 @@ struct vsp1_pipeline {
-> 
->  	struct list_head entities;
-> 
-> -	struct vsp1_dl_list *dl;
-> -
->  	unsigned int div_size;
->  	unsigned int partitions;
->  	struct v4l2_rect partition;
+> >  =09=09unsigned int pending;
+> >  =09=09unsigned int active;
+> > +=09=09bool rotate;
+> >  =09} flip;
+> >  =09
+> >  =09struct vsp1_rwpf_memory mem;
 
--- 
+--=20
 Regards,
 
 Laurent Pinchart
