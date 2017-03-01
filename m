@@ -1,106 +1,239 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60049 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752515AbdCFA3l (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:29:41 -0500
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 9B810202B9
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Mar 2017 01:18:54 +0100 (CET)
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 1/5] arm64: dts: r8a7795: Add HDMI encoder support
-Date: Mon,  6 Mar 2017 02:20:22 +0200
-Message-Id: <20170306002026.15066-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 9/9] drm: bridge: dw-hdmi: Switch to regmap for register access
+Date: Thu,  2 Mar 2017 00:39:15 +0200
+Message-Id: <20170301223915.29888-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-Add DT nodes for the two HDMI encoders in disabled state.
+The Synopsys Designware HDMI TX Controller does not enforce register
+access on platforms instanciating it. The current driver supports two
+different types of memory-mapped flat register access, but in order to
+support the Amlogic Meson SoCs integration, and provide a more generic
+way to handle all sorts of register mapping, switch the register access
+to use the regmap infrastructure.
 
-Based on work by Koji Matsuoka.
+In the case of registers that are not flat memory-mapped or do not
+conform to the current driver implementation, a regmap struct can be
+given in the plat_data and be used at probe or bind.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Since the AHB audio driver is only available with direct memory access,
+only allow the I2S audio driver to be registered is directly
+memory-mapped.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 50 ++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 109 +++++++++++++++++++++------------------
+ include/drm/bridge/dw_hdmi.h     |   1 +
+ 2 files changed, 59 insertions(+), 51 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index eac4f29aa5cd..0887cc6b1f6c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1637,11 +1637,13 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
- 				};
- 				port@2 {
- 					reg = <2>;
- 					du_out_hdmi1: endpoint {
-+						remote-endpoint = <&dw_hdmi1_in>;
- 					};
- 				};
- 				port@3 {
-@@ -1709,5 +1711,53 @@
- 				};
- 			};
- 		};
-+
-+		hdmi0: hdmi0@fead0000 {
-+			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi1: hdmi1@feae0000 {
-+			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfeae0000 0 0x10000>;
-+			interrupts = <0 436 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 728>, <&cpg CPG_CORE R8A7795_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi1_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi1>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
- 	};
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 132c00685796..026a0dce7661 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -19,6 +19,7 @@
+ #include <linux/hdmi.h>
+ #include <linux/mutex.h>
+ #include <linux/of_device.h>
++#include <linux/regmap.h>
+ #include <linux/spinlock.h>
+ 
+ #include <drm/drm_of.h>
+@@ -171,8 +172,8 @@ struct dw_hdmi {
+ 	unsigned int audio_n;
+ 	bool audio_enable;
+ 
+-	void (*write)(struct dw_hdmi *hdmi, u8 val, int offset);
+-	u8 (*read)(struct dw_hdmi *hdmi, int offset);
++	unsigned int reg_shift;
++	struct regmap *regm;
  };
+ 
+ #define HDMI_IH_PHY_STAT0_RX_SENSE \
+@@ -183,42 +184,23 @@ struct dw_hdmi {
+ 	(HDMI_PHY_RX_SENSE0 | HDMI_PHY_RX_SENSE1 | \
+ 	 HDMI_PHY_RX_SENSE2 | HDMI_PHY_RX_SENSE3)
+ 
+-static void dw_hdmi_writel(struct dw_hdmi *hdmi, u8 val, int offset)
+-{
+-	writel(val, hdmi->regs + (offset << 2));
+-}
+-
+-static u8 dw_hdmi_readl(struct dw_hdmi *hdmi, int offset)
+-{
+-	return readl(hdmi->regs + (offset << 2));
+-}
+-
+-static void dw_hdmi_writeb(struct dw_hdmi *hdmi, u8 val, int offset)
+-{
+-	writeb(val, hdmi->regs + offset);
+-}
+-
+-static u8 dw_hdmi_readb(struct dw_hdmi *hdmi, int offset)
+-{
+-	return readb(hdmi->regs + offset);
+-}
+-
+ static inline void hdmi_writeb(struct dw_hdmi *hdmi, u8 val, int offset)
+ {
+-	hdmi->write(hdmi, val, offset);
++	regmap_write(hdmi->regm, offset << hdmi->reg_shift, val);
+ }
+ 
+ static inline u8 hdmi_readb(struct dw_hdmi *hdmi, int offset)
+ {
+-	return hdmi->read(hdmi, offset);
++	unsigned int val = 0;
++
++	regmap_read(hdmi->regm, offset << hdmi->reg_shift, &val);
++
++	return val;
+ }
+ 
+ static void hdmi_modb(struct dw_hdmi *hdmi, u8 data, u8 mask, unsigned reg)
+ {
+-	u8 val = hdmi_readb(hdmi, reg) & ~mask;
+-
+-	val |= data & mask;
+-	hdmi_writeb(hdmi, val, reg);
++	regmap_update_bits(hdmi->regm, reg << hdmi->reg_shift, mask, data);
+ }
+ 
+ static void hdmi_mask_writeb(struct dw_hdmi *hdmi, u8 data, unsigned int reg,
+@@ -1989,6 +1971,20 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
+ 	return -ENODEV;
+ }
+ 
++static const struct regmap_config hdmi_regmap_8bit_config = {
++	.reg_bits	= 32,
++	.val_bits	= 8,
++	.reg_stride	= 1,
++	.max_register	= HDMI_I2CM_FS_SCL_LCNT_0_ADDR,
++};
++
++static const struct regmap_config hdmi_regmap_32bit_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= HDMI_I2CM_FS_SCL_LCNT_0_ADDR << 2,
++};
++
+ static struct dw_hdmi *
+ __dw_hdmi_probe(struct platform_device *pdev,
+ 		const struct dw_hdmi_plat_data *plat_data)
+@@ -1998,7 +1994,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	struct platform_device_info pdevinfo;
+ 	struct device_node *ddc_node;
+ 	struct dw_hdmi *hdmi;
+-	struct resource *iores;
++	struct resource *iores = NULL;
+ 	int irq;
+ 	int ret;
+ 	u32 val = 1;
+@@ -2022,22 +2018,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	mutex_init(&hdmi->audio_mutex);
+ 	spin_lock_init(&hdmi->audio_lock);
+ 
+-	of_property_read_u32(np, "reg-io-width", &val);
+-
+-	switch (val) {
+-	case 4:
+-		hdmi->write = dw_hdmi_writel;
+-		hdmi->read = dw_hdmi_readl;
+-		break;
+-	case 1:
+-		hdmi->write = dw_hdmi_writeb;
+-		hdmi->read = dw_hdmi_readb;
+-		break;
+-	default:
+-		dev_err(dev, "reg-io-width must be 1 or 4\n");
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
+ 	if (ddc_node) {
+ 		hdmi->ddc = of_get_i2c_adapter_by_node(ddc_node);
+@@ -2051,11 +2031,38 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 		dev_dbg(hdmi->dev, "no ddc property found\n");
+ 	}
+ 
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hdmi->regs = devm_ioremap_resource(dev, iores);
+-	if (IS_ERR(hdmi->regs)) {
+-		ret = PTR_ERR(hdmi->regs);
+-		goto err_res;
++	if (!plat_data->regm) {
++		const struct regmap_config *reg_config;
++
++		of_property_read_u32(np, "reg-io-width", &val);
++		switch (val) {
++		case 4:
++			reg_config = &hdmi_regmap_32bit_config;
++			hdmi->reg_shift = 2;
++			break;
++		case 1:
++			reg_config = &hdmi_regmap_8bit_config;
++			break;
++		default:
++			dev_err(dev, "reg-io-width must be 1 or 4\n");
++			return ERR_PTR(-EINVAL);
++		}
++
++		iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++		hdmi->regs = devm_ioremap_resource(dev, iores);
++		if (IS_ERR(hdmi->regs)) {
++			ret = PTR_ERR(hdmi->regs);
++			goto err_res;
++		}
++
++		hdmi->regm = devm_regmap_init_mmio(dev, hdmi->regs, reg_config);
++		if (IS_ERR(hdmi->regm)) {
++			dev_err(dev, "Failed to configure regmap\n");
++			ret = PTR_ERR(hdmi->regm);
++			goto err_res;
++		}
++	} else {
++		hdmi->regm = plat_data->regm;
+ 	}
+ 
+ 	hdmi->isfr_clk = devm_clk_get(hdmi->dev, "isfr");
+@@ -2165,7 +2172,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	config0 = hdmi_readb(hdmi, HDMI_CONFIG0_ID);
+ 	config3 = hdmi_readb(hdmi, HDMI_CONFIG3_ID);
+ 
+-	if (config3 & HDMI_CONFIG3_AHBAUDDMA) {
++	if (iores && config3 & HDMI_CONFIG3_AHBAUDDMA) {
+ 		struct dw_hdmi_audio_data audio;
+ 
+ 		audio.phys = iores->start;
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 545f04fae3b6..bcceee8114a4 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -59,6 +59,7 @@ struct dw_hdmi_phy_ops {
+ };
+ 
+ struct dw_hdmi_plat_data {
++	struct regmap *regm;
+ 	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+ 					   struct drm_display_mode *mode);
+ 
 -- 
 Regards,
 
