@@ -1,26 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36114 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750868AbdCPDSb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Mar 2017 23:18:31 -0400
-From: Matthew Giassa <matthew@giassa.net>
-To: wsa@the-dreams.de
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        matthew@giassa.net
-Subject: [PATCHv5 0/4] Staging: ks7010: ks_wlan_ioctl.h: checkpatch fixes
-Date: Wed, 15 Mar 2017 20:18:07 -0700
-Message-Id: <1489634291-30028-1-git-send-email-matthew@giassa.net>
-In-Reply-To: <20170316024246.GA19641@kroah.com>
-References: <20170316024246.GA19641@kroah.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 0/3] watchdog: add wdt and reset for renesas r7s72100
+Date: Wed,  1 Mar 2017 17:54:52 -0500
+Message-Id: <20170301225455.22818-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The following patches address all outstanding checkpatch warnings/errors
-present in drivers/staging/ks7010/ks_wlan_ioctl.h.
+Some Renesas SoCs do not have a reset register and the only way to do a SW
+controlled reset is to use the watchdog timer. So while this series started
+out by only adding a reset feature, now it's a full watchdog timer driver that
+includes a reset handler.
 
-This change set has been rebased off of the current master
-(69eea5a4ab9c705496e912b55a9d312325de19e6) as per an earlier request,
-and the change log formatting has been slightly changed, as per Tobin's
-advice.
+The longest WDT overflow you can get with a RZ/A1 (R7S72100) with its 8-bit
+wide counter is 125ms. Not very long.
+
+However, by setting max_hw_heartbeat_ms, the watchdog core will now handle
+pinging the WDT automatically and allow the user to set times as big as they
+want. Therefore, the default timeout for this driver is 30 seconds.
+
+Of course if system interrupts are disabled too long and wdt can't be pinged
+by the watchdog core, then the system will reset before the user specified
+timeout. But hey, it's better nothing.
+
+This driver was tested on an RZ/A1 RSK board using watchdog-simple.c from
+samples/watchdog/.
+
+v3:
+* changed from a reset driver to a watchdog timer driver
+* use udelay(20) instead of msleep for reset handler
+* added Reviewed-by for r7s72100.dtsi and renesas-wdt.txt
+* added Acked-by for renesas-wdt.txt
+
+v2:
+* added to renesas-wdt.txt instead of creating a new file
+* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
+* changed "renesas,wdt-reset" to "renesas,rza-wdt"
+* added "renesas,rza-wdt" as a fallback
+* added interupt property (even though it is not used)
+* added clocks property
+* changed hard coded register values to defines
+* added msleep to while(1) loop
+* removed unnecessary #include files
+* added Reviewed-by: Geert Uytterhoeven for renesas-reset.c
+
+Chris Brandt (3):
+  watchdog: add rza_wdt driver
+  watchdog: renesas-wdt: add support for rza
+  ARM: dts: r7s72100: Add watchdog timer
+
+ .../devicetree/bindings/watchdog/renesas-wdt.txt   |   4 +-
+ arch/arm/boot/dts/r7s72100.dtsi                    |   7 +
+ drivers/watchdog/Kconfig                           |   8 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/rza_wdt.c                         | 208 +++++++++++++++++++++
+ 5 files changed, 227 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/watchdog/rza_wdt.c
+
+-- 
+2.10.1
+
+
