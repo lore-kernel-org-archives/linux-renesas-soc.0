@@ -1,84 +1,120 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from newton.telenet-ops.be ([195.130.132.45]:38136 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754828AbdC1JQt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 05:16:49 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 3vsld131Y4zMrgMp
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 11:16:21 +0200 (CEST)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@sang-engineering.com>,
-        Christoph Baumann <cbaumann@visteon.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] serial: sh-sci: Fix late enablement of AUTORTS
-Date: Tue, 28 Mar 2017 11:13:45 +0200
-Message-Id: <1490692426-19252-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
-References: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jose Abreu <Jose.Abreu@synopsys.com>
+Cc: dri-devel@lists.freedesktop.org, Fabio Estevam <fabio.estevam@freescale.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, Ulrich Hecht <ulrich.hecht@gmail.com>, Andy Yan <andy.yan@rock-chips.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH v2 17/29] drm: bridge: dw-hdmi: Refactor PHY power handling
+Date: Thu, 02 Mar 2017 00:47:50 +0200
+Message-ID: <2035754.xySSvQpCjl@avalon>
+In-Reply-To: <2b176eff-2fe9-2daf-b9e8-0dfb116235cc@synopsys.com>
+References: <20161220013400.28317-1-laurent.pinchart+renesas@ideasonboard.com> <7271033.6cEIpZMQXV@avalon> <2b176eff-2fe9-2daf-b9e8-0dfb116235cc@synopsys.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When changing hardware control flow for a UART with dedicated RTS/CTS
-pins, the new AUTORTS state is not immediately reflected in the
-hardware, but only when RTS is raised.  However, the serial core does
-not call .set_mctrl() after .set_termios(), hence AUTORTS may only
-become effective when the port is closed, and reopened later.
-Note that this problem does not happen when manually using stty to
-change CRTSCTS, as AUTORTS will work fine on next open.
+Hi Jose,
 
-To fix this, call .set_mctrl() from .set_termios() when dedicated
-RTS/CTS pins are present, to refresh the AUTORTS or RTS state.
-This is similar to what other drivers supporting AUTORTS do (e.g.
-omap-serial).
+On Wednesday 01 Mar 2017 16:25:46 Jose Abreu wrote:
+> On 01-03-2017 11:09, Laurent Pinchart wrote:
+> > On Thursday 05 Jan 2017 15:06:49 Jose Abreu wrote:
+> >> On 05-01-2017 12:29, Laurent Pinchart wrote:
+> >>> On Tuesday 20 Dec 2016 12:17:23 Jose Abreu wrote:
+> >>>> On 20-12-2016 11:45, Russell King - ARM Linux wrote:
+> >>>>> On Tue, Dec 20, 2016 at 03:33:48AM +0200, Laurent Pinchart wrote:
+> >>>>>> Instead of spreading version-dependent PHY power handling code
+> >>>>>> around, group it in two functions to power the PHY on and off and use
+> >>>>>> them through the driver.
+> >>>>>> 
+> >>>>>> Powering off the PHY at the beginning of the setup phase is currently
+> >>>>>> split in two locations for first and second generation PHYs, group
+> >>>>>> all the operations in the dw_hdmi_phy_init() function.
+> >>>>> 
+> >>>>> This changes the behaviour of the driver.
+> >>>>> 
+> >>>>>> +static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+> >>>>>> +{
+> >>>>>> +	if (hdmi->phy->gen == 1) {
+> >>>>>> +		dw_hdmi_phy_enable_tmds(hdmi, 0);
+> >>>>>> +		dw_hdmi_phy_enable_powerdown(hdmi, true);
+> >>>>>> +	} else {
+> >>>>>> +		dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+> >>>>>> +		dw_hdmi_phy_gen2_pddq(hdmi, 1);
+> >>>>>> +	}
+> >>>>>> +}
+> >>>>>> @@ -1290,9 +1302,7 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
+> >>>>>> *hdmi)
+> >>>>>>  	if (!hdmi->phy_enabled)
+> >>>>>>  		return;
+> >>>>>> 
+> >>>>>> -	dw_hdmi_phy_enable_tmds(hdmi, 0);
+> >>>>>> -	dw_hdmi_phy_enable_powerdown(hdmi, true);
+> >>>>>> -
+> >>>>>> +	dw_hdmi_phy_power_off(hdmi);
+> >>>>> 
+> >>>>> This makes dw_hdmi_phy_disable() power down a gen2 phy.
+> >>>>> 
+> >>>>> The iMX6 has a DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY phy, which you list as a
+> >>>>> gen2 phy.  I've been carrying this change for a while, which I've had
+> >>>>> to revert (and finally expunge), as it causes problems on iMX6:
+> >>>>> 
+> >>>>> @@ -1112,6 +1112,14 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
+> >>>>> *hdmi)
+> >>>>>         if (!hdmi->phy_enabled)
+> >>>>>                 return;
+> >>>>> 
+> >>>>> +       /* Actually set the phy into low power mode */
+> >>>>> +       dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+> >>>>> +
+> >>>>> +       /* FIXME: We should wait for TX_READY to be deasserted */
+> >>>>> +
+> >>>>> +       dw_hdmi_phy_gen2_pddq(hdmi, 1);
+> >>>>> +
+> >>>>> +       /* This appears to have no effect on iMX6 */
+> >>>>>         dw_hdmi_phy_enable_tmds(hdmi, 0);
+> >>>>>         dw_hdmi_phy_enable_powerdown(hdmi, true);
+> >>>>> 
+> >>>>> So, I think your change here will cause problems for iMX6.
+> >>>>> 
+> >>>>> From what I remember, it seems that iMX6 has issues with RXSENSE/HPD
+> >>>>> bouncing when the PHY is powered down.  I can't promise when I'll be
+> >>>>> able to check for that again.
+> >>>> 
+> >>>> Indeed TX_READY must be low before asserting pddq.
+> >>> 
+> >>> The TX_READY signal is documented in the i.MX6 datasheet as being a PHY
+> >>> output signal, but there seems to be no HDMI TX register from which its
+> >>> state can be read. Do I need to poll the HDMI_PHY_PTRPT_ENBL register
+> >>> through I2C ? How long is the PHY expected to take to set TX_READY to 0
+> >>> ?
+> >> 
+> >> TX_READY can be read from register 0x1A of phy, BIT(2) (through
+> >> I2C). Not sure if same offset for all phys though.
+> > 
+> > I have been told that another option is to poll the TX_PHY_LOCK bit in the
+> > phy_stat0 register. That would be a simpler solution that doesn't require
+> > I2C access. Could you confirm (or disconfirm) this ?
+> 
+> Yes (In our implementation we have TX_PHY_LOCK wired up to
+> TX_READY that comes from phy. But if using a custom phy or an
+> unusual implementation then this may not hold).
 
-Reported-by: Baumann, Christoph (C.) <cbaumann@visteon.com>
-Fixes: 33f50ffc253854cf ("serial: sh-sci: Fix support for hardware-assisted RTS/CTS")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on r8a7791/koelsch with HSCIF1 (GPIO hardware flow control),
-and HSCIF2 and SCIFB0 (dedicated hardware flow control).
+Thank you for the information. I've submitted a v4 that poll the TX_PHY_LOCK 
+bit.  With the patch series applied the vendor PHY handling code already 
+delegates PHY power control to the glue code, there's thus no issue there. For 
+platforms using a Synopsys PHY, all the ones we have to support today have 
+TX_READY wired to the PHY lock signal so we should be good as well there. If 
+that doesn't remain true in the future we'll fix it.
 
-A simple test program (basically "cat" with CRTSCTS configuration
-capability) can be found at https://github.com/geertu/sercat
+> >>>> HPD and RXSENSE should work in power down mode by enabling enhpdrxsense
+> >>>> bit in phy_conf0 BUT to enter power down you must disable TX_PWRON,
+> >>>> enhpdrxsense and enable PDDQ and PHY_RESET. Only after doing this (and
+> >>>> consequently entering power down mode) you can enable again
+> >>>> enhpdrxsense.
+> >>> 
+> >>> Thanks, I'll give it a try.
 
-Without this patch the following will fail:
-
-  1. sercat -f /dev/hscif2 &
-     seq 100 120 | sercat -f -w /dev/hscif1 # hangs
-
-  2. seq 200 220 | sercat -f -w /dev/hscif2 &
-     sercat -f /dev/hscif1 # no data received
-
-v2:
-  - Remove the paragraph about sci_init_pins() and reword.
-    When hardware control flow is disabled, there can still be small
-    glitches in the RTS signal.
-    These glitches are now addressed in a separate patch.
----
- drivers/tty/serial/sh-sci.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 446a23bee14008bb..6e405fb5a23f0b4a 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2372,6 +2372,10 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
- 
- 		serial_port_out(port, SCFCR, ctrl);
- 	}
-+	if (port->flags & UPF_HARD_FLOW) {
-+		/* Refresh (Auto) RTS */
-+		sci_set_mctrl(port, port->mctrl);
-+	}
- 
- 	scr_val |= SCSCR_RE | SCSCR_TE |
- 		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
