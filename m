@@ -1,39 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:52511 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751037AbdCQK3D (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47509 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753943AbdCBO4x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2017 06:29:03 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/3] usb: host: xhci-plat: add support suspend/resume for R-Car
-Date: Fri, 17 Mar 2017 19:02:32 +0900
-Message-ID: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 2 Mar 2017 09:56:53 -0500
+Date: Thu, 2 Mar 2017 15:46:56 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] arm64: dts: r8a7796: Add Secondary CPU Cores
+Message-ID: <20170302144655.GT6301@verge.net.au>
+References: <1487345435-1088-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1487345435-1088-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support suspend/resume for R-Car controllers.
-The controllers need firmware downloading and the current code has
-such process only when probe timing. After suspend the system and
-the power of controller down, the driver needs to re-download the firmware
-in resume timing. This patch adds such a process.
-Also, since previous xhci-plat code didnn't handle the clk in suspend/resume,
-this patch set has such process.
+On Fri, Feb 17, 2017 at 04:30:32PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series adds the second Cortex-A57 CPU core, and the
+> Cortex-A53 L2 cache-controller and CPU nodes on the Renesas R-Car M3-W
+> SoC to its DTS file.
+> 
+> Note that these patches add hardware description; actual enabling of the
+> CPU depends on the PSCI firmware.
+> 
+> With the current firmware version (v2.16.0), only the CA57 CPU cores are
+> enabled, hence the last patch does not introduce undeterministic
+> scheduling behavior due to migration between big and LITTLE cores.
+> 
+> Tested on r8a7796/salvator-x, with CPU hot(un)plug and system suspend.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (2):
+>   arm64: dts: r8a7796: Add CA53 L2 cache-controller node
+>   arm64: dts: r8a7796: Add Cortex-A53 CPU cores
+> 
+> Takeshi Kihara (1):
+>   arm64: dts: r8a7796: Add Cortex-A57 CPU cores
 
-Yoshihiro Shimoda (3):
-  usb: host: xhci-plat: enable clk in resume timing
-  usb: host: xhci-plat: add resume_quirk()
-  usb: host: xhci-plat: set resume_quirk() for R-Car controllers
+Hi Geert,
 
- drivers/usb/host/xhci-plat.c | 29 ++++++++++++++++++++++++++++-
- drivers/usb/host/xhci-plat.h |  1 +
- drivers/usb/host/xhci-rcar.c | 11 +++++++++++
- drivers/usb/host/xhci-rcar.h |  6 ++++++
- 4 files changed, 46 insertions(+), 1 deletion(-)
+thanks for your work in this area.
 
--- 
-1.9.1
+There seems to be some more work required to get patch 2/3 across the line
+so I am holding off on applying this series for now.
