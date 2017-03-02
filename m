@@ -1,104 +1,113 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] arm: renesas: Add reset control properties
-Date: Thu, 16 Mar 2017 15:07:22 +0100
-Message-Id: <1489673246-11015-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:47773 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752318AbdCBMWm (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Mar 2017 07:22:42 -0500
+Subject: Re: [PATCH v4 2/9] drm: bridge: dw-hdmi: Move CSC configuration out
+ of PHY code
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        <dri-devel@lists.freedesktop.org>
+References: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170301223915.29888-3-laurent.pinchart+renesas@ideasonboard.com>
+CC: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        <linux-renesas-soc@vger.kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <2c56b3e2-d11e-a82f-9c6c-1bb607b69eb1@synopsys.com>
+Date: Thu, 2 Mar 2017 12:21:23 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170301223915.29888-3-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus, Laurent, Morimoto-san,
+Hi Laurent,
 
-This patch series describes the reset control topology for on-SoC devices
-connected to the Renesas Clock Pulse Generator / Module Standby and
-Software Reset module on the R-Car H3 and M3-W, RZ/G1M, and RZ/G1E SoCs.
 
-Resets usually match the corresponding module clocks.  Exceptions are:
-  - The Display Unit has only 2 resets, one per channel pair, cfr.
-    "[PATCH v2] dt-bindings: drm: rcar-du: Document optional reset
-    properties" (http://www.spinics.net/lists/dri-devel/msg134637.html),
-  - The audio module has resets for the Serial Sound Interfaces only.
-    Adding resets and reset-names properties depends on a DT binding
-    update for renesas,rsnd (note: the DT binding documentation in
-    Documentation/devicetree/bindings/sound/renesas,rsnd.txt doesn't
-    even document clocks and clock-names?).
-Upon request from Laurent for the DU, and upon a DT bindings update
-for rcar_sound, the addition of resets (and reset-names) properties for
-these complex modules is postponed.
+On 01-03-2017 22:39, Laurent Pinchart wrote:
+> The color space converter isn't part of the PHY, move its configuration
+> out of PHY code.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Note that this patch series contains hardware description only.
-Actual reset policy is to be defined and implemented separately.
-Also, this is an optional feature, to be enabled explicitly using
-CONFIG_RESET_CONTROLLER=y.  When enabled, an on-SoC device can be reset
-easily using device_reset(), or by using the reset_control_*() API when
-more fine-grained control is desired.
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 
-Possible use cases are (not exhaustive):
-  - Reset a device before use, to make sure it's in a predefined state, and
-    doesn't depend on earlier configuration by e.g. the boot loader,
-  - Reset a device after detecting an anomaly,
-  - Reset a device to verify suspend/resume is handled correctly by the
-    driver in case the device would be part of a power domain on a
-    different/future SoC.
+Best regards,
+Jose Miguel Abreu
 
-Dependencies and impact:
-  - The corresponding driver changes to the CGP/MSSR driver are already
-    present in v4.11-rc1.
-  - These patches have no impact as long as CONFIG_RESET_CONTROLLER=n.
-    However, if CONFIG_RESET_CONTROLLER=y and resets properties are
-    prsesent in DTS, the EHCI and OHCI drivers already deassert reset as
-    part of their initialization sequences, and put the devices back
-    into reset state in case initialization failed, or on unbind.
-    I'm not aware of other relevant drivers already using reset control.
-
-For testing, these patches are also available in the
-topic/renesas-cpg-mssr-reset-dts-v2 branch of my renesas-drivers git
-repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-
-This has been tested on the R-Car Gen3 Salvator-X (H3 and M3-W) and the
-R-Car M2-W (using out-of-tree driver modifications) Koelsch development
-boards, by inspecting device register contents before and after reset,
-and by comparing them with their documented reset values.
-
-Changes compared to v1:
-  - Break out from "[PATCH 0/8] Renesas CPG/MSSR Reset Control Support"
-    (https://lkml.org/lkml/2017/1/20/336),
-  - Postpone adding resets and reset-names properties for complex
-    devices (du, rcar_sound),
-  - Rebase on top of renesas-devel-20170313-v4.11-rc2,
-  - Add reset properties to recently added device nodes.
-
-Thanks for applying!
-
-Geert Uytterhoeven (4):
-  arm64: dts: r8a7795: Add reset control properties
-  arm64: dts: r8a7796: Add reset control properties
-  ARM: dts: r8a7743: Add reset control properties
-  ARM: dts: r8a7745: Add reset control properties
-
- arch/arm/boot/dts/r8a7743.dtsi           | 24 +++++++++
- arch/arm/boot/dts/r8a7745.dtsi           | 24 +++++++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 93 ++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 46 ++++++++++++++++
- 4 files changed, 187 insertions(+)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> ---
+>  drivers/gpu/drm/bridge/dw-hdmi.c | 25 ++++++++++---------------
+>  1 file changed, 10 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+> index ce7496399ccf..906583beb08b 100644
+> --- a/drivers/gpu/drm/bridge/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+> @@ -914,7 +914,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+>  			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+>  }
+>  
+> -static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+> +static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>  {
+>  	u8 val, msec;
+>  	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+> @@ -946,14 +946,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+>  		return -EINVAL;
+>  	}
+>  
+> -	/* Enable csc path */
+> -	if (cscon)
+> -		val = HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_IN_PATH;
+> -	else
+> -		val = HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_BYPASS;
+> -
+> -	hdmi_writeb(hdmi, val, HDMI_MC_FLOWCTRL);
+> -
+>  	/* gen2 tx power off */
+>  	dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+>  
+> @@ -1028,10 +1020,6 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, int cscon)
+>  static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+>  {
+>  	int i, ret;
+> -	bool cscon;
+> -
+> -	/*check csc whether needed activated in HDMI mode */
+> -	cscon = hdmi->sink_is_hdmi && is_color_space_conversion(hdmi);
+>  
+>  	/* HDMI Phy spec says to do the phy initialization sequence twice */
+>  	for (i = 0; i < 2; i++) {
+> @@ -1040,8 +1028,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+>  		dw_hdmi_phy_enable_tmds(hdmi, 0);
+>  		dw_hdmi_phy_enable_powerdown(hdmi, true);
+>  
+> -		/* Enable CSC */
+> -		ret = hdmi_phy_configure(hdmi, cscon);
+> +		ret = hdmi_phy_configure(hdmi);
+>  		if (ret)
+>  			return ret;
+>  	}
+> @@ -1303,6 +1290,14 @@ static void dw_hdmi_enable_video_path(struct dw_hdmi *hdmi)
+>  		clkdis &= ~HDMI_MC_CLKDIS_CSCCLK_DISABLE;
+>  		hdmi_writeb(hdmi, clkdis, HDMI_MC_CLKDIS);
+>  	}
+> +
+> +	/* Enable color space conversion if needed (for HDMI sinks only). */
+> +	if (hdmi->sink_is_hdmi && is_color_space_conversion(hdmi))
+> +		hdmi_writeb(hdmi, HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_IN_PATH,
+> +			    HDMI_MC_FLOWCTRL);
+> +	else
+> +		hdmi_writeb(hdmi, HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_BYPASS,
+> +			    HDMI_MC_FLOWCTRL);
+>  }
+>  
+>  static void hdmi_enable_audio_clk(struct dw_hdmi *hdmi)
