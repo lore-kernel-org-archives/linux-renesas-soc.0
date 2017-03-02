@@ -1,57 +1,142 @@
-Return-Path: <kieranbingham@gmail.com>
-Subject: Re: [PATCH] v4l: vsp1: Disable HSV formats on Gen3 hardware
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:47985 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752626AbdCBMlz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Mar 2017 07:41:55 -0500
+Subject: Re: [PATCH v4 5/9] drm: bridge: dw-hdmi: Fix the PHY power up
+ sequence
 To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-media@vger.kernel.org
-References: <20170228230813.21848-1-laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
- Kieran Bingham <kieran.bingham@ideasonboard.com>
-From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <9f66d574-6aa8-d58b-2dc1-1c3f2dbfafbb@gmail.com>
-Date: Thu, 2 Mar 2017 09:06:10 +0000
+        <dri-devel@lists.freedesktop.org>
+References: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170301223915.29888-6-laurent.pinchart+renesas@ideasonboard.com>
+CC: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        <linux-renesas-soc@vger.kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <f9d931ba-9fe9-3bfd-f854-8affe68af035@synopsys.com>
+Date: Thu, 2 Mar 2017 12:30:58 +0000
 MIME-Version: 1.0
-In-Reply-To: <20170228230813.21848-1-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20170301223915.29888-6-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-LGTM! :-)
 
-On 28/02/17 23:08, Laurent Pinchart wrote:
-> While all VSP instances can process HSV internally, on Gen3 hardware
-> reading or writing HSV24 or HSV32 from/to memory causes the device to
-> hang. Disable those pixel formats on Gen3 hardware.
-> 
+On 01-03-2017 22:39, Laurent Pinchart wrote:
+> When powering the PHY up we need to wait for the PLL to lock. This is
+> done by polling the TX_PHY_LOCK bit in the HDMI_PHY_STAT0 register
+> (interrupt-based wait could be implemented as well but is likely
+> overkill). The bit is asserted when the PLL locks, but the current code
+> incorrectly waits for the bit to be deasserted. Fix it, and while at it,
+> replace the udelay() with a sleep as the code never runs in
+> non-sleepable context.
+>
+> To be consistent with the power down implementation move the poll loop
+> to the power off function.
+>
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+
+Best regards,
+Jose Miguel Abreu
 
 > ---
->  drivers/media/platform/vsp1/vsp1_pipe.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-> index 3f1acf68dc6e..35364f594e19 100644
-> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
-> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-> @@ -157,9 +157,15 @@ const struct vsp1_format_info *vsp1_get_format_info(struct vsp1_device *vsp1,
->  {
->  	unsigned int i;
+>  drivers/gpu/drm/bridge/dw-hdmi.c | 65 +++++++++++++++++++++++-----------------
+>  1 file changed, 37 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+> index 85348ba6bb1c..0aa3ad404f77 100644
+> --- a/drivers/gpu/drm/bridge/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+> @@ -949,9 +949,44 @@ static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+>  	dw_hdmi_phy_gen2_pddq(hdmi, 1);
+>  }
 >  
-> -	/* Special case, the VYUY format is supported on Gen2 only. */
-> -	if (vsp1->info->gen != 2 && fourcc == V4L2_PIX_FMT_VYUY)
-> -		return NULL;
-> +	/* Special case, the VYUY and HSV formats are supported on Gen2 only. */
-> +	if (vsp1->info->gen != 2) {
-> +		switch (fourcc) {
-> +		case V4L2_PIX_FMT_VYUY:
-> +		case V4L2_PIX_FMT_HSV24:
-> +		case V4L2_PIX_FMT_HSV32:
-> +			return NULL;
-> +		}
+> +static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
+> +{
+> +	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+> +	unsigned int i;
+> +	u8 val;
+> +
+> +	if (phy->gen == 1) {
+> +		dw_hdmi_phy_enable_powerdown(hdmi, false);
+> +
+> +		/* Toggle TMDS enable. */
+> +		dw_hdmi_phy_enable_tmds(hdmi, 0);
+> +		dw_hdmi_phy_enable_tmds(hdmi, 1);
+> +		return 0;
 > +	}
+> +
+> +	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
+> +	dw_hdmi_phy_gen2_pddq(hdmi, 0);
+> +
+> +	/* Wait for PHY PLL lock */
+> +	for (i = 0; i < 5; ++i) {
+> +		val = hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_TX_PHY_LOCK;
+> +		if (val)
+> +			break;
+> +
+> +		usleep_range(1000, 2000);
+> +	}
+> +
+> +	if (!val) {
+> +		dev_err(hdmi->dev, "PHY PLL failed to lock\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	dev_dbg(hdmi->dev, "PHY PLL locked %u iterations\n", i);
+> +	return 0;
+> +}
+> +
+>  static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>  {
+> -	u8 val, msec;
+>  	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+>  	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
+>  	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+> @@ -1019,33 +1054,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>  	hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_CKCALCTRL_OVERRIDE,
+>  			   HDMI_3D_TX_PHY_CKCALCTRL);
 >  
->  	for (i = 0; i < ARRAY_SIZE(vsp1_video_formats); ++i) {
->  		const struct vsp1_format_info *info = &vsp1_video_formats[i];
-> 
+> -	dw_hdmi_phy_enable_powerdown(hdmi, false);
+> -
+> -	/* toggle TMDS enable */
+> -	dw_hdmi_phy_enable_tmds(hdmi, 0);
+> -	dw_hdmi_phy_enable_tmds(hdmi, 1);
+> -
+> -	/* gen2 tx power on */
+> -	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
+> -	dw_hdmi_phy_gen2_pddq(hdmi, 0);
+> -
+> -	/* Wait for PHY PLL lock */
+> -	msec = 5;
+> -	do {
+> -		val = hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_TX_PHY_LOCK;
+> -		if (!val)
+> -			break;
+> -
+> -		if (msec == 0) {
+> -			dev_err(hdmi->dev, "PHY PLL not locked\n");
+> -			return -ETIMEDOUT;
+> -		}
+> -
+> -		udelay(1000);
+> -		msec--;
+> -	} while (1);
+> -
+> -	return 0;
+> +	return dw_hdmi_phy_power_on(hdmi);
+>  }
+>  
+>  static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
