@@ -1,86 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud6.xs4all.net ([194.109.24.31]:32935 "EHLO
-        lb3-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751209AbdCDKxt (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46432 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753576AbdCBPq5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Mar 2017 05:53:49 -0500
+        Thu, 2 Mar 2017 10:46:57 -0500
+Date: Thu, 2 Mar 2017 17:37:03 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
 Subject: Re: [PATCH v2 2/3] v4l: Clearly document interactions between
  formats, controls and buffers
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
+Message-ID: <20170302153703.GI3220@valkosipuli.retiisi.org.uk>
 References: <20170228150320.10104-1-laurent.pinchart+renesas@ideasonboard.com>
  <20170228150320.10104-3-laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <30dd7931-7c7c-70ed-1a62-00756406761c@xs4all.nl>
-Date: Sat, 4 Mar 2017 11:53:45 +0100
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20170228150320.10104-3-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-Here is my review:
-
-On 28/02/17 16:03, Laurent Pinchart wrote:
+On Tue, Feb 28, 2017 at 05:03:19PM +0200, Laurent Pinchart wrote:
 > V4L2 exposes parameters that influence buffers sizes through the format
 > ioctls (VIDIOC_G_FMT, VIDIOC_TRY_FMT and VIDIO_S_FMT). Other parameters
-
-S_SELECTION should be mentioned here as well (more about that later).
-
 > not part of the format structure may also influence buffer sizes or
 > buffer layout in general. One existing such parameter is rotation, which
 > is implemented by the VIDIOC_ROTATE control and thus exposed through the
 > V4L2 control ioctls.
->
+> 
 > The interaction between those parameters and buffers is currently only
 > partially specified by the V4L2 API. In particular interactions between
 > controls and buffers isn't specified at all. The behaviour of the
 > VIDIOC_S_FMT ioctl when buffers are allocated is also not fully
 > specified.
->
+> 
 > This commit clearly defines and documents the interactions between
 > formats, controls and buffers.
->
+> 
 > The preparatory discussions for the documentation change considered
 > completely disallowing controls that change the buffer size or layout,
 > in favour of extending the format API with a new ioctl that would bundle
 > those controls with format information. The idea has been rejected, as
 > this would essentially be a restricted version of the upcoming request
 > API that wouldn't bring any additional value.
->
+> 
 > Another option we have considered was to mandate the use of the request
 > API to modify controls that influence buffer size or layout. This has
 > also been rejected on the grounds that requiring the request API to
 > change rotation even when streaming is stopped would significantly
 > complicate implementation of drivers and usage of the V4L2 API for
 > applications.
->
+> 
 > Applications will however be required to use the upcoming request API to
 > change at runtime formats or controls that influence the buffer size or
 > layout, because of the need to synchronize buffers with the formats and
 > controls. Otherwise there would be no way to interpret the content of a
 > buffer correctly.
->
+> 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > ---
 >  Documentation/media/uapi/v4l/buffer.rst | 88 +++++++++++++++++++++++++++++++++
 >  1 file changed, 88 insertions(+)
->
+> 
 > diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
 > index ac58966ccb9b..5c58db98ab7a 100644
 > --- a/Documentation/media/uapi/v4l/buffer.rst
 > +++ b/Documentation/media/uapi/v4l/buffer.rst
 > @@ -34,6 +34,94 @@ flags are copied from the OUTPUT video buffer to the CAPTURE video
 >  buffer.
->
->
+>  
+>  
 > +Interactions between formats, controls and buffers
 > +==================================================
 > +
@@ -99,17 +92,6 @@ S_SELECTION should be mentioned here as well (more about that later).
 > +the stream to be stopped. Any attempt at such a modification while the stream
 > +is active shall cause the format or control set ioctl to return the ``EBUSY``
 > +error code.
-
-This is not what happens today: it's not the streaming part that causes EBUSY to
-be returned but whether or not buffers are allocated.
-
-Today we do not support changing buffer sizes on the fly, so any attempt to
-call an ioctl that would change the buffer size is blocked and EBUSY is returned.
-To be precise: drivers call vb2_is_busy() to determine this.
-
-To my knowledge all vb2-using drivers behave like this. There may be old drivers
-that do not do this (and these have a high likelyhood of being wrong).
-
 > +
 > +Controls that only influence the buffer layout can be modified at any time
 > +when the stream is stopped. As they don't influence the buffer size, no
@@ -124,6 +106,10 @@ that do not do this (and these have a high likelyhood of being wrong).
 > + #. VIDIOC_STREAMOFF
 > + #. VIDIOC_S_FMT
 > + #. VIDIOC_S_EXT_CTRLS
+
+Which one do you set first, the format or the controls? Supposedly the user
+would have to get the format again after setting the ROTATE control.
+
 > + #. VIDIOC_QBUF
 > + #. VIDIOC_STREAMON
 > +
@@ -136,27 +122,7 @@ that do not do this (and these have a high likelyhood of being wrong).
 > +from these ioctls if any buffer is currently queued, without checking the
 > +queued buffers sizes. Drivers shall also return a ``ENOSPC`` error from the
 > +:c:func:`VIDIOC_QBUF` ioctl if the buffer being queued is too small for the
-> +current format or controls.
-
-Actually, today qbuf will return -EINVAL (from __verify_length in videobuf2-v4l2.c)
-in these cases. I am pretty sure you can't change that to ENOSPC since this has
-always been -EINVAL, and so changing this would break the ABI.
-
-Trying to change the format while buffers are allocated will return EBUSY today.
-
-If you are trying to document what will happen when drivers allow format changes
-on the fly then this is not at all clear from what you write here.
-
-So:
-
-If the driver does not support changing the format while buffers are queued, then
-it will return EBUSY (true for almost (?) all drivers today). If it does support
-this, then it will behave as described above, except for the ENOSPC error in QBUF.
-
-Note that the meaning of ENOSPC should also be explicitly documented in the ioctls
-that can return this.
-
- > Together, these requirements ensure that queued
+> +current format or controls. Together, these requirements ensure that queued
 > +buffers will always be large enough for the configured format and controls.
 > +
 > +Userspace applications can query the buffer size required for a given format
@@ -187,6 +153,18 @@ that can return this.
 > + #. VIDIOC_REQBUFS(0)
 > + #. VIDIOC_S_FMT
 > + #. VIDIOC_S_EXT_CTRLS
+
+Same here.
+
+Would it be safe to say that controls are changed first? I wonder if there
+could be special cases where this wouldn't apply though. It could ultimately
+come down to hardware features: rotation might be only available for certain
+formats so you'd need to change the format first to enable rotation.
+
+What you're documenting above is a typical sequence so it doesn't have to be
+applicable to all potential hardware. I might mention there could be such
+dependencies. I wonder if one exists at the moment. No?
+
 > + #. VIDIOC_REQBUFS(n)
 > + #. VIDIOC_QBUF
 > + #. VIDIOC_STREAMON
@@ -198,41 +176,14 @@ that can return this.
 > +When reallocation is required, any attempt to modify format or controls that
 > +influences the buffer size while buffers are allocated shall cause the format
 > +or control set ioctl to return the ``EBUSY`` error code.
-
-Ah, here you describe the 99% situation. This should come first. You've been working
-on the 1% that allows changing formats while buffers are allocated so that feels
-all-important to you, but in reality almost all drivers use the 'simplified'
-implementation. Describe that first, then go on describing what will happen for
-your driver. That will make much more sense to me (as you can tell from the preceding
-comments) and I'm sure to the end-user as well.
-
-What should be mentioned here as well is that S_SELECTION can also implicitly change
-the format, specifically if there is no scaler or if the scaler has limitations.
-
-Also there are a few ioctls that can reset selections and formats when called:
-S_INPUT/S_OUTPUT, S_STD and S_DV_TIMINGS.
-
-I think this should be mentioned here. It can be just in passing, no need to go
-in-depth on that. As long as people are aware of it.
-
-The documentation of S_STD and S_DV_TIMINGS should also be updated saying that if
-the new std or timings differ from the existing std or timings, then the format
-will also change and selection rectangles will be reset to the defaults. Setting
-the std/dv_timings with the current std or timings will not do anything: there
-are applications that do this even when streaming so this should be allowed.
-
-Unfortunately, this is not documented but it really should.
-
-If you don't have time to update the S_STD/DV_TIMINGS ioctls, then let me know and
-I will do that.
-
 > +
 > +
 >  .. c:type:: v4l2_buffer
->
+>  
 >  struct v4l2_buffer
->
 
-Regards,
+-- 
+Kind regards,
 
-	Hans
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
