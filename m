@@ -1,53 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753379AbdCTI7n (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56844 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751035AbdCBKtJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:43 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/32] arm64: dts: r8a7795: salvator-x: Drop superfluous status updates for frequency overrides
-Date: Mon, 20 Mar 2017 09:57:41 +0100
-Message-Id: <971939d1da07c7b55d35aca31288cce297731c71.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+        Thu, 2 Mar 2017 05:49:09 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>
+Subject: [PATCH v4 3/4] drm: bridge: vga-dac: Add adi,adv7123 compatible string
+Date: Thu,  2 Mar 2017 12:47:27 +0200
+Message-Id: <20170302104728.7150-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170302104728.7150-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170302104728.7150-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The ADV7123 is a transparent VGA DAC. Unlike dumb VGA DACs it can be
+controlled through a power save pin, and requires a power supply.
+However, on most boards where the device is used neither the power save
+signal nor the power supply are controllable.
 
-The scif_clk and pcie_bus_clk device nodes are already enabled in
-r8a7795.dtsi, so there is no need to update their statuses again.
+To avoid developing a separate device-specific driver add an
+"adi,adv7123" compatible entry to the dumb-vga-dac driver. This will
+allow supporting most ADV7123-based boards easily, while allowing future
+development of an adv7123 driver when needed without breaking backward
+compatibility.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/bridge/dumb-vga-dac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 277ab8484e0c..f25241921067 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -362,7 +362,6 @@
+diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+index 86e9f9c7b59c..63e113bd21d2 100644
+--- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
++++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+@@ -237,6 +237,7 @@ static int dumb_vga_remove(struct platform_device *pdev)
  
- &scif_clk {
- 	clock-frequency = <14745600>;
--	status = "okay";
+ static const struct of_device_id dumb_vga_match[] = {
+ 	{ .compatible = "dumb-vga-dac" },
++	{ .compatible = "adi,adv7123" },
+ 	{ .compatible = "ti,ths8135" },
+ 	{},
  };
- 
- &i2c2 {
-@@ -574,7 +573,6 @@
- 
- &pcie_bus_clk {
- 	clock-frequency = <100000000>;
--	status = "okay";
- };
- 
- &pciec0 {
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
