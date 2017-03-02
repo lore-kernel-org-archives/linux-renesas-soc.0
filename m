@@ -1,67 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751083AbdCDCCP (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 21:02:15 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 0/3] RCAR-DU, VSP1: Prevent pre-emptive frame flips on VSP1-DRM pipelines
-Date: Sat,  4 Mar 2017 02:01:16 +0000
-Message-Id: <cover.4a217716bf5515d07dcb6d2b052f883eeecae9e8.1488592678.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham@gmail.com>
+Subject: Re: [PATCH] v4l: vsp1: Disable HSV formats on Gen3 hardware
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-media@vger.kernel.org
+References: <20170228230813.21848-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Kieran Bingham <kieranbingham@gmail.com>
+Message-ID: <9f66d574-6aa8-d58b-2dc1-1c3f2dbfafbb@gmail.com>
+Date: Thu, 2 Mar 2017 09:06:10 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170228230813.21848-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RCAR-DU utilises a running VSPD pipeline to perform processing
-for the display pipeline.
+Hi Laurent,
 
-Changes to this pipeline are performed with an atomic flush operation which
-updates the state in the VSPD. Due to the way the running pipeline is
-operated, any flush operation has an implicit latency of one frame interval.
+LGTM! :-)
 
-This comes about as the display list is committed, but not updated until the
-next VSP1 interrupt. At this point the frame is being processed, but is not
-complete until the following VSP1 frame end interrupt.
+On 28/02/17 23:08, Laurent Pinchart wrote:
+> While all VSP instances can process HSV internally, on Gen3 hardware
+> reading or writing HSV24 or HSV32 from/to memory causes the device to
+> hang. Disable those pixel formats on Gen3 hardware.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-To prevent reporting page flips early, we must track this timing through the
-VSP1, and only allow the rcar-du object to report the page-flip completion
-event after the VSP1 has processed.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This series ensures that tearing and flicker is prevented, without introducing the
-performance impact mentioned in the previous series.
-
-[PATCH 1/3] extends the VSP1 to allow a callback to be registered giving the
-            VSP1 the ability to notify completion events
-[PATCH 2/3] checks for race conditions in the commits of the display list, and
-            in such event postpones the sending of the completion event
-[PATCH 3/3] Utilises the callback extension to send page flips at the end of
-            VSP processing.
-
-These patches have been tested by introducing artificial delays in the commit
-code paths and verifying that no visual tearing or flickering occurs.
-
-Manual start/stop testing has also been performed
-
-Kieran Bingham (3):
-  v4l: vsp1: extend VSP1 module API to allow DRM callbacks
-  v4l: vsp1: Postpone page flip in event of display list race
-  drm: rcar-du: Register a completion callback with VSP1
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 10 +++++++--
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  2 ++-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 29 ++++++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_dl.c   |  9 ++++++--
- drivers/media/platform/vsp1/vsp1_dl.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_drm.c  | 22 ++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_drm.h  | 10 +++++++++-
- drivers/media/platform/vsp1/vsp1_pipe.c |  6 ++++-
- drivers/media/platform/vsp1/vsp1_pipe.h |  2 ++-
- include/media/vsp1.h                    |  3 +++-
- 10 files changed, 89 insertions(+), 6 deletions(-)
-
-base-commit: 55e78dfc82988a79773ccca67e121f9a88df81c2
--- 
-git-series 0.9.1
+> ---
+>  drivers/media/platform/vsp1/vsp1_pipe.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+> index 3f1acf68dc6e..35364f594e19 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> @@ -157,9 +157,15 @@ const struct vsp1_format_info *vsp1_get_format_info(struct vsp1_device *vsp1,
+>  {
+>  	unsigned int i;
+>  
+> -	/* Special case, the VYUY format is supported on Gen2 only. */
+> -	if (vsp1->info->gen != 2 && fourcc == V4L2_PIX_FMT_VYUY)
+> -		return NULL;
+> +	/* Special case, the VYUY and HSV formats are supported on Gen2 only. */
+> +	if (vsp1->info->gen != 2) {
+> +		switch (fourcc) {
+> +		case V4L2_PIX_FMT_VYUY:
+> +		case V4L2_PIX_FMT_HSV24:
+> +		case V4L2_PIX_FMT_HSV32:
+> +			return NULL;
+> +		}
+> +	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(vsp1_video_formats); ++i) {
+>  		const struct vsp1_format_info *info = &vsp1_video_formats[i];
+> 
