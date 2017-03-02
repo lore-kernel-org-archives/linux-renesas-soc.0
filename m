@@ -1,83 +1,278 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 0/9] drm: bridge: dw-hdmi: Refactor PHY support
-Date: Thu,  2 Mar 2017 00:39:06 +0200
-Message-Id: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:47986 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752507AbdCBMlz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Mar 2017 07:41:55 -0500
+Subject: Re: [PATCH v4 6/9] drm: bridge: dw-hdmi: Create PHY operations
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        <dri-devel@lists.freedesktop.org>
+References: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20170301223915.29888-7-laurent.pinchart+renesas@ideasonboard.com>
+CC: Andy Yan <andy.yan@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        <linux-renesas-soc@vger.kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <c72d5615-59fd-9ac8-bd54-ac9bc939766e@synopsys.com>
+Date: Thu, 2 Mar 2017 12:34:50 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170301223915.29888-7-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Laurent,
 
-This patch series refactors all the PHY handling code in order to allow
-support of vendor PHYs and Synopsys DWC HDMI 2.0 TX PHYs.
 
-The series starts with a few cleanups and small fixes. Patch 1/9 just removes
-unused code, patch 2/9 moves the color converter code out of the PHY configure
-function as it isn't PHY-dependent, and patch 3/9 enables color conversion
-even for DVI as it is needed to output RGB when the input format is YUV.
+On 01-03-2017 22:39, Laurent Pinchart wrote:
+> The HDMI TX controller support different PHYs whose programming
+> interface can vary significantly, especially with vendor PHYs that are
+> not provided by Synopsys. To support them, create a PHY operation
+> structure that can be provided by the platform glue layer. The existing
+> PHY handling code (limited to Synopsys PHY support) is refactored into a
+> set of default PHY operations that are used automatically when the
+> platform glue doesn't provide its own operations.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-The next two patches fix the power down (4/9) and up (5/9) sequences to comply
-with the HDMI TX PHY specifications. They are the biggest functional changes
-in the whole set, and have been tested successfully (with the rest of the
-series) on i.MX6Q and R-Car H3. I'll try to perform tests on RK3288 tomorrow
-if nobody beats me to it (Neil, that's for you :-)). The PLL PHY lock delay
-has been measured to be between 300µs and 350µs on R-Car H3 and between 400µs
-and 600µs on i.MX6Q. The PHY power down delay has been measured to be less
-than 50µs on both platforms, and was often close to instant with power down
-reported in the first poll iteration. We should thus be more than safe with a
-5ms timeout.
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 
-Patch 6/9 breaks the PHY operations out. Glue code is then allowed to pass a
-PHY operations structure to support vendor PHYs. The existing PHY support code
-is turned into a default Synopsys PHYs implementation for those PHY
-operations.
+Best regards,
+Jose Miguel Abreu
 
-Patch 7/9 further refactors the Synopsys PHY configuration function to make
-it modular, in order to support DWC HDMI 2.0 TX PHYs that have a very
-different register layout compared to the currently supported PHYs. Glue code
-is again allowed to provide a custom PHY configuration implementation, with
-the existing PHY support code turned into the default implementation for all
-currently supported Synopsys PHYs.
-
-Patch 8/9 is a small cleanup that removes the now unneeded device type for
-glue code platform data, and patch 9/9 follows by switching the driver to
-regmap in order to support vendor-specific register access more easily.
-
-Kieran Bingham (2):
-  drm: bridge: dw-hdmi: Add support for custom PHY configuration
-  drm: bridge: dw-hdmi: Remove device type from platform data
-
-Laurent Pinchart (5):
-  drm: bridge: dw-hdmi: Remove unused functions
-  drm: bridge: dw-hdmi: Move CSC configuration out of PHY code
-  drm: bridge: dw-hdmi: Fix the PHY power down sequence
-  drm: bridge: dw-hdmi: Fix the PHY power up sequence
-  drm: bridge: dw-hdmi: Create PHY operations
-
-Neil Armstrong (2):
-  drm: bridge: dw-hdmi: Enable CSC even for DVI
-  drm: bridge: dw-hdmi: Switch to regmap for register access
-
- drivers/gpu/drm/bridge/dw-hdmi.c            | 467 +++++++++++++++++-----------
- drivers/gpu/drm/imx/dw_hdmi-imx.c           |   2 -
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c |   1 -
- include/drm/bridge/dw_hdmi.h                |  33 +-
- 4 files changed, 304 insertions(+), 199 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>  drivers/gpu/drm/bridge/dw-hdmi.c | 91 ++++++++++++++++++++++++++++------------
+>  include/drm/bridge/dw_hdmi.h     | 18 +++++++-
+>  2 files changed, 80 insertions(+), 29 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+> index 0aa3ad404f77..cb2703862be2 100644
+> --- a/drivers/gpu/drm/bridge/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+> @@ -141,8 +141,12 @@ struct dw_hdmi {
+>  	u8 edid[HDMI_EDID_LEN];
+>  	bool cable_plugin;
+>  
+> -	const struct dw_hdmi_phy_data *phy;
+> -	bool phy_enabled;
+> +	struct {
+> +		const struct dw_hdmi_phy_ops *ops;
+> +		const char *name;
+> +		void *data;
+> +		bool enabled;
+> +	} phy;
+>  
+>  	struct drm_display_mode previous_mode;
+>  
+> @@ -831,6 +835,10 @@ static void hdmi_video_packetize(struct dw_hdmi *hdmi)
+>  		  HDMI_VP_CONF);
+>  }
+>  
+> +/* -----------------------------------------------------------------------------
+> + * Synopsys PHY Handling
+> + */
+> +
+>  static inline void hdmi_phy_test_clear(struct dw_hdmi *hdmi,
+>  				       unsigned char bit)
+>  {
+> @@ -987,6 +995,7 @@ static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
+>  
+>  static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>  {
+> +	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+>  	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+>  	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
+>  	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+> @@ -1019,7 +1028,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>  	dw_hdmi_phy_power_off(hdmi);
+>  
+>  	/* Leave low power consumption mode by asserting SVSRET. */
+> -	if (hdmi->phy->has_svsret)
+> +	if (phy->has_svsret)
+>  		dw_hdmi_phy_enable_svsret(hdmi, 1);
+>  
+>  	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
+> @@ -1057,7 +1066,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>  	return dw_hdmi_phy_power_on(hdmi);
+>  }
+>  
+> -static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+> +static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+> +			    struct drm_display_mode *mode)
+>  {
+>  	int i, ret;
+>  
+> @@ -1071,10 +1081,31 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+>  			return ret;
+>  	}
+>  
+> -	hdmi->phy_enabled = true;
+>  	return 0;
+>  }
+>  
+> +static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
+> +{
+> +	dw_hdmi_phy_power_off(hdmi);
+> +}
+> +
+> +static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
+> +						      void *data)
+> +{
+> +	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
+> +		connector_status_connected : connector_status_disconnected;
+> +}
+> +
+> +static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
+> +	.init = dw_hdmi_phy_init,
+> +	.disable = dw_hdmi_phy_disable,
+> +	.read_hpd = dw_hdmi_phy_read_hpd,
+> +};
+> +
+> +/* -----------------------------------------------------------------------------
+> + * HDMI TX Setup
+> + */
+> +
+>  static void hdmi_tx_hdcp_config(struct dw_hdmi *hdmi)
+>  {
+>  	u8 de;
+> @@ -1289,16 +1320,6 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+>  	hdmi_writeb(hdmi, vsync_len, HDMI_FC_VSYNCINWIDTH);
+>  }
+>  
+> -static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi)
+> -{
+> -	if (!hdmi->phy_enabled)
+> -		return;
+> -
+> -	dw_hdmi_phy_power_off(hdmi);
+> -
+> -	hdmi->phy_enabled = false;
+> -}
+> -
+>  /* HDMI Initialization Step B.4 */
+>  static void dw_hdmi_enable_video_path(struct dw_hdmi *hdmi)
+>  {
+> @@ -1431,9 +1452,10 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+>  	hdmi_av_composer(hdmi, mode);
+>  
+>  	/* HDMI Initializateion Step B.2 */
+> -	ret = dw_hdmi_phy_init(hdmi);
+> +	ret = hdmi->phy.ops->init(hdmi, hdmi->phy.data, &hdmi->previous_mode);
+>  	if (ret)
+>  		return ret;
+> +	hdmi->phy.enabled = true;
+>  
+>  	/* HDMI Initialization Step B.3 */
+>  	dw_hdmi_enable_video_path(hdmi);
+> @@ -1548,7 +1570,11 @@ static void dw_hdmi_poweron(struct dw_hdmi *hdmi)
+>  
+>  static void dw_hdmi_poweroff(struct dw_hdmi *hdmi)
+>  {
+> -	dw_hdmi_phy_disable(hdmi);
+> +	if (hdmi->phy.enabled) {
+> +		hdmi->phy.ops->disable(hdmi, hdmi->phy.data);
+> +		hdmi->phy.enabled = false;
+> +	}
+> +
+>  	hdmi->bridge_is_on = false;
+>  }
+>  
+> @@ -1611,8 +1637,7 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+>  	dw_hdmi_update_phy_mask(hdmi);
+>  	mutex_unlock(&hdmi->mutex);
+>  
+> -	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
+> -		connector_status_connected : connector_status_disconnected;
+> +	return hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
+>  }
+>  
+>  static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
+> @@ -1898,19 +1923,31 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
+>  
+>  	phy_type = hdmi_readb(hdmi, HDMI_CONFIG2_ID);
+>  
+> +	if (phy_type == DW_HDMI_PHY_VENDOR_PHY) {
+> +		/* Vendor PHYs require support from the glue layer. */
+> +		if (!hdmi->plat_data->phy_ops || !hdmi->plat_data->phy_name) {
+> +			dev_err(hdmi->dev,
+> +				"Vendor HDMI PHY not supported by glue layer\n");
+> +			return -ENODEV;
+> +		}
+> +
+> +		hdmi->phy.ops = hdmi->plat_data->phy_ops;
+> +		hdmi->phy.data = hdmi->plat_data->phy_data;
+> +		hdmi->phy.name = hdmi->plat_data->phy_name;
+> +		return 0;
+> +	}
+> +
+> +	/* Synopsys PHYs are handled internally. */
+>  	for (i = 0; i < ARRAY_SIZE(dw_hdmi_phys); ++i) {
+>  		if (dw_hdmi_phys[i].type == phy_type) {
+> -			hdmi->phy = &dw_hdmi_phys[i];
+> +			hdmi->phy.ops = &dw_hdmi_synopsys_phy_ops;
+> +			hdmi->phy.name = dw_hdmi_phys[i].name;
+> +			hdmi->phy.data = (void *)&dw_hdmi_phys[i];
+>  			return 0;
+>  		}
+>  	}
+>  
+> -	if (phy_type == DW_HDMI_PHY_VENDOR_PHY)
+> -		dev_err(hdmi->dev, "Unsupported vendor HDMI PHY\n");
+> -	else
+> -		dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n",
+> -			phy_type);
+> -
+> +	dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n", phy_type);
+>  	return -ENODEV;
+>  }
+>  
+> @@ -2031,7 +2068,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>  	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
+>  		 hdmi->version >> 12, hdmi->version & 0xfff,
+>  		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without",
+> -		 hdmi->phy->name);
+> +		 hdmi->phy.name);
+>  
+>  	initialize_hdmi_ih_mutes(hdmi);
+>  
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index b080a171a23f..0f583ca7e66e 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -57,13 +57,27 @@ struct dw_hdmi_phy_config {
+>  	u16 vlev_ctr;   /* voltage level control */
+>  };
+>  
+> +struct dw_hdmi_phy_ops {
+> +	int (*init)(struct dw_hdmi *hdmi, void *data,
+> +		    struct drm_display_mode *mode);
+> +	void (*disable)(struct dw_hdmi *hdmi, void *data);
+> +	enum drm_connector_status (*read_hpd)(struct dw_hdmi *hdmi, void *data);
+> +};
+> +
+>  struct dw_hdmi_plat_data {
+>  	enum dw_hdmi_devtype dev_type;
+> +	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+> +					   struct drm_display_mode *mode);
+> +
+> +	/* Vendor PHY support */
+> +	const struct dw_hdmi_phy_ops *phy_ops;
+> +	const char *phy_name;
+> +	void *phy_data;
+> +
+> +	/* Synopsys PHY support */
+>  	const struct dw_hdmi_mpll_config *mpll_cfg;
+>  	const struct dw_hdmi_curr_ctrl *cur_ctr;
+>  	const struct dw_hdmi_phy_config *phy_config;
+> -	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+> -					   struct drm_display_mode *mode);
+>  };
+>  
+>  int dw_hdmi_probe(struct platform_device *pdev,
