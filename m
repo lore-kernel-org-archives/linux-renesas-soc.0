@@ -1,79 +1,78 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 2/2] serial: sh-sci: Move uart_register_driver call to device probe
-Date: Fri, 24 Mar 2017 17:26:34 +0100
-Message-Id: <20170324162634.8880-3-sjoerd.simons@collabora.co.uk>
-In-Reply-To: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
-References: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:63459 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750787AbdCBOCQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Mar 2017 09:02:16 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4 0/3] watchdog: add wdt and reset for renesas r7s72100
+Date: Thu,  2 Mar 2017 08:57:43 -0500
+Message-Id: <20170302135746.30550-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-uart_register_driver call binds the driver to a specific device
-node through tty_register_driver call. This should typically
-happen during device probe call.
+Some Renesas SoCs do not have a reset register and the only way to do a SW
+controlled reset is to use the watchdog timer. So while this series started
+out by only adding a reset feature, now it's a full watchdog timer driver that
+includes a reset handler.
 
-In a multiplatform scenario, it is possible that multiple serial
-drivers are part of the kernel. Currently the driver registration fails
-if multiple serial drivers with overlapping major/minor numbers are
-included.
+The longest WDT overflow you can get with a RZ/A1 (R7S72100) with its 8-bit
+wide counter is 125ms. Not very long.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+However, by setting max_hw_heartbeat_ms, the watchdog core will now handle
+pinging the WDT automatically and allow the user to set times as big as they
+want. Therefore, the default timeout for this driver is 30 seconds.
 
----
+Of course if system interrupts are disabled too long and wdt can't be pinged
+by the watchdog core, then the system will reset before the user specified
+timeout. But hey, it's better nothing.
 
- drivers/tty/serial/sh-sci.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+This driver was tested on an RZ/A1 RSK board using watchdog-simple.c from
+samples/watchdog/.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 9a47cc4f16a2..7c1c0c08459e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3063,6 +3063,12 @@ static int sci_probe_single(struct platform_device *dev,
- 		return -EINVAL;
- 	}
- 
-+	if (!sci_uart_driver.state) {
-+		ret = uart_register_driver(&sci_uart_driver);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ret = sci_init_single(dev, sciport, index, p, false);
- 	if (ret)
- 		return ret;
-@@ -3186,24 +3192,17 @@ static struct platform_driver sci_driver = {
- 
- static int __init sci_init(void)
- {
--	int ret;
--
- 	pr_info("%s\n", banner);
- 
--	ret = uart_register_driver(&sci_uart_driver);
--	if (likely(ret == 0)) {
--		ret = platform_driver_register(&sci_driver);
--		if (unlikely(ret))
--			uart_unregister_driver(&sci_uart_driver);
--	}
--
--	return ret;
-+	return platform_driver_register(&sci_driver);
- }
- 
- static void __exit sci_exit(void)
- {
- 	platform_driver_unregister(&sci_driver);
--	uart_unregister_driver(&sci_uart_driver);
-+
-+	if (sci_uart_driver.state)
-+		uart_unregister_driver(&sci_uart_driver);
- }
- 
- #ifdef CONFIG_SERIAL_SH_SCI_CONSOLE
+v4:
+* r7s72100.dtsi: changed from timer@ to watchdog@
+
+v3:
+* changed from a reset driver to a watchdog timer driver
+* use udelay(20) instead of msleep for reset handler
+* added Reviewed-by for r7s72100.dtsi and renesas-wdt.txt
+* added Acked-by for renesas-wdt.txt
+
+v2:
+* added to renesas-wdt.txt instead of creating a new file
+* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
+* changed "renesas,wdt-reset" to "renesas,rza-wdt"
+* added "renesas,rza-wdt" as a fallback
+* added interupt property (even though it is not used)
+* added clocks property
+* changed hard coded register values to defines
+* added msleep to while(1) loop
+* removed unnecessary #include files
+* added Reviewed-by: Geert Uytterhoeven for renesas-reset.c
+
+Chris Brandt (3):
+  watchdog: add rza_wdt driver
+  watchdog: renesas-wdt: add support for rza
+  ARM: dts: r7s72100: Add watchdog timer
+
+ .../devicetree/bindings/watchdog/renesas-wdt.txt   |   4 +-
+ arch/arm/boot/dts/r7s72100.dtsi                    |   7 +
+ drivers/watchdog/Kconfig                           |   8 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/rza_wdt.c                         | 208 +++++++++++++++++++++
+ 5 files changed, 227 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/watchdog/rza_wdt.c
+
 -- 
-2.11.0
+2.10.1
