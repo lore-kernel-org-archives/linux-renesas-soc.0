@@ -1,65 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:52743 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752544AbdCBOCQ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60688 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753106AbdCBNuE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Mar 2017 09:02:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
+        Thu, 2 Mar 2017 08:50:04 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
         Guenter Roeck <linux@roeck-us.net>,
         Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 3/3] ARM: dts: r7s72100: Add watchdog timer
-Date: Thu,  2 Mar 2017 08:57:46 -0500
-Message-Id: <20170302135746.30550-4-chris.brandt@renesas.com>
-In-Reply-To: <20170302135746.30550-1-chris.brandt@renesas.com>
-References: <20170302135746.30550-1-chris.brandt@renesas.com>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+Subject: RE: [PATCH v3 3/3] ARM: dts: r7s72100: Add watchdog timer
+Date: Thu, 2 Mar 2017 13:49:48 +0000
+Message-ID: <SG2PR06MB116545295F2844B3FC5BD1868A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170301225455.22818-1-chris.brandt@renesas.com>
+ <20170301225455.22818-4-chris.brandt@renesas.com>
+ <3944a62e-b061-eb4b-5351-da155a68852e@cogentembedded.com>
+In-Reply-To: <3944a62e-b061-eb4b-5351-da155a68852e@cogentembedded.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add watchdog timer support for RZ/A1.
-For the RZ/A1, the only way to do a reset is to overflow the WDT, so this
-is useful even if you don't need the watchdog functionality.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-* changed from timer@ to watchdog@
-v3:
-* added Reviewed-by
-v2:
-* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
-* changed "renesas,wdt-reset" to "renesas,rza-wdt"
-* added interupt property (even though it is not used)
-* added clocks property
----
- arch/arm/boot/dts/r7s72100.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index ed62e19..22f96b7 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -382,6 +382,13 @@
- 		cache-level = <2>;
- 	};
- 
-+	wdt: watchdog@fcfe0000 {
-+		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
-+		reg = <0xfcfe0000 0x6>;
-+		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&p0_clk>;
-+	};
-+
- 	i2c0: i2c@fcfee000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.10.1
+SGVsbG8gU2VyZ2VpLA0KDQpPbiBUaHVyc2RheSwgTWFyY2ggMDIsIDIwMTcsIFNlcmdlaSBTaHR5
+bHlvdiB3cm90ZToNCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvcjdzNzIxMDAu
+ZHRzaQ0KPiA+IGIvYXJjaC9hcm0vYm9vdC9kdHMvcjdzNzIxMDAuZHRzaSBpbmRleCBlZDYyZTE5
+Li42ZWNlZTcyIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3I3czcyMTAwLmR0
+c2kNCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9yN3M3MjEwMC5kdHNpDQo+ID4gQEAgLTM4
+Miw2ICszODIsMTMgQEANCj4gPiAgCQljYWNoZS1sZXZlbCA9IDwyPjsNCj4gPiAgCX07DQo+ID4N
+Cj4gPiArCXdkdDogdGltZXJAZmNmZTAwMDAgew0KPiANCj4gICAgIFdoeSBub3Qgd2F0Y2hkb2dA
+Li4uPyBUaGF0IG5hbWUgaXMgc3RhbmRhcmRpemVkIGluIGVQQVBSLi4uDQo+IA0KDQpZb3UgYXJl
+IHJpZ2h0LiBJJ2xsIGNoYW5nZSB0aGF0Lg0KDQpUaGFuayB5b3UhDQoNCkNocmlzDQoNCg==
