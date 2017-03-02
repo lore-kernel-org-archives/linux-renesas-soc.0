@@ -1,94 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:60044 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754158AbdCMRM4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 13:12:56 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH v2 4/4] pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
-Date: Mon, 13 Mar 2017 18:12:47 +0100
-Message-Id: <1489425167-22711-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
-References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: Renesas RZ/A1 pin and gpio controller
+Date: Thu, 2 Mar 2017 20:16:51 +0000
+Message-ID: <SG2PR06MB1165E84107B921961C4C0C2E8A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pins, groups, and a function for SCIF_CLK on R-Car H3 ES2.0.
-SCIF_CLK is the external clock source for the Baud Rate Generator for
-External Clock (BRG) on (H)SCIF serial ports.
+Hi Jacopo,
 
-Extracted from a big patch in the BSP by Takeshi Kihara.
+On Monday, February 20, 2017, Jacopo Mondi wrote:
+> Hello,
+>    this is the first submission of combined GPIO and pin controller drive=
+r
+> for Renesas RZ/A1 SoC.
+>=20
+> Compared to my RFC series on the same subject, this new implementation
+> supports a single SoC. If more devices with a similar pin controller will
+> arrive later, we will consider supporting them through this driver.
+>=20
+> The series adds the driver itself and register the pincontroller in dtsi.
+> The pin controller hardware supports 12 ports, each of them is also a gpi=
+o
+> controller.
+>=20
+> The series makes use of pinctrl and pinmux generic function currently
+> available in Linus Walleij's linux-pinctrl.git tree.
+>=20
+> Testing done veryfing functionalities of hardware modules enabled in
+> device tree (SCIF2 for serial output, RIIC for accessing an internal
+> eeprom chip and user visible leds).
+> Gpio have been also verified using a i2c-gpio device in place of the
+> native RIIC one to access the same eeprom device.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
-v2:
-  - New.
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 996cacee99c3e8be..0454f31c08318c48 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1773,6 +1773,22 @@ static const unsigned int scif5_clk_b_mux[] = {
- 	SCK5_B_MARK,
- };
- 
-+/* - SCIF Clock ------------------------------------------------------------- */
-+static const unsigned int scif_clk_a_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(6, 23),
-+};
-+static const unsigned int scif_clk_a_mux[] = {
-+	SCIF_CLK_A_MARK,
-+};
-+static const unsigned int scif_clk_b_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int scif_clk_b_mux[] = {
-+	SCIF_CLK_B_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
-@@ -1801,6 +1817,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif5_clk_a),
- 	SH_PFC_PIN_GROUP(scif5_data_b),
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
-+	SH_PFC_PIN_GROUP(scif_clk_a),
-+	SH_PFC_PIN_GROUP(scif_clk_b),
- };
- 
- static const char * const scif0_groups[] = {
-@@ -1848,6 +1866,11 @@ static const char * const scif5_groups[] = {
- 	"scif5_clk_b",
- };
- 
-+static const char * const scif_clk_groups[] = {
-+	"scif_clk_a",
-+	"scif_clk_b",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
-@@ -1855,6 +1878,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
-+	SH_PFC_FUNCTION(scif_clk),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-2.7.4
+Functionally, I tested these patches on an RZ/A1H RSK board (after modifyin=
+g the DT for the RSK vs the GENMAI board).
+
+The following worked fine:
+ * SCIF
+ * I2C
+ * SDHI
+ * Ethernet
+
+  (The trick is you have to know what pins need to be set as bi-directional=
+)
+
+
+I will look over the code and provide feedback separately.
+
+Cheers
+
+Chris
+
