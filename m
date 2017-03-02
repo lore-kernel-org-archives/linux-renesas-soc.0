@@ -1,78 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:63459 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750787AbdCBOCQ (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35037 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754150AbdCBHFm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Mar 2017 09:02:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 0/3] watchdog: add wdt and reset for renesas r7s72100
-Date: Thu,  2 Mar 2017 08:57:43 -0500
-Message-Id: <20170302135746.30550-1-chris.brandt@renesas.com>
+        Thu, 2 Mar 2017 02:05:42 -0500
+Received: by mail-wm0-f65.google.com with SMTP id u63so10794004wmu.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Mar 2017 23:05:41 -0800 (PST)
+Date: Thu, 2 Mar 2017 08:05:36 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v3 06/13] drm: bridge: Add LVDS encoder driver
+Message-ID: <20170302070536.be67cx2wbusxw3cb@phenom.ffwll.local>
+References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <20170104145824.bnjdsv77bay75ie2@phenom.ffwll.local>
+ <7936513.8Ot9e1G3ck@avalon>
+ <2659133.LIMvdVgYOv@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2659133.LIMvdVgYOv@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some Renesas SoCs do not have a reset register and the only way to do a SW
-controlled reset is to use the watchdog timer. So while this series started
-out by only adding a reset feature, now it's a full watchdog timer driver that
-includes a reset handler.
+On Thu, Mar 02, 2017 at 02:30:09AM +0200, Laurent Pinchart wrote:
+> Hi Daniel,
+> 
+> On Wednesday 04 Jan 2017 17:13:23 Laurent Pinchart wrote:
+> > On Wednesday 04 Jan 2017 15:58:25 Daniel Vetter wrote:
+> > > On Wed, Jan 04, 2017 at 04:33:57PM +0200, Laurent Pinchart wrote:
+> > >> On Wednesday 04 Jan 2017 14:51:48 Daniel Vetter wrote:
+> > >>> Hm, something like drm_bridge_panel_bridge_init(dev, panel) should be
+> > >>> enough, or not? My idea is to use this for the case where the only
+> > >>> thing in dt is the panel, with no real bridge chip. And I think we
+> > >>> don't need anything beyond that one _init function, plus maybe some
+> > >>> additional paramaters ...
+> > >> 
+> > >> There should be no bridge then. If you want the DRM core to manage
+> > >> panels automatically, then we should create specific helpers for that,
+> > >> not abuse the bridge infrastructure. Bridges should be instantiated from
+> > >> a hardware device and bound to drivers as usual.
+> > > 
+> > > I guess that's the part where I disagree: Just because there's physically
+> > > no bridge doesn't mean we shouldn't just treat it as one in the software
+> > > abstraction. If it looks and acts like a bridge (even an empty one), then
+> > > imo it can be a bridge.
+> > > 
+> > > If you insist on panels being panels, then I guess we need some other kind
+> > > of glue to bind them into arbitrary bridge chains. But given that the
+> > > callbacks match very closely, I don't see the point.
+> > > 
+> > > In an idea world a panel would probably derive from a drm_bridge, but
+> > > we're not in that universe unfortunately ;-)
+> > 
+> > Or both would derive from another object, but I agree that's how it should
+> > work. That's what I want to achieve, one step at a time. Creating dummy
+> > bridges isn't a step in that direction in my opinion, so I'd rather not do
+> > that, but work towards the right abstraction.
+> 
+> Do you object getting this patch merged as-is as a first step in the right 
+> direction ? :-)
 
-The longest WDT overflow you can get with a RZ/A1 (R7S72100) with its 8-bit
-wide counter is 125ms. Not very long.
+Well, I'm definitely no fan at all of typing code that's only there to
+satisfy some fairly arbitrary normative choices we attach to the words we
+pick for our abstraction.
 
-However, by setting max_hw_heartbeat_ms, the watchdog core will now handle
-pinging the WDT automatically and allow the user to set times as big as they
-want. Therefore, the default timeout for this driver is 30 seconds.
-
-Of course if system interrupts are disabled too long and wdt can't be pinged
-by the watchdog core, then the system will reset before the user specified
-timeout. But hey, it's better nothing.
-
-This driver was tested on an RZ/A1 RSK board using watchdog-simple.c from
-samples/watchdog/.
-
-v4:
-* r7s72100.dtsi: changed from timer@ to watchdog@
-
-v3:
-* changed from a reset driver to a watchdog timer driver
-* use udelay(20) instead of msleep for reset handler
-* added Reviewed-by for r7s72100.dtsi and renesas-wdt.txt
-* added Acked-by for renesas-wdt.txt
-
-v2:
-* added to renesas-wdt.txt instead of creating a new file
-* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
-* changed "renesas,wdt-reset" to "renesas,rza-wdt"
-* added "renesas,rza-wdt" as a fallback
-* added interupt property (even though it is not used)
-* added clocks property
-* changed hard coded register values to defines
-* added msleep to while(1) loop
-* removed unnecessary #include files
-* added Reviewed-by: Geert Uytterhoeven for renesas-reset.c
-
-Chris Brandt (3):
-  watchdog: add rza_wdt driver
-  watchdog: renesas-wdt: add support for rza
-  ARM: dts: r7s72100: Add watchdog timer
-
- .../devicetree/bindings/watchdog/renesas-wdt.txt   |   4 +-
- arch/arm/boot/dts/r7s72100.dtsi                    |   7 +
- drivers/watchdog/Kconfig                           |   8 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/rza_wdt.c                         | 208 +++++++++++++++++++++
- 5 files changed, 227 insertions(+), 1 deletion(-)
- create mode 100644 drivers/watchdog/rza_wdt.c
-
+But I'm also not going to stop you, just don't complain if I ask the next
+dummy panel to reuse your LVDS bridge :-)
+-Daniel
 -- 
-2.10.1
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
