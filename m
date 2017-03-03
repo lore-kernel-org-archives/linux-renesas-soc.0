@@ -1,26 +1,26 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59795 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40934 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752442AbdCEXok (ORCPT
+        with ESMTP id S1752261AbdCCR3S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 18:44:40 -0500
+        Fri, 3 Mar 2017 12:29:18 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
-Cc: Archit Taneja <architt@codeaurora.org>,
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Archit Taneja <architt@codeaurora.org>,
         Fabio Estevam <fabio.estevam@freescale.com>,
         Jose Abreu <Jose.Abreu@synopsys.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Nickey Yang <nickey.yang@rock-chips.com>,
         Russell King <rmk+kernel@arm.linux.org.uk>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v5.1 04/10] drm: bridge: dw-hdmi: Fix the PHY power down sequence
-Date: Mon,  6 Mar 2017 01:35:39 +0200
-Message-Id: <20170305233539.11898-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170303172007.26541-5-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170303172007.26541-5-laurent.pinchart+renesas@ideasonboard.com>
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 04/10] drm: bridge: dw-hdmi: Fix the PHY power down sequence
+Date: Fri,  3 Mar 2017 19:20:01 +0200
+Message-Id: <20170303172007.26541-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -49,12 +49,8 @@ Reviewed-by: Jose Abreu <joabreu@synopsys.com>
  drivers/gpu/drm/bridge/dw-hdmi.c | 52 +++++++++++++++++++++++++++++++++-------
  1 file changed, 43 insertions(+), 9 deletions(-)
 
-Changes since v5:
-
-- Fix compilation breakage due to reordering of the patches compared to v4
-
 diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index d863b3393aee..3a1cd4c7ac64 100644
+index d863b3393aee..85348ba6bb1c 100644
 --- a/drivers/gpu/drm/bridge/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
 @@ -116,6 +116,7 @@ struct dw_hdmi_i2c {
@@ -71,7 +67,7 @@ index d863b3393aee..3a1cd4c7ac64 100644
  
 +static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
 +{
-+	const struct dw_hdmi_phy_data *phy = hdmi->phy;
++	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
 +	unsigned int i;
 +	u16 val;
 +
