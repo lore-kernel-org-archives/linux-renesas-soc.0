@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40906 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40960 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751754AbdCCRXF (ORCPT
+        with ESMTP id S1751840AbdCCReU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 12:23:05 -0500
+        Fri, 3 Mar 2017 12:34:20 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
 Cc: Andy Yan <andy.yan@rock-chips.com>,
@@ -16,254 +16,232 @@ Cc: Andy Yan <andy.yan@rock-chips.com>,
         Russell King <rmk+kernel@arm.linux.org.uk>,
         Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 06/10] drm: bridge: dw-hdmi: Create PHY operations
-Date: Fri,  3 Mar 2017 19:20:03 +0200
-Message-Id: <20170303172007.26541-7-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v5 09/10] drm: bridge: dw-hdmi: Switch to regmap for register access
+Date: Fri,  3 Mar 2017 19:20:06 +0200
+Message-Id: <20170303172007.26541-10-laurent.pinchart+renesas@ideasonboard.com>
 In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The HDMI TX controller support different PHYs whose programming
-interface can vary significantly, especially with vendor PHYs that are
-not provided by Synopsys. To support them, create a PHY operation
-structure that can be provided by the platform glue layer. The existing
-PHY handling code (limited to Synopsys PHY support) is refactored into a
-set of default PHY operations that are used automatically when the
-platform glue doesn't provide its own operations.
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The Synopsys Designware HDMI TX Controller does not enforce register
+access on platforms instanciating it. The current driver supports two
+different types of memory-mapped flat register access, but in order to
+support the Amlogic Meson SoCs integration, and provide a more generic
+way to handle all sorts of register mapping, switch the register access
+to use the regmap infrastructure.
+
+In the case of registers that are not flat memory-mapped or do not
+conform to the current driver implementation, a regmap struct can be
+given in the plat_data and be used at probe or bind.
+
+Since the AHB audio driver is only available with direct memory access,
+only allow the I2S audio driver to be registered is directly
+memory-mapped.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+Reviewed-by: Jose Abreu <Jose.Abreu@synopsys.com>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 91 ++++++++++++++++++++++++++++------------
- include/drm/bridge/dw_hdmi.h     | 18 +++++++-
- 2 files changed, 80 insertions(+), 29 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 109 +++++++++++++++++++++------------------
+ include/drm/bridge/dw_hdmi.h     |   1 +
+ 2 files changed, 59 insertions(+), 51 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 0aa3ad404f77..cb2703862be2 100644
+index 132c00685796..026a0dce7661 100644
 --- a/drivers/gpu/drm/bridge/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -141,8 +141,12 @@ struct dw_hdmi {
- 	u8 edid[HDMI_EDID_LEN];
- 	bool cable_plugin;
+@@ -19,6 +19,7 @@
+ #include <linux/hdmi.h>
+ #include <linux/mutex.h>
+ #include <linux/of_device.h>
++#include <linux/regmap.h>
+ #include <linux/spinlock.h>
  
--	const struct dw_hdmi_phy_data *phy;
--	bool phy_enabled;
-+	struct {
-+		const struct dw_hdmi_phy_ops *ops;
-+		const char *name;
-+		void *data;
-+		bool enabled;
-+	} phy;
+ #include <drm/drm_of.h>
+@@ -171,8 +172,8 @@ struct dw_hdmi {
+ 	unsigned int audio_n;
+ 	bool audio_enable;
  
- 	struct drm_display_mode previous_mode;
+-	void (*write)(struct dw_hdmi *hdmi, u8 val, int offset);
+-	u8 (*read)(struct dw_hdmi *hdmi, int offset);
++	unsigned int reg_shift;
++	struct regmap *regm;
+ };
  
-@@ -831,6 +835,10 @@ static void hdmi_video_packetize(struct dw_hdmi *hdmi)
- 		  HDMI_VP_CONF);
- }
+ #define HDMI_IH_PHY_STAT0_RX_SENSE \
+@@ -183,42 +184,23 @@ struct dw_hdmi {
+ 	(HDMI_PHY_RX_SENSE0 | HDMI_PHY_RX_SENSE1 | \
+ 	 HDMI_PHY_RX_SENSE2 | HDMI_PHY_RX_SENSE3)
  
-+/* -----------------------------------------------------------------------------
-+ * Synopsys PHY Handling
-+ */
-+
- static inline void hdmi_phy_test_clear(struct dw_hdmi *hdmi,
- 				       unsigned char bit)
- {
-@@ -987,6 +995,7 @@ static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
- 
- static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- {
-+	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
- 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
- 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
-@@ -1019,7 +1028,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 	dw_hdmi_phy_power_off(hdmi);
- 
- 	/* Leave low power consumption mode by asserting SVSRET. */
--	if (hdmi->phy->has_svsret)
-+	if (phy->has_svsret)
- 		dw_hdmi_phy_enable_svsret(hdmi, 1);
- 
- 	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
-@@ -1057,7 +1066,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 	return dw_hdmi_phy_power_on(hdmi);
- }
- 
--static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
-+static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
-+			    struct drm_display_mode *mode)
- {
- 	int i, ret;
- 
-@@ -1071,10 +1081,31 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
- 			return ret;
- 	}
- 
--	hdmi->phy_enabled = true;
- 	return 0;
- }
- 
-+static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
-+{
-+	dw_hdmi_phy_power_off(hdmi);
-+}
-+
-+static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-+						      void *data)
-+{
-+	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
-+		connector_status_connected : connector_status_disconnected;
-+}
-+
-+static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
-+	.init = dw_hdmi_phy_init,
-+	.disable = dw_hdmi_phy_disable,
-+	.read_hpd = dw_hdmi_phy_read_hpd,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * HDMI TX Setup
-+ */
-+
- static void hdmi_tx_hdcp_config(struct dw_hdmi *hdmi)
- {
- 	u8 de;
-@@ -1289,16 +1320,6 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 	hdmi_writeb(hdmi, vsync_len, HDMI_FC_VSYNCINWIDTH);
- }
- 
--static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi)
+-static void dw_hdmi_writel(struct dw_hdmi *hdmi, u8 val, int offset)
 -{
--	if (!hdmi->phy_enabled)
--		return;
--
--	dw_hdmi_phy_power_off(hdmi);
--
--	hdmi->phy_enabled = false;
+-	writel(val, hdmi->regs + (offset << 2));
 -}
 -
- /* HDMI Initialization Step B.4 */
- static void dw_hdmi_enable_video_path(struct dw_hdmi *hdmi)
- {
-@@ -1431,9 +1452,10 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
- 	hdmi_av_composer(hdmi, mode);
- 
- 	/* HDMI Initializateion Step B.2 */
--	ret = dw_hdmi_phy_init(hdmi);
-+	ret = hdmi->phy.ops->init(hdmi, hdmi->phy.data, &hdmi->previous_mode);
- 	if (ret)
- 		return ret;
-+	hdmi->phy.enabled = true;
- 
- 	/* HDMI Initialization Step B.3 */
- 	dw_hdmi_enable_video_path(hdmi);
-@@ -1548,7 +1570,11 @@ static void dw_hdmi_poweron(struct dw_hdmi *hdmi)
- 
- static void dw_hdmi_poweroff(struct dw_hdmi *hdmi)
- {
--	dw_hdmi_phy_disable(hdmi);
-+	if (hdmi->phy.enabled) {
-+		hdmi->phy.ops->disable(hdmi, hdmi->phy.data);
-+		hdmi->phy.enabled = false;
-+	}
-+
- 	hdmi->bridge_is_on = false;
- }
- 
-@@ -1611,8 +1637,7 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
- 	dw_hdmi_update_phy_mask(hdmi);
- 	mutex_unlock(&hdmi->mutex);
- 
--	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
--		connector_status_connected : connector_status_disconnected;
-+	return hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
- }
- 
- static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
-@@ -1898,19 +1923,31 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
- 
- 	phy_type = hdmi_readb(hdmi, HDMI_CONFIG2_ID);
- 
-+	if (phy_type == DW_HDMI_PHY_VENDOR_PHY) {
-+		/* Vendor PHYs require support from the glue layer. */
-+		if (!hdmi->plat_data->phy_ops || !hdmi->plat_data->phy_name) {
-+			dev_err(hdmi->dev,
-+				"Vendor HDMI PHY not supported by glue layer\n");
-+			return -ENODEV;
-+		}
-+
-+		hdmi->phy.ops = hdmi->plat_data->phy_ops;
-+		hdmi->phy.data = hdmi->plat_data->phy_data;
-+		hdmi->phy.name = hdmi->plat_data->phy_name;
-+		return 0;
-+	}
-+
-+	/* Synopsys PHYs are handled internally. */
- 	for (i = 0; i < ARRAY_SIZE(dw_hdmi_phys); ++i) {
- 		if (dw_hdmi_phys[i].type == phy_type) {
--			hdmi->phy = &dw_hdmi_phys[i];
-+			hdmi->phy.ops = &dw_hdmi_synopsys_phy_ops;
-+			hdmi->phy.name = dw_hdmi_phys[i].name;
-+			hdmi->phy.data = (void *)&dw_hdmi_phys[i];
- 			return 0;
- 		}
- 	}
- 
--	if (phy_type == DW_HDMI_PHY_VENDOR_PHY)
--		dev_err(hdmi->dev, "Unsupported vendor HDMI PHY\n");
--	else
--		dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n",
--			phy_type);
+-static u8 dw_hdmi_readl(struct dw_hdmi *hdmi, int offset)
+-{
+-	return readl(hdmi->regs + (offset << 2));
+-}
 -
-+	dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n", phy_type);
+-static void dw_hdmi_writeb(struct dw_hdmi *hdmi, u8 val, int offset)
+-{
+-	writeb(val, hdmi->regs + offset);
+-}
+-
+-static u8 dw_hdmi_readb(struct dw_hdmi *hdmi, int offset)
+-{
+-	return readb(hdmi->regs + offset);
+-}
+-
+ static inline void hdmi_writeb(struct dw_hdmi *hdmi, u8 val, int offset)
+ {
+-	hdmi->write(hdmi, val, offset);
++	regmap_write(hdmi->regm, offset << hdmi->reg_shift, val);
+ }
+ 
+ static inline u8 hdmi_readb(struct dw_hdmi *hdmi, int offset)
+ {
+-	return hdmi->read(hdmi, offset);
++	unsigned int val = 0;
++
++	regmap_read(hdmi->regm, offset << hdmi->reg_shift, &val);
++
++	return val;
+ }
+ 
+ static void hdmi_modb(struct dw_hdmi *hdmi, u8 data, u8 mask, unsigned reg)
+ {
+-	u8 val = hdmi_readb(hdmi, reg) & ~mask;
+-
+-	val |= data & mask;
+-	hdmi_writeb(hdmi, val, reg);
++	regmap_update_bits(hdmi->regm, reg << hdmi->reg_shift, mask, data);
+ }
+ 
+ static void hdmi_mask_writeb(struct dw_hdmi *hdmi, u8 data, unsigned int reg,
+@@ -1989,6 +1971,20 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
  	return -ENODEV;
  }
  
-@@ -2031,7 +2068,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
- 		 hdmi->version >> 12, hdmi->version & 0xfff,
- 		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without",
--		 hdmi->phy->name);
-+		 hdmi->phy.name);
- 
- 	initialize_hdmi_ih_mutes(hdmi);
- 
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index b080a171a23f..0f583ca7e66e 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -57,13 +57,27 @@ struct dw_hdmi_phy_config {
- 	u16 vlev_ctr;   /* voltage level control */
- };
- 
-+struct dw_hdmi_phy_ops {
-+	int (*init)(struct dw_hdmi *hdmi, void *data,
-+		    struct drm_display_mode *mode);
-+	void (*disable)(struct dw_hdmi *hdmi, void *data);
-+	enum drm_connector_status (*read_hpd)(struct dw_hdmi *hdmi, void *data);
++static const struct regmap_config hdmi_regmap_8bit_config = {
++	.reg_bits	= 32,
++	.val_bits	= 8,
++	.reg_stride	= 1,
++	.max_register	= HDMI_I2CM_FS_SCL_LCNT_0_ADDR,
 +};
 +
- struct dw_hdmi_plat_data {
- 	enum dw_hdmi_devtype dev_type;
-+	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
-+					   struct drm_display_mode *mode);
++static const struct regmap_config hdmi_regmap_32bit_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= HDMI_I2CM_FS_SCL_LCNT_0_ADDR << 2,
++};
 +
-+	/* Vendor PHY support */
-+	const struct dw_hdmi_phy_ops *phy_ops;
-+	const char *phy_name;
-+	void *phy_data;
+ static struct dw_hdmi *
+ __dw_hdmi_probe(struct platform_device *pdev,
+ 		const struct dw_hdmi_plat_data *plat_data)
+@@ -1998,7 +1994,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	struct platform_device_info pdevinfo;
+ 	struct device_node *ddc_node;
+ 	struct dw_hdmi *hdmi;
+-	struct resource *iores;
++	struct resource *iores = NULL;
+ 	int irq;
+ 	int ret;
+ 	u32 val = 1;
+@@ -2022,22 +2018,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	mutex_init(&hdmi->audio_mutex);
+ 	spin_lock_init(&hdmi->audio_lock);
+ 
+-	of_property_read_u32(np, "reg-io-width", &val);
+-
+-	switch (val) {
+-	case 4:
+-		hdmi->write = dw_hdmi_writel;
+-		hdmi->read = dw_hdmi_readl;
+-		break;
+-	case 1:
+-		hdmi->write = dw_hdmi_writeb;
+-		hdmi->read = dw_hdmi_readb;
+-		break;
+-	default:
+-		dev_err(dev, "reg-io-width must be 1 or 4\n");
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
+ 	if (ddc_node) {
+ 		hdmi->ddc = of_get_i2c_adapter_by_node(ddc_node);
+@@ -2051,11 +2031,38 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 		dev_dbg(hdmi->dev, "no ddc property found\n");
+ 	}
+ 
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hdmi->regs = devm_ioremap_resource(dev, iores);
+-	if (IS_ERR(hdmi->regs)) {
+-		ret = PTR_ERR(hdmi->regs);
+-		goto err_res;
++	if (!plat_data->regm) {
++		const struct regmap_config *reg_config;
 +
-+	/* Synopsys PHY support */
- 	const struct dw_hdmi_mpll_config *mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config;
--	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
--					   struct drm_display_mode *mode);
++		of_property_read_u32(np, "reg-io-width", &val);
++		switch (val) {
++		case 4:
++			reg_config = &hdmi_regmap_32bit_config;
++			hdmi->reg_shift = 2;
++			break;
++		case 1:
++			reg_config = &hdmi_regmap_8bit_config;
++			break;
++		default:
++			dev_err(dev, "reg-io-width must be 1 or 4\n");
++			return ERR_PTR(-EINVAL);
++		}
++
++		iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++		hdmi->regs = devm_ioremap_resource(dev, iores);
++		if (IS_ERR(hdmi->regs)) {
++			ret = PTR_ERR(hdmi->regs);
++			goto err_res;
++		}
++
++		hdmi->regm = devm_regmap_init_mmio(dev, hdmi->regs, reg_config);
++		if (IS_ERR(hdmi->regm)) {
++			dev_err(dev, "Failed to configure regmap\n");
++			ret = PTR_ERR(hdmi->regm);
++			goto err_res;
++		}
++	} else {
++		hdmi->regm = plat_data->regm;
+ 	}
+ 
+ 	hdmi->isfr_clk = devm_clk_get(hdmi->dev, "isfr");
+@@ -2165,7 +2172,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	config0 = hdmi_readb(hdmi, HDMI_CONFIG0_ID);
+ 	config3 = hdmi_readb(hdmi, HDMI_CONFIG3_ID);
+ 
+-	if (config3 & HDMI_CONFIG3_AHBAUDDMA) {
++	if (iores && config3 & HDMI_CONFIG3_AHBAUDDMA) {
+ 		struct dw_hdmi_audio_data audio;
+ 
+ 		audio.phys = iores->start;
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 545f04fae3b6..bcceee8114a4 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -59,6 +59,7 @@ struct dw_hdmi_phy_ops {
  };
  
- int dw_hdmi_probe(struct platform_device *pdev,
+ struct dw_hdmi_plat_data {
++	struct regmap *regm;
+ 	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+ 					   struct drm_display_mode *mode);
+ 
 -- 
 Regards,
 
