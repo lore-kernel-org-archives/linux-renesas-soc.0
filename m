@@ -1,133 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40901 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751734AbdCCRXE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 12:23:04 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 05/10] drm: bridge: dw-hdmi: Fix the PHY power up sequence
-Date: Fri,  3 Mar 2017 19:20:02 +0200
-Message-Id: <20170303172007.26541-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU=1O_ZZgAXWSecO=HRtZdY8s0LfEMuUkpgvr528HV+Jw@mail.gmail.com>
+References: <1488547835-25229-1-git-send-email-geert+renesas@glider.be>
+ <2423895.QcDWT1fsiC@avalon> <CAMuHMdU=1O_ZZgAXWSecO=HRtZdY8s0LfEMuUkpgvr528HV+Jw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 3 Mar 2017 20:04:26 +0100
+Message-ID: <CAMuHMdWd+7bgRBCG+5jHvbds1_u9j5fN3_BmgMaim2o_JP+rcw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: drm: rcar-du: Document optional reset properties
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When powering the PHY up we need to wait for the PLL to lock. This is
-done by polling the TX_PHY_LOCK bit in the HDMI_PHY_STAT0 register
-(interrupt-based wait could be implemented as well but is likely
-overkill). The bit is asserted when the PLL locks, but the current code
-incorrectly waits for the bit to be deasserted. Fix it, and while at it,
-replace the udelay() with a sleep as the code never runs in
-non-sleepable context.
+On Fri, Mar 3, 2017 at 8:03 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>> +Optional properties:
+>>> +  - resets: A list of phandles + reset-specifier pairs, one for each entry
+>>> in
+>>
+>> s/phandlers/phandle/
+>
+> You're seeing typos that do not exist ;-)
 
-To be consistent with the power down implementation move the poll loop
-to the power off function.
+Ah, you mean plural vs. singular?
+You're right, but I just copied that from the "clocks" description...
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 65 +++++++++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 28 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 85348ba6bb1c..0aa3ad404f77 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -949,9 +949,44 @@ static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
- 	dw_hdmi_phy_gen2_pddq(hdmi, 1);
- }
- 
-+static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
-+{
-+	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
-+	unsigned int i;
-+	u8 val;
-+
-+	if (phy->gen == 1) {
-+		dw_hdmi_phy_enable_powerdown(hdmi, false);
-+
-+		/* Toggle TMDS enable. */
-+		dw_hdmi_phy_enable_tmds(hdmi, 0);
-+		dw_hdmi_phy_enable_tmds(hdmi, 1);
-+		return 0;
-+	}
-+
-+	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
-+	dw_hdmi_phy_gen2_pddq(hdmi, 0);
-+
-+	/* Wait for PHY PLL lock */
-+	for (i = 0; i < 5; ++i) {
-+		val = hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_TX_PHY_LOCK;
-+		if (val)
-+			break;
-+
-+		usleep_range(1000, 2000);
-+	}
-+
-+	if (!val) {
-+		dev_err(hdmi->dev, "PHY PLL failed to lock\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	dev_dbg(hdmi->dev, "PHY PLL locked %u iterations\n", i);
-+	return 0;
-+}
-+
- static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- {
--	u8 val, msec;
- 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
- 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
-@@ -1019,33 +1054,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 	hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_CKCALCTRL_OVERRIDE,
- 			   HDMI_3D_TX_PHY_CKCALCTRL);
- 
--	dw_hdmi_phy_enable_powerdown(hdmi, false);
--
--	/* toggle TMDS enable */
--	dw_hdmi_phy_enable_tmds(hdmi, 0);
--	dw_hdmi_phy_enable_tmds(hdmi, 1);
--
--	/* gen2 tx power on */
--	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
--	dw_hdmi_phy_gen2_pddq(hdmi, 0);
--
--	/* Wait for PHY PLL lock */
--	msec = 5;
--	do {
--		val = hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_TX_PHY_LOCK;
--		if (!val)
--			break;
--
--		if (msec == 0) {
--			dev_err(hdmi->dev, "PHY PLL not locked\n");
--			return -ETIMEDOUT;
--		}
--
--		udelay(1000);
--		msec--;
--	} while (1);
--
--	return 0;
-+	return dw_hdmi_phy_power_on(hdmi);
- }
- 
- static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
--- 
-Regards,
+                        Geert
 
-Laurent Pinchart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
