@@ -1,46 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 8/8] ARM: dts: r8a7794: Remove unit-address and reg from integrated cache
-Date: Mon,  6 Mar 2017 17:40:43 +0100
-Message-Id: <1488818443-25196-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
-References: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40933 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752245AbdCCR3Q (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 3 Mar 2017 12:29:16 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 01/10] drm: bridge: dw-hdmi: Remove unused functions
+Date: Fri,  3 Mar 2017 19:19:58 +0200
+Message-Id: <20170303172007.26541-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Cortex-A7 cache controller is an integrated controller, and thus the
-device node representing it should not have a unit-addresses or reg
-property.
+Most of the hdmi_phy_test_*() functions are unused. Remove them.
 
-Fixes: 34ea4b4a827b4ee7 ("ARM: dts: r8a7794: Fix W=1 dtc warnings")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+Tested-by: Nickey Yang <nickey.yang@rock-chips.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 319c1069b7eeb722..cb31cd2232f9166f 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -56,9 +56,8 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 9a9ec27d9e28..ce7496399ccf 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -837,32 +837,6 @@ static inline void hdmi_phy_test_clear(struct dw_hdmi *hdmi,
+ 		  HDMI_PHY_TST0_TSTCLR_MASK, HDMI_PHY_TST0);
+ }
  
--		L2_CA7: cache-controller@0 {
-+		L2_CA7: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			power-domains = <&sysc R8A7794_PD_CA7_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
+-static inline void hdmi_phy_test_enable(struct dw_hdmi *hdmi,
+-					unsigned char bit)
+-{
+-	hdmi_modb(hdmi, bit << HDMI_PHY_TST0_TSTEN_OFFSET,
+-		  HDMI_PHY_TST0_TSTEN_MASK, HDMI_PHY_TST0);
+-}
+-
+-static inline void hdmi_phy_test_clock(struct dw_hdmi *hdmi,
+-				       unsigned char bit)
+-{
+-	hdmi_modb(hdmi, bit << HDMI_PHY_TST0_TSTCLK_OFFSET,
+-		  HDMI_PHY_TST0_TSTCLK_MASK, HDMI_PHY_TST0);
+-}
+-
+-static inline void hdmi_phy_test_din(struct dw_hdmi *hdmi,
+-				     unsigned char bit)
+-{
+-	hdmi_writeb(hdmi, bit, HDMI_PHY_TST1);
+-}
+-
+-static inline void hdmi_phy_test_dout(struct dw_hdmi *hdmi,
+-				      unsigned char bit)
+-{
+-	hdmi_writeb(hdmi, bit, HDMI_PHY_TST2);
+-}
+-
+ static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
+ {
+ 	u32 val;
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
