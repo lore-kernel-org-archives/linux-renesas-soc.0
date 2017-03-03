@@ -1,160 +1,59 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] [RFC] base: soc: Allow early registration of a single SoC device
-Date: Thu,  9 Mar 2017 19:18:33 +0100
-Message-Id: <1489083513-19245-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489083513-19245-1-git-send-email-geert+renesas@glider.be>
-References: <1489083513-19245-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40935 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752263AbdCCR3S (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 3 Mar 2017 12:29:18 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 03/10] drm: bridge: dw-hdmi: Enable CSC even for DVI
+Date: Fri,  3 Mar 2017 19:20:00 +0200
+Message-Id: <20170303172007.26541-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-commit 1da1b3628df34a2a ("base: soc: Early register bus when needed")
-added support for early registration of SoC devices from a
-core_initcall().  However, some drivers need to check the SoC revision
-from an early_initcall(), which is even earlier.
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-While registering the SoC bus and device, and using soc_device_match(),
-from an early_initcall() do work, the "soc" directory and the "soc0"
-file end up wrongly in the sysfs root, as the "bus" resp. "devices"
-directories haven't been created yet.
+If the input pixel format is not RGB, the CSC must be enabled in order to
+provide valid pixel to DVI sinks.
+This patch removes the hdmi only dependency on the CSC enabling.
 
-To fix this, allow to register a single SoC device early on.
-As long as the SoC bus isn't registered, soc_device_match() just
-matches against this early device.
-When the SoC bus is registered later, the early device is registered for
-real.
-
-Note that soc_device_register() returns NULL (no error, but also not a
-valid pointer) when registering an early device.  Hence platform devices
-cannot be instantiated as children of the "soc0" node representing an
-early SoC device.  This should not be an issue, as that practice has
-been deprecated for new platforms.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
-Is there a better way to fix this?
-While I believe all current users register a single SoC device, we may
-want to register multiple SoC devices in the future?
+ drivers/gpu/drm/bridge/dw-hdmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-soc_device_match() itself is completely independent from sysfs, but the
-sysfs operations are tied intimately to the driver core.
-
-The "bus" and "devices" directories are created from do_basic_setup() ->
-driver_init() -> devices_init() / buses_init(), which runs in between
-do_pre_smp_initcalls() (early_initcall()) and do_initcalls().
----
- drivers/base/soc.c | 50 ++++++++++++++++++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 50033081834a9ccd..909dedae4c4e1d48 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -109,15 +109,18 @@ static void soc_release(struct device *dev)
- 	kfree(soc_dev);
- }
- 
-+static struct soc_device_attribute *early_soc_dev_attr;
-+
- struct soc_device *soc_device_register(struct soc_device_attribute *soc_dev_attr)
- {
- 	struct soc_device *soc_dev;
- 	int ret;
- 
- 	if (!soc_bus_type.p) {
--		ret = bus_register(&soc_bus_type);
--		if (ret)
--			goto out1;
-+		if (early_soc_dev_attr)
-+			return ERR_PTR(-EBUSY);
-+		early_soc_dev_attr = soc_dev_attr;
-+		return NULL;
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 906583beb08b..d863b3393aee 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1291,8 +1291,8 @@ static void dw_hdmi_enable_video_path(struct dw_hdmi *hdmi)
+ 		hdmi_writeb(hdmi, clkdis, HDMI_MC_CLKDIS);
  	}
  
- 	soc_dev = kzalloc(sizeof(*soc_dev), GFP_KERNEL);
-@@ -159,45 +162,53 @@ void soc_device_unregister(struct soc_device *soc_dev)
- 	ida_simple_remove(&soc_ida, soc_dev->soc_dev_num);
- 
- 	device_unregister(&soc_dev->dev);
-+	early_soc_dev_attr = NULL;
- }
- 
- static int __init soc_bus_register(void)
- {
--	if (soc_bus_type.p)
--		return 0;
-+	int ret;
- 
--	return bus_register(&soc_bus_type);
-+	ret = bus_register(&soc_bus_type);
-+	if (ret)
-+		return ret;
-+
-+	if (early_soc_dev_attr)
-+		return PTR_ERR(soc_device_register(early_soc_dev_attr));
-+
-+	return 0;
- }
- core_initcall(soc_bus_register);
- 
--static int soc_device_match_one(struct device *dev, void *arg)
-+static int soc_device_match_attr(const struct soc_device_attribute *attr,
-+				 const struct soc_device_attribute *match)
- {
--	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
--	const struct soc_device_attribute *match = arg;
--
- 	if (match->machine &&
--	    (!soc_dev->attr->machine ||
--	     !glob_match(match->machine, soc_dev->attr->machine)))
-+	    (!attr->machine || !glob_match(match->machine, attr->machine)))
- 		return 0;
- 
- 	if (match->family &&
--	    (!soc_dev->attr->family ||
--	     !glob_match(match->family, soc_dev->attr->family)))
-+	    (!attr->family || !glob_match(match->family, attr->family)))
- 		return 0;
- 
- 	if (match->revision &&
--	    (!soc_dev->attr->revision ||
--	     !glob_match(match->revision, soc_dev->attr->revision)))
-+	    (!attr->revision || !glob_match(match->revision, attr->revision)))
- 		return 0;
- 
- 	if (match->soc_id &&
--	    (!soc_dev->attr->soc_id ||
--	     !glob_match(match->soc_id, soc_dev->attr->soc_id)))
-+	    (!attr->soc_id || !glob_match(match->soc_id, attr->soc_id)))
- 		return 0;
- 
- 	return 1;
- }
- 
-+static int soc_device_match_one(struct device *dev, void *arg)
-+{
-+	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
-+
-+	return soc_device_match_attr(soc_dev->attr, arg);
-+}
-+
- /*
-  * soc_device_match - identify the SoC in the machine
-  * @matches: zero-terminated array of possible matches
-@@ -230,6 +241,9 @@ const struct soc_device_attribute *soc_device_match(
- 			break;
- 		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
- 				       soc_device_match_one);
-+		if (ret < 0 && early_soc_dev_attr)
-+			ret = soc_device_match_attr(early_soc_dev_attr,
-+						    matches);
- 		if (ret < 0)
- 			return NULL;
- 		if (!ret)
+-	/* Enable color space conversion if needed (for HDMI sinks only). */
+-	if (hdmi->sink_is_hdmi && is_color_space_conversion(hdmi))
++	/* Enable color space conversion if needed */
++	if (is_color_space_conversion(hdmi))
+ 		hdmi_writeb(hdmi, HDMI_MC_FLOWCTRL_FEED_THROUGH_OFF_CSC_IN_PATH,
+ 			    HDMI_MC_FLOWCTRL);
+ 	else
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
