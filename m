@@ -1,42 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33938 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936806AbdCJNT3 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:34145 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751641AbdCCRpC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:19:29 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/13] ARM: dts: porter: Drop superfluous status update for frequency override
-Date: Fri, 10 Mar 2017 14:19:09 +0100
-Message-Id: <1489151956-19270-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
-References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+        Fri, 3 Mar 2017 12:45:02 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Wim Van Sebroeck <wim@iguana.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v5 3/3] ARM: dts: r7s72100: Add watchdog timer
+Date: Fri,  3 Mar 2017 12:32:01 -0500
+Message-Id: <20170303173201.5597-4-chris.brandt@renesas.com>
+In-Reply-To: <20170303173201.5597-1-chris.brandt@renesas.com>
+References: <20170303173201.5597-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pcie_bus_clk device node is already enabled in r8a7791.dtsi, so
-there is no need to update its status again.
+Add watchdog timer support for RZ/A1.
+For the RZ/A1, the only way to do a reset is to overflow the WDT, so this
+is useful even if you don't need the watchdog functionality.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 1 -
- 1 file changed, 1 deletion(-)
+v4:
+* changed from timer@ to watchdog@
+v3:
+* added Reviewed-by
+v2:
+* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
+* changed "renesas,wdt-reset" to "renesas,rza-wdt"
+* added interupt property (even though it is not used)
+* added clocks property
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index d9aa2cd6d6256776..95da5cb9d37ab8e5 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -401,7 +401,6 @@
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index ed62e19..22f96b7 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -382,6 +382,13 @@
+ 		cache-level = <2>;
+ 	};
  
- &pcie_bus_clk {
- 	clock-frequency = <100000000>;
--	status = "okay";
- };
- 
- &pciec {
++	wdt: watchdog@fcfe0000 {
++		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
++		reg = <0xfcfe0000 0x6>;
++		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
++		clocks = <&p0_clk>;
++	};
++
+ 	i2c0: i2c@fcfee000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-2.7.4
+2.10.1
