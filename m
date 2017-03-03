@@ -1,61 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:40308 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754946AbdCGSbd (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40959 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752315AbdCCReP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 13:31:33 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vd4MJ6zTXzMr9LQ
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2017 19:05:32 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
+        Fri, 3 Mar 2017 12:34:15 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/5] arm64: dts: r8a7796: Add Cortex-A57 PMU node
-Date: Tue,  7 Mar 2017 19:03:23 +0100
-Message-Id: <1488909806-3322-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
-References: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 08/10] drm: bridge: dw-hdmi: Remove device type from platform data
+Date: Fri,  3 Mar 2017 19:20:05 +0200
+Message-Id: <20170303172007.26541-9-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Enable the performance monitor unit for the Cortex-A57 cores on the
-R8A7796 SoC.
+The device type isn't used anymore now that workarounds and PHY-specific
+operations are performed based on version information read at runtime.
+Remove it.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/bridge/dw-hdmi.c            | 2 --
+ drivers/gpu/drm/imx/dw_hdmi-imx.c           | 2 --
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 1 -
+ include/drm/bridge/dw_hdmi.h                | 7 -------
+ 4 files changed, 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index d2a2110fc7fc3d23..454e1292f9108b34 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -252,6 +252,14 @@
- 			reg = <0 0xe6060000 0 0x50c>;
- 		};
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index b835d81bb471..132c00685796 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -127,7 +127,6 @@ struct dw_hdmi {
+ 	struct drm_connector connector;
+ 	struct drm_bridge bridge;
  
-+		pmu_a57 {
-+			compatible = "arm,cortex-a57-pmu";
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-affinity = <&a57_0>,
-+					     <&a57_1>;
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7796-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+-	enum dw_hdmi_devtype dev_type;
+ 	unsigned int version;
+ 
+ 	struct platform_device *audio;
+@@ -2014,7 +2013,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 
+ 	hdmi->plat_data = plat_data;
+ 	hdmi->dev = dev;
+-	hdmi->dev_type = plat_data->dev_type;
+ 	hdmi->sample_rate = 48000;
+ 	hdmi->disabled = true;
+ 	hdmi->rxsense = true;
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index f645275e6e63..f039641070ac 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -175,7 +175,6 @@ static struct dw_hdmi_plat_data imx6q_hdmi_drv_data = {
+ 	.mpll_cfg   = imx_mpll_cfg,
+ 	.cur_ctr    = imx_cur_ctr,
+ 	.phy_config = imx_phy_config,
+-	.dev_type   = IMX6Q_HDMI,
+ 	.mode_valid = imx6q_hdmi_mode_valid,
+ };
+ 
+@@ -183,7 +182,6 @@ static struct dw_hdmi_plat_data imx6dl_hdmi_drv_data = {
+ 	.mpll_cfg = imx_mpll_cfg,
+ 	.cur_ctr  = imx_cur_ctr,
+ 	.phy_config = imx_phy_config,
+-	.dev_type = IMX6DL_HDMI,
+ 	.mode_valid = imx6dl_hdmi_mode_valid,
+ };
+ 
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index a6d4a0236e8f..d53827413996 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -237,7 +237,6 @@ static const struct dw_hdmi_plat_data rockchip_hdmi_drv_data = {
+ 	.mpll_cfg   = rockchip_mpll_cfg,
+ 	.cur_ctr    = rockchip_cur_ctr,
+ 	.phy_config = rockchip_phy_config,
+-	.dev_type   = RK3288_HDMI,
+ };
+ 
+ static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index dd330259a3dc..545f04fae3b6 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -21,12 +21,6 @@ enum {
+ 	DW_HDMI_RES_MAX,
+ };
+ 
+-enum dw_hdmi_devtype {
+-	IMX6Q_HDMI,
+-	IMX6DL_HDMI,
+-	RK3288_HDMI,
+-};
+-
+ enum dw_hdmi_phy_type {
+ 	DW_HDMI_PHY_DWC_HDMI_TX_PHY = 0x00,
+ 	DW_HDMI_PHY_DWC_MHL_PHY_HEAC = 0xb2,
+@@ -65,7 +59,6 @@ struct dw_hdmi_phy_ops {
+ };
+ 
+ struct dw_hdmi_plat_data {
+-	enum dw_hdmi_devtype dev_type;
+ 	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+ 					   struct drm_display_mode *mode);
+ 
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
