@@ -1,85 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from newton.telenet-ops.be ([195.130.132.45]:37970 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754738AbdC1JQt (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:51064 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751160AbdCCNTW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 05:16:49 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 3vslcr2MbbzMrdpq
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 11:16:12 +0200 (CEST)
+        Fri, 3 Mar 2017 08:19:22 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@sang-engineering.com>,
-        Christoph Baumann <cbaumann@visteon.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] serial: sh-sci: Fix hang in sci_reset()
-Date: Tue, 28 Mar 2017 11:13:44 +0200
-Message-Id: <1490692426-19252-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
-References: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: r8a7796: Remove unit-address and reg from integrated cache
+Date: Fri,  3 Mar 2017 14:18:17 +0100
+Message-Id: <1488547097-4804-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1488547097-4804-1-git-send-email-geert+renesas@glider.be>
+References: <1488547097-4804-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the .set_termios() callback resets the UART, it first waits (busy
-loops) until all characters in the transmit FIFO have been transmitted,
-to prevent a port configuration change from impacting these characters.
+The Cortex-A57 cache controller is an integrated controller, and thus
+the device node representing it should not have a unit-addresses or reg
+property.
 
-However, if the UART has dedicated RTS/CTS hardware flow control
-enabled, these characters may have been stuck in the FIFO due to CTS not
-being asserted by the remote side.
-
-  - When a new user opens the port, .set_termios() is called while
-    transmission is still disabled, leading to an infinite loop:
-
-	NMI watchdog: BUG: soft lockup - CPU#0 stuck for 22s!
-
-  - When an active user changes port configuration without waiting for
-    the draining of the transmit FIFO, this may also block indefinitely,
-    until CTS is asserted by the remote side.
-
-This has been observed with SCIFA (on r8a7740/armadillo), and SCIFB and
-HSCIF (on r8a7791/koelsch).
-
-To fix this, remove the code that waits for the draining of the transmit
-FIFO.
-
+Fixes: 1561f20760ec96db ("arm64: dts: r8a7796: Add Renesas R8A7796 SoC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To reproduce:
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-    stty -echo < /dev/scifb0
-    stty crtscts < /dev/scifb0
-    echo hello > /dev/scifb0	# returns early (wrote to FIFO)
-    echo hello > /dev/scifb0	# hangs
-
-v2:
-  - Remove the draining of the transmit FIFO completely, instead of
-    skipping it when tranmission was not enabled, as the hang could
-    still be reproduced when an active user changes port configuration
-    without waiting for the draining of the transmit FIFO.
----
- drivers/tty/serial/sh-sci.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 1df57461ece4337b..446a23bee14008bb 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2159,10 +2159,6 @@ static void sci_reset(struct uart_port *port)
- 	unsigned int status;
- 	struct sci_port *s = to_sci_port(port);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index f02dfdce92406f67..b950dcec9ace96a1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -48,9 +48,8 @@
+ 			enable-method = "psci";
+ 		};
  
--	do {
--		status = serial_port_in(port, SCxSR);
--	} while (!(status & SCxSR_TEND(port)));
--
- 	serial_port_out(port, SCSCR, 0x00);	/* TE=0, RE=0, CKE1=0 */
- 
- 	reg = sci_getreg(port, SCFCR);
+-		L2_CA57: cache-controller@0 {
++		L2_CA57: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
 -- 
 2.7.4
