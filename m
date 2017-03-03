@@ -1,26 +1,26 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:45116 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40961 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751083AbdCDBTQ (ORCPT
+        with ESMTP id S1751840AbdCCReW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 20:19:16 -0500
+        Fri, 3 Mar 2017 12:34:22 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
-Cc: Fabio Estevam <fabio.estevam@freescale.com>,
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
         Jose Abreu <Jose.Abreu@synopsys.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Nickey Yang <nickey.yang@rock-chips.com>,
         Russell King <rmk+kernel@arm.linux.org.uk>,
-        Andy Yan <andy.yan@rock-chips.com>,
         Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: [PATCH v5.1 10/10] drm: bridge: dw-hdmi: Move the driver to a separate directory.
-Date: Sat,  4 Mar 2017 03:11:44 +0200
-Message-Id: <20170304011144.1618-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170303172007.26541-2-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170303172007.26541-2-laurent.pinchart+renesas@ideasonboard.com>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 10/10] drm: bridge: dw-hdmi: Move the driver to a separate directory.
+Date: Fri,  3 Mar 2017 19:20:07 +0200
+Message-Id: <20170303172007.26541-11-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -33,24 +33,20 @@ Suggested-by: Jose Abreu <Jose.Abreu@synopsys.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
-Changes since v5:
-
-- Removed dw-hdmi Kconfig options from drivers/gpu/bridge/Kconfig
-
 Changes since v4:
 
 - Fixed typos in Kconfig
 ---
- drivers/gpu/drm/bridge/Kconfig                     | 26 ++--------------------
+ drivers/gpu/drm/bridge/Kconfig                     |  2 ++
  drivers/gpu/drm/bridge/Makefile                    |  4 +---
- drivers/gpu/drm/bridge/synopsys/Kconfig            | 23 +++++++++++++++++++
+ drivers/gpu/drm/bridge/synopsys/Kconfig            | 23 ++++++++++++++++++++++
  drivers/gpu/drm/bridge/synopsys/Makefile           |  5 +++++
  .../drm/bridge/{ => synopsys}/dw-hdmi-ahb-audio.c  |  0
  .../gpu/drm/bridge/{ => synopsys}/dw-hdmi-audio.h  |  0
  .../drm/bridge/{ => synopsys}/dw-hdmi-i2s-audio.c  |  0
  drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi.c    |  0
  drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi.h    |  0
- 9 files changed, 31 insertions(+), 27 deletions(-)
+ 9 files changed, 31 insertions(+), 3 deletions(-)
  create mode 100644 drivers/gpu/drm/bridge/synopsys/Kconfig
  create mode 100644 drivers/gpu/drm/bridge/synopsys/Makefile
  rename drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi-ahb-audio.c (100%)
@@ -60,41 +56,10 @@ Changes since v4:
  rename drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi.h (100%)
 
 diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index eb8688ec6f18..02e211cd8129 100644
+index eb8688ec6f18..68ceba083ca1 100644
 --- a/drivers/gpu/drm/bridge/Kconfig
 +++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -24,30 +24,6 @@ config DRM_DUMB_VGA_DAC
- 	help
- 	  Support for RGB to VGA DAC based bridges
- 
--config DRM_DW_HDMI
--	tristate
--	select DRM_KMS_HELPER
--
--config DRM_DW_HDMI_AHB_AUDIO
--	tristate "Synopsis Designware AHB Audio interface"
--	depends on DRM_DW_HDMI && SND
--	select SND_PCM
--	select SND_PCM_ELD
--	select SND_PCM_IEC958
--	help
--	  Support the AHB Audio interface which is part of the Synopsis
--	  Designware HDMI block.  This is used in conjunction with
--	  the i.MX6 HDMI driver.
--
--config DRM_DW_HDMI_I2S_AUDIO
--	tristate "Synopsis Designware I2S Audio interface"
--	depends on SND_SOC
--	depends on DRM_DW_HDMI
--	select SND_SOC_HDMI_CODEC
--	help
--	  Support the I2S Audio interface which is part of the Synopsis
--	  Designware HDMI block.
--
- config DRM_NXP_PTN3460
- 	tristate "NXP PTN3460 DP/LVDS bridge"
- 	depends on OF
-@@ -101,4 +77,6 @@ source "drivers/gpu/drm/bridge/analogix/Kconfig"
+@@ -101,4 +101,6 @@ source "drivers/gpu/drm/bridge/analogix/Kconfig"
  
  source "drivers/gpu/drm/bridge/adv7511/Kconfig"
  
