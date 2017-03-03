@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:60653 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753140AbdCTNsy (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:27467 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751973AbdCCNbF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 09:48:54 -0400
-Date: Mon, 20 Mar 2017 14:47:55 +0100
-From: jacopo <jacopo@jmondi.org>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Fri, 3 Mar 2017 08:31:05 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: jacopo mondi <jacopo@jmondi.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         "geert+renesas@glider.be" <geert+renesas@glider.be>,
         "laurent.pinchart@ideasonboard.com"
@@ -20,155 +19,72 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
-Message-ID: <20170320134755.GB30223@w540>
+Subject: RE: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
+Date: Fri, 3 Mar 2017 13:24:51 +0000
+Message-ID: <SG2PR06MB1165E8FAE15523F7D3EC83718A2B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
  <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
  <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
  <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdVdiMWNq1or9JgzAKfWXsDg1VD9ehG6U=E_snes04Y1Mg@mail.gmail.com>
- <SG2PR06MB1165E8FAE15523F7D3EC83718A2B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <CAMuHMdVdiMWNq1or9JgzAKfWXsDg1VD9ehG6U=E_snes04Y1Mg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165E8FAE15523F7D3EC83718A2B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris, Geert,
-
-On Fri, Mar 03, 2017 at 01:24:51PM +0000, Chris Brandt wrote:
-> Hi Geert,
-> 
-> On Friday, March 03, 2017, Geert Uytterhoeven wrote:
-> > > Is it possible to change the number of port pins in the board dts file?
-> > > For example:
-> > >   RZ/A1H: P5_0 - P5_10
-> > >   RZ/A1L: P5_0 - P5_16
-> > 
-> > That's 17 pins, not 16?
-> 
-> Oops, I meant P5_15
-> 
-> Looking at the parts, here are the differences:
-> 
-> RZ/A1H    RZ/A1L
-> ------------------
-> P2_0:15   P2_0:9
-> P4_0:15   P4_0:7
-> P5_0:10   P5_0:15
-> P7_0:15   P7_0:11
-> P9_0:7    P9_0:5
-> P10_0:15  none
-> P11_0:15  none
-> 
-> > > So, in a rza1l-board.dts file I would put:
-> > >
-> > > &port5 {
-> > >         gpio-ranges = <&pinctrl 0 80 16>;
-> > > }
-> > >
-> > > Will this work?
-> > 
-> > Yes, overriding should work. But the number of pins is an SoC-property,
-> > not
-> > a board-property?
-> 
-> True, but I am trying to figure out how to solve this locally and not make
-> it an upstream problem.
-> 
-> 
-> > Are the differences between RZ/A1H and RZ/A1L just the number of pins?
-> 
-> Yes/No.
-> 
-> Internally, the IP blocks are the same, and located at the same register
-> addresses, but come out to different port pins due to the RZ/A1L having smaller
-> packages.
-> 
-> Also, the L has less channels than the H.
-> For example:
->  QSPI: H=2, L=1
->   LCD: H=2, L=1
->  SCIF: H=8, L=5
->   CAN: H=5, L=2
-> 
-> Of course there is some IP that only comes in the H.
-> 
-> This is why I didn't want to associate "names" with the pins in a pfc driver.
-> I just wanted the board DT to assign a pin to a 'function number'.
-> 
-> 
-> 
-> > If yes, you could use a hierarchical DTS structure:
-> > 
-> > rza1h-<board>.dts:
-> > 
-> >     #include "rza1h.dtsi"
-> > 
-> >     // board specifics here
-> > 
-> > rza1l-<board>.dts:
-> > 
-> >     #include "rza1l.dtsi"
-> > 
-> >     // board specifics here
-> > 
-> > rza1h.dtsi:
-> > 
-> >     #include "rza.dtsi"  // r7s72100.dtsi?
-> > 
-> >     // base SoC overrides
-> >     &port5 {
-> >         gpio-ranges = <&pinctrl 0 80 11>;
-> >     }
-> > 
-> > rza1l.dtsi:
-> > 
-> >     #include "rza.dtsi"  // r7s72100.dtsi?
-> > 
-> >     // base SoC overrides
-> >     &port5 {
-> >         gpio-ranges = <&pinctrl 0 80 16>;
-> >     }
-> > 
-> > Actual naming of DTS files TBD.
-> 
-> OK, so just put the pin differences in the two files. That's a good idea. But,
-> then that's 2 more files to add upstream.
-> As the RZ/A series continues, they might keep doing this kind of thing, so I
-> don't want to get into the habit of adding more and more DT files.
-> 
-> # I wish there was some type of if-else syntax in Device Tree so in the
-> board file I could just say:
-> 
-> / {
-> 	model = "RSKRZA1";
-> 	compatible = "renesas,rskrza1", "renesas,r7s72100";
-> 
-> 	variant = "rza1l";
-> 
-> 
-> > We could also decide to not have rza1h.dtsi, and assume the base dtsi is
-> > for
-> > RZ/A1H.
-> 
-> Honestly, I'm fine with RZ/A1H being the flagship upstream SoC since it is a
-> superset of all the peripherals in RZ/A1M,/A1L,/A1LU,/A1LC. Meaning, this small
-> difference can be handled in a simple board file addition.
-> 
-> I was thinking I was going to post some DT examples on eLinux.org anyway, so one of
-> them would just be this RZ/A1L fix.
-> 
-
-If we do all agree on having RZ/A1H upstream and let differences
-between SoCs to be handled in the BSP/downstream board files, I'll send
-v2 targeting that specific SoC only
-
-Thanks
-   j
-
-> Cheers
-> 
-> Chris
-> 
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgTWFyY2ggMDMsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZl
+biB3cm90ZToNCj4gPiBJcyBpdCBwb3NzaWJsZSB0byBjaGFuZ2UgdGhlIG51bWJlciBvZiBwb3J0
+IHBpbnMgaW4gdGhlIGJvYXJkIGR0cyBmaWxlPw0KPiA+IEZvciBleGFtcGxlOg0KPiA+ICAgUlov
+QTFIOiBQNV8wIC0gUDVfMTANCj4gPiAgIFJaL0ExTDogUDVfMCAtIFA1XzE2DQo+IA0KPiBUaGF0
+J3MgMTcgcGlucywgbm90IDE2Pw0KDQpPb3BzLCBJIG1lYW50IFA1XzE1DQoNCkxvb2tpbmcgYXQg
+dGhlIHBhcnRzLCBoZXJlIGFyZSB0aGUgZGlmZmVyZW5jZXM6DQoNClJaL0ExSCAgICBSWi9BMUwN
+Ci0tLS0tLS0tLS0tLS0tLS0tLQ0KUDJfMDoxNSAgIFAyXzA6OQ0KUDRfMDoxNSAgIFA0XzA6Nw0K
+UDVfMDoxMCAgIFA1XzA6MTUNClA3XzA6MTUgICBQN18wOjExDQpQOV8wOjcgICAgUDlfMDo1DQpQ
+MTBfMDoxNSAgbm9uZQ0KUDExXzA6MTUgIG5vbmUNCg0KPiA+IFNvLCBpbiBhIHJ6YTFsLWJvYXJk
+LmR0cyBmaWxlIEkgd291bGQgcHV0Og0KPiA+DQo+ID4gJnBvcnQ1IHsNCj4gPiAgICAgICAgIGdw
+aW8tcmFuZ2VzID0gPCZwaW5jdHJsIDAgODAgMTY+Ow0KPiA+IH0NCj4gPg0KPiA+IFdpbGwgdGhp
+cyB3b3JrPw0KPiANCj4gWWVzLCBvdmVycmlkaW5nIHNob3VsZCB3b3JrLiBCdXQgdGhlIG51bWJl
+ciBvZiBwaW5zIGlzIGFuIFNvQy1wcm9wZXJ0eSwNCj4gbm90DQo+IGEgYm9hcmQtcHJvcGVydHk/
+DQoNClRydWUsIGJ1dCBJIGFtIHRyeWluZyB0byBmaWd1cmUgb3V0IGhvdyB0byBzb2x2ZSB0aGlz
+IGxvY2FsbHkgYW5kIG5vdCBtYWtlDQppdCBhbiB1cHN0cmVhbSBwcm9ibGVtLg0KDQoNCj4gQXJl
+IHRoZSBkaWZmZXJlbmNlcyBiZXR3ZWVuIFJaL0ExSCBhbmQgUlovQTFMIGp1c3QgdGhlIG51bWJl
+ciBvZiBwaW5zPw0KDQpZZXMvTm8uDQoNCkludGVybmFsbHksIHRoZSBJUCBibG9ja3MgYXJlIHRo
+ZSBzYW1lLCBhbmQgbG9jYXRlZCBhdCB0aGUgc2FtZSByZWdpc3Rlcg0KYWRkcmVzc2VzLCBidXQg
+Y29tZSBvdXQgdG8gZGlmZmVyZW50IHBvcnQgcGlucyBkdWUgdG8gdGhlIFJaL0ExTCBoYXZpbmcg
+c21hbGxlcg0KcGFja2FnZXMuDQoNCkFsc28sIHRoZSBMIGhhcyBsZXNzIGNoYW5uZWxzIHRoYW4g
+dGhlIEguDQpGb3IgZXhhbXBsZToNCiBRU1BJOiBIPTIsIEw9MQ0KICBMQ0Q6IEg9MiwgTD0xDQog
+U0NJRjogSD04LCBMPTUNCiAgQ0FOOiBIPTUsIEw9Mg0KDQpPZiBjb3Vyc2UgdGhlcmUgaXMgc29t
+ZSBJUCB0aGF0IG9ubHkgY29tZXMgaW4gdGhlIEguDQoNClRoaXMgaXMgd2h5IEkgZGlkbid0IHdh
+bnQgdG8gYXNzb2NpYXRlICJuYW1lcyIgd2l0aCB0aGUgcGlucyBpbiBhIHBmYyBkcml2ZXIuDQpJ
+IGp1c3Qgd2FudGVkIHRoZSBib2FyZCBEVCB0byBhc3NpZ24gYSBwaW4gdG8gYSAnZnVuY3Rpb24g
+bnVtYmVyJy4NCg0KDQoNCj4gSWYgeWVzLCB5b3UgY291bGQgdXNlIGEgaGllcmFyY2hpY2FsIERU
+UyBzdHJ1Y3R1cmU6DQo+IA0KPiByemExaC08Ym9hcmQ+LmR0czoNCj4gDQo+ICAgICAjaW5jbHVk
+ZSAicnphMWguZHRzaSINCj4gDQo+ICAgICAvLyBib2FyZCBzcGVjaWZpY3MgaGVyZQ0KPiANCj4g
+cnphMWwtPGJvYXJkPi5kdHM6DQo+IA0KPiAgICAgI2luY2x1ZGUgInJ6YTFsLmR0c2kiDQo+IA0K
+PiAgICAgLy8gYm9hcmQgc3BlY2lmaWNzIGhlcmUNCj4gDQo+IHJ6YTFoLmR0c2k6DQo+IA0KPiAg
+ICAgI2luY2x1ZGUgInJ6YS5kdHNpIiAgLy8gcjdzNzIxMDAuZHRzaT8NCj4gDQo+ICAgICAvLyBi
+YXNlIFNvQyBvdmVycmlkZXMNCj4gICAgICZwb3J0NSB7DQo+ICAgICAgICAgZ3Bpby1yYW5nZXMg
+PSA8JnBpbmN0cmwgMCA4MCAxMT47DQo+ICAgICB9DQo+IA0KPiByemExbC5kdHNpOg0KPiANCj4g
+ICAgICNpbmNsdWRlICJyemEuZHRzaSIgIC8vIHI3czcyMTAwLmR0c2k/DQo+IA0KPiAgICAgLy8g
+YmFzZSBTb0Mgb3ZlcnJpZGVzDQo+ICAgICAmcG9ydDUgew0KPiAgICAgICAgIGdwaW8tcmFuZ2Vz
+ID0gPCZwaW5jdHJsIDAgODAgMTY+Ow0KPiAgICAgfQ0KPiANCj4gQWN0dWFsIG5hbWluZyBvZiBE
+VFMgZmlsZXMgVEJELg0KDQpPSywgc28ganVzdCBwdXQgdGhlIHBpbiBkaWZmZXJlbmNlcyBpbiB0
+aGUgdHdvIGZpbGVzLiBUaGF0J3MgYSBnb29kIGlkZWEuIEJ1dCwNCnRoZW4gdGhhdCdzIDIgbW9y
+ZSBmaWxlcyB0byBhZGQgdXBzdHJlYW0uDQpBcyB0aGUgUlovQSBzZXJpZXMgY29udGludWVzLCB0
+aGV5IG1pZ2h0IGtlZXAgZG9pbmcgdGhpcyBraW5kIG9mIHRoaW5nLCBzbyBJDQpkb24ndCB3YW50
+IHRvIGdldCBpbnRvIHRoZSBoYWJpdCBvZiBhZGRpbmcgbW9yZSBhbmQgbW9yZSBEVCBmaWxlcy4N
+Cg0KIyBJIHdpc2ggdGhlcmUgd2FzIHNvbWUgdHlwZSBvZiBpZi1lbHNlIHN5bnRheCBpbiBEZXZp
+Y2UgVHJlZSBzbyBpbiB0aGUNCmJvYXJkIGZpbGUgSSBjb3VsZCBqdXN0IHNheToNCg0KLyB7DQoJ
+bW9kZWwgPSAiUlNLUlpBMSI7DQoJY29tcGF0aWJsZSA9ICJyZW5lc2FzLHJza3J6YTEiLCAicmVu
+ZXNhcyxyN3M3MjEwMCI7DQoNCgl2YXJpYW50ID0gInJ6YTFsIjsNCg0KDQo+IFdlIGNvdWxkIGFs
+c28gZGVjaWRlIHRvIG5vdCBoYXZlIHJ6YTFoLmR0c2ksIGFuZCBhc3N1bWUgdGhlIGJhc2UgZHRz
+aSBpcw0KPiBmb3INCj4gUlovQTFILg0KDQpIb25lc3RseSwgSSdtIGZpbmUgd2l0aCBSWi9BMUgg
+YmVpbmcgdGhlIGZsYWdzaGlwIHVwc3RyZWFtIFNvQyBzaW5jZSBpdCBpcyBhDQpzdXBlcnNldCBv
+ZiBhbGwgdGhlIHBlcmlwaGVyYWxzIGluIFJaL0ExTSwvQTFMLC9BMUxVLC9BMUxDLiBNZWFuaW5n
+LCB0aGlzIHNtYWxsDQpkaWZmZXJlbmNlIGNhbiBiZSBoYW5kbGVkIGluIGEgc2ltcGxlIGJvYXJk
+IGZpbGUgYWRkaXRpb24uDQoNCkkgd2FzIHRoaW5raW5nIEkgd2FzIGdvaW5nIHRvIHBvc3Qgc29t
+ZSBEVCBleGFtcGxlcyBvbiBlTGludXgub3JnIGFueXdheSwgc28gb25lIG9mDQp0aGVtIHdvdWxk
+IGp1c3QgYmUgdGhpcyBSWi9BMUwgZml4Lg0KDQpDaGVlcnMNCg0KQ2hyaXMNCg0K
