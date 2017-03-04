@@ -1,86 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753425AbdCTJAG (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52326 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752242AbdCDXku (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:00:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/31] ARM: dts: r8a73a4: Add INTC-SYS clock to device tree
-Date: Mon, 20 Mar 2017 09:57:54 +0100
-Message-Id: <c11333cc2e7ebe41e2aa4fa353abafa1f21a0662.1489999062.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Sat, 4 Mar 2017 18:40:50 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 3/3] drm: rcar-du: Register a completion callback with VSP1
+Date: Sun, 05 Mar 2017 01:41:23 +0200
+Message-ID: <1811507.1SveQbyGeY@avalon>
+In-Reply-To: <4036908.C45uQTknvk@avalon>
+References: <cover.4a217716bf5515d07dcb6d2b052f883eeecae9e8.1488592678.git-series.kieran.bingham+renesas@ideasonboard.com> <bbd6cfc198254a60d7369c0101ab027bb7b56946.1488592678.git-series.kieran.bingham+renesas@ideasonboard.com> <4036908.C45uQTknvk@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Kieran,
 
-Link the ARM GIC to the INTC-SYS module clock and the C4 power domain,
-so it can be power managed using that clock in the future.
+On Saturday 04 Mar 2017 15:07:09 Laurent Pinchart wrote:
+> On Saturday 04 Mar 2017 02:01:19 Kieran Bingham wrote:
+> > Currently we process page flip events on every display interrupt,
+> > however this does not take into consideration the processing time needed
+> > by the VSP1 utilised in the pipeline.
+> > 
+> > Register a callback with the VSP driver to obtain completion events, and
+> > track them so that we only perform page flips when the full display
+> > pipeline has completed for the frame.
+> > 
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > ---
+> > 
+> > v2:
+> >  - Commit message completely re-worded for patch re-work.
+> >  - drm_crtc_handle_vblank() re-instated in event of rcrtc->pending
+> >  - removed passing of unnecessary 'data' through callbacks
+> >  - perform page flips from the VSP completion handler
+> >  - add locking around pending flags
+> >  
+> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 10 +++++++--
+> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  2 ++-
+> >  drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 29 +++++++++++++++++++++++++++-
+> >  3 files changed, 39 insertions(+), 2 deletions(-)
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
+[snip]
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a73a4.dtsi            | 13 +++++++++----
- include/dt-bindings/clock/r8a73a4-clock.h |  1 +
- 2 files changed, 10 insertions(+), 4 deletions(-)
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c index b0ff304ce3dc..1fcd311badb1
+> > 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
 
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 6fb7eaba9126..1f5c9f6dddba 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -467,6 +467,9 @@
- 			<0 0xf1004000 0 0x2000>,
- 			<0 0xf1006000 0 0x2000>;
- 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		clocks = <&mstp4_clks R8A73A4_CLK_INTC_SYS>;
-+		clock-names = "clk";
-+		power-domains = <&pd_c4>;
- 	};
- 
- 	bsc: bus@fec10000 {
-@@ -725,16 +728,18 @@
- 		mstp4_clks: mstp4_clks@e6150140 {
- 			compatible = "renesas,r8a73a4-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
--			clocks = <&main_div2_clk>, <&main_div2_clk>,
-+			clocks = <&main_div2_clk>, <&cpg_clocks R8A73A4_CLK_ZS>,
-+				 <&main_div2_clk>,
- 				 <&cpg_clocks R8A73A4_CLK_HP>,
- 				 <&cpg_clocks R8A73A4_CLK_HP>;
- 			#clock-cells = <1>;
- 			clock-indices = <
--				R8A73A4_CLK_IRQC R8A73A4_CLK_IIC5
--				R8A73A4_CLK_IIC4 R8A73A4_CLK_IIC3
-+				R8A73A4_CLK_IRQC R8A73A4_CLK_INTC_SYS
-+				R8A73A4_CLK_IIC5 R8A73A4_CLK_IIC4
-+				R8A73A4_CLK_IIC3
- 			>;
- 			clock-output-names =
--				"irqc", "iic5", "iic4", "iic3";
-+				"irqc", "intc-sys", "iic5", "iic4", "iic3";
- 		};
- 		mstp5_clks: mstp5_clks@e6150144 {
- 			compatible = "renesas,r8a73a4-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r8a73a4-clock.h b/include/dt-bindings/clock/r8a73a4-clock.h
-index dd11ecdf837e..4b3668157257 100644
---- a/include/dt-bindings/clock/r8a73a4-clock.h
-+++ b/include/dt-bindings/clock/r8a73a4-clock.h
-@@ -54,6 +54,7 @@
- #define R8A73A4_CLK_IIC3	11
- #define R8A73A4_CLK_IIC4	10
- #define R8A73A4_CLK_IIC5	9
-+#define R8A73A4_CLK_INTC_SYS	8
- #define R8A73A4_CLK_IRQC	7
- 
- /* MSTP5 */
+[snip]
+
+> > @@ -28,6 +28,22 @@
+> >  #include "rcar_du_kms.h"
+> >  #include "rcar_du_vsp.h"
+> > 
+> > +static void rcar_du_vsp_complete(void *private)
+> > +{
+> > +	struct rcar_du_crtc *crtc = (struct rcar_du_crtc *)private;
+> > +	struct drm_device *dev = crtc->crtc.dev;
+> > +	unsigned long flags;
+> > +	bool pending;
+> > +
+> > +	spin_lock_irqsave(&dev->event_lock, flags);
+> > +	pending = crtc->pending;
+> > +	crtc->pending = false;
+> > +	spin_unlock_irqrestore(&dev->event_lock, flags);
+> > +
+> > +	if (pending)
+> > +		rcar_du_crtc_finish_page_flip(crtc);
+> 
+> This seems to duplicate the synchronization mechanism based on events in
+> rcar_du_crtc_atomic_begin(). I need to check that in more details.
+
+Indeed it does, and I don't think that's needed. You might be able to shorten 
+the race window on the DU side, but you won't be able to close it completely 
+as detecting the race requires information that is only available to the VSP 
+driver. Fixing the race on the VSP side will make this dead code, so you can 
+remove the addition of the pending flag from this patch.
+
+> > +}
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
