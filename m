@@ -1,124 +1,185 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40959 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45116 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752315AbdCCReP (ORCPT
+        with ESMTP id S1751083AbdCDBTQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 12:34:15 -0500
+        Fri, 3 Mar 2017 20:19:16 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
+Cc: Fabio Estevam <fabio.estevam@freescale.com>,
         Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
         Nickey Yang <nickey.yang@rock-chips.com>,
         Russell King <rmk+kernel@arm.linux.org.uk>,
+        Andy Yan <andy.yan@rock-chips.com>,
         Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 08/10] drm: bridge: dw-hdmi: Remove device type from platform data
-Date: Fri,  3 Mar 2017 19:20:05 +0200
-Message-Id: <20170303172007.26541-9-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+        Archit Taneja <architt@codeaurora.org>
+Subject: [PATCH v5.1 10/10] drm: bridge: dw-hdmi: Move the driver to a separate directory.
+Date: Sat,  4 Mar 2017 03:11:44 +0200
+Message-Id: <20170304011144.1618-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-2-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-2-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The driver is already made of 5 separate source files. Move it to a
+newly created directory named synopsys where more Synopsys bridge
+drivers can be added later (for the DisplayPort controller for
+instance).
 
-The device type isn't used anymore now that workarounds and PHY-specific
-operations are performed based on version information read at runtime.
-Remove it.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Suggested-by: Jose Abreu <Jose.Abreu@synopsys.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
 Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c            | 2 --
- drivers/gpu/drm/imx/dw_hdmi-imx.c           | 2 --
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 1 -
- include/drm/bridge/dw_hdmi.h                | 7 -------
- 4 files changed, 12 deletions(-)
+Changes since v5:
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index b835d81bb471..132c00685796 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -127,7 +127,6 @@ struct dw_hdmi {
- 	struct drm_connector connector;
- 	struct drm_bridge bridge;
+- Removed dw-hdmi Kconfig options from drivers/gpu/bridge/Kconfig
+
+Changes since v4:
+
+- Fixed typos in Kconfig
+---
+ drivers/gpu/drm/bridge/Kconfig                     | 26 ++--------------------
+ drivers/gpu/drm/bridge/Makefile                    |  4 +---
+ drivers/gpu/drm/bridge/synopsys/Kconfig            | 23 +++++++++++++++++++
+ drivers/gpu/drm/bridge/synopsys/Makefile           |  5 +++++
+ .../drm/bridge/{ => synopsys}/dw-hdmi-ahb-audio.c  |  0
+ .../gpu/drm/bridge/{ => synopsys}/dw-hdmi-audio.h  |  0
+ .../drm/bridge/{ => synopsys}/dw-hdmi-i2s-audio.c  |  0
+ drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi.c    |  0
+ drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi.h    |  0
+ 9 files changed, 31 insertions(+), 27 deletions(-)
+ create mode 100644 drivers/gpu/drm/bridge/synopsys/Kconfig
+ create mode 100644 drivers/gpu/drm/bridge/synopsys/Makefile
+ rename drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi-ahb-audio.c (100%)
+ rename drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi-audio.h (100%)
+ rename drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi-i2s-audio.c (100%)
+ rename drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi.c (100%)
+ rename drivers/gpu/drm/bridge/{ => synopsys}/dw-hdmi.h (100%)
+
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index eb8688ec6f18..02e211cd8129 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -24,30 +24,6 @@ config DRM_DUMB_VGA_DAC
+ 	help
+ 	  Support for RGB to VGA DAC based bridges
  
--	enum dw_hdmi_devtype dev_type;
- 	unsigned int version;
- 
- 	struct platform_device *audio;
-@@ -2014,7 +2013,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 
- 	hdmi->plat_data = plat_data;
- 	hdmi->dev = dev;
--	hdmi->dev_type = plat_data->dev_type;
- 	hdmi->sample_rate = 48000;
- 	hdmi->disabled = true;
- 	hdmi->rxsense = true;
-diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-index f645275e6e63..f039641070ac 100644
---- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
-+++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-@@ -175,7 +175,6 @@ static struct dw_hdmi_plat_data imx6q_hdmi_drv_data = {
- 	.mpll_cfg   = imx_mpll_cfg,
- 	.cur_ctr    = imx_cur_ctr,
- 	.phy_config = imx_phy_config,
--	.dev_type   = IMX6Q_HDMI,
- 	.mode_valid = imx6q_hdmi_mode_valid,
- };
- 
-@@ -183,7 +182,6 @@ static struct dw_hdmi_plat_data imx6dl_hdmi_drv_data = {
- 	.mpll_cfg = imx_mpll_cfg,
- 	.cur_ctr  = imx_cur_ctr,
- 	.phy_config = imx_phy_config,
--	.dev_type = IMX6DL_HDMI,
- 	.mode_valid = imx6dl_hdmi_mode_valid,
- };
- 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index a6d4a0236e8f..d53827413996 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -237,7 +237,6 @@ static const struct dw_hdmi_plat_data rockchip_hdmi_drv_data = {
- 	.mpll_cfg   = rockchip_mpll_cfg,
- 	.cur_ctr    = rockchip_cur_ctr,
- 	.phy_config = rockchip_phy_config,
--	.dev_type   = RK3288_HDMI,
- };
- 
- static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index dd330259a3dc..545f04fae3b6 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -21,12 +21,6 @@ enum {
- 	DW_HDMI_RES_MAX,
- };
- 
--enum dw_hdmi_devtype {
--	IMX6Q_HDMI,
--	IMX6DL_HDMI,
--	RK3288_HDMI,
--};
+-config DRM_DW_HDMI
+-	tristate
+-	select DRM_KMS_HELPER
 -
- enum dw_hdmi_phy_type {
- 	DW_HDMI_PHY_DWC_HDMI_TX_PHY = 0x00,
- 	DW_HDMI_PHY_DWC_MHL_PHY_HEAC = 0xb2,
-@@ -65,7 +59,6 @@ struct dw_hdmi_phy_ops {
- };
+-config DRM_DW_HDMI_AHB_AUDIO
+-	tristate "Synopsis Designware AHB Audio interface"
+-	depends on DRM_DW_HDMI && SND
+-	select SND_PCM
+-	select SND_PCM_ELD
+-	select SND_PCM_IEC958
+-	help
+-	  Support the AHB Audio interface which is part of the Synopsis
+-	  Designware HDMI block.  This is used in conjunction with
+-	  the i.MX6 HDMI driver.
+-
+-config DRM_DW_HDMI_I2S_AUDIO
+-	tristate "Synopsis Designware I2S Audio interface"
+-	depends on SND_SOC
+-	depends on DRM_DW_HDMI
+-	select SND_SOC_HDMI_CODEC
+-	help
+-	  Support the I2S Audio interface which is part of the Synopsis
+-	  Designware HDMI block.
+-
+ config DRM_NXP_PTN3460
+ 	tristate "NXP PTN3460 DP/LVDS bridge"
+ 	depends on OF
+@@ -101,4 +77,6 @@ source "drivers/gpu/drm/bridge/analogix/Kconfig"
  
- struct dw_hdmi_plat_data {
--	enum dw_hdmi_devtype dev_type;
- 	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
- 					   struct drm_display_mode *mode);
+ source "drivers/gpu/drm/bridge/adv7511/Kconfig"
  
++source "drivers/gpu/drm/bridge/synopsys/Kconfig"
++
+ endmenu
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index 2e83a7855399..103f82e63102 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -2,9 +2,6 @@ ccflags-y := -Iinclude/drm
+ 
+ obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+ obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
+-obj-$(CONFIG_DRM_DW_HDMI) += dw-hdmi.o
+-obj-$(CONFIG_DRM_DW_HDMI_AHB_AUDIO) += dw-hdmi-ahb-audio.o
+-obj-$(CONFIG_DRM_DW_HDMI_I2S_AUDIO) += dw-hdmi-i2s-audio.o
+ obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
+ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
+ obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
+@@ -13,3 +10,4 @@ obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+ obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+ obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+ obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
++obj-y += synopsys/
+diff --git a/drivers/gpu/drm/bridge/synopsys/Kconfig b/drivers/gpu/drm/bridge/synopsys/Kconfig
+new file mode 100644
+index 000000000000..40d2827a6d19
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/synopsys/Kconfig
+@@ -0,0 +1,23 @@
++config DRM_DW_HDMI
++	tristate
++	select DRM_KMS_HELPER
++
++config DRM_DW_HDMI_AHB_AUDIO
++	tristate "Synopsys Designware AHB Audio interface"
++	depends on DRM_DW_HDMI && SND
++	select SND_PCM
++	select SND_PCM_ELD
++	select SND_PCM_IEC958
++	help
++	  Support the AHB Audio interface which is part of the Synopsys
++	  Designware HDMI block.  This is used in conjunction with
++	  the i.MX6 HDMI driver.
++
++config DRM_DW_HDMI_I2S_AUDIO
++	tristate "Synopsys Designware I2S Audio interface"
++	depends on SND_SOC
++	depends on DRM_DW_HDMI
++	select SND_SOC_HDMI_CODEC
++	help
++	  Support the I2S Audio interface which is part of the Synopsys
++	  Designware HDMI block.
+diff --git a/drivers/gpu/drm/bridge/synopsys/Makefile b/drivers/gpu/drm/bridge/synopsys/Makefile
+new file mode 100644
+index 000000000000..17aa7a65b57e
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/synopsys/Makefile
+@@ -0,0 +1,5 @@
++#ccflags-y := -Iinclude/drm
++
++obj-$(CONFIG_DRM_DW_HDMI) += dw-hdmi.o
++obj-$(CONFIG_DRM_DW_HDMI_AHB_AUDIO) += dw-hdmi-ahb-audio.o
++obj-$(CONFIG_DRM_DW_HDMI_I2S_AUDIO) += dw-hdmi-i2s-audio.o
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi-ahb-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
+similarity index 100%
+rename from drivers/gpu/drm/bridge/dw-hdmi-ahb-audio.c
+rename to drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi-audio.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
+similarity index 100%
+rename from drivers/gpu/drm/bridge/dw-hdmi-audio.h
+rename to drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+similarity index 100%
+rename from drivers/gpu/drm/bridge/dw-hdmi-i2s-audio.c
+rename to drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+similarity index 100%
+rename from drivers/gpu/drm/bridge/dw-hdmi.c
+rename to drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+similarity index 100%
+rename from drivers/gpu/drm/bridge/dw-hdmi.h
+rename to drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
 -- 
 Regards,
 
