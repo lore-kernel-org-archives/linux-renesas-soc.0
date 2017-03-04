@@ -1,72 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: Renesas RZ/A1 pin and gpio controller
-Date: Thu, 2 Mar 2017 20:16:51 +0000
-Message-ID: <SG2PR06MB1165E84107B921961C4C0C2E8A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49849 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751370AbdCDNzJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 4 Mar 2017 08:55:09 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH] drm: rcar-du: Arm the page flip event after queuing the page flip.
+Date: Sat,  4 Mar 2017 15:55:38 +0200
+Message-Id: <20170304135538.17008-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+The page flip event is armed in the atomic begin handler, creating a
+race condition with the frame end interrupt that could send the event
+before the atomic operation actually completes. To avoid that, arm the
+event in the atomic flush handler after queuing the page flip.
 
-On Monday, February 20, 2017, Jacopo Mondi wrote:
-> Hello,
->    this is the first submission of combined GPIO and pin controller drive=
-r
-> for Renesas RZ/A1 SoC.
->=20
-> Compared to my RFC series on the same subject, this new implementation
-> supports a single SoC. If more devices with a similar pin controller will
-> arrive later, we will consider supporting them through this driver.
->=20
-> The series adds the driver itself and register the pincontroller in dtsi.
-> The pin controller hardware supports 12 ports, each of them is also a gpi=
-o
-> controller.
->=20
-> The series makes use of pinctrl and pinmux generic function currently
-> available in Linus Walleij's linux-pinctrl.git tree.
->=20
-> Testing done veryfing functionalities of hardware modules enabled in
-> device tree (SCIF2 for serial output, RIIC for accessing an internal
-> eeprom chip and user visible leds).
-> Gpio have been also verified using a i2c-gpio device in place of the
-> native RIIC one to access the same eeprom device.
+This change doesn't fully close the race window, as the frame end
+interrupt could be generated before the page flip is committed to
+hardware but only handled after the event is armed. However, the race
+window is now much smaller.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-Functionally, I tested these patches on an RZ/A1H RSK board (after modifyin=
-g the DT for the RSK vs the GENMAI board).
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 7391dd95c733..7f6663ccd797 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -502,17 +502,6 @@ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
+ 				      struct drm_crtc_state *old_crtc_state)
+ {
+ 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+-	struct drm_device *dev = rcrtc->crtc.dev;
+-	unsigned long flags;
+-
+-	if (crtc->state->event) {
+-		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+-
+-		spin_lock_irqsave(&dev->event_lock, flags);
+-		rcrtc->event = crtc->state->event;
+-		crtc->state->event = NULL;
+-		spin_unlock_irqrestore(&dev->event_lock, flags);
+-	}
+ 
+ 	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		rcar_du_vsp_atomic_begin(rcrtc);
+@@ -522,11 +511,22 @@ static void rcar_du_crtc_atomic_flush(struct drm_crtc *crtc,
+ 				      struct drm_crtc_state *old_crtc_state)
+ {
+ 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
++	struct drm_device *dev = rcrtc->crtc.dev;
++	unsigned long flags;
+ 
+ 	rcar_du_crtc_update_planes(rcrtc);
+ 
+ 	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		rcar_du_vsp_atomic_flush(rcrtc);
++
++	if (crtc->state->event) {
++		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
++
++		spin_lock_irqsave(&dev->event_lock, flags);
++		rcrtc->event = crtc->state->event;
++		crtc->state->event = NULL;
++		spin_unlock_irqrestore(&dev->event_lock, flags);
++	}
+ }
+ 
+ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+-- 
+Regards,
 
-The following worked fine:
- * SCIF
- * I2C
- * SDHI
- * Ethernet
-
-  (The trick is you have to know what pins need to be set as bi-directional=
-)
-
-
-I will look over the code and provide feedback separately.
-
-Cheers
-
-Chris
-
+Laurent Pinchart
