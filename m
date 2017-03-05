@@ -1,39 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Fri, 10 Mar 2017 10:19:05 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:47248 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752290AbdCEQFA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 5 Mar 2017 11:05:00 -0500
+Subject: Re: [PATCH v6 3/3] ARM: dts: r7s72100: Add watchdog timer
+To: Chris Brandt <chris.brandt@renesas.com>,
         Wim Van Sebroeck <wim@iguana.be>,
         Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] ARM: dts: r7s72100: Add watchdog timer
-Message-ID: <20170310091905.GD21820@verge.net.au>
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 References: <20170304223737.20419-1-chris.brandt@renesas.com>
  <20170304223737.20419-4-chris.brandt@renesas.com>
- <ef7f631f-efa9-9d8b-658d-aeaa5bce5bc7@roeck-us.net>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <ef7f631f-efa9-9d8b-658d-aeaa5bce5bc7@roeck-us.net>
+Date: Sun, 5 Mar 2017 08:04:57 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef7f631f-efa9-9d8b-658d-aeaa5bce5bc7@roeck-us.net>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20170304223737.20419-4-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Mar 05, 2017 at 08:04:57AM -0800, Guenter Roeck wrote:
-> On 03/04/2017 02:37 PM, Chris Brandt wrote:
-> >Add watchdog timer support for RZ/A1.
-> >For the RZ/A1, the only way to do a reset is to overflow the WDT, so this
-> >is useful even if you don't need the watchdog functionality.
-> >
-> >Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> >Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
+On 03/04/2017 02:37 PM, Chris Brandt wrote:
+> Add watchdog timer support for RZ/A1.
+> For the RZ/A1, the only way to do a reset is to overflow the WDT, so this
+> is useful even if you don't need the watchdog functionality.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-as the driver bindings have also been Acked I have queued up this
-change for v4.12.
+> ---
+> v4:
+> * changed from timer@ to watchdog@
+> v3:
+> * added Reviewed-by
+> v2:
+> * changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
+> * changed "renesas,wdt-reset" to "renesas,rza-wdt"
+> * added interupt property (even though it is not used)
+> * added clocks property
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index ed62e19..22f96b7 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -382,6 +382,13 @@
+>  		cache-level = <2>;
+>  	};
+>
+> +	wdt: watchdog@fcfe0000 {
+> +		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
+> +		reg = <0xfcfe0000 0x6>;
+> +		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
+> +		clocks = <&p0_clk>;
+> +	};
+> +
+>  	i2c0: i2c@fcfee000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>
