@@ -1,66 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:51060 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751247AbdCCNTW (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59794 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbdCEXok (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 08:19:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: Remove unit-addresses and regs from integrated caches
-Date: Fri,  3 Mar 2017 14:18:15 +0100
-Message-Id: <1488547097-4804-1-git-send-email-geert+renesas@glider.be>
+        Sun, 5 Mar 2017 18:44:40 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v5.1 05/10] drm: bridge: dw-hdmi: Fix the PHY power up sequence
+Date: Mon,  6 Mar 2017 01:35:57 +0200
+Message-Id: <20170305233557.11945-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-6-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-6-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+When powering the PHY up we need to wait for the PLL to lock. This is
+done by polling the TX_PHY_LOCK bit in the HDMI_PHY_STAT0 register
+(interrupt-based wait could be implemented as well but is likely
+overkill). The bit is asserted when the PLL locks, but the current code
+incorrectly waits for the bit to be deasserted. Fix it, and while at it,
+replace the udelay() with a sleep as the code never runs in
+non-sleepable context.
 
-This patch series removes the bogus unit-addresses and reg properties
-from the device nodes representing Cortex-A57/A53 cache controllers.
+To be consistent with the power down implementation move the poll loop
+to the power off function.
 
-Note that the latter were added to remove warnings from dtc when using
-W=1:
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 65 +++++++++++++++++++++++-----------------
+ 1 file changed, 37 insertions(+), 28 deletions(-)
 
-    Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
+Changes since v5:
 
-In hindsight, adding the reg properties turned out to be the wrong fix.
-Indeed, the Cortex-A57/A53 cache controllers are integrated controllers,
-and thus the device nodes representing them should not have
-unit-addresses or reg properties.
+- Fix compilation breakage due to reordering of the patches compared to v4
 
-This series does not have a runtime effect, as Linux doesn't rely much
-on the properties of the cache-controller nodes.
-
-After this patch has been accepted, I'll submit a similar series to fix
-the DTS files for the Renesas arm32 SoCs.
-
-Thanks for applying!
-
-Geert Uytterhoeven (2):
-  arm64: dts: r8a7795: Remove unit-addresses and regs from integrated
-    caches
-  arm64: dts: r8a7796: Remove unit-address and reg from integrated cache
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index 3a1cd4c7ac64..c25eac8ba47b 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -949,9 +949,44 @@ static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+ 	dw_hdmi_phy_gen2_pddq(hdmi, 1);
+ }
+ 
++static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
++{
++	const struct dw_hdmi_phy_data *phy = hdmi->phy;
++	unsigned int i;
++	u8 val;
++
++	if (phy->gen == 1) {
++		dw_hdmi_phy_enable_powerdown(hdmi, false);
++
++		/* Toggle TMDS enable. */
++		dw_hdmi_phy_enable_tmds(hdmi, 0);
++		dw_hdmi_phy_enable_tmds(hdmi, 1);
++		return 0;
++	}
++
++	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
++	dw_hdmi_phy_gen2_pddq(hdmi, 0);
++
++	/* Wait for PHY PLL lock */
++	for (i = 0; i < 5; ++i) {
++		val = hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_TX_PHY_LOCK;
++		if (val)
++			break;
++
++		usleep_range(1000, 2000);
++	}
++
++	if (!val) {
++		dev_err(hdmi->dev, "PHY PLL failed to lock\n");
++		return -ETIMEDOUT;
++	}
++
++	dev_dbg(hdmi->dev, "PHY PLL locked %u iterations\n", i);
++	return 0;
++}
++
+ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ {
+-	u8 val, msec;
+ 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+ 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+@@ -1019,33 +1054,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ 	hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_CKCALCTRL_OVERRIDE,
+ 			   HDMI_3D_TX_PHY_CKCALCTRL);
+ 
+-	dw_hdmi_phy_enable_powerdown(hdmi, false);
+-
+-	/* toggle TMDS enable */
+-	dw_hdmi_phy_enable_tmds(hdmi, 0);
+-	dw_hdmi_phy_enable_tmds(hdmi, 1);
+-
+-	/* gen2 tx power on */
+-	dw_hdmi_phy_gen2_txpwron(hdmi, 1);
+-	dw_hdmi_phy_gen2_pddq(hdmi, 0);
+-
+-	/* Wait for PHY PLL lock */
+-	msec = 5;
+-	do {
+-		val = hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_TX_PHY_LOCK;
+-		if (!val)
+-			break;
+-
+-		if (msec == 0) {
+-			dev_err(hdmi->dev, "PHY PLL not locked\n");
+-			return -ETIMEDOUT;
+-		}
+-
+-		udelay(1000);
+-		msec--;
+-	} while (1);
+-
+-	return 0;
++	return dw_hdmi_phy_power_on(hdmi);
+ }
+ 
+ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
 -- 
-2.7.4
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
