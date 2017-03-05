@@ -1,74 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:51438 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753741AbdCFUQf (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:41816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751359AbdCEQAM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 15:16:35 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 6/7] thermal: rcar_gen3_thermal: store device match data in private structure
-Date: Mon,  6 Mar 2017 21:04:00 +0100
-Message-Id: <20170306200401.29923-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 5 Mar 2017 11:00:12 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 0/3] RCAR-DU, VSP1: Prevent pre-emptive frame flips on VSP1-DRM pipelines
+Date: Sun,  5 Mar 2017 16:00:01 +0000
+Message-Id: <cover.8e2f9686131cb2299b859f056e902b4208061a4e.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device match data needs to be accessible outside the probe function,
-store it in the private data structure.
+The RCAR-DU utilises a running VSPD pipeline to perform processing for the
+display pipeline. This presents the opportunity for some race conditions to
+affect the quality of the display output.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/thermal/rcar_gen3_thermal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+To prevent reporting page flips early, we must track this timing through the
+VSP1, and only allow the rcar-du object to report the page-flip completion
+event after the VSP1 has processed.
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index e52181015e589a7f..9168ac538f3b8cf5 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -87,6 +87,7 @@ struct rcar_gen3_thermal_tsc {
- };
- 
- struct rcar_gen3_thermal_priv {
-+	const struct rcar_gen3_thermal_data *data;
- 	spinlock_t lock;
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
- };
-@@ -363,8 +364,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct thermal_zone_device *zone;
- 	int ret, i;
--	const struct rcar_gen3_thermal_data *match_data =
--		of_device_get_match_data(dev);
- 
- 	/* default values if FUSEs are missing */
- 	/* TODO: Read values from hardware on supported platforms */
-@@ -379,6 +378,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->data = of_device_get_match_data(dev);
-+
- 	spin_lock_init(&priv->lock);
- 
- 	platform_set_drvdata(pdev, priv);
-@@ -433,7 +434,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 
- 		priv->tscs[i] = tsc;
- 
--		match_data->thermal_init(tsc);
-+		priv->data->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
- 
- 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+This series ensures that tearing and flicker is prevented, without introducing the
+performance impact mentioned in the previous series.
+
+[PATCH 1/3] handles potential race conditions in vsp1_dlm_irq_frame_end() and
+            prevents signalling the frame end in this event.
+[PATCH 2/3] extends the VSP1 to allow a callback to be registered giving the
+            VSP1 the ability to notify completion events.
+[PATCH 3/3] utilises the callback extension to send page flips at the end of
+            VSP processing for Gen3 platforms.
+
+These patches have been tested by introducing artificial delays in the commit
+code paths and verifying that no visual tearing or flickering occurs.
+
+Extensive testing around the race window has been performed by dynamically
+adapting the artificial delay between 10, and 17 seconds in 100uS increments
+for periods of 5 seconds on each delay test. These tests have successfully run
+for 3 hours.
+
+Manual start/stop testing has also been performed.
+
+Kieran Bingham (3):
+  v4l: vsp1: Postpone frame end handling in event of display list race
+  v4l: vsp1: Extend VSP1 module API to allow DRM callbacks
+  drm: rcar-du: Register a completion callback with VSP1
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  8 ++++++--
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c   |  9 +++++++++
+ drivers/media/platform/vsp1/vsp1_dl.c   | 19 +++++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_dl.h   |  2 +-
+ drivers/media/platform/vsp1/vsp1_drm.c  | 17 +++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_drm.h  | 11 +++++++++++
+ drivers/media/platform/vsp1/vsp1_pipe.c | 13 ++++++++++++-
+ include/media/vsp1.h                    | 13 +++++++++++++
+ 9 files changed, 87 insertions(+), 6 deletions(-)
+
+base-commit: cdb5795cbc4ddbe5082c25c52ebc1d811ac3849e
 -- 
-2.12.0
+git-series 0.9.1
