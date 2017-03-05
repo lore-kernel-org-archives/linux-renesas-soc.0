@@ -1,247 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40960 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59225 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751840AbdCCReU (ORCPT
+        with ESMTP id S1752356AbdCEWAi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 12:34:20 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 09/10] drm: bridge: dw-hdmi: Switch to regmap for register access
-Date: Fri,  3 Mar 2017 19:20:06 +0200
-Message-Id: <20170303172007.26541-10-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+        Sun, 5 Mar 2017 17:00:38 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 3/3] drm: rcar-du: Register a completion callback with VSP1
+Date: Mon, 06 Mar 2017 00:01:13 +0200
+Message-ID: <2336275.pnkIsF6lvT@avalon>
+In-Reply-To: <591c0ba30211d53613a456d51f2bb523e6ef5e06.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.8e2f9686131cb2299b859f056e902b4208061a4e.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com> <591c0ba30211d53613a456d51f2bb523e6ef5e06.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+Hi Kieran,
 
-The Synopsys Designware HDMI TX Controller does not enforce register
-access on platforms instanciating it. The current driver supports two
-different types of memory-mapped flat register access, but in order to
-support the Amlogic Meson SoCs integration, and provide a more generic
-way to handle all sorts of register mapping, switch the register access
-to use the regmap infrastructure.
+Thank you for the patch.
 
-In the case of registers that are not flat memory-mapped or do not
-conform to the current driver implementation, a regmap struct can be
-given in the plat_data and be used at probe or bind.
+On Sunday 05 Mar 2017 16:00:04 Kieran Bingham wrote:
+> Currently we process page flip events on every display interrupt,
+> however this does not take into consideration the processing time needed
+> by the VSP1 utilised in the pipeline.
+> 
+> Register a callback with the VSP driver to obtain completion events, and
+> track them so that we only perform page flips when the full display
+> pipeline has completed for the frame.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c |  8 ++++++--
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  1 +
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c  |  9 +++++++++
+>  3 files changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 2aceb84fc15d..caaaa1812e20
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -299,7 +299,7 @@ static void rcar_du_crtc_update_planes(struct
+> rcar_du_crtc *rcrtc) * Page Flip
+>   */
+> 
+> -static void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc)
+> +void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc)
+>  {
+>  	struct drm_pending_vblank_event *event;
+>  	struct drm_device *dev = rcrtc->crtc.dev;
+> @@ -571,6 +571,7 @@ static const struct drm_crtc_funcs crtc_funcs = {
+>  static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
+>  {
+>  	struct rcar_du_crtc *rcrtc = arg;
+> +	struct rcar_du_device *rcdu = rcrtc->group->dev;
+>  	irqreturn_t ret = IRQ_NONE;
+>  	u32 status;
+> 
+> @@ -579,7 +580,10 @@ static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
+> 
+>  	if (status & DSSR_FRM) {
+>  		drm_crtc_handle_vblank(&rcrtc->crtc);
+> -		rcar_du_crtc_finish_page_flip(rcrtc);
+> +
+> +		if (rcdu->info->gen < 3)
+> +			rcar_du_crtc_finish_page_flip(rcrtc);
+> +
+>  		ret = IRQ_HANDLED;
+>  	}
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h index a7194812997e..ebdbff9d8e59
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> @@ -71,5 +71,6 @@ void rcar_du_crtc_resume(struct rcar_du_crtc *rcrtc);
+> 
+>  void rcar_du_crtc_route_output(struct drm_crtc *crtc,
+>  			       enum rcar_du_output output);
+> +void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc);
+> 
+>  #endif /* __RCAR_DU_CRTC_H__ */
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c index b0ff304ce3dc..cbb6f54c99ef
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -28,6 +28,13 @@
+>  #include "rcar_du_kms.h"
+>  #include "rcar_du_vsp.h"
+> 
+> +static void rcar_du_vsp_complete(void *private)
+> +{
+> +	struct rcar_du_crtc *crtc = (struct rcar_du_crtc *)private;
 
-Since the AHB audio driver is only available with direct memory access,
-only allow the I2S audio driver to be registered is directly
-memory-mapped.
+I'll remove the cast when applying, as pointed out by Sergei.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Jose Abreu <Jose.Abreu@synopsys.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 109 +++++++++++++++++++++------------------
- include/drm/bridge/dw_hdmi.h     |   1 +
- 2 files changed, 59 insertions(+), 51 deletions(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 132c00685796..026a0dce7661 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -19,6 +19,7 @@
- #include <linux/hdmi.h>
- #include <linux/mutex.h>
- #include <linux/of_device.h>
-+#include <linux/regmap.h>
- #include <linux/spinlock.h>
- 
- #include <drm/drm_of.h>
-@@ -171,8 +172,8 @@ struct dw_hdmi {
- 	unsigned int audio_n;
- 	bool audio_enable;
- 
--	void (*write)(struct dw_hdmi *hdmi, u8 val, int offset);
--	u8 (*read)(struct dw_hdmi *hdmi, int offset);
-+	unsigned int reg_shift;
-+	struct regmap *regm;
- };
- 
- #define HDMI_IH_PHY_STAT0_RX_SENSE \
-@@ -183,42 +184,23 @@ struct dw_hdmi {
- 	(HDMI_PHY_RX_SENSE0 | HDMI_PHY_RX_SENSE1 | \
- 	 HDMI_PHY_RX_SENSE2 | HDMI_PHY_RX_SENSE3)
- 
--static void dw_hdmi_writel(struct dw_hdmi *hdmi, u8 val, int offset)
--{
--	writel(val, hdmi->regs + (offset << 2));
--}
--
--static u8 dw_hdmi_readl(struct dw_hdmi *hdmi, int offset)
--{
--	return readl(hdmi->regs + (offset << 2));
--}
--
--static void dw_hdmi_writeb(struct dw_hdmi *hdmi, u8 val, int offset)
--{
--	writeb(val, hdmi->regs + offset);
--}
--
--static u8 dw_hdmi_readb(struct dw_hdmi *hdmi, int offset)
--{
--	return readb(hdmi->regs + offset);
--}
--
- static inline void hdmi_writeb(struct dw_hdmi *hdmi, u8 val, int offset)
- {
--	hdmi->write(hdmi, val, offset);
-+	regmap_write(hdmi->regm, offset << hdmi->reg_shift, val);
- }
- 
- static inline u8 hdmi_readb(struct dw_hdmi *hdmi, int offset)
- {
--	return hdmi->read(hdmi, offset);
-+	unsigned int val = 0;
-+
-+	regmap_read(hdmi->regm, offset << hdmi->reg_shift, &val);
-+
-+	return val;
- }
- 
- static void hdmi_modb(struct dw_hdmi *hdmi, u8 data, u8 mask, unsigned reg)
- {
--	u8 val = hdmi_readb(hdmi, reg) & ~mask;
--
--	val |= data & mask;
--	hdmi_writeb(hdmi, val, reg);
-+	regmap_update_bits(hdmi->regm, reg << hdmi->reg_shift, mask, data);
- }
- 
- static void hdmi_mask_writeb(struct dw_hdmi *hdmi, u8 data, unsigned int reg,
-@@ -1989,6 +1971,20 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
- 	return -ENODEV;
- }
- 
-+static const struct regmap_config hdmi_regmap_8bit_config = {
-+	.reg_bits	= 32,
-+	.val_bits	= 8,
-+	.reg_stride	= 1,
-+	.max_register	= HDMI_I2CM_FS_SCL_LCNT_0_ADDR,
-+};
-+
-+static const struct regmap_config hdmi_regmap_32bit_config = {
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+	.max_register	= HDMI_I2CM_FS_SCL_LCNT_0_ADDR << 2,
-+};
-+
- static struct dw_hdmi *
- __dw_hdmi_probe(struct platform_device *pdev,
- 		const struct dw_hdmi_plat_data *plat_data)
-@@ -1998,7 +1994,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	struct platform_device_info pdevinfo;
- 	struct device_node *ddc_node;
- 	struct dw_hdmi *hdmi;
--	struct resource *iores;
-+	struct resource *iores = NULL;
- 	int irq;
- 	int ret;
- 	u32 val = 1;
-@@ -2022,22 +2018,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	mutex_init(&hdmi->audio_mutex);
- 	spin_lock_init(&hdmi->audio_lock);
- 
--	of_property_read_u32(np, "reg-io-width", &val);
--
--	switch (val) {
--	case 4:
--		hdmi->write = dw_hdmi_writel;
--		hdmi->read = dw_hdmi_readl;
--		break;
--	case 1:
--		hdmi->write = dw_hdmi_writeb;
--		hdmi->read = dw_hdmi_readb;
--		break;
--	default:
--		dev_err(dev, "reg-io-width must be 1 or 4\n");
--		return ERR_PTR(-EINVAL);
--	}
--
- 	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
- 	if (ddc_node) {
- 		hdmi->ddc = of_get_i2c_adapter_by_node(ddc_node);
-@@ -2051,11 +2031,38 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 		dev_dbg(hdmi->dev, "no ddc property found\n");
- 	}
- 
--	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	hdmi->regs = devm_ioremap_resource(dev, iores);
--	if (IS_ERR(hdmi->regs)) {
--		ret = PTR_ERR(hdmi->regs);
--		goto err_res;
-+	if (!plat_data->regm) {
-+		const struct regmap_config *reg_config;
-+
-+		of_property_read_u32(np, "reg-io-width", &val);
-+		switch (val) {
-+		case 4:
-+			reg_config = &hdmi_regmap_32bit_config;
-+			hdmi->reg_shift = 2;
-+			break;
-+		case 1:
-+			reg_config = &hdmi_regmap_8bit_config;
-+			break;
-+		default:
-+			dev_err(dev, "reg-io-width must be 1 or 4\n");
-+			return ERR_PTR(-EINVAL);
-+		}
-+
-+		iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		hdmi->regs = devm_ioremap_resource(dev, iores);
-+		if (IS_ERR(hdmi->regs)) {
-+			ret = PTR_ERR(hdmi->regs);
-+			goto err_res;
-+		}
-+
-+		hdmi->regm = devm_regmap_init_mmio(dev, hdmi->regs, reg_config);
-+		if (IS_ERR(hdmi->regm)) {
-+			dev_err(dev, "Failed to configure regmap\n");
-+			ret = PTR_ERR(hdmi->regm);
-+			goto err_res;
-+		}
-+	} else {
-+		hdmi->regm = plat_data->regm;
- 	}
- 
- 	hdmi->isfr_clk = devm_clk_get(hdmi->dev, "isfr");
-@@ -2165,7 +2172,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	config0 = hdmi_readb(hdmi, HDMI_CONFIG0_ID);
- 	config3 = hdmi_readb(hdmi, HDMI_CONFIG3_ID);
- 
--	if (config3 & HDMI_CONFIG3_AHBAUDDMA) {
-+	if (iores && config3 & HDMI_CONFIG3_AHBAUDDMA) {
- 		struct dw_hdmi_audio_data audio;
- 
- 		audio.phys = iores->start;
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 545f04fae3b6..bcceee8114a4 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -59,6 +59,7 @@ struct dw_hdmi_phy_ops {
- };
- 
- struct dw_hdmi_plat_data {
-+	struct regmap *regm;
- 	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
- 					   struct drm_display_mode *mode);
- 
+> +
+> +	rcar_du_crtc_finish_page_flip(crtc);
+> +}
+> +
+>  void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
+>  {
+>  	const struct drm_display_mode *mode = &crtc->crtc.state-
+>adjusted_mode;
+> @@ -35,6 +42,8 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
+>  	struct vsp1_du_lif_config cfg = {
+>  		.width = mode->hdisplay,
+>  		.height = mode->vdisplay,
+> +		.callback = rcar_du_vsp_complete,
+> +		.callback_data = crtc,
+>  	};
+>  	struct rcar_du_plane_state state = {
+>  		.state = {
+
 -- 
 Regards,
 
