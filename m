@@ -1,83 +1,292 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:55196 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752113AbdC2SpS (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59796 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbdCEXom (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 14:45:18 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 2/7] thermal: rcar_gen3_thermal: remove unneeded mutex
-Date: Wed, 29 Mar 2017 20:43:51 +0200
-Message-Id: <20170329184356.8610-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 5 Mar 2017 18:44:42 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v5.1 06/10] drm: bridge: dw-hdmi: Create PHY operations
+Date: Mon,  6 Mar 2017 01:36:15 +0200
+Message-Id: <20170305233615.11993-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-7-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-7-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is no point in protecting a register read with a lock. This is
-most likely a leftover from when the driver was reworked before being
-submitted for upstream.
+The HDMI TX controller support different PHYs whose programming
+interface can vary significantly, especially with vendor PHYs that are
+not provided by Synopsys. To support them, create a PHY operation
+structure that can be provided by the platform glue layer. The existing
+PHY handling code (limited to Synopsys PHY support) is refactored into a
+set of default PHY operations that are used automatically when the
+platform glue doesn't provide its own operations.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 95 ++++++++++++++++++++++++++++------------
+ include/drm/bridge/dw_hdmi.h     | 18 +++++++-
+ 2 files changed, 82 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index ec477d47d0bae8e5..cb5c362c00009921 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -20,7 +20,6 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -72,7 +71,6 @@ struct rcar_gen3_thermal_tsc {
- 	void __iomem *base;
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
--	struct mutex lock;
+Changes since v5:
+
+- Undo changes from v5.1 04/10 and 05/10
+
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index c25eac8ba47b..cb2703862be2 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -141,8 +141,12 @@ struct dw_hdmi {
+ 	u8 edid[HDMI_EDID_LEN];
+ 	bool cable_plugin;
+ 
+-	const struct dw_hdmi_phy_data *phy;
+-	bool phy_enabled;
++	struct {
++		const struct dw_hdmi_phy_ops *ops;
++		const char *name;
++		void *data;
++		bool enabled;
++	} phy;
+ 
+ 	struct drm_display_mode previous_mode;
+ 
+@@ -831,6 +835,10 @@ static void hdmi_video_packetize(struct dw_hdmi *hdmi)
+ 		  HDMI_VP_CONF);
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * Synopsys PHY Handling
++ */
++
+ static inline void hdmi_phy_test_clear(struct dw_hdmi *hdmi,
+ 				       unsigned char bit)
+ {
+@@ -917,7 +925,7 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+ 
+ static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+ {
+-	const struct dw_hdmi_phy_data *phy = hdmi->phy;
++	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+ 	unsigned int i;
+ 	u16 val;
+ 
+@@ -951,7 +959,7 @@ static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+ 
+ static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
+ {
+-	const struct dw_hdmi_phy_data *phy = hdmi->phy;
++	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+ 	unsigned int i;
+ 	u8 val;
+ 
+@@ -987,6 +995,7 @@ static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
+ 
+ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ {
++	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+ 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+ 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+@@ -1019,7 +1028,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ 	dw_hdmi_phy_power_off(hdmi);
+ 
+ 	/* Leave low power consumption mode by asserting SVSRET. */
+-	if (hdmi->phy->has_svsret)
++	if (phy->has_svsret)
+ 		dw_hdmi_phy_enable_svsret(hdmi, 1);
+ 
+ 	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
+@@ -1057,7 +1066,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ 	return dw_hdmi_phy_power_on(hdmi);
+ }
+ 
+-static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
++static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
++			    struct drm_display_mode *mode)
+ {
+ 	int i, ret;
+ 
+@@ -1071,10 +1081,31 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ 			return ret;
+ 	}
+ 
+-	hdmi->phy_enabled = true;
+ 	return 0;
+ }
+ 
++static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
++{
++	dw_hdmi_phy_power_off(hdmi);
++}
++
++static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
++						      void *data)
++{
++	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
++		connector_status_connected : connector_status_disconnected;
++}
++
++static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
++	.init = dw_hdmi_phy_init,
++	.disable = dw_hdmi_phy_disable,
++	.read_hpd = dw_hdmi_phy_read_hpd,
++};
++
++/* -----------------------------------------------------------------------------
++ * HDMI TX Setup
++ */
++
+ static void hdmi_tx_hdcp_config(struct dw_hdmi *hdmi)
+ {
+ 	u8 de;
+@@ -1289,16 +1320,6 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 	hdmi_writeb(hdmi, vsync_len, HDMI_FC_VSYNCINWIDTH);
+ }
+ 
+-static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi)
+-{
+-	if (!hdmi->phy_enabled)
+-		return;
+-
+-	dw_hdmi_phy_power_off(hdmi);
+-
+-	hdmi->phy_enabled = false;
+-}
+-
+ /* HDMI Initialization Step B.4 */
+ static void dw_hdmi_enable_video_path(struct dw_hdmi *hdmi)
+ {
+@@ -1431,9 +1452,10 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 	hdmi_av_composer(hdmi, mode);
+ 
+ 	/* HDMI Initializateion Step B.2 */
+-	ret = dw_hdmi_phy_init(hdmi);
++	ret = hdmi->phy.ops->init(hdmi, hdmi->phy.data, &hdmi->previous_mode);
+ 	if (ret)
+ 		return ret;
++	hdmi->phy.enabled = true;
+ 
+ 	/* HDMI Initialization Step B.3 */
+ 	dw_hdmi_enable_video_path(hdmi);
+@@ -1548,7 +1570,11 @@ static void dw_hdmi_poweron(struct dw_hdmi *hdmi)
+ 
+ static void dw_hdmi_poweroff(struct dw_hdmi *hdmi)
+ {
+-	dw_hdmi_phy_disable(hdmi);
++	if (hdmi->phy.enabled) {
++		hdmi->phy.ops->disable(hdmi, hdmi->phy.data);
++		hdmi->phy.enabled = false;
++	}
++
+ 	hdmi->bridge_is_on = false;
+ }
+ 
+@@ -1611,8 +1637,7 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+ 	dw_hdmi_update_phy_mask(hdmi);
+ 	mutex_unlock(&hdmi->mutex);
+ 
+-	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
+-		connector_status_connected : connector_status_disconnected;
++	return hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
+ }
+ 
+ static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
+@@ -1898,19 +1923,31 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
+ 
+ 	phy_type = hdmi_readb(hdmi, HDMI_CONFIG2_ID);
+ 
++	if (phy_type == DW_HDMI_PHY_VENDOR_PHY) {
++		/* Vendor PHYs require support from the glue layer. */
++		if (!hdmi->plat_data->phy_ops || !hdmi->plat_data->phy_name) {
++			dev_err(hdmi->dev,
++				"Vendor HDMI PHY not supported by glue layer\n");
++			return -ENODEV;
++		}
++
++		hdmi->phy.ops = hdmi->plat_data->phy_ops;
++		hdmi->phy.data = hdmi->plat_data->phy_data;
++		hdmi->phy.name = hdmi->plat_data->phy_name;
++		return 0;
++	}
++
++	/* Synopsys PHYs are handled internally. */
+ 	for (i = 0; i < ARRAY_SIZE(dw_hdmi_phys); ++i) {
+ 		if (dw_hdmi_phys[i].type == phy_type) {
+-			hdmi->phy = &dw_hdmi_phys[i];
++			hdmi->phy.ops = &dw_hdmi_synopsys_phy_ops;
++			hdmi->phy.name = dw_hdmi_phys[i].name;
++			hdmi->phy.data = (void *)&dw_hdmi_phys[i];
+ 			return 0;
+ 		}
+ 	}
+ 
+-	if (phy_type == DW_HDMI_PHY_VENDOR_PHY)
+-		dev_err(hdmi->dev, "Unsupported vendor HDMI PHY\n");
+-	else
+-		dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n",
+-			phy_type);
+-
++	dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n", phy_type);
+ 	return -ENODEV;
+ }
+ 
+@@ -2031,7 +2068,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
+ 		 hdmi->version >> 12, hdmi->version & 0xfff,
+ 		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without",
+-		 hdmi->phy->name);
++		 hdmi->phy.name);
+ 
+ 	initialize_hdmi_ih_mutes(hdmi);
+ 
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index b080a171a23f..0f583ca7e66e 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -57,13 +57,27 @@ struct dw_hdmi_phy_config {
+ 	u16 vlev_ctr;   /* voltage level control */
  };
  
- struct rcar_gen3_thermal_priv {
-@@ -163,16 +161,12 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- 	u32 reg;
++struct dw_hdmi_phy_ops {
++	int (*init)(struct dw_hdmi *hdmi, void *data,
++		    struct drm_display_mode *mode);
++	void (*disable)(struct dw_hdmi *hdmi, void *data);
++	enum drm_connector_status (*read_hpd)(struct dw_hdmi *hdmi, void *data);
++};
++
+ struct dw_hdmi_plat_data {
+ 	enum dw_hdmi_devtype dev_type;
++	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
++					   struct drm_display_mode *mode);
++
++	/* Vendor PHY support */
++	const struct dw_hdmi_phy_ops *phy_ops;
++	const char *phy_name;
++	void *phy_data;
++
++	/* Synopsys PHY support */
+ 	const struct dw_hdmi_mpll_config *mpll_cfg;
+ 	const struct dw_hdmi_curr_ctrl *cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config;
+-	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+-					   struct drm_display_mode *mode);
+ };
  
- 	/* Read register and convert to mili Celsius */
--	mutex_lock(&tsc->lock);
--
- 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
- 
- 	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
- 	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
- 	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
- 
--	mutex_unlock(&tsc->lock);
--
- 	/* Make sure we are inside specifications */
- 	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
- 		return -EIO;
-@@ -299,7 +293,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		}
- 
- 		priv->tscs[i] = tsc;
--		mutex_init(&tsc->lock);
- 
- 		match_data->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
+ int dw_hdmi_probe(struct platform_device *pdev,
 -- 
-2.12.1
+Regards,
+
+Laurent Pinchart
