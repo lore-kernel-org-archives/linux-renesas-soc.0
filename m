@@ -1,98 +1,295 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45441 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751226AbdCNTAu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:00:50 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 06/16] rcar-vin: refactor pad lookup code
-Date: Tue, 14 Mar 2017 19:59:47 +0100
-Message-Id: <20170314185957.25253-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v6 1/3] watchdog: add rza_wdt driver
+To: Chris Brandt <chris.brandt@renesas.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20170304223737.20419-1-chris.brandt@renesas.com>
+ <20170304223737.20419-2-chris.brandt@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <e9caebc2-7475-4d59-03bf-3320f4e1f308@roeck-us.net>
+Date: Sun, 5 Mar 2017 08:01:25 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20170304223737.20419-2-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pad lookup code can be broken out to increase readability and to
-reduce code duplication.
+On 03/04/2017 02:37 PM, Chris Brandt wrote:
+> Adds a watchdog timer driver for the Renesas RZ/A Series SoCs. A reset
+> handler is also included since a WDT overflow is the only method for
+> restarting an RZ/A SoC.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 38 +++++++++++++++++------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 1a75191539b0e7d7..ce29a21888da48d5 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -870,11 +870,25 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 	}
- }
- 
-+static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
-+{
-+	unsigned int pad;
-+
-+	if (sd->entity.num_pads <= 1)
-+		return 0;
-+
-+	for (pad = 0; pad < sd->entity.num_pads; pad++)
-+		if (sd->entity.pads[pad].flags & direction)
-+			return pad;
-+
-+	return -EINVAL;
-+}
-+
- int rvin_v4l2_probe(struct rvin_dev *vin)
- {
- 	struct video_device *vdev = &vin->vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--	int pad_idx, ret;
-+	int ret;
- 
- 	v4l2_set_subdev_hostdata(sd, vin);
- 
-@@ -920,21 +934,15 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
- 
--	vin->digital.source_pad = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
--			break;
--	if (pad_idx >= sd->entity.num_pads)
--		return -EINVAL;
--
--	vin->digital.source_pad = pad_idx;
-+	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SOURCE);
-+	if (ret < 0)
-+		return ret;
-+	vin->digital.source_pad = ret;
- 
--	vin->digital.sink_pad = 0;
--	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
--		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
--			vin->digital.sink_pad = pad_idx;
--			break;
--		}
-+	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SINK);
-+	if (ret < 0)
-+		return ret;
-+	vin->digital.sink_pad = ret;
- 
- 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
- 	rvin_reset_format(vin);
--- 
-2.12.0
+> ---
+> v3:
+> * added #include <linux/bitops.h>
+> * alphabetized #include list
+> * removed call to platform_set_drvdata
+> v2:
+> * removed extra lines from file header comments
+> * changed (1<<#) to BIT(#)
+> * changed #define WTSCR_CKS(i) i to (i)
+> * changed format to #define SOMETHING<tab>value (and align values)
+> * now check if clock rate < 16384
+> * added space before and after '/' for "(1000 * U8_MAX) / rate"
+> * changed dev_info to dev_dbg for printing max_hw_heartbeat_ms
+> * added watchdog_init_timeout() for user to set timeout in DT
+> * switched to using devm_watchdog_register_device()
+> * added error message if register fails
+> * simplified rza_wdt_probe() return
+> * removed function rza_wdt_remove()
+> ---
+>  drivers/watchdog/Kconfig   |   8 ++
+>  drivers/watchdog/Makefile  |   1 +
+>  drivers/watchdog/rza_wdt.c | 199 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 208 insertions(+)
+>  create mode 100644 drivers/watchdog/rza_wdt.c
+>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index acb00b5..123c516 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -701,6 +701,14 @@ config RENESAS_WDT
+>  	  This driver adds watchdog support for the integrated watchdogs in the
+>  	  Renesas R-Car and other SH-Mobile SoCs (usually named RWDT or SWDT).
+>
+> +config RENESAS_RZAWDT
+> +	tristate "Renesas RZ/A WDT Watchdog"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	select WATCHDOG_CORE
+> +	help
+> +	  This driver adds watchdog support for the integrated watchdogs in the
+> +	  Renesas RZ/A SoCs. These watchdogs can be used to reset a system.
+> +
+>  config ASPEED_WATCHDOG
+>  	tristate "Aspeed 2400 watchdog support"
+>  	depends on ARCH_ASPEED || COMPILE_TEST
+> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> index 0c3d35e..84b897c 100644
+> --- a/drivers/watchdog/Makefile
+> +++ b/drivers/watchdog/Makefile
+> @@ -81,6 +81,7 @@ obj-$(CONFIG_LPC18XX_WATCHDOG) += lpc18xx_wdt.o
+>  obj-$(CONFIG_BCM7038_WDT) += bcm7038_wdt.o
+>  obj-$(CONFIG_ATLAS7_WATCHDOG) += atlas7_wdt.o
+>  obj-$(CONFIG_RENESAS_WDT) += renesas_wdt.o
+> +obj-$(CONFIG_RENESAS_RZAWDT) += rza_wdt.o
+>  obj-$(CONFIG_ASPEED_WATCHDOG) += aspeed_wdt.o
+>
+>  # AVR32 Architecture
+> diff --git a/drivers/watchdog/rza_wdt.c b/drivers/watchdog/rza_wdt.c
+> new file mode 100644
+> index 0000000..e618218
+> --- /dev/null
+> +++ b/drivers/watchdog/rza_wdt.c
+> @@ -0,0 +1,199 @@
+> +/*
+> + * Renesas RZ/A Series WDT Driver
+> + *
+> + * Copyright (C) 2017 Renesas Electronics America, Inc.
+> + * Copyright (C) 2017 Chris Brandt
+> + *
+> + * This file is subject to the terms and conditions of the GNU General Public
+> + * License.  See the file "COPYING" in the main directory of this archive
+> + * for more details.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/watchdog.h>
+> +
+> +#define DEFAULT_TIMEOUT		30
+> +
+> +/* Watchdog Timer Registers */
+> +#define WTCSR			0
+> +#define WTCSR_MAGIC		0xA500
+> +#define WTSCR_WT		BIT(6)
+> +#define WTSCR_TME		BIT(5)
+> +#define WTSCR_CKS(i)		(i)
+> +
+> +#define WTCNT			2
+> +#define WTCNT_MAGIC		0x5A00
+> +
+> +#define WRCSR			4
+> +#define WRCSR_MAGIC		0x5A00
+> +#define WRCSR_RSTE		BIT(6)
+> +#define WRCSR_CLEAR_WOVF	0xA500	/* special value */
+> +
+> +struct rza_wdt {
+> +	struct watchdog_device wdev;
+> +	void __iomem *base;
+> +	struct clk *clk;
+> +};
+> +
+> +static int rza_wdt_start(struct watchdog_device *wdev)
+> +{
+> +	struct rza_wdt *priv = watchdog_get_drvdata(wdev);
+> +
+> +	/* Stop timer */
+> +	writew(WTCSR_MAGIC | 0, priv->base + WTCSR);
+> +
+> +	/* Must dummy read WRCSR:WOVF at least once before clearing */
+> +	readb(priv->base + WRCSR);
+> +	writew(WRCSR_CLEAR_WOVF, priv->base + WRCSR);
+> +
+> +	/*
+> +	 * Start timer with slowest clock source and reset option enabled.
+> +	 */
+> +	writew(WRCSR_MAGIC | WRCSR_RSTE, priv->base + WRCSR);
+> +	writew(WTCNT_MAGIC | 0, priv->base + WTCNT);
+> +	writew(WTCSR_MAGIC | WTSCR_WT | WTSCR_TME | WTSCR_CKS(7),
+> +	       priv->base + WTCSR);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rza_wdt_stop(struct watchdog_device *wdev)
+> +{
+> +	struct rza_wdt *priv = watchdog_get_drvdata(wdev);
+> +
+> +	writew(WTCSR_MAGIC | 0, priv->base + WTCSR);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rza_wdt_ping(struct watchdog_device *wdev)
+> +{
+> +	struct rza_wdt *priv = watchdog_get_drvdata(wdev);
+> +
+> +	writew(WTCNT_MAGIC | 0, priv->base + WTCNT);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rza_wdt_restart(struct watchdog_device *wdev, unsigned long action,
+> +			    void *data)
+> +{
+> +	struct rza_wdt *priv = watchdog_get_drvdata(wdev);
+> +
+> +	/* Stop timer */
+> +	writew(WTCSR_MAGIC | 0, priv->base + WTCSR);
+> +
+> +	/* Must dummy read WRCSR:WOVF at least once before clearing */
+> +	readb(priv->base + WRCSR);
+> +	writew(WRCSR_CLEAR_WOVF, priv->base + WRCSR);
+> +
+> +	/*
+> +	 * Start timer with fastest clock source and only 1 clock left before
+> +	 * overflow with reset option enabled.
+> +	 */
+> +	writew(WRCSR_MAGIC | WRCSR_RSTE, priv->base + WRCSR);
+> +	writew(WTCNT_MAGIC | 255, priv->base + WTCNT);
+> +	writew(WTCSR_MAGIC | WTSCR_WT | WTSCR_TME, priv->base + WTCSR);
+> +
+> +	/*
+> +	 * Actually make sure the above sequence hits hardware before sleeping.
+> +	 */
+> +	wmb();
+> +
+> +	/* Wait for WDT overflow (reset) */
+> +	udelay(20);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct watchdog_info rza_wdt_ident = {
+> +	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+> +	.identity = "Renesas RZ/A WDT Watchdog",
+> +};
+> +
+> +static const struct watchdog_ops rza_wdt_ops = {
+> +	.owner = THIS_MODULE,
+> +	.start = rza_wdt_start,
+> +	.stop = rza_wdt_stop,
+> +	.ping = rza_wdt_ping,
+> +	.restart = rza_wdt_restart,
+> +};
+> +
+> +static int rza_wdt_probe(struct platform_device *pdev)
+> +{
+> +	struct rza_wdt *priv;
+> +	struct resource *res;
+> +	unsigned long rate;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	priv->base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(priv->base))
+> +		return PTR_ERR(priv->base);
+> +
+> +	priv->clk = devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(priv->clk))
+> +		return PTR_ERR(priv->clk);
+> +
+> +	rate = clk_get_rate(priv->clk);
+> +	if (rate < 16384) {
+> +		dev_err(&pdev->dev, "invalid clock rate (%ld)\n", rate);
+> +		return -ENOENT;
+> +	}
+> +
+> +	/* Assume slowest clock rate possible (CKS=7) */
+> +	rate /= 16384;
+> +
+> +	priv->wdev.info = &rza_wdt_ident,
+> +	priv->wdev.ops = &rza_wdt_ops,
+> +	priv->wdev.parent = &pdev->dev;
+> +
+> +	/*
+> +	 * Since the max possible timeout of our 8-bit count register is less
+> +	 * than a second, we must use max_hw_heartbeat_ms.
+> +	 */
+> +	priv->wdev.max_hw_heartbeat_ms = (1000 * U8_MAX) / rate;
+> +	dev_dbg(&pdev->dev, "max hw timeout of %dms\n",
+> +		 priv->wdev.max_hw_heartbeat_ms);
+> +
+> +	priv->wdev.min_timeout = 1;
+> +	priv->wdev.timeout = DEFAULT_TIMEOUT;
+> +
+> +	watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
+> +	watchdog_set_drvdata(&priv->wdev, priv);
+> +
+> +	ret = devm_watchdog_register_device(&pdev->dev, &priv->wdev);
+> +	if (ret)
+> +		dev_err(&pdev->dev, "Cannot register watchdog device\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id rza_wdt_of_match[] = {
+> +	{ .compatible = "renesas,rza-wdt", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rza_wdt_of_match);
+> +
+> +static struct platform_driver rza_wdt_driver = {
+> +	.probe = rza_wdt_probe,
+> +	.driver = {
+> +		.name = "rza_wdt",
+> +		.of_match_table = rza_wdt_of_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(rza_wdt_driver);
+> +
+> +MODULE_DESCRIPTION("Renesas RZ/A WDT Driver");
+> +MODULE_AUTHOR("Chris Brandt <chris.brandt@renesas.com>");
+> +MODULE_LICENSE("GPL v2");
+>
+
