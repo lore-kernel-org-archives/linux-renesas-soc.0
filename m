@@ -1,140 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:24792 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755926AbdC2LpM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59213 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbdCEV6K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 07:45:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/3] usb: gadget: udc: add USB ID signal monitoring
-Date: Wed, 29 Mar 2017 20:42:52 +0900
-Message-ID: <1490787774-5796-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1490787774-5796-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1490787774-5796-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Sun, 5 Mar 2017 16:58:10 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 1/3] v4l: vsp1: Postpone frame end handling in event of display list race
+Date: Sun, 05 Mar 2017 23:58:45 +0200
+Message-ID: <4368649.e29LHi5jnS@avalon>
+In-Reply-To: <b3bc755c2c88ce4e81e16f47f6f34de1fca79e28.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.8e2f9686131cb2299b859f056e902b4208061a4e.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com> <b3bc755c2c88ce4e81e16f47f6f34de1fca79e28.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This usb 3.0 peripheral controller has a register (USB_OTG_STA) to monitor
-the USB ID signal. So, this patch adds the ID signal monitoring to change
-the mode to host (A-Device) or peripheral (B-Device).
+Hi Kieran,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/udc/renesas_usb3.c | 53 +++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+Thank you for the patch.
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 2218f91..dbef4b8 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -37,6 +37,9 @@
- #define USB3_USB_INT_ENA_2	0x22c
- #define USB3_STUP_DAT_0		0x230
- #define USB3_STUP_DAT_1		0x234
-+#define USB3_USB_OTG_STA	0x268
-+#define USB3_USB_OTG_INT_STA	0x26c
-+#define USB3_USB_OTG_INT_ENA	0x270
- #define USB3_P0_MOD		0x280
- #define USB3_P0_CON		0x288
- #define USB3_P0_STA		0x28c
-@@ -124,6 +127,9 @@
- /* USB_INT_ENA_2 and USB_INT_STA_2 */
- #define USB_INT_2_PIPE(n)	BIT(n)
- 
-+/* USB_OTG_STA, USB_OTG_INT_STA and USB_OTG_INT_ENA */
-+#define USB_OTG_IDMON		BIT(4)
-+
- /* P0_MOD */
- #define P0_MOD_DIR		BIT(6)
- 
-@@ -538,11 +544,39 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
- 	}
- }
- 
-+static void usb3_mode_a_host(struct renesas_usb3 *usb3)
-+{
-+	usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
-+}
-+
-+static void usb3_mode_b_peri(struct renesas_usb3 *usb3)
-+{
-+	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
-+}
-+
-+static bool usb3_is_a_device(struct renesas_usb3 *usb3)
-+{
-+	return !(usb3_read(usb3, USB3_USB_OTG_STA) & USB_OTG_IDMON);
-+}
-+
-+static void usb3_check_id(struct renesas_usb3 *usb3)
-+{
-+	if (usb3_is_a_device(usb3))
-+		usb3_mode_a_host(usb3);
-+	else
-+		usb3_mode_b_peri(usb3);
-+}
-+
- static void renesas_usb3_init_controller(struct renesas_usb3 *usb3)
- {
- 	usb3_init_axi_bridge(usb3);
- 	usb3_init_epc_registers(usb3);
-+	usb3_write(usb3, USB_OTG_IDMON, USB3_USB_OTG_INT_STA);
-+	usb3_write(usb3, USB_OTG_IDMON, USB3_USB_OTG_INT_ENA);
- 
-+	usb3_check_id(usb3);
- 	usb3_check_vbus(usb3);
- }
- 
-@@ -551,6 +585,7 @@ static void renesas_usb3_stop_controller(struct renesas_usb3 *usb3)
- 	usb3_disconnect(usb3);
- 	usb3_write(usb3, 0, USB3_P0_INT_ENA);
- 	usb3_write(usb3, 0, USB3_PN_INT_ENA);
-+	usb3_write(usb3, 0, USB3_USB_OTG_INT_ENA);
- 	usb3_write(usb3, 0, USB3_USB_INT_ENA_1);
- 	usb3_write(usb3, 0, USB3_USB_INT_ENA_2);
- 	usb3_write(usb3, 0, USB3_AXI_INT_ENA);
-@@ -1474,10 +1509,22 @@ static void usb3_irq_epc_int_2(struct renesas_usb3 *usb3, u32 int_sta_2)
- 	}
- }
- 
-+static void usb3_irq_idmon_change(struct renesas_usb3 *usb3)
-+{
-+	usb3_check_id(usb3);
-+}
-+
-+static void usb3_irq_otg_int(struct renesas_usb3 *usb3, u32 otg_int_sta)
-+{
-+	if (otg_int_sta & USB_OTG_IDMON)
-+		usb3_irq_idmon_change(usb3);
-+}
-+
- static void usb3_irq_epc(struct renesas_usb3 *usb3)
- {
- 	u32 int_sta_1 = usb3_read(usb3, USB3_USB_INT_STA_1);
- 	u32 int_sta_2 = usb3_read(usb3, USB3_USB_INT_STA_2);
-+	u32 otg_int_sta = usb3_read(usb3, USB3_USB_OTG_INT_STA);
- 
- 	int_sta_1 &= usb3_read(usb3, USB3_USB_INT_ENA_1);
- 	if (int_sta_1) {
-@@ -1488,6 +1535,12 @@ static void usb3_irq_epc(struct renesas_usb3 *usb3)
- 	int_sta_2 &= usb3_read(usb3, USB3_USB_INT_ENA_2);
- 	if (int_sta_2)
- 		usb3_irq_epc_int_2(usb3, int_sta_2);
-+
-+	otg_int_sta &= usb3_read(usb3, USB3_USB_OTG_INT_ENA);
-+	if (otg_int_sta) {
-+		usb3_write(usb3, otg_int_sta, USB3_USB_OTG_INT_STA);
-+		usb3_irq_otg_int(usb3, otg_int_sta);
-+	}
- }
- 
- static irqreturn_t renesas_usb3_irq(int irq, void *_usb3)
+On Sunday 05 Mar 2017 16:00:02 Kieran Bingham wrote:
+> If we try to commit the display list while an update is pending, we have
+> missed our opportunity. The display list manager will hold the commit
+> until the next interrupt.
+> 
+> In this event, we skip the pipeline completion callback handler so that
+> the pipeline will not mistakenly report frame completion to the user.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c   | 19 +++++++++++++++++--
+>  drivers/media/platform/vsp1/vsp1_dl.h   |  2 +-
+>  drivers/media/platform/vsp1/vsp1_pipe.c | 13 ++++++++++++-
+>  3 files changed, 30 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index b9e5027778ff..f449ca689554
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -562,9 +562,19 @@ void vsp1_dlm_irq_display_start(struct vsp1_dl_manager
+> *dlm) spin_unlock(&dlm->lock);
+>  }
+> 
+> -void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+> +/**
+> + * vsp1_dlm_irq_frame_end - Display list handler for the frame end
+> interrupt + * @dlm: the display list manager
+> + *
+> + * Return true if the previous display list has completed at frame end, or
+> false + * if it has been delayed by one frame because the display list
+> commit raced + * with the frame end interrupt. The function always returns
+> true in header mode + * as display list processing is then not continuous
+> and races never occur. + */
+> +bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+>  {
+>  	struct vsp1_device *vsp1 = dlm->vsp1;
+> +	bool completed = false;
+> 
+>  	spin_lock(&dlm->lock);
+> 
+> @@ -576,8 +586,10 @@ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager
+> *dlm) * perform any operation as there can't be any new display list queued
+> * in that case.
+>  	 */
+> -	if (dlm->mode == VSP1_DL_MODE_HEADER)
+> +	if (dlm->mode == VSP1_DL_MODE_HEADER) {
+> +		completed = true;
+>  		goto done;
+> +	}
+> 
+>  	/*
+>  	 * The UPD bit set indicates that the commit operation raced with the
+> @@ -597,6 +609,7 @@ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+> if (dlm->queued) {
+>  		dlm->active = dlm->queued;
+>  		dlm->queued = NULL;
+> +		completed = true;
+>  	}
+> 
+>  	/*
+> @@ -619,6 +632,8 @@ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+> 
+>  done:
+>  	spin_unlock(&dlm->lock);
+> +
+> +	return completed;
+>  }
+> 
+>  /* Hardware Setup */
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.h
+> b/drivers/media/platform/vsp1/vsp1_dl.h index 7131aa3c5978..6ec1380a10af
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.h
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.h
+> @@ -28,7 +28,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device
+> *vsp1, void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
+>  void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
+>  void vsp1_dlm_irq_display_start(struct vsp1_dl_manager *dlm);
+> -void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
+> +bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
+> 
+>  struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
+>  void vsp1_dl_list_put(struct vsp1_dl_list *dl);
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c
+> b/drivers/media/platform/vsp1/vsp1_pipe.c index 35364f594e19..d15327701ad8
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> @@ -304,10 +304,21 @@ bool vsp1_pipeline_ready(struct vsp1_pipeline *pipe)
+> 
+>  void vsp1_pipeline_frame_end(struct vsp1_pipeline *pipe)
+>  {
+> +	bool completed;
+> +
+>  	if (pipe == NULL)
+>  		return;
+> 
+> -	vsp1_dlm_irq_frame_end(pipe->output->dlm);
+> +	completed = vsp1_dlm_irq_frame_end(pipe->output->dlm);
+> +	if (!completed) {
+> +		/*
+> +		 * If the DL commit raced with the frame end interrupt, the
+> +		 * commit ends up being postponed by one frame. Return
+> +		 * immediately without calling the pipeline's frame end 
+handler
+> +		 * or incrementing the sequence number.
+> +		 */
+> +		return;
+> +	}
+> 
+>  	if (pipe->frame_end)
+>  		pipe->frame_end(pipe);
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
