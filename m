@@ -1,327 +1,174 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:60022 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754474AbdCMRM4 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59795 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752442AbdCEXok (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 13:12:56 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH v2 3/4] pinctrl: sh-pfc: r8a7795: Add SCIF support
-Date: Mon, 13 Mar 2017 18:12:46 +0100
-Message-Id: <1489425167-22711-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
-References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+        Sun, 5 Mar 2017 18:44:40 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v5.1 04/10] drm: bridge: dw-hdmi: Fix the PHY power down sequence
+Date: Mon,  6 Mar 2017 01:35:39 +0200
+Message-Id: <20170305233539.11898-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170303172007.26541-5-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170303172007.26541-5-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pins, groups, and functions for all SCIF serial ports on R-Car H3
-ES2.0.
+The PHY requires us to wait for the PHY to switch to low power mode
+after deasserting TXPWRON and before asserting PDDQ in the power down
+sequence, otherwise power down will fail.
 
-Extracted from a big patch in the BSP by Takeshi Kihara.
+The PHY power down can be monitored though the TX_READY bit, available
+through I2C in the PHY registers, or the TX_PHY_LOCK bit, available
+through the HDMI TX registers. As the two are equivalent, let's pick the
+easier solution of polling the TX_PHY_LOCK bit.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The power down code is currently duplicated in multiple places. To avoid
+spreading multiple calls to a TX_PHY_LOCK poll function, we have to
+refactor the power down code and group it all in a single function.
+
+Tests showed that one poll iteration was enough for TX_PHY_LOCK to
+become low, without requiring any additional delay. Retrying the read
+five times with a 1ms to 2ms delay between each attempt should thus be
+more than enough.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Jose Abreu <joabreu@synopsys.com>
 ---
-v2:
-  - New.
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 275 +++++++++++++++++++++++++++++++++++
- 1 file changed, 275 insertions(+)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 52 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 43 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 6caaed53938ca9cf..996cacee99c3e8be 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1576,10 +1576,285 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+Changes since v5:
+
+- Fix compilation breakage due to reordering of the patches compared to v4
+
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index d863b3393aee..3a1cd4c7ac64 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -116,6 +116,7 @@ struct dw_hdmi_i2c {
+ struct dw_hdmi_phy_data {
+ 	enum dw_hdmi_phy_type type;
+ 	const char *name;
++	unsigned int gen;
+ 	bool has_svsret;
  };
  
-+/* - SCIF0 ------------------------------------------------------------------ */
-+static const unsigned int scif0_data_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int scif0_data_mux[] = {
-+	RX0_MARK, TX0_MARK,
-+};
-+static const unsigned int scif0_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int scif0_clk_mux[] = {
-+	SCK0_MARK,
-+};
-+static const unsigned int scif0_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int scif0_ctrl_mux[] = {
-+	RTS0_N_TANS_MARK, CTS0_N_MARK,
-+};
-+/* - SCIF1 ------------------------------------------------------------------ */
-+static const unsigned int scif1_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
-+};
-+static const unsigned int scif1_data_a_mux[] = {
-+	RX1_A_MARK, TX1_A_MARK,
-+};
-+static const unsigned int scif1_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int scif1_clk_mux[] = {
-+	SCK1_MARK,
-+};
-+static const unsigned int scif1_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 7),
-+};
-+static const unsigned int scif1_ctrl_mux[] = {
-+	RTS1_N_TANS_MARK, CTS1_N_MARK,
-+};
-+
-+static const unsigned int scif1_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
-+};
-+static const unsigned int scif1_data_b_mux[] = {
-+	RX1_B_MARK, TX1_B_MARK,
-+};
-+/* - SCIF2 ------------------------------------------------------------------ */
-+static const unsigned int scif2_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int scif2_data_a_mux[] = {
-+	RX2_A_MARK, TX2_A_MARK,
-+};
-+static const unsigned int scif2_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int scif2_clk_mux[] = {
-+	SCK2_MARK,
-+};
-+static const unsigned int scif2_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int scif2_data_b_mux[] = {
-+	RX2_B_MARK, TX2_B_MARK,
-+};
-+/* - SCIF3 ------------------------------------------------------------------ */
-+static const unsigned int scif3_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int scif3_data_a_mux[] = {
-+	RX3_A_MARK, TX3_A_MARK,
-+};
-+static const unsigned int scif3_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 22),
-+};
-+static const unsigned int scif3_clk_mux[] = {
-+	SCK3_MARK,
-+};
-+static const unsigned int scif3_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
-+};
-+static const unsigned int scif3_ctrl_mux[] = {
-+	RTS3_N_TANS_MARK, CTS3_N_MARK,
-+};
-+static const unsigned int scif3_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int scif3_data_b_mux[] = {
-+	RX3_B_MARK, TX3_B_MARK,
-+};
-+/* - SCIF4 ------------------------------------------------------------------ */
-+static const unsigned int scif4_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int scif4_data_a_mux[] = {
-+	RX4_A_MARK, TX4_A_MARK,
-+};
-+static const unsigned int scif4_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int scif4_clk_a_mux[] = {
-+	SCK4_A_MARK,
-+};
-+static const unsigned int scif4_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(2, 14), RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int scif4_ctrl_a_mux[] = {
-+	RTS4_N_TANS_A_MARK, CTS4_N_A_MARK,
-+};
-+static const unsigned int scif4_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+};
-+static const unsigned int scif4_data_b_mux[] = {
-+	RX4_B_MARK, TX4_B_MARK,
-+};
-+static const unsigned int scif4_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 5),
-+};
-+static const unsigned int scif4_clk_b_mux[] = {
-+	SCK4_B_MARK,
-+};
-+static const unsigned int scif4_ctrl_b_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
-+};
-+static const unsigned int scif4_ctrl_b_mux[] = {
-+	RTS4_N_TANS_B_MARK, CTS4_N_B_MARK,
-+};
-+static const unsigned int scif4_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+};
-+static const unsigned int scif4_data_c_mux[] = {
-+	RX4_C_MARK, TX4_C_MARK,
-+};
-+static const unsigned int scif4_clk_c_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(0, 8),
-+};
-+static const unsigned int scif4_clk_c_mux[] = {
-+	SCK4_C_MARK,
-+};
-+static const unsigned int scif4_ctrl_c_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+};
-+static const unsigned int scif4_ctrl_c_mux[] = {
-+	RTS4_N_TANS_C_MARK, CTS4_N_C_MARK,
-+};
-+/* - SCIF5 ------------------------------------------------------------------ */
-+static const unsigned int scif5_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int scif5_data_a_mux[] = {
-+	RX5_A_MARK, TX5_A_MARK,
-+};
-+static const unsigned int scif5_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int scif5_clk_a_mux[] = {
-+	SCK5_A_MARK,
-+};
-+static const unsigned int scif5_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int scif5_data_b_mux[] = {
-+	RX5_B_MARK, TX5_B_MARK,
-+};
-+static const unsigned int scif5_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int scif5_clk_b_mux[] = {
-+	SCK5_B_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(scif0_data),
-+	SH_PFC_PIN_GROUP(scif0_clk),
-+	SH_PFC_PIN_GROUP(scif0_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data_a),
-+	SH_PFC_PIN_GROUP(scif1_clk),
-+	SH_PFC_PIN_GROUP(scif1_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data_b),
-+	SH_PFC_PIN_GROUP(scif2_data_a),
-+	SH_PFC_PIN_GROUP(scif2_clk),
-+	SH_PFC_PIN_GROUP(scif2_data_b),
-+	SH_PFC_PIN_GROUP(scif3_data_a),
-+	SH_PFC_PIN_GROUP(scif3_clk),
-+	SH_PFC_PIN_GROUP(scif3_ctrl),
-+	SH_PFC_PIN_GROUP(scif3_data_b),
-+	SH_PFC_PIN_GROUP(scif4_data_a),
-+	SH_PFC_PIN_GROUP(scif4_clk_a),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_a),
-+	SH_PFC_PIN_GROUP(scif4_data_b),
-+	SH_PFC_PIN_GROUP(scif4_clk_b),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_b),
-+	SH_PFC_PIN_GROUP(scif4_data_c),
-+	SH_PFC_PIN_GROUP(scif4_clk_c),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_c),
-+	SH_PFC_PIN_GROUP(scif5_data_a),
-+	SH_PFC_PIN_GROUP(scif5_clk_a),
-+	SH_PFC_PIN_GROUP(scif5_data_b),
-+	SH_PFC_PIN_GROUP(scif5_clk_b),
-+};
-+
-+static const char * const scif0_groups[] = {
-+	"scif0_data",
-+	"scif0_clk",
-+	"scif0_ctrl",
-+};
-+
-+static const char * const scif1_groups[] = {
-+	"scif1_data_a",
-+	"scif1_clk",
-+	"scif1_ctrl",
-+	"scif1_data_b",
-+};
-+
-+static const char * const scif2_groups[] = {
-+	"scif2_data_a",
-+	"scif2_clk",
-+	"scif2_data_b",
-+};
-+
-+static const char * const scif3_groups[] = {
-+	"scif3_data_a",
-+	"scif3_clk",
-+	"scif3_ctrl",
-+	"scif3_data_b",
-+};
-+
-+static const char * const scif4_groups[] = {
-+	"scif4_data_a",
-+	"scif4_clk_a",
-+	"scif4_ctrl_a",
-+	"scif4_data_b",
-+	"scif4_clk_b",
-+	"scif4_ctrl_b",
-+	"scif4_data_c",
-+	"scif4_clk_c",
-+	"scif4_ctrl_c",
-+};
-+
-+static const char * const scif5_groups[] = {
-+	"scif5_data_a",
-+	"scif5_clk_a",
-+	"scif5_data_b",
-+	"scif5_clk_b",
- };
+@@ -914,6 +915,40 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+ 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+ }
  
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(scif0),
-+	SH_PFC_FUNCTION(scif1),
-+	SH_PFC_FUNCTION(scif2),
-+	SH_PFC_FUNCTION(scif3),
-+	SH_PFC_FUNCTION(scif4),
-+	SH_PFC_FUNCTION(scif5),
- };
++static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
++{
++	const struct dw_hdmi_phy_data *phy = hdmi->phy;
++	unsigned int i;
++	u16 val;
++
++	if (phy->gen == 1) {
++		dw_hdmi_phy_enable_tmds(hdmi, 0);
++		dw_hdmi_phy_enable_powerdown(hdmi, true);
++		return;
++	}
++
++	dw_hdmi_phy_gen2_txpwron(hdmi, 0);
++
++	/*
++	 * Wait for TX_PHY_LOCK to be deasserted to indicate that the PHY went
++	 * to low power mode.
++	 */
++	for (i = 0; i < 5; ++i) {
++		val = hdmi_readb(hdmi, HDMI_PHY_STAT0);
++		if (!(val & HDMI_PHY_TX_PHY_LOCK))
++			break;
++
++		usleep_range(1000, 2000);
++	}
++
++	if (val & HDMI_PHY_TX_PHY_LOCK)
++		dev_warn(hdmi->dev, "PHY failed to power down\n");
++	else
++		dev_dbg(hdmi->dev, "PHY powered down in %u iterations\n", i);
++
++	dw_hdmi_phy_gen2_pddq(hdmi, 1);
++}
++
+ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ {
+ 	u8 val, msec;
+@@ -946,11 +981,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ 		return -EINVAL;
+ 	}
  
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-	/* gen2 tx power off */
+-	dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+-
+-	/* gen2 pddq */
+-	dw_hdmi_phy_gen2_pddq(hdmi, 1);
++	dw_hdmi_phy_power_off(hdmi);
+ 
+ 	/* Leave low power consumption mode by asserting SVSRET. */
+ 	if (hdmi->phy->has_svsret)
+@@ -1025,8 +1056,6 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
+ 	for (i = 0; i < 2; i++) {
+ 		dw_hdmi_phy_sel_data_en_pol(hdmi, 1);
+ 		dw_hdmi_phy_sel_interface_control(hdmi, 0);
+-		dw_hdmi_phy_enable_tmds(hdmi, 0);
+-		dw_hdmi_phy_enable_powerdown(hdmi, true);
+ 
+ 		ret = hdmi_phy_configure(hdmi);
+ 		if (ret)
+@@ -1256,8 +1285,7 @@ static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi)
+ 	if (!hdmi->phy_enabled)
+ 		return;
+ 
+-	dw_hdmi_phy_enable_tmds(hdmi, 0);
+-	dw_hdmi_phy_enable_powerdown(hdmi, true);
++	dw_hdmi_phy_power_off(hdmi);
+ 
+ 	hdmi->phy_enabled = false;
+ }
+@@ -1827,23 +1855,29 @@ static const struct dw_hdmi_phy_data dw_hdmi_phys[] = {
+ 	{
+ 		.type = DW_HDMI_PHY_DWC_HDMI_TX_PHY,
+ 		.name = "DWC HDMI TX PHY",
++		.gen = 1,
+ 	}, {
+ 		.type = DW_HDMI_PHY_DWC_MHL_PHY_HEAC,
+ 		.name = "DWC MHL PHY + HEAC PHY",
++		.gen = 2,
+ 		.has_svsret = true,
+ 	}, {
+ 		.type = DW_HDMI_PHY_DWC_MHL_PHY,
+ 		.name = "DWC MHL PHY",
++		.gen = 2,
+ 		.has_svsret = true,
+ 	}, {
+ 		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY_HEAC,
+ 		.name = "DWC HDMI 3D TX PHY + HEAC PHY",
++		.gen = 2,
+ 	}, {
+ 		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY,
+ 		.name = "DWC HDMI 3D TX PHY",
++		.gen = 2,
+ 	}, {
+ 		.type = DW_HDMI_PHY_DWC_HDMI20_TX_PHY,
+ 		.name = "DWC HDMI 2.0 TX PHY",
++		.gen = 2,
+ 		.has_svsret = true,
+ 	}
+ };
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
