@@ -1,55 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33135 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755137AbdCGJ62 (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:51270 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753597AbdCFUQc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 04:58:28 -0500
-Received: by mail-lf0-f47.google.com with SMTP id a6so84461883lfa.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2017 01:58:27 -0800 (PST)
-Subject: Re: [PATCH 1/7] thermal: rcar_gen3_thermal: add delay in
- .thermal_init on r8a7796
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-pm@vger.kernel.org,
+        Mon, 6 Mar 2017 15:16:32 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
- <20170306200401.29923-2-niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <98691387-0546-4884-b0ae-09814b7964d0@cogentembedded.com>
-Date: Tue, 7 Mar 2017 12:49:25 +0300
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/7] thermal: rcar_gen3_thermal: add delay in .thermal_init on r8a7796
+Date: Mon,  6 Mar 2017 21:03:55 +0100
+Message-Id: <20170306200401.29923-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20170306200401.29923-2-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 3/6/2017 11:03 PM, Niklas Söderlund wrote:
+The .thermal_init needs to be delayed a short amount of to allow for the
+TEMP register to contain something useful. If it's not delayed theses
+warnings are common during boot:
 
-> The .thermal_init needs to be delayed a short amount of to allow for the
+thermal thermal_zone0: failed to read out thermal zone (-5)
+thermal thermal_zone1: failed to read out thermal zone (-5)
+thermal thermal_zone2: failed to read out thermal zone (-5)
 
-    Amount of what? :-)
+The warnings are triggered by the first call to .get_temp while the TEMP
+register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO since
+a TEMP value of 0 will result in a temperature reading which is out of
+specifications.
 
-> TEMP register to contain something useful. If it's not delayed theses
+This should have been done in the initial commit which adds the driver
+as the same issue was found and corrected for r8a7795.
 
-    These.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> warnings are common during boot:
->
-> thermal thermal_zone0: failed to read out thermal zone (-5)
-> thermal thermal_zone1: failed to read out thermal zone (-5)
-> thermal thermal_zone2: failed to read out thermal zone (-5)
->
-> The warnings are triggered by the first call to .get_temp while the TEMP
-> register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO since
-> a TEMP value of 0 will result in a temperature reading which is out of
-> specifications.
->
-> This should have been done in the initial commit which adds the driver
-> as the same issue was found and corrected for r8a7795.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index d33c845244b1d819..ec477d47d0bae8e5 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -222,6 +222,8 @@ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ 	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
+ 	reg_val |= THCTR_THSST;
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
++
++	usleep_range(1000, 2000);
+ }
+ 
+ static const struct rcar_gen3_thermal_data r8a7795_data = {
+-- 
+2.12.0
