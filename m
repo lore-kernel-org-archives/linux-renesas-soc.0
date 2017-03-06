@@ -1,57 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33804 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754950AbdCGP3o (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:51248 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753558AbdCFUQc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 10:29:44 -0500
-Received: by mail-it0-f68.google.com with SMTP id r141so884670ita.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2017 07:29:35 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20170306200401.29923-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se> <20170306200401.29923-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Mar 2017 16:19:41 +0100
-Message-ID: <CAMuHMdWN_iGLTTAnG8FZXdtPK89OCmvwnEfZzruf5ucmYAZ=1w@mail.gmail.com>
-Subject: Re: [PATCH 2/7] thermal: rcar_gen3_thermal: fix probe error path
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Mon, 6 Mar 2017 15:16:32 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linux PM list <linux-pm@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/7] thermal: rcar_gen3_thermal: fix probe error path
+Date: Mon,  6 Mar 2017 21:03:56 +0100
+Message-Id: <20170306200401.29923-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 6, 2017 at 9:03 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> If the memory resource for a TSC is unviable probe should fail not try
+If the memory resource for a TSC is unviable probe should fail not try
+to go ahead with the remaining TSC. This fix is aligned with other
+checks in probe where probe fails if they are unavailable.
 
-unavailable
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> to go ahead with the remaining TSC. This fix is aligned with other
-
-TSCs
-
-> checks in probe where probe fails if they are unavailable.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index ec477d47d0bae8e5..97958f91047b4c3a 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -289,8 +289,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			break;
++		if (!res) {
++			ret = -ENODEV;
++			goto error_unregister;
++		}
+ 
+ 		tsc->base = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(tsc->base)) {
+-- 
+2.12.0
