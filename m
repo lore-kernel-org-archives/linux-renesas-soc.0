@@ -1,52 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:43478 "EHLO
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:39166 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbdCCNat (ORCPT
+        with ESMTP id S1754527AbdCFQlh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 08:30:49 -0500
+        Mon, 6 Mar 2017 11:41:37 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: drm: rcar-du: Document optional reset properties
-Date: Fri,  3 Mar 2017 14:30:35 +0100
-Message-Id: <1488547835-25229-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 3/8] ARM: dts: r8a7745: Remove unit-address and reg from integrated cache
+Date: Mon,  6 Mar 2017 17:40:38 +0100
+Message-Id: <1488818443-25196-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
+References: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the optional properties for describing module resets, to
-support resetting display channels and LVDS encoders on R-Car Gen2 and
-Gen3.
+The Cortex-A7 cache controller is an integrated controller, and thus the
+device node representing it should not have a unit-addresses or reg
+property.
 
+Fixes: c95360247bdd67d3 ("ARM: dts: r8a7745: initial SoC device tree")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/display/renesas,du.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/r8a7745.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index 1a02f099a0ff0a3a..7873d53764a297c2 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -36,6 +36,16 @@ Required Properties:
-       When supplied they must be named "dclkin.x" with "x" being the input
-       clock numerical index.
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index dcac70fbc4028c11..2feb0084bb3b1b51 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -32,9 +32,8 @@
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
-+Optional properties:
-+  - resets: A list of phandles + reset-specifier pairs, one for each entry in
-+    the reset-names property.
-+  - reset-names: Names of the resets. This property is model-dependent.
-+    - R8A779[0123456] use one reset for a group of one or more successive
-+      channels, and one reset per LVDS encoder (if available). The resets
-+      must be named "du.x" with "x" being the numerical index of the lowest
-+      channel in the group. The LVDS resets must be named "lvds.x" with "x"
-+      being the LVDS encoder numerical index.
-+
- Required nodes:
- 
- The connections to the DU output video ports are modeled using the OF graph
+-		L2_CA7: cache-controller@0 {
++		L2_CA7: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 			power-domains = <&sysc R8A7745_PD_CA7_SCU>;
 -- 
 2.7.4
