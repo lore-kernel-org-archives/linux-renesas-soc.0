@@ -1,189 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46432 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753576AbdCBPq5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43040 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752620AbdCFI6H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Mar 2017 10:46:57 -0500
-Date: Thu, 2 Mar 2017 17:37:03 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: Re: [PATCH v2 2/3] v4l: Clearly document interactions between
- formats, controls and buffers
-Message-ID: <20170302153703.GI3220@valkosipuli.retiisi.org.uk>
-References: <20170228150320.10104-1-laurent.pinchart+renesas@ideasonboard.com>
- <20170228150320.10104-3-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 6 Mar 2017 03:58:07 -0500
+Date: Mon, 6 Mar 2017 09:58:01 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv2] arm64: dts: r8a7795: salvator-x: Set drive-strength
+ for ravb pins
+Message-ID: <20170306085801.GF11468@verge.net.au>
+References: <20161205174310.28802-1-niklas.soderlund+renesas@ragnatech.se>
+ <20161208133137.GE7150@verge.net.au>
+ <20170305232818.GA20587@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20170228150320.10104-3-laurent.pinchart+renesas@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170305232818.GA20587@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
-
-On Tue, Feb 28, 2017 at 05:03:19PM +0200, Laurent Pinchart wrote:
-> V4L2 exposes parameters that influence buffers sizes through the format
-> ioctls (VIDIOC_G_FMT, VIDIOC_TRY_FMT and VIDIO_S_FMT). Other parameters
-> not part of the format structure may also influence buffer sizes or
-> buffer layout in general. One existing such parameter is rotation, which
-> is implemented by the VIDIOC_ROTATE control and thus exposed through the
-> V4L2 control ioctls.
+On Mon, Mar 06, 2017 at 12:28:18AM +0100, Niklas Söderlund wrote:
+> Hi Simon,
 > 
-> The interaction between those parameters and buffers is currently only
-> partially specified by the V4L2 API. In particular interactions between
-> controls and buffers isn't specified at all. The behaviour of the
-> VIDIOC_S_FMT ioctl when buffers are allocated is also not fully
-> specified.
+> On 2016-12-08 14:31:38 +0100, Simon Horman wrote:
+> > On Mon, Dec 05, 2016 at 06:43:10PM +0100, Niklas Söderlund wrote:
+> > > The EthernetAVB should not depend on the bootloader to setup correct
+> > > drive-strength values. Values for drive-strength where found by
+> > > examining the registers after the bootloader has configured the
+> > > registers and successfully used the EthernetAVB.
+> > > 
+> > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > 
+> > I believe this patch has run-time dependencies on PFC patches and will
+> > result in a regression without them. Please resubmit or otherwise ping me
+> > once chose changes are present in an (rc) release or immutable branch.
 > 
-> This commit clearly defines and documents the interactions between
-> formats, controls and buffers.
+> The dependency for this DT change is now present in v4.11-rc1, see 1. If 
+> it's convenient for you feel free to pick up this patch.
 > 
-> The preparatory discussions for the documentation change considered
-> completely disallowing controls that change the buffer size or layout,
-> in favour of extending the format API with a new ioctl that would bundle
-> those controls with format information. The idea has been rejected, as
-> this would essentially be a restricted version of the upcoming request
-> API that wouldn't bring any additional value.
-> 
-> Another option we have considered was to mandate the use of the request
-> API to modify controls that influence buffer size or layout. This has
-> also been rejected on the grounds that requiring the request API to
-> change rotation even when streaming is stopped would significantly
-> complicate implementation of drivers and usage of the V4L2 API for
-> applications.
-> 
-> Applications will however be required to use the upcoming request API to
-> change at runtime formats or controls that influence the buffer size or
-> layout, because of the need to synchronize buffers with the formats and
-> controls. Otherwise there would be no way to interpret the content of a
-> buffer correctly.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  Documentation/media/uapi/v4l/buffer.rst | 88 +++++++++++++++++++++++++++++++++
->  1 file changed, 88 insertions(+)
-> 
-> diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-> index ac58966ccb9b..5c58db98ab7a 100644
-> --- a/Documentation/media/uapi/v4l/buffer.rst
-> +++ b/Documentation/media/uapi/v4l/buffer.rst
-> @@ -34,6 +34,94 @@ flags are copied from the OUTPUT video buffer to the CAPTURE video
->  buffer.
->  
->  
-> +Interactions between formats, controls and buffers
-> +==================================================
-> +
-> +V4L2 exposes parameters that influence the buffer size, or the way data is
-> +laid out in the buffer. Those parameters are exposed through both formats and
-> +controls. One example of such a control is the ``V4L2_CID_ROTATE`` control
-> +that modifies the direction in which pixels are stored in the buffer, as well
-> +as the buffer size when the selected format includes padding at the end of
-> +lines.
-> +
-> +The set of information needed to interpret the content of a buffer (e.g. the
-> +pixel format, the line stride, the tiling orientation or the rotation) is
-> +collectively referred to in the rest of this section as the buffer layout.
-> +
-> +Modifying formats or controls that influence the buffer size or layout require
-> +the stream to be stopped. Any attempt at such a modification while the stream
-> +is active shall cause the format or control set ioctl to return the ``EBUSY``
-> +error code.
-> +
-> +Controls that only influence the buffer layout can be modified at any time
-> +when the stream is stopped. As they don't influence the buffer size, no
-> +special handling is needed to synchronize those controls with buffer
-> +allocation.
-> +
-> +Formats and controls that influence the buffer size interact with buffer
-> +allocation. As buffer allocation is an expensive operation, drivers should
-> +allow format or controls that influence the buffer size to be changed with
-> +buffers allocated. A typical ioctl sequence to modify format and controls is
-> +
-> + #. VIDIOC_STREAMOFF
-> + #. VIDIOC_S_FMT
-> + #. VIDIOC_S_EXT_CTRLS
+> 1. b25719eb938eb39a ("pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO 
+>    and MII pins")
 
-Which one do you set first, the format or the controls? Supposedly the user
-would have to get the format again after setting the ROTATE control.
+Thanks Niklas,
 
-> + #. VIDIOC_QBUF
-> + #. VIDIOC_STREAMON
-> +
-> +Queued buffers must be large enough for the new format or controls.
-> +
-> +Drivers shall return a ``ENOSPC`` error in response to format change
-> +(:c:func:`VIDIOC_S_FMT`) or control changes (:c:func:`VIDIOC_S_CTRL` or
-> +:c:func:`VIDIOC_S_EXT_CTRLS`) if buffers too small for the new format are
-> +currently queued. As a simplification, drivers are allowed to return an error
-> +from these ioctls if any buffer is currently queued, without checking the
-> +queued buffers sizes. Drivers shall also return a ``ENOSPC`` error from the
-> +:c:func:`VIDIOC_QBUF` ioctl if the buffer being queued is too small for the
-> +current format or controls. Together, these requirements ensure that queued
-> +buffers will always be large enough for the configured format and controls.
-> +
-> +Userspace applications can query the buffer size required for a given format
-> +and controls by first setting the desired control values and then trying the
-> +desired format. The :c:func:`VIDIOC_TRY_FMT` ioctl will return the required
-> +buffer size.
-> +
-> + #. VIDIOC_S_EXT_CTRLS(x)
-> + #. VIDIOC_TRY_FMT()
-> + #. VIDIOC_S_EXT_CTRLS(y)
-> + #. VIDIOC_TRY_FMT()
-> +
-> +The :c:func:`VIDIOC_CREATE_BUFS` ioctl can then be used to allocate buffers
-> +based on the queried sizes (for instance by allocating a set of buffers large
-> +enough for all the desired formats and controls, or by allocating separate set
-> +of appropriately sized buffers for each use case).
-> +
-> +To simplify their implementation, drivers may also require buffers to be
-> +reallocated in order to change formats or controls that influence the buffer
-> +size. In that case, to perform such changes, userspace applications shall
-> +first stop the video stream with the :c:func:`VIDIOC_STREAMOFF` ioctl if it
-> +is running and free all buffers with the :c:func:`VIDIOC_REQBUFS` ioctl if
-> +they are allocated. The format or controls can then be modified, and buffers
-> +shall then be reallocated and the stream restarted. A typical ioctl sequence
-> +is
-> +
-> + #. VIDIOC_STREAMOFF
-> + #. VIDIOC_REQBUFS(0)
-> + #. VIDIOC_S_FMT
-> + #. VIDIOC_S_EXT_CTRLS
-
-Same here.
-
-Would it be safe to say that controls are changed first? I wonder if there
-could be special cases where this wouldn't apply though. It could ultimately
-come down to hardware features: rotation might be only available for certain
-formats so you'd need to change the format first to enable rotation.
-
-What you're documenting above is a typical sequence so it doesn't have to be
-applicable to all potential hardware. I might mention there could be such
-dependencies. I wonder if one exists at the moment. No?
-
-> + #. VIDIOC_REQBUFS(n)
-> + #. VIDIOC_QBUF
-> + #. VIDIOC_STREAMON
-> +
-> +The second :c:func:`VIDIOC_REQBUFS` call will take the new format and control
-> +value into account to compute the buffer size to allocate. Applications can
-> +also retrieve the size by calling the :c:func:`VIDIOC_G_FMT` ioctl if needed.
-> +
-> +When reallocation is required, any attempt to modify format or controls that
-> +influences the buffer size while buffers are allocated shall cause the format
-> +or control set ioctl to return the ``EBUSY`` error code.
-> +
-> +
->  .. c:type:: v4l2_buffer
->  
->  struct v4l2_buffer
-
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+I am in the process of rebasing my branches on top of v4.11-rc1
+and I have queued up this patch. It should appear in the next push
+of renesas-next and renesas-revel.
