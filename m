@@ -1,47 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 7 Mar 2017 07:46:04 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:56406 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754434AbdCFQlh (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 6 Mar 2017 11:41:37 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Sudeep Holla <sudeep.holla@arm.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/8] ARM: dts: renesas: Remove unit-addresses and regs
- from integrated caches
-Message-ID: <20170307064603.GD14208@verge.net.au>
-References: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/8] ARM: dts: renesas: Remove unit-addresses and regs from integrated caches
+Date: Mon,  6 Mar 2017 17:40:35 +0100
+Message-Id: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 06, 2017 at 05:40:35PM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series removes the bogus unit-addresses and reg properties
-> from the device nodes representing Cortex-A15/A7 cache controllers.
-> 
-> Note that the latter were added to remove warnings from dtc when using
-> W=1:
-> 
->     Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
-> 
-> In hindsight, adding the reg properties turned out to be the wrong fix.
-> Indeed, the Cortex-A15/A7 cache controllers are integrated controllers,
-> and thus the device nodes representing them should not have
-> unit-addresses or reg properties.
-> 
-> This series does not have a runtime effect, as Linux doesn't rely much
-> on the properties of the cache-controller nodes.
-> 
-> This series is the arm32 counterpart of "[PATCH 0/2] arm64: dts: renesas:
-> Remove unit-addresses and regs from integrated caches", which you've just
-> applied.
-> 
-> Thanks for applying!
+	Hi Simon, Magnus,
 
-Thanks, done.
+This patch series removes the bogus unit-addresses and reg properties
+from the device nodes representing Cortex-A15/A7 cache controllers.
+
+Note that the latter were added to remove warnings from dtc when using
+W=1:
+
+    Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
+
+In hindsight, adding the reg properties turned out to be the wrong fix.
+Indeed, the Cortex-A15/A7 cache controllers are integrated controllers,
+and thus the device nodes representing them should not have
+unit-addresses or reg properties.
+
+This series does not have a runtime effect, as Linux doesn't rely much
+on the properties of the cache-controller nodes.
+
+This series is the arm32 counterpart of "[PATCH 0/2] arm64: dts: renesas:
+Remove unit-addresses and regs from integrated caches", which you've just
+applied.
+
+Thanks for applying!
+
+Geert Uytterhoeven (8):
+  ARM: dts: r8a73a4: Remove unit-addresses and regs from integrated
+    caches
+  ARM: dts: r8a7743: Remove unit-address and reg from integrated cache
+  ARM: dts: r8a7745: Remove unit-address and reg from integrated cache
+  ARM: dts: r8a7790: Remove unit-addresses and regs from integrated
+    caches
+  ARM: dts: r8a7791: Remove unit-address and reg from integrated cache
+  ARM: dts: r8a7792: Remove unit-address and reg from integrated cache
+  ARM: dts: r8a7793: Remove unit-address and reg from integrated cache
+  ARM: dts: r8a7794: Remove unit-address and reg from integrated cache
+
+ arch/arm/boot/dts/r8a73a4.dtsi | 6 ++----
+ arch/arm/boot/dts/r8a7743.dtsi | 3 +--
+ arch/arm/boot/dts/r8a7745.dtsi | 3 +--
+ arch/arm/boot/dts/r8a7790.dtsi | 6 ++----
+ arch/arm/boot/dts/r8a7791.dtsi | 3 +--
+ arch/arm/boot/dts/r8a7792.dtsi | 3 +--
+ arch/arm/boot/dts/r8a7793.dtsi | 3 +--
+ arch/arm/boot/dts/r8a7794.dtsi | 3 +--
+ 8 files changed, 10 insertions(+), 20 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
