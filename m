@@ -1,168 +1,159 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 6 Mar 2017 18:26:29 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+MIME-Version: 1.0
+In-Reply-To: <20170306142931.10457-1-wsa@the-dreams.de>
+References: <20170306142931.10457-1-wsa@the-dreams.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Mar 2017 16:33:59 +0100
+Message-ID: <CAMuHMdUO2-BCfdRUXghhZS7V=FoXNytesn8asCWH8nnpsnBxow@mail.gmail.com>
+Subject: Re: [i2c-tools PATCH v2] i2ctransfer: add new tool
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Linux I2C <linux-i2c@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Jean Delvare <jdelvare@suse.de>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?=
         <u.kleine-koenig@pengutronix.de>,
         Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: Re: [i2c-tools PATCH v2] i2ctransfer: add new tool
-Message-ID: <20170306172628.GB2086@katana>
-References: <20170306142931.10457-1-wsa@the-dreams.de>
- <CAMuHMdUO2-BCfdRUXghhZS7V=FoXNytesn8asCWH8nnpsnBxow@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUO2-BCfdRUXghhZS7V=FoXNytesn8asCWH8nnpsnBxow@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---WhfpMioaduB5tiZL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 6, 2017 at 3:29 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> This tool allows to construct and concat multiple I2C messages into one
+> single transfer. Its aim is to test I2C master controllers, and so there
+> is no SMBus fallback.
 
-Hi Geert,
+Thanks for the tool!
 
-> > This tool allows to construct and concat multiple I2C messages into one
-> > single transfer. Its aim is to test I2C master controllers, and so there
-> > is no SMBus fallback.
->=20
-> Thanks for the tool!
+> I've been missing such a tool a number of times now, so I finally got
+> paround to writing it myself. As with all I2C tools, it can be dangerous,
 
-Very welcome :)
+around
 
->=20
-> > I've been missing such a tool a number of times now, so I finally got
-> > paround to writing it myself. As with all I2C tools, it can be dangerou=
-s,
->=20
-> around
->=20
-> Very dangerous, it inserts spurious "p" characters ;-)
+Very dangerous, it inserts spurious "p" characters ;-)
 
-Yeah, but only if you write the tool. Everyone else is safe :D
+> --- /dev/null
+> +++ b/tools/i2ctransfer.8
 
-> > +A transfer may consist of multiple messages and is started with a STAR=
-T condition and ends with a STOP condition as described in the I2C specific=
-ation.
->=20
-> Funny, this is the other way around than on SPI (an SPI message consists
-> of multiple transfers).
+> +.SH DESCRIPTION
+> +.B i2ctransfer
+> +is a program to create I2C messages and send them combined as one transfer.
+> +For read messages, the contents of the received buffers are printed to stdout, one line per read message.
+> +.br
+> +Please note the difference between a
+> +.I transfer
+> +and a
+> +.I message
+> +here.
+> +A transfer may consist of multiple messages and is started with a START condition and ends with a STOP condition as described in the I2C specification.
 
-In deed, nice to know.
+Funny, this is the other way around than on SPI (an SPI message consists
+of multiple transfers).
 
-> > +It is parsed as an unsigned 16 bit integer, but note that the Linux mi=
-ght apply an additional upper limit (8192 as of v4.10).
->=20
-> s/the Linux/Linux/ (or the kernel, or i2c driver?)
+> +.TP
+> +.B {r|w}
+> +specifies if the message is read or write
+> +.TP
+> +.B <length_of_message>
+> +specifies the number of bytes read or written in this message.
+> +It is parsed as an unsigned 16 bit integer, but note that the Linux might apply an additional upper limit (8192 as of v4.10).
 
-Missing "Kernel". Will fix.
+s/the Linux/Linux/ (or the kernel, or i2c driver?)
 
-> > +Normally, addresses outside the range of 0x03-0x77 and addresses with =
-a kernel driver attached to them will be blocked.
->=20
-> So 10-bit adressing needs -f?
+> +.TP
+> +.B [@address]
+> +specifies the address of the chip to be accessed for this message, and is an integer.
+> +If omitted, reuse the previous address.
+> +Normally, addresses outside the range of 0x03-0x77 and addresses with a kernel driver attached to them will be blocked.
 
-Not supported, will add this info to the man-page.
+So 10-bit adressing needs -f?
 
-> > +static void print_msgs(struct i2c_msg *msgs, __u32 nmsgs, unsigned fla=
-gs)
->=20
-> unsigned int nmsgs?
+> --- /dev/null
+> +++ b/tools/i2ctransfer.c
+> @@ -0,0 +1,347 @@
 
-No... 1)
+> +static void print_msgs(struct i2c_msg *msgs, __u32 nmsgs, unsigned flags)
 
->=20
-> > +{
-> > +       FILE *output =3D flags & PRINT_STDERR ? stderr : stdout;
-> > +       unsigned i;
-> > +       __u16 j;
->=20
-> unsigned int, too?
+unsigned int nmsgs?
 
-No... 1)
+> +{
+> +       FILE *output = flags & PRINT_STDERR ? stderr : stdout;
+> +       unsigned i;
+> +       __u16 j;
 
-> > +static int confirm(const char *filename, struct i2c_msg *msgs, __u32 n=
-msgs)
->=20
-> unsigned int nmsgs?
+unsigned int, too?
 
-No... 1)
+> +
+> +       for (i = 0; i < nmsgs; i++) {
+> +               int read = msgs[i].flags & I2C_M_RD;
+> +               int print_buf = (read && (flags & PRINT_READ_BUF)) ||
+> +                               (!read && (flags & PRINT_WRITE_BUF));
+> +
+> +               if (flags & PRINT_HEADER)
+> +                       fprintf(output, "msg %u: addr 0x%02x, %s, len %u",
+> +                               i, msgs[i].addr, read ? "read" : "write", msgs[i].len);
+> +
+> +               if (msgs[i].len && print_buf) {
+> +                       if (flags & PRINT_HEADER)
+> +                               fprintf(output, ", buf ");
+> +                       for (j = 0; j < msgs[i].len - 1; j++)
+> +                               fprintf(output, "0x%02x ", msgs[i].buf[j]);
+> +                       /* Print final byte with newline */
+> +                       fprintf(output, "0x%02x\n", msgs[i].buf[j]);
+> +               } else if (flags & PRINT_HEADER) {
+> +                       fprintf(output, "\n");
+> +               }
+> +       }
+> +}
+> +
+> +static int confirm(const char *filename, struct i2c_msg *msgs, __u32 nmsgs)
 
->=20
-> > +{
-> > +       fprintf(stderr, "WARNING! This program can confuse your I2C bus=
-, cause data loss and worse!\n");
-> > +       fprintf(stderr, "I will send the following messages to device f=
-ile %s:\n", filename);
-> > +       print_msgs(msgs, nmsgs, PRINT_STDERR | PRINT_HEADER | PRINT_WRI=
-TE_BUF);
-> > +
-> > +       fprintf(stderr, "Continue? [y/N] ");
-> > +       fflush(stderr);
-> > +       if (!user_ack(0)) {
-> > +               fprintf(stderr, "Aborting on user request.\n");
-> > +               return 0;
-> > +       }
-> > +
-> > +       return 1;
-> > +}
-> > +
-> > +int main(int argc, char *argv[])
-> > +{
-> > +       char filename[20];
-> > +       int i2cbus, address =3D -1, file, arg_idx =3D 1, nmsgs =3D 0, n=
-msgs_sent, i;
->=20
-> unsigned int i?
+unsigned int nmsgs?
 
-No... 2)
+> +{
+> +       fprintf(stderr, "WARNING! This program can confuse your I2C bus, cause data loss and worse!\n");
+> +       fprintf(stderr, "I will send the following messages to device file %s:\n", filename);
+> +       print_msgs(msgs, nmsgs, PRINT_STDERR | PRINT_HEADER | PRINT_WRITE_BUF);
+> +
+> +       fprintf(stderr, "Continue? [y/N] ");
+> +       fflush(stderr);
+> +       if (!user_ack(0)) {
+> +               fprintf(stderr, "Aborting on user request.\n");
+> +               return 0;
+> +       }
+> +
+> +       return 1;
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +       char filename[20];
+> +       int i2cbus, address = -1, file, arg_idx = 1, nmsgs = 0, nmsgs_sent, i;
 
->=20
-> > +       while (arg_idx < argc) {
-> > +               char *arg_ptr =3D argv[arg_idx];
-> > +               unsigned long len, raw_data;
-> > +               __u16 flags;
->=20
-> unsigned int flags?
+unsigned int i?
 
-No... 1)
+> +       while (arg_idx < argc) {
+> +               char *arg_ptr = argv[arg_idx];
+> +               unsigned long len, raw_data;
+> +               __u16 flags;
 
-1) I prefer to keep the type of the data source, i.e. where the value is
-   copied from
-2) i is always int for me
+unsigned int flags?
 
-Thanks for the comments,
+> +               __u8 data, *buf;
 
-   Wolfram
+Gr{oetje,eeting}s,
 
---WhfpMioaduB5tiZL
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIcBAEBAgAGBQJYvZvEAAoJEBQN5MwUoCm2E5gP/1ye+NoU1pVBZyJyXKzGvtm7
-9Lmpj69bDfrYag/sqZiLSuutajiKda17w+iTVslj8e6zlw8XtefcUfC1Qw4/qzuq
-JLtA4IUMkwsLS5YD+fsE2mxXF/XZfsg9J+BBQvKgipnMbZd3osbtf128rpuOCMFv
-bLW/qx3wtYIoJJhk327/MlS7SVOH7CMVeO0OqNgTalSDHp77bJypDxSuYcXq2Zvs
-UeRsfT8oudgMzGVDPQSxB5uA88q4CIkmhoCv4zmGJOI2cd0HoqKv2ydS6CmOCmXQ
-rXqdxb3FLC3xZnYbmgfQKx1Qrj1ifhDqObagJxMYq+qJG5nnyXnNZFaFIzirAnzQ
-PTi19AsI6dyF/UC/mGdPZHxje089zIWkv0kft8MGt62gHjnte4mpcpxqJL8jklOr
-UMsRa2ZFZocSmHp2ZNRpkq7zozWZ2fcVX90bFTG2N9lA+Tg+NUX2gfhpKHHOLNNz
-AbNb6GKkc9vOr5hfQKKsrXqpzoNXoEFcPX/jKVqC8W4bW1YMOOoZxMn8lJ44haFz
-aqzXSMSbI23czbBNdfxnajDWYluACrqsIvrjfg1N3hg4pbTsSoCL/QC7ZUjTEwEK
-UzxEHeARBAjdyM63AeFMIJgUpHl1g/H+U900HskcEEHnt/NWqWbrTbSkAQL3F5bU
-0wn5BuZbgwYk47VmfOK3
-=Si29
------END PGP SIGNATURE-----
-
---WhfpMioaduB5tiZL--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
