@@ -1,63 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:54148 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755761AbdCGSv6 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60006 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752509AbdCFAOl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 13:51:58 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vd4L82P2VzMr5bF
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2017 19:04:32 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/5] arm64: dts: r8a7796: Add Cortex-A53 PMU node
-Date: Tue,  7 Mar 2017 19:03:26 +0100
-Message-Id: <1488909806-3322-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
-References: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
+        Sun, 5 Mar 2017 19:14:41 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 7/9] drm: rcar-du: Skip disabled outputs
+Date: Mon,  6 Mar 2017 02:03:00 +0200
+Message-Id: <20170306000302.14149-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the performance monitor unit for the Cortex-A53 cores on the
-R8A7796 SoC.
+When a DT node connected to a DU output is disabled no bridge will ever
+be instantiated for it. Skip the output in that case.
 
-Extracted from a patch by Takeshi Kihara in the BSP.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index b32a180009dd10cc..a90abf14dc4e7c79 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -303,6 +303,18 @@
- 					     <&a57_1>;
- 		};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index f38fc2f3f93d..f4125c8ca902 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -302,6 +302,13 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		return -ENODEV;
+ 	}
  
-+		pmu_a53 {
-+			compatible = "arm,cortex-a53-pmu";
-+			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-affinity = <&a53_0>,
-+					     <&a53_1>,
-+					     <&a53_2>,
-+					     <&a53_3>;
-+		};
++	if (!of_device_is_available(entity)) {
++		dev_dbg(rcdu->dev,
++			"connected entity %s is disabled, skipping\n",
++			entity->full_name);
++		return -ENODEV;
++	}
 +
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7796-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ 	entity_ep_node = of_parse_phandle(ep->local_node, "remote-endpoint", 0);
+ 
+ 	for_each_endpoint_of_node(entity, ep_node) {
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
