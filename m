@@ -1,49 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:35568 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754210AbdCGQaU (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:51438 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753741AbdCFUQf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 11:30:20 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170306200401.29923-7-niklas.soderlund+renesas@ragnatech.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se> <20170306200401.29923-7-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Mar 2017 16:37:11 +0100
-Message-ID: <CAMuHMdXU1mMyVfvrurm=vyMDBJz+wJbtgKTuCadp+Rx3zTjBOA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] thermal: rcar_gen3_thermal: store device match data
- in private structure
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Mon, 6 Mar 2017 15:16:35 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linux PM list <linux-pm@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 6/7] thermal: rcar_gen3_thermal: store device match data in private structure
+Date: Mon,  6 Mar 2017 21:04:00 +0100
+Message-Id: <20170306200401.29923-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 6, 2017 at 9:04 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The device match data needs to be accessible outside the probe function,
-> store it in the private data structure.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+The device match data needs to be accessible outside the probe function,
+store it in the private data structure.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index e52181015e589a7f..9168ac538f3b8cf5 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -87,6 +87,7 @@ struct rcar_gen3_thermal_tsc {
+ };
+ 
+ struct rcar_gen3_thermal_priv {
++	const struct rcar_gen3_thermal_data *data;
+ 	spinlock_t lock;
+ 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
+ };
+@@ -363,8 +364,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct thermal_zone_device *zone;
+ 	int ret, i;
+-	const struct rcar_gen3_thermal_data *match_data =
+-		of_device_get_match_data(dev);
+ 
+ 	/* default values if FUSEs are missing */
+ 	/* TODO: Read values from hardware on supported platforms */
+@@ -379,6 +378,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	priv->data = of_device_get_match_data(dev);
++
+ 	spin_lock_init(&priv->lock);
+ 
+ 	platform_set_drvdata(pdev, priv);
+@@ -433,7 +434,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 
+ 		priv->tscs[i] = tsc;
+ 
+-		match_data->thermal_init(tsc);
++		priv->data->thermal_init(tsc);
+ 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
+ 
+ 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+-- 
+2.12.0
