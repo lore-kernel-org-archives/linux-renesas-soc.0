@@ -1,49 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34402 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932685AbdCGPWi (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:51276 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753621AbdCFUQc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 10:22:38 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170306200401.29923-4-niklas.soderlund+renesas@ragnatech.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se> <20170306200401.29923-4-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Mar 2017 16:22:05 +0100
-Message-ID: <CAMuHMdV-k0tFk3Aqz4Y7b_H=hw-LjZqVucFrwAZg3AUgBSqGZA@mail.gmail.com>
-Subject: Re: [PATCH 3/7] thermal: rcar_gen3_thermal: remove unneeded mutex
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Mon, 6 Mar 2017 15:16:32 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linux PM list <linux-pm@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/7] thermal: rcar_gen3_thermal: remove unneeded mutex
+Date: Mon,  6 Mar 2017 21:03:57 +0100
+Message-Id: <20170306200401.29923-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 6, 2017 at 9:03 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> There is no point in protecting a register read with a lock. This is
-> most likely a leftover from when the driver was reworked before submitted
-> for upstream.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+There is no point in protecting a register read with a lock. This is
+most likely a leftover from when the driver was reworked before submitted
+for upstream.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 97958f91047b4c3a..5d4a5483eb13e796 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -20,7 +20,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/mutex.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+@@ -72,7 +71,6 @@ struct rcar_gen3_thermal_tsc {
+ 	void __iomem *base;
+ 	struct thermal_zone_device *zone;
+ 	struct equation_coefs coef;
+-	struct mutex lock;
+ };
+ 
+ struct rcar_gen3_thermal_priv {
+@@ -163,16 +161,12 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
+ 	u32 reg;
+ 
+ 	/* Read register and convert to mili Celsius */
+-	mutex_lock(&tsc->lock);
+-
+ 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+ 
+ 	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
+ 	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
+ 	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
+ 
+-	mutex_unlock(&tsc->lock);
+-
+ 	/* Make sure we are inside specifications */
+ 	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
+ 		return -EIO;
+@@ -301,7 +295,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		priv->tscs[i] = tsc;
+-		mutex_init(&tsc->lock);
+ 
+ 		match_data->thermal_init(tsc);
+ 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
+-- 
+2.12.0
