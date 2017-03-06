@@ -1,56 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34790 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbdCPLFa (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:45918 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753818AbdCFQ6c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Mar 2017 07:05:30 -0400
-Received: by mail-it0-f66.google.com with SMTP id r141so6043414ita.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Mar 2017 04:05:29 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170316110013.kmjytn4jipo6sacj@ninjato>
-References: <20170316110013.kmjytn4jipo6sacj@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Mar 2017 12:05:26 +0100
-Message-ID: <CAMuHMdXjjZgjRqmzQYtqTQGuMv6qWrG+GVeQK37mpNK2AU-eoQ@mail.gmail.com>
-Subject: Re: [PULL REQUEST] renesas/topic/sdhi-dma-sync-v3 for renesas drivers
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 6 Mar 2017 11:58:32 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/6] ARM: dts: r8a7790: Add INTC-SYS clock to device tree
+Date: Mon,  6 Mar 2017 17:58:07 +0100
+Message-Id: <1488819491-26097-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1488819491-26097-1-git-send-email-geert+renesas@glider.be>
+References: <1488819491-26097-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+Link the ARM GIC to the INTC-SYS module clock, and add it to the "always
+on" PM Domain, so it can be power managed using that clock.
 
-On Thu, Mar 16, 2017 at 12:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> here is an updated topic branch (v3 instead of v2) for renesas-drivers,
-> also rebased to current mmc/next. Please pull.
->
-> Kind regards,
->
->    Wolfram
->
->
-> The following changes since commit 05d1ea17f58de925e46d97b305d3cacbb84a0eb6:
->
->   Merge branch 'fixes' into next (2017-03-14 17:19:20 +0100)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-dma-sync-v3
->
-> for you to fetch changes up to 1309db3202ae35b0372f414dbc50ad6889027b5e:
->
->   mmc: tmio: always unmap DMA before waiting for interrupt (2017-03-16 11:37:58 +0100)
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
 
-Looks fine, thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Drop RFC status,
+  - Rebased on top of CPG Clock Domain support,
+  - Add clock-names property,
+  - Change one-line summary prefix to match current arm-soc practices.
+  - Rebased on top of R-Car SYSC PM Domain support,
+  - s/GIC driver/GIC-400 driver/,
+  - Document critical clock dependency.
+---
+ arch/arm/boot/dts/r8a7790.dtsi            | 9 ++++++---
+ include/dt-bindings/clock/r8a7790-clock.h | 1 +
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 20cf191e0852b10a..2a1967d70804278c 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -185,6 +185,9 @@
+ 			<0 0xf1004000 0 0x2000>,
+ 			<0 0xf1006000 0 0x2000>;
+ 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++		clocks = <&mstp4_clks R8A7790_CLK_INTC_SYS>;
++		clock-names = "clk";
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	gpio0: gpio@e6050000 {
+@@ -1364,10 +1367,10 @@
+ 		mstp4_clks: mstp4_clks@e6150140 {
+ 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
+-			clocks = <&cp_clk>;
++			clocks = <&cp_clk>, <&zs_clk>;
+ 			#clock-cells = <1>;
+-			clock-indices = <R8A7790_CLK_IRQC>;
+-			clock-output-names = "irqc";
++			clock-indices = <R8A7790_CLK_IRQC R8A7790_CLK_INTC_SYS>;
++			clock-output-names = "irqc", "intc-sys";
+ 		};
+ 		mstp5_clks: mstp5_clks@e6150144 {
+ 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7790-clock.h b/include/dt-bindings/clock/r8a7790-clock.h
+index fa5e8da809f2e802..20641fa68e731ec0 100644
+--- a/include/dt-bindings/clock/r8a7790-clock.h
++++ b/include/dt-bindings/clock/r8a7790-clock.h
+@@ -82,6 +82,7 @@
+ 
+ /* MSTP4 */
+ #define R8A7790_CLK_IRQC		7
++#define R8A7790_CLK_INTC_SYS		8
+ 
+ /* MSTP5 */
+ #define R8A7790_CLK_AUDIO_DMAC1		1
+-- 
+2.7.4
