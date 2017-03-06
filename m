@@ -1,57 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:39360 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759385AbdCVO0D (ORCPT
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:34738 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753237AbdCFJaz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 10:26:03 -0400
-Date: Wed, 22 Mar 2017 15:25:01 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFC v2 0/4] iommu/ipmmu-vmsa: IPMMU slave device
- whitelist V2
-Message-ID: <20170322142501.GM29659@8bytes.org>
-References: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
+        Mon, 6 Mar 2017 04:30:55 -0500
+Received: by mail-wm0-f45.google.com with SMTP id 196so17101936wmm.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Mar 2017 01:30:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
+References: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 6 Mar 2017 18:00:03 +0900
+Message-ID: <CANqRtoQR3S=MbVE91s5Ku=XZZ6XxpPFUfZ0FYFxiEcqts5N-pA@mail.gmail.com>
+Subject: Re: [PATCH/RFC v2 0/4] iommu/ipmmu-vmsa: IPMMU slave device whitelist V2
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        joro <joro@8bytes.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 27, 2017 at 03:14:07PM +0900, Magnus Damm wrote:
+On Fri, Jan 27, 2017 at 3:14 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
 > iommu/ipmmu-vmsa: IPMMU slave device whitelist V2
-> 
+>
 > [PATCH/RFC v2 1/4] iommu/of: Skip IOMMU devices disabled in DT
 > [PATCH/RFC v2 2/4] iommu/ipmmu-vmsa: Get rid of disabled device check
 > [PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Check devices in xlate()
 > [PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Opt-in slave devices based on ES version
-> 
+>
 > Here's an updated prototype that shows how DT integration of IPMMU details
 > may be integrated and merged upstream based on SoC data sheet ahead of
 > time followed by enablement in the IPMMU driver code once the appropriate
 > SoC ES version has been released and the hardware has been tested.
-> 
+>
 > Changes since V1:
 >  - Broke out patch 1 from the IPMMU driver
 >  - Moved slave device check from ->add_device() to ->xlate() (Thanks Robin!)
 >  - Updated white list patch to hook into ->xlate()
-> 
+>
 > Patch 1 may be suitable for upstream merge, however other patches should
 > in the future if agreed on be rolled into the IPMMU driver series.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
-> 
->  Developed on top of renesas-drivers-2017-01-24-v4.10-rc5
-> 
->  drivers/iommu/ipmmu-vmsa.c |   59 +++++++++++++++++++++++---------------------
->  drivers/iommu/of_iommu.c   |    2 -
->  2 files changed, 33 insertions(+), 28 deletions(-)
 
-For the series:
+Hi Geert, everyone,
 
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Do you have any opinion about the code in this version of the series?
+
+I recall that you agreed with the approach in "[PATCH/RFC 2/2]
+iommu/ipmmu-vmsa: Opt-in slave devices based on ES version", however
+it was suggested to me by Robin that my code in "[PATCH/RFC 1/2]
+arm64: mm: Silently allow devices lacking IOMMU group" should be
+reworked to use ->xlate().
+
+Now this series makes use of ->xlate() to implement the white list, so
+I hope that makes everyone happy.
+
+Also, based on your suggestion I finally managed to break out the code
+that skips over disabled devices in "[PATCH/RFC v2 1/4] iommu/of: Skip
+IOMMU devices disabled in DT" but I'm not sure if this will cause
+problem for other platforms.
+
+Anyway, my current plan is to wait for feedback for "[PATCH/RFC v2
+1/4] iommu/of: Skip IOMMU devices disabled in DT" and handle that
+independently, and also roll in the other changes in this series into
+my other IPMMU code.
+
+Thanks,
+
+/ magnus
