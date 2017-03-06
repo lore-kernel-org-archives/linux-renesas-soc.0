@@ -1,52 +1,102 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/7] arm: dts: genmai: Add RIIC2 pin group
-Date: Mon, 20 Mar 2017 17:14:50 +0100
-Message-Id: <1490026491-21742-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60050 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752500AbdCFA3k (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 5 Mar 2017 19:29:40 -0500
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id E1E632034A
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Mar 2017 01:18:54 +0100 (CET)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 2/5] arm64: dts: r8a7795: salvator-x: Enable HDMI outputs
+Date: Mon,  6 Mar 2017 02:20:23 +0200
+Message-Id: <20170306002026.15066-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for RIIC2 interface.
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Instantiate the HDMI connectors and enable the encoders.
+
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 569c86a..30992b1 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -44,6 +44,12 @@
- 		renesas,pins = <PIN(3, 0) 6>,
- 			       <PIN(3, 2) 4>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 7a8986edcdc0..e855e9572685 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -165,6 +165,30 @@
+ 		};
  	};
+ 
++	hdmi0-out {
++		compatible = "hdmi-connector";
++		label = "HDMI0 OUT";
++		type = "a";
 +
-+	i2c2_pins: i2c2 {
-+		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
-+		renesas,pins = <PIN(1, 4) (1 | BI_DIR)>,
-+			       <PIN(1, 5) (1 | BI_DIR)>;
++		port {
++			hdmi0_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_out>;
++			};
++		};
 +	};
++
++	hdmi1-out {
++		compatible = "hdmi-connector";
++		label = "HDMI1 OUT";
++		type = "a";
++
++		port {
++			hdmi1_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi1_out>;
++			};
++		};
++	};
++
+ 	vga-encoder {
+ 		compatible = "adi,adv7123";
+ 
+@@ -198,6 +222,32 @@
+ 	};
  };
  
- &extal_clk {
-@@ -62,6 +68,9 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
++&hdmi0 {
++	status = "okay";
 +
- 	eeprom@50 {
- 		compatible = "renesas,24c128";
- 		reg = <0x50>;
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi1 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi1_out: endpoint {
++				remote-endpoint = <&hdmi1_con>;
++			};
++		};
++	};
++};
++
+ &du {
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
