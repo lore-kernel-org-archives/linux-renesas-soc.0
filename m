@@ -1,120 +1,51 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Wed, 08 Mar 2017 20:01:33 +0900
-Message-Id: <148897089355.16106.305846051553789544.sendpatchset@little-apple>
-In-Reply-To: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-Subject: [PATCH v3 01/09] iommu/ipmmu-vmsa: Introduce features, break out alias
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:60226 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753115AbdCFNfB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 6 Mar 2017 08:35:01 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: Wolfram Sang <wsa@the-dreams.de>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: RE: Possible Regression caused by "[PATCH] i2c: riic: correctly
+ finish transfers"
+Date: Mon, 6 Mar 2017 13:34:55 +0000
+Message-ID: <SG2PR06MB116521B4B60AD78B66EA13D58A2C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170306111637.GA28805@verge.net.au>
+In-Reply-To: <20170306111637.GA28805@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Simon,
 
-Introduce struct ipmmu_features to track various hardware
-and software implementation changes inside the driver for
-different kinds of IPMMU hardware. Add use_ns_alias_offset
-as a first example of a feature to control if the secure
-register bank offset should be used or not.
+On Monday, March 06, 2017, Simon Horman wrote:
+> Hi,
+>=20
+> I have noticed a regression in v4.11-rc1 since v4.10 on r7s72100/Genmai.
+>=20
+> With some assistance from Geert I have isolated the problem as being
+> caused by 71ccea095ea1 ("i2c: riic: correctly finish transfers").
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
 
- Changes since V2:
- - None
+I just tried v4.11-rc1 with the RSK and it boots fine. However:
+ 1. The RSK DTS is not probing a I2C EEPROM on boot like the GENMAI DTS (wh=
+ich is
+    Where the hang up seems to be)
 
- Changes since V1:
- - Moved patch to front of the series
+ 2. There is no PFC code yet upstream, (my RSK/u-boot has it) so now that
+   the driver is actually waiting for a STOP condition, it might never get =
+it because
+   the pins are not actually configured.
 
- drivers/iommu/ipmmu-vmsa.c |   35 ++++++++++++++++++++++++++++-------
- 1 file changed, 28 insertions(+), 7 deletions(-)
+When I get to the office, I'll dig out my GENMAI board and try it.
 
---- 0007/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-07 12:25:47.000000000 +0900
-@@ -32,11 +32,15 @@
- 
- #define IPMMU_CTX_MAX 1
- 
-+struct ipmmu_features {
-+	bool use_ns_alias_offset;
-+};
-+
- struct ipmmu_vmsa_device {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct list_head list;
--
-+	const struct ipmmu_features *features;
- 	unsigned int num_utlbs;
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-@@ -999,13 +1003,33 @@ static void ipmmu_device_reset(struct ip
- 		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
- }
- 
-+static const struct ipmmu_features ipmmu_features_default = {
-+	.use_ns_alias_offset = true,
-+};
-+
-+static const struct of_device_id ipmmu_of_ids[] = {
-+	{
-+		.compatible = "renesas,ipmmu-vmsa",
-+		.data = &ipmmu_features_default,
-+	}, {
-+		/* Terminator */
-+	},
-+};
-+
-+MODULE_DEVICE_TABLE(of, ipmmu_of_ids);
-+
- static int ipmmu_probe(struct platform_device *pdev)
- {
- 	struct ipmmu_vmsa_device *mmu;
-+	const struct of_device_id *match;
- 	struct resource *res;
- 	int irq;
- 	int ret;
- 
-+	match = of_match_node(ipmmu_of_ids, pdev->dev.of_node);
-+	if (!match)
-+		return -EINVAL;
-+
- 	mmu = devm_kzalloc(&pdev->dev, sizeof(*mmu), GFP_KERNEL);
- 	if (!mmu) {
- 		dev_err(&pdev->dev, "cannot allocate device data\n");
-@@ -1016,6 +1040,7 @@ static int ipmmu_probe(struct platform_d
- 	mmu->num_utlbs = 32;
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
-+	mmu->features = match->data;
- 
- 	/* Map I/O memory and request IRQ. */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -1035,7 +1060,8 @@ static int ipmmu_probe(struct platform_d
- 	 * Offset the registers base unconditionally to point to the non-secure
- 	 * alias space for now.
- 	 */
--	mmu->base += IM_NS_ALIAS_OFFSET;
-+	if (mmu->features->use_ns_alias_offset)
-+		mmu->base += IM_NS_ALIAS_OFFSET;
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
-@@ -1084,11 +1110,6 @@ static int ipmmu_remove(struct platform_
- 	return 0;
- }
- 
--static const struct of_device_id ipmmu_of_ids[] = {
--	{ .compatible = "renesas,ipmmu-vmsa", },
--	{ }
--};
--
- static struct platform_driver ipmmu_driver = {
- 	.driver = {
- 		.name = "ipmmu-vmsa",
+
+Chris
