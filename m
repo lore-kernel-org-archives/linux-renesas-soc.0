@@ -1,65 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:34145 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751641AbdCCRpC (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:56412 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754451AbdCFQlh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 12:45:02 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 6 Mar 2017 11:41:37 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v5 3/3] ARM: dts: r7s72100: Add watchdog timer
-Date: Fri,  3 Mar 2017 12:32:01 -0500
-Message-Id: <20170303173201.5597-4-chris.brandt@renesas.com>
-In-Reply-To: <20170303173201.5597-1-chris.brandt@renesas.com>
-References: <20170303173201.5597-1-chris.brandt@renesas.com>
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/8] ARM: dts: r8a73a4: Remove unit-addresses and regs from integrated caches
+Date: Mon,  6 Mar 2017 17:40:36 +0100
+Message-Id: <1488818443-25196-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
+References: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add watchdog timer support for RZ/A1.
-For the RZ/A1, the only way to do a reset is to overflow the WDT, so this
-is useful even if you don't need the watchdog functionality.
+The Cortex-A15/A7 cache controllers are integrated controllers, and thus
+the device nodes representing them should not have unit-addresses or reg
+properties.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: b0da45c60d2f7b08 ("ARM: dts: r8a73a4: Fix W=1 dtc warnings")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v4:
-* changed from timer@ to watchdog@
-v3:
-* added Reviewed-by
-v2:
-* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
-* changed "renesas,wdt-reset" to "renesas,rza-wdt"
-* added interupt property (even though it is not used)
-* added clocks property
----
- arch/arm/boot/dts/r7s72100.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a73a4.dtsi | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index ed62e19..22f96b7 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -382,6 +382,13 @@
- 		cache-level = <2>;
- 	};
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 00eb9a7114dc2621..6fb7eaba91262edf 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -32,18 +32,16 @@
+ 			next-level-cache = <&L2_CA15>;
+ 		};
  
-+	wdt: watchdog@fcfe0000 {
-+		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
-+		reg = <0xfcfe0000 0x6>;
-+		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&p0_clk>;
-+	};
-+
- 	i2c0: i2c@fcfee000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+-		L2_CA15: cache-controller@0 {
++		L2_CA15: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			clocks = <&cpg_clocks R8A73A4_CLK_Z>;
+ 			power-domains = <&pd_a3sm>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+ 
+-		L2_CA7: cache-controller@100 {
++		L2_CA7: cache-controller-1 {
+ 			compatible = "cache";
+-			reg = <0x100>;
+ 			clocks = <&cpg_clocks R8A73A4_CLK_Z2>;
+ 			power-domains = <&pd_a3km>;
+ 			cache-unified;
 -- 
-2.10.1
+2.7.4
