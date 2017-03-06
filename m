@@ -1,81 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:51276 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753621AbdCFUQc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43880 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752981AbdCFJRQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 15:16:32 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/7] thermal: rcar_gen3_thermal: remove unneeded mutex
-Date: Mon,  6 Mar 2017 21:03:57 +0100
-Message-Id: <20170306200401.29923-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 6 Mar 2017 04:17:16 -0500
+Date: Mon, 6 Mar 2017 09:50:50 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] R-Car H3 HDMI output DT integration
+Message-ID: <20170306085049.GE11468@verge.net.au>
+References: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is no point in protecting a register read with a lock. This is
-most likely a leftover from when the driver was reworked before submitted
-for upstream.
+On Mon, Mar 06, 2017 at 02:20:21AM +0200, Laurent Pinchart wrote:
+> Hello,
+> 
+> This patch series contains all the DT changes needed to integrate HDMI output
+> support for the H3 Salvator-X board.
+> 
+> The patches have previously been posted as part of other patch series with
+> driver changes. They are now submitted standalone as I expect the driver
+> patches to be merged soon.
+> 
+> Simon, please refrain from merging this for now, I will give you a green light
+> once the driver gets accepted.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/thermal/rcar_gen3_thermal.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 97958f91047b4c3a..5d4a5483eb13e796 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -20,7 +20,6 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -72,7 +71,6 @@ struct rcar_gen3_thermal_tsc {
- 	void __iomem *base;
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
--	struct mutex lock;
- };
- 
- struct rcar_gen3_thermal_priv {
-@@ -163,16 +161,12 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- 	u32 reg;
- 
- 	/* Read register and convert to mili Celsius */
--	mutex_lock(&tsc->lock);
--
- 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
- 
- 	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
- 	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
- 	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
- 
--	mutex_unlock(&tsc->lock);
--
- 	/* Make sure we are inside specifications */
- 	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
- 		return -EIO;
-@@ -301,7 +295,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		}
- 
- 		priv->tscs[i] = tsc;
--		mutex_init(&tsc->lock);
- 
- 		match_data->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
--- 
-2.12.0
+Got it. I have marked the series as deferred for now.
