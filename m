@@ -1,65 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46264 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754427AbdCIOlH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34815 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750918AbdCGHix (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Mar 2017 09:41:07 -0500
-Date: Thu, 9 Mar 2017 15:40:04 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
+        Tue, 7 Mar 2017 02:38:53 -0500
+Date: Tue, 7 Mar 2017 07:42:58 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Chris Brandt <chris.brandt@renesas.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH] i2c: riic: fix restart condition
-Message-ID: <20170309144004.oegbdczlluoywtxl@ninjato>
+Message-ID: <20170307064257.GC14208@verge.net.au>
 References: <20170306202051.3158-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bx723lxykcjcxmzi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20170306202051.3158-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---bx723lxykcjcxmzi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
 On Mon, Mar 06, 2017 at 03:20:51PM -0500, Chris Brandt wrote:
-> While modifying the driver to use the STOP interrupt, the completion of t=
-he
-> intermediate transfers need to wake the driver back up in order to initia=
-te
+> While modifying the driver to use the STOP interrupt, the completion of the
+> intermediate transfers need to wake the driver back up in order to initiate
 > the next transfer (restart condition). Otherwise you get never ending
 > interrupts and only the first transfer sent.
->=20
+> 
 > Fixes: 71ccea095ea1 ("i2c: riic: correctly finish transfers")
 > Reported-by: Simon Horman <horms@verge.net.au>
 > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Applied to for-current, thanks!
+Thanks Chris,
 
+with this patch applied on top of v4.11-rc1 Genmai once again boots
+to userspace with shmobile_defconfig.
 
---bx723lxykcjcxmzi
-Content-Type: application/pgp-signature; name="signature.asc"
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljBaUQACgkQFA3kzBSg
-KbZtsxAAjHGo35U+37pU2obNM7C8tqKOJ8x8HepOChGgP2xO26N+yNNVHEkbFeVm
-Ayogz4EY0QP5ZJOMuyGj8Ol4YZIDFaF7FKe63gMcgPldktq2+8BHXP/6kLqOdNVu
-9JAjZPc28CkArLDGCLxmtYP/9kq4TKNa+OO94+wFYDCKC6rZKodJvs0x/9xaOLGL
-qRdrP+Iz0glkQwifZJaxVeYXBtdwucw38BLnqFaIrIvC2S3lcbK9iocD9CCPgiKn
-8OHc9dPSmRZ9n4KOHYkAHW9ga69i3bMVkft1UDbmFJOP8ZdtkjO7KprPqmSirmip
-FVQw9/yvwnExguYPhLitnOXo7BNXKzJ5t2/0MOXTKcWtsWf1DRlK15DCOXarLHme
-02bcw/0JTeFqcqsaL4ISB19EZpiyOHDWlFTdAqHJMK7f2TuXQ8CGsFud4gVo/yFQ
-9x8vxKGcNE75zRgCCubTUCqoJf2FuOIYH3SNwczji6U080/mliwtKhWNagD+3kT7
-vBoo1U3Cktf/TLT3W3w7DrMh3zqKyxCQwzzNwj+CfK7X/n0JHjMt00kXuXDSydm9
-bZb9UbR+vAoNp57ZEIGZ2neCOHh6GLzv/fQioSq3alI4RB+JT4/4sfsZSAeloi5W
-yyLLNnbVPaWrAa6+9GiZpT1sVYcnd6b9CaKv5L3Qd23gjHv2ooM=
-=S2IF
------END PGP SIGNATURE-----
-
---bx723lxykcjcxmzi--
+> ---
+>  drivers/i2c/busses/i2c-riic.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+> index 8f11d34..c811af4 100644
+> --- a/drivers/i2c/busses/i2c-riic.c
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -218,8 +218,12 @@ static irqreturn_t riic_tend_isr(int irq, void *data)
+>  	}
+>  
+>  	if (riic->is_last || riic->err) {
+> -		riic_clear_set_bit(riic, 0, ICIER_SPIE, RIIC_ICIER);
+> +		riic_clear_set_bit(riic, ICIER_TEIE, ICIER_SPIE, RIIC_ICIER);
+>  		writeb(ICCR2_SP, riic->base + RIIC_ICCR2);
+> +	} else {
+> +		/* Transfer is complete, but do not send STOP */
+> +		riic_clear_set_bit(riic, ICIER_TEIE, 0, RIIC_ICIER);
+> +		complete(&riic->msg_done);
+>  	}
+>  
+>  	return IRQ_HANDLED;
+> -- 
+> 2.10.1
+> 
+> 
