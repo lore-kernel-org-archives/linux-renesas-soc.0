@@ -1,61 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45387 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbdCNTAs (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34492 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755528AbdCGPvn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:00:48 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 00/16] rcar-vin: fix issues with format and capturing
-Date: Tue, 14 Mar 2017 19:59:41 +0100
-Message-Id: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 7 Mar 2017 10:51:43 -0500
+Received: by mail-io0-f196.google.com with SMTP id n76so921791ioe.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2017 07:51:42 -0800 (PST)
 MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVVVAq43sDcOuHhtDrbJrSRLmk3oLHuqkASWHNi1kZ85A@mail.gmail.com>
+References: <pull.ff94a00847faf7ed37768cea68c474926bfc8bd9.1486758696.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <CAMuHMdVVVAq43sDcOuHhtDrbJrSRLmk3oLHuqkASWHNi1kZ85A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Mar 2017 16:51:41 +0100
+Message-ID: <CAMuHMdVF9G6_BhZ+GRVmiTHxWRo=VXi6fsCYL22NgzN-9r=zkQ@mail.gmail.com>
+Subject: Re: [GIT PULL] v4l: vsp1: Partition phase developments
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Hi Kieran,
 
-This series fix a number of issues for the rcar-vin driver regarding 
-format and capturing. It is based on top of v4.11-rc1 and is tested on 
-Koelsch.
+On Mon, Feb 13, 2017 at 11:03 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Feb 10, 2017 at 9:36 PM, Kieran Bingham
+> <kieran.bingham+renesas@ideasonboard.com> wrote:
+>> The following changes since commit 0c3b6ad6a559391f367879fd4be6d2d85625bd5a:
+>>
+>>   v4l: vsp1: Remove redundant context variables (Tue,  1 Nov 2016 15:01:02 +0000)
+>>
+>> are available in the git repository at:
+>>
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git refs/tags/vsp1/pa-phases-2017-02-10
+>
+> s/https/git/ is faster ;-)
+>
+>> for you to fetch changes up to 19c6a7d542809dc814b5dfb11ba8ab737eab56f9:
+>>
+>>   v4l: vsp1: Implement left edge partition algorithm overlap (Thu,  9 Feb 2017 22:08:34 +0000)
+>>
+>> This work further continues my developments on the partition algorithm
+>> for the VSP UDS and SRU components.
+>
+> Thank you, scheduled for inclusion in next renesas-drivers release
+> (probably renesas-drivers-2017-02-21-v4.10).
 
-Parts of this series where previously part of '[PATCH 00/11] media: 
-rcar-vin: fix OPS and format/pad index issues'. But after good reviews 
-a large part of that series where dropped.
+I've dropped this branch from today's renesas-drivers-2017-03-07-v4.11-rc1,
+because it conflicted badly with Laurent's vsp1/histogram, and your branch
+hadn't been updated in a while.
 
-Niklas Söderlund (16):
-  rcar-vin: reset bytesperline and sizeimage when resetting format
-  rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
-  rcar-vin: fix how pads are handled for v4l2 subdevice operations
-  rcar-vin: fix standard in input enumeration
-  rcar-vin: move subdev source and sink pad index to rvin_graph_entity
-  rcar-vin: refactor pad lookup code
-  rcar-vin: move pad lookup to async bound handler
-  rcar-vin: use pad information when verifying media bus format
-  rcar-vin: decrease buffers needed to capture
-  rcar-vin: move functions which acts on hardware
-  rcar-vin: select capture mode based on free buffers
-  rcar-vin: allow switch between capturing modes when stalling
-  rcar-vin: refactor and fold in function after stall handling rework
-  rcar-vin: make use of video_device_alloc() and video_device_release()
-  rcar-vin: add missing error check to propagate error
-  rcar-vin: fix bug in pixelformat selection
+Gr{oetje,eeting}s,
 
- drivers/media/platform/rcar-vin/rcar-core.c |  33 +++-
- drivers/media/platform/rcar-vin/rcar-dma.c  | 229 ++++++++++++++--------------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 127 ++++++++-------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  11 +-
- 4 files changed, 216 insertions(+), 184 deletions(-)
+                        Geert
 
--- 
-2.12.0
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
