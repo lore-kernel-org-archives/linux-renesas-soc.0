@@ -1,179 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60007 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752487AbdCFAOl (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36293 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754724AbdCGKwj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:14:41 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 6/9] drm: rcar-du: Add Gen3 HDMI encoder support
-Date: Mon,  6 Mar 2017 02:02:59 +0200
-Message-Id: <20170306000302.14149-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 7 Mar 2017 05:52:39 -0500
+Received: by mail-it0-f67.google.com with SMTP id w185so114016ita.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2017 02:51:50 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <183720b2-003c-efb6-e4b6-5e6151da46fe@cogentembedded.com>
+References: <1488819491-26097-1-git-send-email-geert+renesas@glider.be>
+ <1488819491-26097-2-git-send-email-geert+renesas@glider.be> <183720b2-003c-efb6-e4b6-5e6151da46fe@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Mar 2017 10:49:06 +0100
+Message-ID: <CAMuHMdWt+Kka=4qaW9Z0-zp6rPEBOO_13BxTy331-5x5mHFx9A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] ARM: dts: r8a73a4: Add INTC-SYS clock to device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Hi Sergei,
 
-The R-Car Gen3 SoCs include on-chip DesignWare HDMI encoders. Support
-them with a platform driver to provide platform glue data to the dw-hdmi
-driver.
+On Tue, Mar 7, 2017 at 10:27 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 3/6/2017 7:58 PM, Geert Uytterhoeven wrote:
+>> Link the ARM GIC to the INTC-SYS module clock and the C4 power domain,
+>> so it can be power managed using that clock in the future.
+>>
+>> Note that currently the GIC-400 driver doesn't support module clocks nor
+>> Runtime PM, so this must be handled as a critical clock.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v2:
+>>   - Add missing "power-domains" property,
+>>   - Add clock-names property,
+>>   - Drop RFC status,
+>>   - Change one-line summary prefix to match current arm-soc practices,
+>>   - s/GIC driver/GIC-400 driver/,
+>>   - Document critical clock dependency.
+>> ---
+>>  arch/arm/boot/dts/r8a73a4.dtsi            | 13 +++++++++----
+>>  include/dt-bindings/clock/r8a73a4-clock.h |  1 +
+>>  2 files changed, 10 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/r8a73a4.dtsi
+>> b/arch/arm/boot/dts/r8a73a4.dtsi
+>> index 6fb7eaba91262edf..1f5c9f6dddba9366 100644
+>> --- a/arch/arm/boot/dts/r8a73a4.dtsi
+>> +++ b/arch/arm/boot/dts/r8a73a4.dtsi
+>> @@ -467,6 +467,9 @@
+>>                         <0 0xf1004000 0 0x2000>,
+>>                         <0 0xf1006000 0 0x2000>;
+>>                 interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
+>> IRQ_TYPE_LEVEL_HIGH)>;
+>> +               clocks = <&mstp4_clks R8A73A4_CLK_INTC_SYS>;
+>> +               clock-names = "clk";
+>
+>    Do we really need such "clock-names"?
 
-The driver is a complete rewrite of code coming from the Renesas BSP,
-save for the values in the PHY parameters table.
+Yes. The ARM/GIC maintainers objected against not using clock-names, as
+some GIC variants have multiple clocks.
+Hence commit afbbd23381767aec ("irqchip/gic: Document optional Clock and
+Power Domain properties") was born...
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
-Changes since v2:
+Gr{oetje,eeting}s,
 
-- Replaced the dependency on DRM_RCAR_DU with DRM and made the symbol
-  tristate.
----
- drivers/gpu/drm/rcar-du/Kconfig        |   7 +++
- drivers/gpu/drm/rcar-du/Makefile       |   1 +
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 100 +++++++++++++++++++++++++++++++++
- 3 files changed, 108 insertions(+)
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+                        Geert
 
-diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-index 06121eeba9e5..8a50dab19e5c 100644
---- a/drivers/gpu/drm/rcar-du/Kconfig
-+++ b/drivers/gpu/drm/rcar-du/Kconfig
-@@ -11,6 +11,13 @@ config DRM_RCAR_DU
- 	  Choose this option if you have an R-Car chipset.
- 	  If M is selected the module will be called rcar-du-drm.
- 
-+config DRM_RCAR_DW_HDMI
-+	tristate "R-Car DU Gen3 HDMI Encoder Support"
-+	depends on DRM && OF
-+	select DRM_DW_HDMI
-+	help
-+	  Enable support for R-Car Gen3 internal HDMI encoder.
-+
- config DRM_RCAR_LVDS
- 	bool "R-Car DU LVDS Encoder Support"
- 	depends on DRM_RCAR_DU
-diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
-index a492e6858691..2131e722de3b 100644
---- a/drivers/gpu/drm/rcar-du/Makefile
-+++ b/drivers/gpu/drm/rcar-du/Makefile
-@@ -11,3 +11,4 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_lvdsenc.o
- rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
- 
- obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
-+obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+= rcar_dw_hdmi.o
-diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-new file mode 100644
-index 000000000000..7539626b8ebd
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-@@ -0,0 +1,100 @@
-+/*
-+ * R-Car Gen3 HDMI PHY
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corporation
-+ *
-+ * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include <drm/bridge/dw_hdmi.h>
-+
-+#define RCAR_HDMI_PHY_OPMODE_PLLCFG	0x06	/* Mode of operation and PLL dividers */
-+#define RCAR_HDMI_PHY_PLLCURRGMPCTRL	0x10	/* PLL current and Gmp (conductance) */
-+#define RCAR_HDMI_PHY_PLLDIVCTRL	0x11	/* PLL dividers */
-+
-+struct rcar_hdmi_phy_params {
-+	unsigned long mpixelclock;
-+	u16 opmode_div;	/* Mode of operation and PLL dividers */
-+	u16 curr_gmp;	/* PLL current and Gmp (conductance) */
-+	u16 div;	/* PLL dividers */
-+};
-+
-+static const struct rcar_hdmi_phy_params rcar_hdmi_phy_params[] = {
-+	{ 35500000,  0x0003, 0x0344, 0x0328 },
-+	{ 44900000,  0x0003, 0x0285, 0x0128 },
-+	{ 71000000,  0x0002, 0x1184, 0x0314 },
-+	{ 90000000,  0x0002, 0x1144, 0x0114 },
-+	{ 140250000, 0x0001, 0x20c4, 0x030a },
-+	{ 182750000, 0x0001, 0x2084, 0x010a },
-+	{ 281250000, 0x0000, 0x0084, 0x0305 },
-+	{ 297000000, 0x0000, 0x0084, 0x0105 },
-+	{ ~0UL,      0x0000, 0x0000, 0x0000 },
-+};
-+
-+static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
-+				   const struct dw_hdmi_plat_data *pdata,
-+				   unsigned long mpixelclock)
-+{
-+	const struct rcar_hdmi_phy_params *params = rcar_hdmi_phy_params;
-+
-+	for (; params && params->mpixelclock != ~0UL; ++params) {
-+		if (mpixelclock <= params->mpixelclock)
-+			break;
-+	}
-+
-+	if (params->mpixelclock == ~0UL)
-+		return -EINVAL;
-+
-+	dw_hdmi_phy_i2c_write(hdmi, params->opmode_div,
-+			      RCAR_HDMI_PHY_OPMODE_PLLCFG);
-+	dw_hdmi_phy_i2c_write(hdmi, params->curr_gmp,
-+			      RCAR_HDMI_PHY_PLLCURRGMPCTRL);
-+	dw_hdmi_phy_i2c_write(hdmi, params->div, RCAR_HDMI_PHY_PLLDIVCTRL);
-+
-+	return 0;
-+}
-+
-+static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
-+	.configure_phy	= rcar_hdmi_phy_configure,
-+};
-+
-+static int rcar_dw_hdmi_probe(struct platform_device *pdev)
-+{
-+	return dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
-+}
-+
-+static int rcar_dw_hdmi_remove(struct platform_device *pdev)
-+{
-+	dw_hdmi_remove(pdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rcar_dw_hdmi_of_table[] = {
-+	{ .compatible = "renesas,rcar-gen3-hdmi" },
-+	{ /* Sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, rcar_dw_hdmi_of_table);
-+
-+static struct platform_driver rcar_dw_hdmi_platform_driver = {
-+	.probe		= rcar_dw_hdmi_probe,
-+	.remove		= rcar_dw_hdmi_remove,
-+	.driver		= {
-+		.name	= "rcar-dw-hdmi",
-+		.of_match_table = rcar_dw_hdmi_of_table,
-+	},
-+};
-+
-+module_platform_driver(rcar_dw_hdmi_platform_driver);
-+
-+MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
-+MODULE_DESCRIPTION("Renesas R-Car Gen3 HDMI Encoder Driver");
-+MODULE_LICENSE("GPL");
--- 
-Regards,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
