@@ -1,158 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59902 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752500AbdCFAKD (ORCPT
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:53938 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755739AbdCGSv6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:10:03 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/9] drm: rcar-du: Add support for LVDS mode selection
-Date: Mon,  6 Mar 2017 02:02:55 +0200
-Message-Id: <20170306000302.14149-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 7 Mar 2017 13:51:58 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vd4L83Tj2zMr5bC
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2017 19:04:32 +0100 (CET)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/5] arm64: dts: r8a7796: Add Cortex-A57 CPU cores
+Date: Tue,  7 Mar 2017 19:03:22 +0100
+Message-Id: <1488909806-3322-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
+References: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Retrieve the LVDS mode from the panel and configure the LVDS encoder
-accordingly. LVDS mode selection is static as LVDS panels can't be
-hot-plugged on any of the device supported by the driver. Support for
-dynamic mode selection can be implemented in the future when needed.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This patch adds Cortex-A57 CPU cores to R8A7796 SoC for a total of
+2 x Cortex-A57.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Rebased]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes since v2:
-
-- Rebased on top of the DRM_BUS_FLAG_DATA_MIRROR rename.
+v2:
+  - No changes.
 ---
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 27 +++++++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 11 +++++++++--
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h | 13 +++++++++++++
- 3 files changed, 49 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index 31f878ad099d..3a3c9374794e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -98,6 +98,8 @@ static void rcar_du_encoder_mode_set(struct drm_encoder *encoder,
- 				     struct drm_connector_state *conn_state)
- {
- 	struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
-+	struct drm_display_info *info = &conn_state->connector->display_info;
-+	enum rcar_lvds_mode mode;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 27f7dd9bd988d3b0..d2a2110fc7fc3d23 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -37,7 +37,6 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- 	rcar_du_crtc_route_output(crtc_state->crtc, renc->output);
+-		/* 1 core only at this point */
+ 		a57_0: cpu@0 {
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+@@ -47,6 +46,15 @@
+ 			enable-method = "psci";
+ 		};
  
-@@ -111,6 +113,31 @@ static void rcar_du_encoder_mode_set(struct drm_encoder *encoder,
- 	}
- 
- 	renc->connector = to_rcar_connector(conn_state->connector);
++		a57_1: cpu@1 {
++			compatible = "arm,cortex-a57","arm,armv8";
++			reg = <0x1>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++		};
 +
-+	if (!info->num_bus_formats || !info->bus_formats) {
-+		dev_err(encoder->dev->dev, "no LVDS bus format reported\n");
-+		return;
-+	}
-+
-+	switch (info->bus_formats[0]) {
-+	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
-+		mode = RCAR_LVDS_MODE_JEIDA;
-+		break;
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
-+		mode = RCAR_LVDS_MODE_VESA;
-+		break;
-+	default:
-+		dev_err(encoder->dev->dev,
-+			"unsupported LVDS bus format 0x%04x\n",
-+			info->bus_formats[0]);
-+		return;
-+	}
-+
-+	if (info->bus_flags & DRM_BUS_FLAG_DATA_LSB_TO_MSB)
-+		mode |= RCAR_LVDS_MODE_MIRROR;
-+
-+	rcar_du_lvdsenc_set_mode(renc->lvds, mode);
- }
+ 		L2_CA57: cache-controller-0 {
+ 			compatible = "cache";
+ 			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
+@@ -100,7 +108,7 @@
+ 			      <0x0 0xf1040000 0 0x20000>,
+ 			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+@@ -109,13 +117,13 @@
+ 		timer {
+ 			compatible = "arm,armv8-timer";
+ 			interrupts = <GIC_PPI 13
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 14
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 11
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 10
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
  
- static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-index e3a4985f6f3f..1661f6201210 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -31,6 +31,7 @@ struct rcar_du_lvdsenc {
- 	bool enabled;
- 
- 	enum rcar_lvds_input input;
-+	enum rcar_lvds_mode mode;
- };
- 
- static void rcar_lvds_write(struct rcar_du_lvdsenc *lvds, u32 reg, u32 data)
-@@ -61,7 +62,7 @@ static void rcar_du_lvdsenc_start_gen2(struct rcar_du_lvdsenc *lvds,
- 	/* Select the input, hardcode mode 0, enable LVDS operation and turn
- 	 * bias circuitry on.
- 	 */
--	lvdcr0 = LVDCR0_BEN | LVDCR0_LVEN;
-+	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_BEN | LVDCR0_LVEN;
- 	if (rcrtc->index == 2)
- 		lvdcr0 |= LVDCR0_DUSEL;
- 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-@@ -114,7 +115,7 @@ static void rcar_du_lvdsenc_start_gen3(struct rcar_du_lvdsenc *lvds,
- 	 * Turn the PLL on, set it to LVDS normal mode, wait for the startup
- 	 * delay and turn the output on.
- 	 */
--	lvdcr0 = LVDCR0_PLLON;
-+	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_PLLON;
- 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
- 
- 	lvdcr0 |= LVDCR0_PWD;
-@@ -211,6 +212,12 @@ void rcar_du_lvdsenc_atomic_check(struct rcar_du_lvdsenc *lvds,
- 		mode->clock = clamp(mode->clock, 25175, 148500);
- }
- 
-+void rcar_du_lvdsenc_set_mode(struct rcar_du_lvdsenc *lvds,
-+			      enum rcar_lvds_mode mode)
-+{
-+	lvds->mode = mode;
-+}
-+
- static int rcar_du_lvdsenc_get_resources(struct rcar_du_lvdsenc *lvds,
- 					 struct platform_device *pdev)
- {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
-index dfdba746edf4..7218ac89333e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
-@@ -26,8 +26,17 @@ enum rcar_lvds_input {
- 	RCAR_LVDS_INPUT_DU2,
- };
- 
-+/* Keep in sync with the LVDCR0.LVMD hardware register values. */
-+enum rcar_lvds_mode {
-+	RCAR_LVDS_MODE_JEIDA = 0,
-+	RCAR_LVDS_MODE_MIRROR = 1,
-+	RCAR_LVDS_MODE_VESA = 4,
-+};
-+
- #if IS_ENABLED(CONFIG_DRM_RCAR_LVDS)
- int rcar_du_lvdsenc_init(struct rcar_du_device *rcdu);
-+void rcar_du_lvdsenc_set_mode(struct rcar_du_lvdsenc *lvds,
-+			      enum rcar_lvds_mode mode);
- int rcar_du_lvdsenc_enable(struct rcar_du_lvdsenc *lvds,
- 			   struct drm_crtc *crtc, bool enable);
- void rcar_du_lvdsenc_atomic_check(struct rcar_du_lvdsenc *lvds,
-@@ -37,6 +46,10 @@ static inline int rcar_du_lvdsenc_init(struct rcar_du_device *rcdu)
- {
- 	return 0;
- }
-+static inline void rcar_du_lvdsenc_set_mode(struct rcar_du_lvdsenc *lvds,
-+					    enum rcar_lvds_mode mode)
-+{
-+}
- static inline int rcar_du_lvdsenc_enable(struct rcar_du_lvdsenc *lvds,
- 					 struct drm_crtc *crtc, bool enable)
- {
+ 		wdt0: watchdog@e6020000 {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
