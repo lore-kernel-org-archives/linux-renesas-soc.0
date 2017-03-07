@@ -1,76 +1,166 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <148885666392.28553.6653211200015255398.sendpatchset@little-apple>
-References: <148885660307.28553.995847796823338863.sendpatchset@little-apple> <148885666392.28553.6653211200015255398.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Mar 2017 10:55:02 +0100
-Message-ID: <CAMuHMdVZda4ofjPS0PtQBgnBJPrqgkSGFD92EeuHfU9f8tpMFg@mail.gmail.com>
-Subject: Re: [PATCH v7 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Tue, 07 Mar 2017 12:17:43 +0900
+Message-Id: <148885666392.28553.6653211200015255398.sendpatchset@little-apple>
+In-Reply-To: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
+References: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
+Subject: [PATCH v7 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-On Tue, Mar 7, 2017 at 4:17 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Not all architectures have an iommu member in their archdata, so
-> use #ifdefs support build with COMPILE_TEST on any architecture.
+Not all architectures have an iommu member in their archdata, so
+use #ifdefs support build with COMPILE_TEST on any architecture.
 
-to support
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+---
 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Changes since V6:
+ - Updated patch to handle newly introduced functions in:
+   [PATCH v7 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ drivers/iommu/ipmmu-vmsa.c |   43 ++++++++++++++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 13 deletions(-)
 
-> --- 0010/drivers/iommu/ipmmu-vmsa.c
-> +++ work/drivers/iommu/ipmmu-vmsa.c     2017-03-06 19:26:26.070607110 +0900
-> @@ -72,6 +72,25 @@ static struct ipmmu_vmsa_domain *to_vmsa
->         return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
->  }
->
-> +#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-> +static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
-> +{
-> +       return dev->archdata.iommu;
-> +}
-> +static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
-> +{
-> +       dev->archdata.iommu = p;
-> +}
-> +#else
-
-#else /* compile testing */
-
-> +static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
-> +{
-> +       return NULL;
-> +}
-> +static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
-> +{
-> +}
-> +#endif
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0010/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-06 19:26:26.070607110 +0900
+@@ -72,6 +72,25 @@ static struct ipmmu_vmsa_domain *to_vmsa
+ 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
+ }
+ 
++#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
++static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
++{
++	return dev->archdata.iommu;
++}
++static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
++{
++	dev->archdata.iommu = p;
++}
++#else
++static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
++{
++	return NULL;
++}
++static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
++{
++}
++#endif
++
+ #define TLB_LOOP_TIMEOUT		100	/* 100us */
+ 
+ /* -----------------------------------------------------------------------------
+@@ -543,7 +562,7 @@ static void ipmmu_domain_free(struct iom
+ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 			       struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 	struct ipmmu_vmsa_device *mmu = archdata->mmu;
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ 	unsigned long flags;
+@@ -588,7 +607,7 @@ static int ipmmu_attach_device(struct io
+ static void ipmmu_detach_device(struct iommu_domain *io_domain,
+ 				struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ 	unsigned int i;
+ 
+@@ -709,7 +728,7 @@ static int ipmmu_init_platform_device(st
+ 	archdata->utlbs = utlbs;
+ 	archdata->num_utlbs = num_utlbs;
+ 	archdata->dev = dev;
+-	dev->archdata.iommu = archdata;
++	set_archdata(dev, archdata);
+ 	return 0;
+ 
+ error:
+@@ -729,12 +748,11 @@ static struct iommu_domain *ipmmu_domain
+ 
+ static int ipmmu_add_device(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata;
+ 	struct ipmmu_vmsa_device *mmu = NULL;
+ 	struct iommu_group *group;
+ 	int ret;
+ 
+-	if (dev->archdata.iommu) {
++	if (to_archdata(dev)) {
+ 		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
+ 			 dev_name(dev));
+ 		return -EINVAL;
+@@ -770,8 +788,7 @@ static int ipmmu_add_device(struct devic
+ 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
+ 	 *   at a 1GB offset to ensure that NULL VAs will fault.
+ 	 */
+-	archdata = dev->archdata.iommu;
+-	mmu = archdata->mmu;
++	mmu = to_archdata(dev)->mmu;
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+@@ -799,7 +816,7 @@ error:
+ 	if (mmu)
+ 		arm_iommu_release_mapping(mmu->mapping);
+ 
+-	dev->archdata.iommu = NULL;
++	set_archdata(dev, NULL);
+ 
+ 	if (!IS_ERR_OR_NULL(group))
+ 		iommu_group_remove_device(dev);
+@@ -809,7 +826,7 @@ error:
+ 
+ static void ipmmu_remove_device(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 
+ 	arm_iommu_detach_device(dev);
+ 	iommu_group_remove_device(dev);
+@@ -817,7 +834,7 @@ static void ipmmu_remove_device(struct d
+ 	kfree(archdata->utlbs);
+ 	kfree(archdata);
+ 
+-	dev->archdata.iommu = NULL;
++	set_archdata(dev, NULL);
+ }
+ 
+ static const struct iommu_ops ipmmu_ops = {
+@@ -874,7 +891,7 @@ static void ipmmu_domain_free_dma(struct
+ 
+ static int ipmmu_add_device_dma(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 	struct iommu_group *group;
+ 
+ 	/* The device has been verified in xlate() */
+@@ -893,7 +910,7 @@ static int ipmmu_add_device_dma(struct d
+ 
+ static void ipmmu_remove_device_dma(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 
+ 	spin_lock(&ipmmu_slave_devices_lock);
+ 	list_del(&archdata->list);
+@@ -904,7 +921,7 @@ static void ipmmu_remove_device_dma(stru
+ 
+ static struct device *ipmmu_find_sibling_device(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 	struct ipmmu_vmsa_archdata *sibling_archdata = NULL;
+ 	bool found = false;
+ 
