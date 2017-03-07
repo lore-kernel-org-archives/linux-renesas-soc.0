@@ -1,161 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40958 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750882AbdCGUuM (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34482 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755577AbdCGPqe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 15:50:12 -0500
-Date: Tue, 7 Mar 2017 20:55:33 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
+        Tue, 7 Mar 2017 10:46:34 -0500
+Received: by mail-it0-f68.google.com with SMTP id r141so939322ita.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2017 07:46:24 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20170306200401.29923-6-niklas.soderlund+renesas@ragnatech.se>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se> <20170306200401.29923-6-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Mar 2017 16:36:00 +0100
+Message-ID: <CAMuHMdWXw8dQKU4KkH8ouB4Kvngm_H4-4W11EBxnx=QXE3Ffjg@mail.gmail.com>
 Subject: Re: [PATCH 5/7] thermal: rcar_gen3_thermal: enable hardware
  interrupts for trip points
-Message-ID: <20170307195533.GE2554@tetsubishi>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
- <20170306200401.29923-6-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170306200401.29923-6-niklas.soderlund+renesas@ragnatech.se>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
-
-thanks for your work!
-
-On Mon, Mar 06, 2017 at 09:03:59PM +0100, Niklas Söderlund wrote:
+On Mon, Mar 6, 2017 at 9:03 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
 > Enable hardware trip points by implementing the set_trips callback. The
 > thermal core will take care of setting the initial trip point window and
 > to update it once the driver reports a TSC have moved outside it.
-> 
+
+has moved
+
 > The interrupt structure for this device is a bit odd. There is not a
 > dedicated IRQ for each TSC, instead the interrupts are shared between
 > all TSC. IRQn is fired if the temp monitored in IRQTEMPn is reached in
+
+all TSCs
+
 > any of the TSC, example IRQ3 is fired if temperature in IRQTEMP3 is
+
+TSCs
+
 > reached in either TSC0, TSC1 or TSC2.
-> 
+>
 > For this reason the usage of interrupts in this driver is a all on or
 
-s/a all/an all/
+an all-on or all-off
 
 > all off design. When an interrupt happens all TSC are checked and all
+
+TSCs
+
 > thermal zones are updated. This could be refined to be more fine grained
 > but the thermal core takes care of only updating the thermal zones that
 > have left there trip point window.
 
-s/there/the/
+their
 
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 > ---
->  drivers/thermal/rcar_gen3_thermal.c | 137 ++++++++++++++++++++++++++++++++++++
+>  drivers/thermal/rcar_gen3_thermal.c | 137 ++++++++++++++++++++++++++++++=
+++++++
 >  1 file changed, 137 insertions(+)
-> 
-> +static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
-> +{
-> +	struct rcar_gen3_thermal_tsc *tsc = devdata;
-> +
-> +	if (low < -40000)
-> +		low = -40000;
-> +	if (high > 125000)
-> +		high = 125000;
+>
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_g=
+en3_thermal.c
+> index 65f7204936a18278..e52181015e589a7f 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
 
-Use clamp_val()?
-
-> +
-> +	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP1,
-> +				rcar_gen3_thermal_mcelsius_to_temp(tsc, low));
-> +
-> +	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
-> +				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
-> +
-> +	dev_dbg(tsc->dev, "TSC%d: low: %d high: %d\n", tsc->num, low, high);
-
-Is there no sysfs/debugfs way to get this from thermal core? I'd bet
-this is of generic interest. Bonus point: if we drop this dbg, we can
-also drop the 'dev' and 'num' members from the struct again.
-
-> +
-> +	return 0;
-> +}
-> +
->  static struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
->  	.get_temp	= rcar_gen3_thermal_get_temp,
-> +	.set_trips	= rcar_gen3_thermal_set_trips,
+> @@ -76,6 +87,7 @@ struct rcar_gen3_thermal_tsc {
 >  };
->  
-> +static void rcar_thermal_irq_disable(struct rcar_gen3_thermal_priv *priv)
+>
+>  struct rcar_gen3_thermal_priv {
+> +       spinlock_t lock;
+
+When declaring a spinlock, please add a comment what exactly is
+protected by the lock.
+
+> +static void rcar_thermal_irq_disable(struct rcar_gen3_thermal_priv *priv=
+)
 > +{
-> +	int i;
+> +       int i;
+
+unsigned int (for all positive loop counters)
+
 > +
-> +	for (i = 0; i < TSC_MAX_NUM; i++)
-> +		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQMSK, 0);
-> +}
-> +
-> +static void rcar_thermal_irq_enable(struct rcar_gen3_thermal_priv *priv)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < TSC_MAX_NUM; i++)
-> +		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQMSK,
-> +					IRQ_TEMPD1 | IRQ_TEMP2);
+> +       for (i =3D 0; i < TSC_MAX_NUM; i++)
+> +               rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQMSK, 0=
+);
 > +}
 
-Merge the two into one with a second parameter which is bool?
-rcar_gen3_irq_enable(priv, true/false)?
+Gr{oetje,eeting}s,
 
->  	pm_runtime_enable(dev);
-> @@ -277,6 +388,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  
->  	for (i = 0; i < TSC_MAX_NUM; i++) {
->  		struct rcar_gen3_thermal_tsc *tsc;
-> +		char *irqname;
-> +		int irq;
->  
->  		tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
->  		if (!tsc) {
-> @@ -299,6 +412,25 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  			goto error_unregister;
->  		}
->  
-> +		irq = platform_get_irq(pdev, i);
+                        Geert
 
-Hmmm, with reusing 'i' for getting the interrupt resource, you assume
-that the number of TSC will always equal the number of interrupts. It's
-somewhat reasonable, yet we have seen enough surprises in HW to better
-not assume it IMO.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Another advantage of decoupling it into a seperate loop is that you only
-need to register as much interrupts as the driver actually uses. It uses
-2 interrupts, so no need for installing 3 handlers, no?
-
-> +		if (irq < 0) {
-> +			ret = irq;
-> +			goto error_unregister;
-> +		}
-
-...
-
-> +
-> +		dev_info(tsc->dev, "TSC%d: Loaded %d trip points\n", tsc->num,
-> +			 of_thermal_get_ntrips(tsc->zone));
-
-I'd think the of_thermal_get_ntrips is a little bit hidden in the
-dev_info. Would like it more explicitly. Also, it cannot fail? What
-happens if DT provides broken trip points...
-
->  	}
->  
-> +	rcar_thermal_irq_enable(priv);
-
-... because we enable interrupts unconditionally here?
-
-Regards,
-
-   Wolfram
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
