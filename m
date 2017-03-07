@@ -1,41 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40813 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754954AbdCGTwI (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33804 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754950AbdCGP3o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 14:52:08 -0500
-Date: Tue, 7 Mar 2017 20:52:03 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 2/7] thermal: rcar_gen3_thermal: fix probe error path
-Message-ID: <20170307195203.GB2554@tetsubishi>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
- <20170306200401.29923-3-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 7 Mar 2017 10:29:44 -0500
+Received: by mail-it0-f68.google.com with SMTP id r141so884670ita.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2017 07:29:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20170306200401.29923-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se> <20170306200401.29923-3-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Mar 2017 16:19:41 +0100
+Message-ID: <CAMuHMdWN_iGLTTAnG8FZXdtPK89OCmvwnEfZzruf5ucmYAZ=1w@mail.gmail.com>
+Subject: Re: [PATCH 2/7] thermal: rcar_gen3_thermal: fix probe error path
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 06, 2017 at 09:03:56PM +0100, Niklas Söderlund wrote:
+On Mon, Mar 6, 2017 at 9:03 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
 > If the memory resource for a TSC is unviable probe should fail not try
+
+unavailable
+
 > to go ahead with the remaining TSC. This fix is aligned with other
+
+TSCs
+
 > checks in probe where probe fails if they are unavailable.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-I disagree. There are likely SoCs in the future which have less than
-TSC_MAX_NUM sensors (V3M shall have only 1 according to chapter 10C in
-v0.52 documentation). So, the code exits the loop for this case. We
-should move it before the devm_kzalloc(), however.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-That also means that you can't really iterate over TSC_MAX_NUM in later
-patches, but rather store the amount of instances in the main struct and
-iterate over that value.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
