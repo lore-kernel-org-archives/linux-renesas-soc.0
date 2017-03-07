@@ -1,118 +1,63 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/7] arm: dts: r7s72100: Add pin controller node
-Date: Fri, 24 Mar 2017 16:22:11 +0100
-Message-Id: <1490368934-12494-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:54148 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755761AbdCGSv6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Mar 2017 13:51:58 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vd4L82P2VzMr5bF
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2017 19:04:32 +0100 (CET)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 5/5] arm64: dts: r8a7796: Add Cortex-A53 PMU node
+Date: Tue,  7 Mar 2017 19:03:26 +0100
+Message-Id: <1488909806-3322-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
+References: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin controller node with 12 gpio controller sub-nodes to
-r7s72100 dtsi.
+Enable the performance monitor unit for the Cortex-A53 cores on the
+R8A7796 SoC.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Extracted from a patch by Takeshi Kihara in the BSP.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 80 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+v2:
+  - New.
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index b8aa256..83e8f27 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -180,6 +180,86 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index b32a180009dd10cc..a90abf14dc4e7c79 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -303,6 +303,18 @@
+ 					     <&a57_1>;
  		};
- 	};
  
-+	pinctrl: pinctrl@fcfe3000 {
-+		compatible = "renesas,r7s72100-ports";
-+
-+		#pinctrl-cells = <1>;
-+
-+		reg = <0xfcfe3000 0x42C0>;
-+
-+		port0: gpio-0 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 0 6>;
++		pmu_a53 {
++			compatible = "arm,cortex-a53-pmu";
++			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-affinity = <&a53_0>,
++					     <&a53_1>,
++					     <&a53_2>,
++					     <&a53_3>;
 +		};
 +
-+		port1: gpio-1 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 16 16>;
-+		};
-+
-+		port2: gpio-2 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 32 16>;
-+		};
-+
-+		port3: gpio-3 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 48 16>;
-+		};
-+
-+		port4: gpio-4 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 64 16>;
-+		};
-+
-+		port5: gpio-5 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 80 11>;
-+		};
-+
-+		port6: gpio-6 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 96 16>;
-+		};
-+
-+		port7: gpio-7 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 112 16>;
-+		};
-+
-+		port8: gpio-8 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 128 16>;
-+		};
-+
-+		port9: gpio-9 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 144 8>;
-+		};
-+
-+		port10: gpio-10 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 160 16>;
-+		};
-+
-+		port11: gpio-11 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 176 16>;
-+		};
-+	};
-+
- 	scif0: serial@e8007000 {
- 		compatible = "renesas,scif-r7s72100", "renesas,scif";
- 		reg = <0xe8007000 64>;
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7796-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
 2.7.4
