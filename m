@@ -1,269 +1,140 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 7/9] drm: bridge: dw-hdmi: Add support for custom PHY configuration
-Date: Thu,  2 Mar 2017 00:39:13 +0200
-Message-Id: <20170301223915.29888-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35630 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754827AbdCGDZK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 6 Mar 2017 22:25:10 -0500
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Tue, 07 Mar 2017 12:17:13 +0900
+Message-Id: <148885663361.28553.16605169682314363447.sendpatchset@little-apple>
+In-Reply-To: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
+References: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
+Subject: [PATCH v7 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-The DWC HDMI TX controller interfaces with a companion PHY. While
-Synopsys provides multiple standard PHYs, SoC vendors can also integrate
-a custom PHY.
+Break out the utlb parsing code and dev_data allocation into a
+separate function. This is preparation for future code sharing.
 
-Modularize PHY configuration to support vendor PHYs through platform
-data. The existing PHY configuration code was originally written to
-support the DWC HDMI 3D TX PHY, and seems to be compatible with the DWC
-MLP PHY. The HDMI 2.0 PHY will require a separate configuration
-function.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
 ---
-Changes since v1:
 
-- Check pdata->phy_configure in hdmi_phy_configure() to avoid
-  dereferencing NULL pointer.
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 109 ++++++++++++++++++++++++++-------------
- include/drm/bridge/dw_hdmi.h     |   7 +++
- 2 files changed, 81 insertions(+), 35 deletions(-)
+Changes since V6:
+ - None
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index cb2703862be2..b835d81bb471 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -118,6 +118,9 @@ struct dw_hdmi_phy_data {
- 	const char *name;
- 	unsigned int gen;
- 	bool has_svsret;
-+	int (*configure)(struct dw_hdmi *hdmi,
-+			 const struct dw_hdmi_plat_data *pdata,
-+			 unsigned long mpixelclock);
- };
- 
- struct dw_hdmi {
-@@ -860,8 +863,8 @@ static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
- 	return true;
- }
- 
--static void hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
--				 unsigned char addr)
-+void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
-+			   unsigned char addr)
- {
- 	hdmi_writeb(hdmi, 0xFF, HDMI_IH_I2CMPHY_STAT0);
- 	hdmi_writeb(hdmi, addr, HDMI_PHY_I2CM_ADDRESS_ADDR);
-@@ -873,6 +876,7 @@ static void hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- 		    HDMI_PHY_I2CM_OPERATION_ADDR);
- 	hdmi_phy_wait_i2c_done(hdmi, 1000);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_i2c_write);
- 
- static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
- {
-@@ -993,37 +997,67 @@ static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
+ drivers/iommu/ipmmu-vmsa.c |   58 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 37 insertions(+), 21 deletions(-)
+
+--- 0004/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-06 18:33:38.600607110 +0900
+@@ -649,22 +649,15 @@ static int ipmmu_find_utlbs(struct ipmmu
  	return 0;
  }
  
--static int hdmi_phy_configure(struct dw_hdmi *hdmi)
-+/*
-+ * PHY configuration function for the DWC HDMI 3D TX PHY. Based on the available
-+ * information the DWC MHL PHY has the same register layout and is thus also
-+ * supported by this function.
-+ */
-+static int hdmi_phy_configure_dwc_hdmi_3d_tx(struct dw_hdmi *hdmi,
-+		const struct dw_hdmi_plat_data *pdata,
-+		unsigned long mpixelclock)
+-static int ipmmu_add_device(struct device *dev)
++static int ipmmu_init_platform_device(struct device *dev)
  {
--	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
--	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
- 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
+ 	struct ipmmu_vmsa_archdata *archdata;
+ 	struct ipmmu_vmsa_device *mmu;
+-	struct iommu_group *group = NULL;
+ 	unsigned int *utlbs;
+ 	unsigned int i;
+ 	int num_utlbs;
+ 	int ret = -ENODEV;
  
- 	/* PLL/MPLL Cfg - always match on final entry */
- 	for (; mpll_config->mpixelclock != ~0UL; mpll_config++)
--		if (hdmi->hdmi_data.video_mode.mpixelclock <=
--		    mpll_config->mpixelclock)
-+		if (mpixelclock <= mpll_config->mpixelclock)
- 			break;
- 
- 	for (; curr_ctrl->mpixelclock != ~0UL; curr_ctrl++)
--		if (hdmi->hdmi_data.video_mode.mpixelclock <=
--		    curr_ctrl->mpixelclock)
-+		if (mpixelclock <= curr_ctrl->mpixelclock)
- 			break;
- 
- 	for (; phy_config->mpixelclock != ~0UL; phy_config++)
--		if (hdmi->hdmi_data.video_mode.mpixelclock <=
--		    phy_config->mpixelclock)
-+		if (mpixelclock <= phy_config->mpixelclock)
- 			break;
- 
- 	if (mpll_config->mpixelclock == ~0UL ||
- 	    curr_ctrl->mpixelclock == ~0UL ||
--	    phy_config->mpixelclock == ~0UL) {
--		dev_err(hdmi->dev, "Pixel clock %d - unsupported by HDMI\n",
--			hdmi->hdmi_data.video_mode.mpixelclock);
-+	    phy_config->mpixelclock == ~0UL)
- 		return -EINVAL;
+-	if (dev->archdata.iommu) {
+-		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
+-			 dev_name(dev));
+-		return -EINVAL;
 -	}
-+
-+	dw_hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce,
-+			      HDMI_3D_TX_PHY_CPCE_CTRL);
-+	dw_hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp,
-+			      HDMI_3D_TX_PHY_GMPCTRL);
-+	dw_hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0],
-+			      HDMI_3D_TX_PHY_CURRCTRL);
-+
-+	dw_hdmi_phy_i2c_write(hdmi, 0, HDMI_3D_TX_PHY_PLLPHBYCTRL);
-+	dw_hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_MSM_CTRL_CKO_SEL_FB_CLK,
-+			      HDMI_3D_TX_PHY_MSM_CTRL);
-+
-+	dw_hdmi_phy_i2c_write(hdmi, phy_config->term, HDMI_3D_TX_PHY_TXTERM);
-+	dw_hdmi_phy_i2c_write(hdmi, phy_config->sym_ctr,
-+			      HDMI_3D_TX_PHY_CKSYMTXCTRL);
-+	dw_hdmi_phy_i2c_write(hdmi, phy_config->vlev_ctr,
-+			      HDMI_3D_TX_PHY_VLEVCTRL);
-+
-+	/* Override and disable clock termination. */
-+	dw_hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_CKCALCTRL_OVERRIDE,
-+			      HDMI_3D_TX_PHY_CKCALCTRL);
-+
-+	return 0;
-+}
-+
-+static int hdmi_phy_configure(struct dw_hdmi *hdmi)
-+{
-+	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
-+	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
-+	unsigned long mpixelclock = hdmi->hdmi_data.video_mode.mpixelclock;
-+	int ret;
- 
- 	dw_hdmi_phy_power_off(hdmi);
- 
-@@ -1042,26 +1076,16 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 		    HDMI_PHY_I2CM_SLAVE_ADDR);
- 	hdmi_phy_test_clear(hdmi, 0);
- 
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].cpce,
--			   HDMI_3D_TX_PHY_CPCE_CTRL);
--	hdmi_phy_i2c_write(hdmi, mpll_config->res[0].gmp,
--			   HDMI_3D_TX_PHY_GMPCTRL);
--	hdmi_phy_i2c_write(hdmi, curr_ctrl->curr[0],
--			   HDMI_3D_TX_PHY_CURRCTRL);
 -
--	hdmi_phy_i2c_write(hdmi, 0, HDMI_3D_TX_PHY_PLLPHBYCTRL);
--	hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_MSM_CTRL_CKO_SEL_FB_CLK,
--			   HDMI_3D_TX_PHY_MSM_CTRL);
--
--	hdmi_phy_i2c_write(hdmi, phy_config->term, HDMI_3D_TX_PHY_TXTERM);
--	hdmi_phy_i2c_write(hdmi, phy_config->sym_ctr,
--			   HDMI_3D_TX_PHY_CKSYMTXCTRL);
--	hdmi_phy_i2c_write(hdmi, phy_config->vlev_ctr,
--			   HDMI_3D_TX_PHY_VLEVCTRL);
--
--	/* Override and disable clock termination. */
--	hdmi_phy_i2c_write(hdmi, HDMI_3D_TX_PHY_CKCALCTRL_OVERRIDE,
--			   HDMI_3D_TX_PHY_CKCALCTRL);
-+	/* Write to the PHY as configured by the platform */
-+	if (pdata->configure_phy)
-+		ret = pdata->configure_phy(hdmi, pdata, mpixelclock);
-+	else
-+		ret = phy->configure(hdmi, pdata, mpixelclock);
-+	if (ret) {
-+		dev_err(hdmi->dev, "PHY configuration failed (clock %lu)\n",
-+			mpixelclock);
-+		return ret;
-+	}
+ 	/* Find the master corresponding to the device. */
  
- 	return dw_hdmi_phy_power_on(hdmi);
- }
-@@ -1895,24 +1919,31 @@ static const struct dw_hdmi_phy_data dw_hdmi_phys[] = {
- 		.name = "DWC MHL PHY + HEAC PHY",
- 		.gen = 2,
- 		.has_svsret = true,
-+		.configure = hdmi_phy_configure_dwc_hdmi_3d_tx,
- 	}, {
- 		.type = DW_HDMI_PHY_DWC_MHL_PHY,
- 		.name = "DWC MHL PHY",
- 		.gen = 2,
- 		.has_svsret = true,
-+		.configure = hdmi_phy_configure_dwc_hdmi_3d_tx,
- 	}, {
- 		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY_HEAC,
- 		.name = "DWC HDMI 3D TX PHY + HEAC PHY",
- 		.gen = 2,
-+		.configure = hdmi_phy_configure_dwc_hdmi_3d_tx,
- 	}, {
- 		.type = DW_HDMI_PHY_DWC_HDMI_3D_TX_PHY,
- 		.name = "DWC HDMI 3D TX PHY",
- 		.gen = 2,
-+		.configure = hdmi_phy_configure_dwc_hdmi_3d_tx,
- 	}, {
- 		.type = DW_HDMI_PHY_DWC_HDMI20_TX_PHY,
- 		.name = "DWC HDMI 2.0 TX PHY",
- 		.gen = 2,
- 		.has_svsret = true,
-+	}, {
-+		.type = DW_HDMI_PHY_VENDOR_PHY,
-+		.name = "Vendor PHY",
- 	}
- };
- 
-@@ -1943,6 +1974,14 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
- 			hdmi->phy.ops = &dw_hdmi_synopsys_phy_ops;
- 			hdmi->phy.name = dw_hdmi_phys[i].name;
- 			hdmi->phy.data = (void *)&dw_hdmi_phys[i];
-+
-+			if (!dw_hdmi_phys[i].configure &&
-+			    !hdmi->plat_data->configure_phy) {
-+				dev_err(hdmi->dev, "%s requires platform support\n",
-+					hdmi->phy.name);
-+				return -ENODEV;
-+			}
-+
- 			return 0;
+ 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
+@@ -701,6 +694,36 @@ static int ipmmu_add_device(struct devic
  		}
  	}
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 0f583ca7e66e..dd330259a3dc 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -78,6 +78,9 @@ struct dw_hdmi_plat_data {
- 	const struct dw_hdmi_mpll_config *mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config;
-+	int (*configure_phy)(struct dw_hdmi *hdmi,
-+			     const struct dw_hdmi_plat_data *pdata,
-+			     unsigned long mpixelclock);
- };
  
- int dw_hdmi_probe(struct platform_device *pdev,
-@@ -91,4 +94,8 @@ void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
- void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
- void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
- 
-+/* PHY configuration */
-+void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
-+			   unsigned char addr);
++	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
++	if (!archdata) {
++		ret = -ENOMEM;
++		goto error;
++	}
 +
- #endif /* __IMX_HDMI_H__ */
--- 
-Regards,
-
-Laurent Pinchart
++	archdata->mmu = mmu;
++	archdata->utlbs = utlbs;
++	archdata->num_utlbs = num_utlbs;
++	dev->archdata.iommu = archdata;
++	return 0;
++
++error:
++	kfree(utlbs);
++	return ret;
++}
++
++static int ipmmu_add_device(struct device *dev)
++{
++	struct ipmmu_vmsa_archdata *archdata;
++	struct ipmmu_vmsa_device *mmu = NULL;
++	struct iommu_group *group;
++	int ret;
++
++	if (dev->archdata.iommu) {
++		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
++			 dev_name(dev));
++		return -EINVAL;
++	}
++
+ 	/* Create a device group and add the device to it. */
+ 	group = iommu_group_alloc();
+ 	if (IS_ERR(group)) {
+@@ -718,16 +741,9 @@ static int ipmmu_add_device(struct devic
+ 		goto error;
+ 	}
+ 
+-	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
+-	if (!archdata) {
+-		ret = -ENOMEM;
++	ret = ipmmu_init_platform_device(dev);
++	if (ret < 0)
+ 		goto error;
+-	}
+-
+-	archdata->mmu = mmu;
+-	archdata->utlbs = utlbs;
+-	archdata->num_utlbs = num_utlbs;
+-	dev->archdata.iommu = archdata;
+ 
+ 	/*
+ 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
+@@ -738,6 +754,8 @@ static int ipmmu_add_device(struct devic
+ 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
+ 	 *   at a 1GB offset to ensure that NULL VAs will fault.
+ 	 */
++	archdata = dev->archdata.iommu;
++	mmu = archdata->mmu;
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+@@ -762,10 +780,8 @@ static int ipmmu_add_device(struct devic
+ 	return 0;
+ 
+ error:
+-	arm_iommu_release_mapping(mmu->mapping);
+-
+-	kfree(dev->archdata.iommu);
+-	kfree(utlbs);
++	if (mmu)
++		arm_iommu_release_mapping(mmu->mapping);
+ 
+ 	dev->archdata.iommu = NULL;
+ 
