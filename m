@@ -1,43 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] [RFC] base: soc: soc_device_match() improvements
-Date: Thu,  9 Mar 2017 19:18:31 +0100
-Message-Id: <1489083513-19245-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:40804 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754954AbdCGTve (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Mar 2017 14:51:34 -0500
+Date: Tue, 7 Mar 2017 20:51:22 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH 1/7] thermal: rcar_gen3_thermal: add delay in
+ .thermal_init on r8a7796
+Message-ID: <20170307195122.GA2554@tetsubishi>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170306200401.29923-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170306200401.29923-2-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Arnd, Greg,
+On Mon, Mar 06, 2017 at 09:03:55PM +0100, Niklas Söderlund wrote:
+> The .thermal_init needs to be delayed a short amount of to allow for the
+> TEMP register to contain something useful. If it's not delayed theses
+> warnings are common during boot:
+> 
+> thermal thermal_zone0: failed to read out thermal zone (-5)
+> thermal thermal_zone1: failed to read out thermal zone (-5)
+> thermal thermal_zone2: failed to read out thermal zone (-5)
+> 
+> The warnings are triggered by the first call to .get_temp while the TEMP
+> register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO since
+> a TEMP value of 0 will result in a temperature reading which is out of
+> specifications.
+> 
+> This should have been done in the initial commit which adds the driver
+> as the same issue was found and corrected for r8a7795.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-This patch series contains two RFC improvements for the SoC bus and
-soc_device_match().  Both are the result of investigations for handling
-different SoC revisions in the Renesas R-Car SYSC driver, which manages
-PM Domains and thus needs to be initialized from an early_initcall.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  [RFC] base: soc: Let soc_device_match() return no match when called
-    too early
-  [RFC] base: soc: Allow early registration of a single SoC device
-
- drivers/base/soc.c | 52 ++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 34 insertions(+), 18 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
