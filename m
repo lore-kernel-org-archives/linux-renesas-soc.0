@@ -1,54 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:36635 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752414AbdCEX2W (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34023 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755391AbdCGQDF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 18:28:22 -0500
-Received: by mail-lf0-f50.google.com with SMTP id y193so65445498lfd.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 05 Mar 2017 15:28:21 -0800 (PST)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Mon, 6 Mar 2017 00:28:18 +0100
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv2] arm64: dts: r8a7795: salvator-x: Set drive-strength
- for ravb pins
-Message-ID: <20170305232818.GA20587@bigcity.dyn.berto.se>
-References: <20161205174310.28802-1-niklas.soderlund+renesas@ragnatech.se>
- <20161208133137.GE7150@verge.net.au>
+        Tue, 7 Mar 2017 11:03:05 -0500
+Received: by mail-io0-f193.google.com with SMTP id n76so958056ioe.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Mar 2017 08:02:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20161208133137.GE7150@verge.net.au>
+In-Reply-To: <1481654294-8214-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1481654294-8214-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Mar 2017 16:54:11 +0100
+Message-ID: <CAMuHMdW5ZTg6NNUNcNu=Ev8NZyihrYBUVNcHUMSOEgrNpH6sTw@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] Fix suspend/resume and race on M2M pipelines
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Tue, Dec 13, 2016 at 7:38 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> The following changes since commit 69973b830859bc6529a7a0468ba0d80ee5117826:
+>
+>   Linux 4.9 (2016-12-11 11:17:54 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git vsp1/suspend-resume-race
+>
+> for you to fetch changes up to a952e0103f86d818a444923adeef50fdcb3f70b9:
+>
+>   media: Catch null pipes on pipeline stop (2016-12-13 16:25:13 +0000)
 
-On 2016-12-08 14:31:38 +0100, Simon Horman wrote:
-> On Mon, Dec 05, 2016 at 06:43:10PM +0100, Niklas S�derlund wrote:
-> > The EthernetAVB should not depend on the bootloader to setup correct
-> > drive-strength values. Values for drive-strength where found by
-> > examining the registers after the bootloader has configured the
-> > registers and successfully used the EthernetAVB.
-> > 
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> I believe this patch has run-time dependencies on PFC patches and will
-> result in a regression without them. Please resubmit or otherwise ping me
-> once chose changes are present in an (rc) release or immutable branch.
+I've dropped this branch from today's renesas-drivers-2017-03-07-v4.11-rc1,
+because it conflicted badly with Laurent's vsp1/histogram, and your branch
+hadn't been updated in a while.
 
-The dependency for this DT change is now present in v4.11-rc1, see 1. If 
-it's convenient for you feel free to pick up this patch.
+Gr{oetje,eeting}s,
 
-1. b25719eb938eb39a ("pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO 
-   and MII pins")
+                        Geert
 
-> 
-> Thanks!
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-Regards,
-Niklas S�derlund
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
