@@ -1,78 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:47994 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935104AbdCJNTh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:19:37 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/13] arm: dts: renesas: Tidy-up status
-Date: Fri, 10 Mar 2017 14:19:03 +0100
-Message-Id: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Wed, 08 Mar 2017 20:02:33 +0900
+Message-Id: <148897095343.16106.17126859556338057136.sendpatchset@little-apple>
+In-Reply-To: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+Subject: [PATCH v3 07/09] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch series performs some cleanups on the Renesas DT source files:
-  - Patch 1 replaces "ok" by "okay" in statuses, as the latter is the
-    recommended form,
-  - Patches 2-13 drop superfluous status updates when overriding the
-    clock frequencies of fixed-frequency clocks, as they have already
-    been enabled in the SoC-specific DTS file.
+Introduce a feature to allow opt-out of setting up
+IMBUSCR. The default case is unchanged.
 
-Thanks!
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Geert Uytterhoeven (13):
-  ARM: dts: porter: Always use status "okay" to enable devices
-  ARM: dts: bockw: Drop superfluous status update for frequency override
-  ARM: dts: marzen: Drop superfluous status update for frequency
-    override
-  ARM: dts: lager: Drop superfluous status update for frequency override
-  ARM: dts: koelsch: Drop superfluous status updates for frequency
-    overrides
-  ARM: dts: porter: Drop superfluous status update for frequency
-    override
-  ARM: dts: gose: Drop superfluous status update for frequency override
-  ARM: dts: alt: Drop superfluous status update for frequency override
-  ARM: dts: silk: Drop superfluous status update for frequency override
-  arm64: dts: h3ulcb: Drop superfluous status update for frequency
-    override
-  arm64: dts: r8a7795: salvator-x: Drop superfluous status updates for
-    frequency overrides
-  arm64: dts: m3ulcb: Drop superfluous status update for frequency
-    override
-  arm64: dts: r8a7796: salvator-x: Drop superfluous status update for
-    frequency override
+ Changes since V2:
+ - None
 
- arch/arm/boot/dts/r8a7778-bockw.dts                | 1 -
- arch/arm/boot/dts/r8a7779-marzen.dts               | 1 -
- arch/arm/boot/dts/r8a7790-lager.dts                | 1 -
- arch/arm/boot/dts/r8a7791-koelsch.dts              | 2 --
- arch/arm/boot/dts/r8a7791-porter.dts               | 5 ++---
- arch/arm/boot/dts/r8a7793-gose.dts                 | 1 -
- arch/arm/boot/dts/r8a7794-alt.dts                  | 1 -
- arch/arm/boot/dts/r8a7794-silk.dts                 | 1 -
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     | 1 -
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 --
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     | 1 -
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 1 -
- 12 files changed, 2 insertions(+), 16 deletions(-)
+ Changes since V1:
+ - Updated the commit message
+ - Reworked patch to coexist with the multi context feature
 
--- 
-2.7.4
+ drivers/iommu/ipmmu-vmsa.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--- 0020/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-08 18:32:26.280607110 +0900
+@@ -37,6 +37,7 @@ struct ipmmu_features {
+ 	bool use_ns_alias_offset;
+ 	bool has_cache_leaf_nodes;
+ 	bool has_eight_ctx;
++	bool setup_imbuscr;
+ };
+ 
+ struct ipmmu_vmsa_device {
+@@ -465,10 +466,10 @@ static int ipmmu_domain_init_context(str
+ 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
+ 
+ 	/* IMBUSCR */
+-	ipmmu_ctx_write(domain, IMBUSCR,
+-			ipmmu_ctx_read(domain, IMBUSCR) &
+-			~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+-
++	if (domain->root->features->setup_imbuscr)
++		ipmmu_ctx_write(domain, IMBUSCR,
++				ipmmu_ctx_read(domain, IMBUSCR) &
++				~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+ 	/*
+ 	 * IMSTR
+ 	 * Clear all interrupt flags.
+@@ -1078,6 +1079,7 @@ static const struct ipmmu_features ipmmu
+ 	.use_ns_alias_offset = true,
+ 	.has_cache_leaf_nodes = false,
+ 	.has_eight_ctx = false,
++	.setup_imbuscr = true,
+ };
+ 
+ static const struct of_device_id ipmmu_of_ids[] = {
