@@ -1,45 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753464AbdCTJAa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:00:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <148885664390.28553.13152016302789412479.sendpatchset@little-apple>
+References: <148885660307.28553.995847796823338863.sendpatchset@little-apple> <148885664390.28553.13152016302789412479.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 8 Mar 2017 10:51:14 +0100
+Message-ID: <CAMuHMdUQD8GXq+w1M0agZh4jgVP_+wG8Cn9K9yWJ9As=YO9fEg@mail.gmail.com>
+Subject: Re: [PATCH v7 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: shmobile: Document RZ/G1N SoC DT binding
-Date: Mon, 20 Mar 2017 09:58:33 +0100
-Message-Id: <cfb9f93437eb6663ca99e85c47bb3656ccfe59c5.1490000005.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1490000005.git.horms+renesas@verge.net.au>
-References: <cover.1490000005.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Mar 7, 2017 at 4:17 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Break out the domain allocation code into a separate function.
+> This is preparation for future code sharing.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Reviewed-by: Joerg Roedel <jroedel@suse.de>
 
-Document the RZ/G1N (r8a7744) SoC.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index b8155a209c58..170fe0562c63 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -17,6 +17,8 @@ SoCs:
-     compatible = "renesas,r8a7742"
-   - RZ/G1M (R8A77430)
-     compatible = "renesas,r8a7743"
-+  - RZ/G1N (R8A77440)
-+    compatible = "renesas,r8a7744"
-   - RZ/G1E (R8A77450)
-     compatible = "renesas,r8a7745"
-   - R-Car M1A (R8A77781)
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
