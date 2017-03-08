@@ -1,49 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56229 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750796AbdCNKQB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 06:16:01 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 4/4] mmc: host: tmio: fill in response from auto cmd12
-Date: Tue, 14 Mar 2017 11:09:19 +0100
-Message-Id: <20170314100919.25401-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
-References: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Wed, 08 Mar 2017 20:02:13 +0900
+Message-Id: <148897093339.16106.5329228083105867675.sendpatchset@little-apple>
+In-Reply-To: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+Subject: [PATCH v3 05/09] iommu/ipmmu-vmsa: IPMMU device is 40-bit bus master
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-After we received the dataend interrupt, R1 response register carries
-the value from the automatically generated stop command. Report that
-info back to the MMC block layer, so we will be notified in case of e.g.
-ECC errors which happened during the last transfer.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The r8a7795 IPMMU supports 40-bit bus mastering. Both
+the coherent DMA mask and the streaming DMA mask are
+set to unlock the 40-bit address space for coherent
+allocations and streaming operations.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index b47dd9195fe3fe..a08db28b0100d6 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -557,6 +557,9 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
- 				stop->opcode, stop->arg);
+ Changes since V2:
+ - Updated the code and commit message to use 40 bits instead of 64 bits
+
+ Changes since V1:
+ - Updated the commit message
+
+ drivers/iommu/ipmmu-vmsa.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0016/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-08 18:29:56.390607110 +0900
+@@ -1103,6 +1103,7 @@ static int ipmmu_probe(struct platform_d
+ 	spin_lock_init(&mmu->lock);
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 	mmu->features = match->data;
++	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(40));
  
-+		/* fill in response from auto CMD12 */
-+		stop->resp[0] = sd_ctrl_read16_and_16_as_32(host, CTL_RESPONSE);
-+
- 		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 	}
- 
--- 
-2.11.0
+ 	/* Map I/O memory and request IRQ. */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
