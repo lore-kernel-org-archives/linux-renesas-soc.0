@@ -1,144 +1,176 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34015 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750739AbdCIERD (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:58590 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752410AbdCHMY3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Mar 2017 23:17:03 -0500
-MIME-Version: 1.0
-In-Reply-To: <bdf40dff-c958-b749-1149-f9417c84466a@arm.com>
-References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
- <148897091345.16106.2935423334300744039.sendpatchset@little-apple> <bdf40dff-c958-b749-1149-f9417c84466a@arm.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 9 Mar 2017 13:16:05 +0900
-Message-ID: <CANqRtoQ37DhHkV=k-b09_cvyiXMwaqFhATa=vOpU4mhHvuYdPA@mail.gmail.com>
+        Wed, 8 Mar 2017 07:24:29 -0500
 Subject: Re: [PATCH v3 03/09] iommu/ipmmu-vmsa: Enable multi context support
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: joro <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To: Magnus Damm <magnus.damm@gmail.com>, joro@8bytes.org
+References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+ <148897091345.16106.2935423334300744039.sendpatchset@little-apple>
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        m.szyprowski@samsung.com
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <bdf40dff-c958-b749-1149-f9417c84466a@arm.com>
+Date: Wed, 8 Mar 2017 12:21:56 +0000
+MIME-Version: 1.0
+In-Reply-To: <148897091345.16106.2935423334300744039.sendpatchset@little-apple>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Robin,
+On 08/03/17 11:01, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Add support for up to 8 contexts. Each context is mapped to one
+> domain. One domain is assigned one or more slave devices. Contexts
+> are allocated dynamically and slave devices are grouped together
+> based on which IPMMU device they are connected to. This makes slave
+> devices tied to the same IPMMU device share the same IOVA space.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+> 
+>  Changes since V2:
+>  - Updated patch description to reflect code included in:
+>    [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
+> 
+>  Changes since V1:
+>  - Support up to 8 contexts instead of 4
+>  - Use feature flag and runtime handling
+>  - Default to single context
+> 
+>  drivers/iommu/ipmmu-vmsa.c |   38 ++++++++++++++++++++++++++++++--------
+>  1 file changed, 30 insertions(+), 8 deletions(-)
+> 
+> --- 0012/drivers/iommu/ipmmu-vmsa.c
+> +++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-08 17:59:19.900607110 +0900
+> @@ -30,11 +30,12 @@
+>  
+>  #include "io-pgtable.h"
+>  
+> -#define IPMMU_CTX_MAX 1
+> +#define IPMMU_CTX_MAX 8
+>  
+>  struct ipmmu_features {
+>  	bool use_ns_alias_offset;
+>  	bool has_cache_leaf_nodes;
+> +	bool has_eight_ctx;
 
-Thanks for your feedback!
+Wouldn't it be more sensible to just encode a number of contexts
+directly, if it isn't reported by the hardware itself? I'm just
+imagining future hardware generations... :P
 
-On Wed, Mar 8, 2017 at 9:21 PM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 08/03/17 11:01, Magnus Damm wrote:
->> From: Magnus Damm <damm+renesas@opensource.se>
->>
->> Add support for up to 8 contexts. Each context is mapped to one
->> domain. One domain is assigned one or more slave devices. Contexts
->> are allocated dynamically and slave devices are grouped together
->> based on which IPMMU device they are connected to. This makes slave
->> devices tied to the same IPMMU device share the same IOVA space.
->>
->> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
->> ---
->>
->>  Changes since V2:
->>  - Updated patch description to reflect code included in:
->>    [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
->>
->>  Changes since V1:
->>  - Support up to 8 contexts instead of 4
->>  - Use feature flag and runtime handling
->>  - Default to single context
->>
->>  drivers/iommu/ipmmu-vmsa.c |   38 ++++++++++++++++++++++++++++++--------
->>  1 file changed, 30 insertions(+), 8 deletions(-)
->>
->> --- 0012/drivers/iommu/ipmmu-vmsa.c
->> +++ work/drivers/iommu/ipmmu-vmsa.c   2017-03-08 17:59:19.900607110 +0900
->> @@ -30,11 +30,12 @@
->>
->>  #include "io-pgtable.h"
->>
->> -#define IPMMU_CTX_MAX 1
->> +#define IPMMU_CTX_MAX 8
->>
->>  struct ipmmu_features {
->>       bool use_ns_alias_offset;
->>       bool has_cache_leaf_nodes;
->> +     bool has_eight_ctx;
->
-> Wouldn't it be more sensible to just encode a number of contexts
-> directly, if it isn't reported by the hardware itself? I'm just
-> imagining future hardware generations... :P
->
-> bool also_has_another_eight_ctx_on_top_of_that;
-> bool wait_no_this_is_the_one_where_ctx_15_isnt_usable;
+bool also_has_another_eight_ctx_on_top_of_that;
+bool wait_no_this_is_the_one_where_ctx_15_isnt_usable;
 
-=)
+>  };
+>  
+>  struct ipmmu_vmsa_device {
+> @@ -44,6 +45,7 @@ struct ipmmu_vmsa_device {
+>  	const struct ipmmu_features *features;
+>  	bool is_leaf;
+>  	unsigned int num_utlbs;
+> +	unsigned int num_ctx;
+>  	spinlock_t lock;			/* Protects ctx and domains[] */
+>  	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+>  	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+> @@ -376,11 +378,12 @@ static int ipmmu_domain_allocate_context
+>  
+>  	spin_lock_irqsave(&mmu->lock, flags);
+>  
+> -	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
+> -	if (ret != IPMMU_CTX_MAX) {
+> +	ret = find_first_zero_bit(mmu->ctx, mmu->num_ctx);
+> +	if (ret != mmu->num_ctx) {
+>  		mmu->domains[ret] = domain;
+>  		set_bit(ret, mmu->ctx);
 
-Sure, I agree with you!
+Using test_and_set_bit() in a loop would avoid having to take a lock here.
 
-Please note that this is currently a mix of software and hardware
-policy. On R-Car Gen2 (ARM32) the legacy code only uses a single
-context for now but 4 contexts are supported by hardware according to
-the data sheet. The remaining 3 contexts are untested at this point.
-For R-Car Gen3 (ARM64) the hardware supports 8 contexts and this patch
-enables all of them.
+> -	}
+> +	} else
+> +		ret = -EBUSY;
+>  
+>  	spin_unlock_irqrestore(&mmu->lock, flags);
+>  
+> @@ -425,9 +428,9 @@ static int ipmmu_domain_init_context(str
+>  	 * Find an unused context.
+>  	 */
+>  	ret = ipmmu_domain_allocate_context(domain->root, domain);
+> -	if (ret == IPMMU_CTX_MAX) {
+> +	if (ret < 0) {
+>  		free_io_pgtable_ops(domain->iop);
+> -		return -EBUSY;
+> +		return ret;
+>  	}
+>  
+>  	domain->context_id = ret;
+> @@ -562,7 +565,7 @@ static irqreturn_t ipmmu_irq(int irq, vo
+>  	/*
+>  	 * Check interrupts for all active contexts.
+>  	 */
+> -	for (i = 0; i < IPMMU_CTX_MAX; i++) {
+> +	for (i = 0; i < mmu->num_ctx; i++) {
+>  		if (!mmu->domains[i])
+>  			continue;
+>  		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
+> @@ -632,6 +635,13 @@ static int ipmmu_attach_device(struct io
+>  		domain->mmu = mmu;
+>  		domain->root = root;
+>  		ret = ipmmu_domain_init_context(domain);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Unable to initialize IPMMU context\n");
+> +			domain->mmu = NULL;
+> +		} else {
+> +			dev_info(dev, "Using IPMMU context %u\n",
+> +				 domain->context_id);
+> +		}
+>  	} else if (domain->mmu != mmu) {
+>  		/*
+>  		 * Something is wrong, we can't attach two devices using
+> @@ -1047,13 +1057,14 @@ static void ipmmu_device_reset(struct ip
+>  	unsigned int i;
+>  
+>  	/* Disable all contexts. */
+> -	for (i = 0; i < 4; ++i)
+> +	for (i = 0; i < mmu->num_ctx; ++i)
+>  		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
+>  }
+>  
+>  static const struct ipmmu_features ipmmu_features_default = {
+>  	.use_ns_alias_offset = true,
+>  	.has_cache_leaf_nodes = false,
+> +	.has_eight_ctx = false,
+>  };
+>  
+>  static const struct of_device_id ipmmu_of_ids[] = {
+> @@ -1112,6 +1123,17 @@ static int ipmmu_probe(struct platform_d
+>  	if (mmu->features->use_ns_alias_offset)
+>  		mmu->base += IM_NS_ALIAS_OFFSET;
+>  
+> +	/*
+> +	 * The number of contexts varies with generation and instance.
+> +	 * Newer SoCs get a total of 8 contexts enabled, older ones just one.
+> +	 */
+> +	if (mmu->features->has_eight_ctx)
+> +		mmu->num_ctx = 8;
+> +	else
+> +		mmu->num_ctx = 1;
+> +
+> +	WARN_ON(mmu->num_ctx > IPMMU_CTX_MAX);
 
->>  };
->>
->>  struct ipmmu_vmsa_device {
->> @@ -44,6 +45,7 @@ struct ipmmu_vmsa_device {
->>       const struct ipmmu_features *features;
->>       bool is_leaf;
->>       unsigned int num_utlbs;
->> +     unsigned int num_ctx;
->>       spinlock_t lock;                        /* Protects ctx and domains[] */
->>       DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
->>       struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
->> @@ -376,11 +378,12 @@ static int ipmmu_domain_allocate_context
->>
->>       spin_lock_irqsave(&mmu->lock, flags);
->>
->> -     ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
->> -     if (ret != IPMMU_CTX_MAX) {
->> +     ret = find_first_zero_bit(mmu->ctx, mmu->num_ctx);
->> +     if (ret != mmu->num_ctx) {
->>               mmu->domains[ret] = domain;
->>               set_bit(ret, mmu->ctx);
->
-> Using test_and_set_bit() in a loop would avoid having to take a lock here.
+The likelihood of that happening doesn't appear to warrant a runtime
+check. Especially one which probably isn't even generated because it's
+trivially resolvable to "if (false)..." at compile time.
 
-So you mean that in case of test_and_set_bit() returns 1 then we try
-find_first_zero_bit() again?
+Robin.
 
-This is not really a performance sensitive part of the driver, so I'm
-currently optimizing for code readability. I'm of course all for
-dropping the lock, but I have a hard time figuring out how your
-suggestion could result in semi-readable code. Any pointers? =)
-
->> @@ -1112,6 +1123,17 @@ static int ipmmu_probe(struct platform_d
->>       if (mmu->features->use_ns_alias_offset)
->>               mmu->base += IM_NS_ALIAS_OFFSET;
->>
->> +     /*
->> +      * The number of contexts varies with generation and instance.
->> +      * Newer SoCs get a total of 8 contexts enabled, older ones just one.
->> +      */
->> +     if (mmu->features->has_eight_ctx)
->> +             mmu->num_ctx = 8;
->> +     else
->> +             mmu->num_ctx = 1;
->> +
->> +     WARN_ON(mmu->num_ctx > IPMMU_CTX_MAX);
->
-> The likelihood of that happening doesn't appear to warrant a runtime
-> check. Especially one which probably isn't even generated because it's
-> trivially resolvable to "if (false)..." at compile time.
-
-Sure, I agree. Will drop.
-
-Thanks,
-
-/ magnus
+> +
+>  	irq = platform_get_irq(pdev, 0);
+>  
+>  	/*
+> 
