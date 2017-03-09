@@ -1,199 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f169.google.com ([209.85.217.169]:36079 "EHLO
-        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753031AbdCNQVV (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34015 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbdCIERD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 12:21:21 -0400
-Received: by mail-ua0-f169.google.com with SMTP id 72so172700122uaf.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Mar 2017 09:21:20 -0700 (PDT)
+        Wed, 8 Mar 2017 23:17:03 -0500
 MIME-Version: 1.0
-In-Reply-To: <20170217182241.11489-1-wsa+renesas@sang-engineering.com>
-References: <20170217182241.11489-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 14 Mar 2017 17:21:18 +0100
-Message-ID: <CAPDyKFpt9Ujyx9hMNB8BKXPAGe6b+WTevcGrTWVtPPJ++aooMA@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: host: tmio: ensure end of DMA and SD access are
- in sync
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+In-Reply-To: <bdf40dff-c958-b749-1149-f9417c84466a@arm.com>
+References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+ <148897091345.16106.2935423334300744039.sendpatchset@little-apple> <bdf40dff-c958-b749-1149-f9417c84466a@arm.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 9 Mar 2017 13:16:05 +0900
+Message-ID: <CANqRtoQ37DhHkV=k-b09_cvyiXMwaqFhATa=vOpU4mhHvuYdPA@mail.gmail.com>
+Subject: Re: [PATCH v3 03/09] iommu/ipmmu-vmsa: Enable multi context support
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: joro <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 17 February 2017 at 19:22, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> The current code assumes that DMA is finished before SD access end is
-> flagged. Thus, it schedules the 'dma_complete' tasklet in the SD card
-> interrupt routine when DATAEND is set. The assumption is not safe,
-> though. Even by mounting an SD card, it can be seen that sometimes DMA
-> complete is first, sometimes DATAEND. It seems they are usually close
-> enough timewise to not cause problems. However, a customer reported that
-> with CMD53 sometimes things really break apart. As a result, the BSP has
-> a patch which introduces flags for both events and makes sure both flags
-> are set before scheduling the tasklet. The customer accepted the patch,
-> yet it doesn't seem a proper upstream solution to me.
->
-> This patch refactors the code to replace the tasklet with already
-> existing and more lightweight mechanisms. First of all, we set the
-> callback in a DMA descriptor to automatically get notified when DMA is
-> done. In the callback, we then use a completion to make sure the SD
-> access has already ended. Then, we proceed as before.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Robin,
 
-Thanks, applied for next!
+Thanks for your feedback!
 
-Kind regards
-Uffe
+On Wed, Mar 8, 2017 at 9:21 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 08/03/17 11:01, Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Add support for up to 8 contexts. Each context is mapped to one
+>> domain. One domain is assigned one or more slave devices. Contexts
+>> are allocated dynamically and slave devices are grouped together
+>> based on which IPMMU device they are connected to. This makes slave
+>> devices tied to the same IPMMU device share the same IOVA space.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> ---
+>>
+>>  Changes since V2:
+>>  - Updated patch description to reflect code included in:
+>>    [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
+>>
+>>  Changes since V1:
+>>  - Support up to 8 contexts instead of 4
+>>  - Use feature flag and runtime handling
+>>  - Default to single context
+>>
+>>  drivers/iommu/ipmmu-vmsa.c |   38 ++++++++++++++++++++++++++++++--------
+>>  1 file changed, 30 insertions(+), 8 deletions(-)
+>>
+>> --- 0012/drivers/iommu/ipmmu-vmsa.c
+>> +++ work/drivers/iommu/ipmmu-vmsa.c   2017-03-08 17:59:19.900607110 +0900
+>> @@ -30,11 +30,12 @@
+>>
+>>  #include "io-pgtable.h"
+>>
+>> -#define IPMMU_CTX_MAX 1
+>> +#define IPMMU_CTX_MAX 8
+>>
+>>  struct ipmmu_features {
+>>       bool use_ns_alias_offset;
+>>       bool has_cache_leaf_nodes;
+>> +     bool has_eight_ctx;
+>
+> Wouldn't it be more sensible to just encode a number of contexts
+> directly, if it isn't reported by the hardware itself? I'm just
+> imagining future hardware generations... :P
+>
+> bool also_has_another_eight_ctx_on_top_of_that;
+> bool wait_no_this_is_the_one_where_ctx_15_isnt_usable;
 
-> ---
+=)
+
+Sure, I agree with you!
+
+Please note that this is currently a mix of software and hardware
+policy. On R-Car Gen2 (ARM32) the legacy code only uses a single
+context for now but 4 contexts are supported by hardware according to
+the data sheet. The remaining 3 contexts are untested at this point.
+For R-Car Gen3 (ARM64) the hardware supports 8 contexts and this patch
+enables all of them.
+
+>>  };
+>>
+>>  struct ipmmu_vmsa_device {
+>> @@ -44,6 +45,7 @@ struct ipmmu_vmsa_device {
+>>       const struct ipmmu_features *features;
+>>       bool is_leaf;
+>>       unsigned int num_utlbs;
+>> +     unsigned int num_ctx;
+>>       spinlock_t lock;                        /* Protects ctx and domains[] */
+>>       DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+>>       struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+>> @@ -376,11 +378,12 @@ static int ipmmu_domain_allocate_context
+>>
+>>       spin_lock_irqsave(&mmu->lock, flags);
+>>
+>> -     ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
+>> -     if (ret != IPMMU_CTX_MAX) {
+>> +     ret = find_first_zero_bit(mmu->ctx, mmu->num_ctx);
+>> +     if (ret != mmu->num_ctx) {
+>>               mmu->domains[ret] = domain;
+>>               set_bit(ret, mmu->ctx);
 >
-> Changes since V1/RFC:
+> Using test_and_set_bit() in a loop would avoid having to take a lock here.
+
+So you mean that in case of test_and_set_bit() returns 1 then we try
+find_first_zero_bit() again?
+
+This is not really a performance sensitive part of the driver, so I'm
+currently optimizing for code readability. I'm of course all for
+dropping the lock, but I have a hard time figuring out how your
+suggestion could result in semi-readable code. Any pointers? =)
+
+>> @@ -1112,6 +1123,17 @@ static int ipmmu_probe(struct platform_d
+>>       if (mmu->features->use_ns_alias_offset)
+>>               mmu->base += IM_NS_ALIAS_OFFSET;
+>>
+>> +     /*
+>> +      * The number of contexts varies with generation and instance.
+>> +      * Newer SoCs get a total of 8 contexts enabled, older ones just one.
+>> +      */
+>> +     if (mmu->features->has_eight_ctx)
+>> +             mmu->num_ctx = 8;
+>> +     else
+>> +             mmu->num_ctx = 1;
+>> +
+>> +     WARN_ON(mmu->num_ctx > IPMMU_CTX_MAX);
 >
-> * removed #ifdef DEBUG
-> * rebased to latest mmc/next
-> * did some more performance testing. Couldn't spot any difference
->
->  drivers/mmc/host/tmio_mmc.h     |  2 +-
->  drivers/mmc/host/tmio_mmc_dma.c | 58 ++++++++++++++++++++++++-----------------
->  drivers/mmc/host/tmio_mmc_pio.c |  4 +--
->  3 files changed, 37 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-> index 2b349d48fb9a8a..891d400d2a7cf2 100644
-> --- a/drivers/mmc/host/tmio_mmc.h
-> +++ b/drivers/mmc/host/tmio_mmc.h
-> @@ -137,7 +137,7 @@ struct tmio_mmc_host {
->         bool                    force_pio;
->         struct dma_chan         *chan_rx;
->         struct dma_chan         *chan_tx;
-> -       struct tasklet_struct   dma_complete;
-> +       struct completion       dma_dataend;
->         struct tasklet_struct   dma_issue;
->         struct scatterlist      bounce_sg;
->         u8                      *bounce_buf;
-> diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/tmio_mmc_dma.c
-> index fa8a936a3d9ba1..c7684fa91f1f9c 100644
-> --- a/drivers/mmc/host/tmio_mmc_dma.c
-> +++ b/drivers/mmc/host/tmio_mmc_dma.c
-> @@ -43,6 +43,31 @@ void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
->         tmio_mmc_enable_dma(host, true);
->  }
->
-> +static void tmio_mmc_dma_callback(void *arg)
-> +{
-> +       struct tmio_mmc_host *host = arg;
-> +
-> +       wait_for_completion(&host->dma_dataend);
-> +
-> +       spin_lock_irq(&host->lock);
-> +
-> +       if (!host->data)
-> +               goto out;
-> +
-> +       if (host->data->flags & MMC_DATA_READ)
-> +               dma_unmap_sg(host->chan_rx->device->dev,
-> +                            host->sg_ptr, host->sg_len,
-> +                            DMA_FROM_DEVICE);
-> +       else
-> +               dma_unmap_sg(host->chan_tx->device->dev,
-> +                            host->sg_ptr, host->sg_len,
-> +                            DMA_TO_DEVICE);
-> +
-> +       tmio_mmc_do_data_irq(host);
-> +out:
-> +       spin_unlock_irq(&host->lock);
-> +}
-> +
->  static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
->  {
->         struct scatterlist *sg = host->sg_ptr, *sg_tmp;
-> @@ -88,6 +113,10 @@ static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
->                         DMA_DEV_TO_MEM, DMA_CTRL_ACK);
->
->         if (desc) {
-> +               reinit_completion(&host->dma_dataend);
-> +               desc->callback = tmio_mmc_dma_callback;
-> +               desc->callback_param = host;
-> +
->                 cookie = dmaengine_submit(desc);
->                 if (cookie < 0) {
->                         desc = NULL;
-> @@ -162,6 +191,10 @@ static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
->                         DMA_MEM_TO_DEV, DMA_CTRL_ACK);
->
->         if (desc) {
-> +               reinit_completion(&host->dma_dataend);
-> +               desc->callback = tmio_mmc_dma_callback;
-> +               desc->callback_param = host;
-> +
->                 cookie = dmaengine_submit(desc);
->                 if (cookie < 0) {
->                         desc = NULL;
-> @@ -221,29 +254,6 @@ static void tmio_mmc_issue_tasklet_fn(unsigned long priv)
->                 dma_async_issue_pending(chan);
->  }
->
-> -static void tmio_mmc_tasklet_fn(unsigned long arg)
-> -{
-> -       struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
-> -
-> -       spin_lock_irq(&host->lock);
-> -
-> -       if (!host->data)
-> -               goto out;
-> -
-> -       if (host->data->flags & MMC_DATA_READ)
-> -               dma_unmap_sg(host->chan_rx->device->dev,
-> -                            host->sg_ptr, host->sg_len,
-> -                            DMA_FROM_DEVICE);
-> -       else
-> -               dma_unmap_sg(host->chan_tx->device->dev,
-> -                            host->sg_ptr, host->sg_len,
-> -                            DMA_TO_DEVICE);
-> -
-> -       tmio_mmc_do_data_irq(host);
-> -out:
-> -       spin_unlock_irq(&host->lock);
-> -}
-> -
->  void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdata)
->  {
->         /* We can only either use DMA for both Tx and Rx or not use it at all */
-> @@ -306,7 +316,7 @@ void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdat
->                 if (!host->bounce_buf)
->                         goto ebouncebuf;
->
-> -               tasklet_init(&host->dma_complete, tmio_mmc_tasklet_fn, (unsigned long)host);
-> +               init_completion(&host->dma_dataend);
->                 tasklet_init(&host->dma_issue, tmio_mmc_issue_tasklet_fn, (unsigned long)host);
->         }
->
-> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-> index 6b789a739d4dfe..c41f2252945eb7 100644
-> --- a/drivers/mmc/host/tmio_mmc_pio.c
-> +++ b/drivers/mmc/host/tmio_mmc_pio.c
-> @@ -596,11 +596,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
->
->                 if (done) {
->                         tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
-> -                       tasklet_schedule(&host->dma_complete);
-> +                       complete(&host->dma_dataend);
->                 }
->         } else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
->                 tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
-> -               tasklet_schedule(&host->dma_complete);
-> +               complete(&host->dma_dataend);
->         } else {
->                 tmio_mmc_do_data_irq(host);
->                 tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> The likelihood of that happening doesn't appear to warrant a runtime
+> check. Especially one which probably isn't even generated because it's
+> trivially resolvable to "if (false)..." at compile time.
+
+Sure, I agree. Will drop.
+
+Thanks,
+
+/ magnus
