@@ -1,37 +1,50 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1489083513-19245-2-git-send-email-geert+renesas@glider.be>
-References: <1489083513-19245-1-git-send-email-geert+renesas@glider.be> <1489083513-19245-2-git-send-email-geert+renesas@glider.be>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 13 Mar 2017 13:39:00 +0100
-Message-ID: <CAK8P3a1Zuo-bgOuUyFjj_HscaMfwoAoGM2-W2EZ1a55ySE3wvw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] [RFC] base: soc: Let soc_device_match() return no
- match when called too early
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:42852 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932920AbdCISSk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 9 Mar 2017 13:18:40 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] [RFC] base: soc: Let soc_device_match() return no match when called too early
+Date: Thu,  9 Mar 2017 19:18:32 +0100
+Message-Id: <1489083513-19245-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489083513-19245-1-git-send-email-geert+renesas@glider.be>
+References: <1489083513-19245-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 9, 2017 at 7:18 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> If soc_device_match() is called before the SoC bus has been registered,
-> bus_for_each_dev() returns -EINVAL, which is considered a match, as it
-> is non-zero.
->
-> While calling soc_device_match() can be considered an integration
-> mistake, returning a match is counter-intuitive: soc_device_match() is
-> typically used to handle quirks, i.e. to deviate from the default path.
-> Hence add a check to abort checking and return no match instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+If soc_device_match() is called before the SoC bus has been registered,
+bus_for_each_dev() returns -EINVAL, which is considered a match, as it
+is non-zero.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+While calling soc_device_match() can be considered an integration
+mistake, returning a match is counter-intuitive: soc_device_match() is
+typically used to handle quirks, i.e. to deviate from the default path.
+Hence add a check to abort checking and return no match instead.
 
-> Should this use WARN_ONCE()?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Should this use WARN_ONCE()?
+---
+ drivers/base/soc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I wouldn't mind that either, but your current version seems sufficient.
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index dc26e5949a320223..50033081834a9ccd 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -230,6 +230,8 @@ const struct soc_device_attribute *soc_device_match(
+ 			break;
+ 		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
+ 				       soc_device_match_one);
++		if (ret < 0)
++			return NULL;
+ 		if (!ret)
+ 			matches++;
+ 		else
+-- 
+2.7.4
