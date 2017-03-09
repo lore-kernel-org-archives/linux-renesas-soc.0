@@ -1,99 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:51436 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751950AbdCFUQf (ORCPT
+Received: from sauhun.de ([89.238.76.85]:46264 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754427AbdCIOlH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 15:16:35 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 7/7] thermal: rcar_gen3_thermal: add suspend and resume support
-Date: Mon,  6 Mar 2017 21:04:01 +0100
-Message-Id: <20170306200401.29923-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 9 Mar 2017 09:41:07 -0500
+Date: Thu, 9 Mar 2017 15:40:04 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] i2c: riic: fix restart condition
+Message-ID: <20170309144004.oegbdczlluoywtxl@ninjato>
+References: <20170306202051.3158-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bx723lxykcjcxmzi"
+Content-Disposition: inline
+In-Reply-To: <20170306202051.3158-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To restore operation it's easiest to reinitialise all TSC. In order to
-do this the current trip window needs to be stored in the TSC structure
-so that it can be restored upon resume.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/thermal/rcar_gen3_thermal.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+--bx723lxykcjcxmzi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 9168ac538f3b8cf5..84642871a628cb2a 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -84,6 +84,8 @@ struct rcar_gen3_thermal_tsc {
- 	void __iomem *base;
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
-+	int low;
-+	int high;
- };
- 
- struct rcar_gen3_thermal_priv {
-@@ -220,6 +222,9 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
- 				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
- 
-+	tsc->low = low;
-+	tsc->high = high;
-+
- 	dev_dbg(tsc->dev, "TSC%d: low: %d high: %d\n", tsc->num, low, high);
- 
- 	return 0;
-@@ -460,9 +465,39 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int __maybe_unused rcar_gen3_thermal_suspend(struct device *dev)
-+{
-+	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
-+
-+	rcar_thermal_irq_disable(priv);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
-+{
-+	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
-+	int i;
-+
-+	for (i = 0; i < TSC_MAX_NUM; i++) {
-+		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
-+
-+		priv->data->thermal_init(tsc);
-+		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
-+	}
-+
-+	rcar_thermal_irq_enable(priv);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rcar_gen3_thermal_pm_ops, rcar_gen3_thermal_suspend,
-+			 rcar_gen3_thermal_resume);
-+
- static struct platform_driver rcar_gen3_thermal_driver = {
- 	.driver	= {
- 		.name	= "rcar_gen3_thermal",
-+		.pm = &rcar_gen3_thermal_pm_ops,
- 		.of_match_table = rcar_gen3_thermal_dt_ids,
- 	},
- 	.probe		= rcar_gen3_thermal_probe,
--- 
-2.12.0
+On Mon, Mar 06, 2017 at 03:20:51PM -0500, Chris Brandt wrote:
+> While modifying the driver to use the STOP interrupt, the completion of t=
+he
+> intermediate transfers need to wake the driver back up in order to initia=
+te
+> the next transfer (restart condition). Otherwise you get never ending
+> interrupts and only the first transfer sent.
+>=20
+> Fixes: 71ccea095ea1 ("i2c: riic: correctly finish transfers")
+> Reported-by: Simon Horman <horms@verge.net.au>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Applied to for-current, thanks!
+
+
+--bx723lxykcjcxmzi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljBaUQACgkQFA3kzBSg
+KbZtsxAAjHGo35U+37pU2obNM7C8tqKOJ8x8HepOChGgP2xO26N+yNNVHEkbFeVm
+Ayogz4EY0QP5ZJOMuyGj8Ol4YZIDFaF7FKe63gMcgPldktq2+8BHXP/6kLqOdNVu
+9JAjZPc28CkArLDGCLxmtYP/9kq4TKNa+OO94+wFYDCKC6rZKodJvs0x/9xaOLGL
+qRdrP+Iz0glkQwifZJaxVeYXBtdwucw38BLnqFaIrIvC2S3lcbK9iocD9CCPgiKn
+8OHc9dPSmRZ9n4KOHYkAHW9ga69i3bMVkft1UDbmFJOP8ZdtkjO7KprPqmSirmip
+FVQw9/yvwnExguYPhLitnOXo7BNXKzJ5t2/0MOXTKcWtsWf1DRlK15DCOXarLHme
+02bcw/0JTeFqcqsaL4ISB19EZpiyOHDWlFTdAqHJMK7f2TuXQ8CGsFud4gVo/yFQ
+9x8vxKGcNE75zRgCCubTUCqoJf2FuOIYH3SNwczji6U080/mliwtKhWNagD+3kT7
+vBoo1U3Cktf/TLT3W3w7DrMh3zqKyxCQwzzNwj+CfK7X/n0JHjMt00kXuXDSydm9
+bZb9UbR+vAoNp57ZEIGZ2neCOHh6GLzv/fQioSq3alI4RB+JT4/4sfsZSAeloi5W
+yyLLNnbVPaWrAa6+9GiZpT1sVYcnd6b9CaKv5L3Qd23gjHv2ooM=
+=S2IF
+-----END PGP SIGNATURE-----
+
+--bx723lxykcjcxmzi--
