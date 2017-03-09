@@ -1,50 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:51064 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751160AbdCCNTW (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:42176 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752625AbdCILkf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 08:19:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: r8a7796: Remove unit-address and reg from integrated cache
-Date: Fri,  3 Mar 2017 14:18:17 +0100
-Message-Id: <1488547097-4804-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488547097-4804-1-git-send-email-geert+renesas@glider.be>
-References: <1488547097-4804-1-git-send-email-geert+renesas@glider.be>
+        Thu, 9 Mar 2017 06:40:35 -0500
+Subject: Re: [PATCH v7 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+To: Magnus Damm <magnus.damm@gmail.com>
+References: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
+ <148885666392.28553.6653211200015255398.sendpatchset@little-apple>
+ <d7db1ada-863a-ab92-7936-47d0306eaa8f@arm.com>
+ <CANqRtoSE3nE5d9tGWwbowDkFAbXSQRBzjtBoACmR0BwQB5SK-Q@mail.gmail.com>
+Cc: joro <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <60a12f1e-968d-be3c-babb-5fcf4e18f232@arm.com>
+Date: Thu, 9 Mar 2017 11:40:24 +0000
+MIME-Version: 1.0
+In-Reply-To: <CANqRtoSE3nE5d9tGWwbowDkFAbXSQRBzjtBoACmR0BwQB5SK-Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Cortex-A57 cache controller is an integrated controller, and thus
-the device node representing it should not have a unit-addresses or reg
-property.
+On 09/03/17 03:44, Magnus Damm wrote:
+> Hi Robin,
+> 
+> On Wed, Mar 8, 2017 at 9:48 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>> On 07/03/17 03:17, Magnus Damm wrote:
+>>> From: Magnus Damm <damm+renesas@opensource.se>
+>>>
+>>> Not all architectures have an iommu member in their archdata, so
+>>> use #ifdefs support build with COMPILE_TEST on any architecture.
+>>
+>> I have a feeling I might be repeating myself, but ipmmu_vmsa_archdata
+>> looks to be trivially convertible to iommu_fwspec, which I strongly
+>> encourage, not least because it would obviate bodges like this.
+> 
+> Yeah, I think it should be possible to use iommu_fwspec for this
+> purpose. The question is when to do it. =)
 
-Fixes: 1561f20760ec96db ("arm64: dts: r8a7796: Add Renesas R8A7796 SoC support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I'd actually be inclined to do it *before* any other major changes, as
+it would be pretty minimal given the current structure of the driver.
+But then I'm free to wilfully ignore the burden of maintaining patch
+stacks between both mainline and older trees ;)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index f02dfdce92406f67..b950dcec9ace96a1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -48,9 +48,8 @@
- 			enable-method = "psci";
- 		};
- 
--		L2_CA57: cache-controller@0 {
-+		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
--- 
-2.7.4
+> I actually looked into it recently, but then realised that for this to
+> work then due to code sharing I need to make use of iommu_fwspec on
+> both 32-bit and 64-bit ARM. So it requires rework of the existing
+> IPMMU for 32-bit ARM (including hairy legacy CONFIG_IOMMU_DMA=n code).
+> I was actually thinking of doing some rework of 32-bit ARM IPMMU code
+> anyway (I suspect iommu_device_* conversion caused breakage) and it
+> probably has to happen on top of current -next. I would also like to
+> start reducing burden of forward porting all these patches, and
+> stirring up the ground does not really help much there...
+
+Note that iommu_fwspec can be used pretty much orthogonally to any of
+the core DMA ops support, so it shouldn't be as invasive as you might
+think. See 84672f192671 ("iommu/mediatek: Convert M4Uv1 to
+iommu_fwspec") as an example of an archdata-to-fwspec conversion of a
+driver which only supports 32-bit ARM, and notably borrows its master
+handling directly from the the IPMMU driver.
+
+Robin.
+
+> 
+> Cheers,
+> 
+> / magnus
+> 
