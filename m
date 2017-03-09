@@ -1,101 +1,117 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Subject: Re: [PATCH RESEND 1/1] media: platform: Renesas IMR driver
-To: Rob Herring <robh@kernel.org>
-References: <20170211200207.273799464@cogentembedded.com>
- <20170222142515.i54xtgyvxysd2qsr@rob-hp-laptop>
- <cccaf6f7-0ff3-539c-5b60-e28858018b97@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Konstantin Kozhevnikov
-        <Konstantin.Kozhevnikov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <ba2b1127-0489-e299-f48e-9498aae2393f@cogentembedded.com>
-Date: Mon, 13 Mar 2017 22:52:20 +0300
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cccaf6f7-0ff3-539c-5b60-e28858018b97@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <fe78313c-5cb8-d6d3-428e-deff2851d938@arm.com>
+References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+ <148897089355.16106.305846051553789544.sendpatchset@little-apple> <fe78313c-5cb8-d6d3-428e-deff2851d938@arm.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 9 Mar 2017 13:01:59 +0900
+Message-ID: <CANqRtoR6VVJGuYZaQVqpE+=83Sjyp5=8BKKr3tDcVc_gS0dYxw@mail.gmail.com>
+Subject: Re: [PATCH v3 01/09] iommu/ipmmu-vmsa: Introduce features, break out alias
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: joro <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Robin,
 
-On 02/22/2017 10:05 PM, Sergei Shtylyov wrote:
-
->>> From: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
->>>
->>> The image renderer light extended 4 (IMR-LX4) or the distortion correction
->>> engine is a drawing processor with a simple  instruction system capable of
->>> referencing data on an external memory as 2D texture data and performing
->>> texture mapping and drawing with respect to any shape that is split into
->>> triangular objects.
->>>
->>> This V4L2 memory-to-memory device driver only supports image renderer found
->>> in the R-Car gen3 SoCs; the R-Car gen2 support  can be added later...
->>>
->>> [Sergei: merged 2 original patches, added the patch description, removed
->>> unrelated parts,  added the binding document, ported the driver to the
->>> modern kernel, renamed the UAPI header file and the guard  macros to match
->>> the driver name, extended the copyrights, fixed up Kconfig prompt/depends/
->>> help, made use of the BIT()/GENMASK() macros, sorted #include's, removed
->>> leading  dots and fixed grammar in the comments, fixed up indentation to
->>> use tabs where possible, renamed IMR_DLSR to IMR_DLPR to match the manual,
->>> separated the register offset/bit #define's, removed *inline* from .c file,
->>> fixed lines over 80 columns, removed useless parens, operators, casts,
->>> braces, variables, #include's, (commented out) statements, and even
->>> function, inserted empty line after desclaration, removed extra empty
->>> lines, reordered some local variable desclarations, removed calls to
->>> 4l2_err() on kmalloc() failure, fixed the error returned by imr_default(),
->>> avoided code duplication in the IRQ handler, used '__packed' for the UAPI
->>> structures, enclosed the macro parameters in parens, exchanged the values
->>> of IMR_MAP_AUTO[SD]G macros.]
->>>
->>> Signed-off-by: Konstantin Kozhevnikov
->>> <Konstantin.Kozhevnikov@cogentembedded.com>
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>
->>> ---
->>> This patch is against the 'media_tree.git' repo's 'master' branch.
->>>
->>>  Documentation/devicetree/bindings/media/rcar_imr.txt |   23
->>>  drivers/media/platform/Kconfig                       |   13
->>>  drivers/media/platform/Makefile                      |    1
->>>  drivers/media/platform/rcar_imr.c                    | 1923
->>> +++++++++++++++++++
->>>  include/uapi/linux/rcar_imr.h                        |   94
->>>  5 files changed, 2054 insertions(+)
->>>
->>> Index: media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
->>> ===================================================================
->>> --- /dev/null
->>> +++ media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
->>> @@ -0,0 +1,23 @@
->>> +Renesas R-Car Image Renderer (Distortion Correction Engine)
->>> +-----------------------------------------------------------
-[...]
->>> +
->>> +Required properties:
->>> +- compatible: must be "renesas,imr-lx4" for the image renderer light
->>> extended 4
->>> +  (IMR-LX4)  found in the R-Car gen3 SoCs;
+On Wed, Mar 8, 2017 at 8:53 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> Hi Magnus,
+>
+> On 08/03/17 11:01, Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
 >>
->> Needs an SoC specific compatible string too.
+>> Introduce struct ipmmu_features to track various hardware
+>> and software implementation changes inside the driver for
+>> different kinds of IPMMU hardware. Add use_ns_alias_offset
+>> as a first example of a feature to control if the secure
+>> register bank offset should be used or not.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> ---
+>>
+>>  Changes since V2:
+>>  - None
+>>
+>>  Changes since V1:
+>>  - Moved patch to front of the series
+>>
+>>  drivers/iommu/ipmmu-vmsa.c |   35 ++++++++++++++++++++++++++++-------
+>>  1 file changed, 28 insertions(+), 7 deletions(-)
+>>
+>> --- 0007/drivers/iommu/ipmmu-vmsa.c
+>> +++ work/drivers/iommu/ipmmu-vmsa.c   2017-03-07 12:25:47.000000000 +0900
+>> @@ -32,11 +32,15 @@
+>>
+>>  #define IPMMU_CTX_MAX 1
+>>
+>> +struct ipmmu_features {
+>> +     bool use_ns_alias_offset;
+>> +};
+>> +
+>>  struct ipmmu_vmsa_device {
+>>       struct device *dev;
+>>       void __iomem *base;
+>>       struct list_head list;
+>> -
+>> +     const struct ipmmu_features *features;
+>>       unsigned int num_utlbs;
+>>       spinlock_t lock;                        /* Protects ctx and domains[] */
+>>       DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+>> @@ -999,13 +1003,33 @@ static void ipmmu_device_reset(struct ip
+>>               ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
+>>  }
+>>
+>> +static const struct ipmmu_features ipmmu_features_default = {
+>> +     .use_ns_alias_offset = true,
+>> +};
+>> +
+>> +static const struct of_device_id ipmmu_of_ids[] = {
+>> +     {
+>> +             .compatible = "renesas,ipmmu-vmsa",
+>> +             .data = &ipmmu_features_default,
+>> +     }, {
+>> +             /* Terminator */
+>> +     },
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(of, ipmmu_of_ids);
+>> +
+>>  static int ipmmu_probe(struct platform_device *pdev)
+>>  {
+>>       struct ipmmu_vmsa_device *mmu;
+>> +     const struct of_device_id *match;
+>>       struct resource *res;
+>>       int irq;
+>>       int ret;
+>>
+>> +     match = of_match_node(ipmmu_of_ids, pdev->dev.of_node);
 >
->    Strings, to be precise -- there are several SoCs but the IMR-LX4 core seems
-> the same among them. Well, if you say so...
+> of_device_get_match_data() makes this a lot easier.
 >
->> The description is above, so you just need to list the compatible
->> strings.
+>> +     if (!match)
+>> +             return -EINVAL;
 >
->    There's (most probably) gonna be other versions of the IMR core supported,
-> (this core can be forund in gen2 SoCs too)...
+> Also, if the driver is DT-only per the other series, note that this
+> cannot happen anyway, since of_driver_match_device() would have to have
+> found a match for your probe function to be called in the first place.
 
-    Seriously, I strongly doubt that we need the SoC specific compatibles in 
-this case -- they don't add any value and seem to only clutter the bindings 
-(more so with adding support for the other variants of the IMR core). The 
-manuals don't seem to have any real differences between the SoCs for any given 
-variant of the IMR core...
+Yeah, you are right. As you know, in the IPMMU driver (with the
+r8a7795 V3 series applied) the init handling is a bit special with
+ARM32 and ARM64 being treated differently. I would like to clean it up
+and share a common implementation.
 
-MBR, Sergei
+Until that happens, how do you think we should handle the (!match)
+case? BUG_ON()?
+
+Cheers,
+
+/ magnus
