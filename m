@@ -1,55 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:40786 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937511AbdCJNsg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:48:36 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] soc: renesas: Identify RZ/G1N
-Date: Fri, 10 Mar 2017 14:48:30 +0100
-Message-Id: <1489153710-8159-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
-References: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <fa6696c3-30d0-b7a4-de0b-9cecd485d5a5@arm.com>
+References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
+ <148897094380.16106.17145886836361556040.sendpatchset@little-apple> <fa6696c3-30d0-b7a4-de0b-9cecd485d5a5@arm.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 9 Mar 2017 12:57:15 +0900
+Message-ID: <CANqRtoQOG=S7s=a+pauF5rU9r-Nch9rcSnvN9utp2ChoA1Trng@mail.gmail.com>
+Subject: Re: [PATCH v3 06/09] iommu/ipmmu-vmsa: Write IMCTR twice
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: joro <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for identifying the RZ/G1N (r8a7744) SoC.
+Hi Robin,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Wed, Mar 8, 2017 at 9:34 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 08/03/17 11:02, Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Write IMCTR both in the root device and the leaf node.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> ---
+>>
+>>  Changes since V2:
+>>  - None
+>>
+>>  Changes since V1:
+>>  - None
+>>
+>>  drivers/iommu/ipmmu-vmsa.c |   17 ++++++++++++++---
+>>  1 file changed, 14 insertions(+), 3 deletions(-)
+>>
+>> --- 0018/drivers/iommu/ipmmu-vmsa.c
+>> +++ work/drivers/iommu/ipmmu-vmsa.c   2017-03-08 18:30:36.870607110 +0900
+>> @@ -286,6 +286,16 @@ static void ipmmu_ctx_write(struct ipmmu
+>>       ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
+>>  }
+>>
+>> +static void ipmmu_ctx_write2(struct ipmmu_vmsa_domain *domain, unsigned int reg,
+>> +                          u32 data)
+>
+> That's pretty cryptic. Maybe both functions could do with less ambiguous
+> names - something like ipmmu_ctx_write_root() vs. ipmmu_ctx_write_all(),
+> perhaps? (and if there's a more specific hardware term than "all" that
+> describes this kind of configuration, even better).
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index f0172e59c0402d10..b894cf64225b31ac 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -90,6 +90,11 @@ static const struct renesas_soc soc_rz_g1m __initconst __maybe_unused = {
- 	.id	= 0x47,
- };
- 
-+static const struct renesas_soc soc_rz_g1n __initconst __maybe_unused = {
-+	.family	= &fam_rzg,
-+	.id	= 0x4b,
-+};
-+
- static const struct renesas_soc soc_rz_g1e __initconst __maybe_unused = {
- 	.family	= &fam_rzg,
- 	.id	= 0x4c,
-@@ -161,6 +166,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A7743
- 	{ .compatible = "renesas,r8a7743",	.data = &soc_rz_g1m },
- #endif
-+#ifdef CONFIG_ARCH_R8A7744
-+	{ .compatible = "renesas,r8a7744",	.data = &soc_rz_g1n },
-+#endif
- #ifdef CONFIG_ARCH_R8A7745
- 	{ .compatible = "renesas,r8a7745",	.data = &soc_rz_g1e },
- #endif
--- 
-2.7.4
+Yeah I agree. Will fix in next version!
+
+Thanks,
+
+/ magnus
