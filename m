@@ -1,49 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:44826 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S932909AbdCJRQu (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:19679 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934861AbdCJNFh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 12:16:50 -0500
-Date: Fri, 10 Mar 2017 12:16:47 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-cc: gregkh@linuxfoundation.org, <linux-usb@vger.kernel.org>,
+        Fri, 10 Mar 2017 08:05:37 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH/RFC 1/2] usb: host: ehci-platform: set hcd->phy to avoid
+Subject: RE: [PATCH/RFC 2/2] usb: host: ehci-platform: set hcd->phy to avoid
  phy_get() in usb_add_hcd()
-In-Reply-To: <1489150886-27862-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Message-ID: <Pine.LNX.4.44L0.1703101214290.2161-100000@iolanthe.rowland.org>
+Date: Fri, 10 Mar 2017 13:05:31 +0000
+Message-ID: <HK2PR06MB1634ED0C514EB97BD1756A1CD8200@HK2PR06MB1634.apcprd06.prod.outlook.com>
+References: <1489150886-27862-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1489150886-27862-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1489150886-27862-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, 10 Mar 2017, Yoshihiro Shimoda wrote:
+> From: Yoshihiro Shimoda, Sent: Friday, March 10, 2017 10:01 PM
 
-> This patch sets hcd->phy from own phy context to avoid phy_get()
-> in usb_add_hcd(). Since hcd.c manage the phy only in usb_add_hcd()
-> and usb_remove_hcd(), there is difficult to manage the phy in
-> suspend/resume.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  drivers/usb/host/ehci-platform.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
-> index a268d9e..4ae27e9 100644
-> --- a/drivers/usb/host/ehci-platform.c
-> +++ b/drivers/usb/host/ehci-platform.c
-> @@ -222,6 +222,8 @@ static int ehci_platform_probe(struct platform_device *dev)
->  					goto err_put_hcd;
->  			}
->  		}
-> +		/* Avoiding phy_get in usb_add_hcd() */
-> +		hcd->phy = priv->phys[0];
+Oops, this subject should be ohci-platform, not ehci-platform...
 
-This won't work if priv->num_phys == 0 (in that case, priv->phys 
-doesn't get allocated).
-
-Apart from this I have no objection, but other people may.
-
-Alan Stern
+Best regards,
+Yoshihiro Shimoda
