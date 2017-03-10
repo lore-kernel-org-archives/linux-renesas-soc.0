@@ -1,27 +1,39 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Fri, 10 Mar 2017 10:30:49 +0100
+Date: Fri, 10 Mar 2017 10:19:05 +0100
 From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: r8a7796: add IMR-LX4 support
-Message-ID: <20170310093049.GH21820@verge.net.au>
-References: <20170220213129.182097269@cogentembedded.com>
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] ARM: dts: r7s72100: Add watchdog timer
+Message-ID: <20170310091905.GD21820@verge.net.au>
+References: <20170304223737.20419-1-chris.brandt@renesas.com>
+ <20170304223737.20419-4-chris.brandt@renesas.com>
+ <ef7f631f-efa9-9d8b-658d-aeaa5bce5bc7@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170220213129.182097269@cogentembedded.com>
+In-Reply-To: <ef7f631f-efa9-9d8b-658d-aeaa5bce5bc7@roeck-us.net>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 21, 2017 at 12:31:12AM +0300, Sergei Shtylyov wrote:
-> Describe the IMR-LX4 devices in the R8A7796 device tree.
+On Sun, Mar 05, 2017 at 08:04:57AM -0800, Guenter Roeck wrote:
+> On 03/04/2017 02:37 PM, Chris Brandt wrote:
+> >Add watchdog timer support for RZ/A1.
+> >For the RZ/A1, the only way to do a reset is to overflow the WDT, so this
+> >is useful even if you don't need the watchdog functionality.
+> >
+> >Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> >Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-Thanks, queued up for v4.12.
+Thanks,
+
+as the driver bindings have also been Acked I have queued up this
+change for v4.12.
