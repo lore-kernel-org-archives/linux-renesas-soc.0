@@ -1,69 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:18843 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752542AbdCBOCQ (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:33502 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934778AbdCJNTW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Mar 2017 09:02:16 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 2/3] watchdog: renesas-wdt: add support for rza
-Date: Thu,  2 Mar 2017 08:57:45 -0500
-Message-Id: <20170302135746.30550-3-chris.brandt@renesas.com>
-In-Reply-To: <20170302135746.30550-1-chris.brandt@renesas.com>
-References: <20170302135746.30550-1-chris.brandt@renesas.com>
+        Fri, 10 Mar 2017 08:19:22 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 01/13] ARM: dts: porter: Always use status "okay" to enable devices
+Date: Fri, 10 Mar 2017 14:19:04 +0100
+Message-Id: <1489151956-19270-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the WDT hardware in the RZ/A series.
+While status "ok" does work, the canonical form is "okay", so update the
+few places that used the former.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v3:
-* Add Acked-by, Reviewed-by.
-v2:
-* added to renesas-wdt.txt instead of creating a new file
-* changed commit title
-* added "renesas,rza-wdt" as a fallback
-* added interrupts property
----
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791-porter.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index da24e31..9e306af 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -2,10 +2,11 @@ Renesas Watchdog Timer (WDT) Controller
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 6761d11d3f9e1317..d9aa2cd6d6256776 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -226,7 +226,7 @@
  
- Required properties:
- - compatible : Should be "renesas,<soctype>-wdt", and
--	       "renesas,rcar-gen3-wdt" as fallback.
-+	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
- 	       Examples with soctypes are:
- 	         - "renesas,r8a7795-wdt" (R-Car H3)
- 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
-+	         - "renesas,r7s72100-wdt" (RZ/A1)
+ 	phy-handle = <&phy1>;
+ 	renesas,ether-link-active-low;
+-	status = "ok";
++	status = "okay";
  
-   When compatible with the generic version, nodes must list the SoC-specific
-   version corresponding to the platform first, followed by the generic
-@@ -17,6 +18,7 @@ Required properties:
- Optional properties:
- - timeout-sec : Contains the watchdog timeout in seconds
- - power-domains : the power domain the WDT belongs to
-+- interrupts: Some WDTs have an interrupt when used in interval timer mode
+ 	phy1: ethernet-phy@1 {
+ 		reg = <1>;
+@@ -359,7 +359,7 @@
  
- Examples:
+ /* composite video input */
+ &vin0 {
+-	status = "ok";
++	status = "okay";
+ 	pinctrl-0 = <&vin0_pins>;
+ 	pinctrl-names = "default";
  
 -- 
-2.10.1
+2.7.4
