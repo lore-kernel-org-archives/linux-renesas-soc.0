@@ -1,61 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:51270 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753597AbdCFUQc (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:45908 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937005AbdCJNT3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 15:16:32 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/7] thermal: rcar_gen3_thermal: add delay in .thermal_init on r8a7796
-Date: Mon,  6 Mar 2017 21:03:55 +0100
-Message-Id: <20170306200401.29923-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 10 Mar 2017 08:19:29 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 03/13] ARM: dts: marzen: Drop superfluous status update for frequency override
+Date: Fri, 10 Mar 2017 14:19:06 +0100
+Message-Id: <1489151956-19270-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The .thermal_init needs to be delayed a short amount of to allow for the
-TEMP register to contain something useful. If it's not delayed theses
-warnings are common during boot:
+The scif_clk device node is already enabled in r8a7779.dtsi, so there is
+no need to update its status again.
 
-thermal thermal_zone0: failed to read out thermal zone (-5)
-thermal thermal_zone1: failed to read out thermal zone (-5)
-thermal thermal_zone2: failed to read out thermal zone (-5)
-
-The warnings are triggered by the first call to .get_temp while the TEMP
-register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO since
-a TEMP value of 0 will result in a temperature reading which is out of
-specifications.
-
-This should have been done in the initial commit which adds the driver
-as the same issue was found and corrected for r8a7795.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7779-marzen.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index d33c845244b1d819..ec477d47d0bae8e5 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -222,6 +222,8 @@ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
- 	reg_val |= THCTR_THSST;
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
-+
-+	usleep_range(1000, 2000);
- }
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index 89c5b24a3d03f049..9412a86f9b300fa7 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -236,7 +236,6 @@
  
- static const struct rcar_gen3_thermal_data r8a7795_data = {
+ &scif_clk {
+ 	clock-frequency = <14745600>;
+-	status = "okay";
+ };
+ 
+ &sdhi0 {
 -- 
-2.12.0
+2.7.4
