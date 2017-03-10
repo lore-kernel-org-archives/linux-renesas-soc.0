@@ -1,69 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:34979 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751593AbdCCSwh (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:63161 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935932AbdCJNDh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 13:52:37 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v5 2/3] watchdog: renesas-wdt: add support for rza
-Date: Fri,  3 Mar 2017 12:32:00 -0500
-Message-Id: <20170303173201.5597-3-chris.brandt@renesas.com>
-In-Reply-To: <20170303173201.5597-1-chris.brandt@renesas.com>
-References: <20170303173201.5597-1-chris.brandt@renesas.com>
+        Fri, 10 Mar 2017 08:03:37 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 0/2] usb: host: [eo]hci-plat: set hcd->phy to avoid phy_get_() in usb_add_hcd()
+Date: Fri, 10 Mar 2017 22:01:24 +0900
+Message-ID: <1489150886-27862-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the WDT hardware in the RZ/A series.
+The usb_add_hcd() will call phy_{get,init,power_on}() if hcd->phy is not set.
+After the usb_add_hcd() call phy_power_on(), it keeps until usb_remove_hcd().
+And then, even if the system turns suspend, the usb core keeps the phy power.
+I think that each host driver should handle the phy power. So, this patch
+sets hcd->phy before usb_add_hcd() to avoid phy_get() in usb_add_hcd().
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
----
-v3:
-* Add Acked-by, Reviewed-by.
-v2:
-* added to renesas-wdt.txt instead of creating a new file
-* changed commit title
-* added "renesas,rza-wdt" as a fallback
-* added interrupts property
----
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I'm not sure that this is a suitable way. (e.g. usb_add_hcd() should not call
+phy_get()?) So, I marked "RFC" into this patch set.
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index da24e31..9e306af 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -2,10 +2,11 @@ Renesas Watchdog Timer (WDT) Controller
- 
- Required properties:
- - compatible : Should be "renesas,<soctype>-wdt", and
--	       "renesas,rcar-gen3-wdt" as fallback.
-+	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
- 	       Examples with soctypes are:
- 	         - "renesas,r8a7795-wdt" (R-Car H3)
- 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
-+	         - "renesas,r7s72100-wdt" (RZ/A1)
- 
-   When compatible with the generic version, nodes must list the SoC-specific
-   version corresponding to the platform first, followed by the generic
-@@ -17,6 +18,7 @@ Required properties:
- Optional properties:
- - timeout-sec : Contains the watchdog timeout in seconds
- - power-domains : the power domain the WDT belongs to
-+- interrupts: Some WDTs have an interrupt when used in interval timer mode
- 
- Examples:
- 
+Yoshihiro Shimoda (2):
+  usb: host: ehci-platform: set hcd->phy to avoid phy_get() in
+    usb_add_hcd()
+  usb: host: ehci-platform: set hcd->phy to avoid phy_get() in
+    usb_add_hcd()
+
+ drivers/usb/host/ehci-platform.c | 2 ++
+ drivers/usb/host/ohci-platform.c | 2 ++
+ 2 files changed, 4 insertions(+)
+
 -- 
-2.10.1
+1.9.1
