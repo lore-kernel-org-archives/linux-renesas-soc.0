@@ -1,77 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50024 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966484AbdCXTQk (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:52158 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937163AbdCJNTc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 15:16:40 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87shm5oonl.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1crUhI-00064v-6J@debutante>
-Date: Fri, 24 Mar 2017 19:16:28 +0000
-Subject: Applied "ASoC: rcar: enable PCM RATE untile 192000" to the asoc tree
+        Fri, 10 Mar 2017 08:19:32 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 05/13] ARM: dts: koelsch: Drop superfluous status updates for frequency overrides
+Date: Fri, 10 Mar 2017 14:19:08 +0100
+Message-Id: <1489151956-19270-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The scif_clk and pcie_bus_clk device nodes are already enabled in
+r8a7791.dtsi, so there is no need to update their statuses again.
 
-   ASoC: rcar: enable PCM RATE untile 192000
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From dc2721564f6da549f6eb29ac5bca28d65beadcb7 Mon Sep 17 00:00:00 2001
-From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Date: Wed, 22 Mar 2017 05:43:35 +0000
-Subject: [PATCH] ASoC: rcar: enable PCM RATE untile 192000
-
-R-Car sound can handle untile 192000 rate.
-
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- sound/soc/sh/rcar/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 72966bdd3daa..3e852e00b277 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -96,7 +96,7 @@
- #include <linux/pm_runtime.h>
- #include "rsnd.h"
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 5405d337d7448665..59beb8402a36007b 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -516,7 +516,6 @@
  
--#define RSND_RATES SNDRV_PCM_RATE_8000_96000
-+#define RSND_RATES SNDRV_PCM_RATE_8000_192000
- #define RSND_FMTS (SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S16_LE)
+ &scif_clk {
+ 	clock-frequency = <14745600>;
+-	status = "okay";
+ };
  
- static const struct of_device_id rsnd_of_match[] = {
+ &sdhi0 {
+@@ -767,7 +766,6 @@
+ 
+ &pcie_bus_clk {
+ 	clock-frequency = <100000000>;
+-	status = "okay";
+ };
+ 
+ &pciec {
 -- 
-2.11.0
+2.7.4
