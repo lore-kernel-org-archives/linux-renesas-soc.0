@@ -1,95 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:48044 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753320AbdCMQUJ (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:58768 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937538AbdCJNsg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 12:20:09 -0400
+        Fri, 10 Mar 2017 08:48:36 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 6/7] clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
-Date: Mon, 13 Mar 2017 17:19:53 +0100
-Message-Id: <1489421994-19707-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
-References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 3/4] soc: renesas: Identify RZ/G1H
+Date: Fri, 10 Mar 2017 14:48:29 +0100
+Message-Id: <1489153710-8159-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
+References: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pass the mode pin states from the SoC-specific CPG/MSSR driver to the
-R-Car Gen3 CPG driver core, as their state will be needed to make some
-core clock configuration decisions.
+Add support for identifying the RZ/G1H (r8a7742) SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
- drivers/clk/renesas/rcar-gen3-cpg.c    | 4 +++-
- drivers/clk/renesas/rcar-gen3-cpg.h    | 2 +-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 608178618da87bef..4699f416e275d924 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -330,7 +330,7 @@ static int __init r8a7795_cpg_mssr_init(struct device *dev)
- 		return -EINVAL;
- 	}
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 330960312296f603..f0172e59c0402d10 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -80,6 +80,11 @@ static const struct renesas_soc soc_rmobile_a1 __initconst __maybe_unused = {
+ 	.id	= 0x40,
+ };
  
--	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
-+	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
- }
- 
- const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index f7787101b8d0406c..9d114b31b0731b5e 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -273,7 +273,7 @@ static int __init r8a7796_cpg_mssr_init(struct device *dev)
- 		return -EINVAL;
- 	}
- 
--	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
-+	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
- }
- 
- const struct cpg_mssr_info r8a7796_cpg_mssr_info __initconst = {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 742f6dc7c15653ef..d395bb8c22f575cf 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -247,6 +247,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 
- static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_clk_extalr __initdata;
-+static u32 cpg_mode __initdata;
- 
- struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-@@ -334,9 +335,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- }
- 
- int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
--			      unsigned int clk_extalr)
-+			      unsigned int clk_extalr, u32 mode)
- {
- 	cpg_pll_config = config;
- 	cpg_clk_extalr = clk_extalr;
-+	cpg_mode = mode;
- 	return 0;
- }
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index f788f481dd42cdf6..073be54b5d038ae3 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -37,6 +37,6 @@ struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base);
- int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
--		       unsigned int clk_extalr);
-+		       unsigned int clk_extalr, u32 mode);
- 
++static const struct renesas_soc soc_rz_g1h __initconst __maybe_unused = {
++	.family	= &fam_rzg,
++	.id	= 0x45,
++};
++
+ static const struct renesas_soc soc_rz_g1m __initconst __maybe_unused = {
+ 	.family	= &fam_rzg,
+ 	.id	= 0x47,
+@@ -150,6 +155,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A7740
+ 	{ .compatible = "renesas,r8a7740",	.data = &soc_rmobile_a1 },
+ #endif
++#ifdef CONFIG_ARCH_R8A7742
++	{ .compatible = "renesas,r8a7742",	.data = &soc_rz_g1h },
++#endif
+ #ifdef CONFIG_ARCH_R8A7743
+ 	{ .compatible = "renesas,r8a7743",	.data = &soc_rz_g1m },
  #endif
 -- 
 2.7.4
