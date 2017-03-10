@@ -1,60 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:52311 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752838AbdCMLMw (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:32818 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750897AbdCJRrc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 07:12:52 -0400
-Date: Mon, 13 Mar 2017 12:12:49 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>
-Subject: Re: timeout waiting for hardware interrupt CMD19
-Message-ID: <20170313111249.cslock3xcupvxmu7@ninjato>
-References: <CAMuHMdWHJvKv_Kva0LWL_hekGgkZdR=FHcOdoShpMtzQuXhD2g@mail.gmail.com>
+        Fri, 10 Mar 2017 12:47:32 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wradajgsrs53bgnt"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWHJvKv_Kva0LWL_hekGgkZdR=FHcOdoShpMtzQuXhD2g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Mar 2017 18:47:25 +0100
+Message-ID: <CAMuHMdWHJvKv_Kva0LWL_hekGgkZdR=FHcOdoShpMtzQuXhD2g@mail.gmail.com>
+Subject: timeout waiting for hardware interrupt CMD19
+To: Wolfram Sang <wsa@the-dreams.de>, Simon Horman <horms@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram, Simon,
 
---wradajgsrs53bgnt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While booting a kernel based on renesas-drivers-2017-03-07-v4.11-rc1 on
+the ALT in Magnus' farm, I get:
 
+ mmc2: new high speed SD card at address 0002
+ mmcblk2: mmc2:0002 SD    954 MiB (ro)
+  mmcblk2: p1
++sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
++sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
++sh_mobile_sdhi ee100000.sd: Tuning procedure failed
++mmc1: tuning execution failed: -110
++mmc1: error -110 whilst initialising SD card
+ mmc1: new ultra high speed SDR104 SDHC card at address aaaa
+ mmcblk1: mmc1:aaaa SL32G 29.7 GiB (ro)
+  mmcblk1: p1
 
-> +sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-> +sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-> +sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-> +mmc1: tuning execution failed: -110
-> +mmc1: error -110 whilst initialising SD card
+(compared to my last boot using renesas-drivers-2016-09-27-v4.8-rc8+).
 
-Thanks! We have some tuning fixes in the queue. Let's see if they help
-here...
+Gr{oetje,eeting}s,
 
+                        Geert
 
---wradajgsrs53bgnt
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljGfqoACgkQFA3kzBSg
-KbaEdg//dBIGFfcpzWcNQK6SGNnFoKm+k/V2ob3JJXR/eRDBhoebLxC9dU+WiDhN
-G0+ZGRNEjbI+puKlymnXCNHuj9KZSyGabIgXHn44TqQ3oAAjkMZrl2t9DtZ/pGM3
-9StEupEgvKp63HMJnl0XAg9GW7jbXeCnSisSzXckoC9vZtJOkla9WyB6omJth95Z
-WFLhF31OrHzg2rGsxiTpxx6qYfhsyobmFgQ5FO3o+viBhblxMz8iVqrAmjGwOqY6
-itVyxITEU6AdAWZamO+KCNbLymX1sArYVzZgzgqYEL/o/azR2s+y77V7K4fWInk4
-Vx3Ldv7SGFbwHRM0fkZ1G8BSbyV76a3x2t19j0AlEIItTWl8+r9C6/ppan9Z5XHo
-V31fQzqntlXvWPLQNuCJVBjZQwrlJt1LZucoshgsfgUR8oBxbQraey1GxQeOQ8S0
-04KNls2noZb1m/S+mdCJgPWSlxBD9+i1fqeSgCbrdTACfCyz+y7OcfmCIL2uoje9
-zHCTUWZ76lyAMpwDTfUEmLanQ9IEsOHwUm8kBuOuUjXMgn1MebtEE8MNhbiW7/Vo
-r2xYGuxjWAyz7Iz2SAkn953AsUK1iuKG/9OSDkmD5VH1bairPpF4XA91yai4ZXnC
-VZBFfY7fZAzF0sMwGf7bJaTGTQdnT77Pz55S0ENZCQMKoEcIMv0=
-=NmCz
------END PGP SIGNATURE-----
-
---wradajgsrs53bgnt--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
