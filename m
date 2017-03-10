@@ -1,50 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753406AbdCTI75 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:35848 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936852AbdCJNsg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/31] ARM: dts: r8a7745: Remove unit-address and reg from integrated cache
-Date: Mon, 20 Mar 2017 09:57:46 +0100
-Message-Id: <51c00a9f730dd27da23e9dec593c22c0f9f5a1b1.1489999062.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Fri, 10 Mar 2017 08:48:36 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] ARM: shmobile: Document RZ/G1N SoC DT binding
+Date: Fri, 10 Mar 2017 14:48:28 +0100
+Message-Id: <1489153710-8159-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
+References: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Document the RZ/G1N (r8a7744) SoC.
 
-The Cortex-A7 cache controller is an integrated controller, and thus the
-device node representing it should not have a unit-addresses or reg
-property.
-
-Fixes: c95360247bdd67d3 ("ARM: dts: r8a7745: initial SoC device tree")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 25175a74b6b7..bca88715fada 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -32,9 +32,8 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
--		L2_CA7: cache-controller@0 {
-+		L2_CA7: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			cache-unified;
- 			cache-level = <2>;
- 			power-domains = <&sysc R8A7745_PD_CA7_SCU>;
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index b8155a209c58ef89..170fe0562c637eab 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -17,6 +17,8 @@ SoCs:
+     compatible = "renesas,r8a7742"
+   - RZ/G1M (R8A77430)
+     compatible = "renesas,r8a7743"
++  - RZ/G1N (R8A77440)
++    compatible = "renesas,r8a7744"
+   - RZ/G1E (R8A77450)
+     compatible = "renesas,r8a7745"
+   - R-Car M1A (R8A77781)
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
