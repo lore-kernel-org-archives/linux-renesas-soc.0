@@ -1,92 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:37436 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbdCNTGn (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:33948 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937220AbdCJNTe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:06:43 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 22/27] rcar-vin: add chsel information to rvin_info
-Date: Tue, 14 Mar 2017 20:03:03 +0100
-Message-Id: <20170314190308.25790-23-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 10 Mar 2017 08:19:34 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 10/13] arm64: dts: h3ulcb: Drop superfluous status update for frequency override
+Date: Fri, 10 Mar 2017 14:19:13 +0100
+Message-Id: <1489151956-19270-11-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each Gen3 SoC has a limited set of predefined routing possibilities for
-which CSI-2 device and virtual channel can be routed to which VIN
-instance. Prepare to store this information in the struct rvin_info.
+The scif_clk device node is already enabled in r8a7795.dtsi, so there is
+no need to update its status again.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-vin.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 94258bf7cd58d097..386ede9c95d9aedb 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -35,6 +35,9 @@
- /* Max number on VIN instances that can be in a system */
- #define RCAR_VIN_NUM 8
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 69c623faf80c1b2b..ab352159de6572c9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -228,7 +228,6 @@
  
-+/* Max number of CHSEL values for any Gen3 SoC */
-+#define RCAR_CHSEL_MAX 6
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -91,6 +94,19 @@ struct rvin_graph_entity {
- 
- struct rvin_group;
- 
-+
-+/** struct rvin_group_chsel - Map a CSI2 device and channel for a CHSEL value
-+ * @csi:		VIN internal number for CSI2 device
-+ * @chan:		CSI-2 channel number on remote. Note that channel
-+ *			is not the same as VC. The CSI-2 hardware have 4
-+ *			channels it can output on but which VC is outputted
-+ *			on which channel is configurable inside the CSI-2.
-+ */
-+struct rvin_group_chsel {
-+	enum rvin_csi_id csi;
-+	unsigned int chan;
-+};
-+
- /**
-  * struct rvin_info- Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -98,6 +114,9 @@ struct rvin_group;
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
-+ *
-+ * num_chsels:		number of possible chsel values for this VIN
-+ * chsels:		routing table VIN <-> CSI-2 for the chsel values
-  */
- struct rvin_info {
- 	enum chip_id chip;
-@@ -105,6 +124,9 @@ struct rvin_info {
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
-+
-+	unsigned int num_chsels;
-+	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
+ &scif_clk {
+ 	clock-frequency = <14745600>;
+-	status = "okay";
  };
  
- /**
+ &i2c2 {
 -- 
-2.12.0
+2.7.4
