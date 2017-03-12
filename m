@@ -1,79 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:45669 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbdC1WmI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 18:42:08 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/3] dmaengine: rcar-dmac: fix resource freeing synchronization
-Date: Wed, 29 Mar 2017 00:40:32 +0200
-Message-Id: <20170328224035.8040-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <148929713106.20744.12985371298983384075.sendpatchset@little-apple>
+References: <148929710090.20744.10912918031085568693.sendpatchset@little-apple>
+ <148929713106.20744.12985371298983384075.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 12 Mar 2017 10:31:39 +0100
+Message-ID: <CAMuHMdVCq+ZjuEr07nbZazB-mwr3-toqDPdgLNeoR1QHLWgCXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Sun, Mar 12, 2017 at 6:38 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Support the r8a7796 IPMMU by sharing feature flags between
+> r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
+> up the updated compat string.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-This series fix resource freeing synchronization by:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-1. Patch 1/3
-   Store the IRQ number in the global struct so it can be used later 
-   together with synchronize_irq().
+Gr{oetje,eeting}s,
 
-2. Patch 2/3
-   Adding support for the device_synchronize() callback in patch 2/3.
+                        Geert
 
-3. Patch 3/3
-   Waiting for any ISR that might still be running after the channel is 
-   halted prior to freeing its resources. This was patch previously part 
-   of a patch sent out by Yoshihiro Shimoda and authored by Hiroyuki 
-   Yokoyama, see [1].
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-   In that thread it was suggested by Lars-Peter Clausen to instead 
-   implement the device_synchronize() callback. Unfortunately this is not 
-   enough to solve the issue. In rcar_dmac_free_chan_resources() the 
-   channel is halted by a call to rcar_dmac_chan_halt() and then directly 
-   moves on to freeing resources, here it is still needed to add a wait 
-   for any ISR to finish before freeing the resources, despite that a 
-   device_synchronize() have been added.  This is because call chain:
-
-   dma_release_channel()
-     dma_chan_put()
-       dmaengine_synchronize()
-       rcar_dmac_free_chan_resources()
-         rcar_dmac_chan_halt()
-
-   Here dmaengine_synchronize() is called prior to rcar_dmac_chan_halt() 
-   so an extra synchronisation to wait for any running ISR is still 
-   needed.
-
-By both adding a device_synchronize() which can be used in conjunction 
-with device_terminate_all() and fiends and by adding an explicit 
-synchronize_irq() when freeing channel resources I feel the 
-synchronisation for freeing channel resources are in a much better 
-shape. It also solves the issue in the original mail thread.
-
-The series is based on v4.11-rc1 and is tested on r8a7795 Salvator-X.
-
-1. https://patchwork.kernel.org/patch/9557691/
-
-Niklas Söderlund (3):
-  dmaengine: rcar-dmac: store channel IRQ in struct rcar_dmac_chan
-  dmaengine: rcar-dmac: implement device_synchronize()
-  dmaengine: rcar-dmac: wait for ISR to finish before freeing resources
-
- drivers/dma/sh/rcar-dmac.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
-
--- 
-2.12.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
