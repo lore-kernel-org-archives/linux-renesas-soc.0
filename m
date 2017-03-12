@@ -1,73 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753374AbdCTI7k (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/32] arm64: dts: r8a7795: Tidyup Audio-DMAC channel for DVC
-Date: Mon, 20 Mar 2017 09:57:34 +0100
-Message-Id: <b5a8ffad0eb0c1e5e601253edac163b2da9e855d.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Sun, 12 Mar 2017 14:38:41 +0900
+Message-Id: <148929712105.20744.4083416494740711767.sendpatchset@little-apple>
+In-Reply-To: <148929710090.20744.10912918031085568693.sendpatchset@little-apple>
+References: <148929710090.20744.10912918031085568693.sendpatchset@little-apple>
+Subject: [PATCH v3 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Current	Audio-DMAC is assigned "rx" as Audio-DMAC0, "tx" as Audio-DMAC1.
-Thus, DVC "tx" should be assigned as Audio-DMAC1, instead of Audio-DMAC0.
+Bump up the maximum numbers of micro-TLBS to 48.
 
-Because of this, current platform board (using SRC/DVC/SSI)
-Playback/Capture both will use same Audio-DMAC0
-(but it depends on audio data path).
+Each IPMMU device instance get micro-TLB assignment via
+the "iommus" property in DT. Older SoCs tend to use a
+maximum number of 32 micro-TLBs per IPMMU instance however
+newer SoCs such as r8a7796 make use of up to 48 micro-TLBs.
 
-First note is that this "rx" and "tx" are from each IP point,
-it doesn't mean Playback/Capture.
-Second note is that Audio DMAC assigned on DT is only for
-Audio-DMAC, Audio-DMAC-peri-peri has no entry.
+At this point no SoC specific handling is done to validate
+the maximum number of micro-TLBs, and because of that the
+DT information is assumed to be within correct range for
+each particular SoC.
 
-=> Audio-DMAC
--> Audio-DMAC-peri-peri
--- HW connection
+If needed in the future SoC specific feature flags can be
+added to handle the maximum number of micro-TLBs without
+requiring DT changes, however at this point this does not
+seem necessary.
 
-Playback case
-
-	[Mem] => [SRC]--[DVC] -> [SSI]--[Codec]
-	      rx ~~~~~~~~~~~~
-Capture
-
-	[Mem] <= [DVC]--[SRC] <- [SSI]--[Codec]
-	      tx ~~~~~~~~~~~~
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 14772bc02125..55c09f1b89c9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1075,11 +1075,11 @@
+ Changes since V2:
+ - Added outer set of () to IMUASID() and IMUCTR() - thanks Ramesh!
+ - Added Reviewed-by from Geert - thanks!
+
+ Changes since V1:
+ - Added support for the second I/O range at 0x600.
+
+ drivers/iommu/ipmmu-vmsa.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- 0020/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-12 14:11:23.020607110 +0900
+@@ -213,7 +213,9 @@ static void set_archdata(struct device *
+ #define IMPMBA(n)			(0x0280 + ((n) * 4))
+ #define IMPMBD(n)			(0x02c0 + ((n) * 4))
  
- 			rcar_sound,dvc {
- 				dvc0: dvc-0 {
--					dmas = <&audma0 0xbc>;
-+					dmas = <&audma1 0xbc>;
- 					dma-names = "tx";
- 				};
- 				dvc1: dvc-1 {
--					dmas = <&audma0 0xbe>;
-+					dmas = <&audma1 0xbe>;
- 					dma-names = "tx";
- 				};
- 			};
--- 
-2.7.0.rc3.207.g0ac5344
+-#define IMUCTR(n)			(0x0300 + ((n) * 16))
++#define IMUCTR(n)			((n) < 32 ? IMUCTR0(n) : IMUCTR32(n))
++#define IMUCTR0(n)			(0x0300 + ((n) * 16))
++#define IMUCTR32(n)			(0x0600 + (((n) - 32) * 16))
+ #define IMUCTR_FIXADDEN			(1 << 31)
+ #define IMUCTR_FIXADD_MASK		(0xff << 16)
+ #define IMUCTR_FIXADD_SHIFT		16
+@@ -223,7 +225,9 @@ static void set_archdata(struct device *
+ #define IMUCTR_FLUSH			(1 << 1)
+ #define IMUCTR_MMUEN			(1 << 0)
+ 
+-#define IMUASID(n)			(0x0308 + ((n) * 16))
++#define IMUASID(n)			((n) < 32 ? IMUASID0(n) : IMUASID32(n))
++#define IMUASID0(n)			(0x0308 + ((n) * 16))
++#define IMUASID32(n)			(0x0608 + (((n) - 32) * 16))
+ #define IMUASID_ASID8_MASK		(0xff << 8)
+ #define IMUASID_ASID8_SHIFT		8
+ #define IMUASID_ASID0_MASK		(0xff << 0)
+@@ -1164,7 +1168,7 @@ static int ipmmu_probe(struct platform_d
+ 	}
+ 
+ 	mmu->dev = &pdev->dev;
+-	mmu->num_utlbs = 32;
++	mmu->num_utlbs = 48;
+ 	spin_lock_init(&mmu->lock);
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 	mmu->features = match->data;
