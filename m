@@ -1,36 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:33788 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbdCOK0I (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:34416 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932211AbdCMQlx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Mar 2017 06:26:08 -0400
-Received: by mail-io0-f177.google.com with SMTP id f84so16972329ioj.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Mar 2017 03:26:07 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
-References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 15 Mar 2017 11:26:05 +0100
-Message-ID: <CACRpkdaTYVj_RrSLhiZxwFogmW80wvFo8cO7zO7uRm_JajUz-A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: Misc fixes and cleanups
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 13 Mar 2017 12:41:53 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: Misc fixes and cleanups
+Date: Mon, 13 Mar 2017 17:41:40 +0100
+Message-Id: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 5:41 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+	Hi Linus, Laurent,
 
-> I plan to queue these up in sh-pfc-for-v4.12.
+This patch series contains miscellaneous fixes and cleanups for the
+Renesas R-Car H3 pinctrl driver:
 
-Thanks, looking forward to pull request.
+I plan to queue these up in sh-pfc-for-v4.12.
 
-I realized I needed a maintainer collecting Samsung patches
-as well this week, so we may get more people maintaining
-subdirs in pinctrl...
+Thanks for your comments!
 
-Yours,
-Linus Walleij
+Geert Uytterhoeven (2):
+  pinctrl: sh-pfc: r8a7795: Fix hscif2_clk_b and hscif4_ctrl
+  pinctrl: sh-pfc: r8a7795: Restore sort order
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 175 ++++++++++++++++++-----------------
+ 1 file changed, 88 insertions(+), 87 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
