@@ -1,98 +1,41 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 1/2] serial: pl010: Move uart_register_driver call to device probe
-Date: Fri, 24 Mar 2017 17:26:33 +0100
-Message-Id: <20170324162634.8880-2-sjoerd.simons@collabora.co.uk>
-In-Reply-To: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
-References: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:48030 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753373AbdCMQUJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 13 Mar 2017 12:20:09 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/7] clk: renesas: r8a7796: Correct name of watchdog clock
+Date: Mon, 13 Mar 2017 17:19:50 +0100
+Message-Id: <1489421994-19707-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-uart_register_driver call binds the driver to a specific device
-node through tty_register_driver call. This should typically
-happen during device probe call.
+There's only a single watchdog clock, and it's named "rwdt".
 
-In a multiplatform scenario, it is possible that multiple serial
-drivers are part of the kernel. Currently the driver registration fails
-if multiple serial drivers with overlapping major/minor numbers are
-included.
-
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/tty/serial/amba-pl010.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/tty/serial/amba-pl010.c b/drivers/tty/serial/amba-pl010.c
-index f2f251075109..74a1d3b2e45d 100644
---- a/drivers/tty/serial/amba-pl010.c
-+++ b/drivers/tty/serial/amba-pl010.c
-@@ -749,6 +749,16 @@ static int pl010_probe(struct amba_device *dev, const struct amba_id *id)
- 	amba_ports[i] = uap;
- 
- 	amba_set_drvdata(dev, uap);
-+
-+	if (!amba_reg.state) {
-+		ret = uart_register_driver(&amba_reg);
-+		if (ret < 0) {
-+			dev_err(uap->port.dev,
-+				"Failed to register AMBA-PL010 driver\n");
-+			return ret;
-+		}
-+	}
-+
- 	ret = uart_add_one_port(&amba_reg, &uap->port);
- 	if (ret)
- 		amba_ports[i] = NULL;
-@@ -760,12 +770,18 @@ static int pl010_remove(struct amba_device *dev)
- {
- 	struct uart_amba_port *uap = amba_get_drvdata(dev);
- 	int i;
-+	bool busy = false;
- 
- 	uart_remove_one_port(&amba_reg, &uap->port);
- 
- 	for (i = 0; i < ARRAY_SIZE(amba_ports); i++)
- 		if (amba_ports[i] == uap)
- 			amba_ports[i] = NULL;
-+		else if (amba_ports[i])
-+			busy = true;
-+
-+	if (!busy)
-+		uart_unregister_driver(&amba_reg);
- 
- 	return 0;
- }
-@@ -816,23 +832,14 @@ static struct amba_driver pl010_driver = {
- 
- static int __init pl010_init(void)
- {
--	int ret;
--
- 	printk(KERN_INFO "Serial: AMBA driver\n");
- 
--	ret = uart_register_driver(&amba_reg);
--	if (ret == 0) {
--		ret = amba_driver_register(&pl010_driver);
--		if (ret)
--			uart_unregister_driver(&amba_reg);
--	}
--	return ret;
-+	return  amba_driver_register(&pl010_driver);
- }
- 
- static void __exit pl010_exit(void)
- {
- 	amba_driver_unregister(&pl010_driver);
--	uart_unregister_driver(&amba_reg);
- }
- 
- module_init(pl010_init);
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 12a23c18bc1e7eb5..55003194a2561c95 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -135,7 +135,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("sdif2",		 312,	R8A7796_CLK_SD2),
+ 	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
+ 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
+-	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
++	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
+ 	DEF_MOD("drif6",		 509,	R8A7796_CLK_S3D2),
 -- 
-2.11.0
+2.7.4
