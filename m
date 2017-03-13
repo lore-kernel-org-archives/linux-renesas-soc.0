@@ -1,75 +1,149 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Tue, 07 Mar 2017 12:16:43 +0900
-Message-Id: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
-Subject: [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:43904 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754418AbdCMRMi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 13 Mar 2017 13:12:38 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] clk: renesas: cpg-mssr: Add support for fixing up clock tables
+Date: Mon, 13 Mar 2017 18:12:30 +0100
+Message-Id: <1489425153-22623-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: IPMMU multi-arch update V7
+The same SoC may have different clocks and/or module clock parents,
+depending on SoC revision.  One option is to use different sets of clock
+tables for each SoC revision.  However, if the differences are small, it
+is much more space-efficient to have a single set of clock tables, and
+fix those up at runtime instead.
 
-[PATCH v7 01/07] iommu/ipmmu-vmsa: Remove platform data handling
-[PATCH v7 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-[PATCH v7 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
-[PATCH v7 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
-[PATCH v7 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-[PATCH v7 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-[PATCH v7 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+Hence provide three helpers:
+  - Two helpers to NULLify core and module clocks that do not exist on
+    some revisions (NULLified clocks are skipped during the registration
+    phase),
+  - One helper to reparent module clocks that have different clock
+    parents.
 
-These patches update the IPMMU driver with a couple of changes to support
-build on multiple architectures. In the process of doing so the interrupt
-code gets reworked, the foundation for supporting multiple contexts are
-added and in case of CONFIG_IOMMU_DMA=y (on 64-bit or 32-bit ARM) devices
-are grouped together and handled via ->xlate() - thanks Robin! Support for
-existing 32-bit ARM SoCs from R-Car Gen2 is kept as-is.
-
-Changes since V6:
- - Rebased on top of v4.11-rc1 and the following fast-tracked change:
-   3b6bb5b iommu/ipmmu-vmsa: Restrict IOMMU Domain Geometry to 32-bit address spac
- - Updated patch 5/7 to roll in a few patches from other series
-   See individual patch for more details
- - Build tested on 32-bit and 64-bit ARM
- - Run time tested on 64-bit ARM (with additional SoC-specific patches)
-
-Changes since V5:
- - Rebased series on top of next-20161019
- - Updated patch 5/7 to simplify domain allocation/free code - thanks Joerg!
- - Added reviewed-by tag from Joerg for patch 1-4 and 6-7.
- 
-Changes since V4:
- - Updated patch 3/7 to work on top on the following commit in next-20160920:
-   b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
- - Add Kconfig hunk to patch 5/7 to avoid undeclared ipmmu_ops if COMPILE_TEST
- - Rebased patch 7/7 to fit on top of new Kconfig bits in 5/7
-
-Changes since V3:
- - Updated patch 3/7 to fix hang-on-boot issue on 32-bit ARM - thanks Geert!
- - Reworked group parameter handling in patch 3/7 and 5/7.
- - Added patch 6/7 to fix build of the driver on s390/tile/um architectures
-
-Changes since V2:
- - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
- - V3 patch 3, 4 and 5 come from
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Patch 5 has been reworked to include patch 3 of the V1 of this series 
-
-Changes since V1:
- - Got rid of patch 2 and 3 from initial series
- - Updated bitmap code locking and also used lighter bitop functions
- - Updated the Kconfig bits to apply on top of ARCH_RENESAS
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v2:
+  - Drop RFC state.
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 50 ++++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.h | 22 +++++++++++++++
+ 2 files changed, 72 insertions(+)
 
- Built on top v4.11-rc1:
-
- drivers/iommu/Kconfig      |    2 
- drivers/iommu/ipmmu-vmsa.c |  359 ++++++++++++++++++++++++++++++++++++--------
- 2 files changed, 299 insertions(+), 62 deletions(-)
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index eadcbd43ff88319b..99eeec6f24ec6c6b 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -265,6 +265,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 	WARN_DEBUG(id >= priv->num_core_clks);
+ 	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
+ 
++	if (!core->name) {
++		/* Skip NULLified clock */
++		return;
++	}
++
+ 	switch (core->type) {
+ 	case CLK_TYPE_IN:
+ 		clk = of_clk_get_by_name(priv->dev->of_node, core->name);
+@@ -335,6 +340,11 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
+ 	WARN_DEBUG(mod->parent >= priv->num_core_clks + priv->num_mod_clks);
+ 	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
+ 
++	if (!mod->name) {
++		/* Skip NULLified clock */
++		return;
++	}
++
+ 	parent = priv->clks[mod->parent];
+ 	if (IS_ERR(parent)) {
+ 		clk = parent;
+@@ -734,5 +744,45 @@ static int __init cpg_mssr_init(void)
+ 
+ subsys_initcall(cpg_mssr_init);
+ 
++void __init cpg_core_nullify_range(struct cpg_core_clk *core_clks,
++				   unsigned int num_core_clks,
++				   unsigned int first_clk,
++				   unsigned int last_clk)
++{
++	unsigned int i;
++
++	for (i = 0; i < num_core_clks; i++)
++		if (core_clks[i].id >= first_clk &&
++		    core_clks[i].id <= last_clk)
++			core_clks[i].name = NULL;
++}
++
++void __init mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
++			     unsigned int num_mod_clks,
++			     const unsigned int *clks, unsigned int n)
++{
++	unsigned int i, j;
++
++	for (i = 0, j = 0; i < num_mod_clks && j < n; i++)
++		if (mod_clks[i].id == clks[j]) {
++			mod_clks[i].name = NULL;
++			j++;
++		}
++}
++
++void __init mssr_mod_reparent(struct mssr_mod_clk *mod_clks,
++			      unsigned int num_mod_clks,
++			      const struct mssr_mod_reparent *clks,
++			      unsigned int n)
++{
++	unsigned int i, j;
++
++	for (i = 0, j = 0; i < num_mod_clks && j < n; i++)
++		if (mod_clks[i].id == clks[j].clk) {
++			mod_clks[i].parent = clks[j].parent;
++			j++;
++		}
++}
++
+ MODULE_DESCRIPTION("Renesas CPG/MSSR Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 4bb7a80c6469e12e..148f4f0aa2a487b0 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -134,4 +134,26 @@ extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
++
++
++    /*
++     * Helpers for fixing up clock tables depending on SoC revision
++     */
++
++struct mssr_mod_reparent {
++	unsigned int clk, parent;
++};
++
++
++extern void cpg_core_nullify_range(struct cpg_core_clk *core_clks,
++				   unsigned int num_core_clks,
++				   unsigned int first_clk,
++				   unsigned int last_clk);
++extern void mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
++			     unsigned int num_mod_clks,
++			     const unsigned int *clks, unsigned int n);
++extern void mssr_mod_reparent(struct mssr_mod_clk *mod_clks,
++			      unsigned int num_mod_clks,
++			      const struct mssr_mod_reparent *clks,
++			      unsigned int n);
+ #endif
+-- 
+2.7.4
