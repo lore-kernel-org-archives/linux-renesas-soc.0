@@ -1,36 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:34611 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbdCML5G (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:17580 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750839AbdCMJlg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 07:57:06 -0400
-Received: by mail-lf0-f52.google.com with SMTP id z15so40450857lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Mar 2017 04:56:59 -0700 (PDT)
-Subject: Re: [PATCH v2] phy: rcar-gen3-usb2: fix implementation for runtime PM
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, kishon@ti.com
-References: <1489397969-26153-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <983f7c65-38f8-a04f-f809-ab6bbd8ac8f5@cogentembedded.com>
-Date: Mon, 13 Mar 2017 14:56:55 +0300
+        Mon, 13 Mar 2017 05:41:36 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <kishon@ti.com>
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2] phy: rcar-gen3-usb2: fix implementation for runtime PM
+Date: Mon, 13 Mar 2017 18:39:29 +0900
+Message-ID: <1489397969-26153-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1489397969-26153-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/13/2017 12:39 PM, Yoshihiro Shimoda wrote:
+This patch fixes an issue that this driver doesn't take care of the runtime
+PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
+but it misunderstood the dev_phy_create()'s specification.
+This driver should call its own pm_runtime_pm() before dev_phy_create().
 
-> This patch fixes an issue that this driver doesn't take care of the runtime
-> PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
-> but it misunderstood the dev_phy_create()'s specification.
-> This driver should call its own pm_runtime_pm() before dev_phy_create().
+Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Changes from v1:
+  - revise the commit log (s/the own/its own/)
+  - simplify return code in probe().
 
-    You probably meant pm_runtime_enable()? Sorry for not noticing the 1st time...
+ drivers/phy/phy-rcar-gen3-usb2.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-> Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index afb4d04..54c3429 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -20,6 +20,7 @@
+ #include <linux/of_address.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/workqueue.h>
+ 
+@@ -395,7 +396,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	struct rcar_gen3_chan *channel;
+ 	struct phy_provider *provider;
+ 	struct resource *res;
+-	int irq;
++	int irq, ret = 0;
+ 
+ 	if (!dev->of_node) {
+ 		dev_err(dev, "This driver needs device tree\n");
+@@ -434,17 +435,24 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	/* devm_phy_create() will call pm_runtime_enable(dev); */
++	/*
++	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
++	 * And then, phy-core will manage runtime pm for this device.
++	 */
++	pm_runtime_enable(dev);
+ 	channel->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb2_ops);
+ 	if (IS_ERR(channel->phy)) {
+ 		dev_err(dev, "Failed to create USB2 PHY\n");
+-		return PTR_ERR(channel->phy);
++		ret = PTR_ERR(channel->phy);
++		goto error;
+ 	}
+ 
+ 	channel->vbus = devm_regulator_get_optional(dev, "vbus");
+ 	if (IS_ERR(channel->vbus)) {
+-		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER)
+-			return PTR_ERR(channel->vbus);
++		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
++			ret = PTR_ERR(channel->vbus);
++			goto error;
++		}
+ 		channel->vbus = NULL;
+ 	}
+ 
+@@ -454,15 +462,22 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+ 	if (IS_ERR(provider)) {
+ 		dev_err(dev, "Failed to register PHY provider\n");
++		ret = PTR_ERR(provider);
++		goto error;
+ 	} else if (channel->has_otg) {
+ 		int ret;
+ 
+ 		ret = device_create_file(dev, &dev_attr_role);
+ 		if (ret < 0)
+-			return ret;
++			goto error;
+ 	}
+ 
+-	return PTR_ERR_OR_ZERO(provider);
++	return 0;
++
++error:
++	pm_runtime_disable(dev);
++
++	return ret;
+ }
+ 
+ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+@@ -472,6 +487,8 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ 	if (channel->has_otg)
+ 		device_remove_file(&pdev->dev, &dev_attr_role);
+ 
++	pm_runtime_disable(&pdev->dev);
++
+ 	return 0;
+ };
+ 
+-- 
+1.9.1
