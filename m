@@ -1,45 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:49477 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753447AbdCTJAQ (ORCPT
+        with ESMTP id S1752665AbdCMJVo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:00:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/31] ARM: dts: lager: Drop superfluous status update for frequency override
-Date: Mon, 20 Mar 2017 09:58:05 +0100
-Message-Id: <2507e3d41a3f0f09e7d756b34e3bb953d6d3b76d.1489999063.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Mon, 13 Mar 2017 05:21:44 -0400
+Date: Mon, 13 Mar 2017 10:21:33 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/13] arm: dts: renesas: Tidy-up status
+Message-ID: <20170313092132.GC19296@verge.net.au>
+References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, Mar 10, 2017 at 02:19:03PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series performs some cleanups on the Renesas DT source files:
+>   - Patch 1 replaces "ok" by "okay" in statuses, as the latter is the
+>     recommended form,
+>   - Patches 2-13 drop superfluous status updates when overriding the
+>     clock frequencies of fixed-frequency clocks, as they have already
+>     been enabled in the SoC-specific DTS file.
+> 
+> Thanks!
 
-The scif_clk device node is already enabled in r8a7790.dtsi, so there is
-no need to update its status again.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index bd512c86e852..ba100a6f67ca 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -581,7 +581,6 @@
- 
- &scif_clk {
- 	clock-frequency = <14745600>;
--	status = "okay";
- };
- 
- &msiof1 {
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks, applied.
