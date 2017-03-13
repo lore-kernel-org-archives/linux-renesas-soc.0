@@ -1,102 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60050 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752500AbdCFA3k (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:37688 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753821AbdCMQUK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:29:40 -0500
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id E1E632034A
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Mar 2017 01:18:54 +0100 (CET)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/5] arm64: dts: r8a7795: salvator-x: Enable HDMI outputs
-Date: Mon,  6 Mar 2017 02:20:23 +0200
-Message-Id: <20170306002026.15066-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 13 Mar 2017 12:20:10 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/7] clk: renesas: r8a7796: Reformat core clock table
+Date: Mon, 13 Mar 2017 17:19:52 +0100
+Message-Id: <1489421994-19707-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+For easier comparison with other clock drivers.
+No functional changes.
 
-Instantiate the HDMI connectors and enable the encoders.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 50 ++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 7a8986edcdc0..e855e9572685 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -165,6 +165,30 @@
- 		};
- 	};
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 55003194a2561c95..f7787101b8d0406c 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -54,8 +54,8 @@ enum clk_ids {
  
-+	hdmi0-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI0 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi0_con: endpoint {
-+				remote-endpoint = <&rcar_dw_hdmi0_out>;
-+			};
-+		};
-+	};
-+
-+	hdmi1-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI1 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi1_con: endpoint {
-+				remote-endpoint = <&rcar_dw_hdmi1_out>;
-+			};
-+		};
-+	};
-+
- 	vga-encoder {
- 		compatible = "adi,adv7123";
+ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+-	DEF_INPUT("extal",  CLK_EXTAL),
+-	DEF_INPUT("extalr", CLK_EXTALR),
++	DEF_INPUT("extal",      CLK_EXTAL),
++	DEF_INPUT("extalr",     CLK_EXTALR),
  
-@@ -198,6 +222,32 @@
- 	};
- };
+ 	/* Internal Core Clocks */
+ 	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN3_MAIN, CLK_EXTAL),
+@@ -95,10 +95,10 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_FIXED("s3d2",       R8A7796_CLK_S3D2,  CLK_S3,         2, 1),
+ 	DEF_FIXED("s3d4",       R8A7796_CLK_S3D4,  CLK_S3,         4, 1),
  
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi1_out: endpoint {
-+				remote-endpoint = <&hdmi1_con>;
-+			};
-+		};
-+	};
-+};
-+
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
+-	DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_SDSRC,    0x0074),
+-	DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_SDSRC,    0x0078),
+-	DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_SDSRC,    0x0268),
+-	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,    0x026c),
++	DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_SDSRC,     0x074),
++	DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_SDSRC,     0x078),
++	DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_SDSRC,     0x268),
++	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,     0x26c),
+ 
+ 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
