@@ -1,69 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:45920 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753930AbdCFQ6c (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 11:58:32 -0500
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/6] ARM: dts: renesas: Add INTC-SYS clock to device tree
-Date: Mon,  6 Mar 2017 17:58:05 +0100
-Message-Id: <1488819491-26097-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH 0/3] soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
+Date: Mon, 13 Mar 2017 18:13:14 +0100
+Message-Id: <1489425197-22859-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+	Hi Simon, Magnus, Arnd[*], Greg[*],
 
-This patch series improves the topology description in DT of the ARM GIC
-on Renesas SoCs using the legacy CPG/MSTP bindings (R-Mobile APE6 and
-R-Car Gen2).  It describes the INTC-SYS clock, links the GIC to its
-module clock, and adds the GIC to the SYSC "always on" PM Domain.
+This patch series adds power domain support for R-Car H3 ES2.0, which
+differs from ES1.x in some areas.
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.  Hence this
-series depends on commit e34084fb9a023d1d ("clk: renesas: mstp: Make
-INTC-SYS a critical clock"), which is in v4.11-rc1.
+The goal is twofold:
+  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+     for now,
+  2. Make it clear which code supports ES1.x, so it can easily be
+     identified and removed later, when production SoCs are deemed
+     ubiquitous.
 
-This series is the counterpart of "[PATCH 0/4] ARM/arm64: dts: renesas:
-Link ARM GIC to clock and clock domain" for SoCs not yet migrated to the
-new CPG/MSSR driver.  The latter is already part of v4.11-rc1 as it had
-less dependencies.
+This is achieved by detecting the SoC revision at runtime using the new
+soc_device_match() API, and fixing up the power area table to match the
+actual SoC revision.
 
-Changes compared to v1:
-  - Add missing "power-domains" property,
-  - Add clock-names property,
-  - Rebased on top of CPG Clock Domain and R-Car SYSC PM Domain support,
-  - Add r8a7792 patch,
-  - Please refer to the individual patch changelogs for more details
-    (v1 dates back to 2014).
+As PM Domains are initialized quite early, the Renesas SoC device must
+be initialized earlier, and this series thus depends on "[PATCH 0/2]
+[RFC] base: soc: soc_device_match() improvements"
+(https://lkml.org/lkml/2017/3/9/653).
 
-Thanks for applying!
+[*] Due to this dependency, there are two options:
+      - Both series go in through Simon's Renesas tree and arm-soc,
+      - Both series go in through Greg's drivers tree.
 
-Geert Uytterhoeven (6):
-  ARM: dts: r8a73a4: Add INTC-SYS clock to device tree
-  ARM: dts: r8a7790: Add INTC-SYS clock to device tree
-  ARM: dts: r8a7791: Add INTC-SYS clock to device tree
-  ARM: dts: r8a7792: Add INTC-SYS clock to device tree
-  ARM: dts: r8a7793: Add INTC-SYS clock to device tree
-  ARM: dts: r8a7794: Add INTC-SYS clock to device tree
+For testers, this series and its dependencies are available in the
+topic/r8a7795es2-sysc-v1 branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
+development board is provided as topic/r8a7795es2-integration.
 
- arch/arm/boot/dts/r8a73a4.dtsi            | 13 +++++++++----
- arch/arm/boot/dts/r8a7790.dtsi            |  9 ++++++---
- arch/arm/boot/dts/r8a7791.dtsi            |  9 ++++++---
- arch/arm/boot/dts/r8a7792.dtsi            | 11 ++++++++---
- arch/arm/boot/dts/r8a7793.dtsi            | 11 ++++++++---
- arch/arm/boot/dts/r8a7794.dtsi            |  9 ++++++---
- include/dt-bindings/clock/r8a73a4-clock.h |  1 +
- include/dt-bindings/clock/r8a7790-clock.h |  1 +
- include/dt-bindings/clock/r8a7791-clock.h |  1 +
- include/dt-bindings/clock/r8a7792-clock.h |  1 +
- include/dt-bindings/clock/r8a7793-clock.h |  5 +++--
- include/dt-bindings/clock/r8a7794-clock.h |  1 +
- 12 files changed, 51 insertions(+), 21 deletions(-)
+This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
+SoCs.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  soc: renesas: Register SoC device early
+  soc: renesas: rcar-sysc: Add support for fixing up power areas
+  soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
+
+ drivers/soc/renesas/r8a7795-sysc.c       | 26 ++++++++++++++++++++++++--
+ drivers/soc/renesas/rcar-sysc.c          | 25 ++++++++++++++++++++++++-
+ drivers/soc/renesas/rcar-sysc.h          | 10 ++++++++++
+ drivers/soc/renesas/renesas-soc.c        |  2 +-
+ include/dt-bindings/power/r8a7795-sysc.h |  2 +-
+ 5 files changed, 60 insertions(+), 5 deletions(-)
 
 -- 
 2.7.4
