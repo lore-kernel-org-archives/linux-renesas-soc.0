@@ -8,70 +8,108 @@ To: Simon Horman <horms@verge.net.au>,
 Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
-Date: Mon, 13 Mar 2017 18:13:14 +0100
-Message-Id: <1489425197-22859-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 3/3] soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
+Date: Mon, 13 Mar 2017 18:13:17 +0100
+Message-Id: <1489425197-22859-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425197-22859-1-git-send-email-geert+renesas@glider.be>
+References: <1489425197-22859-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus, Arnd[*], Greg[*],
+Power area A2VC0 was removed in revision ES2.0, cfr. Based on R-Car Gen3
+Hardware User's Manual rev. 0.53E.
 
-This patch series adds power domain support for R-Car H3 ES2.0, which
-differs from ES1.x in some areas.
+Hence remove it from the power area table when not running on ES1.x.
 
-The goal is twofold:
+This is in line with the goal to:
   1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
      for now,
   2. Make it clear which code supports ES1.x, so it can easily be
      identified and removed later, when production SoCs are deemed
      ubiquitous.
 
-This is achieved by detecting the SoC revision at runtime using the new
-soc_device_match() API, and fixing up the power area table to match the
-actual SoC revision.
-
-As PM Domains are initialized quite early, the Renesas SoC device must
-be initialized earlier, and this series thus depends on "[PATCH 0/2]
-[RFC] base: soc: soc_device_match() improvements"
-(https://lkml.org/lkml/2017/3/9/653).
-
-[*] Due to this dependency, there are two options:
-      - Both series go in through Simon's Renesas tree and arm-soc,
-      - Both series go in through Greg's drivers tree.
-
-For testers, this series and its dependencies are available in the
-topic/r8a7795es2-sysc-v1 branch of my renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
-development board is provided as topic/r8a7795es2-integration.
-
-This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
-SoCs.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  soc: renesas: Register SoC device early
-  soc: renesas: rcar-sysc: Add support for fixing up power areas
-  soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
  drivers/soc/renesas/r8a7795-sysc.c       | 26 ++++++++++++++++++++++++--
- drivers/soc/renesas/rcar-sysc.c          | 25 ++++++++++++++++++++++++-
- drivers/soc/renesas/rcar-sysc.h          | 10 ++++++++++
- drivers/soc/renesas/renesas-soc.c        |  2 +-
  include/dt-bindings/power/r8a7795-sysc.h |  2 +-
- 5 files changed, 60 insertions(+), 5 deletions(-)
+ 2 files changed, 25 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/soc/renesas/r8a7795-sysc.c b/drivers/soc/renesas/r8a7795-sysc.c
+index 5e7537c96f7bbbcd..7412666187b30420 100644
+--- a/drivers/soc/renesas/r8a7795-sysc.c
++++ b/drivers/soc/renesas/r8a7795-sysc.c
+@@ -1,7 +1,7 @@
+ /*
+  * Renesas R-Car H3 System Controller
+  *
+- * Copyright (C) 2016 Glider bvba
++ * Copyright (C) 2016-2017 Glider bvba
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -10,12 +10,13 @@
+ 
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/sys_soc.h>
+ 
+ #include <dt-bindings/power/r8a7795-sysc.h>
+ 
+ #include "rcar-sysc.h"
+ 
+-static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
++static struct rcar_sysc_area r8a7795_areas[] __initdata = {
+ 	{ "always-on",	    0, 0, R8A7795_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
+ 	{ "ca57-scu",	0x1c0, 0, R8A7795_PD_CA57_SCU,	R8A7795_PD_ALWAYS_ON,
+ 	  PD_SCU },
+@@ -40,6 +41,7 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
+ 	{ "a3vp",	0x340, 0, R8A7795_PD_A3VP,	R8A7795_PD_ALWAYS_ON },
+ 	{ "cr7",	0x240, 0, R8A7795_PD_CR7,	R8A7795_PD_ALWAYS_ON },
+ 	{ "a3vc",	0x380, 0, R8A7795_PD_A3VC,	R8A7795_PD_ALWAYS_ON },
++	/* A2VC0 exists on ES1.x only */
+ 	{ "a2vc0",	0x3c0, 0, R8A7795_PD_A2VC0,	R8A7795_PD_A3VC },
+ 	{ "a2vc1",	0x3c0, 1, R8A7795_PD_A2VC1,	R8A7795_PD_A3VC },
+ 	{ "3dg-a",	0x100, 0, R8A7795_PD_3DG_A,	R8A7795_PD_ALWAYS_ON },
+@@ -50,7 +52,27 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
+ 	{ "a3ir",	0x180, 0, R8A7795_PD_A3IR,	R8A7795_PD_ALWAYS_ON },
+ };
+ 
++
++	/*
++	 * Fixups for R-Car H3 revisions after ES1.x
++	 */
++
++static const struct soc_device_attribute r8a7795es1[] __initconst = {
++	{ .soc_id = "r8a7795", .revision = "ES1.*" },
++	{ /* sentinel */ }
++};
++
++static int __init r8a7795_sysc_init(void)
++{
++	if (!soc_device_match(r8a7795es1))
++		rcar_sysc_nullify(r8a7795_areas, ARRAY_SIZE(r8a7795_areas),
++				  R8A7795_PD_A2VC0);
++
++	return 0;
++}
++
+ const struct rcar_sysc_info r8a7795_sysc_info __initconst = {
++	.init = r8a7795_sysc_init,
+ 	.areas = r8a7795_areas,
+ 	.num_areas = ARRAY_SIZE(r8a7795_areas),
+ };
+diff --git a/include/dt-bindings/power/r8a7795-sysc.h b/include/dt-bindings/power/r8a7795-sysc.h
+index ee2e26ba605ef9a3..ad679eeda1370a9d 100644
+--- a/include/dt-bindings/power/r8a7795-sysc.h
++++ b/include/dt-bindings/power/r8a7795-sysc.h
+@@ -33,7 +33,7 @@
+ #define R8A7795_PD_CA53_SCU		21
+ #define R8A7795_PD_3DG_E		22
+ #define R8A7795_PD_A3IR			24
+-#define R8A7795_PD_A2VC0		25
++#define R8A7795_PD_A2VC0		25	/* ES1.x only */
+ #define R8A7795_PD_A2VC1		26
+ 
+ /* Always-on power area */
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
