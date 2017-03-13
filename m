@@ -1,82 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60004 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbdCFAOk (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:60044 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754410AbdCMRMi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:14:40 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 9/9] drm: rcar-du: Add HDMI outputs to R8A7795 device description
-Date: Mon,  6 Mar 2017 02:03:02 +0200
-Message-Id: <20170306000302.14149-10-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 13 Mar 2017 13:12:38 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: [PATCH v2 4/4] clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
+Date: Mon, 13 Mar 2017 18:12:33 +0100
+Message-Id: <1489425153-22623-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Starting with R-Car H3 ES2.0, the parent of RCLK is selected using MD28.
 
-Update the device description with the two available HDMI outputs.
+Add support for that, but retain the old behavior for R-Car H3 ES1.x and
+M3-W ES1.0 using a quirk.
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Inspired by a patch by Takeshi Kihara in the BSP.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  4 +++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 12 ++++++++++--
- 2 files changed, 13 insertions(+), 3 deletions(-)
+v2:
+  - New.
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 38 ++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index a7194812997e..15871fae7445 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -1,7 +1,7 @@
- /*
-  * rcar_du_crtc.h  --  R-Car Display Unit CRTCs
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2015 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  *
-@@ -61,6 +61,8 @@ enum rcar_du_output {
- 	RCAR_DU_OUTPUT_DPAD1,
- 	RCAR_DU_OUTPUT_LVDS0,
- 	RCAR_DU_OUTPUT_LVDS1,
-+	RCAR_DU_OUTPUT_HDMI0,
-+	RCAR_DU_OUTPUT_HDMI1,
- 	RCAR_DU_OUTPUT_TCON,
- 	RCAR_DU_OUTPUT_MAX,
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index e5247e3dc897f9f4..3dee900522b703bd 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -252,11 +252,20 @@ static u32 cpg_mode __initdata;
+ static u32 cpg_quirks __initdata;
+ 
+ #define PLL_ERRATA	BIT(0)		/* Missing PLL0/2/4 post-divider */
++#define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
+ 
+ static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
+ 	{
+ 		.soc_id = "r8a7795", .revision = "ES1.0",
+-		.data = (void *)PLL_ERRATA,
++		.data = (void *)(PLL_ERRATA | RCKCR_CKSEL),
++	},
++	{
++		.soc_id = "r8a7795", .revision = "ES1.*",
++		.data = (void *)RCKCR_CKSEL,
++	},
++	{
++		.soc_id = "r8a7796", .revision = "ES1.0",
++		.data = (void *)RCKCR_CKSEL,
+ 	},
+ 	{ /* sentinel */ }
  };
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 3d789e68ec13..846971fdc196 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -149,13 +149,21 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
- 	.num_crtcs = 4,
- 	.routes = {
--		/* R8A7795 has one RGB output, one LVDS output and two
--		 * (currently unsupported) HDMI outputs.
-+		/* R8A7795 has one RGB output, two HDMI outputs and one
-+		 * LVDS output.
- 		 */
- 		[RCAR_DU_OUTPUT_DPAD0] = {
- 			.possible_crtcs = BIT(3),
- 			.port = 0,
- 		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI1] = {
-+			.possible_crtcs = BIT(2),
-+			.port = 2,
-+		},
- 		[RCAR_DU_OUTPUT_LVDS0] = {
- 			.possible_crtcs = BIT(0),
- 			.port = 3,
+@@ -330,18 +339,25 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
+ 
+ 	case CLK_TYPE_GEN3_R:
+-		/*
+-		 * RINT is default.
+-		 * Only if EXTALR is populated, we switch to it.
+-		 */
+-		value = readl(base + CPG_RCKCR) & 0x3f;
+-
+-		if (clk_get_rate(clks[cpg_clk_extalr])) {
+-			parent = clks[cpg_clk_extalr];
+-			value |= BIT(15);
++		if (cpg_quirks & RCKCR_CKSEL) {
++			/*
++			 * RINT is default.
++			 * Only if EXTALR is populated, we switch to it.
++			 */
++			value = readl(base + CPG_RCKCR) & 0x3f;
++
++			if (clk_get_rate(clks[cpg_clk_extalr])) {
++				parent = clks[cpg_clk_extalr];
++				value |= BIT(15);
++			}
++
++			writel(value, base + CPG_RCKCR);
++			break;
+ 		}
+ 
+-		writel(value, base + CPG_RCKCR);
++		/* Select parent clock of RCLK by MD28 */
++		if (cpg_mode & BIT(28))
++			parent = clks[cpg_clk_extalr];
+ 		break;
+ 
+ 	default:
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
