@@ -1,72 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35248 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933173AbdC3M6S (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:60024 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754419AbdCMRMi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 08:58:18 -0400
-MIME-Version: 1.0
-In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Mar 2017 14:58:15 +0200
-Message-ID: <CAMuHMdXtaGWoafQMyRZqVm0Pg0oBO+554HujK=QFnR+kS7YJbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] clk: renesas: Add support for R-Car H3 ES2.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 13 Mar 2017 13:12:38 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] clk: renesas: Add support for R-Car H3 ES2.0
+Date: Mon, 13 Mar 2017 18:12:29 +0100
+Message-Id: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 6:12 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> This patch series adds clock support for R-Car H3 ES2.0, which differs
-> from ES1.x in several areas.
->
-> The goal is twofold:
->   1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
->      for now,
->   2. Make it clear which code supports ES1.x, so it can easily be
->      identified and removed later, when production SoCs are deemed
->      ubiquitous.
->
-> This is achieved by:
->   - Updating the clock tables for the latest revision (ES2.0), but not
->     removing clocks that only exist on earlier revisions (ES1.x),
->   - Detecting the SoC revision at runtime using the new
->     soc_device_match() API, and fixing up the clocks tables to match the
->     actual SoC revision, by:
->       - NULLifying core and module clocks of modules that do not exist,
->       - Reparenting module clocks that have a different parent on ES1.x.
->
-> Changes compared to v1:
->   - Update of various module clocks as per datasheet update,
->   - Add support for RCLK on R-Car H3 ES2.0.
->
-> For testers, this series and its dependencies are available in the
-> topic/r8a7795es2-clk-v2 branch of my renesas-drivers git repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
-> development board is provided as topic/r8a7795es2-integration.
->
-> This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
-> SoCs.
->
-> I plan to queue this up in clk-renesas-for-v4.12.
+	Hi Mike, Stephen,
 
-Queued in clk-renesas-for-v4.12.
+This patch series adds clock support for R-Car H3 ES2.0, which differs
+from ES1.x in several areas.
+
+The goal is twofold:
+  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+     for now,
+  2. Make it clear which code supports ES1.x, so it can easily be
+     identified and removed later, when production SoCs are deemed
+     ubiquitous.
+
+This is achieved by:
+  - Updating the clock tables for the latest revision (ES2.0), but not
+    removing clocks that only exist on earlier revisions (ES1.x),
+  - Detecting the SoC revision at runtime using the new
+    soc_device_match() API, and fixing up the clocks tables to match the
+    actual SoC revision, by:
+      - NULLifying core and module clocks of modules that do not exist,
+      - Reparenting module clocks that have a different parent on ES1.x.
+
+Changes compared to v1:
+  - Update of various module clocks as per datasheet update,
+  - Add support for RCLK on R-Car H3 ES2.0.
+
+For testers, this series and its dependencies are available in the
+topic/r8a7795es2-clk-v2 branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
+development board is provided as topic/r8a7795es2-integration.
+
+This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
+SoCs.
+
+I plan to queue this up in clk-renesas-for-v4.12.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  clk: renesas: cpg-mssr: Add support for fixing up clock tables
+  clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
+  clk: renesas: r8a7795: Add support for R-Car H3 ES2.0
+  clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c       | 201 ++++++++++++++++++++-------
+ drivers/clk/renesas/rcar-gen3-cpg.c          |  38 +++--
+ drivers/clk/renesas/renesas-cpg-mssr.c       |  50 +++++++
+ drivers/clk/renesas/renesas-cpg-mssr.h       |  22 +++
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h |   7 +
+ 5 files changed, 257 insertions(+), 61 deletions(-)
+
+-- 
+2.7.4
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
