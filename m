@@ -1,62 +1,119 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34250 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752968AbdC1JpD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 05:45:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a7795: salvator-x: Add current sense amplifiers
-Date: Tue, 28 Mar 2017 11:44:42 +0200
-Message-Id: <1490694282-9439-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <kishon@ti.com>
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3] phy: rcar-gen3-usb2: fix implementation for runtime PM
+Date: Tue, 14 Mar 2017 08:37:40 +0900
+Message-ID: <1489448261-4477-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for two Maxim max961x current sense amplifiers
-sensing the VDD_0.8V and DVFS_0.8V lines.
+This patch fixes an issue that this driver doesn't take care of the runtime
+PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
+but it misunderstood the dev_phy_create()'s specification.
+This driver should call its own pm_runtime_enable() before dev_phy_create().
 
-Based on a patch for r8a7796-salvator-x.dts by Jacopo Mondi.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-Pending acceptance of the maxim,max9611 DT bindings.
+ Changes from v2:
+  - revise the commit log (s/pm_runtime_pm/pm_runtime_enable)
 
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ Changes from v1:
+  - revise the commit log (s/the own/its own/)
+  - simplify return code in probe().
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index f25241921067dcef..dca1c180757a2b68 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -400,6 +400,24 @@
- 	};
+ drivers/phy/phy-rcar-gen3-usb2.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index afb4d04..54c3429 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -20,6 +20,7 @@
+ #include <linux/of_address.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/workqueue.h>
+ 
+@@ -395,7 +396,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	struct rcar_gen3_chan *channel;
+ 	struct phy_provider *provider;
+ 	struct resource *res;
+-	int irq;
++	int irq, ret = 0;
+ 
+ 	if (!dev->of_node) {
+ 		dev_err(dev, "This driver needs device tree\n");
+@@ -434,17 +435,24 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	/* devm_phy_create() will call pm_runtime_enable(dev); */
++	/*
++	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
++	 * And then, phy-core will manage runtime pm for this device.
++	 */
++	pm_runtime_enable(dev);
+ 	channel->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb2_ops);
+ 	if (IS_ERR(channel->phy)) {
+ 		dev_err(dev, "Failed to create USB2 PHY\n");
+-		return PTR_ERR(channel->phy);
++		ret = PTR_ERR(channel->phy);
++		goto error;
+ 	}
+ 
+ 	channel->vbus = devm_regulator_get_optional(dev, "vbus");
+ 	if (IS_ERR(channel->vbus)) {
+-		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER)
+-			return PTR_ERR(channel->vbus);
++		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
++			ret = PTR_ERR(channel->vbus);
++			goto error;
++		}
+ 		channel->vbus = NULL;
+ 	}
+ 
+@@ -454,15 +462,22 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+ 	if (IS_ERR(provider)) {
+ 		dev_err(dev, "Failed to register PHY provider\n");
++		ret = PTR_ERR(provider);
++		goto error;
+ 	} else if (channel->has_otg) {
+ 		int ret;
+ 
+ 		ret = device_create_file(dev, &dev_attr_role);
+ 		if (ret < 0)
+-			return ret;
++			goto error;
+ 	}
+ 
+-	return PTR_ERR_OR_ZERO(provider);
++	return 0;
++
++error:
++	pm_runtime_disable(dev);
++
++	return ret;
+ }
+ 
+ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+@@ -472,6 +487,8 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ 	if (channel->has_otg)
+ 		device_remove_file(&pdev->dev, &dev_attr_role);
+ 
++	pm_runtime_disable(&pdev->dev);
++
+ 	return 0;
  };
  
-+&i2c4 {
-+	status = "okay";
-+
-+	csa_vdd: adc@7c {
-+		compatible = "maxim,max9611";
-+		reg = <0x7c>;
-+
-+		shunt-resistor-uohm = <5000>;
-+	};
-+
-+	csa_dvfs: adc@7f {
-+		compatible = "maxim,max9611";
-+		reg = <0x7f>;
-+
-+		shunt-resistor-uohm = <5000>;
-+	};
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
 -- 
-2.7.4
+1.9.1
