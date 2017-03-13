@@ -1,55 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58768 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937538AbdCJNsg (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:47068 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754424AbdCMRMi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:48:36 -0500
+        Mon, 13 Mar 2017 13:12:38 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] soc: renesas: Identify RZ/G1H
-Date: Fri, 10 Mar 2017 14:48:29 +0100
-Message-Id: <1489153710-8159-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
-References: <1489153710-8159-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 2/4] clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
+Date: Mon, 13 Mar 2017 18:12:31 +0100
+Message-Id: <1489425153-22623-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for identifying the RZ/G1H (r8a7742) SoC.
+Add all R-Car H3 ES2.0 Clock Pulse Generator Core Clock Outputs, as
+listed in Table 8.2a ("List of Clocks [R-Car H3]") of the R-Car Gen3
+Hardware User's Manual rev. 0.53E.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v2:
+  - Drop RFC state,
+  - Update datasheet revision.
+---
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 330960312296f603..f0172e59c0402d10 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -80,6 +80,11 @@ static const struct renesas_soc soc_rmobile_a1 __initconst __maybe_unused = {
- 	.id	= 0x40,
- };
+diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+index e864aae0a2561c4b..f047eaf261f34ac7 100644
+--- a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
++++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+@@ -60,4 +60,11 @@
+ #define R8A7795_CLK_R			45
+ #define R8A7795_CLK_OSC			46
  
-+static const struct renesas_soc soc_rz_g1h __initconst __maybe_unused = {
-+	.family	= &fam_rzg,
-+	.id	= 0x45,
-+};
++/* r8a7795 ES2.0 CPG Core Clocks */
++#define R8A7795_CLK_S0D2		47
++#define R8A7795_CLK_S0D3		48
++#define R8A7795_CLK_S0D6		49
++#define R8A7795_CLK_S0D8		50
++#define R8A7795_CLK_S0D12		51
 +
- static const struct renesas_soc soc_rz_g1m __initconst __maybe_unused = {
- 	.family	= &fam_rzg,
- 	.id	= 0x47,
-@@ -150,6 +155,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A7740
- 	{ .compatible = "renesas,r8a7740",	.data = &soc_rmobile_a1 },
- #endif
-+#ifdef CONFIG_ARCH_R8A7742
-+	{ .compatible = "renesas,r8a7742",	.data = &soc_rz_g1h },
-+#endif
- #ifdef CONFIG_ARCH_R8A7743
- 	{ .compatible = "renesas,r8a7743",	.data = &soc_rz_g1m },
- #endif
+ #endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
 -- 
 2.7.4
