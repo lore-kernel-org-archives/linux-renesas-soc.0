@@ -1,33 +1,36 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "kishon@ti.com" <kishon@ti.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] phy: rcar-gen3-usb2: fix implementation for runtime PM
-Date: Mon, 13 Mar 2017 23:39:20 +0000
-Message-ID: <PS1PR06MB1692AE431C1F92F39CBBAAF3D8250@PS1PR06MB1692.apcprd06.prod.outlook.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34611 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751545AbdCML5G (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 13 Mar 2017 07:57:06 -0400
+Received: by mail-lf0-f52.google.com with SMTP id z15so40450857lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Mar 2017 04:56:59 -0700 (PDT)
+Subject: Re: [PATCH v2] phy: rcar-gen3-usb2: fix implementation for runtime PM
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, kishon@ti.com
 References: <1489397969-26153-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <983f7c65-38f8-a04f-f809-ab6bbd8ac8f5@cogentembedded.com>
-In-Reply-To: <983f7c65-38f8-a04f-f809-ab6bbd8ac8f5@cogentembedded.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <983f7c65-38f8-a04f-f809-ab6bbd8ac8f5@cogentembedded.com>
+Date: Mon, 13 Mar 2017 14:56:55 +0300
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1489397969-26153-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkhDQoNCj4gRnJvbTogU2VyZ2VpIFNodHlseW92DQo+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMTMs
-IDIwMTcgODo1NyBQTQ0KPiANCj4gT24gMDMvMTMvMjAxNyAxMjozOSBQTSwgWW9zaGloaXJvIFNo
-aW1vZGEgd3JvdGU6DQo+IA0KPiA+IFRoaXMgcGF0Y2ggZml4ZXMgYW4gaXNzdWUgdGhhdCB0aGlz
-IGRyaXZlciBkb2Vzbid0IHRha2UgY2FyZSBvZiB0aGUgcnVudGltZQ0KPiA+IFBNLiBUaGlzIGNv
-ZGUgYXNzdW1lZCB0aGF0IGRldm1fcGh5X2NyZWF0ZSgpIGNhbGxlZCBwbV9ydW50aW1lX2VuYWJs
-ZShkZXYpLA0KPiA+IGJ1dCBpdCBtaXN1bmRlcnN0b29kIHRoZSBkZXZfcGh5X2NyZWF0ZSgpJ3Mg
-c3BlY2lmaWNhdGlvbi4NCj4gPiBUaGlzIGRyaXZlciBzaG91bGQgY2FsbCBpdHMgb3duIHBtX3J1
-bnRpbWVfcG0oKSBiZWZvcmUgZGV2X3BoeV9jcmVhdGUoKS4NCj4gDQo+ICAgICBZb3UgcHJvYmFi
-bHkgbWVhbnQgcG1fcnVudGltZV9lbmFibGUoKT8gU29ycnkgZm9yIG5vdCBub3RpY2luZyB0aGUg
-MXN0IHRpbWUuLi4NCg0KWWVzLCBJIG1lYW50IHBtX3J1bnRpbWVfZW5hYmxlKCkuIFRoYW5rIHlv
-dSBmb3IgdGhlIHJldmlldyBhZ2FpbiBhbmQgYWdhaW4uDQoNCkJlc3QgcmVnYXJkcywNCllvc2hp
-aGlybyBTaGltb2RhDQoNCg==
+On 03/13/2017 12:39 PM, Yoshihiro Shimoda wrote:
+
+> This patch fixes an issue that this driver doesn't take care of the runtime
+> PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
+> but it misunderstood the dev_phy_create()'s specification.
+> This driver should call its own pm_runtime_pm() before dev_phy_create().
+
+    You probably meant pm_runtime_enable()? Sorry for not noticing the 1st time...
+
+> Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[...]
+
+MBR, Sergei
