@@ -1,60 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:48433 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757380AbdCXP3b (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:60044 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754158AbdCMRM4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 11:29:31 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 4/4] arm64: dts: salvator-x: Add current sense amplifiers
-Date: Fri, 24 Mar 2017 16:28:43 +0100
-Message-Id: <1490369323-13866-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 13 Mar 2017 13:12:56 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: [PATCH v2 4/4] pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
+Date: Mon, 13 Mar 2017 18:12:47 +0100
+Message-Id: <1489425167-22711-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for two Maxim max961x current sense amplifiers
-sensing VDD_08 and DVFS_08 lines.
+Add pins, groups, and a function for SCIF_CLK on R-Car H3 ES2.0.
+SCIF_CLK is the external clock source for the Baud Rate Generator for
+External Clock (BRG) on (H)SCIF serial ports.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Extracted from a big patch in the BSP by Takeshi Kihara.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+v2:
+  - New.
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index c7f40f8..389a177 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -257,6 +257,24 @@
- 	status = "okay";
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 996cacee99c3e8be..0454f31c08318c48 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1773,6 +1773,22 @@ static const unsigned int scif5_clk_b_mux[] = {
+ 	SCK5_B_MARK,
  };
  
-+&i2c4 {
-+	status = "okay";
-+
-+	csa_vdd: adc@7c {
-+		compatible = "maxim,max9611";
-+		reg = <0x7c>;
-+
-+		shunt-resistor-uohm = <5000>;
-+	};
-+
-+	csa_dvfs: adc@7f {
-+		compatible = "maxim,max9611";
-+		reg = <0x7f>;
-+
-+		shunt-resistor-uohm = <5000>;
-+	};
++/* - SCIF Clock ------------------------------------------------------------- */
++static const unsigned int scif_clk_a_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(6, 23),
++};
++static const unsigned int scif_clk_a_mux[] = {
++	SCIF_CLK_A_MARK,
++};
++static const unsigned int scif_clk_b_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(5, 9),
++};
++static const unsigned int scif_clk_b_mux[] = {
++	SCIF_CLK_B_MARK,
 +};
 +
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+@@ -1801,6 +1817,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scif5_clk_a),
+ 	SH_PFC_PIN_GROUP(scif5_data_b),
+ 	SH_PFC_PIN_GROUP(scif5_clk_b),
++	SH_PFC_PIN_GROUP(scif_clk_a),
++	SH_PFC_PIN_GROUP(scif_clk_b),
+ };
+ 
+ static const char * const scif0_groups[] = {
+@@ -1848,6 +1866,11 @@ static const char * const scif5_groups[] = {
+ 	"scif5_clk_b",
+ };
+ 
++static const char * const scif_clk_groups[] = {
++	"scif_clk_a",
++	"scif_clk_b",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+@@ -1855,6 +1878,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(scif3),
+ 	SH_PFC_FUNCTION(scif4),
+ 	SH_PFC_FUNCTION(scif5),
++	SH_PFC_FUNCTION(scif_clk),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
 2.7.4
