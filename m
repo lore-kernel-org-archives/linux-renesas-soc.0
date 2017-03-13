@@ -1,48 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33485 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934474AbdCVNZ5 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:43904 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751703AbdCMRMv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 09:25:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <1489425167-22711-2-git-send-email-geert+renesas@glider.be>
-References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be> <1489425167-22711-2-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Mar 2017 14:25:49 +0100
-Message-ID: <CAMuHMdUYr8BTLdSLV=_JUJVvtDL0dc0PGq0M98Gf=6NtwdiL_w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] pinctrl: sh-pfc: Update info pointer after
- SoC-specific init
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 13 Mar 2017 13:12:51 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] pinctrl: sh-pfc: Update info pointer after SoC-specific init
+Date: Mon, 13 Mar 2017 18:12:44 +0100
+Message-Id: <1489425167-22711-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 6:12 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Update the sh_pfc_soc_info pointer after calling the SoC-specific
-> initialization function, as it may have been updated to e.g. handle
-> different SoC revisions.  This makes sure the correct subdriver name is
-> printed later.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Update the sh_pfc_soc_info pointer after calling the SoC-specific
+initialization function, as it may have been updated to e.g. handle
+different SoC revisions.  This makes sure the correct subdriver name is
+printed later.
 
-Queued in sh-pfc-for-v4.12 with
-Fixes: 0c151062f32c9db8 ("sh-pfc: Add support for SoC-specific initialization")
-as this has been reported independently afterwards.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - new.
+---
+ drivers/pinctrl/sh-pfc/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index cf80ce1dd7cea5a0..4a5a0feb931bf43c 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -586,6 +586,9 @@ static int sh_pfc_probe(struct platform_device *pdev)
+ 		ret = info->ops->init(pfc);
+ 		if (ret < 0)
+ 			return ret;
++
++		/* .init() may have overridden pfc->info */
++		info = pfc->info;
+ 	}
+ 
+ 	/* Enable dummy states for those platforms without pinctrl support */
+-- 
+2.7.4
