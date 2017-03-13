@@ -1,119 +1,33 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <kishon@ti.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3] phy: rcar-gen3-usb2: fix implementation for runtime PM
-Date: Tue, 14 Mar 2017 08:37:40 +0900
-Message-ID: <1489448261-4477-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "kishon@ti.com" <kishon@ti.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] phy: rcar-gen3-usb2: fix implementation for runtime PM
+Date: Mon, 13 Mar 2017 23:39:20 +0000
+Message-ID: <PS1PR06MB1692AE431C1F92F39CBBAAF3D8250@PS1PR06MB1692.apcprd06.prod.outlook.com>
+References: <1489397969-26153-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <983f7c65-38f8-a04f-f809-ab6bbd8ac8f5@cogentembedded.com>
+In-Reply-To: <983f7c65-38f8-a04f-f809-ab6bbd8ac8f5@cogentembedded.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that this driver doesn't take care of the runtime
-PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
-but it misunderstood the dev_phy_create()'s specification.
-This driver should call its own pm_runtime_enable() before dev_phy_create().
-
-Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Changes from v2:
-  - revise the commit log (s/pm_runtime_pm/pm_runtime_enable)
-
- Changes from v1:
-  - revise the commit log (s/the own/its own/)
-  - simplify return code in probe().
-
- drivers/phy/phy-rcar-gen3-usb2.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index afb4d04..54c3429 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -20,6 +20,7 @@
- #include <linux/of_address.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/workqueue.h>
- 
-@@ -395,7 +396,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	struct rcar_gen3_chan *channel;
- 	struct phy_provider *provider;
- 	struct resource *res;
--	int irq;
-+	int irq, ret = 0;
- 
- 	if (!dev->of_node) {
- 		dev_err(dev, "This driver needs device tree\n");
-@@ -434,17 +435,24 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	/* devm_phy_create() will call pm_runtime_enable(dev); */
-+	/*
-+	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
-+	 * And then, phy-core will manage runtime pm for this device.
-+	 */
-+	pm_runtime_enable(dev);
- 	channel->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb2_ops);
- 	if (IS_ERR(channel->phy)) {
- 		dev_err(dev, "Failed to create USB2 PHY\n");
--		return PTR_ERR(channel->phy);
-+		ret = PTR_ERR(channel->phy);
-+		goto error;
- 	}
- 
- 	channel->vbus = devm_regulator_get_optional(dev, "vbus");
- 	if (IS_ERR(channel->vbus)) {
--		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER)
--			return PTR_ERR(channel->vbus);
-+		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
-+			ret = PTR_ERR(channel->vbus);
-+			goto error;
-+		}
- 		channel->vbus = NULL;
- 	}
- 
-@@ -454,15 +462,22 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
- 	if (IS_ERR(provider)) {
- 		dev_err(dev, "Failed to register PHY provider\n");
-+		ret = PTR_ERR(provider);
-+		goto error;
- 	} else if (channel->has_otg) {
- 		int ret;
- 
- 		ret = device_create_file(dev, &dev_attr_role);
- 		if (ret < 0)
--			return ret;
-+			goto error;
- 	}
- 
--	return PTR_ERR_OR_ZERO(provider);
-+	return 0;
-+
-+error:
-+	pm_runtime_disable(dev);
-+
-+	return ret;
- }
- 
- static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
-@@ -472,6 +487,8 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- 	if (channel->has_otg)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
-+	pm_runtime_disable(&pdev->dev);
-+
- 	return 0;
- };
- 
--- 
-1.9.1
+SGkhDQoNCj4gRnJvbTogU2VyZ2VpIFNodHlseW92DQo+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMTMs
+IDIwMTcgODo1NyBQTQ0KPiANCj4gT24gMDMvMTMvMjAxNyAxMjozOSBQTSwgWW9zaGloaXJvIFNo
+aW1vZGEgd3JvdGU6DQo+IA0KPiA+IFRoaXMgcGF0Y2ggZml4ZXMgYW4gaXNzdWUgdGhhdCB0aGlz
+IGRyaXZlciBkb2Vzbid0IHRha2UgY2FyZSBvZiB0aGUgcnVudGltZQ0KPiA+IFBNLiBUaGlzIGNv
+ZGUgYXNzdW1lZCB0aGF0IGRldm1fcGh5X2NyZWF0ZSgpIGNhbGxlZCBwbV9ydW50aW1lX2VuYWJs
+ZShkZXYpLA0KPiA+IGJ1dCBpdCBtaXN1bmRlcnN0b29kIHRoZSBkZXZfcGh5X2NyZWF0ZSgpJ3Mg
+c3BlY2lmaWNhdGlvbi4NCj4gPiBUaGlzIGRyaXZlciBzaG91bGQgY2FsbCBpdHMgb3duIHBtX3J1
+bnRpbWVfcG0oKSBiZWZvcmUgZGV2X3BoeV9jcmVhdGUoKS4NCj4gDQo+ICAgICBZb3UgcHJvYmFi
+bHkgbWVhbnQgcG1fcnVudGltZV9lbmFibGUoKT8gU29ycnkgZm9yIG5vdCBub3RpY2luZyB0aGUg
+MXN0IHRpbWUuLi4NCg0KWWVzLCBJIG1lYW50IHBtX3J1bnRpbWVfZW5hYmxlKCkuIFRoYW5rIHlv
+dSBmb3IgdGhlIHJldmlldyBhZ2FpbiBhbmQgYWdhaW4uDQoNCkJlc3QgcmVnYXJkcywNCllvc2hp
+aGlybyBTaGltb2RhDQoNCg==
