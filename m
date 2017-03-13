@@ -1,40 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:10256 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750752AbdCMG1j (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:48044 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753320AbdCMQUJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 02:27:39 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/2] usb: host: [eo]hci-plat: set hcd->phy to avoid phy_get_() in usb_add_hcd()
-Date: Mon, 13 Mar 2017 15:25:22 +0900
-Message-ID: <1489386324-31353-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 13 Mar 2017 12:20:09 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/7] clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
+Date: Mon, 13 Mar 2017 17:19:53 +0100
+Message-Id: <1489421994-19707-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The usb_add_hcd() will call phy_{get,init,power_on}() if hcd->phy is not set.
-After the usb_add_hcd() call phy_power_on(), it keeps until usb_remove_hcd().
-And then, even if the system turns suspend, the usb core keeps the phy power.
-I think that each host driver should handle the phy power. So, this patch
-sets hcd->phy before usb_add_hcd() to avoid phy_get() in usb_add_hcd().
+Pass the mode pin states from the SoC-specific CPG/MSSR driver to the
+R-Car Gen3 CPG driver core, as their state will be needed to make some
+core clock configuration decisions.
 
-Changes from v1 (as RFC):
- - Fix the usage condition about priv->phys[].
- - Remove RFC.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 4 +++-
+ drivers/clk/renesas/rcar-gen3-cpg.h    | 2 +-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
-Yoshihiro Shimoda (2):
-  usb: host: ehci-platform: set hcd->phy to avoid phy_get() in
-    usb_add_hcd()
-  usb: host: ohci-platform: set hcd->phy to avoid phy_get() in
-    usb_add_hcd()
-
- drivers/usb/host/ehci-platform.c | 3 +++
- drivers/usb/host/ohci-platform.c | 3 +++
- 2 files changed, 6 insertions(+)
-
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 608178618da87bef..4699f416e275d924 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -330,7 +330,7 @@ static int __init r8a7795_cpg_mssr_init(struct device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
++	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
+ }
+ 
+ const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index f7787101b8d0406c..9d114b31b0731b5e 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -273,7 +273,7 @@ static int __init r8a7796_cpg_mssr_init(struct device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
++	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
+ }
+ 
+ const struct cpg_mssr_info r8a7796_cpg_mssr_info __initconst = {
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 742f6dc7c15653ef..d395bb8c22f575cf 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -247,6 +247,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ 
+ static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_clk_extalr __initdata;
++static u32 cpg_mode __initdata;
+ 
+ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+@@ -334,9 +335,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ }
+ 
+ int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
+-			      unsigned int clk_extalr)
++			      unsigned int clk_extalr, u32 mode)
+ {
+ 	cpg_pll_config = config;
+ 	cpg_clk_extalr = clk_extalr;
++	cpg_mode = mode;
+ 	return 0;
+ }
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index f788f481dd42cdf6..073be54b5d038ae3 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -37,6 +37,6 @@ struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+ 	struct clk **clks, void __iomem *base);
+ int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
+-		       unsigned int clk_extalr);
++		       unsigned int clk_extalr, u32 mode);
+ 
+ #endif
 -- 
-1.9.1
+2.7.4
