@@ -1,104 +1,91 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from newton.telenet-ops.be ([195.130.132.45]:36608 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754750AbdCGPqf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 10:46:35 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 3vd1Fv3ynVzMrlL9
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2017 16:45:39 +0100 (CET)
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1clHHw-0002Qb-R9
-        for linux-renesas-soc@vger.kernel.org; Tue, 07 Mar 2017 16:44:36 +0100
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1clHHw-0007xy-Pm
-        for linux-renesas-soc@vger.kernel.org; Tue, 07 Mar 2017 16:44:36 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2017-03-07-v4.11-rc1
-Date: Tue,  7 Mar 2017 16:44:36 +0100
-Message-Id: <1488901476-30583-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 13 Mar 2017 13:28:59 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Subject: Re: [i2c-tools PATCH v2] i2ctransfer: add new tool
+Message-ID: <20170313122859.GA1439@katana>
+References: <20170306142931.10457-1-wsa@the-dreams.de>
+ <20170306195038.6d6a5y5luyuuy7jv@pengutronix.de>
+ <20170313110140.GA2476@tetsubishi>
+ <20170313120725.43uy64azuixdt5qz@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Disposition: inline
+In-Reply-To: <20170313120725.43uy64azuixdt5qz@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2017-03-07-v4.11-rc1 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's version is based on renesas-devel-20170307-v4.11-rc1.
 
-Included branches with driver code:
-  - clk-renesas-for-v4.12
-  - https://git.ragnatech.se/linux#for-renesas-drivers
-  - topic/r8a7795-es2-v1-rebased7
-  - topic/renesas-cpg-mssr-reset-dts-v1-rebased1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/sdhi-autocmd12-resp
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/sdhi-dma-sync-v2
-  - git://linuxtv.org/pinchartl/media.git#tags/drm-du-hdmi-v3-20170306
-  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-dt-v3-20170306
-  - git://linuxtv.org/pinchartl/media.git#vsp1/histogram
-  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-du-vsp-v3-20170305
-  - topic/dma-attr-force-contiguous-v5
-  - topic/suspend-to-idle-v1
+> > > > +.RI [ data ]
+> > > > +.RI [ desc
+> > > > +.RI [ data ]]
+> > >=20
+> > > You could join the previous two lines.
+> >=20
+> > Try it. You will miss some spaces, then.
+>=20
+> It works fine with quoting:
+>=20
+> 	.RI [ "desc " [ data "]] ..."
+>=20
+> . But ok, it's at least arguable if this is better than your solution.
 
-Included fixes:
-  - serial: sh-sci: Fix early deassertion of dedicated RTS
-  - serial: sh-sci: Fix hang in sci_reset()
-  - i2c: riic: fix restart condition
+I prefer my solution ;)
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+> > I wonder: will another I2C master start a transfer on a repeated start?
+> > Need to investigate.
+>=20
+> I'd say it must not. It should have logic to detect bus busy and delay
+> any transfers until the bus becomes idle. With a repeated start the bus
+> doesn't become idle between two transfers.
 
-Gr{oetje,eeting}s,
+I totally agree. However, I think I'll try to stress-test a little when
+I use my scope next time. Just to have some real world experiences...
 
-						Geert
+> ah, ok. BTW, I like tools that clean up after themselves. This way
+> debugging is much easier if you look for lost memory. And yes, this
+> doesn't matter much for short-living programs like i2c-tools, but I like
+> being consistent here and also do the cleanup for this this type of
+> program.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I see this point. And I see that the program became quite more complex
+which makes future modifications more error prone. Your exit path
+consolidation suggestion was a good example for that. But anayway, the
+cleanup is there now, hope you'll all be happy :)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYxpCLAAoJEBQN5MwUoCm2zDsP/jz6iPTgvh8xzFxtyUNXHpys
+tx89CwEmXe6krVJoCNSLc60YdHlcuWvAZfq2j/gxuWAZWR4jmAn7btNHjBmmKUR6
+fSeDfayY9bz8yzvTtEnByA3V5laztoudf2rgw4D9q3uC0eNywCNsaj/0JYR+R4P1
+Oo6I2p9T1cHvoGpYOalmi34RNIlIRvytUbhi5oDqF2aDlbW9stibfPfYbOklP/Vq
+P2u7DxD9pdW+Jsj3OzsfZcBVq7WJFTTHXAqW8PlJMiJdANZ1clZrl38NfqnHGWpS
+gAwk3CzJ7m9Z2vdb50lfazPmlqIG5tO8MdnH6zj+vlP61dhPdCIeDa+8+43Mo4jS
+XKeaOjXEtrLCh8GXHfOzcmoKWxiP7KmF2cUQZ4ZRTD6NZVpZF4YBa3XSnvFICmbG
++j5cJ/kkkmCZ11GohTZavVZ7070KqpWENDPjFyvUMb4i9XM+kIywygZb+XzoIQmN
+uF/qM4lgdZPamRX3qSqacocM0Nv67r10A92nijccD7QldJoTfCgk5S5jWB/xVJWb
+ExlG7owa/BDfAhwjL+uPOoPUOGi65EfL2h94sqcbWW1C+r0Is6BkOFqFbViQMUfn
+mQ0JsJEpSHvuf3EcToX9pQyJe0oX5xAFuY9lsu9JKNQoDe01ZfZgI/a4RlmdPx2Q
+gK2Pe51vAhDOowZEaRvL
+=DGkY
+-----END PGP SIGNATURE-----
+
+--jRHKVT23PllUwdXP--
