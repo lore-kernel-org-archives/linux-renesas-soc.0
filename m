@@ -1,76 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56240 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750815AbdCNKQB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751985AbdCMJQI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 06:16:01 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 1/4] mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
-Date: Tue, 14 Mar 2017 11:09:16 +0100
-Message-Id: <20170314100919.25401-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
-References: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
+        Mon, 13 Mar 2017 05:16:08 -0400
+Date: Mon, 13 Mar 2017 10:16:02 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 0/6] ARM: dts: renesas: Add INTC-SYS clock to device
+ tree
+Message-ID: <20170313091602.GB19296@verge.net.au>
+References: <1488819491-26097-1-git-send-email-geert+renesas@glider.be>
+ <20170310092159.GE21820@verge.net.au>
+ <CAMuHMdVmd5+QW00XRL4qzO85RrCsu_7Bu15ah1rcFZ=eGgDSug@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVmd5+QW00XRL4qzO85RrCsu_7Bu15ah1rcFZ=eGgDSug@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc.h     | 4 ++++
- drivers/mmc/host/tmio_mmc_pio.c | 6 +++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+On Fri, Mar 10, 2017 at 12:19:07PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Mar 10, 2017 at 10:21 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Mar 06, 2017 at 05:58:05PM +0100, Geert Uytterhoeven wrote:
+> >> This patch series improves the topology description in DT of the ARM GIC
+> >> on Renesas SoCs using the legacy CPG/MSTP bindings (R-Mobile APE6 and
+> >> R-Car Gen2).  It describes the INTC-SYS clock, links the GIC to its
+> >> module clock, and adds the GIC to the SYSC "always on" PM Domain.
+> >>
+> >> Note that currently the GIC-400 driver doesn't support module clocks nor
+> >> Runtime PM, so this must be handled as a critical clock.  Hence this
+> >> series depends on commit e34084fb9a023d1d ("clk: renesas: mstp: Make
+> >> INTC-SYS a critical clock"), which is in v4.11-rc1.
+> >>
+> >> This series is the counterpart of "[PATCH 0/4] ARM/arm64: dts: renesas:
+> >> Link ARM GIC to clock and clock domain" for SoCs not yet migrated to the
+> >> new CPG/MSSR driver.  The latter is already part of v4.11-rc1 as it had
+> >> less dependencies.
+> >>
+> >> Changes compared to v1:
+> >>   - Add missing "power-domains" property,
+> >>   - Add clock-names property,
+> >>   - Rebased on top of CPG Clock Domain and R-Car SYSC PM Domain support,
+> >>   - Add r8a7792 patch,
+> >>   - Please refer to the individual patch changelogs for more details
+> >>     (v1 dates back to 2014).
+> >>
+> >> Thanks for applying!
+> >
+> > Thanks, done.
+> 
+> Thanks, but it seems you forgot "ARM: dts: r8a7793: Add INTC-SYS clock to
+> device tree"?
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 2b349d48fb9a8a..b20b451ad90daa 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -50,6 +50,10 @@
- #define CTL_CLK_AND_WAIT_CTL 0x138
- #define CTL_RESET_SDIO 0x1e0
- 
-+/* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
-+#define TMIO_STOP_STP		BIT(0)
-+#define TMIO_STOP_SEC		BIT(8)
-+
- /* Definitions for values the CTRL_STATUS register can take. */
- #define TMIO_STAT_CMDRESPEND    BIT(0)
- #define TMIO_STAT_DATAEND       BIT(2)
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 6b789a739d4dfe..ad2840e1bfae51 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -340,7 +340,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 
- 	/* CMD12 is handled by hardware */
- 	if (cmd->opcode == MMC_STOP_TRANSMISSION && !cmd->arg) {
--		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x001);
-+		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
- 		return 0;
- 	}
- 
-@@ -367,7 +367,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 	if (data) {
- 		c |= DATA_PRESENT;
- 		if (data->blocks > 1) {
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x100);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_SEC);
- 			c |= TRANSFER_MULTI;
- 
- 			/*
-@@ -554,7 +554,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 
- 	if (stop) {
- 		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x000);
-+			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 		else
- 			BUG();
- 	}
--- 
-2.11.0
+Sorry about that, I have it queued up now.
