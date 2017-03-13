@@ -1,59 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59602 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750864AbdCMJi5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 05:38:57 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "kishon@ti.com" <kishon@ti.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] phy: rcar-gen3-usb2: fix implementation for runtime PM
-Date: Mon, 13 Mar 2017 09:38:51 +0000
-Message-ID: <PS1PR06MB1692FF1301FF681603E6C9A3D8250@PS1PR06MB1692.apcprd06.prod.outlook.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] phy: rcar-gen3-usb2: fix implementation for runtime PM
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, kishon@ti.com
 References: <1489386258-31279-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <5006ac8a-b989-fb74-77ee-d7f023c1d20f@cogentembedded.com>
-In-Reply-To: <5006ac8a-b989-fb74-77ee-d7f023c1d20f@cogentembedded.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5006ac8a-b989-fb74-77ee-d7f023c1d20f@cogentembedded.com>
+Date: Mon, 13 Mar 2017 12:04:25 +0300
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1489386258-31279-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8hDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2VyZ2VpIFNo
-dHlseW92DQo+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMTMsIDIwMTcgNjowNCBQTQ0KPiANCj4gSGVs
-bG8hDQo+IA0KPiBPbiAzLzEzLzIwMTcgOToyNCBBTSwgWW9zaGloaXJvIFNoaW1vZGEgd3JvdGU6
-DQo+IA0KPiA+IFRoaXMgcGF0Y2ggZml4ZXMgYW4gaXNzdWUgdGhhdCB0aGlzIGRyaXZlciBkb2Vz
-bid0IHRha2UgY2FyZSBvZiB0aGUgcnVudGltZQ0KPiA+IFBNLiBUaGlzIGNvZGUgYXNzdW1lZCB0
-aGF0IGRldm1fcGh5X2NyZWF0ZSgpIGNhbGxlZCBwbV9ydW50aW1lX2VuYWJsZShkZXYpLA0KPiA+
-IGJ1dCBpdCBtaXN1bmRlcnN0b29kIHRoZSBkZXZfcGh5X2NyZWF0ZSgpJ3Mgc3BlY2lmaWNhdGlv
-bi4NCj4gPiBUaGlzIGRyaXZlciBzaG91bGQgY2FsbCB0aGUgb3duIHBtX3J1bnRpbWVfcG0oKSBi
-ZWZvcmUgZGV2X3BoeV9jcmVhdGUoKS4NCj4gDQo+ICAgICBJdHMgb3duPw0KDQpZZXMuIFNvLCBJ
-IHdpbGwgcmV2aXNlIGl0Lg0KDQo+ID4gRml4ZXM6IGYzYjVhOGQ5YjUwZCAoInBoeTogcmNhci1n
-ZW4zLXVzYjI6IEFkZCBSLUNhciBHZW4zIFVTQjIgUEhZIGRyaXZlciIpDQo+ID4gU2lnbmVkLW9m
-Zi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29t
-Pg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3BoeS9waHktcmNhci1nZW4zLXVzYjIuYyB8IDI5ICsr
-KysrKysrKysrKysrKysrKysrKysrLS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNl
-cnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-cGh5L3BoeS1yY2FyLWdlbjMtdXNiMi5jIGIvZHJpdmVycy9waHkvcGh5LXJjYXItZ2VuMy11c2Iy
-LmMNCj4gPiBpbmRleCBhZmI0ZDA0Li4yM2M0ZTg2IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMv
-cGh5L3BoeS1yY2FyLWdlbjMtdXNiMi5jDQo+ID4gKysrIGIvZHJpdmVycy9waHkvcGh5LXJjYXIt
-Z2VuMy11c2IyLmMNCj4gWy4uLl0NCj4gPiBAQCAtNDU0LDE1ICs0NjIsMjIgQEAgc3RhdGljIGlu
-dCByY2FyX2dlbjNfcGh5X3VzYjJfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikN
-Cj4gPiAgCXByb3ZpZGVyID0gZGV2bV9vZl9waHlfcHJvdmlkZXJfcmVnaXN0ZXIoZGV2LCBvZl9w
-aHlfc2ltcGxlX3hsYXRlKTsNCj4gPiAgCWlmIChJU19FUlIocHJvdmlkZXIpKSB7DQo+ID4gIAkJ
-ZGV2X2VycihkZXYsICJGYWlsZWQgdG8gcmVnaXN0ZXIgUEhZIHByb3ZpZGVyXG4iKTsNCj4gPiAr
-CQlyZXQgPSBQVFJfRVJSKHByb3ZpZGVyKTsNCj4gPiArCQlnb3RvIGVycm9yOw0KPiA+ICAJfSBl
-bHNlIGlmIChjaGFubmVsLT5oYXNfb3RnKSB7DQo+ID4gIAkJaW50IHJldDsNCj4gPg0KPiA+ICAJ
-CXJldCA9IGRldmljZV9jcmVhdGVfZmlsZShkZXYsICZkZXZfYXR0cl9yb2xlKTsNCj4gPiAgCQlp
-ZiAocmV0IDwgMCkNCj4gPiAtCQkJcmV0dXJuIHJldDsNCj4gPiArCQkJZ290byBlcnJvcjsNCj4g
-PiAgCX0NCj4gPg0KPiA+ICAJcmV0dXJuIFBUUl9FUlJfT1JfWkVSTyhwcm92aWRlcik7DQo+IA0K
-PiAgICAgSGVyZSAncHJvdmlkZXInIGNhbiBubyBsb25nZXIgY29udGFpbiBlcnJvciAtLSAqcmV0
-dXJuKiAwIHNlZW1zIHRvIGZpdCBiZXR0ZXIuDQoNCk9vcHMsIEkgd2lsbCBmaXggaXQuDQoNCkJl
-c3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gPiArDQo+ID4gK2Vycm9yOg0KPiA+
-ICsJcG1fcnVudGltZV9kaXNhYmxlKGRldik7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIHJldDsNCj4g
-PiAgfQ0KPiA+DQo+ID4gIHN0YXRpYyBpbnQgcmNhcl9nZW4zX3BoeV91c2IyX3JlbW92ZShzdHJ1
-Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiBbLi4uXQ0KPiANCj4gTUJSLCBTZXJnZWkNCg0K
+Hello!
+
+On 3/13/2017 9:24 AM, Yoshihiro Shimoda wrote:
+
+> This patch fixes an issue that this driver doesn't take care of the runtime
+> PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
+> but it misunderstood the dev_phy_create()'s specification.
+> This driver should call the own pm_runtime_pm() before dev_phy_create().
+
+    Its own?
+
+> Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/phy/phy-rcar-gen3-usb2.c | 29 +++++++++++++++++++++++------
+>  1 file changed, 23 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+> index afb4d04..23c4e86 100644
+> --- a/drivers/phy/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/phy-rcar-gen3-usb2.c
+[...]
+> @@ -454,15 +462,22 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>  	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+>  	if (IS_ERR(provider)) {
+>  		dev_err(dev, "Failed to register PHY provider\n");
+> +		ret = PTR_ERR(provider);
+> +		goto error;
+>  	} else if (channel->has_otg) {
+>  		int ret;
+>
+>  		ret = device_create_file(dev, &dev_attr_role);
+>  		if (ret < 0)
+> -			return ret;
+> +			goto error;
+>  	}
+>
+>  	return PTR_ERR_OR_ZERO(provider);
+
+    Here 'provider' can no longer contain error -- *return* 0 seems to fit better.
+
+> +
+> +error:
+> +	pm_runtime_disable(dev);
+> +
+> +	return ret;
+>  }
+>
+>  static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+[...]
+
+MBR, Sergei
