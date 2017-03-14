@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:37423 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:37494 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbdCNTGj (ORCPT
+        with ESMTP id S1751315AbdCNTGp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:06:39 -0400
+        Tue, 14 Mar 2017 15:06:45 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -14,9 +14,9 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 14/27] rcar-vin: move media bus configuration to struct rvin_info
-Date: Tue, 14 Mar 2017 20:02:55 +0100
-Message-Id: <20170314190308.25790-15-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 24/27] rcar-vin: add link notify for Gen3
+Date: Tue, 14 Mar 2017 20:03:05 +0100
+Message-Id: <20170314190308.25790-25-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -25,183 +25,251 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bus configuration will once the driver is extended to to support Gen3
-contain information not specific to only the directly connected parallel
-subdevice. Move it to struct rvin_info to show it's not always coupled
-to the parallel subdevice.
+Add the ability to process media device link change request. Link
+enablement are a bit complicated on Gen3, if it's possible to enable a
+link depends on what other links already are enabled. On Gen3 the 8 VIN
+are split into two subgroups (VIN0-3 and VIN4-7) and from a routing
+perspective these two groups are independent of each other. Each
+subgroups routing is controlled by the subgroup VIN master instance
+(VIN0 and VIN4).
+
+There are a limited number of possible route setups available for each
+subgroup and the configuration of each setup is dictated by the
+hardware. On H3 for example there are 6 possible route setups for each
+subgroup to choose from.
+
+This leads to the media device link notification code being rather large
+since it will find the best routing configuration to try and accommodate
+as many links as possible. When it's not possible to enable a new link
+due to hardware constrains the link_notifier callback will return
+-EMLINK.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 14 +++++++-------
- drivers/media/platform/rcar-vin/rcar-dma.c  | 11 ++++++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  2 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  9 ++++-----
- 4 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 204 ++++++++++++++++++++++++++++
+ 1 file changed, 204 insertions(+)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 998617711f1ad045..ed99b1abb99e9ef9 100644
+index d3a9bd007dea73d7..68eca8e005f976d6 100644
 --- a/drivers/media/platform/rcar-vin/rcar-core.c
 +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -45,15 +45,15 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
+@@ -27,6 +27,208 @@
+ #include "rcar-vin.h"
  
--static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
-+static bool rvin_mbus_supported(struct rvin_dev *vin)
- {
--	struct v4l2_subdev *sd = entity->subdev;
-+	struct v4l2_subdev *sd = vin->digital.subdev;
- 	struct v4l2_subdev_mbus_code_enum code = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
- 	};
- 
- 	code.index = 0;
--	code.pad = entity->source_pad;
-+	code.pad = vin->digital.source_pad;
- 	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
- 		code.index++;
- 		switch (code.code) {
-@@ -61,7 +61,7 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
- 		case MEDIA_BUS_FMT_UYVY8_2X8:
- 		case MEDIA_BUS_FMT_UYVY10_2X10:
- 		case MEDIA_BUS_FMT_RGB888_1X24:
--			entity->code = code.code;
-+			vin->code = code.code;
- 			return true;
- 		default:
- 			break;
-@@ -77,14 +77,14 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- 	int ret;
- 
- 	/* Verify subdevices mbus format */
--	if (!rvin_mbus_supported(&vin->digital)) {
-+	if (!rvin_mbus_supported(vin)) {
- 		vin_err(vin, "Unsupported media bus format for %s\n",
- 			vin->digital.subdev->name);
- 		return -EINVAL;
- 	}
- 
- 	vin_dbg(vin, "Found media bus format for %s: %d\n",
--		vin->digital.subdev->name, vin->digital.code);
-+		vin->digital.subdev->name, vin->code);
- 
- 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
- 	if (ret < 0) {
-@@ -201,7 +201,7 @@ static int rvin_digital_graph_parse(struct rvin_dev *vin)
- 	}
- 	of_node_put(np);
- 
--	ret = rvin_digitial_parse_v4l2(vin, ep, &vin->digital.mbus_cfg);
-+	ret = rvin_digitial_parse_v4l2(vin, ep, &vin->mbus_cfg);
- 	of_node_put(ep);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index ef029e4c7882322e..2931ba7998709307 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -634,7 +634,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 	/*
- 	 * Input interface
- 	 */
--	switch (vin->digital.code) {
-+	switch (vin->code) {
- 	case MEDIA_BUS_FMT_YUYV8_1X16:
- 		/* BT.601/BT.1358 16bit YCbCr422 */
- 		vnmc |= VNMC_INF_YUV16;
-@@ -642,7 +642,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
--		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -651,7 +651,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
--		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -663,11 +663,11 @@ static int rvin_setup(struct rvin_dev *vin)
- 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
--	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_HPS;
- 
- 	/* Vsync Signal Polarity Select */
--	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_VPS;
- 
- 	/*
-@@ -887,6 +887,7 @@ static void rvin_capture_stop(struct rvin_dev *vin)
- 	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
- }
- 
-+
  /* -----------------------------------------------------------------------------
-  * DMA Functions
++ * Media Controller link notification
++ */
++
++static unsigned int rvin_group_csi_pad_to_chan(unsigned int pad)
++{
++	/*
++	 * The CSI2 driver is rcar-csi2 and we know it's pad layout are
++	 * 0: Source 1-4: Sinks so if we remove one from the pad we
++	 * get the rcar-vin internal CSI2 channel number
++	 */
++	return pad - 1;
++}
++
++/* group lock should be held when calling this function */
++static int rvin_group_entity_to_vin_num(struct rvin_group *group,
++					struct media_entity *entity)
++{
++	struct video_device *vdev;
++	int i;
++
++	if (!is_media_entity_v4l2_video_device(entity))
++		return -ENODEV;
++
++	vdev = media_entity_to_video_device(entity);
++
++	for (i = 0; i < RCAR_VIN_NUM; i++) {
++		if (!group->vin[i])
++			continue;
++
++		if (group->vin[i]->vdev == vdev)
++			return i;
++	}
++
++	return -ENODEV;
++}
++
++/* group lock should be held when calling this function */
++static int rvin_group_entity_to_csi_num(struct rvin_group *group,
++					struct media_entity *entity)
++{
++	struct v4l2_subdev *sd;
++	int i;
++
++	if (!is_media_entity_v4l2_subdev(entity))
++		return -ENODEV;
++
++	sd = media_entity_to_v4l2_subdev(entity);
++
++	for (i = 0; i < RVIN_CSI_MAX; i++)
++		if (group->bridge[i].subdev == sd)
++			return i;
++
++	return -ENODEV;
++}
++
++/* group lock should be held when calling this function */
++static void __rvin_group_build_link_list(struct rvin_group *group,
++					 struct rvin_group_chsel *map,
++					 int start, int len)
++{
++	struct media_pad *vin_pad, *remote_pad;
++	unsigned int n;
++
++	for (n = 0; n < len; n++) {
++		map[n].csi = -1;
++		map[n].chan = -1;
++
++		if (!group->vin[start + n])
++			continue;
++
++		vin_pad = &group->vin[start + n]->vdev->entity.pads[0];
++
++		remote_pad = media_entity_remote_pad(vin_pad);
++		if (!remote_pad)
++			continue;
++
++		map[n].csi =
++			rvin_group_entity_to_csi_num(group, remote_pad->entity);
++		map[n].chan = rvin_group_csi_pad_to_chan(remote_pad->index);
++	}
++}
++
++/* group lock should be held when calling this function */
++static int __rvin_group_try_get_chsel(struct rvin_group *group,
++				      struct rvin_group_chsel *map,
++				      int start, int len)
++{
++	const struct rvin_group_chsel *sel;
++	unsigned int i, n;
++	int chsel;
++
++	for (i = 0; i < group->vin[start]->info->num_chsels; i++) {
++		chsel = i;
++		for (n = 0; n < len; n++) {
++
++			/* If the link is not active it's OK */
++			if (map[n].csi == -1)
++				continue;
++
++			/* Check if chsel match requested link */
++			sel = &group->vin[start]->info->chsels[start + n][i];
++			if (map[n].csi != sel->csi ||
++			    map[n].chan != sel->chan) {
++				chsel = -1;
++				break;
++			}
++		}
++
++		/* A chsel which satisfy the links have been found */
++		if (chsel != -1)
++			return chsel;
++	}
++
++	/* No chsel can satisfy the requested links */
++	return -1;
++}
++
++/* group lock should be held when calling this function */
++static bool rvin_group_in_use(struct rvin_group *group)
++{
++	struct media_entity *entity;
++
++	media_device_for_each_entity(entity, &group->mdev)
++		if (entity->use_count)
++			return true;
++
++	return false;
++}
++
++static int rvin_group_link_notify(struct media_link *link, u32 flags,
++				  unsigned int notification)
++{
++	struct rvin_group *group = container_of(link->graph_obj.mdev,
++						struct rvin_group, mdev);
++	struct rvin_group_chsel chsel_map[4];
++	int vin_num, vin_master, csi_num, csi_chan;
++	unsigned int chsel;
++
++	mutex_lock(&group->lock);
++
++	vin_num = rvin_group_entity_to_vin_num(group, link->sink->entity);
++	csi_num = rvin_group_entity_to_csi_num(group, link->source->entity);
++	csi_chan = rvin_group_csi_pad_to_chan(link->source->index);
++
++	/*
++	 * Figure out which VIN node is the subgroup master.
++	 *
++	 * VIN0-3 are controlled by VIN0
++	 * VIN4-7 are controlled by VIN4
++	 */
++	vin_master = vin_num < 4 ? 0 : 4;
++
++	/* If not all devices exists something is horribly wrong */
++	if (vin_num < 0 || csi_num < 0 || !group->vin[vin_master])
++		goto error;
++
++	/* Special checking only needed for links which are to be enabled */
++	if (notification != MEDIA_DEV_NOTIFY_PRE_LINK_CH ||
++	    !(flags & MEDIA_LNK_FL_ENABLED))
++		goto out;
++
++	/* If any link in the group are in use, no new link can be enabled */
++	if (rvin_group_in_use(group))
++		goto error;
++
++	/* If the VIN already have a active link it's busy */
++	if (media_entity_remote_pad(&link->sink->entity->pads[0]))
++		goto error;
++
++	/* Build list of active links */
++	__rvin_group_build_link_list(group, chsel_map, vin_master, 4);
++
++	/* Add the new proposed link */
++	chsel_map[vin_num - vin_master].csi = csi_num;
++	chsel_map[vin_num - vin_master].chan = csi_chan;
++
++	/* See if there is a chsel value which match our link selection */
++	chsel = __rvin_group_try_get_chsel(group, chsel_map, vin_master, 4);
++
++	/* No chsel can provide the request links */
++	if (chsel == -1)
++		goto error;
++
++	/* Update chsel value at group master */
++	if (rvin_set_chsel(group->vin[vin_master], chsel))
++		goto error;
++
++out:
++	mutex_unlock(&group->lock);
++
++	return v4l2_pipeline_link_notify(link, flags, notification);
++error:
++	mutex_unlock(&group->lock);
++
++	return -EMLINK;
++}
++
++static const struct media_device_ops rvin_media_ops = {
++	.link_notify = rvin_group_link_notify,
++};
++
++/* -----------------------------------------------------------------------------
+  * Gen3 CSI2 Group Allocator
   */
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 28b62a514bbb93a9..1ee9dcb621350f77 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -180,7 +180,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
  
- 	sd = vin_to_source(vin);
+@@ -101,6 +303,8 @@ static struct rvin_group *rvin_group_allocate(struct rvin_dev *vin)
+ 		mdev->driver_version = LINUX_VERSION_CODE;
+ 		media_device_init(mdev);
  
--	v4l2_fill_mbus_format(&format.format, pix, vin->digital.code);
-+	v4l2_fill_mbus_format(&format.format, pix, vin->code);
- 
- 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
- 	if (pad_cfg == NULL)
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 4805127b7af879a3..43206e85bbaadb5b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -62,8 +62,6 @@ struct rvin_video_format {
-  * struct rvin_graph_entity - Video endpoint from async framework
-  * @asd:	sub-device descriptor for async framework
-  * @subdev:	subdevice matched using async framework
-- * @code:	Media bus format from source
-- * @mbus_cfg:	Media bus format from DT
-  * @source_pad:	source pad of remote subdevice
-  * @sink_pad:	sink pad of remote subdevice
-  */
-@@ -71,9 +69,6 @@ struct rvin_graph_entity {
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *subdev;
- 
--	u32 code;
--	struct v4l2_mbus_config mbus_cfg;
--
- 	unsigned int source_pad;
- 	unsigned int sink_pad;
- };
-@@ -115,6 +110,8 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-+ * @mbus_cfg:		media bus format from DT
-+ * @code:		media bus coide from subdevice
-  * @format:		active V4L2 pixel format
-  *
-  * @crop:		active cropping
-@@ -141,6 +138,8 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
-+	struct v4l2_mbus_config mbus_cfg;
-+	u32 code;
- 	struct v4l2_pix_format format;
- 
- 	struct v4l2_rect crop;
++		mdev->ops = &rvin_media_ops;
++
+ 		ret = media_device_register(mdev);
+ 		if (ret) {
+ 			vin_err(vin, "Failed to register media device\n");
 -- 
 2.12.0
