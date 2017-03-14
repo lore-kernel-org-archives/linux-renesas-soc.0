@@ -1,47 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:57244 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753737AbdCMQUJ (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:37445 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751820AbdCNTGl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 12:20:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 1/7] clk: renesas: r8a7795: Correct parent clock and sort order for Audio DMACs
-Date: Mon, 13 Mar 2017 17:19:48 +0100
-Message-Id: <1489421994-19707-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
-References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+        Tue, 14 Mar 2017 15:06:41 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 18/27] rcar-vin: add flag to switch to media controller mode
+Date: Tue, 14 Mar 2017 20:02:59 +0100
+Message-Id: <20170314190308.25790-19-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The parent clock of the Audio DMACs is the "ZS" AXI bus clock, which
-maps to S3D1 or R-Car H3 ES1.x.
-All module clocks must be sorted by clock ID.
+On Gen3 a media controller API needs to be used to allow userspace to
+configure the subdevices in the pipeline instead of directly controlling
+a single source subdevice, which is and will continue to be the mode of
+operation on Gen2.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Prepare for these two modes of operation by adding a flag to struct
+rvin_graph_entity which will control which mode to use.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 3 +++
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 2add8218e0f7a6c0..cde470ce81e449cf 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -142,8 +142,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("rwdt0",		 402,	R8A7795_CLK_R),
- 	DEF_MOD("intc-ex",		 407,	R8A7795_CLK_CP),
- 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
--	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
--	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D4),
-+	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D1),
-+	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D1),
- 	DEF_MOD("drif7",		 508,	R8A7795_CLK_S3D2),
- 	DEF_MOD("drif6",		 509,	R8A7795_CLK_S3D2),
- 	DEF_MOD("drif5",		 510,	R8A7795_CLK_S3D2),
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index adc38696a0ba70b9..8b30d8d3ec7d9c04 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -261,18 +261,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 
+ static const struct rvin_info rcar_info_h1 = {
+ 	.chip = RCAR_H1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_m1 = {
+ 	.chip = RCAR_M1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.chip = RCAR_GEN2,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index b1cd0abba9ca9c94..512e67fdefd15015 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -77,12 +77,14 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info- Information about the particular VIN implementation
+  * @chip:		type of VIN chip
++ * @use_mc:		use media controller instead of controlling subdevice
+  *
+  * max_width:		max input width the VIN supports
+  * max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
++	bool use_mc;
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
 -- 
-2.7.4
+2.12.0
