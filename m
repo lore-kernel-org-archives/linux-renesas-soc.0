@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45399 "EHLO
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45502 "EHLO
         smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751113AbdCNTAu (ORCPT
+        with ESMTP id S1751226AbdCNTAx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:00:50 -0400
+        Tue, 14 Mar 2017 15:00:53 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -14,9 +14,9 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 02/16] rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
-Date: Tue, 14 Mar 2017 19:59:43 +0100
-Message-Id: <20170314185957.25253-3-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 13/16] rcar-vin: refactor and fold in function after stall handling rework
+Date: Tue, 14 Mar 2017 19:59:54 +0100
+Message-Id: <20170314185957.25253-14-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -25,33 +25,40 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use rvin_reset_format() in rvin_s_dv_timings() instead of just resetting
-a few fields. This fixes an issue where the field format was not
-properly set after S_DV_TIMINGS.
+With the driver stopping and starting the stream each time the driver is
+stalled rvin_capture_off() can be folded in to the only caller.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 69bc4cfea6a8aeb5..7ca27599b9982ffc 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, void *priv_fh,
- 	if (ret)
- 		return ret;
- 
--	vin->source.width = timings->bt.width;
--	vin->source.height = timings->bt.height;
--	vin->format.width = timings->bt.width;
--	vin->format.height = timings->bt.height;
--
--	return 0;
-+	/* Changing the timings will change the width/height */
-+	return rvin_reset_format(vin);
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index bd1ccb70ae2bc47e..c5fa176ac9d8cc4a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -396,12 +396,6 @@ static void rvin_capture_on(struct rvin_dev *vin)
+ 		rvin_write(vin, VNFC_S_FRAME, VNFC_REG);
  }
  
- static int rvin_g_dv_timings(struct file *file, void *priv_fh,
+-static void rvin_capture_off(struct rvin_dev *vin)
+-{
+-	/* Set continuous & single transfer off */
+-	rvin_write(vin, 0, VNFC_REG);
+-}
+-
+ static int rvin_capture_start(struct rvin_dev *vin)
+ {
+ 	struct rvin_buffer *buf, *node;
+@@ -435,7 +429,8 @@ static int rvin_capture_start(struct rvin_dev *vin)
+ 
+ static void rvin_capture_stop(struct rvin_dev *vin)
+ {
+-	rvin_capture_off(vin);
++	/* Set continuous & single transfer off */
++	rvin_write(vin, 0, VNFC_REG);
+ 
+ 	/* Disable module */
+ 	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
 -- 
 2.12.0
