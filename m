@@ -1,138 +1,82 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Wed, 08 Mar 2017 20:02:53 +0900
-Message-Id: <148897097336.16106.17118406255063350893.sendpatchset@little-apple>
-In-Reply-To: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-Subject: [PATCH v3 09/09] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:37396 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751489AbdCNTGi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 14 Mar 2017 15:06:38 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 11/27] rcar-vin: do not allow changing scaling and composing while streaming
+Date: Tue, 14 Mar 2017 20:02:52 +0100
+Message-Id: <20170314190308.25790-12-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+It is possible on Gen2 to change the registers controlling composing and
+scaling while the stream is running. Is however not a good idea to do so
+and could result in trouble. There are also no good reason to allow
+this, remove immediate reflection in hardware registers from
+vidioc_s_selection and only configure scaling and composing when the
+stream starts.
 
-Tie in r8a7795 features and update the IOMMU_OF_DECLARE
-compat string to include the updated compat string.
-
-TODO:
- - Consider making use of iommu_fwspec_add_ids() for uTLB handling
-     Needed to coexist with non-OF R-Car Gen2 somehow...
- - Break out stuff useful for R-Car Gen2 from this series
-     Fix up the Gen2 IPMMU support code
-       and/or
-     Fold more stuff into the multi-arch series
- - Add support for sysfs and iommu_device_link()/unlink()
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
+ 3 files changed, 1 insertion(+), 7 deletions(-)
 
- Changes since V2:
- - Check for lack of root device in ->xlate()
-   This fixed a bug when IPMMU-MM is disabled in DT the system hangs on boot
- - Added code to ipmmu_init_platform_device() to handle multiple ->xlate() calls
- - Include empty white list by default
- - Updated TODO list
-
- Changes since V1:
- - Enable multi context feature
- - Update TODO list
-
- drivers/iommu/ipmmu-vmsa.c |   41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
---- 0018/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-08 19:11:53.600607110 +0900
-@@ -23,6 +23,7 @@
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- #include <asm/dma-iommu.h>
-@@ -770,6 +771,10 @@ static int ipmmu_init_platform_device(st
- 	int num_utlbs;
- 	int ret = -ENODEV;
- 
-+	/* Initialize once - xlate() will call multiple times */
-+	if (to_archdata(dev))
-+		return 0;
-+
- 	/* Find the master corresponding to the device. */
- 
- 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
-@@ -1043,6 +1048,17 @@ static struct iommu_group *ipmmu_find_gr
- 	return group;
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 286aafab533cda9d..ef029e4c7882322e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
+ 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
  }
  
-+static bool ipmmu_slave_whitelist(struct device *dev)
-+{
-+	/* By default, do not allow use of IPMMU */
-+	return false;
-+}
-+
-+static const struct soc_device_attribute soc_r8a7795[] = {
-+	{ .soc_id = "r8a7795", },
-+	{ /* sentinel */ }
-+};
-+
- static int ipmmu_of_xlate_dma(struct device *dev,
- 			      struct of_phandle_args *spec)
+-void rvin_crop_scale_comp(struct rvin_dev *vin)
++static void rvin_crop_scale_comp(struct rvin_dev *vin)
  {
-@@ -1053,6 +1069,18 @@ static int ipmmu_of_xlate_dma(struct dev
- 	if (!of_device_is_available(spec->np))
- 		return -ENODEV;
+ 	u32 xs, ys;
  
-+	/* Failing in ->attach_device() results in a hang, so make
-+	 * sure the root device is installed before going there
-+	 */
-+	if (!__ipmmu_find_root()) {
-+		dev_info(dev, "Unable to locate IPMMU root device\n");
-+		return -ENODEV;
-+	}
-+
-+	/* For R-Car Gen3 use a white list to opt-in slave devices */
-+	if (soc_device_match(soc_r8a7795) && !ipmmu_slave_whitelist(dev))
-+		return -ENODEV;
-+
- 	return ipmmu_init_platform_device(dev);
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index e14f0aff8ceecc68..919040e40aec60f6 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -442,9 +442,6 @@ static int rvin_s_selection(struct file *file, void *fh,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* HW supports modifying configuration while running */
+-	rvin_crop_scale_comp(vin);
+-
+ 	return 0;
  }
  
-@@ -1095,11 +1123,22 @@ static const struct ipmmu_features ipmmu
- 	.twobit_imttbcr_sl0 = false,
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 6bf2e4ff8f6076c7..f1251c013d1d2d80 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -175,7 +175,4 @@ void rvin_v4l2_remove(struct rvin_dev *vin);
  
-+static const struct ipmmu_features ipmmu_features_r8a7795 = {
-+	.use_ns_alias_offset = false,
-+	.has_cache_leaf_nodes = true,
-+	.has_eight_ctx = true,
-+	.setup_imbuscr = false,
-+	.twobit_imttbcr_sl0 = true,
-+};
-+
- static const struct of_device_id ipmmu_of_ids[] = {
- 	{
- 		.compatible = "renesas,ipmmu-vmsa",
- 		.data = &ipmmu_features_default,
- 	}, {
-+		.compatible = "renesas,ipmmu-r8a7795",
-+		.data = &ipmmu_features_r8a7795,
-+	}, {
- 		/* Terminator */
- 	},
- };
-@@ -1288,6 +1327,8 @@ static int __init ipmmu_vmsa_iommu_of_se
+ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
  
- IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
- 		 ipmmu_vmsa_iommu_of_setup);
-+IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
-+		 ipmmu_vmsa_iommu_of_setup);
+-/* Cropping, composing and scaling */
+-void rvin_crop_scale_comp(struct rvin_dev *vin);
+-
  #endif
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+-- 
+2.12.0
