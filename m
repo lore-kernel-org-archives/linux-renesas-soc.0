@@ -1,50 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753363AbdCTI7f (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:37423 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751962AbdCNTGr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/32] arm64: dts: r8a7796: Remove unit-address and reg from integrated cache
-Date: Mon, 20 Mar 2017 09:57:32 +0100
-Message-Id: <57a4fd420c6e8a04b6a87ff24d34250cd7c48f15.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+        Tue, 14 Mar 2017 15:06:47 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 20/27] rcar-vin: register a media pad if running in media controller mode
+Date: Tue, 14 Mar 2017 20:03:01 +0100
+Message-Id: <20170314190308.25790-21-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+When running in media controller mode a media pad is needed, register
+one.
 
-The Cortex-A57 cache controller is an integrated controller, and thus
-the device node representing it should not have a unit-addresses or reg
-property.
-
-Fixes: 1561f20760ec96db ("arm64: dts: r8a7796: Add Renesas R8A7796 SoC support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 9 +++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 4 ++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index dbf82bc6ba64..27f7dd9bd988 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -47,9 +47,8 @@
- 			enable-method = "psci";
- 		};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 7aaa01dee014d64b..f560d27449b84882 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -267,7 +267,16 @@ static int rvin_group_init(struct rvin_dev *vin)
+ 	if (ret)
+ 		return ret;
  
--		L2_CA57: cache-controller@0 {
-+		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
++	vin->pad.flags = MEDIA_PAD_FL_SINK;
++	ret = media_entity_pads_init(&vin->vdev->entity, 1, &vin->pad);
++	if (ret)
++		goto error_v4l2;
++
+ 	return 0;
++error_v4l2:
++	rvin_v4l2_mc_remove(vin);
++
++	return ret;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 6f2b1e28381678a9..06934313950253f4 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -103,6 +103,8 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @pad:		pad for media controller
++ *
+  * @lock:		protects @queue
+  * @queue:		vb2 buffers queue
+  *
+@@ -132,6 +134,8 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity digital;
+ 
++	struct media_pad pad;
++
+ 	struct mutex lock;
+ 	struct vb2_queue queue;
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.12.0
