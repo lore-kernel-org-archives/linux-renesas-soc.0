@@ -1,83 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56328 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbdCQQCF (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45441 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751226AbdCNTAu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2017 12:02:05 -0400
+        Tue, 14 Mar 2017 15:00:50 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/7] thermal: rcar_gen3_thermal: remove unneeded mutex
-Date: Fri, 17 Mar 2017 16:52:55 +0100
-Message-Id: <20170317155300.21566-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 06/16] rcar-vin: refactor pad lookup code
+Date: Tue, 14 Mar 2017 19:59:47 +0100
+Message-Id: <20170314185957.25253-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is no point in protecting a register read with a lock. This is
-most likely a leftover from when the driver was reworked before submitted
-for upstream.
+The pad lookup code can be broken out to increase readability and to
+reduce code duplication.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 38 +++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index ec477d47d0bae8e5..cb5c362c00009921 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -20,7 +20,6 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -72,7 +71,6 @@ struct rcar_gen3_thermal_tsc {
- 	void __iomem *base;
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
--	struct mutex lock;
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 1a75191539b0e7d7..ce29a21888da48d5 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -870,11 +870,25 @@ static void rvin_notify(struct v4l2_subdev *sd,
+ 	}
+ }
  
- struct rcar_gen3_thermal_priv {
-@@ -163,16 +161,12 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- 	u32 reg;
++static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
++{
++	unsigned int pad;
++
++	if (sd->entity.num_pads <= 1)
++		return 0;
++
++	for (pad = 0; pad < sd->entity.num_pads; pad++)
++		if (sd->entity.pads[pad].flags & direction)
++			return pad;
++
++	return -EINVAL;
++}
++
+ int rvin_v4l2_probe(struct rvin_dev *vin)
+ {
+ 	struct video_device *vdev = &vin->vdev;
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad_idx, ret;
++	int ret;
  
- 	/* Read register and convert to mili Celsius */
--	mutex_lock(&tsc->lock);
+ 	v4l2_set_subdev_hostdata(sd, vin);
+ 
+@@ -920,21 +934,15 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
+ 
+-	vin->digital.source_pad = 0;
+-	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+-		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
+-			break;
+-	if (pad_idx >= sd->entity.num_pads)
+-		return -EINVAL;
 -
- 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+-	vin->digital.source_pad = pad_idx;
++	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SOURCE);
++	if (ret < 0)
++		return ret;
++	vin->digital.source_pad = ret;
  
- 	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
- 	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
- 	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
+-	vin->digital.sink_pad = 0;
+-	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+-		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
+-			vin->digital.sink_pad = pad_idx;
+-			break;
+-		}
++	ret = rvin_find_pad(sd, MEDIA_PAD_FL_SINK);
++	if (ret < 0)
++		return ret;
++	vin->digital.sink_pad = ret;
  
--	mutex_unlock(&tsc->lock);
--
- 	/* Make sure we are inside specifications */
- 	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
- 		return -EIO;
-@@ -299,7 +293,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		}
- 
- 		priv->tscs[i] = tsc;
--		mutex_init(&tsc->lock);
- 
- 		match_data->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
+ 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
+ 	rvin_reset_format(vin);
 -- 
 2.12.0
