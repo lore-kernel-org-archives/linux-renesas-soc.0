@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45472 "EHLO
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45399 "EHLO
         smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbdCNTAw (ORCPT
+        with ESMTP id S1751113AbdCNTAu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:00:52 -0400
+        Tue, 14 Mar 2017 15:00:50 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -14,9 +14,9 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 09/16] rcar-vin: decrease buffers needed to capture
-Date: Tue, 14 Mar 2017 19:59:50 +0100
-Message-Id: <20170314185957.25253-10-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 02/16] rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
+Date: Tue, 14 Mar 2017 19:59:43 +0100
+Message-Id: <20170314185957.25253-3-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -25,26 +25,33 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It's possible to grab frames using only one buffer, this should never
-have been set to anything else then 1.
+Use rvin_reset_format() in rvin_s_dv_timings() instead of just resetting
+a few fields. This fixes an issue where the field format was not
+properly set after S_DV_TIMINGS.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 9ccd5ff55e192514..c37f7a2993fb5565 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1183,7 +1183,7 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
- 	q->ops = &rvin_qops;
- 	q->mem_ops = &vb2_dma_contig_memops;
- 	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
--	q->min_buffers_needed = 2;
-+	q->min_buffers_needed = 1;
- 	q->dev = vin->dev;
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 69bc4cfea6a8aeb5..7ca27599b9982ffc 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, void *priv_fh,
+ 	if (ret)
+ 		return ret;
  
- 	ret = vb2_queue_init(q);
+-	vin->source.width = timings->bt.width;
+-	vin->source.height = timings->bt.height;
+-	vin->format.width = timings->bt.width;
+-	vin->format.height = timings->bt.height;
+-
+-	return 0;
++	/* Changing the timings will change the width/height */
++	return rvin_reset_format(vin);
+ }
+ 
+ static int rvin_g_dv_timings(struct file *file, void *priv_fh,
 -- 
 2.12.0
