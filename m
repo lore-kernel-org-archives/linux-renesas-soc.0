@@ -1,153 +1,289 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33294 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750728AbdCHLKB (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:37396 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752008AbdCNTGs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Mar 2017 06:10:01 -0500
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Wed, 08 Mar 2017 20:01:53 +0900
-Message-Id: <148897091345.16106.2935423334300744039.sendpatchset@little-apple>
-In-Reply-To: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-Subject: [PATCH v3 03/09] iommu/ipmmu-vmsa: Enable multi context support
+        Tue, 14 Mar 2017 15:06:48 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 21/27] rcar-vin: add group allocator functions
+Date: Tue, 14 Mar 2017 20:03:02 +0100
+Message-Id: <20170314190308.25790-22-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+In media controller mode all VIN instances needs to be part of the same
+media graph. There is also a need to each VIN instance to know and in
+some cases be able to communicate with other VIN instances.
 
-Add support for up to 8 contexts. Each context is mapped to one
-domain. One domain is assigned one or more slave devices. Contexts
-are allocated dynamically and slave devices are grouped together
-based on which IPMMU device they are connected to. This makes slave
-devices tied to the same IPMMU device share the same IOVA space.
+Add a allocator framework where the first VIN instance to be probed
+creates a shared data structure and creates a media device.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/media/platform/rcar-vin/rcar-core.c | 112 +++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  40 ++++++++++
+ 2 files changed, 149 insertions(+), 3 deletions(-)
 
- Changes since V2:
- - Updated patch description to reflect code included in:
-   [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
-
- Changes since V1:
- - Support up to 8 contexts instead of 4
- - Use feature flag and runtime handling
- - Default to single context
-
- drivers/iommu/ipmmu-vmsa.c |   38 ++++++++++++++++++++++++++++++--------
- 1 file changed, 30 insertions(+), 8 deletions(-)
-
---- 0012/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-08 17:59:19.900607110 +0900
-@@ -30,11 +30,12 @@
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index f560d27449b84882..c10770d5ec37816c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -20,12 +20,110 @@
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/slab.h>
  
- #include "io-pgtable.h"
+ #include <media/v4l2-of.h>
  
--#define IPMMU_CTX_MAX 1
-+#define IPMMU_CTX_MAX 8
+ #include "rcar-vin.h"
  
- struct ipmmu_features {
- 	bool use_ns_alias_offset;
- 	bool has_cache_leaf_nodes;
-+	bool has_eight_ctx;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -44,6 +45,7 @@ struct ipmmu_vmsa_device {
- 	const struct ipmmu_features *features;
- 	bool is_leaf;
- 	unsigned int num_utlbs;
-+	unsigned int num_ctx;
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
- 	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
-@@ -376,11 +378,12 @@ static int ipmmu_domain_allocate_context
- 
- 	spin_lock_irqsave(&mmu->lock, flags);
- 
--	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
--	if (ret != IPMMU_CTX_MAX) {
-+	ret = find_first_zero_bit(mmu->ctx, mmu->num_ctx);
-+	if (ret != mmu->num_ctx) {
- 		mmu->domains[ret] = domain;
- 		set_bit(ret, mmu->ctx);
--	}
-+	} else
-+		ret = -EBUSY;
- 
- 	spin_unlock_irqrestore(&mmu->lock, flags);
- 
-@@ -425,9 +428,9 @@ static int ipmmu_domain_init_context(str
- 	 * Find an unused context.
- 	 */
- 	ret = ipmmu_domain_allocate_context(domain->root, domain);
--	if (ret == IPMMU_CTX_MAX) {
-+	if (ret < 0) {
- 		free_io_pgtable_ops(domain->iop);
--		return -EBUSY;
-+		return ret;
- 	}
- 
- 	domain->context_id = ret;
-@@ -562,7 +565,7 @@ static irqreturn_t ipmmu_irq(int irq, vo
- 	/*
- 	 * Check interrupts for all active contexts.
- 	 */
--	for (i = 0; i < IPMMU_CTX_MAX; i++) {
-+	for (i = 0; i < mmu->num_ctx; i++) {
- 		if (!mmu->domains[i])
- 			continue;
- 		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
-@@ -632,6 +635,13 @@ static int ipmmu_attach_device(struct io
- 		domain->mmu = mmu;
- 		domain->root = root;
- 		ret = ipmmu_domain_init_context(domain);
-+		if (ret < 0) {
-+			dev_err(dev, "Unable to initialize IPMMU context\n");
-+			domain->mmu = NULL;
-+		} else {
-+			dev_info(dev, "Using IPMMU context %u\n",
-+				 domain->context_id);
+ /* -----------------------------------------------------------------------------
++ * Gen3 CSI2 Group Allocator
++ */
++
++static DEFINE_MUTEX(rvin_group_lock);
++static struct rvin_group *rvin_group_data;
++
++static void rvin_group_release(struct kref *kref)
++{
++	struct rvin_group *group =
++		container_of(kref, struct rvin_group, refcount);
++
++	mutex_lock(&rvin_group_lock);
++
++	media_device_unregister(&group->mdev);
++	media_device_cleanup(&group->mdev);
++
++	rvin_group_data = NULL;
++
++	mutex_unlock(&rvin_group_lock);
++
++	kfree(group);
++}
++
++static struct rvin_group *__rvin_group_allocate(struct rvin_dev *vin)
++{
++	struct rvin_group *group;
++
++	if (rvin_group_data) {
++		group = rvin_group_data;
++		kref_get(&group->refcount);
++		vin_dbg(vin, "%s: get group=%p\n", __func__, group);
++		return group;
++	}
++
++	group = kzalloc(sizeof(*group), GFP_KERNEL);
++	if (!group)
++		return NULL;
++
++	kref_init(&group->refcount);
++	rvin_group_data = group;
++
++	vin_dbg(vin, "%s: alloc group=%p\n", __func__, group);
++	return group;
++}
++
++static struct rvin_group *rvin_group_allocate(struct rvin_dev *vin)
++{
++	struct rvin_group *group;
++	struct media_device *mdev;
++	int ret;
++
++	mutex_lock(&rvin_group_lock);
++
++	group = __rvin_group_allocate(vin);
++	if (!group) {
++		mutex_unlock(&rvin_group_lock);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	/* Init group data if its not already initialized */
++	mdev = &group->mdev;
++	if (!mdev->dev) {
++		mutex_init(&group->lock);
++		mdev->dev = vin->dev;
++
++		strlcpy(mdev->driver_name, "Renesas VIN",
++			sizeof(mdev->driver_name));
++		strlcpy(mdev->model, vin->dev->of_node->name,
++			sizeof(mdev->model));
++		strlcpy(mdev->bus_info, of_node_full_name(vin->dev->of_node),
++			sizeof(mdev->bus_info));
++		mdev->driver_version = LINUX_VERSION_CODE;
++		media_device_init(mdev);
++
++		ret = media_device_register(mdev);
++		if (ret) {
++			vin_err(vin, "Failed to register media device\n");
++			kref_put(&group->refcount, rvin_group_release);
++			mutex_unlock(&rvin_group_lock);
++			return ERR_PTR(ret);
 +		}
- 	} else if (domain->mmu != mmu) {
- 		/*
- 		 * Something is wrong, we can't attach two devices using
-@@ -1047,13 +1057,14 @@ static void ipmmu_device_reset(struct ip
- 	unsigned int i;
++	}
++
++	vin->v4l2_dev.mdev = mdev;
++
++	mutex_unlock(&rvin_group_lock);
++
++	return group;
++}
++
++static void rvin_group_delete(struct rvin_dev *vin)
++{
++	vin_dbg(vin, "%s: group=%p\n", __func__, &vin->group);
++	kref_put(&vin->group->refcount, rvin_group_release);
++}
++
++/* -----------------------------------------------------------------------------
+  * Async notifier
+  */
  
- 	/* Disable all contexts. */
--	for (i = 0; i < 4; ++i)
-+	for (i = 0; i < mmu->num_ctx; ++i)
- 		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
+@@ -263,9 +361,13 @@ static int rvin_group_init(struct rvin_dev *vin)
+ {
+ 	int ret;
+ 
++	vin->group = rvin_group_allocate(vin);
++	if (IS_ERR(vin->group))
++		return PTR_ERR(vin->group);
++
+ 	ret = rvin_v4l2_mc_probe(vin);
+ 	if (ret)
+-		return ret;
++		goto error_group;
+ 
+ 	vin->pad.flags = MEDIA_PAD_FL_SINK;
+ 	ret = media_entity_pads_init(&vin->vdev->entity, 1, &vin->pad);
+@@ -275,6 +377,8 @@ static int rvin_group_init(struct rvin_dev *vin)
+ 	return 0;
+ error_v4l2:
+ 	rvin_v4l2_mc_remove(vin);
++error_group:
++	rvin_group_delete(vin);
+ 
+ 	return ret;
  }
+@@ -398,10 +502,12 @@ static int rcar_vin_remove(struct platform_device *pdev)
  
- static const struct ipmmu_features ipmmu_features_default = {
- 	.use_ns_alias_offset = true,
- 	.has_cache_leaf_nodes = false,
-+	.has_eight_ctx = false,
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 
+-	if (vin->info->use_mc)
++	if (vin->info->use_mc) {
+ 		rvin_v4l2_mc_remove(vin);
+-	else
++		rvin_group_delete(vin);
++	} else {
+ 		rvin_v4l2_remove(vin);
++	}
+ 
+ 	rvin_dma_remove(vin);
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 06934313950253f4..94258bf7cd58d097 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -17,6 +17,8 @@
+ #ifndef __RCAR_VIN__
+ #define __RCAR_VIN__
+ 
++#include <linux/kref.h>
++
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-dev.h>
+@@ -30,6 +32,9 @@
+ /* Address alignment mask for HW buffers */
+ #define HW_BUFFER_MASK 0x7f
+ 
++/* Max number on VIN instances that can be in a system */
++#define RCAR_VIN_NUM 8
++
+ enum chip_id {
+ 	RCAR_H1,
+ 	RCAR_M1,
+@@ -37,6 +42,15 @@ enum chip_id {
+ 	RCAR_GEN3,
  };
  
- static const struct of_device_id ipmmu_of_ids[] = {
-@@ -1112,6 +1123,17 @@ static int ipmmu_probe(struct platform_d
- 	if (mmu->features->use_ns_alias_offset)
- 		mmu->base += IM_NS_ALIAS_OFFSET;
- 
-+	/*
-+	 * The number of contexts varies with generation and instance.
-+	 * Newer SoCs get a total of 8 contexts enabled, older ones just one.
-+	 */
-+	if (mmu->features->has_eight_ctx)
-+		mmu->num_ctx = 8;
-+	else
-+		mmu->num_ctx = 1;
++enum rvin_csi_id {
++	RVIN_CSI20,
++	RVIN_CSI21,
++	RVIN_CSI40,
++	RVIN_CSI41,
++	RVIN_CSI_MAX,
++	RVIN_NC, /* Not Connected */
++};
 +
-+	WARN_ON(mmu->num_ctx > IPMMU_CTX_MAX);
-+
- 	irq = platform_get_irq(pdev, 0);
+ /**
+  * STOPPED  - No operation in progress
+  * RUNNING  - Operation in progress have buffers
+@@ -75,6 +89,8 @@ struct rvin_graph_entity {
+ 	unsigned int sink_pad;
+ };
  
- 	/*
++struct rvin_group;
++
+ /**
+  * struct rvin_info- Information about the particular VIN implementation
+  * @chip:		type of VIN chip
+@@ -103,6 +119,7 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @group:		Gen3 CSI group
+  * @pad:		pad for media controller
+  *
+  * @lock:		protects @queue
+@@ -134,6 +151,7 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity digital;
+ 
++	struct rvin_group *group;
+ 	struct media_pad pad;
+ 
+ 	struct mutex lock;
+@@ -162,6 +180,28 @@ struct rvin_dev {
+ #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
+ #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
+ 
++/**
++ * struct rvin_group - VIN CSI2 group information
++ * @refcount:		number of VIN instances using the group
++ *
++ * @mdev:		media device which represents the group
++ *
++ * @lock:		protects the vin, bridge and source members
++ * @vin:		VIN instances which are part of the group
++ * @bridge:		CSI2 bridge between video source and VIN
++ * @source:		video source connected to each bridge
++ */
++struct rvin_group {
++	struct kref refcount;
++
++	struct media_device mdev;
++
++	struct mutex lock;
++	struct rvin_dev *vin[RCAR_VIN_NUM];
++	struct rvin_graph_entity bridge[RVIN_CSI_MAX];
++	struct rvin_graph_entity source[RVIN_CSI_MAX];
++};
++
+ int rvin_dma_probe(struct rvin_dev *vin, int irq);
+ void rvin_dma_remove(struct rvin_dev *vin);
+ 
+-- 
+2.12.0
