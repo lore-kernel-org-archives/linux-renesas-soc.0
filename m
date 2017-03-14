@@ -1,47 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 2 Mar 2017 16:05:45 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] arm64: dts: r8a7795: Add Cortex-A53 CPU cores and
- PMU
-Message-ID: <20170302150545.GV6301@verge.net.au>
-References: <1487944768-31983-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:37413 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751653AbdCNTGj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 14 Mar 2017 15:06:39 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 13/27] rcar-vin: do not cut height in two for top, bottom or alternate fields
+Date: Tue, 14 Mar 2017 20:02:54 +0100
+Message-Id: <20170314190308.25790-14-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1487944768-31983-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+The height should not be cut in half for the format for top, bottom or
+alternate fields settings. This was a mistake and it was made
+visible by the scaling refactoring.
 
-On Fri, Feb 24, 2017 at 02:59:26PM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series adds the Cortex-A53 CPU cores and PMU on the Renesas
-> R-Car H3 SoC to its DTS file.
-> 
-> Note that these patches describes the hardware; actual enabling of the
-> CPU depends on the PSCI firmware.
-> 
-> With the current firmware version (v2.16.0), only the CA57 CPU cores are
-> enabled, hence these patches do not introduce undeterministic scheduling
-> behavior due to migration between big and LITTLE cores.
-> 
-> Changes compared to v3:
->   - Drop bogus links from the pmu_a57 node to the CA53 nodes,
->   - Add Cortex-A53 PMU node.
-> 
-> Tested on r8a7795/salvator-x, with CPU hot(un)plug and system suspend.
-> 
-> Thanks for applying!
+Correct behavior is that the user should request a frame size that fits
+the half height frame reflected in the field setting. If not the VIN
+will do it's best to scale the top or bottom to the requested format and
+cropping and scaling do not work as expected.
 
-I believe this patch-set is in keeping with the face-to-face discussion
-between Magnus, yourself, myself and others in Brussels last month.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-With that in mind I have queued this up for v4.12.
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 80421421625e6f6f..28b62a514bbb93a9 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -142,8 +142,6 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
+ 	case V4L2_FIELD_ALTERNATE:
+-		vin->format.height /= 2;
+-		break;
+ 	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+@@ -245,8 +243,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
+ 	case V4L2_FIELD_ALTERNATE:
+-		pix->height /= 2;
+-		break;
+ 	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+-- 
+2.12.0
