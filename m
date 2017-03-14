@@ -1,105 +1,128 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34763 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751054AbdCOJM0 (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45408 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750930AbdCNTAu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Mar 2017 05:12:26 -0400
-Received: by mail-lf0-f49.google.com with SMTP id z15so4174485lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Mar 2017 02:12:25 -0700 (PDT)
-Subject: Re: [PATCH 03/16] rcar-vin: fix how pads are handled for v4l2
- subdevice operations
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tue, 14 Mar 2017 15:00:50 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Hans Verkuil <hverkuil@xs4all.nl>
-References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
- <20170314185957.25253-4-niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         tomoharu.fukawa.eb@renesas.com,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1fcdfc89-6c85-3863-6fd0-e6db4ec9072c@cogentembedded.com>
-Date: Wed, 15 Mar 2017 12:12:21 +0300
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 03/16] rcar-vin: fix how pads are handled for v4l2 subdevice operations
+Date: Tue, 14 Mar 2017 19:59:44 +0100
+Message-Id: <20170314185957.25253-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20170314185957.25253-4-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+The rcar-vin driver only uses one pad, pad number 0.
 
-On 3/14/2017 9:59 PM, Niklas Söderlund wrote:
+- All v4l2 operations that did not check that the requested operation
+  was for pad 0 have been updated with a check to enforce this.
 
-> The rcar-vin driver only uses one pad, pad number 0.
->
-> - All v4l2 operations that did not check that the requested operation
->   was for pad 0 have been updated with a check to enforce this.
->
-> - All v4l2 operations that stored (and later restore) the requested pad
+- All v4l2 operations that stored (and later restore) the requested pad
+  before substituting it for the subdevice pad number have been updated
+  to not store the incoming pad and simply restore it to 0 after the
+  subdevice operation is complete.
 
-    Restored?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
->   before substituting it for the subdevice pad number have been updated
->   to not store the incoming pad and simply restore it to 0 after the
->   subdevice operation is complete.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 26 ++++++++++++++------------
->  1 file changed, 14 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 7ca27599b9982ffc..610f59e2a9142622 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -550,14 +550,16 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
->  {
->  	struct rvin_dev *vin = video_drvdata(file);
->  	struct v4l2_subdev *sd = vin_to_source(vin);
-> -	int pad, ret;
-> +	int ret;
-> +
-> +	if (timings->pad)
-> +		return -EINVAL;
->
-> -	pad = timings->pad;
->  	timings->pad = vin->sink_pad_idx;
->
->  	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
-
-    Does this still compile after you removed 'pad'?
-
->
-> -	timings->pad = pad;
-> +	timings->pad = 0;
->
->  	return ret;
->  }
-> @@ -600,14 +602,16 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
->  {
->  	struct rvin_dev *vin = video_drvdata(file);
->  	struct v4l2_subdev *sd = vin_to_source(vin);
-> -	int pad, ret;
-> +	int ret;
-> +
-> +	if (cap->pad)
-> +		return -EINVAL;
->
-> -	pad = cap->pad;
->  	cap->pad = vin->sink_pad_idx;
->
->  	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
-
-    And this?
-
->
-> -	cap->pad = pad;
-> +	cap->pad = 0;
->
->  	return ret;
->  }
-[...]
-
-MBR, Sergei
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 7ca27599b9982ffc..610f59e2a9142622 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -550,14 +550,16 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad, ret;
++	int ret;
++
++	if (timings->pad)
++		return -EINVAL;
+ 
+-	pad = timings->pad;
+ 	timings->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+ 
+-	timings->pad = pad;
++	timings->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -600,14 +602,16 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int pad, ret;
++	int ret;
++
++	if (cap->pad)
++		return -EINVAL;
+ 
+-	pad = cap->pad;
+ 	cap->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+ 
+-	cap->pad = pad;
++	cap->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -616,17 +620,16 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int input, ret;
++	int ret;
+ 
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	input = edid->pad;
+ 	edid->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
+ 
+-	edid->pad = input;
++	edid->pad = 0;
+ 
+ 	return ret;
+ }
+@@ -635,17 +638,16 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int input, ret;
++	int ret;
+ 
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	input = edid->pad;
+ 	edid->pad = vin->sink_pad_idx;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
+ 
+-	edid->pad = input;
++	edid->pad = 0;
+ 
+ 	return ret;
+ }
+-- 
+2.12.0
