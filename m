@@ -1,69 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:60120 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755719AbdCGTBf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Mar 2017 14:01:35 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vd4MK0LsbzMr9Lg
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  7 Mar 2017 19:05:33 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/5] arm64: dts: r8a7796: Add Secondary CPU Cores
-Date: Tue,  7 Mar 2017 19:03:21 +0100
-Message-Id: <1488909806-3322-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 07/27] rcar-vin: change name of video device
+Date: Tue, 14 Mar 2017 20:02:48 +0100
+Message-Id: <20170314190308.25790-8-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+The rcar-vin driver needs to be part of a media controller to support
+Gen3. Give each VIN instance a unique name so it can be referenced from
+userspace.
 
-This patch series adds the second Cortex-A57 CPU core, the Cortex-A57
-PMU, and the Cortex-A53 L2 cache-controller, CPU, and PMU nodes on the
-Renesas R-Car M3-W SoC to its DTS file.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Note that these patches add hardware description; actual enabling of the
-CPU depends on the PSCI firmware.
-
-With the current firmware version (v2.16.0), only the CA57 CPU cores are
-enabled, hence the last patch does not introduce undeterministic
-scheduling behavior due to migration between big and LITTLE cores.
-
-Changes compared to v1:
-  - Add Cortex-A57 and Cortex-A53 PMU nodes,
-  - Drop unit address and reg property for integrated cache-controller.
-
-Tested on r8a7796/salvator-x, with CPU hot(un)plug and system suspend.
-
-Thanks for applying!
-
-Geert Uytterhoeven (3):
-  arm64: dts: r8a7796: Add CA53 L2 cache-controller node
-  arm64: dts: r8a7796: Add Cortex-A53 CPU cores
-  arm64: dts: r8a7796: Add Cortex-A53 PMU node
-
-Takeshi Kihara (2):
-  arm64: dts: r8a7796: Add Cortex-A57 CPU cores
-  arm64: dts: r8a7796: Add Cortex-A57 PMU node
-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 83 +++++++++++++++++++++++++++++---
- 1 file changed, 77 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 1b364f359ff4b5ed..709ee828f2ac2173 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -915,7 +915,8 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->fops = &rvin_fops;
+ 	vdev->v4l2_dev = &vin->v4l2_dev;
+ 	vdev->queue = &vin->queue;
+-	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
++	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
++		 dev_name(vin->dev));
+ 	vdev->release = video_device_release;
+ 	vdev->ioctl_ops = &rvin_ioctl_ops;
+ 	vdev->lock = &vin->lock;
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.12.0
