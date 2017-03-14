@@ -1,67 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:43497 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751152AbdCBURc (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56240 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbdCNKQB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Mar 2017 15:17:32 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: jacopo mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
-Date: Thu, 2 Mar 2017 20:17:26 +0000
-Message-ID: <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
- <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
-In-Reply-To: <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Tue, 14 Mar 2017 06:16:01 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 1/4] mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+Date: Tue, 14 Mar 2017 11:09:16 +0100
+Message-Id: <20170314100919.25401-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
+References: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc.h     | 4 ++++
+ drivers/mmc/host/tmio_mmc_pio.c | 6 +++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-On Tuesday, February 21, 2017, jacopo mondi wrote:
-> > +			gpio-controller;
-> > +			#gpio-cells =3D <2>;
-> > +			gpio-ranges =3D <&pinctrl 0 0 16>;
->=20
-> Not all ports have 16 pins available.
-> This is one of the differences between different RZ/A1 SoC versions
-> (RZ/A1H, RZ/A1L etc)
->=20
-> I'll change the number of pins to the actual available ones on each port
-> for r7s72100 (RZ/A1H)
-
-But wait, what if someone wants to use a RZ/A1L???
-
-I don't want to make a separate dtsi file for RZ/A1L.
-
-Is it possible to change the number of port pins in the board dts file?
-For example:
-  RZ/A1H: P5_0 - P5_10
-  RZ/A1L: P5_0 - P5_16
-
-So, in a rza1l-board.dts file I would put:
-
-&port5 {
-	gpio-ranges =3D <&pinctrl 0 80 16>;
-}
-
-Will this work?
-
-
-Chris
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 2b349d48fb9a8a..b20b451ad90daa 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -50,6 +50,10 @@
+ #define CTL_CLK_AND_WAIT_CTL 0x138
+ #define CTL_RESET_SDIO 0x1e0
+ 
++/* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
++#define TMIO_STOP_STP		BIT(0)
++#define TMIO_STOP_SEC		BIT(8)
++
+ /* Definitions for values the CTRL_STATUS register can take. */
+ #define TMIO_STAT_CMDRESPEND    BIT(0)
+ #define TMIO_STAT_DATAEND       BIT(2)
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 6b789a739d4dfe..ad2840e1bfae51 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -340,7 +340,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+ 
+ 	/* CMD12 is handled by hardware */
+ 	if (cmd->opcode == MMC_STOP_TRANSMISSION && !cmd->arg) {
+-		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x001);
++		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_STP);
+ 		return 0;
+ 	}
+ 
+@@ -367,7 +367,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+ 	if (data) {
+ 		c |= DATA_PRESENT;
+ 		if (data->blocks > 1) {
+-			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x100);
++			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, TMIO_STOP_SEC);
+ 			c |= TRANSFER_MULTI;
+ 
+ 			/*
+@@ -554,7 +554,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
+ 
+ 	if (stop) {
+ 		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
+-			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0x000);
++			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
+ 		else
+ 			BUG();
+ 	}
+-- 
+2.11.0
