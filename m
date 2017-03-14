@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:37423 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:37359 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751962AbdCNTGr (ORCPT
+        with ESMTP id S1751014AbdCNTGe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:06:47 -0400
+        Tue, 14 Mar 2017 15:06:34 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -13,10 +13,11 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 20/27] rcar-vin: register a media pad if running in media controller mode
-Date: Tue, 14 Mar 2017 20:03:01 +0100
-Message-Id: <20170314190308.25790-21-niklas.soderlund+renesas@ragnatech.se>
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH v3 02/27] media: entity: Add has_route entity operation
+Date: Tue, 14 Mar 2017 20:02:43 +0100
+Message-Id: <20170314190308.25790-3-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -25,57 +26,41 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When running in media controller mode a media pad is needed, register
-one.
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
+The optional operation can be used by entities to report whether two
+pads are internally connected.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 9 +++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h  | 4 ++++
- 2 files changed, 13 insertions(+)
+ include/media/media-entity.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 7aaa01dee014d64b..f560d27449b84882 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -267,7 +267,16 @@ static int rvin_group_init(struct rvin_dev *vin)
- 	if (ret)
- 		return ret;
- 
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	ret = media_entity_pads_init(&vin->vdev->entity, 1, &vin->pad);
-+	if (ret)
-+		goto error_v4l2;
-+
- 	return 0;
-+error_v4l2:
-+	rvin_v4l2_mc_remove(vin);
-+
-+	return ret;
- }
- 
- /* -----------------------------------------------------------------------------
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 6f2b1e28381678a9..06934313950253f4 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -103,6 +103,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index c7c254c5bca1761b..bcb08c1f8c6265e8 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -177,6 +177,9 @@ struct media_pad {
+  * @link_validate:	Return whether a link is valid from the entity point of
+  *			view. The media_pipeline_start() function
+  *			validates all links by calling this operation. Optional.
++ * @has_route:		Return whether a route exists inside the entity between
++ *			two given pads. Optional. If the operation isn't
++ *			implemented all pads will be considered as connected.
   *
-+ * @pad:		pad for media controller
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
+  * .. note::
   *
-@@ -132,6 +134,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity digital;
+@@ -188,6 +191,8 @@ struct media_entity_operations {
+ 			  const struct media_pad *local,
+ 			  const struct media_pad *remote, u32 flags);
+ 	int (*link_validate)(struct media_link *link);
++	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
++			  unsigned int pad1);
+ };
  
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 
+ /**
 -- 
 2.12.0
