@@ -1,66 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60051 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752515AbdCFA3m (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45387 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750796AbdCNTAs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:29:42 -0500
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id CE548204C1
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Mar 2017 01:18:55 +0100 (CET)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 5/5] ARM: shmobile: dts: Switch to panel-lvds bindings for Mitsubishi panels
-Date: Mon,  6 Mar 2017 02:20:26 +0200
-Message-Id: <20170306002026.15066-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170306002026.15066-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 14 Mar 2017 15:00:48 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 00/16] rcar-vin: fix issues with format and capturing
+Date: Tue, 14 Mar 2017 19:59:41 +0100
+Message-Id: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
-Use the correct DT bindings.
+Hi,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi | 3 ++-
- arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+This series fix a number of issues for the rcar-vin driver regarding 
+format and capturing. It is based on top of v4.11-rc1 and is tested on 
+Koelsch.
 
-diff --git a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-index 65cb50f0c29f..238d14bb0ebe 100644
---- a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa104xd12", "panel-dpi";
-+		compatible = "mitsubishi,aa104xd12", "panel-lvds";
- 
- 		width-mm = <210>;
- 		height-mm = <158>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1024x768 @65Hz */
-diff --git a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-index a07ebf8f6938..04aafd479775 100644
---- a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa121td01", "panel-dpi";
-+		compatible = "mitsubishi,aa121td01", "panel-lvds";
- 
- 		width-mm = <261>;
- 		height-mm = <163>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1280x800 @60Hz */
+Parts of this series where previously part of '[PATCH 00/11] media: 
+rcar-vin: fix OPS and format/pad index issues'. But after good reviews 
+a large part of that series where dropped.
+
+Niklas Söderlund (16):
+  rcar-vin: reset bytesperline and sizeimage when resetting format
+  rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
+  rcar-vin: fix how pads are handled for v4l2 subdevice operations
+  rcar-vin: fix standard in input enumeration
+  rcar-vin: move subdev source and sink pad index to rvin_graph_entity
+  rcar-vin: refactor pad lookup code
+  rcar-vin: move pad lookup to async bound handler
+  rcar-vin: use pad information when verifying media bus format
+  rcar-vin: decrease buffers needed to capture
+  rcar-vin: move functions which acts on hardware
+  rcar-vin: select capture mode based on free buffers
+  rcar-vin: allow switch between capturing modes when stalling
+  rcar-vin: refactor and fold in function after stall handling rework
+  rcar-vin: make use of video_device_alloc() and video_device_release()
+  rcar-vin: add missing error check to propagate error
+  rcar-vin: fix bug in pixelformat selection
+
+ drivers/media/platform/rcar-vin/rcar-core.c |  33 +++-
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 229 ++++++++++++++--------------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 127 ++++++++-------
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  11 +-
+ 4 files changed, 216 insertions(+), 184 deletions(-)
+
 -- 
-Regards,
-
-Laurent Pinchart
+2.12.0
