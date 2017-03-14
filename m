@@ -1,69 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f50.google.com ([209.85.213.50]:32944 "EHLO
-        mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753071AbdCNQVc (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56238 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750812AbdCNKQB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 12:21:32 -0400
-Received: by mail-vk0-f50.google.com with SMTP id d188so54584046vka.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Mar 2017 09:21:26 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
-References: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 14 Mar 2017 17:21:25 +0100
-Message-ID: <CAPDyKFpzUm5mFiOeUSi+z6Cwad9P=tdek6vd5KqoFRouu606Hw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] mmc: tmio: properly report status from autocmd12
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 14 Mar 2017 06:16:01 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 0/4] mmc: tmio: properly report status from autocmd12
+Date: Tue, 14 Mar 2017 11:09:15 +0100
+Message-Id: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 14 March 2017 at 11:09, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> New in V3:
->
-> * rebased to v4.11-rc2 and retested
-> * added one more tag from Simon
->
-> New in V2:
-> * Fix some more comments in patch 2.
-> * Add Simon's tags
->
-> SDHI automatically sends CMD12 when the desired amount of data was transferred
-> after multi block commands. However, the response from that CMD12 was never
-> reported back to the mmc core, so that errors like ECC might go unnoticed. This
-> series aims to fix that and clean up minor issues on the way when dealing with
-> the autocmd12 feature. Testing documentation can be found here [1] and thanks
-> must go to Shimoda-san for additional testing. Actually handling the ECC errors
-> in the core is a seperate issue and I'll post a patch for it right after this.
->
-> The patches are based on mmc-next as of today. A branch can be found here:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp-v3
->
-> Thanks and all the best,
->
->    Wolfram
->
-> [1] http://elinux.org/Tests:SDHI-autocmd12-responses
->
-> Wolfram Sang (4):
->   mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
->   mmc: host: tmio: fix minor typos in comments
->   mmc: host: tmio: don't BUG on unsupported stop commands
->   mmc: host: tmio: fill in response from auto cmd12
->
->  drivers/mmc/host/tmio_mmc.h     | 10 +++++++---
->  drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
->  2 files changed, 17 insertions(+), 9 deletions(-)
->
-> --
+New in V3:
 
-Thanks, applied for next!
+* rebased to v4.11-rc2 and retested
+* added one more tag from Simon
 
-Kind regards
-Uffe
+New in V2:
+* Fix some more comments in patch 2.
+* Add Simon's tags
+
+SDHI automatically sends CMD12 when the desired amount of data was transferred
+after multi block commands. However, the response from that CMD12 was never
+reported back to the mmc core, so that errors like ECC might go unnoticed. This
+series aims to fix that and clean up minor issues on the way when dealing with
+the autocmd12 feature. Testing documentation can be found here [1] and thanks
+must go to Shimoda-san for additional testing. Actually handling the ECC errors
+in the core is a seperate issue and I'll post a patch for it right after this.
+
+The patches are based on mmc-next as of today. A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp-v3
+
+Thanks and all the best,
+
+   Wolfram
+
+[1] http://elinux.org/Tests:SDHI-autocmd12-responses
+
+Wolfram Sang (4):
+  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+  mmc: host: tmio: fix minor typos in comments
+  mmc: host: tmio: don't BUG on unsupported stop commands
+  mmc: host: tmio: fill in response from auto cmd12
+
+ drivers/mmc/host/tmio_mmc.h     | 10 +++++++---
+ drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
+ 2 files changed, 17 insertions(+), 9 deletions(-)
+
+-- 
+2.11.0
