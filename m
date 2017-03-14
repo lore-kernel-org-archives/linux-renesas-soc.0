@@ -1,51 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:60098 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751628AbdCPRvx (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56229 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750796AbdCNKQB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Mar 2017 13:51:53 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 4/5] ARM: dts: r7s72100: add rtc to device tree
-Date: Thu, 16 Mar 2017 13:51:11 -0400
-Message-Id: <20170316175112.27913-5-chris.brandt@renesas.com>
-In-Reply-To: <20170316175112.27913-1-chris.brandt@renesas.com>
-References: <20170316175112.27913-1-chris.brandt@renesas.com>
+        Tue, 14 Mar 2017 06:16:01 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 4/4] mmc: host: tmio: fill in response from auto cmd12
+Date: Tue, 14 Mar 2017 11:09:19 +0100
+Message-Id: <20170314100919.25401-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
+References: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+After we received the dataend interrupt, R1 response register carries
+the value from the automatically generated stop command. Report that
+info back to the MMC block layer, so we will be notified in case of e.g.
+ECC errors which happened during the last transfer.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 2a42a79..e047fc8 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -551,4 +551,15 @@
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index b47dd9195fe3fe..a08db28b0100d6 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -557,6 +557,9 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
+ 			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
+ 				stop->opcode, stop->arg);
+ 
++		/* fill in response from auto CMD12 */
++		stop->resp[0] = sd_ctrl_read16_and_16_as_32(host, CTL_RESPONSE);
 +
-+	rtc: rtc@fcff1000 {
-+		compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
-+		reg = <0xfcff1000 0x2e>;
-+		interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
-+			      GIC_SPI 277 IRQ_TYPE_EDGE_RISING
-+			      GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&mstp6_clks R7S72100_CLK_RTC>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
- };
+ 		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
+ 	}
+ 
 -- 
-2.10.1
+2.11.0
