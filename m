@@ -1,91 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:47812 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753965AbdCFQ6c (ORCPT
+Received: from mail-vk0-f50.google.com ([209.85.213.50]:32944 "EHLO
+        mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753071AbdCNQVc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 11:58:32 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/6] ARM: dts: r8a73a4: Add INTC-SYS clock to device tree
-Date: Mon,  6 Mar 2017 17:58:06 +0100
-Message-Id: <1488819491-26097-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488819491-26097-1-git-send-email-geert+renesas@glider.be>
-References: <1488819491-26097-1-git-send-email-geert+renesas@glider.be>
+        Tue, 14 Mar 2017 12:21:32 -0400
+Received: by mail-vk0-f50.google.com with SMTP id d188so54584046vka.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Mar 2017 09:21:26 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
+References: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 14 Mar 2017 17:21:25 +0100
+Message-ID: <CAPDyKFpzUm5mFiOeUSi+z6Cwad9P=tdek6vd5KqoFRouu606Hw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] mmc: tmio: properly report status from autocmd12
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Link the ARM GIC to the INTC-SYS module clock and the C4 power domain,
-so it can be power managed using that clock in the future.
+On 14 March 2017 at 11:09, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> New in V3:
+>
+> * rebased to v4.11-rc2 and retested
+> * added one more tag from Simon
+>
+> New in V2:
+> * Fix some more comments in patch 2.
+> * Add Simon's tags
+>
+> SDHI automatically sends CMD12 when the desired amount of data was transferred
+> after multi block commands. However, the response from that CMD12 was never
+> reported back to the mmc core, so that errors like ECC might go unnoticed. This
+> series aims to fix that and clean up minor issues on the way when dealing with
+> the autocmd12 feature. Testing documentation can be found here [1] and thanks
+> must go to Shimoda-san for additional testing. Actually handling the ECC errors
+> in the core is a seperate issue and I'll post a patch for it right after this.
+>
+> The patches are based on mmc-next as of today. A branch can be found here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-autocmd12-resp-v3
+>
+> Thanks and all the best,
+>
+>    Wolfram
+>
+> [1] http://elinux.org/Tests:SDHI-autocmd12-responses
+>
+> Wolfram Sang (4):
+>   mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+>   mmc: host: tmio: fix minor typos in comments
+>   mmc: host: tmio: don't BUG on unsupported stop commands
+>   mmc: host: tmio: fill in response from auto cmd12
+>
+>  drivers/mmc/host/tmio_mmc.h     | 10 +++++++---
+>  drivers/mmc/host/tmio_mmc_pio.c | 16 ++++++++++------
+>  2 files changed, 17 insertions(+), 9 deletions(-)
+>
+> --
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
+Thanks, applied for next!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Add missing "power-domains" property,
-  - Add clock-names property,
-  - Drop RFC status,
-  - Change one-line summary prefix to match current arm-soc practices,
-  - s/GIC driver/GIC-400 driver/,
-  - Document critical clock dependency.
----
- arch/arm/boot/dts/r8a73a4.dtsi            | 13 +++++++++----
- include/dt-bindings/clock/r8a73a4-clock.h |  1 +
- 2 files changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 6fb7eaba91262edf..1f5c9f6dddba9366 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -467,6 +467,9 @@
- 			<0 0xf1004000 0 0x2000>,
- 			<0 0xf1006000 0 0x2000>;
- 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		clocks = <&mstp4_clks R8A73A4_CLK_INTC_SYS>;
-+		clock-names = "clk";
-+		power-domains = <&pd_c4>;
- 	};
- 
- 	bsc: bus@fec10000 {
-@@ -725,16 +728,18 @@
- 		mstp4_clks: mstp4_clks@e6150140 {
- 			compatible = "renesas,r8a73a4-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
--			clocks = <&main_div2_clk>, <&main_div2_clk>,
-+			clocks = <&main_div2_clk>, <&cpg_clocks R8A73A4_CLK_ZS>,
-+				 <&main_div2_clk>,
- 				 <&cpg_clocks R8A73A4_CLK_HP>,
- 				 <&cpg_clocks R8A73A4_CLK_HP>;
- 			#clock-cells = <1>;
- 			clock-indices = <
--				R8A73A4_CLK_IRQC R8A73A4_CLK_IIC5
--				R8A73A4_CLK_IIC4 R8A73A4_CLK_IIC3
-+				R8A73A4_CLK_IRQC R8A73A4_CLK_INTC_SYS
-+				R8A73A4_CLK_IIC5 R8A73A4_CLK_IIC4
-+				R8A73A4_CLK_IIC3
- 			>;
- 			clock-output-names =
--				"irqc", "iic5", "iic4", "iic3";
-+				"irqc", "intc-sys", "iic5", "iic4", "iic3";
- 		};
- 		mstp5_clks: mstp5_clks@e6150144 {
- 			compatible = "renesas,r8a73a4-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r8a73a4-clock.h b/include/dt-bindings/clock/r8a73a4-clock.h
-index dd11ecdf837e8e65..4b36681572570c15 100644
---- a/include/dt-bindings/clock/r8a73a4-clock.h
-+++ b/include/dt-bindings/clock/r8a73a4-clock.h
-@@ -54,6 +54,7 @@
- #define R8A73A4_CLK_IIC3	11
- #define R8A73A4_CLK_IIC4	10
- #define R8A73A4_CLK_IIC5	9
-+#define R8A73A4_CLK_INTC_SYS	8
- #define R8A73A4_CLK_IRQC	7
- 
- /* MSTP5 */
--- 
-2.7.4
+Kind regards
+Uffe
