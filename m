@@ -1,39 +1,55 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Matthew Giassa <matthew@giassa.net>
-To: wsa@the-dreams.de
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        matthew@giassa.net
-Subject: [PATCHv5 3/4] Staging: ks7010: ks_wlan_ioctl.h: Aligning parameters in function prototypes.
-Date: Wed, 15 Mar 2017 20:18:10 -0700
-Message-Id: <1489634291-30028-4-git-send-email-matthew@giassa.net>
-In-Reply-To: <1489634291-30028-1-git-send-email-matthew@giassa.net>
-References: <20170316024246.GA19641@kroah.com>
- <1489634291-30028-1-git-send-email-matthew@giassa.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45470 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751483AbdCNTAy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 14 Mar 2017 15:00:54 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 16/16] rcar-vin: fix bug in pixelformat selection
+Date: Tue, 14 Mar 2017 19:59:57 +0100
+Message-Id: <20170314185957.25253-17-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Re-aligning function parameters in function prototypes by inserting
-additional hard-tabs to resolve a checkpatch warning.
+If the requested pixelformat is not supported only revert to the current
+pixelformat, do not revert the entire format. Also if the pixelformat
+needs to be reverted the pixel information needs to be fetched once
+more.
 
-Signed-off-by: Matthew Giassa <matthew@giassa.net>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/staging/ks7010/ks_wlan_ioctl.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
-index 1b68402..1251d7e 100644
---- a/drivers/staging/ks7010/ks_wlan_ioctl.h
-+++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
-@@ -60,7 +60,7 @@
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 956092ba6ef9bc6f..27b7733e96afe3e9 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -226,9 +226,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	if (!info) {
+ 		vin_dbg(vin, "Format %x not found, keeping %x\n",
+ 			pix->pixelformat, vin->format.pixelformat);
+-		*pix = vin->format;
+-		pix->width = rwidth;
+-		pix->height = rheight;
++		pix->pixelformat = vin->format.pixelformat;
++		info = rvin_format_from_pixel(pix->pixelformat);
+ 	}
  
- int ks_wlan_read_config_file(struct ks_wlan_private *priv);
- int ks_wlan_setup_parameter(struct ks_wlan_private *priv,
--		             unsigned int commit_flag);
-+			    unsigned int commit_flag);
- 
- #endif /* __KERNEL__ */
- 
+ 	/* Always recalculate */
 -- 
-2.7.4
+2.12.0
