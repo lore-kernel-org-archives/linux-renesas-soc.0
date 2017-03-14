@@ -12,18 +12,17 @@ Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
         Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
         Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [RESEND PATCH v3 2/2] phy: Group vendor specific phy drivers
-Date: Tue, 14 Mar 2017 11:52:50 +0530
-Message-Id: <1489472570-26434-1-git-send-email-vivek.gautam@codeaurora.org>
-In-Reply-To: <1489472080-23711-2-git-send-email-vivek.gautam@codeaurora.org>
-References: <1489472080-23711-2-git-send-email-vivek.gautam@codeaurora.org>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org
+Subject: [PATCH v3 2/2] phy: Group vendor specific phy drivers
+Date: Tue, 14 Mar 2017 11:44:40 +0530
+Message-Id: <1489472080-23711-2-git-send-email-vivek.gautam@codeaurora.org>
+In-Reply-To: <1489472080-23711-1-git-send-email-vivek.gautam@codeaurora.org>
+References: <1489472080-23711-1-git-send-email-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -46,19 +45,16 @@ Cc: Viresh Kumar <viresh.kumar@linaro.org>
 Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: Chen-Yu Tsai <wens@csie.org>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Jaehoon Chung <jh80.chung@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-omap@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 Cc: linux-rockchip@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-usb@vger.kernel.org
 ---
-
-Corrected Krzysztof's email-id. Added linux-arm-msm.
 
 Hi Heiko, Viresh,
 It's been a year since the last version of this patch was posted.
