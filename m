@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45441 "EHLO
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:45436 "EHLO
         smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbdCNTAw (ORCPT
+        with ESMTP id S1751122AbdCNTAu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:00:52 -0400
+        Tue, 14 Mar 2017 15:00:50 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -14,9 +14,9 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 11/16] rcar-vin: select capture mode based on free buffers
-Date: Tue, 14 Mar 2017 19:59:52 +0100
-Message-Id: <20170314185957.25253-12-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 05/16] rcar-vin: move subdev source and sink pad index to rvin_graph_entity
+Date: Tue, 14 Mar 2017 19:59:46 +0100
+Message-Id: <20170314185957.25253-6-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -25,69 +25,142 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instead of selecting single or continuous capture mode based on how many
-buffers userspace intends to give us select capture mode based on number
-of free buffers we can allocate to hardware when the stream is started.
+It makes more sens to store the sink and source pads in struct
+rvin_graph_entity since that contains other subdevice related
+information.
 
-This change is a prerequisite to enable the driver to switch from
-continuous to single capture mode (or the other way around) when the
-driver is stalled by userspace not feeding it buffers as fast as it
-consumes it.
+The data type to store pad information in is unsigned int and not int,
+change this. While we are at it drop the _idx suffix from the names,
+this never made sens.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 31 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 20 ++++++++++----------
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  9 +++++----
+ 2 files changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index c10d75aa7e71d665..f7776592b9a13d41 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -404,7 +404,21 @@ static void rvin_capture_off(struct rvin_dev *vin)
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 7be52c2036bb35fc..1a75191539b0e7d7 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -111,7 +111,7 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 	struct v4l2_mbus_framefmt *mf = &fmt.format;
+ 	int ret;
  
- static int rvin_capture_start(struct rvin_dev *vin)
- {
--	int ret;
-+	struct rvin_buffer *buf, *node;
-+	int bufs, ret;
+-	fmt.pad = vin->src_pad_idx;
++	fmt.pad = vin->digital.source_pad;
+ 
+ 	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
+ 	if (ret)
+@@ -178,7 +178,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	if (pad_cfg == NULL)
+ 		return -ENOMEM;
+ 
+-	format.pad = vin->src_pad_idx;
++	format.pad = vin->digital.source_pad;
+ 
+ 	field = pix->field;
+ 
+@@ -559,7 +559,7 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+ 	if (timings->pad)
+ 		return -EINVAL;
+ 
+-	timings->pad = vin->sink_pad_idx;
++	timings->pad = vin->digital.sink_pad;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+ 
+@@ -611,7 +611,7 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+ 	if (cap->pad)
+ 		return -EINVAL;
+ 
+-	cap->pad = vin->sink_pad_idx;
++	cap->pad = vin->digital.sink_pad;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+ 
+@@ -629,7 +629,7 @@ static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	edid->pad = vin->sink_pad_idx;
++	edid->pad = vin->digital.sink_pad;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, get_edid, edid);
+ 
+@@ -647,7 +647,7 @@ static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+ 	if (edid->pad)
+ 		return -EINVAL;
+ 
+-	edid->pad = vin->sink_pad_idx;
++	edid->pad = vin->digital.sink_pad;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, set_edid, edid);
+ 
+@@ -920,19 +920,19 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
+ 
+-	vin->src_pad_idx = 0;
++	vin->digital.source_pad = 0;
+ 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+ 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
+ 			break;
+ 	if (pad_idx >= sd->entity.num_pads)
+ 		return -EINVAL;
+ 
+-	vin->src_pad_idx = pad_idx;
++	vin->digital.source_pad = pad_idx;
+ 
+-	vin->sink_pad_idx = 0;
++	vin->digital.sink_pad = 0;
+ 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+ 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
+-			vin->sink_pad_idx = pad_idx;
++			vin->digital.sink_pad = pad_idx;
+ 			break;
+ 		}
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 727e215c08718eb9..9bfb5a7c4dc4f215 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -74,6 +74,8 @@ struct rvin_video_format {
+  * @subdev:	subdevice matched using async framework
+  * @code:	Media bus format from source
+  * @mbus_cfg:	Media bus format from DT
++ * @source_pad:	source pad of remote subdevice
++ * @sink_pad:	sink pad of remote subdevice
+  */
+ struct rvin_graph_entity {
+ 	struct v4l2_async_subdev asd;
+@@ -81,6 +83,9 @@ struct rvin_graph_entity {
+ 
+ 	u32 code;
+ 	struct v4l2_mbus_config mbus_cfg;
 +
-+	/* Count number of free buffers */
-+	bufs = 0;
-+	list_for_each_entry_safe(buf, node, &vin->buf_list, list)
-+		bufs++;
-+
-+	/* Continuous capture requires more buffers then there are HW slots */
-+	vin->continuous = bufs > HW_BUFFER_NUM;
-+
-+	if (!rvin_fill_hw(vin)) {
-+		vin_err(vin, "HW not ready to start, not enough buffers available\n");
-+		return -EINVAL;
-+	}
++	unsigned int source_pad;
++	unsigned int sink_pad;
+ };
  
- 	rvin_crop_scale_comp(vin);
+ /**
+@@ -91,8 +96,6 @@ struct rvin_graph_entity {
+  *
+  * @vdev:		V4L2 video device associated with VIN
+  * @v4l2_dev:		V4L2 device
+- * @src_pad_idx:	source pad index for media controller drivers
+- * @sink_pad_idx:	sink pad index for media controller drivers
+  * @ctrl_handler:	V4L2 control handler
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+@@ -121,8 +124,6 @@ struct rvin_dev {
  
-@@ -1061,22 +1075,7 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	vin->state = RUNNING;
- 	vin->sequence = 0;
- 
--	/* Continuous capture requires more buffers then there are HW slots */
--	vin->continuous = count > HW_BUFFER_NUM;
--
--	/*
--	 * This should never happen but if we don't have enough
--	 * buffers for HW bail out
--	 */
--	if (!rvin_fill_hw(vin)) {
--		vin_err(vin, "HW not ready to start, not enough buffers available\n");
--		ret = -EINVAL;
--		goto out;
--	}
--
- 	ret = rvin_capture_start(vin);
--out:
--	/* Return all buffers if something went wrong */
- 	if (ret) {
- 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
- 		v4l2_subdev_call(sd, video, s_stream, 0);
+ 	struct video_device vdev;
+ 	struct v4l2_device v4l2_dev;
+-	int src_pad_idx;
+-	int sink_pad_idx;
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity digital;
 -- 
 2.12.0
