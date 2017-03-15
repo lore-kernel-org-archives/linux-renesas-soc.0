@@ -1,73 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753449AbdCTJAR (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55136 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751509AbdCOSNX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:00:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/31] ARM: dts: r8a7793: Tidyup Audio-DMAC channel for DVC
-Date: Mon, 20 Mar 2017 09:58:00 +0100
-Message-Id: <d2b10f99962aa5ec9865a77827931bf20211a39c.1489999063.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Wed, 15 Mar 2017 14:13:23 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <87tw6wd7bq.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1coDQB-0002Aq-QS@debutante>
+Date: Wed, 15 Mar 2017 18:13:15 +0000
+Subject: Applied "ASoC: rcar: clear DE bit only in PDMACHCR when it stops" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The patch
+
+   ASoC: rcar: clear DE bit only in PDMACHCR when it stops
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 62a10498afb27370ec6018e9d802b74850fd8d9a Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 14 Mar 2017 09:34:49 +0900
+Subject: [PATCH] ASoC: rcar: clear DE bit only in PDMACHCR when it stops
 
-Current	Audio-DMAC is assigned "rx" as Audio-DMAC0, "tx" as Audio-DMAC1.
-Thus, DVC "tx" should be assigned as Audio-DMAC1, instead of Audio-DMAC0.
-
-Because of this, current platform board (using SRC/DVC/SSI)
-Playback/Capture both will use same Audio-DMAC0
-(but it depends on audio data path).
-
-First note is that this "rx" and "tx" are from each IP point,
-it doesn't mean Playback/Capture.
-Second note is that Audio DMAC assigned on DT is only for
-Audio-DMAC, Audio-DMAC-peri-peri has no entry.
-
-=> Audio-DMAC
--> Audio-DMAC-peri-peri
--- HW connection
-
-Playback case
-
-	[Mem] => [SRC]--[DVC] -> [SSI]--[Codec]
-	      rx ~~~~~~~~~~~~
-Capture
-
-	[Mem] <= [DVC]--[SRC] <- [SSI]--[Codec]
-	      tx ~~~~~~~~~~~~
+R-Car datasheet indicates "Clear DE in PDMACHCR" for transfer stop,
+but current code clears all bits in PDMACHCR.
+Because of this, DE bit might never been cleared,
+and it causes CMD overflow. This patch fixes this issue.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/sh/rcar/dma.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 38506f563b2b..53c89b47eaf0 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1425,11 +1425,11 @@
+diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
+index 1f405c833867..c2e199b4fcf4 100644
+--- a/sound/soc/sh/rcar/dma.c
++++ b/sound/soc/sh/rcar/dma.c
+@@ -454,6 +454,20 @@ static u32 rsnd_dmapp_read(struct rsnd_dma *dma, u32 reg)
+ 	return ioread32(rsnd_dmapp_addr(dmac, dma, reg));
+ }
  
- 		rcar_sound,dvc {
- 			dvc0: dvc-0 {
--				dmas = <&audma0 0xbc>;
-+				dmas = <&audma1 0xbc>;
- 				dma-names = "tx";
- 			};
- 			dvc1: dvc-1 {
--				dmas = <&audma0 0xbe>;
-+				dmas = <&audma1 0xbe>;
- 				dma-names = "tx";
- 			};
- 		};
++static void rsnd_dmapp_bset(struct rsnd_dma *dma, u32 data, u32 mask, u32 reg)
++{
++	struct rsnd_mod *mod = rsnd_mod_get(dma);
++	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
++	struct rsnd_dma_ctrl *dmac = rsnd_priv_to_dmac(priv);
++	volatile void __iomem *addr = rsnd_dmapp_addr(dmac, dma, reg);
++	u32 val = ioread32(addr);
++
++	val &= ~mask;
++	val |= (data & mask);
++
++	iowrite32(val, addr);
++}
++
+ static int rsnd_dmapp_stop(struct rsnd_mod *mod,
+ 			   struct rsnd_dai_stream *io,
+ 			   struct rsnd_priv *priv)
+@@ -461,10 +475,10 @@ static int rsnd_dmapp_stop(struct rsnd_mod *mod,
+ 	struct rsnd_dma *dma = rsnd_mod_to_dma(mod);
+ 	int i;
+ 
+-	rsnd_dmapp_write(dma, 0, PDMACHCR);
++	rsnd_dmapp_bset(dma, 0,  PDMACHCR_DE, PDMACHCR);
+ 
+ 	for (i = 0; i < 1024; i++) {
+-		if (0 == rsnd_dmapp_read(dma, PDMACHCR))
++		if (0 == (rsnd_dmapp_read(dma, PDMACHCR) & PDMACHCR_DE))
+ 			return 0;
+ 		udelay(1);
+ 	}
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
