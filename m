@@ -1,65 +1,133 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:58776 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753444AbdCFQ2F (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35748 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751509AbdCOJ3e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 11:28:05 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vcQDS3LSyzMs5Yh
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Mar 2017 17:27:20 +0100 (CET)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dt-bindings: drm: rcar-du: Document optional reset properties
-Date: Mon,  6 Mar 2017 17:25:56 +0100
-Message-Id: <1488817556-21410-1-git-send-email-geert+renesas@glider.be>
+        Wed, 15 Mar 2017 05:29:34 -0400
+Received: by mail-lf0-f47.google.com with SMTP id j90so4329681lfk.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Mar 2017 02:29:32 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Wed, 15 Mar 2017 10:29:30 +0100
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 03/16] rcar-vin: fix how pads are handled for v4l2
+ subdevice operations
+Message-ID: <20170315092930.GU20587@bigcity.dyn.berto.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170314185957.25253-4-niklas.soderlund+renesas@ragnatech.se>
+ <1fcdfc89-6c85-3863-6fd0-e6db4ec9072c@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1fcdfc89-6c85-3863-6fd0-e6db4ec9072c@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the optional properties for describing module resets, to
-support resetting display channels and LVDS encoders on R-Car Gen2 and
-Gen3.
+Hi Sergei,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-See "[v2,1/4] dt-bindings: clock: renesas: cpg-mssr: Document reset control
-support" (https://patchwork.kernel.org/patch/9536627/) for the format of
-a reset specifier in the Renesas CPG/MSSR case.
+Thanks for your feedback.
 
-E.g. "resets = <&cpg 310>;"
+On 2017-03-15 12:12:21 +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 3/14/2017 9:59 PM, Niklas S�derlund wrote:
+> 
+> > The rcar-vin driver only uses one pad, pad number 0.
+> > 
+> > - All v4l2 operations that did not check that the requested operation
+> >   was for pad 0 have been updated with a check to enforce this.
+> > 
+> > - All v4l2 operations that stored (and later restore) the requested pad
+> 
+>    Restored?
 
-v2:
-  - s/phandles/phandle/.
----
- Documentation/devicetree/bindings/display/renesas,du.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Will update for v2.
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index 1a02f099a0ff0a3a..3db418c827193e82 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -36,6 +36,16 @@ Required Properties:
-       When supplied they must be named "dclkin.x" with "x" being the input
-       clock numerical index.
- 
-+Optional properties:
-+  - resets: A list of phandle + reset-specifier pairs, one for each entry in
-+    the reset-names property.
-+  - reset-names: Names of the resets. This property is model-dependent.
-+    - R8A779[0123456] use one reset for a group of one or more successive
-+      channels, and one reset per LVDS encoder (if available). The resets
-+      must be named "du.x" with "x" being the numerical index of the lowest
-+      channel in the group. The LVDS resets must be named "lvds.x" with "x"
-+      being the LVDS encoder numerical index.
-+
- Required nodes:
- 
- The connections to the DU output video ports are modeled using the OF graph
+> 
+> >   before substituting it for the subdevice pad number have been updated
+> >   to not store the incoming pad and simply restore it to 0 after the
+> >   subdevice operation is complete.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-v4l2.c | 26 ++++++++++++++------------
+> >  1 file changed, 14 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > index 7ca27599b9982ffc..610f59e2a9142622 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > @@ -550,14 +550,16 @@ static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+> >  {
+> >  	struct rvin_dev *vin = video_drvdata(file);
+> >  	struct v4l2_subdev *sd = vin_to_source(vin);
+> > -	int pad, ret;
+> > +	int ret;
+> > +
+> > +	if (timings->pad)
+> > +		return -EINVAL;
+> > 
+> > -	pad = timings->pad;
+> >  	timings->pad = vin->sink_pad_idx;
+> > 
+> >  	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+> 
+>    Does this still compile after you removed 'pad'?
+
+Yes, the pad in v4l2_subdev_call() do not refer to the pad variable but 
+the pad operations of the subdevice ops struct, the macro is defined as:
+
+#define v4l2_subdev_call(sd, o, f, args...)                     \
+        (!(sd) ? -ENODEV : (((sd)->ops->o && (sd)->ops->o->f) ? \
+                (sd)->ops->o->f((sd), ##args) : -ENOIOCTLCMD))
+
+So if you expand the macro it looks like:
+
+sd->ops->pad->enum_dv_timings(timings);
+
+I agree it's confusing and I had the same thought the first times I 
+looked at it too :-)
+
+> 
+> > 
+> > -	timings->pad = pad;
+> > +	timings->pad = 0;
+> > 
+> >  	return ret;
+> >  }
+> > @@ -600,14 +602,16 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+> >  {
+> >  	struct rvin_dev *vin = video_drvdata(file);
+> >  	struct v4l2_subdev *sd = vin_to_source(vin);
+> > -	int pad, ret;
+> > +	int ret;
+> > +
+> > +	if (cap->pad)
+> > +		return -EINVAL;
+> > 
+> > -	pad = cap->pad;
+> >  	cap->pad = vin->sink_pad_idx;
+> > 
+> >  	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+> 
+>    And this?
+> 
+> > 
+> > -	cap->pad = pad;
+> > +	cap->pad = 0;
+> > 
+> >  	return ret;
+> >  }
+> [...]
+> 
+> MBR, Sergei
+> 
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
