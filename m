@@ -1,44 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753393AbdCTI7v (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34084 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752647AbdCOJhI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/31] ARM: dts: r8a7745: Fix SCIFB0 dmas indentation
-Date: Mon, 20 Mar 2017 09:57:42 +0100
-Message-Id: <ad20bb6868f1d29f9c911f14087be4f93c098604.1489999062.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Wed, 15 Mar 2017 05:37:08 -0400
+Received: by mail-lf0-f53.google.com with SMTP id z15so4423665lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Mar 2017 02:37:06 -0700 (PDT)
+Subject: Re: [PATCH v3 06/27] rcar-vin: move max width and height information
+ to chip information
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170314190308.25790-7-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e30bf8c4-fc62-c216-15d6-b0349794c859@cogentembedded.com>
+Date: Wed, 15 Mar 2017 12:37:04 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170314190308.25790-7-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 3/14/2017 10:02 PM, Niklas Söderlund wrote:
 
-Fixes: e0d2da54c4d01ba2 ("ARM: dts: r8a7745: add [H]SCIF{|A|B} support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Gen3 the max supported width and height will be different from Gen2.
+> Move the limits to the struct chip_info to prepare for Gen3 support.
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 1f65ff68a469..25175a74b6b7 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -277,7 +277,7 @@
- 			clocks = <&cpg CPG_MOD 206>;
- 			clock-names = "fck";
- 			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
--		       <&dmac1 0x3d>, <&dmac1 0x3e>;
-+			       <&dmac1 0x3d>, <&dmac1 0x3e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
- 			status = "disabled";
--- 
-2.7.0.rc3.207.g0ac5344
+    Maybe rvin_info?
+
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
+>  drivers/media/platform/rcar-vin/rcar-vin.h  | 6 ++++++
+>  3 files changed, 14 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index ec1eb723d401fda2..998617711f1ad045 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -257,14 +257,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+>
+>  static const struct rvin_info rcar_info_h1 = {
+>  	.chip = RCAR_H1,
+> +	.max_width = 2048,
+> +	.max_height = 2048,
+>  };
+>
+>  static const struct rvin_info rcar_info_m1 = {
+>  	.chip = RCAR_M1,
+> +	.max_width = 2048,
+> +	.max_height = 2048,
+>  };
+>
+>  static const struct rvin_info rcar_info_gen2 = {
+>  	.chip = RCAR_GEN2,
+> +	.max_width = 2048,
+> +	.max_height = 2048,
+>  };
+>
+>  static const struct of_device_id rvin_of_id_table[] = {
+[...]
+
+MBR, Sergei
