@@ -1,17 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:32887 "EHLO
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33651 "EHLO
         mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751384AbdCPMt3 (ORCPT
+        with ESMTP id S1751384AbdCPMtC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Mar 2017 08:49:29 -0400
+        Thu, 16 Mar 2017 08:49:02 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWNYqNxcBHTNiTyDe3ZED0L07z4AhRiOcfNBj4QiMJ9Ag@mail.gmail.com>
+In-Reply-To: <e5214bac-7bf9-1897-cf9f-f4735e6985e9@cogentembedded.com>
 References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
- <1489423302-21296-2-git-send-email-geert+renesas@glider.be>
- <e5214bac-7bf9-1897-cf9f-f4735e6985e9@cogentembedded.com> <CAMuHMdWNYqNxcBHTNiTyDe3ZED0L07z4AhRiOcfNBj4QiMJ9Ag@mail.gmail.com>
+ <1489423302-21296-2-git-send-email-geert+renesas@glider.be> <e5214bac-7bf9-1897-cf9f-f4735e6985e9@cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Mar 2017 13:49:26 +0100
-Message-ID: <CAMuHMdX2XQDog5GtM+QrJ-zKf82Tmtj1JNfiDT5mg7MgLR0m=g@mail.gmail.com>
+Date: Thu, 16 Mar 2017 13:49:00 +0100
+Message-ID: <CAMuHMdWNYqNxcBHTNiTyDe3ZED0L07z4AhRiOcfNBj4QiMJ9Ag@mail.gmail.com>
 Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Fix hscif2_clk_b and hscif4_ctrl
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -23,11 +22,18 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 16, 2017 at 1:49 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hei Sergey,
+Hei Sergey,
 
-"Hi Sergei", of course.
+On Mon, Mar 13, 2017 at 5:57 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 03/13/2017 07:41 PM, Geert Uytterhoeven wrote:
+>
+>> Fix typos in hscif2_clk_[bc]_mux[] and hscif4_ctrl_mux[].
+>
+>    Only seeing hscif2_clk_b_mux[] fix...
+
+Thanks for noticing, I had copied this line from another patch for r8a7796,
+but forgot to update it.
 
 Gr{oetje,eeting}s,
 
