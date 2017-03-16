@@ -1,69 +1,26 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:63543 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752317AbdCDWim (ORCPT
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36114 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbdCPDSb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Mar 2017 17:38:42 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v6 2/3] watchdog: renesas-wdt: add support for rza
-Date: Sat,  4 Mar 2017 17:37:36 -0500
-Message-Id: <20170304223737.20419-3-chris.brandt@renesas.com>
-In-Reply-To: <20170304223737.20419-1-chris.brandt@renesas.com>
-References: <20170304223737.20419-1-chris.brandt@renesas.com>
+        Wed, 15 Mar 2017 23:18:31 -0400
+From: Matthew Giassa <matthew@giassa.net>
+To: wsa@the-dreams.de
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        matthew@giassa.net
+Subject: [PATCHv5 0/4] Staging: ks7010: ks_wlan_ioctl.h: checkpatch fixes
+Date: Wed, 15 Mar 2017 20:18:07 -0700
+Message-Id: <1489634291-30028-1-git-send-email-matthew@giassa.net>
+In-Reply-To: <20170316024246.GA19641@kroah.com>
+References: <20170316024246.GA19641@kroah.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the WDT hardware in the RZ/A series.
+The following patches address all outstanding checkpatch warnings/errors
+present in drivers/staging/ks7010/ks_wlan_ioctl.h.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
----
-v3:
-* Add Acked-by, Reviewed-by.
-v2:
-* added to renesas-wdt.txt instead of creating a new file
-* changed commit title
-* added "renesas,rza-wdt" as a fallback
-* added interrupts property
----
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index da24e31..9e306af 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -2,10 +2,11 @@ Renesas Watchdog Timer (WDT) Controller
- 
- Required properties:
- - compatible : Should be "renesas,<soctype>-wdt", and
--	       "renesas,rcar-gen3-wdt" as fallback.
-+	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
- 	       Examples with soctypes are:
- 	         - "renesas,r8a7795-wdt" (R-Car H3)
- 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
-+	         - "renesas,r7s72100-wdt" (RZ/A1)
- 
-   When compatible with the generic version, nodes must list the SoC-specific
-   version corresponding to the platform first, followed by the generic
-@@ -17,6 +18,7 @@ Required properties:
- Optional properties:
- - timeout-sec : Contains the watchdog timeout in seconds
- - power-domains : the power domain the WDT belongs to
-+- interrupts: Some WDTs have an interrupt when used in interval timer mode
- 
- Examples:
- 
--- 
-2.10.1
+This change set has been rebased off of the current master
+(69eea5a4ab9c705496e912b55a9d312325de19e6) as per an earlier request,
+and the change log formatting has been slightly changed, as per Tobin's
+advice.
