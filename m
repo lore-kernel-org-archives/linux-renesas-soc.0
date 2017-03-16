@@ -1,76 +1,107 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:34738 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753237AbdCFJaz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 04:30:55 -0500
-Received: by mail-wm0-f45.google.com with SMTP id 196so17101936wmm.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Mar 2017 01:30:49 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
-References: <148549764733.22203.16459470412085471955.sendpatchset@little-apple>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 6 Mar 2017 18:00:03 +0900
-Message-ID: <CANqRtoQR3S=MbVE91s5Ku=XZZ6XxpPFUfZ0FYFxiEcqts5N-pA@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 0/4] iommu/ipmmu-vmsa: IPMMU slave device whitelist V2
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        joro <joro@8bytes.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Matthew Giassa <matthew@giassa.net>
+To: wsa@the-dreams.de
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        matthew@giassa.net
+Subject: [PATCHv5 4/4] Staging: ks7010: ks_wlan_ioctl.h: Wrap complex macros with parentheses
+Date: Wed, 15 Mar 2017 20:18:11 -0700
+Message-Id: <1489634291-30028-5-git-send-email-matthew@giassa.net>
+In-Reply-To: <1489634291-30028-1-git-send-email-matthew@giassa.net>
+References: <20170316024246.GA19641@kroah.com>
+ <1489634291-30028-1-git-send-email-matthew@giassa.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 27, 2017 at 3:14 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> iommu/ipmmu-vmsa: IPMMU slave device whitelist V2
->
-> [PATCH/RFC v2 1/4] iommu/of: Skip IOMMU devices disabled in DT
-> [PATCH/RFC v2 2/4] iommu/ipmmu-vmsa: Get rid of disabled device check
-> [PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Check devices in xlate()
-> [PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Opt-in slave devices based on ES version
->
-> Here's an updated prototype that shows how DT integration of IPMMU details
-> may be integrated and merged upstream based on SoC data sheet ahead of
-> time followed by enablement in the IPMMU driver code once the appropriate
-> SoC ES version has been released and the hardware has been tested.
->
-> Changes since V1:
->  - Broke out patch 1 from the IPMMU driver
->  - Moved slave device check from ->add_device() to ->xlate() (Thanks Robin!)
->  - Updated white list patch to hook into ->xlate()
->
-> Patch 1 may be suitable for upstream merge, however other patches should
-> in the future if agreed on be rolled into the IPMMU driver series.
+Wrapping all complex macros with parentheses to resolve checkpatch
+errors. This change, along with the preceding changes in this change
+set, resolves all checkpatch warnings and errors for the file.
 
-Hi Geert, everyone,
+Signed-off-by: Matthew Giassa <matthew@giassa.net>
+---
+ drivers/staging/ks7010/ks_wlan_ioctl.h | 64 +++++++++++++++++-----------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-Do you have any opinion about the code in this version of the series?
-
-I recall that you agreed with the approach in "[PATCH/RFC 2/2]
-iommu/ipmmu-vmsa: Opt-in slave devices based on ES version", however
-it was suggested to me by Robin that my code in "[PATCH/RFC 1/2]
-arm64: mm: Silently allow devices lacking IOMMU group" should be
-reworked to use ->xlate().
-
-Now this series makes use of ->xlate() to implement the white list, so
-I hope that makes everyone happy.
-
-Also, based on your suggestion I finally managed to break out the code
-that skips over disabled devices in "[PATCH/RFC v2 1/4] iommu/of: Skip
-IOMMU devices disabled in DT" but I'm not sure if this will cause
-problem for other platforms.
-
-Anyway, my current plan is to wait for feedback for "[PATCH/RFC v2
-1/4] iommu/of: Skip IOMMU devices disabled in DT" and handle that
-independently, and also roll in the other changes in this series into
-my other IPMMU code.
-
-Thanks,
-
-/ magnus
+diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
+index 1251d7e..adc935d 100644
+--- a/drivers/staging/ks7010/ks_wlan_ioctl.h
++++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
+@@ -15,43 +15,43 @@
+ #include <linux/wireless.h>
+ /* The low order bit identify a SET (0) or a GET (1) ioctl.  */
+ 
+-/*					SIOCIWFIRSTPRIV + 0 */
+-/* former KS_WLAN_GET_DRIVER_VERSION	SIOCIWFIRSTPRIV + 1 */
+-/*					SIOCIWFIRSTPRIV + 2 */
+-#define KS_WLAN_GET_FIRM_VERSION	SIOCIWFIRSTPRIV + 3
++/*					(SIOCIWFIRSTPRIV + 0) */
++/* former KS_WLAN_GET_DRIVER_VERSION	(SIOCIWFIRSTPRIV + 1) */
++/*					(SIOCIWFIRSTPRIV + 2) */
++#define KS_WLAN_GET_FIRM_VERSION	(SIOCIWFIRSTPRIV + 3)
+ #ifdef WPS
+-#define KS_WLAN_SET_WPS_ENABLE		SIOCIWFIRSTPRIV + 4
+-#define KS_WLAN_GET_WPS_ENABLE		SIOCIWFIRSTPRIV + 5
+-#define KS_WLAN_SET_WPS_PROBE_REQ	SIOCIWFIRSTPRIV + 6
++#define KS_WLAN_SET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 4)
++#define KS_WLAN_GET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 5)
++#define KS_WLAN_SET_WPS_PROBE_REQ	(SIOCIWFIRSTPRIV + 6)
+ #endif
+-#define KS_WLAN_GET_EEPROM_CKSUM	SIOCIWFIRSTPRIV + 7
+-#define KS_WLAN_SET_PREAMBLE		SIOCIWFIRSTPRIV + 8
+-#define KS_WLAN_GET_PREAMBLE		SIOCIWFIRSTPRIV + 9
+-#define KS_WLAN_SET_POWER_SAVE		SIOCIWFIRSTPRIV + 10
+-#define KS_WLAN_GET_POWER_SAVE		SIOCIWFIRSTPRIV + 11
+-#define KS_WLAN_SET_SCAN_TYPE		SIOCIWFIRSTPRIV + 12
+-#define KS_WLAN_GET_SCAN_TYPE		SIOCIWFIRSTPRIV + 13
+-#define KS_WLAN_SET_RX_GAIN		SIOCIWFIRSTPRIV + 14
+-#define KS_WLAN_GET_RX_GAIN		SIOCIWFIRSTPRIV + 15
+-#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV + 16	/* unused */
+-//#define KS_WLAN_SET_REGION            SIOCIWFIRSTPRIV + 17
+-#define KS_WLAN_SET_BEACON_LOST		SIOCIWFIRSTPRIV + 18
+-#define KS_WLAN_GET_BEACON_LOST		SIOCIWFIRSTPRIV + 19
++#define KS_WLAN_GET_EEPROM_CKSUM	(SIOCIWFIRSTPRIV + 7)
++#define KS_WLAN_SET_PREAMBLE		(SIOCIWFIRSTPRIV + 8)
++#define KS_WLAN_GET_PREAMBLE		(SIOCIWFIRSTPRIV + 9)
++#define KS_WLAN_SET_POWER_SAVE		(SIOCIWFIRSTPRIV + 10)
++#define KS_WLAN_GET_POWER_SAVE		(SIOCIWFIRSTPRIV + 11)
++#define KS_WLAN_SET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 12)
++#define KS_WLAN_GET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 13)
++#define KS_WLAN_SET_RX_GAIN		(SIOCIWFIRSTPRIV + 14)
++#define KS_WLAN_GET_RX_GAIN		(SIOCIWFIRSTPRIV + 15)
++#define KS_WLAN_HOSTT			(SIOCIWFIRSTPRIV + 16) /* unused */
++//#define KS_WLAN_SET_REGION            (SIOCIWFIRSTPRIV + 17)
++#define KS_WLAN_SET_BEACON_LOST		(SIOCIWFIRSTPRIV + 18)
++#define KS_WLAN_GET_BEACON_LOST		(SIOCIWFIRSTPRIV + 19)
+ 
+-#define KS_WLAN_SET_TX_GAIN		SIOCIWFIRSTPRIV + 20
+-#define KS_WLAN_GET_TX_GAIN		SIOCIWFIRSTPRIV + 21
++#define KS_WLAN_SET_TX_GAIN		(SIOCIWFIRSTPRIV + 20)
++#define KS_WLAN_GET_TX_GAIN		(SIOCIWFIRSTPRIV + 21)
+ 
+ /* for KS7010 */
+-#define KS_WLAN_SET_PHY_TYPE		SIOCIWFIRSTPRIV + 22
+-#define KS_WLAN_GET_PHY_TYPE		SIOCIWFIRSTPRIV + 23
+-#define KS_WLAN_SET_CTS_MODE		SIOCIWFIRSTPRIV + 24
+-#define KS_WLAN_GET_CTS_MODE		SIOCIWFIRSTPRIV + 25
+-/*					SIOCIWFIRSTPRIV + 26 */
+-/*					SIOCIWFIRSTPRIV + 27 */
+-#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV + 28	/* sleep mode */
+-#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV + 29	/* sleep mode */
+-/*					SIOCIWFIRSTPRIV + 30 */
+-/*					SIOCIWFIRSTPRIV + 31 */
++#define KS_WLAN_SET_PHY_TYPE		(SIOCIWFIRSTPRIV + 22)
++#define KS_WLAN_GET_PHY_TYPE		(SIOCIWFIRSTPRIV + 23)
++#define KS_WLAN_SET_CTS_MODE		(SIOCIWFIRSTPRIV + 24)
++#define KS_WLAN_GET_CTS_MODE		(SIOCIWFIRSTPRIV + 25)
++/*					(SIOCIWFIRSTPRIV + 26) */
++/*					(SIOCIWFIRSTPRIV + 27) */
++#define KS_WLAN_SET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 28) /* sleep mode */
++#define KS_WLAN_GET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 29) /* sleep mode */
++/*					(SIOCIWFIRSTPRIV + 30) */
++/*					(SIOCIWFIRSTPRIV + 31) */
+ 
+ #ifdef __KERNEL__
+ 
+-- 
+2.7.4
