@@ -1,93 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:32992 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751677AbdCCRpD (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35437 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752014AbdCPLL1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 12:45:03 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v5 0/3] watchdog: add wdt and reset for renesas r7s72100
-Date: Fri,  3 Mar 2017 12:31:58 -0500
-Message-Id: <20170303173201.5597-1-chris.brandt@renesas.com>
+        Thu, 16 Mar 2017 07:11:27 -0400
+Date: Thu, 16 Mar 2017 12:00:17 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/topic/sdhi-dma-sync-v3 for renesas drivers
+Message-ID: <20170316110013.kmjytn4jipo6sacj@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4z22ftpwp7zrr2g6"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some Renesas SoCs do not have a reset register and the only way to do a SW
-controlled reset is to use the watchdog timer. So while this series started
-out by only adding a reset feature, now it's a full watchdog timer driver that
-includes a reset handler.
 
-The longest WDT overflow you can get with a RZ/A1 (R7S72100) with its 8-bit
-wide counter is 125ms. Not very long.
+--4z22ftpwp7zrr2g6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-However, by setting max_hw_heartbeat_ms, the watchdog core will now handle
-pinging the WDT automatically and allow the user to set times as big as they
-want. Therefore, the default timeout for this driver is 30 seconds.
+Hi Geert,
 
-Of course if system interrupts are disabled too long and wdt can't be pinged
-by the watchdog core, then the system will reset before the user specified
-timeout. But hey, it's better nothing.
+here is an updated topic branch (v3 instead of v2) for renesas-drivers,
+also rebased to current mmc/next. Please pull.
 
-This driver was tested on an RZ/A1 RSK board using watchdog-simple.c from
-samples/watchdog/.
+Kind regards,
 
-v5:
-* rza_wdt.c changes only
-* removed extra lines from file header comments
-* changed (1<<#) to BIT(#)
-* changed #define WTSCR_CKS(i) i to (i)
-* changed format to #define SOMETHING<tab>value (and align values)
-* now check if clock rate < 16384
-* added space before and after '/' for "(1000 * U8_MAX) / rate"
-* changed dev_info to dev_dbg for printing max_hw_heartbeat_ms
-* added watchdog_init_timeout() for user to set timeout in DT
-* switched to using devm_watchdog_register_device()
-* added error message if register fails
-* simplified rza_wdt_probe() return
-* removed function rza_wdt_remove()
+   Wolfram
 
-v4:
-* r7s72100.dtsi: changed from timer@ to watchdog@
 
-v3:
-* changed from a reset driver to a watchdog timer driver
-* use udelay(20) instead of msleep for reset handler
-* added Reviewed-by for r7s72100.dtsi and renesas-wdt.txt
-* added Acked-by for renesas-wdt.txt
+The following changes since commit 05d1ea17f58de925e46d97b305d3cacbb84a0eb6:
 
-v2:
-* added to renesas-wdt.txt instead of creating a new file
-* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
-* changed "renesas,wdt-reset" to "renesas,rza-wdt"
-* added "renesas,rza-wdt" as a fallback
-* added interupt property (even though it is not used)
-* added clocks property
-* changed hard coded register values to defines
-* added msleep to while(1) loop
-* removed unnecessary #include files
-* added Reviewed-by: Geert Uytterhoeven for renesas-reset.c
+  Merge branch 'fixes' into next (2017-03-14 17:19:20 +0100)
 
-Chris Brandt (3):
-  watchdog: add rza_wdt driver
-  watchdog: renesas-wdt: add support for rza
-  ARM: dts: r7s72100: Add watchdog timer
+are available in the git repository at:
 
- .../devicetree/bindings/watchdog/renesas-wdt.txt   |   4 +-
- arch/arm/boot/dts/r7s72100.dtsi                    |   7 +
- drivers/watchdog/Kconfig                           |   8 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/rza_wdt.c                         | 199 +++++++++++++++++++++
- 5 files changed, 218 insertions(+), 1 deletion(-)
- create mode 100644 drivers/watchdog/rza_wdt.c
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-dma-sync-v3
 
--- 
-2.10.1
+for you to fetch changes up to 1309db3202ae35b0372f414dbc50ad6889027b5e:
+
+  mmc: tmio: always unmap DMA before waiting for interrupt (2017-03-16 11:37:58 +0100)
+
+----------------------------------------------------------------
+Wolfram Sang (1):
+      mmc: tmio: always unmap DMA before waiting for interrupt
+
+ drivers/mmc/host/tmio_mmc_dma.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--4z22ftpwp7zrr2g6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljKcD0ACgkQFA3kzBSg
+Kbb89w//ap/lgfDhkKPEJxq3HWAtv89DOo75BVx6icN2kXww47VFoQCOz1HZzDR/
+9ujb+wRbDeoJFCe2m6m8WI6yCF5NULELYMiEChYCTsgq6BBXK7ZBRNMEJgnKq6OU
+3brNrQ4yZPxhPBamyQpryr43bvakzK8kEdD5240C3KwLCg1phrQiTtgLyljt7FIO
+ePi6kzThwTFjTTIvt+/Su9gk6lrvQ0QyTuhcgLWn5CJECxxMwXfYMa29TEzqEMdm
+AvbRHmYkrksseY4ycVRzi0M6Jo+cgZb4Ixbnq3seV/7B3CnRDUtupPRsdXdbkv/z
+ZGB+gLc33AqWMlorkUZx4o5VXNs5tPIhKOMWygDA/9PAQ1/81Qe8PAoQtITzVXQl
+YXrJ8p2wN00ZifitUTCzUgHw94hrQC5Sl9/ncjy1PydV8QSdR0FWAgijgiwxn+HJ
+k4UE+Ndmh9OyJPcX3LND9ekWffQsyS8HiBM7iatMEpc3jUCTg/j9iQcKs/EU7cuo
+O27s//Fo5S6bIgr6+sJNRRM5oFVlt8y3R88MNuUwDXB/a2hoNvZJtghxf6/SDnzD
+oF5i0WINJYKib9GJDXnvSPgT+0aSyLuXQ+WikjlC6B5mt0+raoC+bQ7qTPdmFyNi
+dpum/MTeB8CXbEijUqPaxdvGjXKms8xjBV0g4OApZHU5pTOvWq4=
+=JcZM
+-----END PGP SIGNATURE-----
+
+--4z22ftpwp7zrr2g6--
