@@ -1,149 +1,118 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:43904 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754418AbdCMRMi (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 13:12:38 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] clk: renesas: cpg-mssr: Add support for fixing up clock tables
-Date: Mon, 13 Mar 2017 18:12:30 +0100
-Message-Id: <1489425153-22623-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
+Date: Thu, 16 Mar 2017 14:43:57 +0000
+Message-ID: <SG2PR06MB11659B314B3B385F4B2835728A260@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB1165969D5D3072A3A19DEDCE8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <6804f0d9-3768-c792-e4c7-2512fac83d2d@jmondi.org>
+In-Reply-To: <6804f0d9-3768-c792-e4c7-2512fac83d2d@jmondi.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The same SoC may have different clocks and/or module clock parents,
-depending on SoC revision.  One option is to use different sets of clock
-tables for each SoC revision.  However, if the differences are small, it
-is much more space-efficient to have a single set of clock tables, and
-fix those up at runtime instead.
+Hi Jacopo,
 
-Hence provide three helpers:
-  - Two helpers to NULLify core and module clocks that do not exist on
-    some revisions (NULLified clocks are skipped during the registration
-    phase),
-  - One helper to reparent module clocks that have different clock
-    parents.
+> > I would suggest:
+> >    PIBC_REG =3D 1 /* always gets set for GPIO mode */
+> >  input:
+> >    PM_REG =3D 1
+> >    PBDC_REG =3D 0
+> > output:
+> >    PM_REG =3D 0
+> >    PBDC_REG =3D 1
+> >
+>=20
+> I assumed "set_direction()" to always be called after a "request()", so
+> that the pin is always in reset state.
+> This is obviously not true, so I'm going to fix this as you suggested.
+> I'm just wondering why we should keep input buffer enabled even if we're
+> running in output mode. This seems to be "safe" according to TRM but I'm =
+a
+> bit afraid of unexpected consequences (am I too paranoid?)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Drop RFC state.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 50 ++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.h | 22 +++++++++++++++
- 2 files changed, 72 insertions(+)
+In the hardware manual, look at "Table 54.4 PPRnm Read Values"
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index eadcbd43ff88319b..99eeec6f24ec6c6b 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -265,6 +265,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 	WARN_DEBUG(id >= priv->num_core_clks);
- 	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
- 
-+	if (!core->name) {
-+		/* Skip NULLified clock */
-+		return;
-+	}
-+
- 	switch (core->type) {
- 	case CLK_TYPE_IN:
- 		clk = of_clk_get_by_name(priv->dev->of_node, core->name);
-@@ -335,6 +340,11 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	WARN_DEBUG(mod->parent >= priv->num_core_clks + priv->num_mod_clks);
- 	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
- 
-+	if (!mod->name) {
-+		/* Skip NULLified clock */
-+		return;
-+	}
-+
- 	parent = priv->clks[mod->parent];
- 	if (IS_ERR(parent)) {
- 		clk = parent;
-@@ -734,5 +744,45 @@ static int __init cpg_mssr_init(void)
- 
- subsys_initcall(cpg_mssr_init);
- 
-+void __init cpg_core_nullify_range(struct cpg_core_clk *core_clks,
-+				   unsigned int num_core_clks,
-+				   unsigned int first_clk,
-+				   unsigned int last_clk)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < num_core_clks; i++)
-+		if (core_clks[i].id >= first_clk &&
-+		    core_clks[i].id <= last_clk)
-+			core_clks[i].name = NULL;
-+}
-+
-+void __init mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
-+			     unsigned int num_mod_clks,
-+			     const unsigned int *clks, unsigned int n)
-+{
-+	unsigned int i, j;
-+
-+	for (i = 0, j = 0; i < num_mod_clks && j < n; i++)
-+		if (mod_clks[i].id == clks[j]) {
-+			mod_clks[i].name = NULL;
-+			j++;
-+		}
-+}
-+
-+void __init mssr_mod_reparent(struct mssr_mod_clk *mod_clks,
-+			      unsigned int num_mod_clks,
-+			      const struct mssr_mod_reparent *clks,
-+			      unsigned int n)
-+{
-+	unsigned int i, j;
-+
-+	for (i = 0, j = 0; i < num_mod_clks && j < n; i++)
-+		if (mod_clks[i].id == clks[j].clk) {
-+			mod_clks[i].parent = clks[j].parent;
-+			j++;
-+		}
-+}
-+
- MODULE_DESCRIPTION("Renesas CPG/MSSR Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 4bb7a80c6469e12e..148f4f0aa2a487b0 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -134,4 +134,26 @@ extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
-+
-+
-+    /*
-+     * Helpers for fixing up clock tables depending on SoC revision
-+     */
-+
-+struct mssr_mod_reparent {
-+	unsigned int clk, parent;
-+};
-+
-+
-+extern void cpg_core_nullify_range(struct cpg_core_clk *core_clks,
-+				   unsigned int num_core_clks,
-+				   unsigned int first_clk,
-+				   unsigned int last_clk);
-+extern void mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
-+			     unsigned int num_mod_clks,
-+			     const unsigned int *clks, unsigned int n);
-+extern void mssr_mod_reparent(struct mssr_mod_clk *mod_clks,
-+			      unsigned int num_mod_clks,
-+			      const struct mssr_mod_reparent *clks,
-+			      unsigned int n);
- #endif
--- 
-2.7.4
+When PM_REG is '0', the input buffer value (PIBC_REG) is don't care (X)
+
+
+
+> > I would suggest something like this:
+> >
+> > 	if (bidir)
+> > 		rza1_set_bit(port, PBDC_REG, offset, 1);
+> > 	else {
+> > 		rza1_set_bit(port, PBDC_REG, offset, 0);
+> > 		rza1_set_bit(port, PM_REG, offset, swio_in);
+> > 	}
+> >
+> > 	rza1_set_bit(port, PMC_REG, offset, 1);
+> >
+> >
+>=20
+> This looks nicer, for sure, but from my testing I found out that the
+> sequence reported in section 54.19-c of TRM has to be carefully respected=
+,
+> particularly setting PM after PMC (and iirc setting PBDC before PFC*) Am =
+I
+> wrong? I will give your suggestion spin anyway...
+
+I admit, I didn't really look at the suggested flow that the manual said.
+I just want off the fact that PMC_REG was the last thing being set, so all
+the other registers were irrelevant until that point.
+
+However, you can change the order if you like, as longs as the register
+settings still end up the same way as I outlined.
+
+
+> This apart, you suggestion is tied to your comment on [2/7] on replacing
+> INPUT_EN with BIDIR and introduce SWIO_IN and SWIO_OUT, which I mostly
+> agree on (I'll comment on that as well).
+>=20
+> A sort of middle-ground to get rid of horrible conditions like "if
+> ((!swio_en && input_en) || (swio_en && !input_en))"
+> which requires a 7 lines comments to be explained and I still found
+> obscure after a month I was not looking at it, would be making BIDIR and
+> SWIO_[IN|OUT] exclusive, as if a pin is set to be SWIO it already has
+> direction specified, and if it is said to be BIDIR, it means its directio=
+n
+> is decided by the alternate function, not by software.
+> Does this fly for you?
+
+Yes, my suggestion is to make BIDIR and SWIO_[IN|OUT] exclusive in the DT. =
+You
+only choose one (or nothing). You can specify that in the DT bindings docum=
+ent.
+
+> Do you see cases where those flags may have to be
+> specified together?
+
+There should not be case. Actually...when I went through this, I think the =
+HW manual
+prohibits this anyway...or rather one cancels the other....but I can't reme=
+mber which.
+But, I did spend a good amount of time re-reading the chapter when I was re=
+viewing
+your code.
+
+
+Thank you,
+Chris
+
