@@ -1,232 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/4] ARM: dts: r8a7745: Add reset control properties
-Date: Thu, 16 Mar 2017 15:07:26 +0100
-Message-Id: <1489673246-11015-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489673246-11015-1-git-send-email-geert+renesas@glider.be>
-References: <1489673246-11015-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:22884 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752386AbdCPRvx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 16 Mar 2017 13:51:53 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 5/5] ARM: dts: rskrza1: add rtc DT support
+Date: Thu, 16 Mar 2017 13:51:12 -0400
+Message-Id: <20170316175112.27913-6-chris.brandt@renesas.com>
+In-Reply-To: <20170316175112.27913-1-chris.brandt@renesas.com>
+References: <20170316175112.27913-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add properties to describe the reset topology for on-SoC devices:
-  - Add the "#reset-cells" property to the CPG/MSSR device node,
-  - Add resets and reset-names properties to the various device nodes.
-
-This allows to reset SoC devices using the Reset Controller API.
-
-Note that all resets added match the corresponding module clocks.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
-v2:
-  - No changes.
----
- arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index bca88715fadad81b..2feb0084bb3b1b51 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -62,6 +62,7 @@
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
- 		};
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index 6abb929..dfbb028 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -77,6 +77,10 @@
+ 	status = "okay";
+ };
  
- 		irqc: interrupt-controller@e61c0000 {
-@@ -81,6 +82,7 @@
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 407>;
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
- 		};
- 
- 		timer {
-@@ -102,6 +104,7 @@
- 			clock-names = "extal", "usb_extal";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
- 
- 		prr: chipid@ff000044 {
-@@ -148,6 +151,7 @@
- 			clocks = <&cpg CPG_MOD 219>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -180,6 +184,7 @@
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -195,6 +200,7 @@
- 			       <&dmac1 0x21>, <&dmac1 0x22>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
- 			status = "disabled";
- 		};
- 
-@@ -209,6 +215,7 @@
- 			       <&dmac1 0x25>, <&dmac1 0x26>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
- 
-@@ -223,6 +230,7 @@
- 			       <&dmac1 0x27>, <&dmac1 0x28>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
- 			status = "disabled";
- 		};
- 
-@@ -237,6 +245,7 @@
- 			       <&dmac1 0x1b>, <&dmac1 0x1c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 1106>;
- 			status = "disabled";
- 		};
- 
-@@ -251,6 +260,7 @@
- 			       <&dmac1 0x1f>, <&dmac1 0x20>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 1107>;
- 			status = "disabled";
- 		};
- 
-@@ -265,6 +275,7 @@
- 			       <&dmac1 0x23>, <&dmac1 0x24>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 1108>;
- 			status = "disabled";
- 		};
- 
-@@ -279,6 +290,7 @@
- 			       <&dmac1 0x3d>, <&dmac1 0x3e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
- 			status = "disabled";
- 		};
- 
-@@ -293,6 +305,7 @@
- 			       <&dmac1 0x19>, <&dmac1 0x1a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
- 			status = "disabled";
- 		};
- 
-@@ -307,6 +320,7 @@
- 			       <&dmac1 0x1d>, <&dmac1 0x1e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 216>;
- 			status = "disabled";
- 		};
- 
-@@ -322,6 +336,7 @@
- 			       <&dmac1 0x29>, <&dmac1 0x2a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 721>;
- 			status = "disabled";
- 		};
- 
-@@ -337,6 +352,7 @@
- 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 720>;
- 			status = "disabled";
- 		};
- 
-@@ -352,6 +368,7 @@
- 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 719>;
- 			status = "disabled";
- 		};
- 
-@@ -367,6 +384,7 @@
- 			       <&dmac1 0x2f>, <&dmac1 0x30>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 718>;
- 			status = "disabled";
- 		};
- 
-@@ -382,6 +400,7 @@
- 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 715>;
- 			status = "disabled";
- 		};
- 
-@@ -397,6 +416,7 @@
- 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
- 			status = "disabled";
- 		};
- 
-@@ -412,6 +432,7 @@
- 			       <&dmac1 0x39>, <&dmac1 0x3a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
- 			status = "disabled";
- 		};
- 
-@@ -427,6 +448,7 @@
- 			       <&dmac1 0x4d>, <&dmac1 0x4e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
- 			status = "disabled";
- 		};
- 
-@@ -442,6 +464,7 @@
- 			       <&dmac1 0x3b>, <&dmac1 0x3c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
- 			status = "disabled";
- 		};
- 
-@@ -451,6 +474,7 @@
- 			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 813>;
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 813>;
- 			phy-mode = "rmii";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
++&rtc {
++	status = "okay";
++};
++
+ &scif2 {
+ 	status = "okay";
+ };
 -- 
-2.7.4
-
+2.10.1
