@@ -1,53 +1,39 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/7] arm: dts: genmai: Add RIIC2 pin group
-Date: Fri, 24 Mar 2017 16:22:13 +0100
-Message-Id: <1490368934-12494-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Matthew Giassa <matthew@giassa.net>
+To: wsa@the-dreams.de
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        matthew@giassa.net
+Subject: [PATCHv5 3/4] Staging: ks7010: ks_wlan_ioctl.h: Aligning parameters in function prototypes.
+Date: Wed, 15 Mar 2017 20:18:10 -0700
+Message-Id: <1489634291-30028-4-git-send-email-matthew@giassa.net>
+In-Reply-To: <1489634291-30028-1-git-send-email-matthew@giassa.net>
+References: <20170316024246.GA19641@kroah.com>
+ <1489634291-30028-1-git-send-email-matthew@giassa.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for RIIC2 interface.
+Re-aligning function parameters in function prototypes by inserting
+additional hard-tabs to resolve a checkpatch warning.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Matthew Giassa <matthew@giassa.net>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/staging/ks7010/ks_wlan_ioctl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 569c86a..30992b1 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -44,6 +44,12 @@
- 		renesas,pins = <PIN(3, 0) 6>,
- 			       <PIN(3, 2) 4>;
- 	};
-+
-+	i2c2_pins: i2c2 {
-+		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
-+		renesas,pins = <PIN(1, 4) (1 | BI_DIR)>,
-+			       <PIN(1, 5) (1 | BI_DIR)>;
-+	};
- };
+diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
+index 1b68402..1251d7e 100644
+--- a/drivers/staging/ks7010/ks_wlan_ioctl.h
++++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
+@@ -60,7 +60,7 @@
  
- &extal_clk {
-@@ -62,6 +68,9 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
+ int ks_wlan_read_config_file(struct ks_wlan_private *priv);
+ int ks_wlan_setup_parameter(struct ks_wlan_private *priv,
+-		             unsigned int commit_flag);
++			    unsigned int commit_flag);
  
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
-+
- 	eeprom@50 {
- 		compatible = "renesas,24c128";
- 		reg = <0x50>;
+ #endif /* __KERNEL__ */
+ 
 -- 
 2.7.4
