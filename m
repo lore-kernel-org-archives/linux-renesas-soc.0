@@ -1,85 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753434AbdCTJAM (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35540 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751524AbdCPLlQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:00:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/31] ARM: dts: r8a7793: Add INTC-SYS clock to device tree
-Date: Mon, 20 Mar 2017 09:58:01 +0100
-Message-Id: <2f25c2d1cdf04ab0f247351e286d3fdefbdad09b.1489999063.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Thu, 16 Mar 2017 07:41:16 -0400
+Date: Thu, 16 Mar 2017 12:33:33 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: core: check also R1 response for stop commands
+Message-ID: <20170316113333.tcm2rllud5yrwrki@ninjato>
+References: <20170314101501.25463-1-wsa+renesas@sang-engineering.com>
+ <PS1PR06MB16924720592DB11B43DD5AF0D8240@PS1PR06MB1692.apcprd06.prod.outlook.com>
+ <20170314104904.4ig62cy2w6fkpqzm@ninjato>
+ <PS1PR06MB1692B56C7B571EBB02EB23C1D8270@PS1PR06MB1692.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="e7e3335haxtis556"
+Content-Disposition: inline
+In-Reply-To: <PS1PR06MB1692B56C7B571EBB02EB23C1D8270@PS1PR06MB1692.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Link the ARM GIC to the INTC-SYS module clock, and add it to the "always
-on" PM Domain, so it can be power managed using that clock.
+--e7e3335haxtis556
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
+Shimoda-san
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7793.dtsi            | 11 ++++++++---
- include/dt-bindings/clock/r8a7793-clock.h |  5 +++--
- 2 files changed, 11 insertions(+), 5 deletions(-)
+> Anyway, I tested this patch. And the mmc core said some error happened.
+> I think this is suitable behavior. So,
+>=20
+> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 53c89b47eaf0..9fcf3a9ca084 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -108,6 +108,9 @@
- 			<0 0xf1004000 0 0x2000>,
- 			<0 0xf1006000 0 0x2000>;
- 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		clocks = <&mstp4_clks R8A7793_CLK_INTC_SYS>;
-+		clock-names = "clk";
-+		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 	};
- 
- 	gpio0: gpio@e6050000 {
-@@ -1178,10 +1181,12 @@
- 		mstp4_clks: mstp4_clks@e6150140 {
- 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
--			clocks = <&cp_clk>;
-+			clocks = <&cp_clk>, <&zs_clk>;
- 			#clock-cells = <1>;
--			clock-indices = <R8A7793_CLK_IRQC>;
--			clock-output-names = "irqc";
-+			clock-indices = <
-+				R8A7793_CLK_IRQC R8A7793_CLK_INTC_SYS
-+			>;
-+			clock-output-names = "irqc", "intc-sys";
- 		};
- 		mstp5_clks: mstp5_clks@e6150144 {
- 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r8a7793-clock.h b/include/dt-bindings/clock/r8a7793-clock.h
-index efcbc594fe82..7318d45d4e7e 100644
---- a/include/dt-bindings/clock/r8a7793-clock.h
-+++ b/include/dt-bindings/clock/r8a7793-clock.h
-@@ -77,10 +77,11 @@
- 
- /* MSTP4 */
- #define R8A7793_CLK_IRQC		7
-+#define R8A7793_CLK_INTC_SYS		8
- 
- /* MSTP5 */
--#define R8A7793_CLK_AUDIO_DMAC1         1
--#define R8A7793_CLK_AUDIO_DMAC0         2
-+#define R8A7793_CLK_AUDIO_DMAC1		1
-+#define R8A7793_CLK_AUDIO_DMAC0		2
- #define R8A7793_CLK_ADSP_MOD		6
- #define R8A7793_CLK_THERMAL		22
- #define R8A7793_CLK_PWM			23
--- 
-2.7.0.rc3.207.g0ac5344
+Thank you very much for the quick response and testing!
+
+> < Question >
+> In mmc_blk_cmd_recovery(), if "brq->stop.resp[0] & R1_CARD_ECC_FAILED" is=
+ true, ecc_err is set to true.
+> However, in mmc_blk_err_check(), ecc_err is only referred when brq->data.=
+error is true.
+> So, I guess we need a patch like below as another patch. What do you thin=
+k?
+>=20
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 0e838b0..99c937b 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -1374,7 +1374,7 @@ static enum mmc_blk_status mmc_blk_err_check(struct=
+ mmc_ca
+>                 return MMC_BLK_RETRY;
+>         }
+>=20
+> -       if (brq->data.error) {
+> +       if (brq->data.error || ecc_err) {
+>                 if (need_retune && !brq->retune_retry_done) {
+>                         pr_debug("%s: retrying because a re-tune was need=
+ed\n",
+>                                  req->rq_disk->disk_name);
+>=20
+> After that, the mmc core also output the following message:
+>=20
+> mmcblk1: error 0 transferring data, sector 0, nr 128, cmd response 0x900,=
+ card status 0x200b00
+> mmcblk1: retrying using single block read
+
+I think you are right that we need to change something somewhere in this
+code block. I was about to suggest adding "|| brq->stop.error" instead
+of "|| ecc_err". However, I am not so sure about this as well, since the
+code is a little confusing to me. Especially this:
+
+1381                 if (rq_data_dir(req) =3D=3D READ) {=20
+1382                         if (ecc_err)=20
+1383                                 return MMC_BLK_ECC_ERR;=20
+1384                         return MMC_BLK_DATA_ERR;
+1385                 } else {
+1386                         return MMC_BLK_CMD_ERR;
+1387                 }
+
+If the data_directions is WRITE, then we return a CMD_ERR instead of a
+DATA_ERR? And all that in a code path which is only run when
+brq->data.error, i.e. brq->cmd.err is not even touched?
+
+I'd think the if-block in question wants to handle errors which happened
+while transferring data. As such, I'd still think adding
+"|| brq->stop.error" might be a good idea. And revisiting if this block
+should really return CMD_ERR.
+
+But I may be wrong and misunderstanding, so I am happy for further
+opinions. Maybe the code needs just some more comments.
+
+Thanks and regards,
+
+   Wolfram
+
+
+--e7e3335haxtis556
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljKeAgACgkQFA3kzBSg
+Kbah2Q/8DtCzBOWirVTh+Z7EIN1kBZw99J3hIZ/zuETmQyfHen+cmC8r9VpbFrsi
+Ky+/ylFStpWQ7mtIKtd6HiTxZRTQNwvnzAiE7SNOwAhuOnPxFpvVKZqEN3MV7xZl
+xgBzm68tMPcxv6yeDmgZjtUkJwmLZsi9Dgf0fXYFEhg8ODYkV3ItlFkKvQIrWwTP
+1vv3YW1qBdhRccaEFFxOxjtj7c3mPgJKX1D0ih13yYcHb5fRS6nPzRaW3Ha7u99a
+Nnc14mSECgc1Vx/2x7kEfzQmGE8zMaHLKlD5z7YKjPDTOrUR1F5c9OV94lipdL0R
+6E8cnx8WLd9ZVSRH4cVS9OJzXYObIkEemla6qy6fX2CFhNav9nNFbnEW9bI0IVTM
+9Vmgf6JSj3rmxAHV4tnl6+82jRQKydnYmNdmOD68rBKFKO5+V38AKyXIvCh7Su8i
+P7et0Q3kGLBvRY7Nqe/y6622Ewj+Sv8S7CqQXjS8rK9nQsMHIJ0DxxPLAq8vzWzz
+SFZaN0UeJjdMf9EEpscXjK+l/5z7nENgC08NLiJYkNNkDgOZ/43Yy2BXPp+YdPRP
+tVKwYOm5MQF0ZP46h4Sfdye7RElXeSrl73zYVDPs/Jm47RBP5KxKR4dctbnUARUc
+V73jbkADS8deqc7EEGLEMD8hC1AD4Zu/0HFx6NUEqgRyre39Mo8=
+=+ufA
+-----END PGP SIGNATURE-----
+
+--e7e3335haxtis556--
