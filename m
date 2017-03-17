@@ -1,109 +1,76 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Matthew Giassa <matthew@giassa.net>
-To: wsa@the-dreams.de
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        matthew@giassa.net
-Subject: [PATCHv5 4/4] Staging: ks7010: ks_wlan_ioctl.h: Wrap complex macros with parentheses
-Date: Tue, 14 Mar 2017 19:25:54 -0700
-Message-Id: <1489544754-23840-4-git-send-email-matthew@giassa.net>
-In-Reply-To: <1489544754-23840-3-git-send-email-matthew@giassa.net>
-References: <1487650805-30520-1-git-send-email-matthew@giassa.net>
- <1489544754-23840-1-git-send-email-matthew@giassa.net>
- <1489544754-23840-2-git-send-email-matthew@giassa.net>
- <1489544754-23840-3-git-send-email-matthew@giassa.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54566 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751023AbdCQP4y (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Mar 2017 11:56:54 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 6/7] thermal: rcar_gen3_thermal: store device match data in private structure
+Date: Fri, 17 Mar 2017 16:52:59 +0100
+Message-Id: <20170317155300.21566-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Wrapping all complex macros with parentheses to resolve checkpatch
-errors. This change, along with the preceding changes in this change
-set, resolves all checkpatch warnings and errors for the file.
+The device match data needs to be accessible outside the probe function,
+store it in the private data structure.
 
-Signed-off-by: Matthew Giassa <matthew@giassa.net>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/staging/ks7010/ks_wlan_ioctl.h | 64 +++++++++++++++++-----------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ drivers/thermal/rcar_gen3_thermal.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
-index 1251d7e..adc935d 100644
---- a/drivers/staging/ks7010/ks_wlan_ioctl.h
-+++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
-@@ -15,43 +15,43 @@
- #include <linux/wireless.h>
- /* The low order bit identify a SET (0) or a GET (1) ioctl.  */
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index dc019b7873273cf2..438fb9988eabb91b 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -85,6 +85,7 @@ struct rcar_gen3_thermal_tsc {
+ };
  
--/*					SIOCIWFIRSTPRIV + 0 */
--/* former KS_WLAN_GET_DRIVER_VERSION	SIOCIWFIRSTPRIV + 1 */
--/*					SIOCIWFIRSTPRIV + 2 */
--#define KS_WLAN_GET_FIRM_VERSION	SIOCIWFIRSTPRIV + 3
-+/*					(SIOCIWFIRSTPRIV + 0) */
-+/* former KS_WLAN_GET_DRIVER_VERSION	(SIOCIWFIRSTPRIV + 1) */
-+/*					(SIOCIWFIRSTPRIV + 2) */
-+#define KS_WLAN_GET_FIRM_VERSION	(SIOCIWFIRSTPRIV + 3)
- #ifdef WPS
--#define KS_WLAN_SET_WPS_ENABLE		SIOCIWFIRSTPRIV + 4
--#define KS_WLAN_GET_WPS_ENABLE		SIOCIWFIRSTPRIV + 5
--#define KS_WLAN_SET_WPS_PROBE_REQ	SIOCIWFIRSTPRIV + 6
-+#define KS_WLAN_SET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 4)
-+#define KS_WLAN_GET_WPS_ENABLE		(SIOCIWFIRSTPRIV + 5)
-+#define KS_WLAN_SET_WPS_PROBE_REQ	(SIOCIWFIRSTPRIV + 6)
- #endif
--#define KS_WLAN_GET_EEPROM_CKSUM	SIOCIWFIRSTPRIV + 7
--#define KS_WLAN_SET_PREAMBLE		SIOCIWFIRSTPRIV + 8
--#define KS_WLAN_GET_PREAMBLE		SIOCIWFIRSTPRIV + 9
--#define KS_WLAN_SET_POWER_SAVE		SIOCIWFIRSTPRIV + 10
--#define KS_WLAN_GET_POWER_SAVE		SIOCIWFIRSTPRIV + 11
--#define KS_WLAN_SET_SCAN_TYPE		SIOCIWFIRSTPRIV + 12
--#define KS_WLAN_GET_SCAN_TYPE		SIOCIWFIRSTPRIV + 13
--#define KS_WLAN_SET_RX_GAIN		SIOCIWFIRSTPRIV + 14
--#define KS_WLAN_GET_RX_GAIN		SIOCIWFIRSTPRIV + 15
--#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV + 16	/* unused */
--//#define KS_WLAN_SET_REGION            SIOCIWFIRSTPRIV + 17
--#define KS_WLAN_SET_BEACON_LOST		SIOCIWFIRSTPRIV + 18
--#define KS_WLAN_GET_BEACON_LOST		SIOCIWFIRSTPRIV + 19
-+#define KS_WLAN_GET_EEPROM_CKSUM	(SIOCIWFIRSTPRIV + 7)
-+#define KS_WLAN_SET_PREAMBLE		(SIOCIWFIRSTPRIV + 8)
-+#define KS_WLAN_GET_PREAMBLE		(SIOCIWFIRSTPRIV + 9)
-+#define KS_WLAN_SET_POWER_SAVE		(SIOCIWFIRSTPRIV + 10)
-+#define KS_WLAN_GET_POWER_SAVE		(SIOCIWFIRSTPRIV + 11)
-+#define KS_WLAN_SET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 12)
-+#define KS_WLAN_GET_SCAN_TYPE		(SIOCIWFIRSTPRIV + 13)
-+#define KS_WLAN_SET_RX_GAIN		(SIOCIWFIRSTPRIV + 14)
-+#define KS_WLAN_GET_RX_GAIN		(SIOCIWFIRSTPRIV + 15)
-+#define KS_WLAN_HOSTT			(SIOCIWFIRSTPRIV + 16) /* unused */
-+//#define KS_WLAN_SET_REGION            (SIOCIWFIRSTPRIV + 17)
-+#define KS_WLAN_SET_BEACON_LOST		(SIOCIWFIRSTPRIV + 18)
-+#define KS_WLAN_GET_BEACON_LOST		(SIOCIWFIRSTPRIV + 19)
+ struct rcar_gen3_thermal_priv {
++	const struct rcar_gen3_thermal_data *data;
+ 	spinlock_t lock; /* Protect interrupts on and off */
+ 	unsigned int num_tscs;
+ 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
+@@ -353,8 +354,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	struct thermal_zone_device *zone;
+ 	int ret, irq, i;
+ 	char *irqname;
+-	const struct rcar_gen3_thermal_data *match_data =
+-		of_device_get_match_data(dev);
  
--#define KS_WLAN_SET_TX_GAIN		SIOCIWFIRSTPRIV + 20
--#define KS_WLAN_GET_TX_GAIN		SIOCIWFIRSTPRIV + 21
-+#define KS_WLAN_SET_TX_GAIN		(SIOCIWFIRSTPRIV + 20)
-+#define KS_WLAN_GET_TX_GAIN		(SIOCIWFIRSTPRIV + 21)
+ 	/* default values if FUSEs are missing */
+ 	/* TODO: Read values from hardware on supported platforms */
+@@ -369,6 +368,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
  
- /* for KS7010 */
--#define KS_WLAN_SET_PHY_TYPE		SIOCIWFIRSTPRIV + 22
--#define KS_WLAN_GET_PHY_TYPE		SIOCIWFIRSTPRIV + 23
--#define KS_WLAN_SET_CTS_MODE		SIOCIWFIRSTPRIV + 24
--#define KS_WLAN_GET_CTS_MODE		SIOCIWFIRSTPRIV + 25
--/*					SIOCIWFIRSTPRIV + 26 */
--/*					SIOCIWFIRSTPRIV + 27 */
--#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV + 28	/* sleep mode */
--#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV + 29	/* sleep mode */
--/*					SIOCIWFIRSTPRIV + 30 */
--/*					SIOCIWFIRSTPRIV + 31 */
-+#define KS_WLAN_SET_PHY_TYPE		(SIOCIWFIRSTPRIV + 22)
-+#define KS_WLAN_GET_PHY_TYPE		(SIOCIWFIRSTPRIV + 23)
-+#define KS_WLAN_SET_CTS_MODE		(SIOCIWFIRSTPRIV + 24)
-+#define KS_WLAN_GET_CTS_MODE		(SIOCIWFIRSTPRIV + 25)
-+/*					(SIOCIWFIRSTPRIV + 26) */
-+/*					(SIOCIWFIRSTPRIV + 27) */
-+#define KS_WLAN_SET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 28) /* sleep mode */
-+#define KS_WLAN_GET_SLEEP_MODE		(SIOCIWFIRSTPRIV + 29) /* sleep mode */
-+/*					(SIOCIWFIRSTPRIV + 30) */
-+/*					(SIOCIWFIRSTPRIV + 31) */
++	priv->data = of_device_get_match_data(dev);
++
+ 	spin_lock_init(&priv->lock);
  
- #ifdef __KERNEL__
+ 	platform_set_drvdata(pdev, priv);
+@@ -414,7 +415,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
  
+ 		priv->tscs[i] = tsc;
+ 
+-		match_data->thermal_init(tsc);
++		priv->data->thermal_init(tsc);
+ 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
+ 
+ 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
 -- 
-2.7.4
+2.12.0
