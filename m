@@ -1,285 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:33583 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754831AbdCGDZK (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:59416 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751037AbdCQK3A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 22:25:10 -0500
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Tue, 07 Mar 2017 12:17:33 +0900
-Message-Id: <148885665352.28553.13907030016954382230.sendpatchset@little-apple>
-In-Reply-To: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
-References: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
-Subject: [PATCH v7 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+        Fri, 17 Mar 2017 06:29:00 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/3] usb: host: xhci-plat: enable clk in resume timing
+Date: Fri, 17 Mar 2017 19:02:33 +0900
+Message-ID: <1489744955-29553-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+This patch enables the clk in resume timing when device_may_wakeup()
+is false. Otherwise, kernel panic happens when R-Car resumes the system
+from Suspend-to-RAM because the clk is disabled.
 
-Introduce an alternative set of iommu_ops suitable for 64-bit ARM
-as well as 32-bit ARM when CONFIG_IOMMU_DMA=y. Also adjust the
-Kconfig to depend on ARM or IOMMU_DMA. Initialize the device
-from ->xlate() when CONFIG_IOMMU_DMA=y.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
+ drivers/usb/host/xhci-plat.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
- Changes since V6:
- - Rolled in the following patches from "r8a7795 support V2":
-   [PATCH v2 04/11] iommu/ipmmu-vmsa: Reuse iommu groups
-   [PATCH v2 06/11] iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
- - Moved find_group() implementation to prevent warning on 32-bit ARM
- - Rolled in the following patch from "IPMMU slave device whitelist V2":
-   [PATCH/RFC v2 3/4] iommu/ipmmu-vmsa: Check devices in xlate()
-
- drivers/iommu/Kconfig      |    1 
- drivers/iommu/ipmmu-vmsa.c |  164 +++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 157 insertions(+), 8 deletions(-)
-
---- 0001/drivers/iommu/Kconfig
-+++ work/drivers/iommu/Kconfig	2017-03-06 18:42:42.000000000 +0900
-@@ -274,6 +274,7 @@ config EXYNOS_IOMMU_DEBUG
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index bd02a6c..3528de3 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -306,6 +306,7 @@ static int xhci_plat_suspend(struct device *dev)
+ {
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++	int ret;
  
- config IPMMU_VMSA
- 	bool "Renesas VMSA-compatible IPMMU"
-+	depends on ARM || IOMMU_DMA
- 	depends on ARM_LPAE
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select IOMMU_API
---- 0009/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-06 19:22:27.700607110 +0900
-@@ -10,6 +10,7 @@
- 
- #include <linux/bitmap.h>
- #include <linux/delay.h>
-+#include <linux/dma-iommu.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/export.h>
-@@ -22,8 +23,10 @@
- #include <linux/sizes.h>
- #include <linux/slab.h>
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- #include <asm/dma-iommu.h>
- #include <asm/pgalloc.h>
-+#endif
- 
- #include "io-pgtable.h"
- 
-@@ -57,6 +60,8 @@ struct ipmmu_vmsa_archdata {
- 	struct ipmmu_vmsa_device *mmu;
- 	unsigned int *utlbs;
- 	unsigned int num_utlbs;
-+	struct device *dev;
-+	struct list_head list;
- };
- 
- static DEFINE_SPINLOCK(ipmmu_devices_lock);
-@@ -522,14 +527,6 @@ static struct iommu_domain *__ipmmu_doma
- 	return &domain->io_domain;
+ 	/*
+ 	 * xhci_suspend() needs `do_wakeup` to know whether host is allowed
+@@ -315,7 +316,12 @@ static int xhci_plat_suspend(struct device *dev)
+ 	 * reconsider this when xhci_plat_suspend enlarges its scope, e.g.,
+ 	 * also applies to runtime suspend.
+ 	 */
+-	return xhci_suspend(xhci, device_may_wakeup(dev));
++	ret = xhci_suspend(xhci, device_may_wakeup(dev));
++
++	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
++		clk_disable_unprepare(xhci->clk);
++
++	return ret;
  }
  
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
--{
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
--	return __ipmmu_domain_alloc(type);
--}
--
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
-@@ -572,6 +569,9 @@ static int ipmmu_attach_device(struct io
- 		dev_err(dev, "Can't attach IPMMU %s to domain on IPMMU %s\n",
- 			dev_name(mmu->dev), dev_name(domain->mmu->dev));
- 		ret = -EINVAL;
-+	} else {
-+			dev_info(dev, "Reusing IPMMU context %u\n",
-+				 domain->context_id);
- 	}
+ static int xhci_plat_resume(struct device *dev)
+@@ -323,6 +329,9 @@ static int xhci_plat_resume(struct device *dev)
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
  
- 	spin_unlock_irqrestore(&domain->lock, flags);
-@@ -708,6 +708,7 @@ static int ipmmu_init_platform_device(st
- 	archdata->mmu = mmu;
- 	archdata->utlbs = utlbs;
- 	archdata->num_utlbs = num_utlbs;
-+	archdata->dev = dev;
- 	dev->archdata.iommu = archdata;
- 	return 0;
- 
-@@ -716,6 +717,16 @@ error:
- 	return ret;
++	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
++		clk_prepare_enable(xhci->clk);
++
+ 	return xhci_resume(xhci, 0);
  }
  
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
-+
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
-+
-+	return __ipmmu_domain_alloc(type);
-+}
-+
- static int ipmmu_add_device(struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata;
-@@ -823,6 +834,141 @@ static const struct iommu_ops ipmmu_ops
- 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
- };
- 
-+#endif /* !CONFIG_ARM && CONFIG_IOMMU_DMA */
-+
-+#ifdef CONFIG_IOMMU_DMA
-+
-+static DEFINE_SPINLOCK(ipmmu_slave_devices_lock);
-+static LIST_HEAD(ipmmu_slave_devices);
-+
-+static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
-+{
-+	struct iommu_domain *io_domain = NULL;
-+
-+	switch (type) {
-+	case IOMMU_DOMAIN_UNMANAGED:
-+		io_domain = __ipmmu_domain_alloc(type);
-+		break;
-+
-+	case IOMMU_DOMAIN_DMA:
-+		io_domain = __ipmmu_domain_alloc(type);
-+		if (io_domain)
-+			iommu_get_dma_cookie(io_domain);
-+		break;
-+	}
-+
-+	return io_domain;
-+}
-+
-+static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
-+{
-+	switch (io_domain->type) {
-+	case IOMMU_DOMAIN_DMA:
-+		iommu_put_dma_cookie(io_domain);
-+		/* fall-through */
-+	default:
-+		ipmmu_domain_free(io_domain);
-+		break;
-+	}
-+}
-+
-+static int ipmmu_add_device_dma(struct device *dev)
-+{
-+	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct iommu_group *group;
-+
-+	/* The device has been verified in xlate() */
-+	if (!archdata)
-+		return -ENODEV;
-+
-+	group = iommu_group_get_for_dev(dev);
-+	if (IS_ERR(group))
-+		return PTR_ERR(group);
-+
-+	spin_lock(&ipmmu_slave_devices_lock);
-+	list_add(&archdata->list, &ipmmu_slave_devices);
-+	spin_unlock(&ipmmu_slave_devices_lock);
-+	return 0;
-+}
-+
-+static void ipmmu_remove_device_dma(struct device *dev)
-+{
-+	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+
-+	spin_lock(&ipmmu_slave_devices_lock);
-+	list_del(&archdata->list);
-+	spin_unlock(&ipmmu_slave_devices_lock);
-+
-+	iommu_group_remove_device(dev);
-+}
-+
-+static struct device *ipmmu_find_sibling_device(struct device *dev)
-+{
-+	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_archdata *sibling_archdata = NULL;
-+	bool found = false;
-+
-+	spin_lock(&ipmmu_slave_devices_lock);
-+
-+	list_for_each_entry(sibling_archdata, &ipmmu_slave_devices, list) {
-+		if (archdata == sibling_archdata)
-+			continue;
-+		if (sibling_archdata->mmu == archdata->mmu) {
-+			found = true;
-+			break;
-+		}
-+	}
-+
-+	spin_unlock(&ipmmu_slave_devices_lock);
-+
-+	return found ? sibling_archdata->dev : NULL;
-+}
-+
-+static struct iommu_group *ipmmu_find_group_dma(struct device *dev)
-+{
-+	struct iommu_group *group;
-+	struct device *sibling;
-+
-+	sibling = ipmmu_find_sibling_device(dev);
-+	if (sibling)
-+		group = iommu_group_get(sibling);
-+	if (!sibling || IS_ERR(group))
-+		group = generic_device_group(dev);
-+
-+	return group;
-+}
-+
-+static int ipmmu_of_xlate_dma(struct device *dev,
-+			      struct of_phandle_args *spec)
-+{
-+	/* If the IPMMU device is disabled in DT then return error
-+	 * to make sure the of_iommu code does not install ops
-+	 * even though the iommu device is disabled
-+	 */
-+	if (!of_device_is_available(spec->np))
-+		return -ENODEV;
-+
-+	return ipmmu_init_platform_device(dev);
-+}
-+
-+static const struct iommu_ops ipmmu_ops = {
-+	.domain_alloc = ipmmu_domain_alloc_dma,
-+	.domain_free = ipmmu_domain_free_dma,
-+	.attach_dev = ipmmu_attach_device,
-+	.detach_dev = ipmmu_detach_device,
-+	.map = ipmmu_map,
-+	.unmap = ipmmu_unmap,
-+	.map_sg = default_iommu_map_sg,
-+	.iova_to_phys = ipmmu_iova_to_phys,
-+	.add_device = ipmmu_add_device_dma,
-+	.remove_device = ipmmu_remove_device_dma,
-+	.device_group = ipmmu_find_group_dma,
-+	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
-+	.of_xlate = ipmmu_of_xlate_dma,
-+};
-+
-+#endif /* CONFIG_IOMMU_DMA */
-+
- /* -----------------------------------------------------------------------------
-  * Probe/remove and init
-  */
-@@ -912,7 +1058,9 @@ static int ipmmu_remove(struct platform_
- 	list_del(&mmu->list);
- 	spin_unlock(&ipmmu_devices_lock);
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 	arm_iommu_release_mapping(mmu->mapping);
-+#endif
- 
- 	ipmmu_device_reset(mmu);
- 
+-- 
+1.9.1
