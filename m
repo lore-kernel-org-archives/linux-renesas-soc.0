@@ -1,12 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:29925 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751039AbdCQNQm (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35019 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751130AbdCQI03 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2017 09:16:42 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Alessandro Zummo <a.zummo@towertech.it>,
+        Fri, 17 Mar 2017 04:26:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170316175112.27913-3-chris.brandt@renesas.com>
+References: <20170316175112.27913-1-chris.brandt@renesas.com> <20170316175112.27913-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Mar 2017 09:17:20 +0100
+Message-ID: <CAMuHMdVu0dQjptyW0F5YS+V6sixXTM3P6VWq2=8BQ5njUOXf-Q@mail.gmail.com>
+Subject: Re: [PATCH 2/5] rtc: Add rtc-sh
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -14,48 +20,57 @@ CC: Alessandro Zummo <a.zummo@towertech.it>,
         RTCLINUX <rtc-linux@googlegroups.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 2/5] rtc: Add rtc-sh
-Date: Fri, 17 Mar 2017 13:16:25 +0000
-Message-ID: <SG2PR06MB1165A9931C930DF9BCD5C0A98A390@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170316175112.27913-1-chris.brandt@renesas.com>
- <20170316175112.27913-3-chris.brandt@renesas.com>
- <CAMuHMdVu0dQjptyW0F5YS+V6sixXTM3P6VWq2=8BQ5njUOXf-Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdVu0dQjptyW0F5YS+V6sixXTM3P6VWq2=8BQ5njUOXf-Q@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCg0KSGFwcHkgU3QgUGF0cmljaydzIERheSENCg0KICAgIChJIGtub3cgeW91
-IGFyZSBub3QgSXJpc2guLi4uYnV0IHlvdSBhcmUgY2xvc2VyIHRvIElyZWxhbmQgdGhhbiBJIGFt
-IDspDQoNCg0KT24gRnJpZGF5LCBNYXJjaCAxNywgMjAxNywgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
-b3RlOg0KPiBPbiBUaHUsIE1hciAxNiwgMjAxNyBhdCA2OjUxIFBNLCBDaHJpcyBCcmFuZHQgPGNo
-cmlzLmJyYW5kdEByZW5lc2FzLmNvbT4NCj4gd3JvdGU6DQo+ID4gcnRjLXNoIGlzIGEgUlRDIGZv
-ciBTdXBlckggYW5kIFJaL0EgU29Dcy4NCj4gDQo+IGFuIFJUQz8NCg0KR29vZCBwb2ludC4gVGhh
-dCdzIG1vcmUgYmV0dGVyIDspDQoNCg0KPiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ICst
-IGNvbXBhdGlibGU6IFNob3VsZCBiZSAicmVuZXNhcyxyN3M3MjEwMC1ydGMiIG9yICJyZW5lc2Fz
-LHNoLXJ0YyIgYXMNCj4gPiArYQ0KPiANCj4gcy9vci9hbmQvDQoNCk9LDQoNCg0KPiA+ICsgIGZh
-bGxiYWNrLg0KPiA+ICstIHJlZzogcGh5c2ljYWwgYmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2Yg
-bWVtb3J5IG1hcHBlZCByZWdpb24uDQo+ID4gKy0gaW50ZXJydXB0czogMyBpbnRlcnJ1cHRzIGZv
-ciBhbGFybSwgcGVyaW9kLCBhbmQgY2FycnkuDQo+IA0KPiBJZiB0aGVyZSdzIGEgbmVlZCBmb3Ig
-bXVsdGlwbGUgaW50ZXJydXB0cywgaXQncyBhbHdheXMgYSBnb29kIGlkZWEgdG8gdXNlDQo+IGlu
-dGVycnVwdC1uYW1lcy4gVGhlIGRhdGFzaGVldCBjYWxscyB0aGVtICJhcm0iLCAicHJkIiwgYW5k
-ICJjdXAiLCBidXQgSQ0KPiB3b3VsZG4ndCBvYmplY3QgYWdhaW5zdCAiYWxhcm0iLCAicGVyaW9k
-IiwgYW5kICJjYXJyeSIgOy0pDQoNCk9LLiBJJ2xsIGNoYW5nZS4NCkkgbGlrZSB0aGUgbG9uZ2Vy
-IG5hbWVzIGFzIHdlbGwgKCJwcmQiIGxvb2tzIHVnbHkpDQoNCg0KPiA+ICstIGNsb2NrczogdGhl
-IGNsb2NrIHNvdXJjZSBmb3IgdGhlIFJUQyBjb250cm9sbGVyLg0KPiANCj4gVGhlIGRhdGFzaGVl
-dCBtZW50aW9ucyAzIHBvc3NpYmxlIGNsb2NrIHNvdXJjZXM/DQoNClRoZXJlIGlzIHRoZSBjbG9j
-ayBzb3VyY2UgdGhhdCBkb2VzIHRoZSBjb3VudGluZyAoUlRDX1gxLCBSVENfWDMsIFhUQUwpLCBh
-bmQgdGhlbiBhIGNsb2NrIHNvdXJjZSB0aGF0IHJ1bnMgdGhlIHJlZ2lzdGVyIGludGVyZmFjZSAo
-cnVuIG9mZiBvZiB0aGUgcDAgY2xvY2spLiBTbyBJIGp1c3QgbmVlZCB0byB0dXJuIG9uIHRoZSBw
-MCBjbG9jayBzbyBJIGNhbiBnZXQgYXQgdGhlIHJlZ2lzdGVycy4gTm90ZSB0aGF0IGlmIHlvdSBk
-byBhIGhhcmQgcmVzZXQgd2l0aCBhIFJFU0VUIGJ1dHRvbiwgYW5kIGFsbCB0aGUgcmVnaXN0ZXJz
-IGluIHRoZSBjaGlwIGdvIGJhY2sgdG8gdGhlaXIgUE9SIHN0YXRlLCB0aGUgY291bnRlciBzdGls
-bCBjb3VudHMgb2ZmIG9mIHRoZSAzMktIeiBYVEFMIGV2ZW4gdGhvdWdoIHRoZSAicGVyaXBoZXJh
-bCBjbG9jayIgaXMgc3RvcHBlZCAod2hpY2gganVzdCBtZWFucyB5b3UgY2FuJ3QgZ2V0IHRvIHRo
-ZSByZWdpc3RlcnMpLg0KDQpJbiByZWFsaXR5LCB5b3UgaGF2ZSB0byBhc3N1bWUgdGhlIFJUQyBj
-b3VudGluZyBzb3VyY2UgaGFzIGFscmVhZHkgYmVlbiBzZXQgdXAgYnkgdS1ib290LCBvciBmcm9t
-IGEgcGFzdCByZWJvb3QsIHNvIEkgZG9uJ3QgZG8gYW55IG9mIHRoYXQgc2VsZWN0IGNvbmZpZ3Vy
-YXRpb24gYXQgYWxsLg0KDQoNCkNocmlzDQo=
+Hi Chris,
+
+On Thu, Mar 16, 2017 at 6:51 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> rtc-sh is a RTC for SuperH and RZ/A SoCs.
+
+an RTC?
+
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
+> @@ -0,0 +1,19 @@
+> +* Real Time Clock for Renesas SH and ARM SoCs
+> +
+> +Required properties:
+> +- compatible: Should be "renesas,r7s72100-rtc" or "renesas,sh-rtc" as a
+
+s/or/and/
+
+> +  fallback.
+> +- reg: physical base address and length of memory mapped region.
+> +- interrupts: 3 interrupts for alarm, period, and carry.
+
+If there's a need for multiple interrupts, it's always a good idea to use
+interrupt-names. The datasheet calls them "arm", "prd", and "cup", but
+I wouldn't object against "alarm", "period", and "carry" ;-)
+
+> +- clocks: the clock source for the RTC controller.
+
+The datasheet mentions 3 possible clock sources?
+
+> +Example:
+> +rtc: rtc@fcff1000 {
+> +       compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
+> +       reg = <0xfcff1000 0x2e>;
+> +       interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
+> +                     GIC_SPI 277 IRQ_TYPE_EDGE_RISING
+> +                     GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
+> +       clocks = <&mstp6_clks R7S72100_CLK_RTC>;
+> +       power-domains = <&cpg_clocks>;
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
