@@ -1,73 +1,63 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/8] Renesas RZ/A1 pin and gpio controller
-Date: Fri, 24 Mar 2017 16:22:07 +0100
-Message-Id: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56330 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbdCQQCG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Mar 2017 12:02:06 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/7] thermal: rcar_gen3_thermal: add support for interrupt triggerd trip points
+Date: Fri, 17 Mar 2017 16:52:53 +0100
+Message-Id: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi,
 
-Third round for Renesas RZ/A1 PFC gpio and pin controller.
+This series adds support for hardware backed trip point windows. It is
+based on top of v4.11-rc1 and is tested on R-Car H3 and M3-W.
 
-V3 fixes review comments on grammar and spelling by Geert.
-Some other fixes from Geert's review as update of function argument names
-to reflect the function purpose (s/offset/[pin|bit]), use irqsave/irqrestore
-version of spinlocks locking/unlocking methods and other style fixes.
+The series starts out by fixing three issues (1/7, 2/7, 3/7) that should
+have been fixed by me before the initial driver where submitted to
+upstream. Sorry for not spotting the issues sooner.
 
-Still an open question on the use of "pins" or "renesas,pins" property in
-device tree bindings:
-https://www.spinics.net/lists/linux-renesas-soc/msg12765.html
+The series then extends the rcar_gen3_thermal driver with hardware
+interrupts for trip point windows by implementing the .set_trips()
+callback of struct thermal_zone_of_device_ops (4/7, 5/7). It then adds
+suspend and resume handlers so that the hardware interrupts are
+preserved across suspend/resume cycles (6/7, 7/7).
 
-Tested on Genmai and RSK boards with SCIF, I2c and GPIO (genmai) and SCIF, I2c,
-SDHI and ethernet on RSK (thanks Chris).
+* Changes since v1
+- Added check that at least one TSC is found
+- Record number of TSC in private data structure
+- Request interrupts separately from TSCs
+- Have only one function which controls both IRQ on and off
+- Check return value from of_thermal_get_ntrips()
+- Fixed spelling in commit messages
+- Add Reviewed-by tags
 
-Thanks
-   j
+Niklas Söderlund (7):
+  thermal: rcar_gen3_thermal: add delay in .thermal_init on r8a7796
+  thermal: rcar_gen3_thermal: remove unneeded mutex
+  thermal: rcar_gen3_thermal: check that TSC exists before memory
+    allocation
+  thermal: rcar_gen3_thermal: record and check number of TSCs found
+  thermal: rcar_gen3_thermal: enable hardware interrupts for trip points
+  thermal: rcar_gen3_thermal: store device match data in private
+    structure
+  thermal: rcar_gen3_thermal: add suspend and resume support
 
-v1 -> v2:
-- change pin configuration flags as suggested by Chris
-- gpio set direction function fixed as suggested by Chris
-- add some more example on pin configuration flag usage to dt-binding doc
-- fix gpio-controller names to remove unit address as suggested by Geert
-- some comments chopped here and there to make the driver less verbose
-
-v2 -> v3:
-- fix grammar and syntax in comment and documentation
-- fix code style (reverse xmas tree ordering in variable declaration)
-- use irqsave/irqrestore in spinlock lock/unlock
-- use devm_ version of kasprintf (memory returned was not properly free)
-- use bitops.h operation ffs and fls to make sure a single bit is set in pmx
-  mask
-- Add Geert's reviewed-by to DTS patches
-
-Jacopo Mondi (8):
-  pinctrl: Renesas RZ/A1 pin and gpio controller
-  dt-bindings: pinctrl: Add RZ/A1 bindings doc
-  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-  arm: dts: r7s72100: Add pin controller node
-  arm: dts: genmai: Add SCIF2 pin group
-  arm: dts: genmai: Add RIIC2 pin group
-  arm: dts: genmai: Add user led device nodes
-  arm: dts: genmai: Add ethernet pin group
-
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 143 +++
- arch/arm/boot/dts/r7s72100-genmai.dts              |  68 ++
- arch/arm/boot/dts/r7s72100.dtsi                    |  80 ++
- drivers/pinctrl/Kconfig                            |  10 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-rza1.c                     | 961 +++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  36 +
- 7 files changed, 1299 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza1.c
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+ drivers/thermal/rcar_gen3_thermal.c | 195 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 180 insertions(+), 15 deletions(-)
 
 -- 
-2.7.4
-
+2.12.0
