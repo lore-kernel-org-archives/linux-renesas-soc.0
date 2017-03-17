@@ -1,62 +1,145 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753151AbdCTI7T (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/32] arm64: dts: r8a7795: salvator-x: Fix EthernetAVB PHY timing
-Date: Mon, 20 Mar 2017 09:57:18 +0100
-Message-Id: <0e45da1c6ea6b18616d95c697ecd6234bc504ef6.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170317205915.388401869@cogentembedded.com>
+Date: Fri, 17 Mar 2017 23:59:00 +0300
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] media: platform: rcar_imr: add IMR-LX3 support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=media-platform-rcar_imr-add-IMR-LX3-support.patch
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Add support for the image renderer light extended 3 (IMR-LX3) found only in
+the R-Car V2H (R8A7792) SoC. It's mostly the same as IMR-LSX3 but doesn't
+support video capture data as a source of 2D textures.
 
-Set PHY rxc-skew-ps to 1500 and all other values to their default values.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This is intended to to address failures in the case of 1Gbps communication
-using the by salvator-x board with the KSZ9031RNX phy. This has been
-reported to occur with both the r8a7795 (H3) and r8a7796 (M3-W) SoCs.
-
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+This patch  is against the 'media_tree.git' repo's 'master' branch plus the
+latest version of  the Renesas IMR driver and the patch adding IMR-LSX3 support.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index dc1177c76aa5..5158ba3f9ce3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -497,18 +497,7 @@
- 	status = "okay";
+ Documentation/devicetree/bindings/media/rcar_imr.txt |    4 ++
+ drivers/media/platform/rcar_imr.c                    |   27 ++++++++++++-------
+ 2 files changed, 22 insertions(+), 9 deletions(-)
+
+Index: media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
+===================================================================
+--- media_tree.orig/Documentation/devicetree/bindings/media/rcar_imr.txt
++++ media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
+@@ -9,6 +9,10 @@ and drawing with respect to any shape th
+ Required properties:
  
- 	phy0: ethernet-phy@0 {
--		rxc-skew-ps = <900>;
--		rxdv-skew-ps = <0>;
--		rxd0-skew-ps = <0>;
--		rxd1-skew-ps = <0>;
--		rxd2-skew-ps = <0>;
--		rxd3-skew-ps = <0>;
--		txc-skew-ps = <900>;
--		txen-skew-ps = <0>;
--		txd0-skew-ps = <0>;
--		txd1-skew-ps = <0>;
--		txd2-skew-ps = <0>;
--		txd3-skew-ps = <0>;
-+		rxc-skew-ps = <1500>;
- 		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
--- 
-2.7.0.rc3.207.g0ac5344
+ - compatible:
++  "renesas,<soctype>-imr-lx3", "renesas,imr-lx3" as a fallback for the image
++  renderer light extended 3 (IMR-LX3) found in the R-Car gen2 SoCs, where the
++  examples with <soctype> are:
++  - "renesas,r8a7792-imr-lx3" for R-Car V2H;
+   "renesas,<soctype>-imr-lsx3", "renesas,imr-lsx3" as a fallback for the image
+   renderer light SRAM extended 3 (IMR-LSX3) found in the R-Car gen2 SoCs, where
+   the examples with <soctype> are:
+Index: media_tree/drivers/media/platform/rcar_imr.c
+===================================================================
+--- media_tree.orig/drivers/media/platform/rcar_imr.c
++++ media_tree/drivers/media/platform/rcar_imr.c
+@@ -1,5 +1,5 @@
+ /*
+- * rcar_imr.c -- R-Car IMR-LSX3/LX4 Driver
++ * rcar_imr.c -- R-Car IMR-LX3/LSX3/LX4 Driver
+  *
+  * Copyright (C) 2015-2017 Cogent Embedded, Inc. <source@cogentembedded.com>
+  *
+@@ -82,6 +82,7 @@ struct imr_format_info {
+ };
+ 
+ enum imr_type {
++	IMR_LX3,
+ 	IMR_LSX3,
+ 	IMR_LX4,
+ };
+@@ -153,7 +154,7 @@ struct imr_ctx {
+ #define IMR_SSAR		0x38
+ #define IMR_DSTR		0x3C
+ #define IMR_SSTR		0x40
+-#define IMR_DSOR		0x50
++#define IMR_DSOR		0x50		/* IMR-LSX3/LX4 only */
+ #define IMR_CMRCR		0x54
+ #define IMR_CMRCSR		0x58
+ #define IMR_CMRCCR		0x5C
+@@ -200,7 +201,7 @@ struct imr_ctx {
+ #define IMR_CMRCR_DUV		GENMASK(4, 3)
+ #define IMR_CMRCR_SUV_SHIFT	5
+ #define IMR_CMRCR_SUV		GENMASK(6, 5)
+-#define IMR_CMRCR_YISM		BIT(7)
++#define IMR_CMRCR_YISM		BIT(7)		/* IMR-LSX3/LX4 only */
+ #define IMR_CMRCR_Y10		BIT(8)
+ #define IMR_CMRCR_Y12		BIT(9)
+ #define IMR_CMRCR_SY10		BIT(11)
+@@ -214,7 +215,7 @@ struct imr_ctx {
+ #define IMR_TRIMR_AUTOSG	BIT(3)
+ #define IMR_TRIMR_TCM		BIT(6)
+ 
+-#define IMR_TRICR_YCFORM	BIT(31)
++#define IMR_TRICR_YCFORM	BIT(31)		/* IMR-LSX3/LX4 only */
+ 
+ #define IMR_UVDPOR_UVDPO_SHIFT	0
+ #define IMR_UVDPOR_UVDPO	GENMASK(2, 0)
+@@ -296,7 +297,7 @@ static u32 __imr_flags_common(u32 iflags
+ 	return iflags & oflags & IMR_F_PLANES_MASK;
+ }
+ 
+-static const struct imr_format_info imr_lsx3_formats[] = {
++static const struct imr_format_info imr_lx3_formats[] = {
+ 	{
+ 		.name	= "YUV 4:2:2 semiplanar (NV16)",
+ 		.fourcc	= V4L2_PIX_FMT_NV16,
+@@ -377,10 +378,16 @@ static const struct imr_format_info imr_
+ 	},
+ };
+ 
++static const struct imr_info imr_lx3 = {
++	.type		= IMR_LX3,
++	.formats	= imr_lx3_formats,
++	.num_formats	= ARRAY_SIZE(imr_lx3_formats),
++};
++
+ static const struct imr_info imr_lsx3 = {
+ 	.type		= IMR_LSX3,
+-	.formats	= imr_lsx3_formats,
+-	.num_formats	= ARRAY_SIZE(imr_lsx3_formats),
++	.formats	= imr_lx3_formats,
++	.num_formats	= ARRAY_SIZE(imr_lx3_formats),
+ };
+ 
+ static const struct imr_info imr_lx4 = {
+@@ -835,7 +842,8 @@ static void imr_dl_program_setup(struct
+ 	*dl++ = IMR_OP_WTS(IMR_CPDPOR, __imr_cpdp(type));
+ 
+ 	/* reset rendering mode registers */
+-	*dl++ = IMR_OP_WTS(IMR_CMRCCR,  0xDBFE);
++	*dl++ = IMR_OP_WTS(IMR_CMRCCR, ctx->imr->info->type >= IMR_LSX3 ?
++			   0xDBFE : 0xDB7E);
+ 	*dl++ = IMR_OP_WTS(IMR_CMRCCR2, ctx->imr->info->type == IMR_LX4 ?
+ 			   0x9065 : IMR_CMRCR2_LUTE);
+ 
+@@ -1990,6 +1998,7 @@ static const struct dev_pm_ops imr_pm_op
+ 
+ /* device table */
+ static const struct of_device_id imr_of_match[] = {
++	{ .compatible = "renesas,imr-lx3",  .data = &imr_lx3, },
+ 	{ .compatible = "renesas,imr-lsx3", .data = &imr_lsx3, },
+ 	{ .compatible = "renesas,imr-lx4",  .data = &imr_lx4,  },
+ 	{ },
+@@ -2011,5 +2020,5 @@ module_platform_driver(imr_platform_driv
+ 
+ MODULE_ALIAS("imr");
+ MODULE_AUTHOR("Cogent Embedded Inc. <sources@cogentembedded.com>");
+-MODULE_DESCRIPTION("Renesas IMR-LSX3/LX4 Driver");
++MODULE_DESCRIPTION("Renesas IMR-LX3/LSX3/LX4 Driver");
+ MODULE_LICENSE("GPL");
