@@ -1,64 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55090 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753511AbdCBAjv (ORCPT
+Received: from mail.free-electrons.com ([62.4.15.54]:59647 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751175AbdCQPQS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Mar 2017 19:39:51 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVERS FOR RENESAS"
-        <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 06/13] drm: bridge: Add LVDS encoder driver
-Date: Thu, 02 Mar 2017 02:30:09 +0200
-Message-ID: <2659133.LIMvdVgYOv@avalon>
-In-Reply-To: <7936513.8Ot9e1G3ck@avalon>
-References: <1480410283-28698-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20170104145824.bnjdsv77bay75ie2@phenom.ffwll.local> <7936513.8Ot9e1G3ck@avalon>
+        Fri, 17 Mar 2017 11:16:18 -0400
+Date: Fri, 17 Mar 2017 16:16:08 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/5] ARM: dts: r7s72100: add rtc clock to device tree
+Message-ID: <20170317151608.onw67v4qv746albh@piout.net>
+References: <20170316175112.27913-1-chris.brandt@renesas.com>
+ <20170316175112.27913-4-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170316175112.27913-4-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Daniel,
+On 16/03/2017 at 13:51:10 -0400, Chris Brandt wrote:
 
-On Wednesday 04 Jan 2017 17:13:23 Laurent Pinchart wrote:
-> On Wednesday 04 Jan 2017 15:58:25 Daniel Vetter wrote:
-> > On Wed, Jan 04, 2017 at 04:33:57PM +0200, Laurent Pinchart wrote:
-> >> On Wednesday 04 Jan 2017 14:51:48 Daniel Vetter wrote:
-> >>> Hm, something like drm_bridge_panel_bridge_init(dev, panel) should be
-> >>> enough, or not? My idea is to use this for the case where the only
-> >>> thing in dt is the panel, with no real bridge chip. And I think we
-> >>> don't need anything beyond that one _init function, plus maybe some
-> >>> additional paramaters ...
-> >> 
-> >> There should be no bridge then. If you want the DRM core to manage
-> >> panels automatically, then we should create specific helpers for that,
-> >> not abuse the bridge infrastructure. Bridges should be instantiated from
-> >> a hardware device and bound to drivers as usual.
-> > 
-> > I guess that's the part where I disagree: Just because there's physically
-> > no bridge doesn't mean we shouldn't just treat it as one in the software
-> > abstraction. If it looks and acts like a bridge (even an empty one), then
-> > imo it can be a bridge.
-> > 
-> > If you insist on panels being panels, then I guess we need some other kind
-> > of glue to bind them into arbitrary bridge chains. But given that the
-> > callbacks match very closely, I don't see the point.
-> > 
-> > In an idea world a panel would probably derive from a drm_bridge, but
-> > we're not in that universe unfortunately ;-)
+You should always include a commit message.
+
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi            | 9 +++++++++
+>  include/dt-bindings/clock/r7s72100-clock.h | 3 +++
+>  2 files changed, 12 insertions(+)
 > 
-> Or both would derive from another object, but I agree that's how it should
-> work. That's what I want to achieve, one step at a time. Creating dummy
-> bridges isn't a step in that direction in my opinion, so I'd rather not do
-> that, but work towards the right abstraction.
-
-Do you object getting this patch merged as-is as a first step in the right 
-direction ? :-)
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index ed62e19..2a42a79 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -117,6 +117,15 @@
+>  			clock-output-names = "ostm0", "ostm1";
+>  		};
+>  
+> +		mstp6_clks: mstp6_clks@fcfe042c {
+> +			#clock-cells = <1>;
+> +			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+> +			reg = <0xfcfe042c 4>;
+> +			clocks = <&p0_clk>;
+> +			clock-indices = <R7S72100_CLK_RTC>;
+> +			clock-output-names = "rtc0";
+> +		};
+> +
+>  		mstp7_clks: mstp7_clks@fcfe0430 {
+>  			#clock-cells = <1>;
+>  			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+> diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+> index cd2ed51..bc256d3 100644
+> --- a/include/dt-bindings/clock/r7s72100-clock.h
+> +++ b/include/dt-bindings/clock/r7s72100-clock.h
+> @@ -29,6 +29,9 @@
+>  #define R7S72100_CLK_OSTM0	1
+>  #define R7S72100_CLK_OSTM1	0
+>  
+> +/* MSTP6 */
+> +#define R7S72100_CLK_RTC	0
+> +
+>  /* MSTP7 */
+>  #define R7S72100_CLK_ETHER	4
+>  
+> -- 
+> 2.10.1
+> 
+> 
 
 -- 
-Regards,
-
-Laurent Pinchart
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
