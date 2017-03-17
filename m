@@ -1,45 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753457AbdCTJAX (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56589 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbdCQQCI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:00:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/31] ARM: dts: alt: Drop superfluous status update for frequency override
-Date: Mon, 20 Mar 2017 09:58:09 +0100
-Message-Id: <e5fada0cf2131b901e411bb65c22ddc98b6dcf98.1489999063.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Fri, 17 Mar 2017 12:02:08 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/7] thermal: rcar_gen3_thermal: add delay in .thermal_init on r8a7796
+Date: Fri, 17 Mar 2017 16:52:54 +0100
+Message-Id: <20170317155300.21566-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The .thermal_init needs to be delayed a short amount of time to allow
+for the TEMP register to contain something useful. If it's not delayed
+these warnings are common during boot:
 
-The scif_clk device node is already enabled in r8a7794.dtsi, so there is
-no need to update its status again.
+thermal thermal_zone0: failed to read out thermal zone (-5)
+thermal thermal_zone1: failed to read out thermal zone (-5)
+thermal thermal_zone2: failed to read out thermal zone (-5)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+The warnings are triggered by the first call to .get_temp() while the
+TEMP register contains 0 and rcar_gen3_thermal_get_temp() returns -EIO
+since a TEMP value of 0 will result in a temperature reading which is
+out of specifications.
+
+This should have been done in the initial commit which adds the driver
+as the same issue was found and corrected for r8a7795.
+
+Fixes: 564e73d283af9d4c ("thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver")
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/thermal/rcar_gen3_thermal.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 569e3f0e97a5..3fcf76b8e923 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -375,7 +375,6 @@
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index d33c845244b1d819..ec477d47d0bae8e5 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -222,6 +222,8 @@ static void r8a7796_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ 	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
+ 	reg_val |= THCTR_THSST;
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val);
++
++	usleep_range(1000, 2000);
+ }
  
- &scif_clk {
- 	clock-frequency = <14745600>;
--	status = "okay";
- };
- 
- &qspi {
+ static const struct rcar_gen3_thermal_data r8a7795_data = {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.12.0
