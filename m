@@ -1,69 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:36174 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932239AbdCTU2Y (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56339 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751065AbdCQQCG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 16:28:24 -0400
-Date: Mon, 20 Mar 2017 21:27:57 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        Fri, 17 Mar 2017 12:02:06 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v2 7/7] thermal: rcar_gen3_thermal: add suspend and
- resume support
-Message-ID: <20170320202756.GD1587@katana>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 7/7] thermal: rcar_gen3_thermal: add suspend and resume support
+Date: Fri, 17 Mar 2017 16:53:00 +0100
+Message-Id: <20170317155300.21566-8-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
- <20170317155300.21566-8-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="eheScQNz3K90DVRs"
-Content-Disposition: inline
-In-Reply-To: <20170317155300.21566-8-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+To restore operation it's easiest to reinitialise all TSCs. In order to
+do this the current trip window needs to be stored in the TSC structure
+so that it can be restored upon resume.
 
---eheScQNz3K90DVRs
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-On Fri, Mar 17, 2017 at 04:53:00PM +0100, Niklas S=C3=B6derlund wrote:
-> To restore operation it's easiest to reinitialise all TSCs. In order to
-> do this the current trip window needs to be stored in the TSC structure
-> so that it can be restored upon resume.
->=20
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-
-If you refactor rcar_thermal_irq_set(), then you'd need adaptions here
-as well, but besides this minor thing:
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---eheScQNz3K90DVRs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJY0DtMAAoJEBQN5MwUoCm2oukP/3yYv9YO//SZI3Qb2QVOg7tF
-zHUXIXgHCHvygvOznNZs7nZZ85Epi/WSmu75n4sNt6xg17S/1ugAyUUxYTdwHfeB
-81zYafCSw7h+WHmkdO7PLtmpWUjPSUEPIRwxrvmoSP0H1qEhD3IaYfJ8RDtVeaZz
-m7xtJejHHG5s2FSWQkdQZjnZbTq8oJqxeFMDZOm/PrIbvpBNI7uXEbRjabPz0fvO
-5nxz7aNrwkXFIQzW9KrO5+1zTn6wIGxf5IM1+ngLk1QKLbp37rUTEL6U2llAvkVr
-SVcuuVJtCEDSzjRs4s5N0l011Oqgd+U7D4WNe7uTi3yaeYC6g0+G3+1hq1UXDDTr
-I+pv+UrsqMMeWz7hI1f7ksEffQNghshkKwt1vRuM+KX5aeC2gPGZXZ2Pfrj1T5oq
-3j6bxYKWvqq5/udpKA6mj2n1Yej8OwOX2yaR+r83f8fRcO7enhClra85L6oPvORu
-PfLFVkccxIUHXS7xDfs0Js9DvsK2PmTr/k6gIw01BKo6aZsgt4CIonBmLsI/EHl4
-8RP1QkNxcvfXGBrkG+TPGLfkflGO1lEziOTUF4+h8MxmZg0EqGHyNWeIC5vFCYiS
-QcGCUCWfJGmIO5Q8GCDSUQuCzdN9D/qOUQZyTG6Z1CclrJ73uqB10KfSYdVtjHO6
-9T2T0YQe7QtY3wqjUdV2
-=r9X/
------END PGP SIGNATURE-----
-
---eheScQNz3K90DVRs--
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 438fb9988eabb91b..b5e3d7b41629803c 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -82,6 +82,8 @@ struct rcar_gen3_thermal_tsc {
+ 	void __iomem *base;
+ 	struct thermal_zone_device *zone;
+ 	struct equation_coefs coef;
++	int low;
++	int high;
+ };
+ 
+ struct rcar_gen3_thermal_priv {
+@@ -217,6 +219,9 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
+ 				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
+ 
++	tsc->low = low;
++	tsc->high = high;
++
+ 	return 0;
+ }
+ 
+@@ -450,9 +455,39 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int __maybe_unused rcar_gen3_thermal_suspend(struct device *dev)
++{
++	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
++
++	rcar_thermal_irq_set(priv, 0);
++
++	return 0;
++}
++
++static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
++{
++	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
++	unsigned int i;
++
++	for (i = 0; i < priv->num_tscs; i++) {
++		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
++
++		priv->data->thermal_init(tsc);
++		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
++	}
++
++	rcar_thermal_irq_set(priv, 1);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(rcar_gen3_thermal_pm_ops, rcar_gen3_thermal_suspend,
++			 rcar_gen3_thermal_resume);
++
+ static struct platform_driver rcar_gen3_thermal_driver = {
+ 	.driver	= {
+ 		.name	= "rcar_gen3_thermal",
++		.pm = &rcar_gen3_thermal_pm_ops,
+ 		.of_match_table = rcar_gen3_thermal_dt_ids,
+ 	},
+ 	.probe		= rcar_gen3_thermal_probe,
+-- 
+2.12.0
