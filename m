@@ -1,68 +1,80 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 1/9] drm: bridge: dw-hdmi: Remove unused functions
-Date: Thu,  2 Mar 2017 00:39:07 +0200
-Message-Id: <20170301223915.29888-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:31330 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750999AbdCQK26 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Mar 2017 06:28:58 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] usb: host: xhci-plat: add resume_quirk()
+Date: Fri, 17 Mar 2017 19:02:34 +0900
+Message-ID: <1489744955-29553-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Most of the hdmi_phy_test_*() functions are unused. Remove them.
+This patch adds resume_quirk() to do platform specific process in
+resume timing.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
+ drivers/usb/host/xhci-plat.c | 15 +++++++++++++++
+ drivers/usb/host/xhci-plat.h |  1 +
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 9a9ec27d9e28..ce7496399ccf 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -837,32 +837,6 @@ static inline void hdmi_phy_test_clear(struct dw_hdmi *hdmi,
- 		  HDMI_PHY_TST0_TSTCLR_MASK, HDMI_PHY_TST0);
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 3528de3..ceb7413 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -54,6 +54,16 @@ static int xhci_priv_init_quirk(struct usb_hcd *hcd)
+ 	return priv->init_quirk(hcd);
  }
  
--static inline void hdmi_phy_test_enable(struct dw_hdmi *hdmi,
--					unsigned char bit)
--{
--	hdmi_modb(hdmi, bit << HDMI_PHY_TST0_TSTEN_OFFSET,
--		  HDMI_PHY_TST0_TSTEN_MASK, HDMI_PHY_TST0);
--}
--
--static inline void hdmi_phy_test_clock(struct dw_hdmi *hdmi,
--				       unsigned char bit)
--{
--	hdmi_modb(hdmi, bit << HDMI_PHY_TST0_TSTCLK_OFFSET,
--		  HDMI_PHY_TST0_TSTCLK_MASK, HDMI_PHY_TST0);
--}
--
--static inline void hdmi_phy_test_din(struct dw_hdmi *hdmi,
--				     unsigned char bit)
--{
--	hdmi_writeb(hdmi, bit, HDMI_PHY_TST1);
--}
--
--static inline void hdmi_phy_test_dout(struct dw_hdmi *hdmi,
--				      unsigned char bit)
--{
--	hdmi_writeb(hdmi, bit, HDMI_PHY_TST2);
--}
--
- static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
++static int xhci_priv_resume_quirk(struct usb_hcd *hcd)
++{
++	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
++
++	if (!priv->resume_quirk)
++		return 0;
++
++	return priv->resume_quirk(hcd);
++}
++
+ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
  {
- 	u32 val;
+ 	/*
+@@ -328,10 +338,15 @@ static int xhci_plat_resume(struct device *dev)
+ {
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++	int ret;
+ 
+ 	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
+ 		clk_prepare_enable(xhci->clk);
+ 
++	ret = xhci_priv_resume_quirk(hcd);
++	if (ret)
++		return ret;
++
+ 	return xhci_resume(xhci, 0);
+ }
+ 
+diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
+index 9af0cb4..29b2278 100644
+--- a/drivers/usb/host/xhci-plat.h
++++ b/drivers/usb/host/xhci-plat.h
+@@ -17,6 +17,7 @@ struct xhci_plat_priv {
+ 	const char *firmware_name;
+ 	void (*plat_start)(struct usb_hcd *);
+ 	int (*init_quirk)(struct usb_hcd *);
++	int (*resume_quirk)(struct usb_hcd *);
+ };
+ 
+ #define hcd_to_xhci_priv(h) ((struct xhci_plat_priv *)hcd_to_xhci(h)->priv)
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
