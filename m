@@ -1,51 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:58276 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932209AbdCMQlw (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47512 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbdCQGcU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 12:41:52 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Fix hscif2_clk_b and hscif4_ctrl
-Date: Mon, 13 Mar 2017 17:41:41 +0100
-Message-Id: <1489423302-21296-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
-References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
+        Fri, 17 Mar 2017 02:32:20 -0400
+Date: Fri, 17 Mar 2017 15:23:18 +0900
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Matthew Giassa <matthew@giassa.net>
+Cc: wsa@the-dreams.de, linux-renesas-soc@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv5 1/4] Staging: ks7010: ks_wlan_ioctl.h: Removed mixed
+ spaces/tabs
+Message-ID: <20170317062318.GA7930@kroah.com>
+References: <20170316024246.GA19641@kroah.com>
+ <1489634291-30028-1-git-send-email-matthew@giassa.net>
+ <1489634291-30028-2-git-send-email-matthew@giassa.net>
+ <20170317062257.GA7745@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170317062257.GA7745@kroah.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix typos in hscif2_clk_[bc]_mux[] and hscif4_ctrl_mux[].
+On Fri, Mar 17, 2017 at 03:22:57PM +0900, Greg KH wrote:
+> On Wed, Mar 15, 2017 at 08:18:08PM -0700, Matthew Giassa wrote:
+> > Removing mixed spaces/hard-tabs used to create a "column alignment" of
+> > macro names and macro values.
+> > 
+> > Signed-off-by: Matthew Giassa <matthew@giassa.net>
+> > ---
+> >  drivers/staging/ks7010/ks_wlan_ioctl.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> This patch does not apply to my tree at all.  Are you sure you are
+> working against the staging-next branch?  Please rebase and resend.
 
-Fixes: a56069c46c102710 ("pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Same thing for all of the patches in this series.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 504d0c3d7f741849..6ba7ed15a4610366 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2167,7 +2167,7 @@ static const unsigned int hscif2_clk_b_pins[] = {
- 	RCAR_GP_PIN(6, 21),
- };
- static const unsigned int hscif2_clk_b_mux[] = {
--	HSCK1_B_MARK,
-+	HSCK2_B_MARK,
- };
- static const unsigned int hscif2_ctrl_b_pins[] = {
- 	/* RTS, CTS */
-@@ -2240,7 +2240,7 @@ static const unsigned int hscif4_ctrl_pins[] = {
- 	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14),
- };
- static const unsigned int hscif4_ctrl_mux[] = {
--	HRTS4_N_MARK, HCTS3_N_MARK,
-+	HRTS4_N_MARK, HCTS4_N_MARK,
- };
- 
- static const unsigned int hscif4_data_b_pins[] = {
--- 
-2.7.4
+greg k-h
