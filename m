@@ -1,70 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34326 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757076AbdCUNvj (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34417 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbdCQKIB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Mar 2017 09:51:39 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170317100630.GA20587@bigcity.dyn.berto.se>
-References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
- <20170306200401.29923-6-niklas.soderlund+renesas@ragnatech.se>
- <20170307195533.GE2554@tetsubishi> <20170317100630.GA20587@bigcity.dyn.berto.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Mar 2017 14:50:59 +0100
-Message-ID: <CAMuHMdXJpVdNosRcwqjmy40gDDXo7myKLZtF8y+p-q0cZbqq2Q@mail.gmail.com>
-Subject: Re: [PATCH 5/7] thermal: rcar_gen3_thermal: enable hardware
- interrupts for trip points
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        Fri, 17 Mar 2017 06:08:01 -0400
+Received: by mail-lf0-f45.google.com with SMTP id z15so31104535lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Mar 2017 03:08:00 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Fri, 17 Mar 2017 11:07:58 +0100
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 5/7] thermal: rcar_gen3_thermal: enable hardware
+ interrupts for trip points
+Message-ID: <20170317100758.GB20587@bigcity.dyn.berto.se>
+References: <20170306200401.29923-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170306200401.29923-6-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdWXw8dQKU4KkH8ouB4Kvngm_H4-4W11EBxnx=QXE3Ffjg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWXw8dQKU4KkH8ouB4Kvngm_H4-4W11EBxnx=QXE3Ffjg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Hi Geert,
 
-On Fri, Mar 17, 2017 at 11:06 AM, Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
-> On 2017-03-07 20:55:33 +0100, Wolfram Sang wrote:
->> On Mon, Mar 06, 2017 at 09:03:59PM +0100, Niklas S=C3=B6derlund wrote:
->> > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnate=
-ch.se>
->> > ---
->> >  drivers/thermal/rcar_gen3_thermal.c | 137 +++++++++++++++++++++++++++=
-+++++++++
->> >  1 file changed, 137 insertions(+)
->> >
->> > +static int rcar_gen3_thermal_set_trips(void *devdata, int low, int hi=
-gh)
->> > +{
->> > +   struct rcar_gen3_thermal_tsc *tsc =3D devdata;
->> > +
->> > +   if (low < -40000)
->> > +           low =3D -40000;
->> > +   if (high > 125000)
->> > +           high =3D 125000;
->>
->> Use clamp_val()?
->
-> Good idea, will use.
+Thanks for your feedback.
 
-Why not clamp()? Does the type checking stand in the way?
+On 2017-03-07 16:36:00 +0100, Geert Uytterhoeven wrote:
+> On Mon, Mar 6, 2017 at 9:03 PM, Niklas S�derlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > Enable hardware trip points by implementing the set_trips callback. The
+> > thermal core will take care of setting the initial trip point window and
+> > to update it once the driver reports a TSC have moved outside it.
+> 
+> has moved
+> 
+> > The interrupt structure for this device is a bit odd. There is not a
+> > dedicated IRQ for each TSC, instead the interrupts are shared between
+> > all TSC. IRQn is fired if the temp monitored in IRQTEMPn is reached in
+> 
+> all TSCs
+> 
+> > any of the TSC, example IRQ3 is fired if temperature in IRQTEMP3 is
+> 
+> TSCs
+> 
+> > reached in either TSC0, TSC1 or TSC2.
+> >
+> > For this reason the usage of interrupts in this driver is a all on or
+> 
+> an all-on or all-off
+> 
+> > all off design. When an interrupt happens all TSC are checked and all
+> 
+> TSCs
+> 
+> > thermal zones are updated. This could be refined to be more fine grained
+> > but the thermal core takes care of only updating the thermal zones that
+> > have left there trip point window.
+> 
+> their
+> 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Gr{oetje,eeting}s,
+I will fix all the spelling suggestions above, thanks! But I will not 
+add your Reviewed-by since Wolframs comments suggest I need to update 
+some parts of this patch.
 
-                        Geert
+> 
+> > ---
+> >  drivers/thermal/rcar_gen3_thermal.c | 137 ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 137 insertions(+)
+> >
+> > diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> > index 65f7204936a18278..e52181015e589a7f 100644
+> > --- a/drivers/thermal/rcar_gen3_thermal.c
+> > +++ b/drivers/thermal/rcar_gen3_thermal.c
+> 
+> > @@ -76,6 +87,7 @@ struct rcar_gen3_thermal_tsc {
+> >  };
+> >
+> >  struct rcar_gen3_thermal_priv {
+> > +       spinlock_t lock;
+> 
+> When declaring a spinlock, please add a comment what exactly is
+> protected by the lock.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Will do thanks.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+> > +static void rcar_thermal_irq_disable(struct rcar_gen3_thermal_priv *priv)
+> > +{
+> > +       int i;
+> 
+> unsigned int (for all positive loop counters)
+
+Thanks, will fix.
+
+> 
+> > +
+> > +       for (i = 0; i < TSC_MAX_NUM; i++)
+> > +               rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQMSK, 0);
+> > +}
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+-- 
+Regards,
+Niklas S�derlund
