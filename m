@@ -1,12 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:18215 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751039AbdCQNRf (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36309 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbdCQI3b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2017 09:17:35 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Alessandro Zummo <a.zummo@towertech.it>,
+        Fri, 17 Mar 2017 04:29:31 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170316175112.27913-2-chris.brandt@renesas.com>
+References: <20170316175112.27913-1-chris.brandt@renesas.com> <20170316175112.27913-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Mar 2017 09:22:53 +0100
+Message-ID: <CAMuHMdXXRiUTJJRsrpyFNEwjvjPO2s5Rthn2r+UipaQgVHHMcQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] rtc: rtc-sh: add support for rza series
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -14,30 +20,45 @@ CC: Alessandro Zummo <a.zummo@towertech.it>,
         RTCLINUX <rtc-linux@googlegroups.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/5] rtc: rtc-sh: add support for rza series
-Date: Fri, 17 Mar 2017 13:17:31 +0000
-Message-ID: <SG2PR06MB116511BA2DB66097980C97548A390@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170316175112.27913-1-chris.brandt@renesas.com>
- <20170316175112.27913-2-chris.brandt@renesas.com>
- <CAMuHMdXXRiUTJJRsrpyFNEwjvjPO2s5Rthn2r+UipaQgVHHMcQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXXRiUTJJRsrpyFNEwjvjPO2s5Rthn2r+UipaQgVHHMcQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgTWFyY2ggMTcsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCj4gPiAtLS0gYS9kcml2ZXJzL3J0Yy9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVy
-cy9ydGMvS2NvbmZpZw0KPiA+IEBAIC0xMzAzLDEwICsxMzAzLDEwIEBAIGNvbmZpZyBSVENfRFJW
-X1NBMTEwMA0KPiA+DQo+ID4gIGNvbmZpZyBSVENfRFJWX1NIDQo+ID4gICAgICAgICB0cmlzdGF0
-ZSAiU3VwZXJIIE9uLUNoaXAgUlRDIg0KPiA+IC0gICAgICAgZGVwZW5kcyBvbiBTVVBFUkggJiYg
-SEFWRV9DTEsNCj4gPiArICAgICAgIGRlcGVuZHMgb24gKFNVUEVSSCB8fCBBUkNIX1JFTkVTQVMp
-ICYmIEhBVkVfQ0xLDQo+IA0KPiBJIGJlbGlldmUgdGhlIGRlcGVuZGVuY3kgb24gSEFWRV9DTEsg
-aXMgbm90IG5lZWRlZC4NCj4gU3VwZXJIIHNlbGVjdHMgQ0xLREVWX0xPT0tVUCwgd2hpY2ggc2Vs
-ZWN0cyBIQVZFX0NMSy4NCj4gQVJNIChhbmQgQVJNNjQpIHNlbGVjdHMgQ09NTU9OX0NMSywgd2hp
-Y2ggc2VsZWN0cyBIQVZFX0NMSy4NCj4gDQo+IGludGVyZXN0aW5nbHksIFN1cGVySCBhbHJlYWR5
-IGRpZCBzbyBhdCB0aGUgdGltZSB0aGUgZGVwZW5kZW5jeSB3YXMNCj4gYWRkZWQuLi4NCg0KT0ss
-IEknbGwgdGFrZSBpdCBvdXQuDQpJIGp1c3QgZGlkbid0IHdhbnQgdG8gYnJlYWsgYW55IFNIIHN0
-dWZmLg0KDQoNCg0KQ2hyaXMNCg==
+Hi Chris,
+
+On Thu, Mar 16, 2017 at 6:51 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> This same RTC is used in RZ/A series MPUs, therefore with some slight
+> changes, this driver can be reused. Additionally, since ARM architectures
+> require Device Tree configurations, device tree support has been added.
+
+Thanks for your patch!
+
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -1303,10 +1303,10 @@ config RTC_DRV_SA1100
+>
+>  config RTC_DRV_SH
+>         tristate "SuperH On-Chip RTC"
+> -       depends on SUPERH && HAVE_CLK
+> +       depends on (SUPERH || ARCH_RENESAS) && HAVE_CLK
+
+I believe the dependency on HAVE_CLK is not needed.
+SuperH selects CLKDEV_LOOKUP, which selects HAVE_CLK.
+ARM (and ARM64) selects COMMON_CLK, which selects HAVE_CLK.
+
+interestingly, SuperH already did so at the time the dependency was added...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
