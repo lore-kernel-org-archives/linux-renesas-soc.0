@@ -1,49 +1,134 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:33985 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754242AbdCXCQf (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:36178 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbdCQTcn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Mar 2017 22:16:35 -0400
-Date: Thu, 23 Mar 2017 21:16:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        Fri, 17 Mar 2017 15:32:43 -0400
+Received: by mail-lf0-f51.google.com with SMTP id y193so37048906lfd.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Mar 2017 12:32:41 -0700 (PDT)
 Subject: Re: [PATCH v2] media: platform: rcar_imr: add IMR-LSX3 support
-Message-ID: <20170324021632.xp3xnrgklqdeixq6@rob-hp-laptop>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org
 References: <20170316190000.216761731@cogentembedded.com>
+ <b12254ac-ed2f-dec5-8cbd-4ce22c5f3c55@xs4all.nl>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <35e744da-4ae6-5a7c-2651-656012c961aa@cogentembedded.com>
+Date: Fri, 17 Mar 2017 22:26:12 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170316190000.216761731@cogentembedded.com>
+In-Reply-To: <b12254ac-ed2f-dec5-8cbd-4ce22c5f3c55@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 16, 2017 at 09:59:50PM +0300, Sergei Shtylyov wrote:
-> Add support for the image renderer light SRAM extended 3 (IMR-LSX3) found
-> only in the R-Car V2H (R8A7792) SoC.  It differs  from IMR-LX4 in that it
-> supports only planar video formats but can use the video capture data for
-> the textures.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> This patch  is against the 'media_tree.git' repo's 'master' branch plus the
-> latest version of  the Renesas IMR driver...
-> 
-> Changes in version 2:
-> - renamed *enum* 'imr_gen' to 'imr_type' and the *struct* field of this type
->   from 'gen' to 'type';
-> - rename *struct* 'imr_type' to 'imr_info' and the fields/variables of this type
->   from 'type' to 'info';
-> - added comments to IMR-LX4 only CMRCR2 bits;
-> - added IMR type check to the WTS instruction writing to CMRCCR2.
-> 
->  Documentation/devicetree/bindings/media/rcar_imr.txt |   11 +
+On 03/17/2017 05:33 PM, Hans Verkuil wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+>> Add support for the image renderer light SRAM extended 3 (IMR-LSX3) found
+>> only in the R-Car V2H (R8A7792) SoC.  It differs  from IMR-LX4 in that it
+>> supports only planar video formats but can use the video capture data for
+>> the textures.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
->  drivers/media/platform/rcar_imr.c                    |  106 +++++++++++++++----
->  2 files changed, 97 insertions(+), 20 deletions(-)
+[...]
+>> Index: media_tree/drivers/media/platform/rcar_imr.c
+>> ===================================================================
+>> --- media_tree.orig/drivers/media/platform/rcar_imr.c
+>> +++ media_tree/drivers/media/platform/rcar_imr.c
+[...]
+>> @@ -282,6 +296,34 @@ static u32 __imr_flags_common(u32 iflags
+>>  	return iflags & oflags & IMR_F_PLANES_MASK;
+>>  }
+>>
+>> +static const struct imr_format_info imr_lsx3_formats[] = {
+>> +	{
+>> +		.name	= "YUV 4:2:2 semiplanar (NV16)",
+>> +		.fourcc	= V4L2_PIX_FMT_NV16,
+>> +		.flags	= IMR_F_Y8 | IMR_F_UV8 | IMR_F_PLANAR,
+>> +	},
+>> +	{
+>> +		.name	= "Greyscale 8-bit",
+>> +		.fourcc	= V4L2_PIX_FMT_GREY,
+>> +		.flags	= IMR_F_Y8 | IMR_F_PLANAR,
+>> +	},
+>> +	{
+>> +		.name	= "Greyscale 10-bit",
+>> +		.fourcc	= V4L2_PIX_FMT_Y10,
+>> +		.flags	= IMR_F_Y8 | IMR_F_Y10 | IMR_F_PLANAR,
+>> +	},
+>> +	{
+>> +		.name	= "Greyscale 12-bit",
+>> +		.fourcc	= V4L2_PIX_FMT_Y12,
+>> +		.flags	= IMR_F_Y8 | IMR_F_Y10 | IMR_F_Y12 | IMR_F_PLANAR,
+>> +	},
+>> +	{
+>> +		.name	= "Chrominance UV 8-bit",
+>> +		.fourcc	= V4L2_PIX_FMT_UV8,
+>> +		.flags	= IMR_F_UV8 | IMR_F_PLANAR,
+>> +	},
+>> +};
+>> +
+>>  static const struct imr_format_info imr_lx4_formats[] = {
+>>  	{
+>>  		.name	= "YUV 4:2:2 semiplanar (NV16)",
+>> @@ -335,6 +377,18 @@ static const struct imr_format_info imr_
+>>  	},
+>>  };
+>>
+>> +static const struct imr_info imr_lsx3 = {
+>> +	.type		= IMR_LSX3,
+>> +	.formats	= imr_lsx3_formats,
+>> +	.num_formats	= ARRAY_SIZE(imr_lsx3_formats),
+>> +};
+>> +
+>> +static const struct imr_info imr_lx4 = {
+>> +	.type		= IMR_LX4,
+>> +	.formats	= imr_lx4_formats,
+>> +	.num_formats	= ARRAY_SIZE(imr_lx4_formats),
+>> +};
+>> +
+>>  /* mesh configuration constructor */
+>>  static struct imr_cfg *imr_cfg_create(struct imr_ctx *ctx,
+>>  				      u32 dl_size, u32 dl_start)
+[...]
+>> @@ -823,7 +879,7 @@ static void imr_dl_program_setup(struct
+>>  			*dl++ = IMR_OP_WTS(IMR_SSTR,
+>>  					   w << (iflags & IMR_F_UV10 ? 1 : 0));
+>>  		}
+>> -	} else {
+>> +	} else if (ctx->imr->info->type == IMR_LX4) {
+>>  		u16 src_fmt = (iflags & IMR_F_UV_SWAP ? IMR_CMRCR2_UVFORM : 0) |
+>>  			      (iflags & IMR_F_YUV_SWAP ?
+>>  			       IMR_CMRCR2_YUV422FORM : 0);
+>> @@ -864,6 +920,9 @@ static void imr_dl_program_setup(struct
+>>  			*dl++ = IMR_OP_WTS(IMR_DSTR,
+>>  					   W << (cflags & IMR_F_Y10 ? 2 : 1));
+>>  		}
+>> +	} else	{
+>> +		/* this shouldn't happen! */
+>> +		BUG();
+>
+> Can you find a better way? The use of 'BUG' is frowned upon. It's better
+> to return an error here.
+
+    OK, I'll try to return -EINVAL here...
+    BTW, the main driver patch also has BUG_ON()...
+
+> Also, are you sure this can't happen?  At least for
+ > me it is not obvious from the code.
+
+    Absolutely. Interleaved formats are not supported by IMR-L[S]X3, so the 
+format array has IMR_F_PLANAR set for all formats supported by these cores. 
+Interleaved formats are onlt supported by IMR-LX4 (for which we check above).
+
+[...]
+
+> Regards,
+>
+> 	Hans
+
+MBR, Sergei
