@@ -1,50 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753398AbdCTI7z (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:33648 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750990AbdCRJ4E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/31] ARM: dts: r8a7743: Remove unit-address and reg from integrated cache
-Date: Mon, 20 Mar 2017 09:57:45 +0100
-Message-Id: <37f0c804e57ac93ca37a98aa5a210c6b73e6572a.1489999062.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Sat, 18 Mar 2017 05:56:04 -0400
+Received: by mail-lf0-f47.google.com with SMTP id a6so41034745lfa.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 18 Mar 2017 02:55:39 -0700 (PDT)
+Subject: Re: [PATCH v2 2/7] thermal: rcar_gen3_thermal: remove unneeded mutex
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170317155300.21566-3-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <65b25e5d-0a25-ae0c-9f4d-a2a5429dc11b@cogentembedded.com>
+Date: Sat, 18 Mar 2017 12:30:26 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170317155300.21566-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 3/17/2017 6:52 PM, Niklas Söderlund wrote:
 
-The Cortex-A15 cache controller is an integrated controller, and thus
-the device node representing it should not have a unit-addresses or reg
-property.
+> There is no point in protecting a register read with a lock. This is
 
-Fixes: 34e8d993a68ae459 ("ARM: dts: r8a7743: initial SoC device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+    Register I/O is usually protected with spinlock...
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c166be2f18e0..cd908796fb3b 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -32,9 +32,8 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
--		L2_CA15: cache-controller@0 {
-+		L2_CA15: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			cache-unified;
- 			cache-level = <2>;
- 			power-domains = <&sysc R8A7743_PD_CA15_SCU>;
--- 
-2.7.0.rc3.207.g0ac5344
+> most likely a leftover from when the driver was reworked before submitted
+> for upstream.
+
+    Before being submitted?
+
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[...]
+
+MBR, Sergei
