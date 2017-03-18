@@ -1,66 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:54430 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753227AbdCTUJ0 (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33889 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751040AbdCROgt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 16:09:26 -0400
-Date: Mon, 20 Mar 2017 21:02:43 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
+        Sat, 18 Mar 2017 10:36:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170317155300.21566-4-niklas.soderlund+renesas@ragnatech.se>
+References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se> <20170317155300.21566-4-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 18 Mar 2017 15:06:54 +0100
+Message-ID: <CAMuHMdWHFWTpLcf9dVut-0G359mCWuoknNJ+Y2Fuum+-+XFh_g@mail.gmail.com>
 Subject: Re: [PATCH v2 3/7] thermal: rcar_gen3_thermal: check that TSC exists
  before memory allocation
-Message-ID: <20170320200243.GA1587@katana>
-References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
- <20170317155300.21566-4-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Content-Disposition: inline
-In-Reply-To: <20170317155300.21566-4-niklas.soderlund+renesas@ragnatech.se>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 17, 2017 at 04:52:56PM +0100, Niklas S=C3=B6derlund wrote:
+On Fri, Mar 17, 2017 at 4:52 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
 > Move the check for a TSC resource before allocating memory for a new
 > TSC. If no TSC is found there is little point in allocating memory for
 > it.
->=20
+>
 > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
 se>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-iQIcBAEBAgAGBQJY0DVjAAoJEBQN5MwUoCm2Vw8QAIVCbRV2cE+0Y/EF1I8cKe5c
-/KB9+bjonXpZrJelNwwiAz7mvO/sd8aTb1McpmqVQMFwb1ksJtBt+ijyiABL0Gtc
-n1fUdCO7qewDdCZINX0LBUQ94eWRHYnD4ikVz0tlwry2xOIUgaAogxBi6S11XZf+
-Cy74CvZ7qBRr9ZWJvaSBLE5xVboT+E5bTp8Qg/jb3XvBgVklhBgmm+AGxErJA/c2
-WOEUkHYDimJL9vOB3IifA7Z/+rEjnG+s5cUMUq2rB2t4LVgSGZLWk7HVw2/5iGHr
-urryF6fqdh+lEOLTMMr2MeT/E5DoFtEyEw2y1GiCtELcTKDy0SS1NTcdQ2JjzQRN
-QUIagAAC79eFdO6hqIxy8IyU+1P5bYJyZ18a8AlRJqJ0A1meoduygjmnUtxi7reF
-PsP9LfYc0Q9tapEWLOYqMqgy3jYPcWLAsWoi5eR3XiVtPeibHDGtMfcirltxE3Dc
-2rbprn8q/FvxnWtJJXHYTbryw2Mubm/rZSdL0YYIp+JsUWuWStzMKjqYPnAhrxha
-Yrt3QFnRw8pFrn/a/ohHhZ6WorwdFiwfVmoQ7tcG4ByL1loPqCFecqUneBHsD5g4
-4TXw3W0EkzO1KZ7JPP0y45fre1dLSi10TQmmjqt4GQbJPWefsYv6zOLvtBD88yf+
-0Ut9g9O5j/mxxsgU0Wjg
-=OKEc
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
