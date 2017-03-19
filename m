@@ -1,57 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:46766 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754730AbdC1JQt (ORCPT
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:35952 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751475AbdCSQUI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 05:16:49 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vslcr2F8kzMr0jL
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 11:16:12 +0200 (CEST)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Sun, 19 Mar 2017 12:20:08 -0400
+Received: by mail-wm0-f49.google.com with SMTP id n11so47326129wma.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 19 Mar 2017 09:20:07 -0700 (PDT)
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+Date: Sun, 19 Mar 2017 17:20:04 +0100
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Eugeniu Rosca <roscaeugeniu@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@sang-engineering.com>,
-        Christoph Baumann <cbaumann@visteon.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] serial: sh-sci: Assorted flow control fixes
-Date: Tue, 28 Mar 2017 11:13:43 +0200
-Message-Id: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Print correct pinmux info name
+Message-ID: <20170319162004.GB8580@x230>
+References: <20170318205226.GA11403@x230>
+ <CAMuHMdWzHLDjXknbK+Vik-7Qyi_WgcZL4JB5U_srKMh1sZa7Vg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWzHLDjXknbK+Vik-7Qyi_WgcZL4JB5U_srKMh1sZa7Vg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Greg, Jiri,
+On Sun, Mar 19, 2017 at 03:02:48PM +0100, Geert Uytterhoeven wrote:
 
-This patch series fixes several issues related to hardware flow control
-on Renesas SCIF UARTs.
+Hi Geert,
 
-For changes compared to v1 ("[PATCH 0/2] serial: sh-sci: Assorted flow
-control fixes", https://lkml.org/lkml/2016/12/2/226), please refer to
-the comments in the individual patches.
+> Thanks for your patch!
+> But next time, please send it inline, for easier commenting.
 
-Thanks!
+Thanks! Will do that next time.
 
-Geert Uytterhoeven (3):
-  serial: sh-sci: Fix hang in sci_reset()
-  serial: sh-sci: Fix late enablement of AUTORTS
-  serial: sh-sci: Fix (AUTO)RTS in sci_init_pins()
+> From a code maintenance point of view, I think it's safer to update the info
+> pointer itself, cfr. "[PATCH v2 1/4] pinctrl: sh-pfc: Update info pointer
+> after SoC-specific init"
+> (https://www.spinics.net/lists/linux-renesas-soc/msg12375.html).
 
- drivers/tty/serial/sh-sci.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+Agree! It's good that printing the correct PFC driver name is already
+fixed on your side.
 
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Best regards,
+Eugeniu.
