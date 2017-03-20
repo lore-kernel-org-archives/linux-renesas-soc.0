@@ -1,61 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36076 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753401AbdC0POa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753292AbdCTI7Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Mar 2017 11:14:30 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 4/4] arm64: dts: salvator-x: Add current sense amplifiers
-Date: Mon, 27 Mar 2017 17:12:58 +0200
-Message-Id: <1490627578-15938-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 20 Mar 2017 04:59:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/32] arm64: dts: h3ulcb: Fix EthernetAVB PHY timing
+Date: Mon, 20 Mar 2017 09:57:19 +0100
+Message-Id: <5b9fd1962f605a31842371471e559407c293131f.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for two Maxim max961x current sense amplifiers
-sensing VDD_08 and DVFS_08 lines.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Set PHY rxc-skew-ps to 1500 and all other values to their default values.
+
+This is intended to to address failures in the case of 1Gbps communication
+using the by h3ulcb board with the KSZ9031RNX phy.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index c7f40f8..389a177 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -257,6 +257,24 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 9811534f296e..69c623faf80c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -354,18 +354,7 @@
  	status = "okay";
- };
  
-+&i2c4 {
-+	status = "okay";
-+
-+	csa_vdd: adc@7c {
-+		compatible = "maxim,max9611";
-+		reg = <0x7c>;
-+
-+		shunt-resistor-uohm = <5000>;
-+	};
-+
-+	csa_dvfs: adc@7f {
-+		compatible = "maxim,max9611";
-+		reg = <0x7f>;
-+
-+		shunt-resistor-uohm = <5000>;
-+	};
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
+ 	phy0: ethernet-phy@0 {
+-		rxc-skew-ps = <900>;
+-		rxdv-skew-ps = <0>;
+-		rxd0-skew-ps = <0>;
+-		rxd1-skew-ps = <0>;
+-		rxd2-skew-ps = <0>;
+-		rxd3-skew-ps = <0>;
+-		txc-skew-ps = <900>;
+-		txen-skew-ps = <0>;
+-		txd0-skew-ps = <0>;
+-		txd1-skew-ps = <0>;
+-		txd2-skew-ps = <0>;
+-		txd3-skew-ps = <0>;
++		rxc-skew-ps = <1500>;
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
