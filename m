@@ -1,61 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753292AbdCTI7Z (ORCPT
+        with ESMTP id S1753406AbdCTI75 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:25 -0400
+        Mon, 20 Mar 2017 04:59:57 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/32] arm64: dts: h3ulcb: Fix EthernetAVB PHY timing
-Date: Mon, 20 Mar 2017 09:57:19 +0100
-Message-Id: <5b9fd1962f605a31842371471e559407c293131f.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+Subject: [PATCH 07/31] ARM: dts: r8a7745: Remove unit-address and reg from integrated cache
+Date: Mon, 20 Mar 2017 09:57:46 +0100
+Message-Id: <51c00a9f730dd27da23e9dec593c22c0f9f5a1b1.1489999062.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Set PHY rxc-skew-ps to 1500 and all other values to their default values.
+The Cortex-A7 cache controller is an integrated controller, and thus the
+device node representing it should not have a unit-addresses or reg
+property.
 
-This is intended to to address failures in the case of 1Gbps communication
-using the by h3ulcb board with the KSZ9031RNX phy.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: c95360247bdd67d3 ("ARM: dts: r8a7745: initial SoC device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 9811534f296e..69c623faf80c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -354,18 +354,7 @@
- 	status = "okay";
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 25175a74b6b7..bca88715fada 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -32,9 +32,8 @@
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
- 	phy0: ethernet-phy@0 {
--		rxc-skew-ps = <900>;
--		rxdv-skew-ps = <0>;
--		rxd0-skew-ps = <0>;
--		rxd1-skew-ps = <0>;
--		rxd2-skew-ps = <0>;
--		rxd3-skew-ps = <0>;
--		txc-skew-ps = <900>;
--		txen-skew-ps = <0>;
--		txd0-skew-ps = <0>;
--		txd1-skew-ps = <0>;
--		txd2-skew-ps = <0>;
--		txd3-skew-ps = <0>;
-+		rxc-skew-ps = <1500>;
- 		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+-		L2_CA7: cache-controller@0 {
++		L2_CA7: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 			power-domains = <&sysc R8A7745_PD_CA7_SCU>;
 -- 
 2.7.0.rc3.207.g0ac5344
