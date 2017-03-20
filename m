@@ -1,45 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:63161 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S936366AbdCJNDj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753374AbdCTI7k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:03:39 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 1/2] usb: host: ehci-platform: set hcd->phy to avoid phy_get() in usb_add_hcd()
-Date: Fri, 10 Mar 2017 22:01:25 +0900
-Message-ID: <1489150886-27862-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1489150886-27862-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1489150886-27862-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 20 Mar 2017 04:59:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/32] arm64: dts: r8a7795: Tidyup Audio-DMAC channel for DVC
+Date: Mon, 20 Mar 2017 09:57:34 +0100
+Message-Id: <b5a8ffad0eb0c1e5e601253edac163b2da9e855d.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch sets hcd->phy from own phy context to avoid phy_get()
-in usb_add_hcd(). Since hcd.c manage the phy only in usb_add_hcd()
-and usb_remove_hcd(), there is difficult to manage the phy in
-suspend/resume.
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Current	Audio-DMAC is assigned "rx" as Audio-DMAC0, "tx" as Audio-DMAC1.
+Thus, DVC "tx" should be assigned as Audio-DMAC1, instead of Audio-DMAC0.
+
+Because of this, current platform board (using SRC/DVC/SSI)
+Playback/Capture both will use same Audio-DMAC0
+(but it depends on audio data path).
+
+First note is that this "rx" and "tx" are from each IP point,
+it doesn't mean Playback/Capture.
+Second note is that Audio DMAC assigned on DT is only for
+Audio-DMAC, Audio-DMAC-peri-peri has no entry.
+
+=> Audio-DMAC
+-> Audio-DMAC-peri-peri
+-- HW connection
+
+Playback case
+
+	[Mem] => [SRC]--[DVC] -> [SSI]--[Codec]
+	      rx ~~~~~~~~~~~~
+Capture
+
+	[Mem] <= [DVC]--[SRC] <- [SSI]--[Codec]
+	      tx ~~~~~~~~~~~~
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/usb/host/ehci-platform.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
-index a268d9e..4ae27e9 100644
---- a/drivers/usb/host/ehci-platform.c
-+++ b/drivers/usb/host/ehci-platform.c
-@@ -222,6 +222,8 @@ static int ehci_platform_probe(struct platform_device *dev)
- 					goto err_put_hcd;
- 			}
- 		}
-+		/* Avoiding phy_get in usb_add_hcd() */
-+		hcd->phy = priv->phys[0];
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 14772bc02125..55c09f1b89c9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1075,11 +1075,11 @@
  
- 		for (clk = 0; clk < EHCI_MAX_CLKS; clk++) {
- 			priv->clks[clk] = of_clk_get(dev->dev.of_node, clk);
+ 			rcar_sound,dvc {
+ 				dvc0: dvc-0 {
+-					dmas = <&audma0 0xbc>;
++					dmas = <&audma1 0xbc>;
+ 					dma-names = "tx";
+ 				};
+ 				dvc1: dvc-1 {
+-					dmas = <&audma0 0xbe>;
++					dmas = <&audma1 0xbe>;
+ 					dma-names = "tx";
+ 				};
+ 			};
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
