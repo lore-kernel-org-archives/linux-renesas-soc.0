@@ -1,46 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:22884 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752386AbdCPRvx (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:36174 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932239AbdCTU2Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Mar 2017 13:51:53 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 5/5] ARM: dts: rskrza1: add rtc DT support
-Date: Thu, 16 Mar 2017 13:51:12 -0400
-Message-Id: <20170316175112.27913-6-chris.brandt@renesas.com>
-In-Reply-To: <20170316175112.27913-1-chris.brandt@renesas.com>
-References: <20170316175112.27913-1-chris.brandt@renesas.com>
+        Mon, 20 Mar 2017 16:28:24 -0400
+Date: Mon, 20 Mar 2017 21:27:57 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v2 7/7] thermal: rcar_gen3_thermal: add suspend and
+ resume support
+Message-ID: <20170320202756.GD1587@katana>
+References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170317155300.21566-8-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="eheScQNz3K90DVRs"
+Content-Disposition: inline
+In-Reply-To: <20170317155300.21566-8-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index 6abb929..dfbb028 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -77,6 +77,10 @@
- 	status = "okay";
- };
- 
-+&rtc {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	status = "okay";
- };
--- 
-2.10.1
+--eheScQNz3K90DVRs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Mar 17, 2017 at 04:53:00PM +0100, Niklas S=C3=B6derlund wrote:
+> To restore operation it's easiest to reinitialise all TSCs. In order to
+> do this the current trip window needs to be stored in the TSC structure
+> so that it can be restored upon resume.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+
+If you refactor rcar_thermal_irq_set(), then you'd need adaptions here
+as well, but besides this minor thing:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--eheScQNz3K90DVRs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJY0DtMAAoJEBQN5MwUoCm2oukP/3yYv9YO//SZI3Qb2QVOg7tF
+zHUXIXgHCHvygvOznNZs7nZZ85Epi/WSmu75n4sNt6xg17S/1ugAyUUxYTdwHfeB
+81zYafCSw7h+WHmkdO7PLtmpWUjPSUEPIRwxrvmoSP0H1qEhD3IaYfJ8RDtVeaZz
+m7xtJejHHG5s2FSWQkdQZjnZbTq8oJqxeFMDZOm/PrIbvpBNI7uXEbRjabPz0fvO
+5nxz7aNrwkXFIQzW9KrO5+1zTn6wIGxf5IM1+ngLk1QKLbp37rUTEL6U2llAvkVr
+SVcuuVJtCEDSzjRs4s5N0l011Oqgd+U7D4WNe7uTi3yaeYC6g0+G3+1hq1UXDDTr
+I+pv+UrsqMMeWz7hI1f7ksEffQNghshkKwt1vRuM+KX5aeC2gPGZXZ2Pfrj1T5oq
+3j6bxYKWvqq5/udpKA6mj2n1Yej8OwOX2yaR+r83f8fRcO7enhClra85L6oPvORu
+PfLFVkccxIUHXS7xDfs0Js9DvsK2PmTr/k6gIw01BKo6aZsgt4CIonBmLsI/EHl4
+8RP1QkNxcvfXGBrkG+TPGLfkflGO1lEziOTUF4+h8MxmZg0EqGHyNWeIC5vFCYiS
+QcGCUCWfJGmIO5Q8GCDSUQuCzdN9D/qOUQZyTG6Z1CclrJ73uqB10KfSYdVtjHO6
+9T2T0YQe7QtY3wqjUdV2
+=r9X/
+-----END PGP SIGNATURE-----
+
+--eheScQNz3K90DVRs--
