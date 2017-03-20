@@ -1,83 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753347AbdCTI73 (ORCPT
+        with ESMTP id S1753459AbdCTJAZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:29 -0400
+        Mon, 20 Mar 2017 05:00:25 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/32] arm64: dts: r8a7796: Enable HSCIF DMA
-Date: Mon, 20 Mar 2017 09:57:26 +0100
-Message-Id: <6d50bb8935042c4b7747b57df064ff41295e4769.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] soc: renesas: Identify RZ/G1N
+Date: Mon, 20 Mar 2017 09:58:24 +0100
+Message-Id: <cd59de80dd34dd2d1a3ca97d7a6e712c048b135a.1490000158.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1490000158.git.horms+renesas@verge.net.au>
+References: <cover.1490000158.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add support for identifying the RZ/G1N (r8a7744) SoC.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 951e351ddae1..aa404ed9142e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -499,6 +499,9 @@
- 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-@@ -513,6 +516,9 @@
- 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-+			       <&dmac2 0x33>, <&dmac2 0x32>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-@@ -527,6 +533,9 @@
- 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-+			       <&dmac2 0x35>, <&dmac2 0x34>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-@@ -541,6 +550,8 @@
- 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
-+			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-@@ -555,6 +566,8 @@
- 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
-+			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index f0172e59c040..b894cf64225b 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -90,6 +90,11 @@ static const struct renesas_soc soc_rz_g1m __initconst __maybe_unused = {
+ 	.id	= 0x47,
+ };
+ 
++static const struct renesas_soc soc_rz_g1n __initconst __maybe_unused = {
++	.family	= &fam_rzg,
++	.id	= 0x4b,
++};
++
+ static const struct renesas_soc soc_rz_g1e __initconst __maybe_unused = {
+ 	.family	= &fam_rzg,
+ 	.id	= 0x4c,
+@@ -161,6 +166,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A7743
+ 	{ .compatible = "renesas,r8a7743",	.data = &soc_rz_g1m },
+ #endif
++#ifdef CONFIG_ARCH_R8A7744
++	{ .compatible = "renesas,r8a7744",	.data = &soc_rz_g1n },
++#endif
+ #ifdef CONFIG_ARCH_R8A7745
+ 	{ .compatible = "renesas,r8a7745",	.data = &soc_rz_g1e },
+ #endif
 -- 
 2.7.0.rc3.207.g0ac5344
