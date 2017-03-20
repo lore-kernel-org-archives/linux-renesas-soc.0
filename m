@@ -1,44 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34273 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753187AbdCTImD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753363AbdCTI7f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:42:03 -0400
-Received: by mail-pf0-f195.google.com with SMTP id o126so16081491pfb.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Mar 2017 01:41:52 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 20 Mar 2017 04:59:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Mon, 20 Mar 2017 17:36:22 +0900
-Message-Id: <148999898229.20118.1562448393902244892.sendpatchset@little-apple>
-In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-Subject: [PATCH v3 07/09] arm64: dts: r8a7795: Connect Ethernet-AVB to IPMMU-DS0
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/32] arm64: dts: r8a7796: Remove unit-address and reg from integrated cache
+Date: Mon, 20 Mar 2017 09:57:32 +0100
+Message-Id: <57a4fd420c6e8a04b6a87ff24d34250cd7c48f15.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add IPMMU-DS0 to the Ethernet-AVB device node.
+The Cortex-A57 cache controller is an integrated controller, and thus
+the device node representing it should not have a unit-addresses or reg
+property.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Fixes: 1561f20760ec96db ("arm64: dts: r8a7796: Add Renesas R8A7796 SoC support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- Changes since V2:
- - New patch
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    1 +
- 1 file changed, 1 insertion(+)
-
---- 0012/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-20 16:30:42.620607110 +0900
-@@ -762,6 +762,7 @@
- 					  "ch20", "ch21", "ch22", "ch23",
- 					  "ch24";
- 			clocks = <&cpg CPG_MOD 812>;
-+			iommus = <&ipmmu_ds0 16>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			phy-mode = "rgmii-txid";
- 			#address-cells = <1>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index dbf82bc6ba64..27f7dd9bd988 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -47,9 +47,8 @@
+ 			enable-method = "psci";
+ 		};
+ 
+-		L2_CA57: cache-controller@0 {
++		L2_CA57: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
+-- 
+2.7.0.rc3.207.g0ac5344
