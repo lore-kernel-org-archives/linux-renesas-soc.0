@@ -1,68 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34789 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754463AbdCGDcC (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:29567 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753328AbdCTPSe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 22:32:02 -0500
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Tue, 07 Mar 2017 12:17:23 +0900
-Message-Id: <148885664390.28553.13152016302789412479.sendpatchset@little-apple>
-In-Reply-To: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
-References: <148885660307.28553.995847796823338863.sendpatchset@little-apple>
-Subject: [PATCH v7 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+        Mon, 20 Mar 2017 11:18:34 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo <jacopo@jmondi.org>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
+Date: Mon, 20 Mar 2017 15:17:11 +0000
+Message-ID: <SG2PR06MB1165B74ADB66F43FC53FB54A8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
+ <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
+ <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdVdiMWNq1or9JgzAKfWXsDg1VD9ehG6U=E_snes04Y1Mg@mail.gmail.com>
+ <SG2PR06MB1165E8FAE15523F7D3EC83718A2B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20170320134755.GB30223@w540>
+In-Reply-To: <20170320134755.GB30223@w540>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
-
-Break out the domain allocation code into a separate function.
-This is preparation for future code sharing.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
----
-
- Changes since V6:
- - None
-
- drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
---- 0006/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-06 18:34:59.520607110 +0900
-@@ -509,13 +509,10 @@ static irqreturn_t ipmmu_irq(int irq, vo
-  * IOMMU Operations
-  */
- 
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
- {
- 	struct ipmmu_vmsa_domain *domain;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (!domain)
- 		return NULL;
-@@ -525,6 +522,14 @@ static struct iommu_domain *ipmmu_domain
- 	return &domain->io_domain;
- }
- 
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
-+
-+	return __ipmmu_domain_alloc(type);
-+}
-+
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+SGkgSmFjb3BvLA0KDQpNb25kYXksIE1hcmNoIDIwLCAyMDE3LCBqYWNvcG8gd3JvdGU6DQo+ID4g
+SSB3YXMgdGhpbmtpbmcgSSB3YXMgZ29pbmcgdG8gcG9zdCBzb21lIERUIGV4YW1wbGVzIG9uIGVM
+aW51eC5vcmcNCj4gPiBhbnl3YXksIHNvIG9uZSBvZiB0aGVtIHdvdWxkIGp1c3QgYmUgdGhpcyBS
+Wi9BMUwgZml4Lg0KPiA+DQo+IA0KPiBJZiB3ZSBkbyBhbGwgYWdyZWUgb24gaGF2aW5nIFJaL0Ex
+SCB1cHN0cmVhbSBhbmQgbGV0IGRpZmZlcmVuY2VzIGJldHdlZW4NCj4gU29DcyB0byBiZSBoYW5k
+bGVkIGluIHRoZSBCU1AvZG93bnN0cmVhbSBib2FyZCBmaWxlcywgSSdsbCBzZW5kDQo+IHYyIHRh
+cmdldGluZyB0aGF0IHNwZWNpZmljIFNvQyBvbmx5DQoNCg0KSSdtIGZpbmUgd2l0aCB0aGF0Lg0K
+DQogICAgICAuLi5vZiBjb3Vyc2Ugc2luY2UgaXQgd2FzIG15IHN1Z2dlc3Rpb24gOykNCg0KDQpD
+aHJpcw0KDQo=
