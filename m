@@ -1,58 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52359 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752186AbdCDXuJ (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:54430 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753227AbdCTUJ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Mar 2017 18:50:09 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH] drm: rcar-du: Remove wait field from rcar_du_device structure
-Date: Sun,  5 Mar 2017 01:50:38 +0200
-Message-Id: <20170304235038.7586-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 20 Mar 2017 16:09:26 -0400
+Date: Mon, 20 Mar 2017 21:02:43 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v2 3/7] thermal: rcar_gen3_thermal: check that TSC exists
+ before memory allocation
+Message-ID: <20170320200243.GA1587@katana>
+References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170317155300.21566-4-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Content-Disposition: inline
+In-Reply-To: <20170317155300.21566-4-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The field is a left-over from the switch to the atomic commit helper.
-It's unused, remove it.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 --
- drivers/gpu/drm/rcar-du/rcar_du_drv.h | 5 -----
- 2 files changed, 7 deletions(-)
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index decad036b031..eb905e6b5f4c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -328,8 +328,6 @@ static int rcar_du_probe(struct platform_device *pdev)
- 	if (rcdu == NULL)
- 		return -ENOMEM;
- 
--	init_waitqueue_head(&rcdu->commit.wait);
--
- 	rcdu->dev = &pdev->dev;
- 	rcdu->info = of_device_get_match_data(rcdu->dev);
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index c843c3134498..574b3c1c21df 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -98,11 +98,6 @@ struct rcar_du_device {
- 	unsigned int vspd1_sink;
- 
- 	struct rcar_du_lvdsenc *lvds[RCAR_DU_MAX_LVDS];
--
--	struct {
--		wait_queue_head_t wait;
--		u32 pending;
--	} commit;
- };
- 
- static inline bool rcar_du_has(struct rcar_du_device *rcdu,
--- 
-Regards,
+On Fri, Mar 17, 2017 at 04:52:56PM +0100, Niklas S=C3=B6derlund wrote:
+> Move the check for a TSC resource before allocating memory for a new
+> TSC. If no TSC is found there is little point in allocating memory for
+> it.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Laurent Pinchart
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJY0DVjAAoJEBQN5MwUoCm2Vw8QAIVCbRV2cE+0Y/EF1I8cKe5c
+/KB9+bjonXpZrJelNwwiAz7mvO/sd8aTb1McpmqVQMFwb1ksJtBt+ijyiABL0Gtc
+n1fUdCO7qewDdCZINX0LBUQ94eWRHYnD4ikVz0tlwry2xOIUgaAogxBi6S11XZf+
+Cy74CvZ7qBRr9ZWJvaSBLE5xVboT+E5bTp8Qg/jb3XvBgVklhBgmm+AGxErJA/c2
+WOEUkHYDimJL9vOB3IifA7Z/+rEjnG+s5cUMUq2rB2t4LVgSGZLWk7HVw2/5iGHr
+urryF6fqdh+lEOLTMMr2MeT/E5DoFtEyEw2y1GiCtELcTKDy0SS1NTcdQ2JjzQRN
+QUIagAAC79eFdO6hqIxy8IyU+1P5bYJyZ18a8AlRJqJ0A1meoduygjmnUtxi7reF
+PsP9LfYc0Q9tapEWLOYqMqgy3jYPcWLAsWoi5eR3XiVtPeibHDGtMfcirltxE3Dc
+2rbprn8q/FvxnWtJJXHYTbryw2Mubm/rZSdL0YYIp+JsUWuWStzMKjqYPnAhrxha
+Yrt3QFnRw8pFrn/a/ohHhZ6WorwdFiwfVmoQ7tcG4ByL1loPqCFecqUneBHsD5g4
+4TXw3W0EkzO1KZ7JPP0y45fre1dLSi10TQmmjqt4GQbJPWefsYv6zOLvtBD88yf+
+0Ut9g9O5j/mxxsgU0Wjg
+=OKEc
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
