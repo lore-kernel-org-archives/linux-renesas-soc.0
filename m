@@ -1,76 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54566 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751023AbdCQP4y (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753121AbdCTI7R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2017 11:56:54 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 6/7] thermal: rcar_gen3_thermal: store device match data in private structure
-Date: Fri, 17 Mar 2017 16:52:59 +0100
-Message-Id: <20170317155300.21566-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 20 Mar 2017 04:59:17 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/32] arm64: dts: r8a7795: Use rgmii-txid phy-mode for EthernetAVB
+Date: Mon, 20 Mar 2017 09:57:17 +0100
+Message-Id: <dda3887907d743385f2599fa18c765bd295ae2da.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device match data needs to be accessible outside the probe function,
-store it in the private data structure.
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Since commit 61fccb2d6274 ("ravb: Add tx and rx clock internal delays mode
+of APSR") the EthernetAVB driver enables tx and rx clock internal delay
+modes (TDM and RDM) depending on the phy mode as follows:
+
+    phy mode   | ASPR delay mode
+    -----------+----------------
+    rgmii-id   | TDM and RDM
+    rgmii-rxid | RDM
+    rgmii-txid | TDM
+
+And prior to the above commit no internal delay mode settings were
+implemented for any phy mode.
+
+With this and the above change present tx internal delay mode is enabled
+which has been observed to address failures in the case of 1Gbps
+communication using the by salvator-x board with the KSZ9031RNX phy. This
+has been reported to occur with both the r8a7795 (H3) and r8a7796 (M3-W)
+SoCs.
+
+With the above patch present but this patch present tx and rx internal
+delay modes are enabled; and with the above patch and this present absent
+no internal delay modes are enabled. In both cases failures have been
+observed when using 1Gbps communication in the environments described
+above.
+
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index dc019b7873273cf2..438fb9988eabb91b 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -85,6 +85,7 @@ struct rcar_gen3_thermal_tsc {
- };
- 
- struct rcar_gen3_thermal_priv {
-+	const struct rcar_gen3_thermal_data *data;
- 	spinlock_t lock; /* Protect interrupts on and off */
- 	unsigned int num_tscs;
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
-@@ -353,8 +354,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	struct thermal_zone_device *zone;
- 	int ret, irq, i;
- 	char *irqname;
--	const struct rcar_gen3_thermal_data *match_data =
--		of_device_get_match_data(dev);
- 
- 	/* default values if FUSEs are missing */
- 	/* TODO: Read values from hardware on supported platforms */
-@@ -369,6 +368,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->data = of_device_get_match_data(dev);
-+
- 	spin_lock_init(&priv->lock);
- 
- 	platform_set_drvdata(pdev, priv);
-@@ -414,7 +415,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 
- 		priv->tscs[i] = tsc;
- 
--		match_data->thermal_init(tsc);
-+		priv->data->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
- 
- 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index fe266bb3d913..382a8987bca9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -564,7 +564,7 @@
+ 					  "ch24";
+ 			clocks = <&cpg CPG_MOD 812>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-			phy-mode = "rgmii-id";
++			phy-mode = "rgmii-txid";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
 -- 
-2.12.0
+2.7.0.rc3.207.g0ac5344
