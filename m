@@ -1,145 +1,60 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170317205915.388401869@cogentembedded.com>
-Date: Fri, 17 Mar 2017 23:59:00 +0300
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] media: platform: rcar_imr: add IMR-LX3 support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=media-platform-rcar_imr-add-IMR-LX3-support.patch
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:34105 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753113AbdCTImD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 04:42:03 -0400
+Received: by mail-pf0-f195.google.com with SMTP id o126so16080785pfb.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Mar 2017 01:41:42 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
+        geert+renesas@glider.be
+Date: Mon, 20 Mar 2017 17:36:12 +0900
+Message-Id: <148999897296.20118.6099961740611728210.sendpatchset@little-apple>
+In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
+References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
+Subject: [PATCH v3 06/09] arm64: dts: r8a7795: Point VSPI via FCPVI to IPMMU-VP
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the image renderer light extended 3 (IMR-LX3) found only in
-the R-Car V2H (R8A7792) SoC. It's mostly the same as IMR-LSX3 but doesn't
-support video capture data as a source of 2D textures.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hook up the FCPVI devices to allow use of VSPI with IPMMU-VP.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-This patch  is against the 'media_tree.git' repo's 'master' branch plus the
-latest version of  the Renesas IMR driver and the patch adding IMR-LSX3 support.
 
- Documentation/devicetree/bindings/media/rcar_imr.txt |    4 ++
- drivers/media/platform/rcar_imr.c                    |   27 ++++++++++++-------
- 2 files changed, 22 insertions(+), 9 deletions(-)
+ Changes since V2:
+ - New patch
 
-Index: media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-===================================================================
---- media_tree.orig/Documentation/devicetree/bindings/media/rcar_imr.txt
-+++ media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
-@@ -9,6 +9,10 @@ and drawing with respect to any shape th
- Required properties:
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- 0010/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-20 16:26:53.600607110 +0900
+@@ -1692,6 +1692,7 @@
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe9af000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 611>;
++			iommus = <&ipmmu_vp 8>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
  
- - compatible:
-+  "renesas,<soctype>-imr-lx3", "renesas,imr-lx3" as a fallback for the image
-+  renderer light extended 3 (IMR-LX3) found in the R-Car gen2 SoCs, where the
-+  examples with <soctype> are:
-+  - "renesas,r8a7792-imr-lx3" for R-Car V2H;
-   "renesas,<soctype>-imr-lsx3", "renesas,imr-lsx3" as a fallback for the image
-   renderer light SRAM extended 3 (IMR-LSX3) found in the R-Car gen2 SoCs, where
-   the examples with <soctype> are:
-Index: media_tree/drivers/media/platform/rcar_imr.c
-===================================================================
---- media_tree.orig/drivers/media/platform/rcar_imr.c
-+++ media_tree/drivers/media/platform/rcar_imr.c
-@@ -1,5 +1,5 @@
- /*
-- * rcar_imr.c -- R-Car IMR-LSX3/LX4 Driver
-+ * rcar_imr.c -- R-Car IMR-LX3/LSX3/LX4 Driver
-  *
-  * Copyright (C) 2015-2017 Cogent Embedded, Inc. <source@cogentembedded.com>
-  *
-@@ -82,6 +82,7 @@ struct imr_format_info {
- };
+@@ -1709,6 +1710,7 @@
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe9bf000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 610>;
++			iommus = <&ipmmu_vp 9>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
  
- enum imr_type {
-+	IMR_LX3,
- 	IMR_LSX3,
- 	IMR_LX4,
- };
-@@ -153,7 +154,7 @@ struct imr_ctx {
- #define IMR_SSAR		0x38
- #define IMR_DSTR		0x3C
- #define IMR_SSTR		0x40
--#define IMR_DSOR		0x50
-+#define IMR_DSOR		0x50		/* IMR-LSX3/LX4 only */
- #define IMR_CMRCR		0x54
- #define IMR_CMRCSR		0x58
- #define IMR_CMRCCR		0x5C
-@@ -200,7 +201,7 @@ struct imr_ctx {
- #define IMR_CMRCR_DUV		GENMASK(4, 3)
- #define IMR_CMRCR_SUV_SHIFT	5
- #define IMR_CMRCR_SUV		GENMASK(6, 5)
--#define IMR_CMRCR_YISM		BIT(7)
-+#define IMR_CMRCR_YISM		BIT(7)		/* IMR-LSX3/LX4 only */
- #define IMR_CMRCR_Y10		BIT(8)
- #define IMR_CMRCR_Y12		BIT(9)
- #define IMR_CMRCR_SY10		BIT(11)
-@@ -214,7 +215,7 @@ struct imr_ctx {
- #define IMR_TRIMR_AUTOSG	BIT(3)
- #define IMR_TRIMR_TCM		BIT(6)
+@@ -1726,6 +1728,7 @@
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe9cf000 0 0x200>;
+ 			clocks = <&cpg CPG_MOD 609>;
++			iommus = <&ipmmu_vp 10>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
  
--#define IMR_TRICR_YCFORM	BIT(31)
-+#define IMR_TRICR_YCFORM	BIT(31)		/* IMR-LSX3/LX4 only */
- 
- #define IMR_UVDPOR_UVDPO_SHIFT	0
- #define IMR_UVDPOR_UVDPO	GENMASK(2, 0)
-@@ -296,7 +297,7 @@ static u32 __imr_flags_common(u32 iflags
- 	return iflags & oflags & IMR_F_PLANES_MASK;
- }
- 
--static const struct imr_format_info imr_lsx3_formats[] = {
-+static const struct imr_format_info imr_lx3_formats[] = {
- 	{
- 		.name	= "YUV 4:2:2 semiplanar (NV16)",
- 		.fourcc	= V4L2_PIX_FMT_NV16,
-@@ -377,10 +378,16 @@ static const struct imr_format_info imr_
- 	},
- };
- 
-+static const struct imr_info imr_lx3 = {
-+	.type		= IMR_LX3,
-+	.formats	= imr_lx3_formats,
-+	.num_formats	= ARRAY_SIZE(imr_lx3_formats),
-+};
-+
- static const struct imr_info imr_lsx3 = {
- 	.type		= IMR_LSX3,
--	.formats	= imr_lsx3_formats,
--	.num_formats	= ARRAY_SIZE(imr_lsx3_formats),
-+	.formats	= imr_lx3_formats,
-+	.num_formats	= ARRAY_SIZE(imr_lx3_formats),
- };
- 
- static const struct imr_info imr_lx4 = {
-@@ -835,7 +842,8 @@ static void imr_dl_program_setup(struct
- 	*dl++ = IMR_OP_WTS(IMR_CPDPOR, __imr_cpdp(type));
- 
- 	/* reset rendering mode registers */
--	*dl++ = IMR_OP_WTS(IMR_CMRCCR,  0xDBFE);
-+	*dl++ = IMR_OP_WTS(IMR_CMRCCR, ctx->imr->info->type >= IMR_LSX3 ?
-+			   0xDBFE : 0xDB7E);
- 	*dl++ = IMR_OP_WTS(IMR_CMRCCR2, ctx->imr->info->type == IMR_LX4 ?
- 			   0x9065 : IMR_CMRCR2_LUTE);
- 
-@@ -1990,6 +1998,7 @@ static const struct dev_pm_ops imr_pm_op
- 
- /* device table */
- static const struct of_device_id imr_of_match[] = {
-+	{ .compatible = "renesas,imr-lx3",  .data = &imr_lx3, },
- 	{ .compatible = "renesas,imr-lsx3", .data = &imr_lsx3, },
- 	{ .compatible = "renesas,imr-lx4",  .data = &imr_lx4,  },
- 	{ },
-@@ -2011,5 +2020,5 @@ module_platform_driver(imr_platform_driv
- 
- MODULE_ALIAS("imr");
- MODULE_AUTHOR("Cogent Embedded Inc. <sources@cogentembedded.com>");
--MODULE_DESCRIPTION("Renesas IMR-LSX3/LX4 Driver");
-+MODULE_DESCRIPTION("Renesas IMR-LX3/LSX3/LX4 Driver");
- MODULE_LICENSE("GPL");
