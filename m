@@ -1,76 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:55228 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752809AbdC2SpV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753437AbdCTJAN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 14:45:21 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 6/7] thermal: rcar_gen3_thermal: store device match data in private structure
-Date: Wed, 29 Mar 2017 20:43:55 +0200
-Message-Id: <20170329184356.8610-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 20 Mar 2017 05:00:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 24/31] ARM: dts: bockw: Drop superfluous status update for frequency override
+Date: Mon, 20 Mar 2017 09:58:03 +0100
+Message-Id: <ffbb98d4d1f194e455bae2bc2eab2995188c652e.1489999063.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device match data needs to be accessible outside the probe function,
-store it in the private data structure.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The scif_clk device node is already enabled in r8a7778.dtsi, so there is
+no need to update its status again.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7778-bockw.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index d37c7d8f8fcd6619..f259a995c66c976a 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -88,6 +88,7 @@ struct rcar_gen3_thermal_priv {
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
- 	unsigned int num_tscs;
- 	spinlock_t lock; /* Protect interrupts on and off */
-+	const struct rcar_gen3_thermal_data *data;
+diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
+index 211d239d9041..c79d55eb43c5 100644
+--- a/arch/arm/boot/dts/r8a7778-bockw.dts
++++ b/arch/arm/boot/dts/r8a7778-bockw.dts
+@@ -229,5 +229,4 @@
+ 
+ &scif_clk {
+ 	clock-frequency = <14745600>;
+-	status = "okay";
  };
- 
- struct rcar_gen3_thermal_data {
-@@ -351,8 +352,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	struct thermal_zone_device *zone;
- 	int ret, irq, i;
- 	char *irqname;
--	const struct rcar_gen3_thermal_data *match_data =
--		of_device_get_match_data(dev);
- 
- 	/* default values if FUSEs are missing */
- 	/* TODO: Read values from hardware on supported platforms */
-@@ -367,6 +366,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->data = of_device_get_match_data(dev);
-+
- 	spin_lock_init(&priv->lock);
- 
- 	platform_set_drvdata(pdev, priv);
-@@ -417,7 +418,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 
- 		priv->tscs[i] = tsc;
- 
--		match_data->thermal_init(tsc);
-+		priv->data->thermal_init(tsc);
- 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
- 
- 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
 -- 
-2.12.1
+2.7.0.rc3.207.g0ac5344
