@@ -1,262 +1,109 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 6/9] drm: bridge: dw-hdmi: Create PHY operations
-Date: Thu,  2 Mar 2017 00:39:12 +0200
-Message-Id: <20170301223915.29888-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170301223915.29888-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753352AbdCTI7c (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 04:59:32 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/32] arm64: dts: r8a7795: Add Cortex-A53 CPU cores
+Date: Mon, 20 Mar 2017 09:57:27 +0100
+Message-Id: <799a75abdef348500bab14e873e7711afa426aaf.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The HDMI TX controller support different PHYs whose programming
-interface can vary significantly, especially with vendor PHYs that are
-not provided by Synopsys. To support them, create a PHY operation
-structure that can be provided by the platform glue layer. The existing
-PHY handling code (limited to Synopsys PHY support) is refactored into a
-set of default PHY operations that are used automatically when the
-platform glue doesn't provide its own operations.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This patch adds Cortex-A53 CPU cores to r8a7795 SoC for a total of 8
+cores (4 x Cortex-A57 + 4 x Cortex-A53).
+
+Based on work by Takeshi Kihara and Dirk Behme.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 91 ++++++++++++++++++++++++++++------------
- include/drm/bridge/dw_hdmi.h     | 18 +++++++-
- 2 files changed, 80 insertions(+), 29 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 46 ++++++++++++++++++++++++++++----
+ 1 file changed, 41 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 0aa3ad404f77..cb2703862be2 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -141,8 +141,12 @@ struct dw_hdmi {
- 	u8 edid[HDMI_EDID_LEN];
- 	bool cable_plugin;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 382a8987bca9..61830697e33c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -73,6 +73,42 @@
+ 			enable-method = "psci";
+ 		};
  
--	const struct dw_hdmi_phy_data *phy;
--	bool phy_enabled;
-+	struct {
-+		const struct dw_hdmi_phy_ops *ops;
-+		const char *name;
-+		void *data;
-+		bool enabled;
-+	} phy;
- 
- 	struct drm_display_mode previous_mode;
- 
-@@ -831,6 +835,10 @@ static void hdmi_video_packetize(struct dw_hdmi *hdmi)
- 		  HDMI_VP_CONF);
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Synopsys PHY Handling
-+ */
++		a53_0: cpu@100 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x100>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
 +
- static inline void hdmi_phy_test_clear(struct dw_hdmi *hdmi,
- 				       unsigned char bit)
- {
-@@ -987,6 +995,7 @@ static int dw_hdmi_phy_power_on(struct dw_hdmi *hdmi)
- 
- static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- {
-+	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
- 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
- 	const struct dw_hdmi_mpll_config *mpll_config = pdata->mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
-@@ -1019,7 +1028,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 	dw_hdmi_phy_power_off(hdmi);
- 
- 	/* Leave low power consumption mode by asserting SVSRET. */
--	if (hdmi->phy->has_svsret)
-+	if (phy->has_svsret)
- 		dw_hdmi_phy_enable_svsret(hdmi, 1);
- 
- 	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
-@@ -1057,7 +1066,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 	return dw_hdmi_phy_power_on(hdmi);
- }
- 
--static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
-+static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
-+			    struct drm_display_mode *mode)
- {
- 	int i, ret;
- 
-@@ -1071,10 +1081,31 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi)
- 			return ret;
- 	}
- 
--	hdmi->phy_enabled = true;
- 	return 0;
- }
- 
-+static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
-+{
-+	dw_hdmi_phy_power_off(hdmi);
-+}
++		a53_1: cpu@101 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x101>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
 +
-+static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-+						      void *data)
-+{
-+	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
-+		connector_status_connected : connector_status_disconnected;
-+}
++		a53_2: cpu@102 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x102>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
 +
-+static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
-+	.init = dw_hdmi_phy_init,
-+	.disable = dw_hdmi_phy_disable,
-+	.read_hpd = dw_hdmi_phy_read_hpd,
-+};
++		a53_3: cpu@103 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x103>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
 +
-+/* -----------------------------------------------------------------------------
-+ * HDMI TX Setup
-+ */
-+
- static void hdmi_tx_hdcp_config(struct dw_hdmi *hdmi)
- {
- 	u8 de;
-@@ -1289,16 +1320,6 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 	hdmi_writeb(hdmi, vsync_len, HDMI_FC_VSYNCINWIDTH);
- }
+ 		L2_CA57: cache-controller@0 {
+ 			compatible = "cache";
+ 			reg = <0>;
+@@ -166,7 +202,7 @@
+ 			      <0x0 0xf1040000 0 0x20000>,
+ 			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+-					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+@@ -307,13 +343,13 @@
+ 		timer {
+ 			compatible = "arm,armv8-timer";
+ 			interrupts = <GIC_PPI 13
+-					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 14
+-					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 11
+-					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 10
+-					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
  
--static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi)
--{
--	if (!hdmi->phy_enabled)
--		return;
--
--	dw_hdmi_phy_power_off(hdmi);
--
--	hdmi->phy_enabled = false;
--}
--
- /* HDMI Initialization Step B.4 */
- static void dw_hdmi_enable_video_path(struct dw_hdmi *hdmi)
- {
-@@ -1431,9 +1452,10 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
- 	hdmi_av_composer(hdmi, mode);
- 
- 	/* HDMI Initializateion Step B.2 */
--	ret = dw_hdmi_phy_init(hdmi);
-+	ret = hdmi->phy.ops->init(hdmi, hdmi->phy.data, &hdmi->previous_mode);
- 	if (ret)
- 		return ret;
-+	hdmi->phy.enabled = true;
- 
- 	/* HDMI Initialization Step B.3 */
- 	dw_hdmi_enable_video_path(hdmi);
-@@ -1548,7 +1570,11 @@ static void dw_hdmi_poweron(struct dw_hdmi *hdmi)
- 
- static void dw_hdmi_poweroff(struct dw_hdmi *hdmi)
- {
--	dw_hdmi_phy_disable(hdmi);
-+	if (hdmi->phy.enabled) {
-+		hdmi->phy.ops->disable(hdmi, hdmi->phy.data);
-+		hdmi->phy.enabled = false;
-+	}
-+
- 	hdmi->bridge_is_on = false;
- }
- 
-@@ -1611,8 +1637,7 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
- 	dw_hdmi_update_phy_mask(hdmi);
- 	mutex_unlock(&hdmi->mutex);
- 
--	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
--		connector_status_connected : connector_status_disconnected;
-+	return hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
- }
- 
- static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
-@@ -1898,19 +1923,31 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
- 
- 	phy_type = hdmi_readb(hdmi, HDMI_CONFIG2_ID);
- 
-+	if (phy_type == DW_HDMI_PHY_VENDOR_PHY) {
-+		/* Vendor PHYs require support from the glue layer. */
-+		if (!hdmi->plat_data->phy_ops || !hdmi->plat_data->phy_name) {
-+			dev_err(hdmi->dev,
-+				"Vendor HDMI PHY not supported by glue layer\n");
-+			return -ENODEV;
-+		}
-+
-+		hdmi->phy.ops = hdmi->plat_data->phy_ops;
-+		hdmi->phy.data = hdmi->plat_data->phy_data;
-+		hdmi->phy.name = hdmi->plat_data->phy_name;
-+		return 0;
-+	}
-+
-+	/* Synopsys PHYs are handled internally. */
- 	for (i = 0; i < ARRAY_SIZE(dw_hdmi_phys); ++i) {
- 		if (dw_hdmi_phys[i].type == phy_type) {
--			hdmi->phy = &dw_hdmi_phys[i];
-+			hdmi->phy.ops = &dw_hdmi_synopsys_phy_ops;
-+			hdmi->phy.name = dw_hdmi_phys[i].name;
-+			hdmi->phy.data = (void *)&dw_hdmi_phys[i];
- 			return 0;
- 		}
- 	}
- 
--	if (phy_type == DW_HDMI_PHY_VENDOR_PHY)
--		dev_err(hdmi->dev, "Unsupported vendor HDMI PHY\n");
--	else
--		dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n",
--			phy_type);
--
-+	dev_err(hdmi->dev, "Unsupported HDMI PHY type (%02x)\n", phy_type);
- 	return -ENODEV;
- }
- 
-@@ -2031,7 +2068,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
- 		 hdmi->version >> 12, hdmi->version & 0xfff,
- 		 prod_id1 & HDMI_PRODUCT_ID1_HDCP ? "with" : "without",
--		 hdmi->phy->name);
-+		 hdmi->phy.name);
- 
- 	initialize_hdmi_ih_mutes(hdmi);
- 
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index b080a171a23f..0f583ca7e66e 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -57,13 +57,27 @@ struct dw_hdmi_phy_config {
- 	u16 vlev_ctr;   /* voltage level control */
- };
- 
-+struct dw_hdmi_phy_ops {
-+	int (*init)(struct dw_hdmi *hdmi, void *data,
-+		    struct drm_display_mode *mode);
-+	void (*disable)(struct dw_hdmi *hdmi, void *data);
-+	enum drm_connector_status (*read_hpd)(struct dw_hdmi *hdmi, void *data);
-+};
-+
- struct dw_hdmi_plat_data {
- 	enum dw_hdmi_devtype dev_type;
-+	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
-+					   struct drm_display_mode *mode);
-+
-+	/* Vendor PHY support */
-+	const struct dw_hdmi_phy_ops *phy_ops;
-+	const char *phy_name;
-+	void *phy_data;
-+
-+	/* Synopsys PHY support */
- 	const struct dw_hdmi_mpll_config *mpll_cfg;
- 	const struct dw_hdmi_curr_ctrl *cur_ctr;
- 	const struct dw_hdmi_phy_config *phy_config;
--	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
--					   struct drm_display_mode *mode);
- };
- 
- int dw_hdmi_probe(struct platform_device *pdev,
+ 		cpg: clock-controller@e6150000 {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
