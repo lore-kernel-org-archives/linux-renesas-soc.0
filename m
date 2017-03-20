@@ -1,115 +1,79 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753339AbdCTJAJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 05:00:09 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
-Date: Mon, 13 Mar 2017 18:13:17 +0100
-Message-Id: <1489425197-22859-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489425197-22859-1-git-send-email-geert+renesas@glider.be>
-References: <1489425197-22859-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 18/31] ARM: dts: r8a7792: Add INTC-SYS clock to device tree
+Date: Mon, 20 Mar 2017 09:57:57 +0100
+Message-Id: <90dce5428ae5499f06d91297ef10b3b613044774.1489999063.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Power area A2VC0 was removed in revision ES2.0, cfr. Based on R-Car Gen3
-Hardware User's Manual rev. 0.53E.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hence remove it from the power area table when not running on ES1.x.
+Link the ARM GIC to the INTC-SYS module clock, and add it to the "always
+on" PM Domain, so it can be power managed using that clock.
 
-This is in line with the goal to:
-  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
-     for now,
-  2. Make it clear which code supports ES1.x, so it can easily be
-     identified and removed later, when production SoCs are deemed
-     ubiquitous.
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/r8a7795-sysc.c       | 26 ++++++++++++++++++++++++--
- include/dt-bindings/power/r8a7795-sysc.h |  2 +-
- 2 files changed, 25 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi            | 11 ++++++++---
+ include/dt-bindings/clock/r8a7792-clock.h |  1 +
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/renesas/r8a7795-sysc.c b/drivers/soc/renesas/r8a7795-sysc.c
-index 5e7537c96f7bbbcd..7412666187b30420 100644
---- a/drivers/soc/renesas/r8a7795-sysc.c
-+++ b/drivers/soc/renesas/r8a7795-sysc.c
-@@ -1,7 +1,7 @@
- /*
-  * Renesas R-Car H3 System Controller
-  *
-- * Copyright (C) 2016 Glider bvba
-+ * Copyright (C) 2016-2017 Glider bvba
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -10,12 +10,13 @@
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index c762f44f7732..6c0797ebc08f 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -92,6 +92,9 @@
+ 			      <0 0xf1006000 0 0x2000>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
+ 				      IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&mstp4_clks R8A7792_CLK_INTC_SYS>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+ 		};
  
- #include <linux/bug.h>
- #include <linux/kernel.h>
-+#include <linux/sys_soc.h>
+ 		irqc: interrupt-controller@e61c0000 {
+@@ -895,10 +898,12 @@
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
+-			clocks = <&cp_clk>;
++			clocks = <&cp_clk>, <&zs_clk>;
+ 			#clock-cells = <1>;
+-			clock-indices = <R8A7792_CLK_IRQC>;
+-			clock-output-names = "irqc";
++			clock-indices = <
++				R8A7792_CLK_IRQC R8A7792_CLK_INTC_SYS
++			>;
++			clock-output-names = "irqc", "intc-sys";
+ 		};
+ 		mstp7_clks: mstp7_clks@e615014c {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
+index 9a8b392ceb00..94dd16a1e6e6 100644
+--- a/include/dt-bindings/clock/r8a7792-clock.h
++++ b/include/dt-bindings/clock/r8a7792-clock.h
+@@ -45,6 +45,7 @@
  
- #include <dt-bindings/power/r8a7795-sysc.h>
+ /* MSTP4 */
+ #define R8A7792_CLK_IRQC		7
++#define R8A7792_CLK_INTC_SYS		8
  
- #include "rcar-sysc.h"
- 
--static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
-+static struct rcar_sysc_area r8a7795_areas[] __initdata = {
- 	{ "always-on",	    0, 0, R8A7795_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
- 	{ "ca57-scu",	0x1c0, 0, R8A7795_PD_CA57_SCU,	R8A7795_PD_ALWAYS_ON,
- 	  PD_SCU },
-@@ -40,6 +41,7 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
- 	{ "a3vp",	0x340, 0, R8A7795_PD_A3VP,	R8A7795_PD_ALWAYS_ON },
- 	{ "cr7",	0x240, 0, R8A7795_PD_CR7,	R8A7795_PD_ALWAYS_ON },
- 	{ "a3vc",	0x380, 0, R8A7795_PD_A3VC,	R8A7795_PD_ALWAYS_ON },
-+	/* A2VC0 exists on ES1.x only */
- 	{ "a2vc0",	0x3c0, 0, R8A7795_PD_A2VC0,	R8A7795_PD_A3VC },
- 	{ "a2vc1",	0x3c0, 1, R8A7795_PD_A2VC1,	R8A7795_PD_A3VC },
- 	{ "3dg-a",	0x100, 0, R8A7795_PD_3DG_A,	R8A7795_PD_ALWAYS_ON },
-@@ -50,7 +52,27 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
- 	{ "a3ir",	0x180, 0, R8A7795_PD_A3IR,	R8A7795_PD_ALWAYS_ON },
- };
- 
-+
-+	/*
-+	 * Fixups for R-Car H3 revisions after ES1.x
-+	 */
-+
-+static const struct soc_device_attribute r8a7795es1[] __initconst = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-+	{ /* sentinel */ }
-+};
-+
-+static int __init r8a7795_sysc_init(void)
-+{
-+	if (!soc_device_match(r8a7795es1))
-+		rcar_sysc_nullify(r8a7795_areas, ARRAY_SIZE(r8a7795_areas),
-+				  R8A7795_PD_A2VC0);
-+
-+	return 0;
-+}
-+
- const struct rcar_sysc_info r8a7795_sysc_info __initconst = {
-+	.init = r8a7795_sysc_init,
- 	.areas = r8a7795_areas,
- 	.num_areas = ARRAY_SIZE(r8a7795_areas),
- };
-diff --git a/include/dt-bindings/power/r8a7795-sysc.h b/include/dt-bindings/power/r8a7795-sysc.h
-index ee2e26ba605ef9a3..ad679eeda1370a9d 100644
---- a/include/dt-bindings/power/r8a7795-sysc.h
-+++ b/include/dt-bindings/power/r8a7795-sysc.h
-@@ -33,7 +33,7 @@
- #define R8A7795_PD_CA53_SCU		21
- #define R8A7795_PD_3DG_E		22
- #define R8A7795_PD_A3IR			24
--#define R8A7795_PD_A2VC0		25
-+#define R8A7795_PD_A2VC0		25	/* ES1.x only */
- #define R8A7795_PD_A2VC1		26
- 
- /* Always-on power area */
+ /* MSTP5 */
+ #define R8A7792_CLK_AUDIO_DMAC0		2
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
