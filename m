@@ -1,60 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33420 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753084AbdCTImD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753393AbdCTI7v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:42:03 -0400
-Received: by mail-pg0-f66.google.com with SMTP id 79so9834217pgf.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Mar 2017 01:41:24 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 20 Mar 2017 04:59:51 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Mon, 20 Mar 2017 17:35:54 +0900
-Message-Id: <148999895453.20118.17344954792745460322.sendpatchset@little-apple>
-In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-Subject: [PATCH v3 04/09] arm64: dts: r8a7795: Point FDP1 via FCPF to IPMMU-VP
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/31] ARM: dts: r8a7745: Fix SCIFB0 dmas indentation
+Date: Mon, 20 Mar 2017 09:57:42 +0100
+Message-Id: <ad20bb6868f1d29f9c911f14087be4f93c098604.1489999062.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hook up the FCPF devices to allow use of FDP1 with IPMMU-VP.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Fixes: e0d2da54c4d01ba2 ("ARM: dts: r8a7745: add [H]SCIF{|A|B} support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7745.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Changes since V2:
- - New patch
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    3 +++
- 1 file changed, 3 insertions(+)
-
---- 0007/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-20 16:19:28.230607110 +0900
-@@ -1639,6 +1639,7 @@
- 			compatible = "renesas,fcpf";
- 			reg = <0 0xfe950000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 615>;
-+			iommus = <&ipmmu_vp 0>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
-@@ -1646,6 +1647,7 @@
- 			compatible = "renesas,fcpf";
- 			reg = <0 0xfe951000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 614>;
-+			iommus = <&ipmmu_vp 1>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
-@@ -1653,6 +1655,7 @@
- 			compatible = "renesas,fcpf";
- 			reg = <0 0xfe952000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 613>;
-+			iommus = <&ipmmu_vp 2>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 1f65ff68a469..25175a74b6b7 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -277,7 +277,7 @@
+ 			clocks = <&cpg CPG_MOD 206>;
+ 			clock-names = "fck";
+ 			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
+-		       <&dmac1 0x3d>, <&dmac1 0x3e>;
++			       <&dmac1 0x3d>, <&dmac1 0x3e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
+ 			status = "disabled";
+-- 
+2.7.0.rc3.207.g0ac5344
