@@ -1,50 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40792 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754515AbdCFQlh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753429AbdCTJAI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 11:41:37 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/8] ARM: dts: r8a7743: Remove unit-address and reg from integrated cache
-Date: Mon,  6 Mar 2017 17:40:37 +0100
-Message-Id: <1488818443-25196-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
-References: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
+        Mon, 20 Mar 2017 05:00:08 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 17/31] ARM: dts: r8a7791: Add INTC-SYS clock to device tree
+Date: Mon, 20 Mar 2017 09:57:56 +0100
+Message-Id: <c2f2e266acb39f86bda1461874568ced7eaa6752.1489999063.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Cortex-A15 cache controller is an integrated controller, and thus
-the device node representing it should not have a unit-addresses or reg
-property.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: 34e8d993a68ae459 ("ARM: dts: r8a7743: initial SoC device tree")
+Link the ARM GIC to the INTC-SYS module clock, and add it to the "always
+on" PM Domain, so it can be power managed using that clock.
+
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi            | 9 ++++++---
+ include/dt-bindings/clock/r8a7791-clock.h | 1 +
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0c44b9db4f34490f..0ddac81742e4cdc7 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -32,9 +32,8 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 7cad65a28f25..525377df16ee 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -117,6 +117,9 @@
+ 			<0 0xf1004000 0 0x2000>,
+ 			<0 0xf1006000 0 0x2000>;
+ 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		clocks = <&mstp4_clks R8A7791_CLK_INTC_SYS>;
++		clock-names = "clk";
++		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 	};
  
--		L2_CA15: cache-controller@0 {
-+		L2_CA15: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			cache-unified;
- 			cache-level = <2>;
- 			power-domains = <&sysc R8A7743_PD_CA15_SCU>;
+ 	gpio0: gpio@e6050000 {
+@@ -1365,10 +1368,10 @@
+ 		mstp4_clks: mstp4_clks@e6150140 {
+ 			compatible = "renesas,r8a7791-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
+-			clocks = <&cp_clk>;
++			clocks = <&cp_clk>, <&zs_clk>;
+ 			#clock-cells = <1>;
+-			clock-indices = <R8A7791_CLK_IRQC>;
+-			clock-output-names = "irqc";
++			clock-indices = <R8A7791_CLK_IRQC R8A7791_CLK_INTC_SYS>;
++			clock-output-names = "irqc", "intc-sys";
+ 		};
+ 		mstp5_clks: mstp5_clks@e6150144 {
+ 			compatible = "renesas,r8a7791-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7791-clock.h b/include/dt-bindings/clock/r8a7791-clock.h
+index ffa11379b3f0..adc50dc31ab3 100644
+--- a/include/dt-bindings/clock/r8a7791-clock.h
++++ b/include/dt-bindings/clock/r8a7791-clock.h
+@@ -72,6 +72,7 @@
+ 
+ /* MSTP4 */
+ #define R8A7791_CLK_IRQC		7
++#define R8A7791_CLK_INTC_SYS		8
+ 
+ /* MSTP5 */
+ #define R8A7791_CLK_AUDIO_DMAC1		1
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
