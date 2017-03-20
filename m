@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:40771 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754338AbdCTWqA (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:51977 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754312AbdCTQ1T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 18:46:00 -0400
-Date: Mon, 20 Mar 2017 23:45:24 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mon, 20 Mar 2017 12:27:19 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Alessandro Zummo <a.zummo@towertech.it>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -15,9 +14,11 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         RTCLINUX <rtc-linux@googlegroups.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/5] rtc: Add rtc-sh
-Message-ID: <20170320224524.cvtxotz7266hrxr2@piout.net>
-References: <20170316175112.27913-3-chris.brandt@renesas.com>
+Subject: RE: [PATCH 2/5] rtc: Add rtc-sh
+Date: Mon, 20 Mar 2017 16:26:46 +0000
+Message-ID: <SG2PR06MB11650F098CFD2BCCB74C823B8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170316175112.27913-1-chris.brandt@renesas.com>
+ <20170316175112.27913-3-chris.brandt@renesas.com>
  <CAMuHMdVu0dQjptyW0F5YS+V6sixXTM3P6VWq2=8BQ5njUOXf-Q@mail.gmail.com>
  <SG2PR06MB1165A9931C930DF9BCD5C0A98A390@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdW0nHiZkE_RxVLX3G0MuwQLPHVFyNq5C1tx0yAqDQefaA@mail.gmail.com>
@@ -26,56 +27,37 @@ References: <20170316175112.27913-3-chris.brandt@renesas.com>
  <20170317150524.oijto6gtjxycdnwn@piout.net>
  <SG2PR06MB1165819F41CF40562F44F08B8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAMuHMdWxs4Xwc0T5AHL73ZtF6r8pN9v6g-GEzozdLvTc4j4aSw@mail.gmail.com>
- <SG2PR06MB11650F098CFD2BCCB74C823B8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <CAMuHMdWxs4Xwc0T5AHL73ZtF6r8pN9v6g-GEzozdLvTc4j4aSw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB11650F098CFD2BCCB74C823B8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 20/03/2017 at 16:26:46 +0000, Chris Brandt wrote:
-> Hi Geert,
-> 
-> On Monday, March 20, 2017, Geert Uytterhoeven wrote:
-> > > +       rtc: rtc@fcff1000 {
-> > > +               compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
-> > > +               reg = <0xfcff1000 0x2e>;
-> > > +               interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
-> > > +                             GIC_SPI 277 IRQ_TYPE_EDGE_RISING
-> > > +                             GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
-> > > +               interrupt-names = "alarm", "period", "carry";
-> > > +               clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
-> > > +                         <&extal_clk> , <&rtc_x3_clk>;
-> > > +               clock-names = "fck", "rtc_x1", "extal", "rtc_x3";
-> > > +               power-domains = <&cpg_clocks>;
-> > > +               count-source = "rtc_x1";    <<<<<<< this would be in the
-> > board dts file
-> > 
-> > IMHO that's software policy, not hardware description, so it doesn't
-> > belong in DT.
-> 
-> Really? I'm so confused about what is and isn't the responsibility of DT.
-> 
-> 
-> > However, by scanning the list of allowed clock names, and looking at clock
-> > rates, the driver can find a suitable clock itself.
-> 
-> Yes, I could make the selection automatic by looking that the clock names (and
-> I will do that for this driver), but what about the case where a user needs
-> to select something from a list of possible HW options? In other words, where
-> does 'software option' selection stuff go if not in the DT?
-> 
-
-If you want you can leave the clock selection logic out of the driver as
-long as the DT binding is complete. You dont have to use everything that
-is described in the DT.
-
-Regarding the selection, I'd say take the first that is present and not
-0 however, if something has already been set, you may not want to
-override it. (I know, this is not helping a lot ;) )
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgTWFyY2ggMjAsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZl
+biB3cm90ZToNCj4gPiArICAgICAgIHJ0YzogcnRjQGZjZmYxMDAwIHsNCj4gPiArICAgICAgICAg
+ICAgICAgY29tcGF0aWJsZSA9ICJyZW5lc2FzLHI3czcyMTAwLXJ0YyIsICJyZW5lc2FzLHNoLXJ0
+YyI7DQo+ID4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweGZjZmYxMDAwIDB4MmU+Ow0KPiA+ICsg
+ICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjc2IElSUV9UWVBFX0VER0VfUklT
+SU5HDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR0lDX1NQSSAyNzcgSVJRX1RZ
+UEVfRURHRV9SSVNJTkcNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHSUNfU1BJ
+IDI3OCBJUlFfVFlQRV9FREdFX1JJU0lORz47DQo+ID4gKyAgICAgICAgICAgICAgIGludGVycnVw
+dC1uYW1lcyA9ICJhbGFybSIsICJwZXJpb2QiLCAiY2FycnkiOw0KPiA+ICsgICAgICAgICAgICAg
+ICBjbG9ja3MgPSA8Jm1zdHA2X2Nsa3MgUjdTNzIxMDBfQ0xLX1JUQz4sIDwmcnRjX3gxX2Nsaz4s
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICA8JmV4dGFsX2Nsaz4gLCA8JnJ0Y194M19j
+bGs+Ow0KPiA+ICsgICAgICAgICAgICAgICBjbG9jay1uYW1lcyA9ICJmY2siLCAicnRjX3gxIiwg
+ImV4dGFsIiwgInJ0Y194MyI7DQo+ID4gKyAgICAgICAgICAgICAgIHBvd2VyLWRvbWFpbnMgPSA8
+JmNwZ19jbG9ja3M+Ow0KPiA+ICsgICAgICAgICAgICAgICBjb3VudC1zb3VyY2UgPSAicnRjX3gx
+IjsgICAgPDw8PDw8PCB0aGlzIHdvdWxkIGJlIGluIHRoZQ0KPiBib2FyZCBkdHMgZmlsZQ0KPiAN
+Cj4gSU1ITyB0aGF0J3Mgc29mdHdhcmUgcG9saWN5LCBub3QgaGFyZHdhcmUgZGVzY3JpcHRpb24s
+IHNvIGl0IGRvZXNuJ3QNCj4gYmVsb25nIGluIERULg0KDQpSZWFsbHk/IEknbSBzbyBjb25mdXNl
+ZCBhYm91dCB3aGF0IGlzIGFuZCBpc24ndCB0aGUgcmVzcG9uc2liaWxpdHkgb2YgRFQuDQoNCg0K
+PiBIb3dldmVyLCBieSBzY2FubmluZyB0aGUgbGlzdCBvZiBhbGxvd2VkIGNsb2NrIG5hbWVzLCBh
+bmQgbG9va2luZyBhdCBjbG9jaw0KPiByYXRlcywgdGhlIGRyaXZlciBjYW4gZmluZCBhIHN1aXRh
+YmxlIGNsb2NrIGl0c2VsZi4NCg0KWWVzLCBJIGNvdWxkIG1ha2UgdGhlIHNlbGVjdGlvbiBhdXRv
+bWF0aWMgYnkgbG9va2luZyB0aGF0IHRoZSBjbG9jayBuYW1lcyAoYW5kDQpJIHdpbGwgZG8gdGhh
+dCBmb3IgdGhpcyBkcml2ZXIpLCBidXQgd2hhdCBhYm91dCB0aGUgY2FzZSB3aGVyZSBhIHVzZXIg
+bmVlZHMNCnRvIHNlbGVjdCBzb21ldGhpbmcgZnJvbSBhIGxpc3Qgb2YgcG9zc2libGUgSFcgb3B0
+aW9ucz8gSW4gb3RoZXIgd29yZHMsIHdoZXJlDQpkb2VzICdzb2Z0d2FyZSBvcHRpb24nIHNlbGVj
+dGlvbiBzdHVmZiBnbyBpZiBub3QgaW4gdGhlIERUPw0KDQoNClRoYW5rcywNCkNocmlzDQo=
