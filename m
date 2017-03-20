@@ -1,60 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34105 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753113AbdCTImD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753442AbdCTJAP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:42:03 -0400
-Received: by mail-pf0-f195.google.com with SMTP id o126so16080785pfb.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Mar 2017 01:41:42 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 20 Mar 2017 05:00:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Mon, 20 Mar 2017 17:36:12 +0900
-Message-Id: <148999897296.20118.6099961740611728210.sendpatchset@little-apple>
-In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-Subject: [PATCH v3 06/09] arm64: dts: r8a7795: Point VSPI via FCPVI to IPMMU-VP
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/31] ARM: dts: porter: Always use status "okay" to enable devices
+Date: Mon, 20 Mar 2017 09:58:02 +0100
+Message-Id: <d8fc23051a9b6dd66ed0cc3c2a676991493b8112.1489999063.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hook up the FCPVI devices to allow use of VSPI with IPMMU-VP.
+While status "ok" does work, the canonical form is "okay", so update the
+few places that used the former.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7791-porter.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- Changes since V2:
- - New patch
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    3 +++
- 1 file changed, 3 insertions(+)
-
---- 0010/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-20 16:26:53.600607110 +0900
-@@ -1692,6 +1692,7 @@
- 			compatible = "renesas,fcpv";
- 			reg = <0 0xfe9af000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 611>;
-+			iommus = <&ipmmu_vp 8>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 6761d11d3f9e..d9aa2cd6d625 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -226,7 +226,7 @@
  
-@@ -1709,6 +1710,7 @@
- 			compatible = "renesas,fcpv";
- 			reg = <0 0xfe9bf000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 610>;
-+			iommus = <&ipmmu_vp 9>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
+ 	phy-handle = <&phy1>;
+ 	renesas,ether-link-active-low;
+-	status = "ok";
++	status = "okay";
  
-@@ -1726,6 +1728,7 @@
- 			compatible = "renesas,fcpv";
- 			reg = <0 0xfe9cf000 0 0x200>;
- 			clocks = <&cpg CPG_MOD 609>;
-+			iommus = <&ipmmu_vp 10>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
+ 	phy1: ethernet-phy@1 {
+ 		reg = <1>;
+@@ -359,7 +359,7 @@
  
+ /* composite video input */
+ &vin0 {
+-	status = "ok";
++	status = "okay";
+ 	pinctrl-0 = <&vin0_pins>;
+ 	pinctrl-names = "default";
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
