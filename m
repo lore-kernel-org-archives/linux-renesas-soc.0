@@ -1,55 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: Remove unit-addresses and regs from integrated caches
-Date: Fri,  3 Mar 2017 14:18:16 +0100
-Message-Id: <1488547097-4804-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488547097-4804-1-git-send-email-geert+renesas@glider.be>
-References: <1488547097-4804-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752940AbdCTI7Q (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 04:59:16 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/32] arm64: dts: h3ulcb: Update memory node to 4 GiB map
+Date: Mon, 20 Mar 2017 09:57:16 +0100
+Message-Id: <a262d66224c4c34bc2bee16d4d37d460a738788c.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Cortex-A57/A53 cache controllers are integrated controllers, and
-thus the device nodes representing them should not have unit-addresses
-or reg properties.
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Fixes: 6f7bf82cc912441f ("arm64: dts: r8a7795: Fix W=1 dtc warnings")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds memory region:
+
+  - After changes, the H3ULCB board has the following map:
+    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
+    Bank1: 1GiB RAM : 0x000500000000 -> 0x0053fffffff
+    Bank2: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
+    Bank3: 1GiB RAM : 0x000700000000 -> 0x0073fffffff
+
+  - Before changes, the old map looked like this:
+    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 13833aa8e035be04..67a8d2a4c9b568cc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -110,17 +110,15 @@
- 			enable-method = "psci";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index c5f8f69a4f5f..9811534f296e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -33,6 +33,21 @@
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
  
--		L2_CA57: cache-controller@0 {
-+		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			power-domains = <&sysc R8A7795_PD_CA57_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x40000000>;
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
  
--		L2_CA53: cache-controller@100 {
-+		L2_CA53: cache-controller-1 {
- 			compatible = "cache";
--			reg = <0x100>;
- 			power-domains = <&sysc R8A7795_PD_CA53_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
 -- 
-2.7.4
-
+2.7.0.rc3.207.g0ac5344
