@@ -1,50 +1,50 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 04/27] media: entity: Swap pads if route is checked from source to sink
-Date: Tue, 14 Mar 2017 20:02:45 +0100
-Message-Id: <20170314190308.25790-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753422AbdCTJAF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 05:00:05 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/31] ARM: dts: r8a7794: Remove unit-address and reg from integrated cache
+Date: Mon, 20 Mar 2017 09:57:51 +0100
+Message-Id: <65d0b7ed40f8a3a41a0ac5ed5ca4d1874c6aaf2d.1489999062.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This way the pads are always passed to the has_route() op sink pad first.
-Makes sense.
+The Cortex-A7 cache controller is an integrated controller, and thus the
+device node representing it should not have a unit-addresses or reg
+property.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Fixes: 34ea4b4a827b4ee7 ("ARM: dts: r8a7794: Fix W=1 dtc warnings")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/media-entity.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index ccd991d2d3450ab3..f0386ddd7c92cc4e 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -256,6 +256,10 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- 	if (!entity->ops || !entity->ops->has_route)
- 		return true;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 319c1069b7ee..cb31cd2232f9 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -56,9 +56,8 @@
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
-+	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
-+	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
-+		swap(pad0, pad1);
-+
- 	return entity->ops->has_route(entity, pad0, pad1);
- }
- EXPORT_SYMBOL_GPL(media_entity_has_route);
+-		L2_CA7: cache-controller@0 {
++		L2_CA7: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			power-domains = <&sysc R8A7794_PD_CA7_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
 -- 
-2.12.0
+2.7.0.rc3.207.g0ac5344
