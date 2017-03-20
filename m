@@ -1,99 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56339 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751065AbdCQQCG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753432AbdCTJAK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2017 12:02:06 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 7/7] thermal: rcar_gen3_thermal: add suspend and resume support
-Date: Fri, 17 Mar 2017 16:53:00 +0100
-Message-Id: <20170317155300.21566-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 20 Mar 2017 05:00:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/31] ARM: dts: r8a7791: Tidyup Audio-DMAC channel for DVC
+Date: Mon, 20 Mar 2017 09:57:59 +0100
+Message-Id: <d49db72b567d6273f41f045b0c146837d3e50f8d.1489999063.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To restore operation it's easiest to reinitialise all TSCs. In order to
-do this the current trip window needs to be stored in the TSC structure
-so that it can be restored upon resume.
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Current	Audio-DMAC is assigned "rx" as Audio-DMAC0, "tx" as Audio-DMAC1.
+Thus, DVC "tx" should be assigned as Audio-DMAC1, instead of Audio-DMAC0.
+
+Because of this, current platform board (using SRC/DVC/SSI)
+Playback/Capture both will use same Audio-DMAC0
+(but it depends on audio data path).
+
+First note is that this "rx" and "tx" are from each IP point,
+it doesn't mean Playback/Capture.
+Second note is that Audio DMAC assigned on DT is only for
+Audio-DMAC, Audio-DMAC-peri-peri has no entry.
+
+=> Audio-DMAC
+-> Audio-DMAC-peri-peri
+-- HW connection
+
+Playback case
+
+	[Mem] => [SRC]--[DVC] -> [SSI]--[Codec]
+	      rx ~~~~~~~~~~~~
+Capture
+
+	[Mem] <= [DVC]--[SRC] <- [SSI]--[Codec]
+	      tx ~~~~~~~~~~~~
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 438fb9988eabb91b..b5e3d7b41629803c 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -82,6 +82,8 @@ struct rcar_gen3_thermal_tsc {
- 	void __iomem *base;
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
-+	int low;
-+	int high;
- };
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 525377df16ee..b319ef4d57b0 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1779,11 +1779,11 @@
  
- struct rcar_gen3_thermal_priv {
-@@ -217,6 +219,9 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
- 				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
- 
-+	tsc->low = low;
-+	tsc->high = high;
-+
- 	return 0;
- }
- 
-@@ -450,9 +455,39 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int __maybe_unused rcar_gen3_thermal_suspend(struct device *dev)
-+{
-+	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
-+
-+	rcar_thermal_irq_set(priv, 0);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
-+{
-+	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
-+	unsigned int i;
-+
-+	for (i = 0; i < priv->num_tscs; i++) {
-+		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
-+
-+		priv->data->thermal_init(tsc);
-+		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
-+	}
-+
-+	rcar_thermal_irq_set(priv, 1);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rcar_gen3_thermal_pm_ops, rcar_gen3_thermal_suspend,
-+			 rcar_gen3_thermal_resume);
-+
- static struct platform_driver rcar_gen3_thermal_driver = {
- 	.driver	= {
- 		.name	= "rcar_gen3_thermal",
-+		.pm = &rcar_gen3_thermal_pm_ops,
- 		.of_match_table = rcar_gen3_thermal_dt_ids,
- 	},
- 	.probe		= rcar_gen3_thermal_probe,
+ 		rcar_sound,dvc {
+ 			dvc0: dvc-0 {
+-				dmas = <&audma0 0xbc>;
++				dmas = <&audma1 0xbc>;
+ 				dma-names = "tx";
+ 			};
+ 			dvc1: dvc-1 {
+-				dmas = <&audma0 0xbe>;
++				dmas = <&audma1 0xbe>;
+ 				dma-names = "tx";
+ 			};
+ 		};
 -- 
-2.12.0
+2.7.0.rc3.207.g0ac5344
