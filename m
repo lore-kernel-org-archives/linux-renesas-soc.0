@@ -1,63 +1,66 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/7] arm: dts: genmai: Add SCIF2 pin group
-Date: Mon, 20 Mar 2017 17:14:49 +0100
-Message-Id: <1490026491-21742-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: kishon@ti.com
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH v4 2/3] phy: Move ULPI phy header out of drivers to include path
+Date: Mon, 20 Mar 2017 18:49:56 +0530
+Message-Id: <1490015997-12956-3-git-send-email-vivek.gautam@codeaurora.org>
+In-Reply-To: <1490015997-12956-1-git-send-email-vivek.gautam@codeaurora.org>
+References: <1490015997-12956-1-git-send-email-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for SCIF2 serial debug interface.
+Although ULPI phy is currently being used by tusb1210,
+there can be other consumers too in future. So move this
+to the includes path for phy.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 118a8e2..569c86a 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
+Changes since v3:
+ - Removed qcom phy changes, since patch - 1/3 addressed that now.
+
+Changes since v2:
+ - Updated the location for this header in drivers using it.
+
+ drivers/phy/phy-tusb1210.c                | 3 +--
+ {drivers => include/linux}/phy/ulpi_phy.h | 0
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+ rename {drivers => include/linux}/phy/ulpi_phy.h (100%)
+
+diff --git a/drivers/phy/phy-tusb1210.c b/drivers/phy/phy-tusb1210.c
+index 4f6d5e71507d..bb3fb031c478 100644
+--- a/drivers/phy/phy-tusb1210.c
++++ b/drivers/phy/phy-tusb1210.c
+@@ -12,8 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/ulpi/driver.h>
+ #include <linux/gpio/consumer.h>
+-
+-#include "ulpi_phy.h"
++#include <linux/phy/ulpi_phy.h>
  
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
- 	model = "Genmai";
-@@ -36,6 +37,15 @@
- 	};
- };
- 
-+&pinctrl {
-+
-+	scif2_pins: serial2 {
-+		/* P3_0 as TxD2; P3_2 as RxD2 */
-+		renesas,pins = <PIN(3, 0) 6>,
-+			       <PIN(3, 2) 4>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <13330000>;
- };
-@@ -60,6 +70,9 @@
- };
- 
- &scif2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif2_pins>;
-+
- 	status = "okay";
- };
- 
+ #define TUSB1210_VENDOR_SPECIFIC2		0x80
+ #define TUSB1210_VENDOR_SPECIFIC2_IHSTX_SHIFT	0
+diff --git a/drivers/phy/ulpi_phy.h b/include/linux/phy/ulpi_phy.h
+similarity index 100%
+rename from drivers/phy/ulpi_phy.h
+rename to include/linux/phy/ulpi_phy.h
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
