@@ -1,52 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56236 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750802AbdCNKQB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753387AbdCTI7r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 06:16:01 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Mon, 20 Mar 2017 04:59:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 3/4] mmc: host: tmio: don't BUG on unsupported stop commands
-Date: Tue, 14 Mar 2017 11:09:18 +0100
-Message-Id: <20170314100919.25401-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
-References: <20170314100919.25401-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 31/32] arm64: dts: m3ulcb: Drop superfluous status update for frequency override
+Date: Mon, 20 Mar 2017 09:57:42 +0100
+Message-Id: <cb4de4ece41a55ba125e6e8d1fa727457132dc41.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Halting the kernel on an unsupported stop command seems overkill, report
-the error and say what we already did (due to autocmd12) instead.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The scif_clk device node is already enabled in r8a7796.dtsi, so there is
+no need to update its status again.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index ad2840e1bfae51..b47dd9195fe3fe 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -553,10 +553,11 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index c3f064ac2cb4..372b2a944716 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -180,7 +180,6 @@
  
- 	if (stop) {
--		if (stop->opcode == MMC_STOP_TRANSMISSION && !stop->arg)
--			sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
--		else
--			BUG();
-+		if (stop->opcode != MMC_STOP_TRANSMISSION || stop->arg)
-+			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
-+				stop->opcode, stop->arg);
-+
-+		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 	}
+ &scif_clk {
+ 	clock-frequency = <14745600>;
+-	status = "okay";
+ };
  
- 	schedule_work(&host->done);
+ &wdt0 {
 -- 
-2.11.0
+2.7.0.rc3.207.g0ac5344
