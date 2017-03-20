@@ -1,119 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35462 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753006AbdCTImD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753369AbdCTI7h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:42:03 -0400
-Received: by mail-pf0-f196.google.com with SMTP id n11so4734246pfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Mar 2017 01:41:05 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 20 Mar 2017 04:59:37 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Mon, 20 Mar 2017 17:35:36 +0900
-Message-Id: <148999893649.20118.17724268009849243177.sendpatchset@little-apple>
-In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-Subject: [PATCH v3 02/09] arm64: dts: r8a7795: Tie Audio/SYS-DMAC to IPMMU-DS0/1 and MP1
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 24/32] arm64: dts: r8a7796: Add Cortex-A57 CPU cores
+Date: Mon, 20 Mar 2017 09:57:35 +0100
+Message-Id: <7328be4a03b10c19e49a564f4c2e3a9ebcf34ca7.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Hook up r8a7795 DMAC nodes to the IPMMUs. In particular Audio-DMAC0
-and Audio-DMAC1 get connected to IPMMU-MP1, while SYS-DMAC0 gets tied
-to IPMMU-DS0 and SYS-DMAC1 and SYS-DMAC2 get tied to IPMMU-DS1.
+This patch adds Cortex-A57 CPU cores to R8A7796 SoC for a total of
+2 x Cortex-A57.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Rebased]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
- Changes from V2:
- - Updated description with more detail about SYS-DMAC and Audio-DMAC
- - Updated title/subject to include Audio-DMAC
- - Added Reviewed-by from Laurent - thanks!
-
- Changes from V1:
- - None
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |   40 ++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
---- 0002/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-20 15:45:51.330607110 +0900
-@@ -548,6 +548,14 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 219>;
- 			clock-names = "fck";
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-@@ -581,6 +589,14 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-@@ -614,6 +630,14 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 217>;
- 			clock-names = "fck";
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-@@ -647,6 +671,14 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 502>;
- 			clock-names = "fck";
-+			iommus = <&ipmmu_mp1 0>, <&ipmmu_mp1 1>,
-+			       <&ipmmu_mp1 2>, <&ipmmu_mp1 3>,
-+			       <&ipmmu_mp1 4>, <&ipmmu_mp1 5>,
-+			       <&ipmmu_mp1 6>, <&ipmmu_mp1 7>,
-+			       <&ipmmu_mp1 8>, <&ipmmu_mp1 9>,
-+			       <&ipmmu_mp1 10>, <&ipmmu_mp1 11>,
-+			       <&ipmmu_mp1 12>, <&ipmmu_mp1 13>,
-+			       <&ipmmu_mp1 14>, <&ipmmu_mp1 15>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-@@ -680,6 +712,14 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 501>;
- 			clock-names = "fck";
-+			iommus = <&ipmmu_mp1 16>, <&ipmmu_mp1 17>,
-+			       <&ipmmu_mp1 18>, <&ipmmu_mp1 19>,
-+			       <&ipmmu_mp1 20>, <&ipmmu_mp1 21>,
-+			       <&ipmmu_mp1 22>, <&ipmmu_mp1 23>,
-+			       <&ipmmu_mp1 24>, <&ipmmu_mp1 25>,
-+			       <&ipmmu_mp1 26>, <&ipmmu_mp1 27>,
-+			       <&ipmmu_mp1 28>, <&ipmmu_mp1 29>,
-+			       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 27f7dd9bd988..d2a2110fc7fc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -37,7 +37,6 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		/* 1 core only at this point */
+ 		a57_0: cpu@0 {
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+@@ -47,6 +46,15 @@
+ 			enable-method = "psci";
+ 		};
+ 
++		a57_1: cpu@1 {
++			compatible = "arm,cortex-a57","arm,armv8";
++			reg = <0x1>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++		};
++
+ 		L2_CA57: cache-controller-0 {
+ 			compatible = "cache";
+ 			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
+@@ -100,7 +108,7 @@
+ 			      <0x0 0xf1040000 0 0x20000>,
+ 			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+@@ -109,13 +117,13 @@
+ 		timer {
+ 			compatible = "arm,armv8-timer";
+ 			interrupts = <GIC_PPI 13
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 14
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 11
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 				     <GIC_PPI 10
+-					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
+ 
+ 		wdt0: watchdog@e6020000 {
+-- 
+2.7.0.rc3.207.g0ac5344
