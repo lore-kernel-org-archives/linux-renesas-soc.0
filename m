@@ -1,50 +1,83 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/5] rtc: Reuse rtc-sh driver to support RZ/A1
-Date: Thu, 16 Mar 2017 13:51:07 -0400
-Message-Id: <20170316175112.27913-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753347AbdCTI73 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 04:59:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/32] arm64: dts: r8a7796: Enable HSCIF DMA
+Date: Mon, 20 Mar 2017 09:57:26 +0100
+Message-Id: <6d50bb8935042c4b7747b57df064ff41295e4769.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basically, the same RTC that was used in SuperH devices is now used in
-RZ/A1 devices. Therefore with some slight changes, that driver can be
-reused.
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Additionally, since ARM architectures require Device Tree configurations,
-device tree support has been added.
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-This was tested on RZ/A1H RSK board. Once the correct time was programmed
-into the RTC running off a 32.768kHz crystal, you can retain an accurate
-system clock between reboots (hard and soft) until power is finally removed
-from the board (there is no batter backup on the RSK board).
-
-
-Chris Brandt (5):
-  rtc: rtc-sh: add support for rza series
-  rtc: Add rtc-sh
-  ARM: dts: r7s72100: add rtc clock to device tree
-  ARM: dts: r7s72100: add rtc to device tree
-  ARM: dts: rskrza1: add rtc DT support
-
- Documentation/devicetree/bindings/rtc/rtc-sh.txt | 19 +++++++++++++++++++
- arch/arm/boot/dts/r7s72100-rskrza1.dts           |  4 ++++
- arch/arm/boot/dts/r7s72100.dtsi                  | 20 ++++++++++++++++++++
- drivers/rtc/Kconfig                              |  4 ++--
- drivers/rtc/rtc-sh.c                             | 20 ++++++++++++++++++++
- include/dt-bindings/clock/r7s72100-clock.h       |  3 +++
- 6 files changed, 68 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-sh.txt
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 951e351ddae1..aa404ed9142e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -499,6 +499,9 @@
+ 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
++			       <&dmac2 0x31>, <&dmac2 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+@@ -513,6 +516,9 @@
+ 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
++			       <&dmac2 0x33>, <&dmac2 0x32>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+@@ -527,6 +533,9 @@
+ 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
++			       <&dmac2 0x35>, <&dmac2 0x34>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+@@ -541,6 +550,8 @@
+ 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
++			dma-names = "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+@@ -555,6 +566,8 @@
+ 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
++			dma-names = "tx", "rx";
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
 -- 
-2.10.1
-
-
+2.7.0.rc3.207.g0ac5344
