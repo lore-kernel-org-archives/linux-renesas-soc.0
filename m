@@ -1,80 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        vinod.koul@intel.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, dan.j.williams@intel.com
-Date: Mon, 13 Mar 2017 23:38:15 +0900
-Message-Id: <148941589552.8144.12085740563774580543.sendpatchset@little-apple>
-In-Reply-To: <148941587549.8144.11445088809156037649.sendpatchset@little-apple>
-References: <148941587549.8144.11445088809156037649.sendpatchset@little-apple>
-Subject: [PATCH 2/3] dmaengine: rcar-dmac: Slow mode prototype
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753452AbdCTJAS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 05:00:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 27/31] ARM: dts: koelsch: Drop superfluous status updates for frequency overrides
+Date: Mon, 20 Mar 2017 09:58:06 +0100
+Message-Id: <b20b1de4b542749a500c426796bb7fa400b03e58.1489999063.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This experimental slow mode support code simply extends the MID/RID value
-to allow encoding a 4-bit value in bit 8-11 to specify the SLM bit value.
-With this value set the channel associated with the device will be processed
-slower by the hardware. The idea is that the slow mode can be used for testing
-to force underruns to harden other parts of the system.
+The scif_clk and pcie_bus_clk device nodes are already enabled in
+r8a7791.dtsi, so there is no need to update their statuses again.
 
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
- drivers/dma/sh/rcar-dmac.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
---- 0002/drivers/dma/sh/rcar-dmac.c
-+++ work/drivers/dma/sh/rcar-dmac.c	2017-03-13 23:15:54.170607110 +0900
-@@ -171,6 +171,7 @@ struct rcar_dmac_chan {
- 	struct rcar_dmac_chan_slave dst;
- 	struct rcar_dmac_chan_map map;
- 	int mid_rid;
-+	unsigned int slm;
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 5405d337d744..59beb8402a36 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -516,7 +516,6 @@
  
- 	spinlock_t lock;
+ &scif_clk {
+ 	clock-frequency = <14745600>;
+-	status = "okay";
+ };
  
-@@ -374,7 +375,7 @@ static void rcar_dmac_chan_start_xfer(st
- 		rcar_dmac_chan_write(chan, RCAR_DMADPBASE,
- 				     (desc->hwdescs.dma & 0xfffffff0) |
- 				     RCAR_DMADPBASE_SEL);
--		rcar_dmac_chan_write(chan, RCAR_DMACHCRB,
-+		rcar_dmac_chan_write(chan, RCAR_DMACHCRB, chan->slm |
- 				     RCAR_DMACHCRB_DCNT(desc->nchunks - 1) |
- 				     RCAR_DMACHCRB_DRST);
+ &sdhi0 {
+@@ -767,7 +766,6 @@
  
-@@ -438,6 +439,7 @@ static void rcar_dmac_chan_start_xfer(st
- 		rcar_dmac_chan_write(chan, RCAR_DMATCR,
- 				     chunk->size >> desc->xfer_shift);
+ &pcie_bus_clk {
+ 	clock-frequency = <100000000>;
+-	status = "okay";
+ };
  
-+		rcar_dmac_chan_write(chan, RCAR_DMACHCRB, chan->slm);
- 		chcr |= RCAR_DMACHCR_DPM_DISABLED | RCAR_DMACHCR_IE;
- 	}
- 
-@@ -1596,7 +1598,7 @@ static bool rcar_dmac_chan_filter(struct
- 			return false;
- 	}
- 
--	return !test_and_set_bit(dma_spec->args[0], dmac->modules);
-+	return !test_and_set_bit(dma_spec->args[0] & 0xff, dmac->modules);
- }
- 
- static struct dma_chan *rcar_dmac_of_xlate(struct of_phandle_args *dma_spec,
-@@ -1661,7 +1663,12 @@ static struct dma_chan *rcar_dmac_of_xla
- 		return NULL;
- 
- 	rchan = to_rcar_dmac_chan(chan);
--	rchan->mid_rid = dma_spec->args[0];
-+	rchan->mid_rid = dma_spec->args[0] & 0xff;
-+
-+	if (dma_spec->args[0] > 0xff) {
-+		rchan->slm = RCAR_DMACHCRB_SLM_CLK(dma_spec->args[0] >> 8);
-+		dev_info(chan->device->dev, "slm set to 0x%x\n", rchan->slm);
-+	}
- 
- 	return chan;
- }
+ &pciec {
+-- 
+2.7.0.rc3.207.g0ac5344
