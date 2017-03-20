@@ -1,168 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:32832 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757485AbdCVCDW (ORCPT
+Received: from mail.free-electrons.com ([62.4.15.54]:40771 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754338AbdCTWqA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Mar 2017 22:03:22 -0400
-From: Rob Herring <robh@kernel.org>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: arm@kernel.org, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 06/15] ARM: dts: r8a779x: fix PCI bus dtc warnings
-Date: Tue, 21 Mar 2017 21:03:04 -0500
-Message-Id: <20170322020313.24338-6-robh@kernel.org>
-In-Reply-To: <20170322020313.24338-1-robh@kernel.org>
-References: <20170322020313.24338-1-robh@kernel.org>
+        Mon, 20 Mar 2017 18:46:00 -0400
+Date: Mon, 20 Mar 2017 23:45:24 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        RTCLINUX <rtc-linux@googlegroups.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/5] rtc: Add rtc-sh
+Message-ID: <20170320224524.cvtxotz7266hrxr2@piout.net>
+References: <20170316175112.27913-3-chris.brandt@renesas.com>
+ <CAMuHMdVu0dQjptyW0F5YS+V6sixXTM3P6VWq2=8BQ5njUOXf-Q@mail.gmail.com>
+ <SG2PR06MB1165A9931C930DF9BCD5C0A98A390@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdW0nHiZkE_RxVLX3G0MuwQLPHVFyNq5C1tx0yAqDQefaA@mail.gmail.com>
+ <SG2PR06MB11653BB788CADBEE78FE4CF58A390@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdWs3NtKLiBnKCmxGYNBW3zzWYydj=JGKr+mH7ao97L2_Q@mail.gmail.com>
+ <20170317150524.oijto6gtjxycdnwn@piout.net>
+ <SG2PR06MB1165819F41CF40562F44F08B8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdWxs4Xwc0T5AHL73ZtF6r8pN9v6g-GEzozdLvTc4j4aSw@mail.gmail.com>
+ <SG2PR06MB11650F098CFD2BCCB74C823B8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB11650F098CFD2BCCB74C823B8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-dtc recently added PCI bus checks. Fix these warnings.
+On 20/03/2017 at 16:26:46 +0000, Chris Brandt wrote:
+> Hi Geert,
+> 
+> On Monday, March 20, 2017, Geert Uytterhoeven wrote:
+> > > +       rtc: rtc@fcff1000 {
+> > > +               compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
+> > > +               reg = <0xfcff1000 0x2e>;
+> > > +               interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
+> > > +                             GIC_SPI 277 IRQ_TYPE_EDGE_RISING
+> > > +                             GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
+> > > +               interrupt-names = "alarm", "period", "carry";
+> > > +               clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
+> > > +                         <&extal_clk> , <&rtc_x3_clk>;
+> > > +               clock-names = "fck", "rtc_x1", "extal", "rtc_x3";
+> > > +               power-domains = <&cpg_clocks>;
+> > > +               count-source = "rtc_x1";    <<<<<<< this would be in the
+> > board dts file
+> > 
+> > IMHO that's software policy, not hardware description, so it doesn't
+> > belong in DT.
+> 
+> Really? I'm so confused about what is and isn't the responsibility of DT.
+> 
+> 
+> > However, by scanning the list of allowed clock names, and looking at clock
+> > rates, the driver can find a suitable clock itself.
+> 
+> Yes, I could make the selection automatic by looking that the clock names (and
+> I will do that for this driver), but what about the case where a user needs
+> to select something from a list of possible HW options? In other words, where
+> does 'software option' selection stuff go if not in the DT?
+> 
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-Sub-arch maintainers, please apply to your trees unless arm-soc wants 
-to take the whole lot.
+If you want you can leave the clock selection logic out of the driver as
+long as the DT binding is complete. You dont have to use everything that
+is described in the DT.
 
- arch/arm/boot/dts/r8a7790.dtsi | 16 ++++++----------
- arch/arm/boot/dts/r8a7791.dtsi | 16 ++++++----------
- arch/arm/boot/dts/r8a7794.dtsi | 16 ++++++----------
- 3 files changed, 18 insertions(+), 30 deletions(-)
+Regarding the selection, I'd say take the first that is present and not
+0 however, if something has already been set, you may not want to
+override it. (I know, this is not helping a lot ;) )
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 6d10450de6d7..c16a37e9fb5d 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1598,16 +1598,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
-+		usb@1,0 {
- 			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
-+		usb@2,0 {
- 			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
-@@ -1654,16 +1652,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
--			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
-+		usb@1,0 {
-+			reg = <0x20800 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
--			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
-+		usb@2,0 {
-+			reg = <0x21000 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 9f9e48511836..a1d8686eaea5 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1596,16 +1596,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
-+		usb@1,0 {
- 			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
-+		usb@2,0 {
- 			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
-@@ -1631,16 +1629,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
--			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
-+		usb@1,0 {
-+			reg = <0x10800 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
--			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
-+		usb@2,0 {
-+			reg = <0x11000 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 319c1069b7ee..c07495185cc4 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -817,16 +817,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
-+		usb@1,0 {
- 			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
-+		usb@2,0 {
- 			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
- 			phys = <&usb0 0>;
- 			phy-names = "usb";
- 		};
-@@ -852,16 +850,14 @@
- 				 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 				 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 
--		usb@0,1 {
--			reg = <0x800 0 0 0 0>;
--			device_type = "pci";
-+		usb@1,0 {
-+			reg = <0x10800 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
- 
--		usb@0,2 {
--			reg = <0x1000 0 0 0 0>;
--			device_type = "pci";
-+		usb@2,0 {
-+			reg = <0x11000 0 0 0 0>;
- 			phys = <&usb2 0>;
- 			phy-names = "usb";
- 		};
 -- 
-2.10.1
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
