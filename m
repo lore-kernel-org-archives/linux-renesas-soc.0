@@ -1,61 +1,117 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1490026491-21742-5-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org> <1490026491-21742-5-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Mar 2017 14:12:04 +0100
-Message-ID: <CAMuHMdXZ4qoFrqQjxhD328XW_TPcEpo82mQSKyj6HKvaouot2w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] arm: dts: r7s72100: Add pin controller node
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        chris.brandt@renesas.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/7] arm: dts: r7s72100: Add pin controller node
+Date: Mon, 20 Mar 2017 17:14:48 +0100
+Message-Id: <1490026491-21742-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Add pin controller node with 12 gpio controller sub-nodes to
+r7s72100 dtsi.
 
-On Mon, Mar 20, 2017 at 5:14 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add pin controller node with 12 gpio controller sub-nodes to
-> r7s72100 dtsi.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 80 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -183,6 +183,86 @@
->                 };
->         };
->
-> +       pinctrl: pinctrl@fcfe3000 {
-> +               compatible = "renesas,r7s72100-ports";
-> +
-> +               #pinctrl-cells = <1>;
-> +
-> +               reg = <0xfcfe3000 0x4248>;
-
-How did you get to 0x4248? I had expected 0x4230.
-Not that it matters much, Linux rounds it up to a multiple of PAGE_SIZE anyway.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 614ba79..9eb8751f 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -183,6 +183,86 @@
+ 		};
+ 	};
+ 
++	pinctrl: pinctrl@fcfe3000 {
++		compatible = "renesas,r7s72100-ports";
++
++		#pinctrl-cells = <1>;
++
++		reg = <0xfcfe3000 0x4248>;
++
++		port0: gpio-0 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 0 6>;
++		};
++
++		port1: gpio-1 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 16 16>;
++		};
++
++		port2: gpio-2 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 32 16>;
++		};
++
++		port3: gpio-3 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 48 16>;
++		};
++
++		port4: gpio-4 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 64 16>;
++		};
++
++		port5: gpio-5 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 80 11>;
++		};
++
++		port6: gpio-6 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 96 16>;
++		};
++
++		port7: gpio-7 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 112 16>;
++		};
++
++		port8: gpio-8 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 128 16>;
++		};
++
++		port9: gpio-9 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 144 8>;
++		};
++
++		port10: gpio-10 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 160 16>;
++		};
++
++		port11: gpio-11 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 176 16>;
++		};
++	};
++
+ 	scif0: serial@e8007000 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8007000 64>;
+-- 
+2.7.4
