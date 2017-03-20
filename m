@@ -1,103 +1,160 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34050 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbdCPOLY (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34398 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753352AbdCTIsk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Mar 2017 10:11:24 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87a88l3lcw.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1coW7Z-0002fF-KU@debutante>
-Date: Thu, 16 Mar 2017 14:11:17 +0000
-Subject: Applied "ASoC: rcar: dma: remove unnecessary "volatile"" to the asoc tree
+        Mon, 20 Mar 2017 04:48:40 -0400
+Received: by mail-pf0-f193.google.com with SMTP id o126so16107661pfb.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Mar 2017 01:48:14 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
+        geert+renesas@glider.be
+Date: Mon, 20 Mar 2017 17:35:27 +0900
+Message-Id: <148999892722.20118.2711421688777373508.sendpatchset@little-apple>
+In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
+References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
+Subject: [PATCH v3 01/09] arm64: dts: r8a7795: Add IPMMU device nodes
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Magnus Damm <damm+renesas@opensource.se>
 
-   ASoC: rcar: dma: remove unnecessary "volatile"
+Add r8a7795 IPMMU nodes and keep all disabled by default.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 9986943ef5d61a9bea3c86000d91d3b789f0060e Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 16 Mar 2017 04:22:09 +0000
-Subject: [PATCH] ASoC: rcar: dma: remove unnecessary "volatile"
-
-commit 2a3af642eb20("ASoC: rcar: clear DE bit only in PDMACHCR...")
-added rsnd_dmapp_bset(), but it used copy-paste. Thus, it had
-unnecessary "volatile", and had below warning on x86.
-This patch fix it.
-
-   sound/soc/sh/rcar/dma.c: In function 'rsnd_dmapp_bset':
->> sound/soc/sh/rcar/dma.c:463:21: warning: passing argument 1 of \
-   'ioread32' discards 'volatile' qualifier from pointer target \
-   type [-Wdiscarded-qualifiers]
-     u32 val = ioread32(addr);
-                        ^~~~
-   In file included from arch/x86/include/asm/io.h:203:0,
-                    from arch/x86/include/asm/realmode.h:5,
-                    from arch/x86/include/asm/acpi.h:33,
-                    from arch/x86/include/asm/fixmap.h:19,
-                    from arch/x86/include/asm/apic.h:10,
-                    from arch/x86/include/asm/smp.h:12,
-                    from include/linux/smp.h:59,
-                    from include/linux/topology.h:33,
-                    from include/linux/gfp.h:8,
-                    from include/linux/idr.h:16,
-                    from include/linux/kernfs.h:14,
-                    from include/linux/sysfs.h:15,
-                    from include/linux/kobject.h:21,
-                    from include/linux/of.h:21,
-                    from include/linux/of_dma.h:16,
-                    from sound/soc/sh/rcar/dma.c:12:
-   include/asm-generic/iomap.h:31:21: note: expected 'void *' \
-   but argument is of type 'volatile void *'
-    extern unsigned int ioread32(void __iomem *);
-                        ^~~~~~~~
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- sound/soc/sh/rcar/dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index c2e199b4fcf4..241cb3b08a07 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -459,7 +459,7 @@ static void rsnd_dmapp_bset(struct rsnd_dma *dma, u32 data, u32 mask, u32 reg)
- 	struct rsnd_mod *mod = rsnd_mod_get(dma);
- 	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
- 	struct rsnd_dma_ctrl *dmac = rsnd_priv_to_dmac(priv);
--	volatile void __iomem *addr = rsnd_dmapp_addr(dmac, dma, reg);
-+	void __iomem *addr = rsnd_dmapp_addr(dmac, dma, reg);
- 	u32 val = ioread32(addr);
+ Changes from V2:
+ - Added Reviewed-by from Laurent - thanks!
+
+ Changes from V1:
+ - None
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |  113 ++++++++++++++++++++++++++++++
+ 1 file changed, 113 insertions(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-20 15:34:20.120607110 +0900
+@@ -407,6 +407,119 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
  
- 	val &= ~mask;
--- 
-2.11.0
++		ipmmu_vi: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfebd0000 0 0x1000>; /* IPMMU-VI */
++			renesas,ipmmu-main = <&ipmmu_mm 11>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_vp: mmu@fe990000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfe990000 0 0x1000>; /* IPMMU-VP */
++			renesas,ipmmu-main = <&ipmmu_mm 12>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_vc0: mmu@fe6b0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfe6b0000 0 0x1000>; /* IPMMU-VC0 */
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_vc1: mmu@fe6f0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfe6f0000 0 0x1000>; /* IPMMU-VC1 */
++			renesas,ipmmu-main = <&ipmmu_mm 10>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_pv0: mmu@fd800000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfd800000 0 0x1000>; /* IPMMU-PV0 */
++			renesas,ipmmu-main = <&ipmmu_mm 6>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xff8b0000 0 0x1000>; /* IPMMU-IR */
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_hc: mmu@e6570000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe6570000 0 0x1000>; /* IPMMU-HC */
++			renesas,ipmmu-main = <&ipmmu_mm 2>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xffc80000 0 0x1000>; /* IPMMU-RT */
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mp0: mmu@ec670000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xec670000 0 0x1000>; /* IPMMU-MP0 */
++			renesas,ipmmu-main = <&ipmmu_mm 4>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mp1: mmu@ec680000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xec680000 0 0x1000>; /* IPMMU-MP1 */
++			renesas,ipmmu-main = <&ipmmu_mm 5>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_sy: mmu@e7730000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe7730000 0 0x1000>; /* IPMMU-SY */
++			renesas,ipmmu-main = <&ipmmu_mm 8>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds0: mmu@e6740000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
++			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe67b0000 0 0x1000>; /* IPMMU-MM */
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7795",
+ 				     "renesas,rcar-dmac";
