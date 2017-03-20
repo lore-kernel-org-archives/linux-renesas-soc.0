@@ -1,44 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35275 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753191AbdCTImD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753427AbdCTJAH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:42:03 -0400
-Received: by mail-pg0-f68.google.com with SMTP id g2so18561364pge.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Mar 2017 01:42:01 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 20 Mar 2017 05:00:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Mon, 20 Mar 2017 17:36:31 +0900
-Message-Id: <148999899175.20118.17407651015202857599.sendpatchset@little-apple>
-In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-Subject: [PATCH v3 08/09] arm64: dts: r8a7795: Connect SATA to IPMMU-HC
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/31] ARM: dts: r8a7790: Add INTC-SYS clock to device tree
+Date: Mon, 20 Mar 2017 09:57:55 +0100
+Message-Id: <9e58523624fc063ce43ad3ef2bf6d603bda50a5e.1489999063.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
+References: <cover.1489999062.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add IPMMU-HC to the SATA device node.
+Link the ARM GIC to the INTC-SYS module clock, and add it to the "always
+on" PM Domain, so it can be power managed using that clock.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7790.dtsi            | 9 ++++++---
+ include/dt-bindings/clock/r8a7790-clock.h | 1 +
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
- Changes since V2:
- - New patch
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    1 +
- 1 file changed, 1 insertion(+)
-
---- 0014/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-20 16:31:38.830607110 +0900
-@@ -1366,6 +1366,7 @@
- 			reg = <0 0xee300000 0 0x1fff>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 815>;
-+			iommus = <&ipmmu_hc 2>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 495c583054a8..534525665bb3 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -185,6 +185,9 @@
+ 			<0 0xf1004000 0 0x2000>,
+ 			<0 0xf1006000 0 0x2000>;
+ 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++		clocks = <&mstp4_clks R8A7790_CLK_INTC_SYS>;
++		clock-names = "clk";
++		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	gpio0: gpio@e6050000 {
+@@ -1364,10 +1367,10 @@
+ 		mstp4_clks: mstp4_clks@e6150140 {
+ 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
+-			clocks = <&cp_clk>;
++			clocks = <&cp_clk>, <&zs_clk>;
+ 			#clock-cells = <1>;
+-			clock-indices = <R8A7790_CLK_IRQC>;
+-			clock-output-names = "irqc";
++			clock-indices = <R8A7790_CLK_IRQC R8A7790_CLK_INTC_SYS>;
++			clock-output-names = "irqc", "intc-sys";
  		};
+ 		mstp5_clks: mstp5_clks@e6150144 {
+ 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7790-clock.h b/include/dt-bindings/clock/r8a7790-clock.h
+index fa5e8da809f2..20641fa68e73 100644
+--- a/include/dt-bindings/clock/r8a7790-clock.h
++++ b/include/dt-bindings/clock/r8a7790-clock.h
+@@ -82,6 +82,7 @@
+ 
+ /* MSTP4 */
+ #define R8A7790_CLK_IRQC		7
++#define R8A7790_CLK_INTC_SYS		8
+ 
+ /* MSTP5 */
+ #define R8A7790_CLK_AUDIO_DMAC1		1
+-- 
+2.7.0.rc3.207.g0ac5344
