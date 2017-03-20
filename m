@@ -1,70 +1,51 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 3/7] ARM: dts: r7s72100: add rtc clock to device tree
-Date: Wed, 29 Mar 2017 10:30:31 -0700
-Message-Id: <20170329173035.67477-4-chris.brandt@renesas.com>
-In-Reply-To: <20170329173035.67477-1-chris.brandt@renesas.com>
-References: <20170329173035.67477-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753116AbdCTI7O (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Mar 2017 04:59:14 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/32] arm64: dts: r8a7795: salvator-x: Enable I2C for DVFS device
+Date: Mon, 20 Mar 2017 09:57:15 +0100
+Message-Id: <006ced572a3b2247639ce06443aff00704888001.1489999913.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the realtime clock functional clock source.
+From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+This patch enables I2C for DVFS device for for Salvator-X board on
+R8A7795 SoC.
+
+Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-* changed "rtc0" to "rtc"
-* added Reviewed-by
----
- arch/arm/boot/dts/r7s72100.dtsi            | 9 +++++++++
- include/dt-bindings/clock/r7s72100-clock.h | 3 +++
- 2 files changed, 12 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 34994afa9d15..6a1448be4e10 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -117,6 +117,15 @@
- 			clock-output-names = "ostm0", "ostm1";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 7a8986edcdc0..dc1177c76aa5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -485,6 +485,10 @@
+ 	clock-frequency = <22579200>;
+ };
  
-+		mstp6_clks: mstp6_clks@fcfe042c {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe042c 4>;
-+			clocks = <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_RTC>;
-+			clock-output-names = "rtc";
-+		};
++&i2c_dvfs {
++	status = "okay";
++};
 +
- 		mstp7_clks: mstp7_clks@fcfe0430 {
- 			#clock-cells = <1>;
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index cd2ed5194255..bc256d31099a 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -29,6 +29,9 @@
- #define R7S72100_CLK_OSTM0	1
- #define R7S72100_CLK_OSTM1	0
- 
-+/* MSTP6 */
-+#define R7S72100_CLK_RTC	0
-+
- /* MSTP7 */
- #define R7S72100_CLK_ETHER	4
- 
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.11.0
-
-
+2.7.0.rc3.207.g0ac5344
