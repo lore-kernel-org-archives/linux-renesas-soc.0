@@ -1,147 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:36975 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934813AbdCVSKd (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 14:10:33 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 0/7] Renesas RZ/A1 pin and gpio controller
-Date: Wed, 22 Mar 2017 18:10:26 +0000
-Message-ID: <SG2PR06MB1165AB3D48DA3450FC27EA3D8A3C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        chris.brandt@renesas.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] Renesas RZ/A1 pin and gpio controller
+Date: Mon, 20 Mar 2017 17:14:44 +0100
+Message-Id: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Hello,
+   second round of combined GPIO and pin controller driver
+for Renesas RZ/A1 SoC.
 
-On Monday, March 20, 2017, Jacopo Mondi wrote:
-> Chris: it would be great if you could give this another spin on RSK board=
-.
+Few adjustments compared to v1.
+The most visible one is the update of pin configuration flag to what
+Chris suggested, and consequent simplification of pin multiplexing routine.
+Some other fixes in DTS suggested by Geert have been applied.
 
+Testing done verifying functionalities of hardware modules enabled in device
+tree (SCIF2 for serial output, RIIC for accessing an internal eeprom chip and
+user visible leds).
+Gpio have been also verified using a i2c-gpio device in place of the native
+RIIC one to access the same eeprom device.
 
-I tested these patches on an RZ/A1H RSK board after modifying the DT for
-the RSK vs the GENMAI board.
+Chris: it would be great if you could give this another spin on RSK board. In
+v4.11 generic pinmux and pinctrl function have been merged in mainline, so no
+need for an ad-hoc branch if you're willing to test this again.
 
-The following worked fine:
- * SCIF
- * I2C
- * SDHI
- * Ethernet
+Thanks
+   j
 
-I see Geert has already responded with mostly text (grammar) changes.
-As for the "API" of the driver from a user perspective, I think it should
-cover all the use cases of the peripherals.
+v1 -> v2:
+- change pin configuration flags as suggested by Chris
+- gpio set direction function fixed as suggested by Chris
+- add some more example on pin configuration flag usage to dt-binding doc
+- fix gpio-controller names to remove unit address as suggested by Geert
+- some comments chopped here and there to make the driver less verbose
 
+Jacopo Mondi (7):
+  pinctrl: Renesas RZ/A1 pin and gpio controller
+  dt-bindings: pinctrl: Add RZ/A1 bindings doc
+  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+  arm: dts: r7s72100: Add pin controller node
+  arm: dts: genmai: Add SCIF2 pin group
+  arm: dts: genmai: Add RIIC2 pin group
+  arm: dts: genmai: Add user led device nodes
 
-For your reference, here was my pin config for the RSK board testing. Once
-this driver is (hopefully) accepted, I will update the upstream rskrza1 DT.=
-=20
+ .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 144 +++
+ arch/arm/boot/dts/r7s72100-genmai.dts              |  36 +
+ arch/arm/boot/dts/r7s72100.dtsi                    |  80 ++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-rza1.c                     | 963 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  36 +
+ 7 files changed, 1270 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rza1.c
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
 
-
---- RSK BOARD PIN SETUP ---
-
-&pinctrl {
-
-	scif2_pins: serial2 {
-		/* P3_0 as TxD2; P3_2 as RxD2 */
-		renesas,pins =3D <PIN(3, 0) 6>,
-			       <PIN(3, 2) 4>;
-	};
-
-	/* RIIC Ch 3 */
-	i2c3_pins: i2c3 {
-		/* RIIC3: P1_6 as SCL, P1_7 as SDA */
-		renesas,pins =3D <PIN(1, 6) (1 | BI_DIR)>,
-			       <PIN(1, 7) (1 | BI_DIR)>;
-	};
-
-	/* SHDI ch1 on CN1 */
-	sdhi1_pins: sdhi1 {
-		/* SHDI ch1 on Port 3 */
-		renesas,pins =3D <PIN(3, 8) (7)>,		/* SDHI1 CD */
-				<PIN(3, 9) (7)>,		/* SDHI1 WP */
-				<PIN(3, 10) (7 | BI_DIR)>,	/* SDHI1 DAT1 */
-				<PIN(3, 11) (7 | BI_DIR)>,	/* SDHI1 DAT0 */
-				<PIN(3, 12) (7)>,		/* SDHI1 CLK */
-				<PIN(3, 13) (7 | BI_DIR)>,	/* SDHI1 CMD */
-				<PIN(3, 14) (7 | BI_DIR)>,	/* SDHI1 DAT3 */
-				<PIN(3, 15) (7 | BI_DIR)>;	/* SDHI1 DAT2 */
-	};
-
-	/* Ethernet */
-	ether_pins: ether {
-		/* Ethernet on Ports 1,2,3,5 */
-		renesas,pins =3D <PIN(1, 14) (4)>, /* P1_14 =3D ET_COL */
-			<PIN(5, 9) (2)>,	/* P5_9 =3D ET_MDC */
-			<PIN(3, 3) (2 | BI_DIR)>,	/* P3_3 =3D ET_MDIO (bi dir) */
-			<PIN(3, 4) (2)>,	/* P3_4 =3D ET_RXCLK */
-			<PIN(3, 5) (2)>,	/* P3_5 =3D ET_RXER */
-			<PIN(3, 6) (2)>,	/* P3_6 =3D ET_RXDV */
-			<PIN(2, 0) (2)>,	/* P2_0 =3D ET_TXCLK */
-			<PIN(2, 1) (2)>,	/* P2_1 =3D ET_TXER */
-			<PIN(2, 2) (2)>,	/* P2_2 =3D ET_TXEN */
-			<PIN(2, 3) (2)>,	/* P2_3 =3D ET_CRS */
-			<PIN(2, 4) (2)>,	/* P2_4 =3D ET_TXD0 */
-			<PIN(2, 5) (2)>,	/* P2_5 =3D ET_TXD1 */
-			<PIN(2, 6) (2)>,	/* P2_6 =3D ET_TXD2 */
-			<PIN(2, 7) (2)>,	/* P2_7 =3D ET_TXD3 */
-			<PIN(2, 8) (2)>,	/* P2_8 =3D ET_RXD0 */
-			<PIN(2, 9) (2)>,	/* P2_9 =3D ET_RXD1 */
-			<PIN(2, 10) (2)>, /* P2_10 =3D ET_RXD2 */
-			<PIN(2, 11) (2)>; /* P2_11 =3D ET_RXD3 */
-	};
-};
-
-&i2c3 {
-	pinctrl-names =3D "default";
-	pinctrl-0 =3D <&i2c3_pins>;
-};
-
-&scif2 {
-	pinctrl-names =3D "default";
-	pinctrl-0 =3D <&scif2_pins>;
-};
-
-&sdhi1 {
-	pinctrl-names =3D "default";
-	pinctrl-0 =3D <&sdhi1_pins>;
-};
-
-&ether {
-	pinctrl-names =3D "default";
-	pinctrl-0 =3D <&ether_pins>;
-};
-
-/ {
-	leds {
-		status =3D "okay";
-		compatible =3D "gpio-leds";
-
-		led1 {
-			gpios =3D <&port7 1 GPIO_ACTIVE_LOW>;
-		};
-	};
-};
-
-
-
-Thank you,
-Chris
+-- 
+2.7.4
