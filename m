@@ -1,147 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50118 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966305AbdCXTQx (ORCPT
+Received: from mail-vk0-f52.google.com ([209.85.213.52]:34570 "EHLO
+        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756364AbdCUKJn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 15:16:53 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87o9xcp6zi.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1crUhU-00068l-0z@debutante>
-Date: Fri, 24 Mar 2017 19:16:40 +0000
-Subject: Applied "ASoC: core: remove pointless auxiliary from snd_soc_component" to the asoc tree
+        Tue, 21 Mar 2017 06:09:43 -0400
+Received: by mail-vk0-f52.google.com with SMTP id z204so31888356vkd.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Mar 2017 03:09:25 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170317090450.18593-1-wsa+renesas@sang-engineering.com>
+References: <20170317090450.18593-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 21 Mar 2017 11:09:24 +0100
+Message-ID: <CAPDyKFr3_awg=zzTD9rm_BUb=1PC=nAamq4HWE9wtCDvhARMDg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: always get number of taps
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On 17 March 2017 at 10:04, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+>
+> Current code gets number of taps only once and keeps the value. This is
+> not correct, we need to obtain it every time before executing tuning,
+> so remove the outer if-block.
+>
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> [wsa: extracted from a larger patch and reworded commit message]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   ASoC: core: remove pointless auxiliary from snd_soc_component
+Thanks, applied for next!
 
-has been applied to the asoc tree at
+Kind regards
+Uffe
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 991454e17070eaf5286a666d9e896fd6fb332c72 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 24 Mar 2017 00:13:00 +0000
-Subject: [PATCH] ASoC: core: remove pointless auxiliary from snd_soc_component
-
-commit 1a653aa44725 ("ASoC: core: replace aux_comp_list to ...")
-tried to replace aux_comp_list to component_dev_list,
-but it failed because of binding timing. Thus, Sylwester fixuped it by
-commit d2e3a1358c37 ("ASoC: Fix binding and probing of auxiliary...").
-
-One of main purpose of commit 1a653aa44725 ("ASoC: core: replace...")
-was remove replaceable list (= list_aux) from snd_soc_component by using
-new "auxiliary" flags (but it failed).
-Because of this background, current code has reborned card_aux_list
-(= same as original list_aux), and almost pointless "auxiliary" flags.
-
-Let's remove pointless "auxiliary" flags by this patch
-This means, it is same as revert both
-commit 1a653aa44725 ("ASoC: core: replace aux_comp_list to ...") and
-commit d2e3a1358c37 ("ASoC: Fix binding and probing of auxiliary...").
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/soc.h  |  1 -
- sound/soc/soc-core.c | 15 +++++----------
- 2 files changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index cdfb55f7aede..ee838b0d5db8 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -812,7 +812,6 @@ struct snd_soc_component {
- 
- 	unsigned int ignore_pmdown_time:1; /* pmdown_time is ignored at stop */
- 	unsigned int registered_as_component:1;
--	unsigned int auxiliary:1; /* for auxiliary component of the card */
- 	unsigned int suspended:1; /* is in suspend PM state */
- 
- 	struct list_head list;
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index d29fbc7195a0..a6f840beacb0 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1776,7 +1776,6 @@ static int soc_bind_aux_dev(struct snd_soc_card *card, int num)
- 	}
- 
- 	component->init = aux_dev->init;
--	component->auxiliary = 1;
- 	list_add(&component->card_aux_list, &card->aux_comp_list);
- 
- 	return 0;
-@@ -1788,14 +1787,13 @@ static int soc_bind_aux_dev(struct snd_soc_card *card, int num)
- 
- static int soc_probe_aux_devices(struct snd_soc_card *card)
- {
--	struct snd_soc_component *comp, *tmp;
-+	struct snd_soc_component *comp;
- 	int order;
- 	int ret;
- 
- 	for (order = SND_SOC_COMP_ORDER_FIRST; order <= SND_SOC_COMP_ORDER_LAST;
- 		order++) {
--		list_for_each_entry_safe(comp, tmp, &card->aux_comp_list,
--					 card_aux_list) {
-+		list_for_each_entry(comp, &card->aux_comp_list, card_aux_list) {
- 			if (comp->driver->probe_order == order) {
- 				ret = soc_probe_component(card,	comp);
- 				if (ret < 0) {
-@@ -1804,7 +1802,6 @@ static int soc_probe_aux_devices(struct snd_soc_card *card)
- 						comp->name, ret);
- 					return ret;
- 				}
--				list_del(&comp->card_aux_list);
- 			}
- 		}
- 	}
-@@ -1820,14 +1817,12 @@ static void soc_remove_aux_devices(struct snd_soc_card *card)
- 	for (order = SND_SOC_COMP_ORDER_FIRST; order <= SND_SOC_COMP_ORDER_LAST;
- 		order++) {
- 		list_for_each_entry_safe(comp, _comp,
--			&card->component_dev_list, card_list) {
--
--			if (!comp->auxiliary)
--				continue;
-+			&card->aux_comp_list, card_aux_list) {
- 
- 			if (comp->driver->remove_order == order) {
- 				soc_remove_component(comp);
--				comp->auxiliary = 0;
-+				/* remove it from the card's aux_comp_list */
-+				list_del(&comp->card_aux_list);
- 			}
- 		}
- 	}
--- 
-2.11.0
+> ---
+>  drivers/mmc/host/tmio_mmc_pio.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+> index 5b01d22932cdbf..a2d92f10501bdd 100644
+> --- a/drivers/mmc/host/tmio_mmc_pio.c
+> +++ b/drivers/mmc/host/tmio_mmc_pio.c
+> @@ -815,16 +815,14 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>         struct tmio_mmc_host *host = mmc_priv(mmc);
+>         int i, ret = 0;
+>
+> -       if (!host->tap_num) {
+> -               if (!host->init_tuning || !host->select_tuning)
+> -                       /* Tuning is not supported */
+> -                       goto out;
+> +       if (!host->init_tuning || !host->select_tuning)
+> +               /* Tuning is not supported */
+> +               goto out;
+>
+> -               host->tap_num = host->init_tuning(host);
+> -               if (!host->tap_num)
+> -                       /* Tuning is not supported */
+> -                       goto out;
+> -       }
+> +       host->tap_num = host->init_tuning(host);
+> +       if (!host->tap_num)
+> +               /* Tuning is not supported */
+> +               goto out;
+>
+>         if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
+>                 dev_warn_once(&host->pdev->dev,
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
