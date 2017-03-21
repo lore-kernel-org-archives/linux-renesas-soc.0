@@ -1,77 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40933 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752245AbdCCR3Q (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59774 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755255AbdCUIUn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Mar 2017 12:29:16 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 01/10] drm: bridge: dw-hdmi: Remove unused functions
-Date: Fri,  3 Mar 2017 19:19:58 +0200
-Message-Id: <20170303172007.26541-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170303172007.26541-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 21 Mar 2017 04:20:43 -0400
+Date: Tue, 21 Mar 2017 09:20:37 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 0/4] arm: renesas: Add reset control properties
+Message-ID: <20170321082036.GE20866@verge.net.au>
+References: <1489673246-11015-1-git-send-email-geert+renesas@glider.be>
+ <20170320082852.GC21538@verge.net.au>
+ <CAMuHMdUdFUBh=2azMLWJ1Bm34pP3OnesqdvR1ZQ14JgMtuqecw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUdFUBh=2azMLWJ1Bm34pP3OnesqdvR1ZQ14JgMtuqecw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Most of the hdmi_phy_test_*() functions are unused. Remove them.
+On Mon, Mar 20, 2017 at 10:31:50AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon, Shimoda-san,
+> 
+> On Mon, Mar 20, 2017 at 9:28 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Mar 16, 2017 at 03:07:22PM +0100, Geert Uytterhoeven wrote:
+> >> This patch series describes the reset control topology for on-SoC devices
+> >> connected to the Renesas Clock Pulse Generator / Module Standby and
+> >> Software Reset module on the R-Car H3 and M3-W, RZ/G1M, and RZ/G1E SoCs.
+> >>
+> >> Resets usually match the corresponding module clocks.  Exceptions are:
+> >>   - The Display Unit has only 2 resets, one per channel pair, cfr.
+> >>     "[PATCH v2] dt-bindings: drm: rcar-du: Document optional reset
+> >>     properties" (http://www.spinics.net/lists/dri-devel/msg134637.html),
+> >>   - The audio module has resets for the Serial Sound Interfaces only.
+> >>     Adding resets and reset-names properties depends on a DT binding
+> >>     update for renesas,rsnd (note: the DT binding documentation in
+> >>     Documentation/devicetree/bindings/sound/renesas,rsnd.txt doesn't
+> >>     even document clocks and clock-names?).
+> >> Upon request from Laurent for the DU, and upon a DT bindings update
+> >> for rcar_sound, the addition of resets (and reset-names) properties for
+> >> these complex modules is postponed.
+> >>
+> >> Note that this patch series contains hardware description only.
+> >> Actual reset policy is to be defined and implemented separately.
+> >> Also, this is an optional feature, to be enabled explicitly using
+> >> CONFIG_RESET_CONTROLLER=y.  When enabled, an on-SoC device can be reset
+> >> easily using device_reset(), or by using the reset_control_*() API when
+> >> more fine-grained control is desired.
+> >>
+> >> Possible use cases are (not exhaustive):
+> >>   - Reset a device before use, to make sure it's in a predefined state, and
+> >>     doesn't depend on earlier configuration by e.g. the boot loader,
+> >>   - Reset a device after detecting an anomaly,
+> >>   - Reset a device to verify suspend/resume is handled correctly by the
+> >>     driver in case the device would be part of a power domain on a
+> >>     different/future SoC.
+> >>
+> >> Dependencies and impact:
+> >>   - The corresponding driver changes to the CGP/MSSR driver are already
+> >>     present in v4.11-rc1.
+> >>   - These patches have no impact as long as CONFIG_RESET_CONTROLLER=n.
+> >>     However, if CONFIG_RESET_CONTROLLER=y and resets properties are
+> >>     prsesent in DTS, the EHCI and OHCI drivers already deassert reset as
+> >>     part of their initialization sequences, and put the devices back
+> >>     into reset state in case initialization failed, or on unbind.
+> >>     I'm not aware of other relevant drivers already using reset control.
+> >
+> > It appears that for arm64 defconfig CONFIG_RESET_CONTROLLER=y is true so
+> > by default there will be a behavioural change on arm64. I'd like to
+> > understand if it is a desirable (or at least not undesirable) change.
+> 
+> V1 of this patch series has been part of renesas-drivers since
+> renesas-drivers-2017-01-24-v4.10-rc5, so I'd hope any negative impact would
+> have been discovered by now.
+> 
+> Shimoda-san: Have you noticed any oddities w.r.t. USB?
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Jose Abreu <joabreu@synopsys.com>
-Tested-by: Nickey Yang <nickey.yang@rock-chips.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
+Thanks for the extra information. With the above in mind I think its
+reasonable to queue-up this series for v4.12 and I have done so.
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index 9a9ec27d9e28..ce7496399ccf 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -837,32 +837,6 @@ static inline void hdmi_phy_test_clear(struct dw_hdmi *hdmi,
- 		  HDMI_PHY_TST0_TSTCLR_MASK, HDMI_PHY_TST0);
- }
- 
--static inline void hdmi_phy_test_enable(struct dw_hdmi *hdmi,
--					unsigned char bit)
--{
--	hdmi_modb(hdmi, bit << HDMI_PHY_TST0_TSTEN_OFFSET,
--		  HDMI_PHY_TST0_TSTEN_MASK, HDMI_PHY_TST0);
--}
--
--static inline void hdmi_phy_test_clock(struct dw_hdmi *hdmi,
--				       unsigned char bit)
--{
--	hdmi_modb(hdmi, bit << HDMI_PHY_TST0_TSTCLK_OFFSET,
--		  HDMI_PHY_TST0_TSTCLK_MASK, HDMI_PHY_TST0);
--}
--
--static inline void hdmi_phy_test_din(struct dw_hdmi *hdmi,
--				     unsigned char bit)
--{
--	hdmi_writeb(hdmi, bit, HDMI_PHY_TST1);
--}
--
--static inline void hdmi_phy_test_dout(struct dw_hdmi *hdmi,
--				      unsigned char bit)
--{
--	hdmi_writeb(hdmi, bit, HDMI_PHY_TST2);
--}
--
- static bool hdmi_phy_wait_i2c_done(struct dw_hdmi *hdmi, int msec)
- {
- 	u32 val;
--- 
-Regards,
-
-Laurent Pinchart
+If any oddities arise then we can revisit this.
