@@ -1,81 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41010 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752836AbdCXNhz (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34002 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757383AbdCUUEx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 09:37:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+        Tue, 21 Mar 2017 16:04:53 -0400
+Received: by mail-lf0-f53.google.com with SMTP id z15so71290964lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Mar 2017 13:04:52 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170321200448.051326718@cogentembedded.com>
+Date: Tue, 21 Mar 2017 23:04:45 +0300
 To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@sang-engineering.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 2/2] arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0
-Date: Fri, 24 Mar 2017 14:37:45 +0100
-Message-Id: <1490362665-4422-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
-References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 2/2] ARM: dts: r8a7792: add IMR-L[S]X3 support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-r8a7792-add-IMR-L-S-X3-support.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Split off support for Salvator-X boards with the ES1.x revision of the
-R-Car H3 SoC into a separate file.  The main r8a7795-salvator-x.dts file
-now corresponds to Salvator-X with R-Car H3 ES2.0 or later.
+Describe the IMR-LX3 and 6 IMR-LSX3 devices in the R8A7792 device tree.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Use a separate file for ES1.x instead of for ES2.0, so
-    r8a7795-salvator-x.dts always corresponds to the board with the
-    latest SoC revision,
-  - Add a dash between SoC part number and revision, for compatibility
-    with the BSP,
-  - Enhance the hardware description from basic support to everything
-    already supported on ES1.x.
----
- arch/arm64/boot/dts/renesas/Makefile                                  | 1 +
- .../renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts}    | 0
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts                    | 4 ++--
- 3 files changed, 3 insertions(+), 2 deletions(-)
- copy arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts} (100%)
+Based on the original patch by Roman Meshkevich
+<roman.meshkevich@cogentembedded.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 1618e0a3c81d48bd..b6c723d8f6875f2d 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+ arch/arm/boot/dts/r8a7792.dtsi |   63 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -734,6 +734,69 @@
+ 			status = "disabled";
+ 		};
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-similarity index 100%
-copy from arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-copy to arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 7758b479dd98d2e9..baf5d34653d27e28 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -32,11 +32,11 @@
-  */
- 
- /dts-v1/;
--#include "r8a7795-es1.dtsi"
-+#include "r8a7795.dtsi"
- #include <dt-bindings/gpio/gpio.h>
- 
- / {
--	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
-+	model = "Renesas Salvator-X board based on r8a7795 ES2.0+";
- 	compatible = "renesas,salvator-x", "renesas,r8a7795";
- 
- 	aliases {
--- 
-2.7.4
++		imr-lsx3@fe840000 {
++			compatible = "renesas,r8a7792-imr-lsx3",
++				     "renesas,imr-lsx3";
++			reg = <0 0xfe840000 0 0x2000>;
++			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_0>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
++		imr-lsx3@fe850000 {
++			compatible = "renesas,r8a7792-imr-lsx3",
++				     "renesas,imr-lsx3";
++			reg = <0 0xfe850000 0 0x2000>;
++			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_1>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
++		imr-lsx3@fe860000 {
++			compatible = "renesas,r8a7792-imr-lsx3",
++				     "renesas,imr-lsx3";
++			reg = <0 0xfe860000 0 0x2000>;
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_2>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
++		imr-lsx3@fe870000 {
++			compatible = "renesas,r8a7792-imr-lsx3",
++				     "renesas,imr-lsx3";
++			reg = <0 0xfe870000 0 0x2000>;
++			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_3>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
++		imr-lsx3@fe880000 {
++			compatible = "renesas,r8a7792-imr-lsx3",
++				     "renesas,imr-lsx3";
++			reg = <0 0xfe880000 0 0x2000>;
++			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_4>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
++		imr-lsx3@fe890000 {
++			compatible = "renesas,r8a7792-imr-lsx3",
++				     "renesas,imr-lsx3";
++			reg = <0 0xfe890000 0 0x2000>;
++			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_5>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
++		imr-lx3@fead0000 {
++			compatible = "renesas,r8a7792-imr-lx3",
++				     "renesas,imr-lx3";
++			reg = <0 0xfead0000 0 0x2000>;
++			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_IMR_LX3>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
+ 		vsp1@fe928000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe928000 0 0x8000>;
