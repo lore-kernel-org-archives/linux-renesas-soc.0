@@ -1,49 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:32824 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934771AbdC3UVF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 16:21:05 -0400
-Received: by mail-lf0-f53.google.com with SMTP id h125so33977297lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2017 13:21:03 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170330202059.050530179@cogentembedded.com>
-Date: Thu, 30 Mar 2017 23:20:48 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791: fix SCIF2 pinmux data
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-fix-SCIF2-pinmux-data.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 4/7] ARM: dts: r7s72100: add RTC_X clock inputs to device tree
+Date: Wed, 22 Mar 2017 10:27:51 -0400
+Message-Id: <20170322142754.30888-5-chris.brandt@renesas.com>
+In-Reply-To: <20170322142754.30888-1-chris.brandt@renesas.com>
+References: <20170322142754.30888-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-PINMUX_IPSR_MSEL() macro invocation for the TX2 signal has apparently wrong
-1st argument -- most probably a result of cut&paste programming...
+Add the RTC clocks to device tree. The frequencies must be fixed values
+according to the hardware manual.
 
-Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
-This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus  2 R8A7791 fixes posted yesterday.
+ arch/arm/boot/dts/r7s72100.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 6a1448b..632a6a4 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -51,6 +51,20 @@
+ 			clock-frequency = <0>;
+ 		};
+ 
++		rtc_x1_clk: rtc_x1 {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			/* If clk present, value must be set by board to 32678 */
++			clock-frequency = <0>;
++		};
++
++		rtc_x3_clk: rtc_x3 {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			/* If clk present, value must be set by board to 4000000 */
++			clock-frequency = <0>;
++		};
++
+ 		/* Fixed factor clocks */
+ 		b_clk: b {
+ 			#clock-cells = <0>;
+-- 
+2.10.1
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1103,7 +1103,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP6_5_3, FMIN_E, SEL_FM_4),
- 	PINMUX_IPSR_GPSR(IP6_7_6, AUDIO_CLKOUT),
- 	PINMUX_IPSR_MSEL(IP6_7_6, MSIOF1_SS1_B, SEL_SOF1_1),
--	PINMUX_IPSR_MSEL(IP6_5_3, TX2, SEL_SCIF2_0),
-+	PINMUX_IPSR_MSEL(IP6_7_6, TX2, SEL_SCIF2_0),
- 	PINMUX_IPSR_MSEL(IP6_7_6, SCIFA2_TXD, SEL_SCIFA2_0),
- 	PINMUX_IPSR_GPSR(IP6_9_8, IRQ0),
- 	PINMUX_IPSR_MSEL(IP6_9_8, SCIFB1_RXD_D, SEL_SCIFB1_3),
+
