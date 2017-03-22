@@ -1,88 +1,87 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Wed, 08 Mar 2017 20:02:43 +0900
-Message-Id: <148897096346.16106.12982552891354954137.sendpatchset@little-apple>
-In-Reply-To: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-References: <148897088333.16106.13237004440297956899.sendpatchset@little-apple>
-Subject: [PATCH v3 08/09] iommu/ipmmu-vmsa: Allow two bit SL0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 2/4] iio: Documentation: Add max961x sysfs documentation
+To: jacopo <jacopo@jmondi.org>
+References: <1487948756-25172-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487948756-25172-3-git-send-email-jacopo+renesas@jmondi.org>
+ <56b35a65-a23d-68ac-17d6-cf46f9352ab7@kernel.org>
+ <20170321160911.GE30223@w540>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
+        laurent.pinchart@ideasonboard.com, knaack.h@gmx.de,
+        lars@metafoo.de, meerw@pmeerw.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-iio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <108fc4a4-8312-fc92-7a61-53616cd743de@kernel.org>
+Date: Wed, 22 Mar 2017 20:43:34 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170321160911.GE30223@w540>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 21/03/17 16:09, jacopo wrote:
+> Hi Jonathan,
+> 
+> On Sat, Feb 25, 2017 at 03:54:45PM +0000, Jonathan Cameron wrote:
+>> On 24/02/17 15:05, Jacopo Mondi wrote:
+>>> Add documentation for max961x driver.
+>>> The only attribute to document is the current sense shunt resistor
+>>> value.
+>>>
+>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> Interestingly generic as it only applies to some of the channels.
+>> We might need to have the channel where it is effecting the output specified in the
+>> name, even if we end up with several repeats of the same thing for different
+>> computed channels.
+>>
+> 
+> Sorry, I'm getting on this a bit late...
+> 
+> Do you still think we should have an attribute for each of the
+> channels this values affects?
+> We will end up having 2 distinct processed channels (power and
+> current) that depends on this value.
+> I can expose them as 2 distinct attributes if you think this is the
+> case...
+Better to have two attributes exposing the same thing than imply it
+is relevant to more of channels than it is...
+> 
+> A note on the series in general: given the lack of comments, I will
+> send v2 exposing two processed channels, with no buffered reads, and
+> gain selection performed in kernel space.
+> If we will have to add buffered reads to accomodate higher sampling
+> frequency we'll do that later on eventually.
+Great.
 
-Introduce support for two bit SL0 bitfield in IMTTBCR
-by using a separate feature flag.
+Jonathan
+> 
+> Thanks
+>   j
+> 
+>> Jonathan
+>>> ---
+>>>  Documentation/ABI/testing/sysfs-bus-iio-adc-max961x | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max961x
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max961x b/Documentation/ABI/testing/sysfs-bus-iio-adc-max961x
+>>> new file mode 100644
+>>> index 0000000..dbd5e75
+>>> --- /dev/null
+>>> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max961x
+>>> @@ -0,0 +1,5 @@
+>>> +What:		/sys/bus/iio/devices/iio:deviceX/in_shunt_resistor
+>>> +Date:		February 2017
+>>> +KernelVersion:	4.10
+>>> +Contact:	linux-iio@vger.kernel.org
+>>> +Description: 	The value of the shunt resistor in micro Ohms.
+>>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Changes since V2:
- - None
-
- Changes since V1:
- - None
-
- drivers/iommu/ipmmu-vmsa.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
---- 0022/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-08 18:33:07.630607110 +0900
-@@ -38,6 +38,7 @@ struct ipmmu_features {
- 	bool has_cache_leaf_nodes;
- 	bool has_eight_ctx;
- 	bool setup_imbuscr;
-+	bool twobit_imttbcr_sl0;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -163,6 +164,10 @@ static void set_archdata(struct device *
- #define IMTTBCR_TSZ0_MASK		(7 << 0)
- #define IMTTBCR_TSZ0_SHIFT		O
- 
-+#define IMTTBCR_SL0_TWOBIT_LVL_3	(0 << 6)
-+#define IMTTBCR_SL0_TWOBIT_LVL_2	(1 << 6)
-+#define IMTTBCR_SL0_TWOBIT_LVL_1	(2 << 6)
-+
- #define IMBUSCR				0x000c
- #define IMBUSCR_DVM			(1 << 2)
- #define IMBUSCR_BUSSEL_SYS		(0 << 0)
-@@ -406,6 +411,7 @@ static int ipmmu_domain_allocate_context
- static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- {
- 	u64 ttbr;
-+	u32 tmp;
- 	int ret;
- 
- 	/*
-@@ -458,9 +464,15 @@ static int ipmmu_domain_init_context(str
- 	 * We use long descriptors with inner-shareable WBWA tables and allocate
- 	 * the whole 32-bit VA space to TTBR0.
- 	 */
-+
-+	if (domain->root->features->twobit_imttbcr_sl0)
-+		tmp = IMTTBCR_SL0_TWOBIT_LVL_1;
-+	else
-+		tmp = IMTTBCR_SL0_LVL_1;
-+
- 	ipmmu_ctx_write(domain, IMTTBCR, IMTTBCR_EAE |
- 			IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
--			IMTTBCR_IRGN0_WB_WA | IMTTBCR_SL0_LVL_1);
-+			IMTTBCR_IRGN0_WB_WA | tmp);
- 
- 	/* MAIR0 */
- 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
-@@ -1080,6 +1092,7 @@ static const struct ipmmu_features ipmmu
- 	.has_cache_leaf_nodes = false,
- 	.has_eight_ctx = false,
- 	.setup_imbuscr = true,
-+	.twobit_imttbcr_sl0 = false,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
