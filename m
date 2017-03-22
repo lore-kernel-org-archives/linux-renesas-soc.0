@@ -1,194 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:25619 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755945AbdC2LpN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 07:45:13 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 3/3] usb: gadget: udc: renesas_usb3: add support for usb role swap
-Date: Wed, 29 Mar 2017 20:42:54 +0900
-Message-ID: <1490787774-5796-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1490787774-5796-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1490787774-5796-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20170321194830.621344167@cogentembedded.com>
+References: <20170321194830.621344167@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Mar 2017 10:38:23 +0100
+Message-ID: <CAMuHMdWS8x46yG_7kEcfu+Omy3iVt5FtEwU_HD=EXcA-cje2LA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: add IMR-L[S]X3 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for usb role swap via sysfs "role".
+On Thu, Jan 1, 1970 at 12:00 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe the IMR-LX3 and 6 IMR-LSX3 devices in the R8A7792 device tree.
+>
+> Based on the original patch by Roman Meshkevich
+> <roman.meshkevich@cogentembedded.com>
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-For example:
- 1) Connect a usb cable using 2 Salvator-X boards.
-  - For A-Device, the cable is connected to CN11 (USB3.0 ch0).
-  - For B-Device, the cable is connected to CN9 (USB2.0 ch0).
- 2) On A-Device, you input the following command:
-  # echo peripheral > /sys/devices/platform/soc/ee020000.usb/role
- 3) On B-Device, you input the following command:
-  # echo host > /sys/devices/platform/soc/ee080200.usb-phy/role
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Then, the A-Device acts as a peripheral and the B-Device acts as
-a host. Please note that A-Device must input the following command
-if you want the board to act as a host again.
- # echo host > /sys/devices/platform/soc/ee020000.usb/role
+Pending acceptance of the DT bindings.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- .../ABI/testing/sysfs-platform-renesas_usb3        | 15 +++++
- drivers/usb/gadget/udc/renesas_usb3.c              | 77 ++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-renesas_usb3
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/ABI/testing/sysfs-platform-renesas_usb3 b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
-new file mode 100644
-index 0000000..1f63190
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
-@@ -0,0 +1,15 @@
-+What:		/sys/devices/platform/<udc-name>/role
-+Date:		March 2017
-+KernelVersion:	4.13
-+Contact:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-+Description:
-+		This file can be read and write.
-+		The file can show/change the drd mode of usb.
-+
-+		Write the following string to change the mode:
-+		 "host" - switching mode from peripheral to host.
-+		 "peripheral" - switching mode from host to peripheral.
-+
-+		Read the file, then it shows the following strings:
-+		 "host" - The mode is host now.
-+		 "peripheral" - The mode is peripheral now.
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 3f04e57..5a4cd85 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -372,6 +372,11 @@ static void usb3_disable_pipe_irq(struct renesas_usb3 *usb3, int num)
- 	usb3_clear_bit(usb3, USB_INT_2_PIPE(num), USB3_USB_INT_ENA_2);
- }
- 
-+static bool usb3_is_host(struct renesas_usb3 *usb3)
-+{
-+	return !(usb3_read(usb3, USB3_DRD_CON) & DRD_CON_PERI_CON);
-+}
-+
- static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
- {
- 	/* Set AXI_INT */
-@@ -568,12 +573,29 @@ static void usb3_mode_a_host(struct renesas_usb3 *usb3)
- 	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
- }
- 
-+static void usb3_mode_a_peri(struct renesas_usb3 *usb3)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&usb3->lock, flags);
-+	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
-+	usb3_connect(usb3);
-+	spin_unlock_irqrestore(&usb3->lock, flags);
-+}
-+
- static void usb3_mode_b_peri(struct renesas_usb3 *usb3)
- {
- 	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
- 	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
- }
- 
-+static void usb3_mode_b_host(struct renesas_usb3 *usb3)
-+{
-+	usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
-+}
-+
- static bool usb3_is_a_device(struct renesas_usb3 *usb3)
- {
- 	return !(usb3_read(usb3, USB3_USB_OTG_STA) & USB_OTG_IDMON);
-@@ -1831,11 +1853,59 @@ static int renesas_usb3_set_selfpowered(struct usb_gadget *gadget, int is_self)
- 	.set_selfpowered	= renesas_usb3_set_selfpowered,
- };
- 
-+static ssize_t role_store(struct device *dev, struct device_attribute *attr,
-+			  const char *buf, size_t count)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+	bool new_mode_is_host;
-+
-+	if (!usb3->driver)
-+		return -ENODEV;
-+
-+	if (!strncmp(buf, "host", strlen("host")))
-+		new_mode_is_host = true;
-+	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+		new_mode_is_host = false;
-+	else
-+		return -EINVAL;
-+
-+	if (new_mode_is_host == usb3_is_host(usb3))
-+		return -EINVAL;
-+
-+	if (new_mode_is_host) {
-+		if (usb3_is_a_device(usb3))
-+			usb3_mode_a_host(usb3);
-+		else
-+			usb3_mode_b_host(usb3);
-+	} else {
-+		if (usb3_is_a_device(usb3))
-+			usb3_mode_a_peri(usb3);
-+		else
-+			usb3_mode_b_peri(usb3);
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t role_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+
-+	if (!usb3->driver)
-+		return -ENODEV;
-+
-+	return sprintf(buf, "%s\n", usb3_is_host(usb3) ? "host" : "peripheral");
-+}
-+static DEVICE_ATTR_RW(role);
-+
- /*------- platform_driver ------------------------------------------------*/
- static int renesas_usb3_remove(struct platform_device *pdev)
- {
- 	struct renesas_usb3 *usb3 = platform_get_drvdata(pdev);
- 
-+	device_remove_file(&pdev->dev, &dev_attr_role);
-+
- 	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
-@@ -2038,6 +2108,10 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_add_udc;
- 
-+	ret = device_create_file(&pdev->dev, &dev_attr_role);
-+	if (ret < 0)
-+		goto err_dev_create;
-+
- 	usb3->workaround_for_vbus = priv->workaround_for_vbus;
- 
- 	pm_runtime_enable(&pdev->dev);
-@@ -2047,6 +2121,9 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+err_dev_create:
-+	usb_del_gadget_udc(&usb3->gadget);
-+
- err_add_udc:
- 	__renesas_usb3_ep_free_request(usb3->ep0_req);
- 
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
