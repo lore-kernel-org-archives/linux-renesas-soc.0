@@ -1,41 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51649 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759094AbdCVLe1 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:35428 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934354AbdCVLay (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 07:34:27 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
- by mailout1.samsung.com
+        Wed, 22 Mar 2017 07:30:54 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ON7015VFS5DPG60@mailout1.samsung.com> for
- linux-renesas-soc@vger.kernel.org; Wed, 22 Mar 2017 20:34:26 +0900 (KST)
-Subject: Re: [alsa-devel] [PATCH][RFC] ASoC: core: remove pointless auxiliary
- from snd_soc_component
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>
+ with ESMTP id <0ON701PJZRZGQO60@mailout3.samsung.com> for
+ linux-renesas-soc@vger.kernel.org; Wed, 22 Mar 2017 20:30:52 +0900 (KST)
+Subject: Re: [PATCH][RFC] ASoC: core: remove pointless auxiliary from
+ snd_soc_component
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <e3e9eaf7-f7ac-6d44-7f93-8a76ad19e2a2@samsung.com>
-Date: Wed, 22 Mar 2017 12:34:19 +0100
+Message-id: <a70b7fc4-1328-0ca2-1182-0a92863d90da@samsung.com>
+Date: Wed, 22 Mar 2017 12:30:47 +0100
 MIME-version: 1.0
-In-reply-to: <87wpbindqp.wl%kuninori.morimoto.gx@renesas.com>
+In-reply-to: <87o9xcp6zi.wl%kuninori.morimoto.gx@renesas.com>
 Content-type: text/plain; charset=windows-1252; format=flowed
 Content-transfer-encoding: 7bit
-References: <87o9xcp6zi.wl%kuninori.morimoto.gx@renesas.com>
- <CGME20170322042528epcas3p105ee4d00d9870d7006be5732686f77cf@epcas3p1.samsung.com>
- <87wpbindqp.wl%kuninori.morimoto.gx@renesas.com>
+References: <CGME20170308072638epcas1p4b3a0c943539f55ec83eb66a3b0fec621@epcas1p4.samsung.com>
+ <87o9xcp6zi.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Morimoto-san,
+On 03/08/2017 08:26 AM, Kuninori Morimoto wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> commit 1a653aa44725 ("ASoC: core: replace aux_comp_list to ...")
+> tried to replace aux_comp_list to component_dev_list,
+> but it failed because of binding timing. Thus, Sylwester fixuped it by
+> commit d2e3a1358c37 ("ASoC: Fix binding and probing of auxiliary...").
+>
+> One of main purpose of commit 1a653aa44725 ("ASoC: core: replace...")
+> was remove replaceable list (= list_aux) from snd_soc_component by using
+> new "auxiliary" flags (but it failed).
+> Because of this background, current code has reborned card_aux_list
+> (= same as original list_aux), and almost pointless "auxiliary" flags.
+>
+> Let's remove pointless "auxiliary" flags by this patch
+> This means, it is same as revert both
+> commit 1a653aa44725 ("ASoC: core: replace aux_comp_list to ...") and
+> commit d2e3a1358c37 ("ASoC: Fix binding and probing of auxiliary...").
+>
+> Not-yet-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> request-Tested-by-from: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 03/22/2017 05:24 AM, Kuninori Morimoto wrote:
-> Can you test this patch if possible ?
+I tested in on top of v4.11-rc3 on the TM2 board and didn't notice any issues,
+the sound card got initialized properly.
 
-My apologies for the delay, I just tested the patch
-and it seems all correct.
-
--- 
-Regards,
-Sylwester
+Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
