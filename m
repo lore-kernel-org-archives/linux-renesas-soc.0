@@ -1,133 +1,98 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=VNCf=2K=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH 3/3] drm: rcar-du: Register a completion callback with VSP1
-Date: Wed,  1 Mar 2017 13:12:56 +0000
-Message-Id: <b2e74113040a80c99151c392b1d42ea604b8ca1f.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1490026491-21742-4-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org> <1490026491-21742-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Mar 2017 11:35:35 +0100
+Message-ID: <CAMuHMdUYZ0+468Djucy2NXXUq7LOZMUwm-3YmiFATVQa=M_CTg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Updating the state in a running VSP1 requires two interrupts from the
-VSP. Initially, the updated state will be committed - but only after the
-VSP1 has completed processing it's current frame will the new state be
-taken into account. As such, the committed state will only be 'completed'
-after an extra frame completion interrupt.
+On Mon, Mar 20, 2017 at 5:14 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add dt-bindings for Renesas r7s72100 pin controller header file.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 36 ++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+>
+> diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+> new file mode 100644
+> index 0000000..98852d3
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+> @@ -0,0 +1,36 @@
+> +/*
+> + * Defines macros and constants for Renesas RZ/A1 pin controller pin
+> + * muxing functions.
+> + */
+> +#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
+> +#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
+> +
+> +#define RZA1_PINS_PER_PORT     16
+> +
+> +/* Create the pin index from it's bank and position numbers */
 
-Track this delay, by passing the frame flip event through the VSP
-module; It will be returned only when the frame has completed and can be
-returned to the caller.
+its bank
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c |  8 +++++-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  1 +-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 34 ++++++++++++++++++++++++++-
- 3 files changed, 41 insertions(+), 2 deletions(-)
+> +#define PIN(b, p)              ((b) * RZA1_PINS_PER_PORT + (p))
+> +
+> +/*
+> + * Flags to apply to alternate function configuration
+> + * All of the following are mutually exclusive.
+> + */
+> +
+> +/*
+> + * Pin is bi-directional.
+> + * Alternate function that need both input/outpu functionalities shall
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 7391dd95c733..0a824633a012 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -328,7 +328,7 @@ static bool rcar_du_crtc_page_flip_pending(struct rcar_du_crtc *rcrtc)
- 	bool pending;
- 
- 	spin_lock_irqsave(&dev->event_lock, flags);
--	pending = rcrtc->event != NULL;
-+	pending = (rcrtc->event != NULL) || (rcrtc->pending != NULL);
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
- 
- 	return pending;
-@@ -578,6 +578,12 @@ static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
- 	rcar_du_crtc_write(rcrtc, DSRCR, status & DSRCR_MASK);
- 
- 	if (status & DSSR_FRM) {
-+
-+		if (rcrtc->pending) {
-+			trace_printk("VBlank loss due to VSP Overrun\n");
-+			return IRQ_HANDLED;
-+		}
-+
- 		drm_crtc_handle_vblank(&rcrtc->crtc);
- 		rcar_du_crtc_finish_page_flip(rcrtc);
- 		ret = IRQ_HANDLED;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index a7194812997e..8374a858446a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -46,6 +46,7 @@ struct rcar_du_crtc {
- 	bool started;
- 
- 	struct drm_pending_vblank_event *event;
-+	struct drm_pending_vblank_event *pending;
- 	wait_queue_head_t flip_wait;
- 
- 	unsigned int outputs;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 71e70e1e0881..408375aff1a0 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -28,6 +28,26 @@
- #include "rcar_du_kms.h"
- #include "rcar_du_vsp.h"
- 
-+static void rcar_du_vsp_complete(void *private, void *data)
-+{
-+	struct rcar_du_crtc *crtc = (struct rcar_du_crtc *)private;
-+	struct drm_device *dev = crtc->crtc.dev;
-+	struct drm_pending_vblank_event *event;
-+	bool match;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&dev->event_lock, flags);
-+	event = crtc->event;
-+	crtc->event = data;
-+	match = (crtc->event == crtc->pending);
-+	crtc->pending = NULL;
-+	spin_unlock_irqrestore(&dev->event_lock, flags);
-+
-+	/* Safety checks */
-+	WARN(event, "Event lost by VSP completion callback\n");
-+	WARN(!match, "Stored pending event, does not match completion\n");
-+}
-+
- void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
- {
- 	const struct drm_display_mode *mode = &crtc->crtc.state->adjusted_mode;
-@@ -66,6 +86,8 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
- 	 */
- 	crtc->group->need_restart = true;
- 
-+	vsp1_du_register_callback(crtc->vsp->vsp, rcar_du_vsp_complete, crtc);
-+
- 	vsp1_du_setup_lif(crtc->vsp->vsp, mode->hdisplay, mode->vdisplay);
- }
- 
-@@ -81,7 +103,17 @@ void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc)
- 
- void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc)
- {
--	vsp1_du_atomic_flush(crtc->vsp->vsp, NULL);
-+	struct drm_device *dev = crtc->crtc.dev;
-+	struct drm_pending_vblank_event *event;
-+	unsigned long flags;
-+
-+	/* Move the event to the VSP, track it locally as 'pending' */
-+	spin_lock_irqsave(&dev->event_lock, flags);
-+	event = crtc->pending = crtc->event;
-+	crtc->event = NULL;
-+	spin_unlock_irqrestore(&dev->event_lock, flags);
-+
-+	vsp1_du_atomic_flush(crtc->vsp->vsp, event);
- }
- 
- /* Keep the two tables in sync. */
--- 
-git-series 0.9.1
+An alternate function that needs ... output
+
+> + * be configured as bidirectional.
+> + * Eg. SDA/SCL pins of an I2c interface.
+> + */
+> +#define BI_DIR                 (1 << 3)
+> +
+> +/*
+> + * Flags used to ask software drive the pin I/O direction overriding the
+
+to drive
+
+> + * alternate function configuration.
+> + * Some alternate function requires software to force I/O direction of a pin,
+
+functions require
+
+> + * ovverriding the designated one.
+
+overriding
+
+> + * Reference to the HW manual to know when this flag shall be used.
+
+Refer
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
