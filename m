@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33656 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758917AbdCVOGt (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:59316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759062AbdCVNzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 10:06:49 -0400
+        Wed, 22 Mar 2017 09:55:55 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLd3o0MEgU93axvEg3kddMp4fvP2ZpnBWRdNBR8AHFV+Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdVMyjVv471KB6+SCbNBs6EAaFUm1-2xwj2y-qgriFht0Q@mail.gmail.com>
 References: <20170322020313.24338-1-robh@kernel.org> <20170322020313.24338-6-robh@kernel.org>
- <CAMuHMdVMyjVv471KB6+SCbNBs6EAaFUm1-2xwj2y-qgriFht0Q@mail.gmail.com> <CAL_JsqLd3o0MEgU93axvEg3kddMp4fvP2ZpnBWRdNBR8AHFV+Q@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Mar 2017 15:06:07 +0100
-Message-ID: <CAMuHMdWhcix=rSQMB5Vf6jN_3_RfrHBMwmVLW4tjP_9bLpVMMA@mail.gmail.com>
+ <CAMuHMdVMyjVv471KB6+SCbNBs6EAaFUm1-2xwj2y-qgriFht0Q@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 22 Mar 2017 08:47:27 -0500
+Message-ID: <CAL_JsqLd3o0MEgU93axvEg3kddMp4fvP2ZpnBWRdNBR8AHFV+Q@mail.gmail.com>
 Subject: Re: [PATCH 06/15] ARM: dts: r8a779x: fix PCI bus dtc warnings
-To: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
@@ -24,75 +24,110 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+On Wed, Mar 22, 2017 at 3:58 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Rob,
+>
+> On Wed, Mar 22, 2017 at 3:03 AM, Rob Herring <robh@kernel.org> wrote:
+>> dtc recently added PCI bus checks. Fix these warnings.
+>
+> It's always a good idea to put the warnings in the commit message:
 
-On Wed, Mar 22, 2017 at 2:47 PM, Rob Herring <robh@kernel.org> wrote:
-> On Wed, Mar 22, 2017 at 3:58 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, Mar 22, 2017 at 3:03 AM, Rob Herring <robh@kernel.org> wrote:
->>> dtc recently added PCI bus checks. Fix these warnings.
+Well, the warnings are a bit noisy in that they get repeated, can be
+misleading, change as I fix problems (device nodes are not checked if
+the bridge node fails), and most importantly I'm lazy having fixed
+these treewide. Sub-arch maintainers are welcome to make better
+patches. :)
+
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,1 node name is not "pci" or "pcie"
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,1 missing ranges for PCI bridge (or not a bridge)
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,1 incorrect #address-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,1 incorrect #size-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,1 missing bus-range for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,2 node name is not "pci" or "pcie"
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,2 missing ranges for PCI bridge (or not a bridge)
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,2 incorrect #address-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,2 incorrect #size-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee090000/usb@0,2 missing bus-range for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,1 node name is not "pci" or "pcie"
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,1 missing ranges for PCI bridge (or not a bridge)
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,1 incorrect #address-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,1 incorrect #size-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,1 missing bus-range for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,2 node name is not "pci" or "pcie"
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,2 missing ranges for PCI bridge (or not a bridge)
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,2 incorrect #address-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,2 incorrect #size-cells for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
+> /pci@ee0d0000/usb@0,2 missing bus-range for PCI bridge
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (unit_address_format):
+> Failed prerequisite 'pci_bridge'
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_reg): Failed
+> prerequisite 'pci_bridge'
+> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_bus_num):
+> Failed prerequisite 'pci_bridge'
+>
+> The above indeed go away with your patch, but I don't know why ;-)
+
+Most of these are because 'device_type = "pci";' should only be on PCI
+bridges, not PCI devices.
+
+>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> Cc: Simon Horman <horms@verge.net.au>
+>> Cc: Magnus Damm <magnus.damm@gmail.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>> Sub-arch maintainers, please apply to your trees unless arm-soc wants
+>> to take the whole lot.
 >>
->> It's always a good idea to put the warnings in the commit message:
+>>  arch/arm/boot/dts/r8a7790.dtsi | 16 ++++++----------
+>>  arch/arm/boot/dts/r8a7791.dtsi | 16 ++++++----------
+>>  arch/arm/boot/dts/r8a7794.dtsi | 16 ++++++----------
+>>  3 files changed, 18 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+>> index 6d10450de6d7..c16a37e9fb5d 100644
+>> --- a/arch/arm/boot/dts/r8a7790.dtsi
+>> +++ b/arch/arm/boot/dts/r8a7790.dtsi
+>> @@ -1598,16 +1598,14 @@
+>>                                  0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+>>                                  0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+>>
+>> -               usb@0,1 {
+>> +               usb@1,0 {
+>>                         reg = <0x800 0 0 0 0>;
+>> -                       device_type = "pci";
+>>                         phys = <&usb0 0>;
+>>                         phy-names = "usb";
+>>                 };
 >
-> Well, the warnings are a bit noisy in that they get repeated, can be
-> misleading, change as I fix problems (device nodes are not checked if
-> the bridge node fails), and most importantly I'm lazy having fixed
-> these treewide. Sub-arch maintainers are welcome to make better
-> patches. :)
->
->> arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_bridge): Node
->> /pci@ee090000/usb@0,1 node name is not "pci" or "pcie"
+> Both Documentation/devicetree/bindings/pci/pci.txt and ePAPR refer to
+> http://www.firmware.org/1275/bindings/pci/pci2_1.pdf
+> http://www.firmware.org/1275/practice/imap/imap0_9d.pdf
+> which no longer exist.
 
-[...]
+Yeah, they are still out there. Just need to google "PCI supplement 1275". :)
 
->> The above indeed go away with your patch, but I don't know why ;-)
->
-> Most of these are because 'device_type = "pci";' should only be on PCI
-> bridges, not PCI devices.
+I have the full archive saved off. I need to get them added to devicetree.org.
 
-Thanks, retrying...
-
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_reg): Node
-/pci@ee090000/usb@0,1 PCI unit address format error, expected "1,0"
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_reg): Node
-/pci@ee090000/usb@0,2 PCI unit address format error, expected "2,0"
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_reg): Node
-/pci@ee0d0000/usb@0,1 PCI unit address format error, expected "1,0"
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_reg): Node
-/pci@ee0d0000/usb@0,2 PCI unit address format error, expected "2,0"
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_bus_num):
-Node /pci@ee0d0000/usb@0,1 PCI bus number 0 out of range, expected (2
-- 2)
-arch/arm/boot/dts/r8a7790-lager.dtb: Warning (pci_device_bus_num):
-Node /pci@ee0d0000/usb@0,2 PCI bus number 0 out of range, expected (2
-- 2)
-
-OK, without 'device_type = "pci"' it makes much more sense...
-
->> Both Documentation/devicetree/bindings/pci/pci.txt and ePAPR refer to
->> http://www.firmware.org/1275/bindings/pci/pci2_1.pdf
->> http://www.firmware.org/1275/practice/imap/imap0_9d.pdf
->> which no longer exist.
->
-> Yeah, they are still out there. Just need to google "PCI supplement 1275". :)
->
-> I have the full archive saved off. I need to get them added to devicetree.org.
-
-Having working links in the DT bindings would be great.
-
-BTW, seems like I still have an offline copy of v2.0 of the PCI spec in
-PostScript format, from my CHRP days[*], when hard disks where smaller
-than CD-Rs ;-)
-
-[*] I never managed to memorize the PCI DT bindings, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
