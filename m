@@ -1,83 +1,56 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170321194820.477663240@cogentembedded.com>
-Date: Thu, 01 Jan 1970 03:00:01 +0300
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/2] ARM: dts: r8a7792: add IMR-L[S]X3 clocks
+Return-Path: <linux-media-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=ARM-dts-r8a7792-add-IMR-L-S-X3-clocks.patch
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20170309200818.786255823@cogentembedded.com>
+References: <20170309200818.786255823@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Mar 2017 10:34:16 +0100
+Message-ID: <CAMuHMdV5-aMx4KuqShm47XtORJK8rMKzw6FUs2Hjsxia+jPfxg@mail.gmail.com>
+Subject: Re: [PATCH v5] media: platform: Renesas IMR driver
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Konstantin Kozhevnikov
+        <Konstantin.Kozhevnikov@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the IMR-L[S]X3 clocks to the R8A7792 device tree.
+On Thu, Mar 9, 2017 at 9:08 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> --- /dev/null
+> +++ media_tree/Documentation/devicetree/bindings/media/rcar_imr.txt
+> @@ -0,0 +1,27 @@
+> +Renesas R-Car Image Renderer (Distortion Correction Engine)
+> +-----------------------------------------------------------
+> +
+> +The image renderer, or the distortion correction engine, is a drawing processor
+> +with a simple instruction system capable of referencing video capture data or
+> +data in an external memory as 2D texture data and performing texture mapping
+> +and drawing with respect to any shape that is split into triangular objects.
+> +
+> +Required properties:
+> +
+> +- compatible: "renesas,<soctype>-imr-lx4", "renesas,imr-lx4" as a fallback for
+> +  the image renderer light extended 4 (IMR-LX4) found in the R-Car gen3 SoCs,
+> +  where the examples with <soctype> are:
+> +  - "renesas,r8a7795-imr-lx4" for R-Car H3,
+> +  - "renesas,r8a7796-imr-lx4" for R-Car M3-W.
 
-Based on the original patch by Roman Meshkevich
-<roman.meshkevich@cogentembedded.com>.
+Laurent: what do you think about the need for SoC-specific compatible
+values for the various IM* blocks?
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Gr{oetje,eeting}s,
 
----
- arch/arm/boot/dts/r8a7792.dtsi            |   15 ++++++++++++---
- include/dt-bindings/clock/r8a7792-clock.h |    7 +++++++
- 2 files changed, 19 insertions(+), 3 deletions(-)
+                        Geert
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -927,16 +927,25 @@
- 				     "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
- 			clocks = <&zg_clk>, <&zg_clk>, <&zg_clk>, <&zg_clk>,
--			         <&zg_clk>, <&zg_clk>, <&hp_clk>;
-+				 <&zg_clk>, <&zg_clk>, <&hp_clk>, <&zg_clk>,
-+				 <&zg_clk>, <&zg_clk>, <&zg_clk>, <&zg_clk>,
-+				 <&zg_clk>, <&zg_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 				R8A7792_CLK_VIN5 R8A7792_CLK_VIN4
- 				R8A7792_CLK_VIN3 R8A7792_CLK_VIN2
- 				R8A7792_CLK_VIN1 R8A7792_CLK_VIN0
--				R8A7792_CLK_ETHERAVB
-+				R8A7792_CLK_ETHERAVB R8A7792_CLK_IMR_LX3
-+				R8A7792_CLK_IMR_LSX3_1 R8A7792_CLK_IMR_LSX3_0
-+				R8A7792_CLK_IMR_LSX3_5 R8A7792_CLK_IMR_LSX3_4
-+				R8A7792_CLK_IMR_LSX3_3 R8A7792_CLK_IMR_LSX3_2
- 			>;
- 			clock-output-names = "vin5", "vin4", "vin3", "vin2",
--					     "vin1", "vin0", "etheravb";
-+					     "vin1", "vin0",
-+					     "etheravb", "imr-lx3",
-+					     "imr-lsx3-1", "imr-lsx3-0",
-+					     "imr-lsx3-5", "imr-lsx3-4",
-+					     "imr-lsx3-3", "imr-lsx3-2";
- 		};
- 		mstp9_clks: mstp9_clks@e6150994 {
- 			compatible = "renesas,r8a7792-mstp-clocks",
-Index: renesas/include/dt-bindings/clock/r8a7792-clock.h
-===================================================================
---- renesas.orig/include/dt-bindings/clock/r8a7792-clock.h
-+++ renesas/include/dt-bindings/clock/r8a7792-clock.h
-@@ -70,6 +70,13 @@
- #define R8A7792_CLK_VIN1		10
- #define R8A7792_CLK_VIN0		11
- #define R8A7792_CLK_ETHERAVB		12
-+#define R8A7792_CLK_IMR_LX3		21
-+#define R8A7792_CLK_IMR_LSX3_1		22
-+#define R8A7792_CLK_IMR_LSX3_0		23
-+#define R8A7792_CLK_IMR_LSX3_5		25
-+#define R8A7792_CLK_IMR_LSX3_4		26
-+#define R8A7792_CLK_IMR_LSX3_3		27
-+#define R8A7792_CLK_IMR_LSX3_2		28
- 
- /* MSTP9 */
- #define R8A7792_CLK_GPIO7		4
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
