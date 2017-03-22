@@ -1,82 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59893 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752454AbdCFAKB (ORCPT
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33682 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933635AbdCVAka (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:10:01 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 0/9] R-Car Gen3 HDMI output support
-Date: Mon,  6 Mar 2017 02:02:53 +0200
-Message-Id: <20170306000302.14149-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 21 Mar 2017 20:40:30 -0400
+Received: by mail-pf0-f194.google.com with SMTP id p189so18743792pfp.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Mar 2017 17:40:25 -0700 (PDT)
+Date: Tue, 21 Mar 2017 17:34:49 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.12
+Message-ID: <20170322003449.GG5129@localhost>
+References: <cover.1489999913.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On Mon, Mar 20, 2017 at 09:57:30AM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM64 based SoC DT updates for v4.12.
+> 
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.12
+> 
+> for you to fetch changes up to 3cbe33367d4fd480a92fbc131a96fa925be9e95d:
+> 
+>   arm64: dts: r8a7796: salvator-x: Drop superfluous status update for frequency override (2017-03-13 10:21:16 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM64 Based SoC DT Updates for v4.12
+> 
+> Cleanup:
+> * Drop superfluous status update for frequency override from all
+>   r8a779[56] boards
+> * Tidyup Audio-DMAC channel for DVC for r8a7795 SoC
+> * Remove unit-address and reg from integrated cache on r8a779[56] SoCs
+> 
+> Enhancements:
+> * Add all Cortex-A53 and Cortex-A57 CPU cores to r8a7796 SoC
+> * Add Cortex-A53 CPU cores to r8a7795 SoC
+> * Update memory node to 4 GiB map on h3ulcb board
+> * Upgrade to PSCI v1.0 to support Suspend-to-RAM on r8a779[56] SoCs
+> * Add SCIF1 (DEBUG1) to r8a7796/salvator-x board
+> * Add all SCIF and HSCIF nodes with DMA enabled to r8a7796 SoC
+> * Set drive-strength for ravb pins for r8a7795/salvator-x board
+> * Enable gigabit ethernet on r8a779[56]/salvator-x boards
+> * Enable I2C for DVFS device r8a779[56]/salvator-x boards
 
-This patch series implements support for the HDMI output on Renesas R-Car Gen3
-SoCs, and more specifically on the R-Car H3.
+Merged into next/dt64. Thanks!
 
-Compared to the previous version, I've left out all the dw-hdmi patches that
-have been updated separately and are on their way to being merged. I've also
-left out the DT integration patches that will be submitted separately. I have
-on the other hand included patches 1/9 to 4/9 that were an implicit dependency
-of the previous version.
-
-The patches are based on a merge of the following branches and tags from
-git://linuxtv.org/pinchartl/media.git
-
-- DWC HDMI Driver: drm-next-dw-hdmi-v5.1-20170306
-- DRM LVDS Encoder Driver: drm-next-lvds-encoder-v4-20170302
-- DRM LVDS Panel Driver: drm/next/lvds-panel
-- R-Car DU Driver: drm/next/du
-
-I plan to send a pull request for theses patches and the dependencies that
-won't be merged through drm-misc in the next few days.
-
-Koji Matsuoka (3):
-  drm: rcar-du: Add Gen3 HDMI encoder support
-  drm: rcar-du: Add DPLL support
-  drm: rcar-du: Add HDMI outputs to R8A7795 device description
-
-Laurent Pinchart (6):
-  drm: rcar-du: Use the DRM panel API
-  drm: rcar-du: Add support for LVDS mode selection
-  drm: rcar-du: Replace manual bridge implementation with DRM bridge
-  drm: rcar-du: Hardcode encoders types to DRM_MODE_ENCODER_NONE
-  dt-bindings: display: renesas: Add R-Car Gen3 HDMI TX DT bindings
-  drm: rcar-du: Skip disabled outputs
-
- .../bindings/display/bridge/renesas,dw-hdmi.txt    |  75 +++++++++
- MAINTAINERS                                        |   1 +
- drivers/gpu/drm/rcar-du/Kconfig                    |  10 +-
- drivers/gpu/drm/rcar-du/Makefile                   |   6 +-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c             |  81 +++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   4 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  28 ++--
- drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   3 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 179 +++++++++++++--------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  14 +-
- drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c          | 134 ---------------
- drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h          |  35 ----
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  44 ++---
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  68 +++-----
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          |  11 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  13 ++
- drivers/gpu/drm/rcar-du/rcar_du_regs.h             |  23 +++
- drivers/gpu/drm/rcar-du/rcar_du_vgacon.c           |  82 ----------
- drivers/gpu/drm/rcar-du/rcar_du_vgacon.h           |  23 ---
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             | 100 ++++++++++++
- 20 files changed, 475 insertions(+), 459 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-
--- 
-Regards,
-
-Laurent Pinchart
+-Olof
