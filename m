@@ -1,66 +1,42 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: kishon@ti.com
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH v4 2/3] phy: Move ULPI phy header out of drivers to include path
-Date: Mon, 20 Mar 2017 18:49:56 +0530
-Message-Id: <1490015997-12956-3-git-send-email-vivek.gautam@codeaurora.org>
-In-Reply-To: <1490015997-12956-1-git-send-email-vivek.gautam@codeaurora.org>
-References: <1490015997-12956-1-git-send-email-vivek.gautam@codeaurora.org>
+MIME-Version: 1.0
+In-Reply-To: <1490026491-21742-8-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org> <1490026491-21742-8-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Mar 2017 14:23:37 +0100
+Message-ID: <CAMuHMdUuX6umyBxHM-aE+PzZYEpWT8wHaHCpnCLUjYjJT-RjPg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] arm: dts: genmai: Add user led device nodes
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Although ULPI phy is currently being used by tusb1210,
-there can be other consumers too in future. So move this
-to the includes path for phy.
+On Mon, Mar 20, 2017 at 5:14 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add device nodes for user leds on Genmai board.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Changes since v3:
- - Removed qcom phy changes, since patch - 1/3 addressed that now.
+Gr{oetje,eeting}s,
 
-Changes since v2:
- - Updated the location for this header in drivers using it.
+                        Geert
 
- drivers/phy/phy-tusb1210.c                | 3 +--
- {drivers => include/linux}/phy/ulpi_phy.h | 0
- 2 files changed, 1 insertion(+), 2 deletions(-)
- rename {drivers => include/linux}/phy/ulpi_phy.h (100%)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/phy/phy-tusb1210.c b/drivers/phy/phy-tusb1210.c
-index 4f6d5e71507d..bb3fb031c478 100644
---- a/drivers/phy/phy-tusb1210.c
-+++ b/drivers/phy/phy-tusb1210.c
-@@ -12,8 +12,7 @@
- #include <linux/module.h>
- #include <linux/ulpi/driver.h>
- #include <linux/gpio/consumer.h>
--
--#include "ulpi_phy.h"
-+#include <linux/phy/ulpi_phy.h>
- 
- #define TUSB1210_VENDOR_SPECIFIC2		0x80
- #define TUSB1210_VENDOR_SPECIFIC2_IHSTX_SHIFT	0
-diff --git a/drivers/phy/ulpi_phy.h b/include/linux/phy/ulpi_phy.h
-similarity index 100%
-rename from drivers/phy/ulpi_phy.h
-rename to include/linux/phy/ulpi_phy.h
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
