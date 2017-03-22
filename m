@@ -1,107 +1,58 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 0/4] iio: adc: Maxim max9611 driver
-Date: Fri, 24 Mar 2017 16:28:39 +0100
-Message-Id: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34625 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933635AbdCVAkg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 21 Mar 2017 20:40:36 -0400
+Received: by mail-pg0-f67.google.com with SMTP id w20so2780886pgc.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Mar 2017 17:40:35 -0700 (PDT)
+Date: Tue, 21 Mar 2017 17:38:13 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.12
+Message-ID: <20170322003813.GJ5129@localhost>
+References: <cover.1490000005.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1490000005.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Mon, Mar 20, 2017 at 09:58:32AM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC DT bindings updates for v4.12.
+> 
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings-for-v4.12
+> 
+> for you to fetch changes up to cfb9f93437eb6663ca99e85c47bb3656ccfe59c5:
+> 
+>   ARM: shmobile: Document RZ/G1N SoC DT binding (2017-03-13 10:24:14 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC DT Bindings Updates for v4.12
+> 
+> * Document RZ/G1N and RZ/G1H SoC DT bindings
+> 
+> ----------------------------------------------------------------
+> Geert Uytterhoeven (2):
+>       ARM: shmobile: Document RZ/G1H SoC DT binding
+>       ARM: shmobile: Document RZ/G1N SoC DT binding
 
-Third round for Maxim max9611/max9612 high-side current sense amplifier driver.
-
-For reference, a simplified integration schematic drawing is here reported:
-
- ----o----/\/\/-----o-------|LOAD|---
-     |    shunt     |
- ____|______________|___
- |  RS+            RS-  |
- |   |-----gain-----|   |
- |          |           |
- |          |           |
- |max9611   |->| ADC |===== I2c
- |______________________|
-
-public datasheet available at
-https://datasheets.maximintegrated.com/en/ds/MAX9611-MAX9612.pdf
-
-In v2 all channels whose values are calculated using parameters
-depending on the applied gain have been transformed in "processed" channels.
-
-In v3 fixed DT bindings to use a more generic name for ADC nodes, and shunt
-resistor description property.
-
-output reported from iio_info tool:
-iio:device0: max9611_vdd
-                6 channels found:
-                        voltage0:  (input)
-                        1 channel-specific attributes found:
-                                attr 0: input value: 4.085000000
-                        voltage1:  (input)
-                        3 channel-specific attributes found:
-                                attr 0: scale value: 14
-                                attr 1: offset value: 1
-                                attr 2: raw value: 59
-                        shunt:  (input)
-                        2 channel-specific attributes found:
-                                attr 0: resistor_power value: 5000
-                                attr 1: resistor_current value: 5000
-                        power:  (input)
-                        1 channel-specific attributes found:
-                                attr 0: input value: 663.404000000
-                        temp:  (input)
-                        2 channel-specific attributes found:
-                                attr 0: scale value: 0.480076812
-                                attr 1: raw value: 59
-                        current:  (input)
-                        1 channel-specific attributes found:
-                                attr 0: input value: 817.000000000
-
-Tested on Salvator-X M3-W board.
-
-Thanks
-   j
-
-v1 -> v2:
-- Drop wildcard (max961x) in driver, documentation and dt-bindings. Use
-  max9611 instead.
-- Make 3 processed channels for csa voltage, csa current and power load
-- Remove wrapper functions around i2c buffer access
-- Add locking in read_raw()
-- Make 2 separate attributes for shunt resistor: current and power
-- Renamed shunt resistor attribute
-- Fixed several review comments
-
-v2 -> v3:
-- Incorporated Geert's suggestions on using a more generic name for ADC nodes
-  in device tree
-- Changed "maxim,shunt-resistor-uohm" to "shunt-resistor-uohm"
-- Update documentation accordingly to the two previous changes
+Merged, thanks.
 
 
-Jacopo Mondi (4):
-  Documentation: dt-bindings: iio: Add max9611 ADC
-  iio: Documentation: Add max9611 sysfs documentation
-  iio: adc: Add Maxim max9611 ADC driver
-  arm64: dts: salvator-x: Add current sense amplifiers
-
- .../ABI/testing/sysfs-bus-iio-adc-max9611          |  16 +
- .../devicetree/bindings/iio/adc/max9611.txt        |  26 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  18 +
- drivers/iio/adc/Kconfig                            |  10 +
- drivers/iio/adc/Makefile                           |   1 +
- drivers/iio/adc/max9611.c                          | 590 +++++++++++++++++++++
- 6 files changed, 661 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
- create mode 100644 Documentation/devicetree/bindings/iio/adc/max9611.txt
- create mode 100644 drivers/iio/adc/max9611.c
-
--- 
-2.7.4
-
+-Olof
