@@ -1,57 +1,51 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] arm: dts: genmai: Add user led device nodes
-Date: Mon, 20 Mar 2017 17:14:51 +0100
-Message-Id: <1490026491-21742-8-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 2/4] iio: Documentation: Add max9611 sysfs documentation
+Date: Thu, 23 Mar 2017 13:41:11 +0100
+Message-Id: <1490272873-2532-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490272873-2532-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490272873-2532-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for user leds on Genmai board.
+Add documentation for max9611 driver.
+Document attributes describing value of shunt resistor installed between
+RS+ and RS- voltage sense inputs.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 30992b1..94b9ab7 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
-@@ -35,6 +36,19 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 	};
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+new file mode 100644
+index 0000000..9c60824
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+@@ -0,0 +1,16 @@
++What:		/sys/bus/iio/devices/iio:deviceX/in_shunt_resistor_power
++Date:		March 2017
++KernelVersion:	4.12
++Contact:	linux-iio@vger.kernel.org
++Description: 	The value of the shunt resistor used to compute power drain on
++                common input voltage pin (RS+). In micro Ohms.
 +
-+	leds {
-+		status = "okay";
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led2 {
-+			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
- 
- &pinctrl {
++What:		/sys/bus/iio/devices/iio:deviceX/in_shunt_resistor_current
++Date:		March 2017
++KernelVersion:	4.12
++Contact:	linux-iio@vger.kernel.org
++Description: 	The value of the shunt resistor used to compute current flowing
++                between RS+ and RS- voltage sense inputs. In micro Ohms.
++		This attributes describe a single physical component, exposed
++		as two distinct attributes as it is used to calculate two
++		different values.
 -- 
 2.7.4
+
