@@ -1,43 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:49485 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751494AbdC1Lzv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 07:55:51 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/4] usb: gadget: udc: renesas_usb3: add USB3.0 DRD support
-Date: Tue, 28 Mar 2017 20:53:20 +0900
-Message-ID: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 23 Mar 2017 17:13:19 +0100
+From: jacopo <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/7] arm: dts: r7s72100: Add pin controller node
+Message-ID: <20170323161319.GM30223@w540>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-5-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdXZ4qoFrqQjxhD328XW_TPcEpo82mQSKyj6HKvaouot2w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXZ4qoFrqQjxhD328XW_TPcEpo82mQSKyj6HKvaouot2w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest Felipe's usb.bit / testing/next branch
-(commit id = 29986993f67341493988b6c5d68e0653061975b2).
+Hi Geert,
 
-The USB3.0 DRD controller on R-Car Gen3 can change the role via DRD_CON
-register in the periperal side sadly, so this patch adds support
-for usb role swap feature in this udc driver.
-Furtunately, the default setting of the DRD is host side, if a user want
-to use host side only, we can handle it easily just to disable the udc driver.
+On Wed, Mar 22, 2017 at 02:12:04PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+> 
+> On Mon, Mar 20, 2017 at 5:14 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Add pin controller node with 12 gpio controller sub-nodes to
+> > r7s72100 dtsi.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > --- a/arch/arm/boot/dts/r7s72100.dtsi
+> > +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> > @@ -183,6 +183,86 @@
+> >                 };
+> >         };
+> >
+> > +       pinctrl: pinctrl@fcfe3000 {
+> > +               compatible = "renesas,r7s72100-ports";
+> > +
+> > +               #pinctrl-cells = <1>;
+> > +
+> > +               reg = <0xfcfe3000 0x4248>;
+> 
+> How did you get to 0x4248? I had expected 0x4230.
+> Not that it matters much, Linux rounds it up to a multiple of PAGE_SIZE anyway.
+> 
 
-Yoshihiro Shimoda (4):
-  usb: gadget: udc: renesas_usb3: add sysfs "role" to set "b-device"
-    mode
-  usb: gadget: udc: add USB ID signal monitoring
-  usb: gadget: udc: renesas_usb3: add extcon support
-  usb: gadget: udc: renesas_usb3: add support for usb role swap
+I guess I probably confused hex and dec values, as the correct
+calculation here would have been (4200 + C * 4)
+That 4248 value is what you get with (4200 + 12 * 4) so I probably
+typed 12 in the calculator instead of C :)
+I'll change this even if it does not make any difference..
 
- .../ABI/testing/sysfs-platform-renesas_usb3        |  17 ++
- drivers/usb/gadget/udc/Kconfig                     |   1 +
- drivers/usb/gadget/udc/renesas_usb3.c              | 201 ++++++++++++++++++++-
- 3 files changed, 214 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-renesas_usb3
-
--- 
-1.9.1
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
