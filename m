@@ -1,125 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753391AbdCTI7t (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35925 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932127AbdCWMr4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Thu, 23 Mar 2017 08:47:56 -0400
+MIME-Version: 1.0
+In-Reply-To: <1490272873-2532-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490272873-2532-1-git-send-email-jacopo+renesas@jmondi.org> <1490272873-2532-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Mar 2017 13:47:54 +0100
+Message-ID: <CAMuHMdW2Eb41nuNAS0j7fYhWCDD2xAuSVK=j2o5JZw3QdW=8kQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] Documentation: dt-bindings: iio: Add max9611 ADC
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.12
-Date: Mon, 20 Mar 2017 09:58:08 +0100
-Message-Id: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Thu, Mar 23, 2017 at 1:41 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add device tree bindings documentation for Maxim max9611/max9612 current
+> sense amplifier.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Please consider these Renesas ARM based SoC DT updates for v4.12.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/max9611.txt
+> @@ -0,0 +1,27 @@
+> +* Maxim max9611/max9612 current sense amplifier with 12-bits ADC interface
+> +
+> +Maxim max9611/max9612 is an high-side current sense amplifier with integrated
+> +12-bits ADC communicating over I2c bus.
+> +The device node for this driver shall be a child of a I2c controller.
+> +
+> +Required properties
+> +  - compatible: Should be "maxim,max9611" or "maxim,max9612"
+> +  - reg: The 7-bits long I2c address of the device
+> +  - maxim,shunt-resistor-uohm: Resistor value, in uOhm, of the current sense
+> +                               shunt resistor.
 
-* Conflicts
+Isn't this sufficiently generic to drop the "maxim," prefix?
 
-  "Add watchdog timer to r7s72100 SoC", which is part of this patch-set,
-  has a minor conflict with "ARM: 8661/1: dts: r7s72100: add l2 cache",
-  which I believe Russell King has in his tree.
+Gr{oetje,eeting}s,
 
-  The resolution is to take both.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-for-v4.12
-
-for you to fetch changes up to d01ff18992218f3a13f45f45a886b3bf8f250f14:
-
-  ARM: dts: silk: Drop superfluous status update for frequency override (2017-03-13 10:19:35 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.12
-
-Cleanup:
-* Drop superfluous status update for frequency override on various boards
-* Always use status "okay" to enable devices on porger board
-* Add INTC-SYS clock to device tree of various SoCs
-* Tidyup Audio-DMAC channel for DVC on r8a779[013] SoCs
-* Remove unit-address and reg from integrated cache on various SoCs
-* Switch from ARCH_SHMOBILE_MULTI to ARCH_RENESAS
-* Fix SCIFB0 dmas indentation on r8a774[35] SoCs
-
-Enhancements:
-* Add watchdog timer to r7s72100 SoC
-* Update sdhi clock bindings on r7s72100 SoC
-
-----------------------------------------------------------------
-Chris Brandt (2):
-      ARM: dts: r7s72100: update sdhi clock bindings
-      ARM: dts: r7s72100: Add watchdog timer
-
-Geert Uytterhoeven (26):
-      ARM: dts: r8a7743: Fix SCIFB0 dmas indentation
-      ARM: dts: r8a7745: Fix SCIFB0 dmas indentation
-      ARM: dts: renesas: Switch from ARCH_SHMOBILE_MULTI to ARCH_RENESAS
-      ARM: dts: r8a73a4: Remove unit-addresses and regs from integrated caches
-      ARM: dts: r8a7743: Remove unit-address and reg from integrated cache
-      ARM: dts: r8a7745: Remove unit-address and reg from integrated cache
-      ARM: dts: r8a7790: Remove unit-addresses and regs from integrated caches
-      ARM: dts: r8a7791: Remove unit-address and reg from integrated cache
-      ARM: dts: r8a7792: Remove unit-address and reg from integrated cache
-      ARM: dts: r8a7793: Remove unit-address and reg from integrated cache
-      ARM: dts: r8a7794: Remove unit-address and reg from integrated cache
-      ARM: dts: r8a73a4: Add INTC-SYS clock to device tree
-      ARM: dts: r8a7790: Add INTC-SYS clock to device tree
-      ARM: dts: r8a7791: Add INTC-SYS clock to device tree
-      ARM: dts: r8a7792: Add INTC-SYS clock to device tree
-      ARM: dts: r8a7794: Add INTC-SYS clock to device tree
-      ARM: dts: r8a7793: Add INTC-SYS clock to device tree
-      ARM: dts: porter: Always use status "okay" to enable devices
-      ARM: dts: bockw: Drop superfluous status update for frequency override
-      ARM: dts: marzen: Drop superfluous status update for frequency override
-      ARM: dts: lager: Drop superfluous status update for frequency override
-      ARM: dts: koelsch: Drop superfluous status updates for frequency overrides
-      ARM: dts: porter: Drop superfluous status update for frequency override
-      ARM: dts: gose: Drop superfluous status update for frequency override
-      ARM: dts: alt: Drop superfluous status update for frequency override
-      ARM: dts: silk: Drop superfluous status update for frequency override
-
-Kuninori Morimoto (3):
-      ARM: dts: r8a7790: Tidyup Audio-DMAC channel for DVC
-      ARM: dts: r8a7791: Tidyup Audio-DMAC channel for DVC
-      ARM: dts: r8a7793: Tidyup Audio-DMAC channel for DVC
-
- arch/arm/boot/dts/Makefile                 | 38 +++++++++++++++---------------
- arch/arm/boot/dts/r7s72100.dtsi            | 24 +++++++++++++++----
- arch/arm/boot/dts/r8a73a4.dtsi             | 19 ++++++++-------
- arch/arm/boot/dts/r8a7743.dtsi             |  5 ++--
- arch/arm/boot/dts/r8a7745.dtsi             |  5 ++--
- arch/arm/boot/dts/r8a7778-bockw.dts        |  1 -
- arch/arm/boot/dts/r8a7779-marzen.dts       |  1 -
- arch/arm/boot/dts/r8a7790-lager.dts        |  1 -
- arch/arm/boot/dts/r8a7790.dtsi             | 19 ++++++++-------
- arch/arm/boot/dts/r8a7791-koelsch.dts      |  2 --
- arch/arm/boot/dts/r8a7791-porter.dts       |  5 ++--
- arch/arm/boot/dts/r8a7791.dtsi             | 16 +++++++------
- arch/arm/boot/dts/r8a7792.dtsi             | 14 +++++++----
- arch/arm/boot/dts/r8a7793-gose.dts         |  1 -
- arch/arm/boot/dts/r8a7793.dtsi             | 18 ++++++++------
- arch/arm/boot/dts/r8a7794-alt.dts          |  1 -
- arch/arm/boot/dts/r8a7794-silk.dts         |  1 -
- arch/arm/boot/dts/r8a7794.dtsi             | 12 ++++++----
- include/dt-bindings/clock/r7s72100-clock.h |  6 +++--
- include/dt-bindings/clock/r8a73a4-clock.h  |  1 +
- include/dt-bindings/clock/r8a7790-clock.h  |  1 +
- include/dt-bindings/clock/r8a7791-clock.h  |  1 +
- include/dt-bindings/clock/r8a7792-clock.h  |  1 +
- include/dt-bindings/clock/r8a7793-clock.h  |  5 ++--
- include/dt-bindings/clock/r8a7794-clock.h  |  1 +
- 25 files changed, 113 insertions(+), 86 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
