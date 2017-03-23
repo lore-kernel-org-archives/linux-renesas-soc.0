@@ -1,207 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34524 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754858AbdCTN30 (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35865 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752588AbdCWMmH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 09:29:26 -0400
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: kishon@ti.com
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v4 0/3] phy: Group phy drivers based on vendor listing
-Date: Mon, 20 Mar 2017 18:49:54 +0530
-Message-Id: <1490015997-12956-1-git-send-email-vivek.gautam@codeaurora.org>
+        Thu, 23 Mar 2017 08:42:07 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 0/4] iio: adc: Maxim max9611 driver
+Date: Thu, 23 Mar 2017 13:41:09 +0100
+Message-Id: <1490272873-2532-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is the next version to an earlier posted series [1].
-Missed Cc'ing the first patch of the previous series [1] to lkml.
-Posting out this series now after addressing comments
-and after adding the received 'Acked-by' and 'Reviewed-by'
-tags.
+Hello!
 
-This series is based on linux-phy/next branch.
+Second round for Maxim max9611/max9612 high-side current sense amplifier driver.
 
-[1] https://www.spinics.net/lists/arm-kernel/msg568370.html
+For reference, a simplified integration schematic drawing is here reported:
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
+ ----o----/\/\/-----o-------|LOAD|---
+     |    shunt     |
+ ____|______________|___
+ |  RS+            RS-  |
+ |   |-----gain-----|   |
+ |          |           |
+ |          |           |
+ |max9611   |->| ADC |===== I2c
+ |______________________|
 
---
-Vivek Gautam (3):
-  phy: qcom-usb: Remove unused ulpi phy header
-  phy: Move ULPI phy header out of drivers to include path
-  phy: Group vendor specific phy drivers
+public datasheet available at
+https://datasheets.maximintegrated.com/en/ds/MAX9611-MAX9612.pdf
 
- MAINTAINERS                                        |  18 +-
- drivers/phy/Kconfig                                | 471 +--------------------
- drivers/phy/Makefile                               |  67 +--
- drivers/phy/allwinner/Kconfig                      |  31 ++
- drivers/phy/allwinner/Makefile                     |   2 +
- drivers/phy/{ => allwinner}/phy-sun4i-usb.c        |   0
- drivers/phy/{ => allwinner}/phy-sun9i-usb.c        |   0
- drivers/phy/broadcom/Kconfig                       |  64 +++
- drivers/phy/broadcom/Makefile                      |   7 +
- drivers/phy/{ => broadcom}/phy-bcm-cygnus-pcie.c   |   0
- drivers/phy/{ => broadcom}/phy-bcm-kona-usb2.c     |   0
- drivers/phy/{ => broadcom}/phy-bcm-ns-usb2.c       |   0
- drivers/phy/{ => broadcom}/phy-bcm-ns-usb3.c       |   0
- drivers/phy/{ => broadcom}/phy-bcm-ns2-pcie.c      |   0
- drivers/phy/{ => broadcom}/phy-bcm-nsp-usb3.c      |   0
- drivers/phy/{ => broadcom}/phy-brcm-sata.c         |   0
- drivers/phy/hisilicon/Kconfig                      |  20 +
- drivers/phy/hisilicon/Makefile                     |   2 +
- drivers/phy/{ => hisilicon}/phy-hi6220-usb.c       |   0
- drivers/phy/{ => hisilicon}/phy-hix5hd2-sata.c     |   0
- drivers/phy/marvell/Kconfig                        |  50 +++
- drivers/phy/marvell/Makefile                       |   6 +
- drivers/phy/{ => marvell}/phy-armada375-usb2.c     |   0
- drivers/phy/{ => marvell}/phy-berlin-sata.c        |   0
- drivers/phy/{ => marvell}/phy-berlin-usb.c         |   0
- drivers/phy/{ => marvell}/phy-mvebu-sata.c         |   0
- drivers/phy/{ => marvell}/phy-pxa-28nm-hsic.c      |   0
- drivers/phy/{ => marvell}/phy-pxa-28nm-usb2.c      |   0
- drivers/phy/qualcomm/Kconfig                       |  38 ++
- drivers/phy/qualcomm/Makefile                      |   7 +
- drivers/phy/{ => qualcomm}/phy-qcom-apq8064-sata.c |   0
- drivers/phy/{ => qualcomm}/phy-qcom-ipq806x-sata.c |   0
- drivers/phy/{ => qualcomm}/phy-qcom-ufs-i.h        |   0
- drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.c |   0
- drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.h |   0
- drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.c |   0
- drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.h |   0
- drivers/phy/{ => qualcomm}/phy-qcom-ufs.c          |   0
- drivers/phy/{ => qualcomm}/phy-qcom-usb-hs.c       |   2 -
- drivers/phy/{ => qualcomm}/phy-qcom-usb-hsic.c     |   2 -
- drivers/phy/renesas/Kconfig                        |  17 +
- drivers/phy/renesas/Makefile                       |   2 +
- drivers/phy/{ => renesas}/phy-rcar-gen2.c          |   0
- drivers/phy/{ => renesas}/phy-rcar-gen3-usb2.c     |   0
- drivers/phy/rockchip/Kconfig                       |  51 +++
- drivers/phy/rockchip/Makefile                      |   6 +
- drivers/phy/{ => rockchip}/phy-rockchip-dp.c       |   0
- drivers/phy/{ => rockchip}/phy-rockchip-emmc.c     |   0
- .../phy/{ => rockchip}/phy-rockchip-inno-usb2.c    |   0
- drivers/phy/{ => rockchip}/phy-rockchip-pcie.c     |   0
- drivers/phy/{ => rockchip}/phy-rockchip-typec.c    |   0
- drivers/phy/{ => rockchip}/phy-rockchip-usb.c      |   0
- drivers/phy/samsung/Kconfig                        |  96 +++++
- drivers/phy/samsung/Makefile                       |  11 +
- drivers/phy/{ => samsung}/phy-exynos-dp-video.c    |   0
- drivers/phy/{ => samsung}/phy-exynos-mipi-video.c  |   0
- drivers/phy/{ => samsung}/phy-exynos-pcie.c        |   0
- drivers/phy/{ => samsung}/phy-exynos4210-usb2.c    |   0
- drivers/phy/{ => samsung}/phy-exynos4x12-usb2.c    |   0
- drivers/phy/{ => samsung}/phy-exynos5-usbdrd.c     |   0
- drivers/phy/{ => samsung}/phy-exynos5250-sata.c    |   0
- drivers/phy/{ => samsung}/phy-exynos5250-usb2.c    |   0
- drivers/phy/{ => samsung}/phy-s5pv210-usb2.c       |   0
- drivers/phy/{ => samsung}/phy-samsung-usb2.c       |   0
- drivers/phy/{ => samsung}/phy-samsung-usb2.h       |   0
- drivers/phy/st/Kconfig                             |  33 ++
- drivers/phy/st/Makefile                            |   4 +
- drivers/phy/{ => st}/phy-miphy28lp.c               |   0
- drivers/phy/{ => st}/phy-spear1310-miphy.c         |   0
- drivers/phy/{ => st}/phy-spear1340-miphy.c         |   0
- drivers/phy/{ => st}/phy-stih407-usb.c             |   0
- drivers/phy/ti/Kconfig                             |  78 ++++
- drivers/phy/ti/Makefile                            |   7 +
- drivers/phy/{ => ti}/phy-da8xx-usb.c               |   0
- drivers/phy/{ => ti}/phy-dm816x-usb.c              |   0
- drivers/phy/{ => ti}/phy-omap-control.c            |   0
- drivers/phy/{ => ti}/phy-omap-usb2.c               |   0
- drivers/phy/{ => ti}/phy-ti-pipe3.c                |   0
- drivers/phy/{ => ti}/phy-tusb1210.c                |   3 +-
- drivers/phy/{ => ti}/phy-twl4030-usb.c             |   0
- {drivers => include/linux}/phy/ulpi_phy.h          |   0
- 81 files changed, 568 insertions(+), 527 deletions(-)
- create mode 100644 drivers/phy/allwinner/Kconfig
- create mode 100644 drivers/phy/allwinner/Makefile
- rename drivers/phy/{ => allwinner}/phy-sun4i-usb.c (100%)
- rename drivers/phy/{ => allwinner}/phy-sun9i-usb.c (100%)
- create mode 100644 drivers/phy/broadcom/Kconfig
- create mode 100644 drivers/phy/broadcom/Makefile
- rename drivers/phy/{ => broadcom}/phy-bcm-cygnus-pcie.c (100%)
- rename drivers/phy/{ => broadcom}/phy-bcm-kona-usb2.c (100%)
- rename drivers/phy/{ => broadcom}/phy-bcm-ns-usb2.c (100%)
- rename drivers/phy/{ => broadcom}/phy-bcm-ns-usb3.c (100%)
- rename drivers/phy/{ => broadcom}/phy-bcm-ns2-pcie.c (100%)
- rename drivers/phy/{ => broadcom}/phy-bcm-nsp-usb3.c (100%)
- rename drivers/phy/{ => broadcom}/phy-brcm-sata.c (100%)
- create mode 100644 drivers/phy/hisilicon/Kconfig
- create mode 100644 drivers/phy/hisilicon/Makefile
- rename drivers/phy/{ => hisilicon}/phy-hi6220-usb.c (100%)
- rename drivers/phy/{ => hisilicon}/phy-hix5hd2-sata.c (100%)
- create mode 100644 drivers/phy/marvell/Kconfig
- create mode 100644 drivers/phy/marvell/Makefile
- rename drivers/phy/{ => marvell}/phy-armada375-usb2.c (100%)
- rename drivers/phy/{ => marvell}/phy-berlin-sata.c (100%)
- rename drivers/phy/{ => marvell}/phy-berlin-usb.c (100%)
- rename drivers/phy/{ => marvell}/phy-mvebu-sata.c (100%)
- rename drivers/phy/{ => marvell}/phy-pxa-28nm-hsic.c (100%)
- rename drivers/phy/{ => marvell}/phy-pxa-28nm-usb2.c (100%)
- create mode 100644 drivers/phy/qualcomm/Kconfig
- create mode 100644 drivers/phy/qualcomm/Makefile
- rename drivers/phy/{ => qualcomm}/phy-qcom-apq8064-sata.c (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-ipq806x-sata.c (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-i.h (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.c (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.h (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.c (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.h (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-ufs.c (100%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-usb-hs.c (99%)
- rename drivers/phy/{ => qualcomm}/phy-qcom-usb-hsic.c (99%)
- create mode 100644 drivers/phy/renesas/Kconfig
- create mode 100644 drivers/phy/renesas/Makefile
- rename drivers/phy/{ => renesas}/phy-rcar-gen2.c (100%)
- rename drivers/phy/{ => renesas}/phy-rcar-gen3-usb2.c (100%)
- create mode 100644 drivers/phy/rockchip/Kconfig
- create mode 100644 drivers/phy/rockchip/Makefile
- rename drivers/phy/{ => rockchip}/phy-rockchip-dp.c (100%)
- rename drivers/phy/{ => rockchip}/phy-rockchip-emmc.c (100%)
- rename drivers/phy/{ => rockchip}/phy-rockchip-inno-usb2.c (100%)
- rename drivers/phy/{ => rockchip}/phy-rockchip-pcie.c (100%)
- rename drivers/phy/{ => rockchip}/phy-rockchip-typec.c (100%)
- rename drivers/phy/{ => rockchip}/phy-rockchip-usb.c (100%)
- create mode 100644 drivers/phy/samsung/Kconfig
- create mode 100644 drivers/phy/samsung/Makefile
- rename drivers/phy/{ => samsung}/phy-exynos-dp-video.c (100%)
- rename drivers/phy/{ => samsung}/phy-exynos-mipi-video.c (100%)
- rename drivers/phy/{ => samsung}/phy-exynos-pcie.c (100%)
- rename drivers/phy/{ => samsung}/phy-exynos4210-usb2.c (100%)
- rename drivers/phy/{ => samsung}/phy-exynos4x12-usb2.c (100%)
- rename drivers/phy/{ => samsung}/phy-exynos5-usbdrd.c (100%)
- rename drivers/phy/{ => samsung}/phy-exynos5250-sata.c (100%)
- rename drivers/phy/{ => samsung}/phy-exynos5250-usb2.c (100%)
- rename drivers/phy/{ => samsung}/phy-s5pv210-usb2.c (100%)
- rename drivers/phy/{ => samsung}/phy-samsung-usb2.c (100%)
- rename drivers/phy/{ => samsung}/phy-samsung-usb2.h (100%)
- create mode 100644 drivers/phy/st/Kconfig
- create mode 100644 drivers/phy/st/Makefile
- rename drivers/phy/{ => st}/phy-miphy28lp.c (100%)
- rename drivers/phy/{ => st}/phy-spear1310-miphy.c (100%)
- rename drivers/phy/{ => st}/phy-spear1340-miphy.c (100%)
- rename drivers/phy/{ => st}/phy-stih407-usb.c (100%)
- create mode 100644 drivers/phy/ti/Kconfig
- create mode 100644 drivers/phy/ti/Makefile
- rename drivers/phy/{ => ti}/phy-da8xx-usb.c (100%)
- rename drivers/phy/{ => ti}/phy-dm816x-usb.c (100%)
- rename drivers/phy/{ => ti}/phy-omap-control.c (100%)
- rename drivers/phy/{ => ti}/phy-omap-usb2.c (100%)
- rename drivers/phy/{ => ti}/phy-ti-pipe3.c (100%)
- rename drivers/phy/{ => ti}/phy-tusb1210.c (99%)
- rename drivers/phy/{ => ti}/phy-twl4030-usb.c (100%)
- rename {drivers => include/linux}/phy/ulpi_phy.h (100%)
+Compared to v1, all channels whose values are calculated using parameters
+depending on the applied gain have been transformed in "processed" channels.
+
+Gain selection procedure is performed in kernel space, and gain-dependent
+values (current sense amplifier gain and offset) are not exposed to userspace
+anymore.
+
+output reported from iio_info tool:
+iio:device0: max9611_vdd
+                6 channels found:
+                        voltage0:  (input)
+                        1 channel-specific attributes found:
+                                attr 0: input value: 4.085000000
+                        voltage1:  (input)
+                        3 channel-specific attributes found:
+                                attr 0: scale value: 14
+                                attr 1: offset value: 1
+                                attr 2: raw value: 59
+                        shunt:  (input)
+                        2 channel-specific attributes found:
+                                attr 0: resistor_power value: 5000
+                                attr 1: resistor_current value: 5000
+                        power:  (input)
+                        1 channel-specific attributes found:
+                                attr 0: input value: 663.404000000
+                        temp:  (input)
+                        2 channel-specific attributes found:
+                                attr 0: scale value: 0.480076812
+                                attr 1: raw value: 59
+                        current:  (input)
+                        1 channel-specific attributes found:
+                                attr 0: input value: 817.000000000
+
+Tested on Salvator-X M3-W board.
+
+Thanks
+   j
+
+v1 -> v2:
+- Drop wildcard (max961x) in driver, documentation and dt-bindings. Use
+  max9611 instead.
+- Make 3 processed channels for csa voltage, csa current and power load
+- Remove wrapper functions around i2c buffer access
+- Add locking in read_raw()
+- Make 2 separate attributes for shunt resistor: current and power
+- Renamed shunt resistor attribute
+- Fixed several review comments
+
+Jacopo Mondi (4):
+  Documentation: dt-bindings: iio: Add max9611 ADC
+  iio: Documentation: Add max9611 sysfs documentation
+  iio: adc: Add Maxim max9611 ADC driver
+  arm64: dts: salvator-x: Add current sense amplifiers
+
+
+ .../ABI/testing/sysfs-bus-iio-adc-max9611          |  16 +
+ .../devicetree/bindings/iio/adc/max9611.txt        |  27 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  18 +
+ drivers/iio/adc/Kconfig                            |  10 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/max9611.c                          | 590 +++++++++++++++++++++
+ 6 files changed, 662 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/max9611.txt
+ create mode 100644 drivers/iio/adc/max9611.c
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
