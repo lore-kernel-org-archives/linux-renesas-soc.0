@@ -1,66 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35934 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbdC2S0S (ORCPT
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:33985 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754242AbdCXCQf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 14:26:18 -0400
-Received: by mail-lf0-f41.google.com with SMTP id x137so14320687lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Mar 2017 11:26:16 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170329182612.448637615@cogentembedded.com>
-Date: Wed, 29 Mar 2017 21:26:09 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 1/1] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux data
+        Thu, 23 Mar 2017 22:16:35 -0400
+Date: Thu, 23 Mar 2017 21:16:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] media: platform: rcar_imr: add IMR-LSX3 support
+Message-ID: <20170324021632.xp3xnrgklqdeixq6@rob-hp-laptop>
+References: <20170316190000.216761731@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-add-missing-HSCIF1-pinmux-data.patch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170316190000.216761731@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R8A7791 PFC driver  was apparently based on the preliminary revisions
-of  the  user's manual, which  omitted the HSCIF1 group E signals in  the
-IPSR4 register description. This would cause HSCIF1's probe  to fail with
-the messages like below:
+On Thu, Mar 16, 2017 at 09:59:50PM +0300, Sergei Shtylyov wrote:
+> Add support for the image renderer light SRAM extended 3 (IMR-LSX3) found
+> only in the R-Car V2H (R8A7792) SoC.  It differs  from IMR-LX4 in that it
+> supports only planar video formats but can use the video capture data for
+> the textures.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> This patch  is against the 'media_tree.git' repo's 'master' branch plus the
+> latest version of  the Renesas IMR driver...
+> 
+> Changes in version 2:
+> - renamed *enum* 'imr_gen' to 'imr_type' and the *struct* field of this type
+>   from 'gen' to 'type';
+> - rename *struct* 'imr_type' to 'imr_info' and the fields/variables of this type
+>   from 'type' to 'info';
+> - added comments to IMR-LX4 only CMRCR2 bits;
+> - added IMR type check to the WTS instruction writing to CMRCCR2.
+> 
+>  Documentation/devicetree/bindings/media/rcar_imr.txt |   11 +
 
-sh-pfc e6060000.pfc: cannot locate data/mark enum_id for mark 1989
-sh-sci e62c8000.serial: Error applying setting, reverse things back
-sh-sci: probe of e62c8000.serial failed with error -22
+Acked-by: Rob Herring <robh@kernel.org>
 
-Add the neceassary PINMUX_IPSR_MSEL() invocations for the HSCK1_E,
-HCTS1#_E, and HRTS1#_E signals...
-
-Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: stable@vger.kernel.org
-
----
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    3 +++
- 1 file changed, 3 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1010,14 +1010,17 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP4_12_10, SCL2, SEL_IIC2_0),
- 	PINMUX_IPSR_MSEL(IP4_12_10, GPS_CLK_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_12_10, GLO_Q0_D, SEL_GPS_3),
-+	PINMUX_IPSR_MSEL(IP4_12_10, HSCK1_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_GPSR(IP4_15_13, SSI_WS2),
- 	PINMUX_IPSR_MSEL(IP4_15_13, SDA2, SEL_IIC2_0),
- 	PINMUX_IPSR_MSEL(IP4_15_13, GPS_SIGN_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_15_13, RX2_E, SEL_SCIF2_4),
- 	PINMUX_IPSR_MSEL(IP4_15_13, GLO_Q1_D, SEL_GPS_3),
-+	PINMUX_IPSR_MSEL(IP4_15_13, HCTS1_N_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_GPSR(IP4_18_16, SSI_SDATA2),
- 	PINMUX_IPSR_MSEL(IP4_18_16, GPS_MAG_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_18_16, TX2_E, SEL_SCIF2_4),
-+	PINMUX_IPSR_MSEL(IP4_18_16, HRTS1_N_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_GPSR(IP4_19, SSI_SCK34),
- 	PINMUX_IPSR_GPSR(IP4_20, SSI_WS34),
- 	PINMUX_IPSR_GPSR(IP4_21, SSI_SDATA3),
+>  drivers/media/platform/rcar_imr.c                    |  106 +++++++++++++++----
+>  2 files changed, 97 insertions(+), 20 deletions(-)
