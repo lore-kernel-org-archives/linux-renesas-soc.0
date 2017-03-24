@@ -1,59 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753340AbdCTI72 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/32] arm64: dts: r8a7795: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-Date: Mon, 20 Mar 2017 09:57:29 +0100
-Message-Id: <71585040b77e7b388708dc35bdc49f106fa55a4a.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        chris.brandt@renesas.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/8] Renesas RZ/A1 pin and gpio controller
+Date: Fri, 24 Mar 2017 16:22:07 +0100
+Message-Id: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Hello!
 
->>From PSCI v1.0, Suspend-to-RAM is supported via SYSTEM_SUSPEND PSCI
-function call. Hence, upgrade PSCI version for R-Car H3 to support
-Suspend-to-RAM.
+Third round for Renesas RZ/A1 PFC gpio and pin controller.
 
-The Suspend-to-RAM is highly dependent on ARM Trusted Firwmare support
-since necessary callback functions will be registered after a query
-to ARM Trusted Firmware about SYSTEM_SUSPEND support.
+V3 fixes review comments on grammar and spelling by Geert.
+Some other fixes from Geert's review as update of function argument names
+to reflect the function purpose (s/offset/[pin|bit]), use irqsave/irqrestore
+version of spinlocks locking/unlocking methods and other style fixes.
 
-Since PSCI v1.0 is backward compatible with PSCI v0.2, CPU Hotplug and
-CPUIdle should be able to work normally with this change.
+Still an open question on the use of "pins" or "renesas,pins" property in
+device tree bindings:
+https://www.spinics.net/lists/linux-renesas-soc/msg12765.html
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Keep "arm,psci-0.2"]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested on Genmai and RSK boards with SCIF, I2c and GPIO (genmai) and SCIF, I2c,
+SDHI and ethernet on RSK (thanks Chris).
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 3573872974e0..c1e00a3e7c45 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -29,7 +29,7 @@
- 	};
- 
- 	psci {
--		compatible = "arm,psci-0.2";
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
- 	};
- 
+Thanks
+   j
+
+v1 -> v2:
+- change pin configuration flags as suggested by Chris
+- gpio set direction function fixed as suggested by Chris
+- add some more example on pin configuration flag usage to dt-binding doc
+- fix gpio-controller names to remove unit address as suggested by Geert
+- some comments chopped here and there to make the driver less verbose
+
+v2 -> v3:
+- fix grammar and syntax in comment and documentation
+- fix code style (reverse xmas tree ordering in variable declaration)
+- use irqsave/irqrestore in spinlock lock/unlock
+- use devm_ version of kasprintf (memory returned was not properly free)
+- use bitops.h operation ffs and fls to make sure a single bit is set in pmx
+  mask
+- Add Geert's reviewed-by to DTS patches
+
+Jacopo Mondi (8):
+  pinctrl: Renesas RZ/A1 pin and gpio controller
+  dt-bindings: pinctrl: Add RZ/A1 bindings doc
+  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+  arm: dts: r7s72100: Add pin controller node
+  arm: dts: genmai: Add SCIF2 pin group
+  arm: dts: genmai: Add RIIC2 pin group
+  arm: dts: genmai: Add user led device nodes
+  arm: dts: genmai: Add ethernet pin group
+
+ .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 143 +++
+ arch/arm/boot/dts/r7s72100-genmai.dts              |  68 ++
+ arch/arm/boot/dts/r7s72100.dtsi                    |  80 ++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-rza1.c                     | 961 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  36 +
+ 7 files changed, 1299 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rza1.c
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
+
