@@ -1,42 +1,72 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>
-CC: Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33915 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756995AbdCXJpk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Mar 2017 05:45:40 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170324094054.GA7422@verge.net.au>
+References: <20170209133803.21539-1-chris.brandt@renesas.com>
+ <CAMuHMdXRD3o7KdaADvPYxzeuEVo44nRVWHfCverPc+9s=0owPA@mail.gmail.com>
+ <20170324070228.GI1319@verge.net.au> <CAMuHMdUJMEjb8UhaHHK3aE2uEoUpKFtSFXLhYwgJHKu9YDeVHQ@mail.gmail.com>
+ <20170324094054.GA7422@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 24 Mar 2017 10:45:37 +0100
+Message-ID: <CAMuHMdWdOXiwjXXidhCVEBeUHeevZm8yDDCdXcGohgEXvrCU-Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r7s72100: add power-domains to sdhi
+To: Simon Horman <horms@verge.net.au>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: r7s72100: add power-domains to sdhi
-Date: Fri, 24 Mar 2017 11:17:25 +0000
-Message-ID: <SG2PR06MB116573C9325106B5ED4580578A3E0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170209133803.21539-1-chris.brandt@renesas.com>
- <CAMuHMdXRD3o7KdaADvPYxzeuEVo44nRVWHfCverPc+9s=0owPA@mail.gmail.com>
- <20170324070228.GI1319@verge.net.au>
- <CAMuHMdUJMEjb8UhaHHK3aE2uEoUpKFtSFXLhYwgJHKu9YDeVHQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUJMEjb8UhaHHK3aE2uEoUpKFtSFXLhYwgJHKu9YDeVHQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gRnJpZGF5LCBNYXJjaCAyNCwgMjAxNywgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+
-IFRoZSBmaXhlcyB0YWcgYWJvdmUgaW5kaWNhdGVzIHRoaXMgaXMgYSBmaXggZm9yIHY0LjEwLCBo
-b3dldmVyLCB3aGVuIEkNCj4gPiB0cmllZCB0byBhcHBseSBpdCBvbiB0b3Agb2YgdjQuMTEtcmMx
-IHRoZXJlIHdhcyBhIGNvbmZsaWN0LiAgU28gSQ0KPiA+IHRoaW5rIGEgYmFja3BvcnQgd2lsbCBi
-ZSByZXF1aXJlZCBpZiB3ZSB3YW50IGl0IHRvIGJlIGNvbnNpZGVyZWQgZm9yDQo+ID4gdjQuMTEg
-YW5kIGJlIGNvbnNpZGVyZWQgZm9yIGFuZCBpbiB0dXJuIHY0LjEwLXN0YWJsZS4NCj4gDQo+IFRo
-YXQncyBiZWNhdXNlIG9mIGNvbW1pdCAzZDJhYmRhMDJhZDJkMDZkDQo+ICgiQVJNOiBkdHM6IHI3
-czcyMTAwOiB1cGRhdGUgc2RoaSBjbG9jayBiaW5kaW5ncyIpDQoNCg0KQmV0d2VlbiB0aGUgdHdv
-LCAidXBkYXRlIHNkaGkgY2xvY2sgYmluZGluZ3MiIGlzIG1vcmUgaW1wb3J0YW50IHRoaXMgdGhp
-cyBwYXRjaCAoImFkZCBwb3dlci1kb21haW5zIikuDQpXaXRob3V0ICJ1cGRhdGUgc2RoaSBjbG9j
-ayBiaW5kaW5ncyIsIHRoZSBTREhJIC9taWdodC8gbm90IHdvcmsuDQoNCg0KQnV0LCAidXBkYXRl
-IHNkaGkgY2xvY2sgYmluZGluZ3MiLCBhbHNvIHJlbGllcyBvbiB0aGUgZHJpdmVyIHVwZGF0ZSAz
-NGExNjU0NzA2YzYgKCJtbWM6IHNoX21vYmlsZV9zZGhpOiBhZGQgc3VwcG9ydCBmb3IgMiBjbG9j
-a3MiKS4NClRoYXQgb25lIGlzIGluIHY0LjExLXJjMSwgYnV0IG5vdCBpbiA0LjEwLjUuDQoNCkkg
-anVzdCBub3RpY2VkIG5vdyB0aGF0IDM0YTE2NTQ3MDZjNiBkb2VzIG5vdCBoYXZlICJGaXhlcyIg
-aW4gdGhlIGNvbW1pdCBsb2csIHNvIGl0IGlzIHByb2JhYmx5IG5vdCBtYXJrZWQgdG8gZ28gaW50
-byB2NC4xMC1zdGFibGUsIHNvIGluIHRoYXQgY2FzZSBiYWNrcG9ydGluZyB0aGUgZHRzaSBpcyBw
-b2ludGxlc3MuDQoNCg0KQ2hyaXMNCg0K
+Hi Simon,
+
+On Fri, Mar 24, 2017 at 10:40 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Mar 24, 2017 at 08:55:44AM +0100, Geert Uytterhoeven wrote:
+>> On Fri, Mar 24, 2017 at 8:02 AM, Simon Horman <horms@verge.net.au> wrote:
+>> > On Wed, Mar 22, 2017 at 02:25:04PM +0100, Geert Uytterhoeven wrote:
+>> >> (this time reply-to-all)
+>> >>
+>> >> On Thu, Feb 9, 2017 at 2:38 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+>> >> > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> >> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+>> >> > Fixes: 66474697923c ("ARM: dts: r7s72100: add sdhi to device tree")
+>> >>
+>> >> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> >
+>> > Thanks, I have queued this up for v4.12.
+>> >
+>> > The fixes tag above indicates this is a fix for v4.10, however, when I
+>> > tried to apply it on top of v4.11-rc1 there was a conflict.  So I think a
+>> > backport will be required if we want it to be considered for v4.11 and be
+>> > considered for and in turn v4.10-stable.
+>>
+>> That's because of commit 3d2abda02ad2d06d
+>> ("ARM: dts: r7s72100: update sdhi clock bindings")
+>>
+>> > This makes things a bit messy with regards to conflicts between v4.11 and
+>> > v4.12 and I'm inclined to pass on the backport.
+>>
+>> If you ever want to backport, you'll have two backport changes too the
+>> SDHI driver, too.
+>
+> Is that the case if only this patch (and not 3d2abda02ad2d06d) is backported?
+
+No, but if you backport this patch only, you'll have to handle the conflicts...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
