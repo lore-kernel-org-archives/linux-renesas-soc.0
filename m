@@ -1,44 +1,79 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <SRS0=VNCf=2K=ideasonboard.com=kieran.bingham+renesas@kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH 1/3] v4l: vsp1: Register pipe with output WPF
-Date: Wed,  1 Mar 2017 13:12:54 +0000
-Message-Id: <c49f9bbdc3061afda54dfeab3b0d05c309a2e0c4.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.79abe454b4a405227fcacc23f1b6ba624ee99cf0.1488373517.git-series.kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: linux-serial@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH 2/2] serial: sh-sci: Move uart_register_driver call to device probe
+Date: Fri, 24 Mar 2017 17:26:34 +0100
+Message-Id: <20170324162634.8880-3-sjoerd.simons@collabora.co.uk>
+In-Reply-To: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
+References: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DRM object does not register the pipe with the WPF object. This is
-used internally throughout the driver as a means of accessing the pipe.
-As such this breaks operations which require access to the pipe from WPF
-interrupts.
+uart_register_driver call binds the driver to a specific device
+node through tty_register_driver call. This should typically
+happen during device probe call.
 
-Register the pipe inside the WPF object after it has been declared as
-the output.
+In a multiplatform scenario, it is possible that multiple serial
+drivers are part of the kernel. Currently the driver registration fails
+if multiple serial drivers with overlapping major/minor numbers are
+included.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+
 ---
- drivers/media/platform/vsp1/vsp1_drm.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index cd209dccff1b..8e2aa3f8e52f 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -596,6 +596,7 @@ int vsp1_drm_init(struct vsp1_device *vsp1)
- 	pipe->bru = &vsp1->bru->entity;
- 	pipe->lif = &vsp1->lif->entity;
- 	pipe->output = vsp1->wpf[0];
-+	pipe->output->pipe = pipe;
+ drivers/tty/serial/sh-sci.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 9a47cc4f16a2..7c1c0c08459e 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3063,6 +3063,12 @@ static int sci_probe_single(struct platform_device *dev,
+ 		return -EINVAL;
+ 	}
  
- 	return 0;
++	if (!sci_uart_driver.state) {
++		ret = uart_register_driver(&sci_uart_driver);
++		if (ret)
++			return ret;
++	}
++
+ 	ret = sci_init_single(dev, sciport, index, p, false);
+ 	if (ret)
+ 		return ret;
+@@ -3186,24 +3192,17 @@ static struct platform_driver sci_driver = {
+ 
+ static int __init sci_init(void)
+ {
+-	int ret;
+-
+ 	pr_info("%s\n", banner);
+ 
+-	ret = uart_register_driver(&sci_uart_driver);
+-	if (likely(ret == 0)) {
+-		ret = platform_driver_register(&sci_driver);
+-		if (unlikely(ret))
+-			uart_unregister_driver(&sci_uart_driver);
+-	}
+-
+-	return ret;
++	return platform_driver_register(&sci_driver);
  }
+ 
+ static void __exit sci_exit(void)
+ {
+ 	platform_driver_unregister(&sci_driver);
+-	uart_unregister_driver(&sci_uart_driver);
++
++	if (sci_uart_driver.state)
++		uart_unregister_driver(&sci_uart_driver);
+ }
+ 
+ #ifdef CONFIG_SERIAL_SH_SCI_CONSOLE
 -- 
-git-series 0.9.1
+2.11.0
