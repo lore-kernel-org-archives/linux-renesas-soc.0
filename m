@@ -1,42 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33942 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935097AbdCJNTY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:19:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/13] ARM: dts: alt: Drop superfluous status update for frequency override
-Date: Fri, 10 Mar 2017 14:19:11 +0100
-Message-Id: <1489151956-19270-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
-References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 24 Mar 2017 16:47:32 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: Re: [PATCH 1/2] serial: pl010: Move uart_register_driver call to
+ device probe
+Message-ID: <20170324164732.GJ7909@n2100.armlinux.org.uk>
+References: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
+ <20170324162634.8880-2-sjoerd.simons@collabora.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170324162634.8880-2-sjoerd.simons@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The scif_clk device node is already enabled in r8a7794.dtsi, so there is
-no need to update its status again.
+On Fri, Mar 24, 2017 at 05:26:33PM +0100, Sjoerd Simons wrote:
+> uart_register_driver call binds the driver to a specific device
+> node through tty_register_driver call. This should typically
+> happen during device probe call.
+> 
+> In a multiplatform scenario, it is possible that multiple serial
+> drivers are part of the kernel. Currently the driver registration fails
+> if multiple serial drivers with overlapping major/minor numbers are
+> included.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 1 -
- 1 file changed, 1 deletion(-)
+This is racy.  The driver model locking is on a _per_ device basis,
+it is not on a per driver basis.
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 569e3f0e97a51804..3fcf76b8e923be86 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -375,7 +375,6 @@
- 
- &scif_clk {
- 	clock-frequency = <14745600>;
--	status = "okay";
- };
- 
- &qspi {
+It is entirely possible for a driver to be probed by two devices at
+once, possibly on two different CPUs.  Checking the state of the
+UART driver structure and then registering it means there is a window
+where we could end up with two CPUs registering the same UART driver
+at the same time, which would cause things to go wrong.
+
+Therefore, this needs some form of locking.
+
 -- 
-2.7.4
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
