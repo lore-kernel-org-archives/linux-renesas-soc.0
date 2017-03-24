@@ -1,158 +1,107 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33477 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751142AbdCZJIB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 26 Mar 2017 05:08:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 26 Mar 2017 11:07:58 +0200
-Message-ID: <CAMuHMdWojCNtJBQxP6E+hdscCQ7U28RGWsPfhXidxJDu-aTQOw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] iio: adc: Maxim max9611 driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Jonathan Cameron <jic23@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 0/4] iio: adc: Maxim max9611 driver
+Date: Fri, 24 Mar 2017 16:28:39 +0100
+Message-Id: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo, Jonathan,
+Hello!
 
-On Fri, Mar 24, 2017 at 4:28 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Third round for Maxim max9611/max9612 high-side current sense amplifier driver.
->
-> For reference, a simplified integration schematic drawing is here reported:
->
->  ----o----/\/\/-----o-------|LOAD|---
->      |    shunt     |
->  ____|______________|___
->  |  RS+            RS-  |
->  |   |-----gain-----|   |
->  |          |           |
->  |          |           |
->  |max9611   |->| ADC |===== I2c
->  |______________________|
->
-> public datasheet available at
-> https://datasheets.maximintegrated.com/en/ds/MAX9611-MAX9612.pdf
->
-> In v2 all channels whose values are calculated using parameters
-> depending on the applied gain have been transformed in "processed" channels.
->
-> In v3 fixed DT bindings to use a more generic name for ADC nodes, and shunt
-> resistor description property.
->
-> output reported from iio_info tool:
-> iio:device0: max9611_vdd
->                 6 channels found:
->                         voltage0:  (input)
->                         1 channel-specific attributes found:
->                                 attr 0: input value: 4.085000000
->                         voltage1:  (input)
->                         3 channel-specific attributes found:
->                                 attr 0: scale value: 14
->                                 attr 1: offset value: 1
->                                 attr 2: raw value: 59
->                         shunt:  (input)
->                         2 channel-specific attributes found:
->                                 attr 0: resistor_power value: 5000
->                                 attr 1: resistor_current value: 5000
->                         power:  (input)
->                         1 channel-specific attributes found:
->                                 attr 0: input value: 663.404000000
->                         temp:  (input)
->                         2 channel-specific attributes found:
->                                 attr 0: scale value: 0.480076812
->                                 attr 1: raw value: 59
->                         current:  (input)
->                         1 channel-specific attributes found:
->                                 attr 0: input value: 817.000000000
+Third round for Maxim max9611/max9612 high-side current sense amplifier driver.
 
-I'm a bit puzzled about Jonathan's request to have two separate attributes
-for the single shunt resistor value.  While they do apply to two calculated
-channels, they're the same physical property, and can never be different.
+For reference, a simplified integration schematic drawing is here reported:
 
-Furthermore, in the above output they do not show up as attributes of the
-"power" and "current" channels, but as attributes of a separate "shunt"
-channel. Is that intentional?
+ ----o----/\/\/-----o-------|LOAD|---
+     |    shunt     |
+ ____|______________|___
+ |  RS+            RS-  |
+ |   |-----gain-----|   |
+ |          |           |
+ |          |           |
+ |max9611   |->| ADC |===== I2c
+ |______________________|
 
-For comparison, with ina226 on BayLibre ACME, which uses a similar
-configuration, I get:
+public datasheet available at
+https://datasheets.maximintegrated.com/en/ds/MAX9611-MAX9612.pdf
 
-    iio:device0: ina226
-        5 channels found:
-            voltage0:  (input)
-            6 channel-specific attributes found:
-                attr 0: scale value: 0.002500000
-                attr 1: raw value: 979
-                attr 2: integration_time value: 0.001100
-                attr 3: index value: 0
-                attr 4: en value: 0
-                attr 5: type value: le:u16/16>>0
-            voltage1:  (input)
-            6 channel-specific attributes found:
-                attr 0: integration_time value: 0.001100
-                attr 1: raw value: 4007
-                attr 2: scale value: 1.250000000
-                attr 3: en value: 0
-                attr 4: index value: 1
-                attr 5: type value: le:u16/16>>0
-            power2:  (input)
-            5 channel-specific attributes found:
-                attr 0: raw value: 49
-                attr 1: scale value: 25.000000000
-                attr 2: index value: 2
-                attr 3: type value: le:u16/16>>0
-                attr 4: en value: 0
-            current3:  (input)
-            5 channel-specific attributes found:
-                attr 0: scale value: 1
-                attr 1: raw value: 245
-                attr 2: type value: le:u16/16>>0
-                attr 3: index value: 3
-                attr 4: en value: 0
-            timestamp:  (input)
-            3 channel-specific attributes found:
-                attr 0: type value: le:s64/64>>0
-                attr 1: index value: 4
-                attr 2: en value: 0
-        6 device-specific attributes found:
-                attr 0: in_oversampling_ratio value: 4
-                attr 1: in_shunt_resistor value: 10000
-                attr 2: in_allow_async_readout value: 0
-                attr 3: integration_time_available value: 0.000140
-0.000204 0.000332 0.000588 0.001100 0.002116 0.004156 0.008244
-                attr 4: in_sampling_frequency value: 114
-                attr 5: in_active value: 1
+In v2 all channels whose values are calculated using parameters
+depending on the applied gain have been transformed in "processed" channels.
 
-(note that the last "in_active" property does not exist in the mainline
- version of the driver).
+In v3 fixed DT bindings to use a more generic name for ADC nodes, and shunt
+resistor description property.
 
-Here the shunt resistor value is a (single) device-specific attribute, which
-makes more sense to me, as in-se the shunt resistor value is not a property
-of just the "current" and "power" channels, but a property of the (external)
-device configuration.
+output reported from iio_info tool:
+iio:device0: max9611_vdd
+                6 channels found:
+                        voltage0:  (input)
+                        1 channel-specific attributes found:
+                                attr 0: input value: 4.085000000
+                        voltage1:  (input)
+                        3 channel-specific attributes found:
+                                attr 0: scale value: 14
+                                attr 1: offset value: 1
+                                attr 2: raw value: 59
+                        shunt:  (input)
+                        2 channel-specific attributes found:
+                                attr 0: resistor_power value: 5000
+                                attr 1: resistor_current value: 5000
+                        power:  (input)
+                        1 channel-specific attributes found:
+                                attr 0: input value: 663.404000000
+                        temp:  (input)
+                        2 channel-specific attributes found:
+                                attr 0: scale value: 0.480076812
+                                attr 1: raw value: 59
+                        current:  (input)
+                        1 channel-specific attributes found:
+                                attr 0: input value: 817.000000000
 
-Thanks!
+Tested on Salvator-X M3-W board.
 
-Gr{oetje,eeting}s,
+Thanks
+   j
 
-                        Geert
+v1 -> v2:
+- Drop wildcard (max961x) in driver, documentation and dt-bindings. Use
+  max9611 instead.
+- Make 3 processed channels for csa voltage, csa current and power load
+- Remove wrapper functions around i2c buffer access
+- Add locking in read_raw()
+- Make 2 separate attributes for shunt resistor: current and power
+- Renamed shunt resistor attribute
+- Fixed several review comments
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+v2 -> v3:
+- Incorporated Geert's suggestions on using a more generic name for ADC nodes
+  in device tree
+- Changed "maxim,shunt-resistor-uohm" to "shunt-resistor-uohm"
+- Update documentation accordingly to the two previous changes
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+Jacopo Mondi (4):
+  Documentation: dt-bindings: iio: Add max9611 ADC
+  iio: Documentation: Add max9611 sysfs documentation
+  iio: adc: Add Maxim max9611 ADC driver
+  arm64: dts: salvator-x: Add current sense amplifiers
+
+ .../ABI/testing/sysfs-bus-iio-adc-max9611          |  16 +
+ .../devicetree/bindings/iio/adc/max9611.txt        |  26 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  18 +
+ drivers/iio/adc/Kconfig                            |  10 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/max9611.c                          | 590 +++++++++++++++++++++
+ 6 files changed, 661 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/max9611.txt
+ create mode 100644 drivers/iio/adc/max9611.c
+
+-- 
+2.7.4
+
