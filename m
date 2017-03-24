@@ -1,58 +1,64 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:34287 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965012AbdCXJNj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Mar 2017 05:13:39 -0400
+Message-ID: <1490346809.3068.1.camel@pengutronix.de>
 Subject: Re: [PATCH] backlight: pwm_bl: Fix GPIO out for unimplemented
  .get_direction()
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <thierry.reding@gmail.com>,
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
         Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <1490203285-28324-1-git-send-email-geert+renesas@glider.be>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
         linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <c00f689f-dae6-14d6-55d3-b1b44db19dc1@linaro.org>
-Date: Fri, 24 Mar 2017 16:42:53 +0000
-MIME-Version: 1.0
+Date: Fri, 24 Mar 2017 10:13:29 +0100
 In-Reply-To: <1490203285-28324-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+References: <1490203285-28324-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 22/03/17 17:21, Geert Uytterhoeven wrote:
+On Wed, 2017-03-22 at 18:21 +0100, Geert Uytterhoeven wrote:
 > Commit 7613c922315e308a ("backlight: pwm_bl: Move the checks for initial
 > power state to a separate function") not just moved some code, but made
 > slight changes in semantics.
->
+> 
 > If a gpiochip doesn't implement the optional .get_direction() callback,
 > gpiod_get_direction always returns -EINVAL, which is never equal to
 > GPIOF_DIR_IN, leading to the GPIO not being configured for output.
 >
 > To avoid this, invert the test and check for not GPIOF_DIR_OUT instead,
 > like the original code did.
->
+> 
 > This restores the display on r8a7740/armadillo.
->
+> 
 > Fixes: 7613c922315e308a ("backlight: pwm_bl: Move the checks for initial power state to a separate function")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Daniel Thommpson <daniel.thompson@linaro.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
+regards
+Philipp
 
 > ---
 >  drivers/video/backlight/pwm_bl.c | 7 ++++---
 >  1 file changed, 4 insertions(+), 3 deletions(-)
->
+> 
 > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
 > index d7efcb632f7d9dde..002f1ce22bd02032 100644
 > --- a/drivers/video/backlight/pwm_bl.c
 > +++ b/drivers/video/backlight/pwm_bl.c
 > @@ -297,14 +297,15 @@ static int pwm_backlight_probe(struct platform_device *pdev)
 >  	}
->
+>  
 >  	/*
 > -	 * If the GPIO is configured as input, change the direction to output
 > -	 * and set the GPIO as active.
@@ -67,6 +73,5 @@ Acked-by: Daniel Thommpson <daniel.thompson@linaro.org>
 > -	    gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN)
 > +	    gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
 >  		gpiod_direction_output(pb->enable_gpio, 1);
->
+>  
 >  	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
->
