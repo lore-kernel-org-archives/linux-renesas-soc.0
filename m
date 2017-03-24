@@ -1,46 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:44612 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754758AbdC1Kqd (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 06:46:33 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] ARM: dts: alt: Correct clock of DU1
-Date: Tue, 28 Mar 2017 12:45:32 +0200
-Message-Id: <1490697933-5849-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1490697933-5849-1-git-send-email-geert+renesas@glider.be>
-References: <1490697933-5849-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        chris.brandt@renesas.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 5/7] arm: dts: genmai: Add SCIF2 pin group
+Date: Fri, 24 Mar 2017 16:22:12 +0100
+Message-Id: <1490368934-12494-6-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The second channel of the display unit uses a different module clock
-than the first channel.
+Add pin configuration subnode for SCIF2 serial debug interface.
 
-Fixes: 876e7fb9f418fd86 ("ARM: shmobile: r8a7794: alt: Enable VGA port")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r7s72100-genmai.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 3fcf76b8e923be86..f1eea13cdf44371d 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -168,7 +168,7 @@
- 	status = "okay";
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 118a8e2..569c86a 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -11,6 +11,7 @@
  
- 	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
--		 <&mstp7_clks R8A7794_CLK_DU0>,
-+		 <&mstp7_clks R8A7794_CLK_DU1>,
- 		 <&x13_clk>, <&x2_clk>;
- 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+ 	model = "Genmai";
+@@ -36,6 +37,15 @@
+ 	};
+ };
+ 
++&pinctrl {
++
++	scif2_pins: serial2 {
++		/* P3_0 as TxD2; P3_2 as RxD2 */
++		renesas,pins = <PIN(3, 0) 6>,
++			       <PIN(3, 2) 4>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <13330000>;
+ };
+@@ -60,6 +70,9 @@
+ };
+ 
+ &scif2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif2_pins>;
++
+ 	status = "okay";
+ };
  
 -- 
 2.7.4
