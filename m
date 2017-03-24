@@ -1,87 +1,44 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Sun, 12 Mar 2017 14:38:51 +0900
-Message-Id: <148929713106.20744.12985371298983384075.sendpatchset@little-apple>
-In-Reply-To: <148929710090.20744.10912918031085568693.sendpatchset@little-apple>
-References: <148929710090.20744.10912918031085568693.sendpatchset@little-apple>
-Subject: [PATCH v3 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:34756 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934613AbdCXPRy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Mar 2017 11:17:54 -0400
+Received: by mail-io0-f177.google.com with SMTP id b140so3795409iof.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Mar 2017 08:17:53 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1490348373-11050-1-git-send-email-geert+renesas@glider.be>
+References: <1490348373-11050-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 24 Mar 2017 16:17:47 +0100
+Message-ID: <CACRpkdZqhYpYeMyNo7whAxUe=rHOW8Ho5eAaUDq3dra8aS_3Xw@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.12
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Mar 24, 2017 at 10:39 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Support the r8a7796 IPMMU by sharing feature flags between
-r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
-up the updated compat string.
+>         Hi Linus,
+>
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+>
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.12-tag1
+>
+> for you to fetch changes up to 3091ae775fae17084013021d01513bc1ad274e6a:
+>
+>   pinctrl: sh-pfc: Update info pointer after SoC-specific init (2017-03-21 11:21:55 +0100)
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Pulled into my devel branch in the pinctrl tree.
 
- Changes since V2:
- - Updated to include white list suppport
-
- Changes since V1:
- - None
-
- drivers/iommu/ipmmu-vmsa.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
---- 0024/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-03-12 14:14:32.550607110 +0900
-@@ -1058,8 +1058,9 @@ static bool ipmmu_slave_whitelist(struct
- 	return false;
- }
- 
--static const struct soc_device_attribute soc_r8a7795[] = {
-+static const struct soc_device_attribute soc_rcar_gen3[] = {
- 	{ .soc_id = "r8a7795", },
-+	{ .soc_id = "r8a7796", },
- 	{ /* sentinel */ }
- };
- 
-@@ -1082,7 +1083,7 @@ static int ipmmu_of_xlate_dma(struct dev
- 	}
- 
- 	/* For R-Car Gen3 use a white list to opt-in slave devices */
--	if (soc_device_match(soc_r8a7795) && !ipmmu_slave_whitelist(dev))
-+	if (soc_device_match(soc_rcar_gen3) && !ipmmu_slave_whitelist(dev))
- 		return -ENODEV;
- 
- 	return ipmmu_init_platform_device(dev);
-@@ -1127,7 +1128,7 @@ static const struct ipmmu_features ipmmu
- 	.twobit_imttbcr_sl0 = false,
- };
- 
--static const struct ipmmu_features ipmmu_features_r8a7795 = {
-+static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.use_ns_alias_offset = false,
- 	.has_cache_leaf_nodes = true,
- 	.has_eight_ctx = true,
-@@ -1141,7 +1142,10 @@ static const struct of_device_id ipmmu_o
- 		.data = &ipmmu_features_default,
- 	}, {
- 		.compatible = "renesas,ipmmu-r8a7795",
--		.data = &ipmmu_features_r8a7795,
-+		.data = &ipmmu_features_rcar_gen3,
-+	}, {
-+		.compatible = "renesas,ipmmu-r8a7796",
-+		.data = &ipmmu_features_rcar_gen3,
- 	}, {
- 		/* Terminator */
- 	},
-@@ -1333,6 +1337,8 @@ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "r
- 		 ipmmu_vmsa_iommu_of_setup);
- IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
- 		 ipmmu_vmsa_iommu_of_setup);
-+IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
-+		 ipmmu_vmsa_iommu_of_setup);
- #endif
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+Thanks!
+Linus Walleij
