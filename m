@@ -1,71 +1,72 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org> <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Mar 2017 15:22:23 +0200
-Message-ID: <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com>
-Subject: Re: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37860 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757379AbdCXPWn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Mar 2017 11:22:43 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        chris.brandt@renesas.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+Date: Fri, 24 Mar 2017 16:22:10 +0100
+Message-Id: <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Mar 24, 2017 at 4:22 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+Add dt-bindings for Renesas r7s72100 pin controller header file.
 
-> Add dt-bindings for Renesas r7s72100 pin controller header file.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 36 ++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
 
-> +/*
-> + * Pin is bi-directional.
-> + * An alternate function that needs both input/output functionalities shall
-> + * be configured as bidirectional.
-> + * Eg. SDA/SCL pins of an I2c interface.
-> + */
-> +#define BI_DIR                 (1 << 3)
-
-Any specific reason why this should not simply be added to
-include/linux/pinctrl/pinconf-generic.h
-as PIN_CONFIG_BIDIRECTIONAL and parsed in
-drivers/pinctrl/pinconf-generic.c
-from the (new) DT property "bidirectional" simply?
-
-> +/*
-> + * Flags used to ask software to drive the pin I/O direction overriding the
-> + * alternate function configuration.
-> + * Some alternate functions require software to force I/O direction of a pin,
-> + * overriding the designated one.
-> + * Refer to the HW manual to know when this flag shall be used.
-> + */
-> +#define SWIO_IN                        (1 << 4)
-> +#define SWIO_OUT               (1 << 5)
-
-What is wrong in doing this with generic pin config using
-PIN_CONFIG_INPUT_ENABLE and PIN_CONFIG_OUTPUT
-(ignoring the argument)?
-
-In the device tree use input-enable and add a new output-enable
-(with unspecified value) with proper description and DT bindings?
-
-And if you think these have no general applicability, by the end
-of the day they are *still* pin config, not magic flags we can choose to
-toss in with the muxing, so you can do what the Qualcomm driver
-does and add custom pin configurations extending the generic
-pin config, see drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-qcom,pull-up-strength etc.
-
-Yours,
-Linus Walleij
+diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+new file mode 100644
+index 0000000..170338b
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+@@ -0,0 +1,36 @@
++/*
++ * Defines macros and constants for Renesas RZ/A1 pin controller pin
++ * muxing functions.
++ */
++#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++
++#define RZA1_PINS_PER_PORT	16
++
++/* Create the pin index from its bank and position numbers */
++#define PIN(b, p)		((b) * RZA1_PINS_PER_PORT + (p))
++
++/*
++ * Flags to apply to alternate function configuration
++ * All of the following are mutually exclusive.
++ */
++
++/*
++ * Pin is bi-directional.
++ * An alternate function that needs both input/output functionalities shall
++ * be configured as bidirectional.
++ * Eg. SDA/SCL pins of an I2c interface.
++ */
++#define BI_DIR			(1 << 3)
++
++/*
++ * Flags used to ask software to drive the pin I/O direction overriding the
++ * alternate function configuration.
++ * Some alternate functions require software to force I/O direction of a pin,
++ * overriding the designated one.
++ * Refer to the HW manual to know when this flag shall be used.
++ */
++#define SWIO_IN			(1 << 4)
++#define SWIO_OUT		(1 << 5)
++
++#endif
+-- 
+2.7.4
