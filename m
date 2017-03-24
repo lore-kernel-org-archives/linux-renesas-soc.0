@@ -1,68 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63087 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1760000AbdCVO2w (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41010 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752836AbdCXNhz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 10:28:52 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Fri, 24 Mar 2017 09:37:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@sang-engineering.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/7] rtc: Reuse rtc-sh driver to support RZ/A1
-Date: Wed, 22 Mar 2017 10:27:47 -0400
-Message-Id: <20170322142754.30888-1-chris.brandt@renesas.com>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 2/2] arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0
+Date: Fri, 24 Mar 2017 14:37:45 +0100
+Message-Id: <1490362665-4422-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
+References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basically, the same RTC that was used in SuperH devices is now used in
-RZ/A1 devices. Therefore with some slight changes, that driver can be
-reused.
+Split off support for Salvator-X boards with the ES1.x revision of the
+R-Car H3 SoC into a separate file.  The main r8a7795-salvator-x.dts file
+now corresponds to Salvator-X with R-Car H3 ES2.0 or later.
 
-Additionally, since ARM architectures require Device Tree configurations,
-device tree support has been added.
-
-This was tested on RZ/A1H RSK board. Once the correct time was programmed
-into the RTC running off a 32.768kHz crystal, you can retain an accurate
-system clock between reboots (hard and soft) until power is finally removed
-from the board (there is no batter backup on the RSK board).
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 v2:
-* removed HAVE_CLK from Kconfig
-* when using DT, look for "fck" instead of "rtc0"
-* changed (res == NULL) to (!res)
-* added Reviewed-by for rtc-sh.c
-* added interrupt-names and clock-names
-* clocks now include counting sources
-* added clock-names "fck", "rtc_x1", "rtc_x3", "extal"
-* changed 'is a RTC' to 'is an RTC' in commit message
-* changed "rtc0" to "rtc"
-* Added clock nodes for RTC_X1 and RTC_X3 pin inputs
-* each commit now has a log message
+  - Use a separate file for ES1.x instead of for ES2.0, so
+    r8a7795-salvator-x.dts always corresponds to the board with the
+    latest SoC revision,
+  - Add a dash between SoC part number and revision, for compatibility
+    with the BSP,
+  - Enhance the hardware description from basic support to everything
+    already supported on ES1.x.
+---
+ arch/arm64/boot/dts/renesas/Makefile                                  | 1 +
+ .../renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts}    | 0
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts                    | 4 ++--
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+ copy arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts} (100%)
 
-
-Chris Brandt (7):
-  rtc: rtc-sh: add support for rza series
-  rtc: Add rtc-sh
-  ARM: dts: r7s72100: add rtc clock to device tree
-  ARM: dts: r7s72100: add RTC_X clock inputs to device tree
-  ARM: dts: r7s72100: add rtc to device tree
-  ARM: dts: rskrza1: set rtc_x1 clock value
-  ARM: dts: rskrza1: add rtc DT support
-
- Documentation/devicetree/bindings/rtc/rtc-sh.txt | 29 +++++++++++++++++++
- arch/arm/boot/dts/r7s72100-rskrza1.dts           |  8 +++++
- arch/arm/boot/dts/r7s72100.dtsi                  | 37 ++++++++++++++++++++++++
- drivers/rtc/Kconfig                              |  4 +--
- drivers/rtc/rtc-sh.c                             | 33 +++++++++++++++++----
- include/dt-bindings/clock/r7s72100-clock.h       |  3 ++
- 6 files changed, 107 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-sh.txt
-
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 1618e0a3c81d48bd..b6c723d8f6875f2d 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ 
+ always		:= $(dtb-y)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+similarity index 100%
+copy from arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+copy to arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 7758b479dd98d2e9..baf5d34653d27e28 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -32,11 +32,11 @@
+  */
+ 
+ /dts-v1/;
+-#include "r8a7795-es1.dtsi"
++#include "r8a7795.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+-	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
++	model = "Renesas Salvator-X board based on r8a7795 ES2.0+";
+ 	compatible = "renesas,salvator-x", "renesas,r8a7795";
+ 
+ 	aliases {
 -- 
-2.10.1
+2.7.4
