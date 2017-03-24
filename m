@@ -1,63 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56330 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbdCQQCG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Mar 2017 12:02:06 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-pm@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/7] thermal: rcar_gen3_thermal: add support for interrupt triggerd trip points
-Date: Fri, 17 Mar 2017 16:52:53 +0100
-Message-Id: <20170317155300.21566-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+        chris.brandt@renesas.com, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 7/7] arm: dts: genmai: Add user led device nodes
+Date: Fri, 24 Mar 2017 16:22:14 +0100
+Message-Id: <1490368934-12494-8-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Add device nodes for user leds on Genmai board.
 
-This series adds support for hardware backed trip point windows. It is
-based on top of v4.11-rc1 and is tested on R-Car H3 and M3-W.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r7s72100-genmai.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-The series starts out by fixing three issues (1/7, 2/7, 3/7) that should
-have been fixed by me before the initial driver where submitted to
-upstream. Sorry for not spotting the issues sooner.
-
-The series then extends the rcar_gen3_thermal driver with hardware
-interrupts for trip point windows by implementing the .set_trips()
-callback of struct thermal_zone_of_device_ops (4/7, 5/7). It then adds
-suspend and resume handlers so that the hardware interrupts are
-preserved across suspend/resume cycles (6/7, 7/7).
-
-* Changes since v1
-- Added check that at least one TSC is found
-- Record number of TSC in private data structure
-- Request interrupts separately from TSCs
-- Have only one function which controls both IRQ on and off
-- Check return value from of_thermal_get_ntrips()
-- Fixed spelling in commit messages
-- Add Reviewed-by tags
-
-Niklas Söderlund (7):
-  thermal: rcar_gen3_thermal: add delay in .thermal_init on r8a7796
-  thermal: rcar_gen3_thermal: remove unneeded mutex
-  thermal: rcar_gen3_thermal: check that TSC exists before memory
-    allocation
-  thermal: rcar_gen3_thermal: record and check number of TSCs found
-  thermal: rcar_gen3_thermal: enable hardware interrupts for trip points
-  thermal: rcar_gen3_thermal: store device match data in private
-    structure
-  thermal: rcar_gen3_thermal: add suspend and resume support
-
- drivers/thermal/rcar_gen3_thermal.c | 195 +++++++++++++++++++++++++++++++++---
- 1 file changed, 180 insertions(+), 15 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 30992b1..94b9ab7 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+@@ -35,6 +36,19 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 	};
++
++	leds {
++		status = "okay";
++		compatible = "gpio-leds";
++
++		led1 {
++			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
++		};
++
++		led2 {
++			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &pinctrl {
 -- 
-2.12.0
+2.7.4
