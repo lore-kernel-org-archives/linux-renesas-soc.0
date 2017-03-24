@@ -1,72 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33915 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756995AbdCXJpk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935031AbdCXJlC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 05:45:40 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170324094054.GA7422@verge.net.au>
-References: <20170209133803.21539-1-chris.brandt@renesas.com>
- <CAMuHMdXRD3o7KdaADvPYxzeuEVo44nRVWHfCverPc+9s=0owPA@mail.gmail.com>
- <20170324070228.GI1319@verge.net.au> <CAMuHMdUJMEjb8UhaHHK3aE2uEoUpKFtSFXLhYwgJHKu9YDeVHQ@mail.gmail.com>
- <20170324094054.GA7422@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Mar 2017 10:45:37 +0100
-Message-ID: <CAMuHMdWdOXiwjXXidhCVEBeUHeevZm8yDDCdXcGohgEXvrCU-Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r7s72100: add power-domains to sdhi
-To: Simon Horman <horms@verge.net.au>
+        Fri, 24 Mar 2017 05:41:02 -0400
+Date: Fri, 24 Mar 2017 10:40:55 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Chris Brandt <chris.brandt@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] ARM: dts: r7s72100: add power-domains to sdhi
+Message-ID: <20170324094054.GA7422@verge.net.au>
+References: <20170209133803.21539-1-chris.brandt@renesas.com>
+ <CAMuHMdXRD3o7KdaADvPYxzeuEVo44nRVWHfCverPc+9s=0owPA@mail.gmail.com>
+ <20170324070228.GI1319@verge.net.au>
+ <CAMuHMdUJMEjb8UhaHHK3aE2uEoUpKFtSFXLhYwgJHKu9YDeVHQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUJMEjb8UhaHHK3aE2uEoUpKFtSFXLhYwgJHKu9YDeVHQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Fri, Mar 24, 2017 at 08:55:44AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Mar 24, 2017 at 8:02 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Mar 22, 2017 at 02:25:04PM +0100, Geert Uytterhoeven wrote:
+> >> (this time reply-to-all)
+> >>
+> >> On Thu, Feb 9, 2017 at 2:38 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> >> > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> >> > Fixes: 66474697923c ("ARM: dts: r7s72100: add sdhi to device tree")
+> >>
+> >> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Thanks, I have queued this up for v4.12.
+> >
+> > The fixes tag above indicates this is a fix for v4.10, however, when I
+> > tried to apply it on top of v4.11-rc1 there was a conflict.  So I think a
+> > backport will be required if we want it to be considered for v4.11 and be
+> > considered for and in turn v4.10-stable.
+> 
+> That's because of commit 3d2abda02ad2d06d
+> ("ARM: dts: r7s72100: update sdhi clock bindings")
+> 
+> > This makes things a bit messy with regards to conflicts between v4.11 and
+> > v4.12 and I'm inclined to pass on the backport.
+> 
+> If you ever want to backport, you'll have two backport changes too the
+> SDHI driver, too.
 
-On Fri, Mar 24, 2017 at 10:40 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Mar 24, 2017 at 08:55:44AM +0100, Geert Uytterhoeven wrote:
->> On Fri, Mar 24, 2017 at 8:02 AM, Simon Horman <horms@verge.net.au> wrote:
->> > On Wed, Mar 22, 2017 at 02:25:04PM +0100, Geert Uytterhoeven wrote:
->> >> (this time reply-to-all)
->> >>
->> >> On Thu, Feb 9, 2017 at 2:38 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
->> >> > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
->> >> > Fixes: 66474697923c ("ARM: dts: r7s72100: add sdhi to device tree")
->> >>
->> >> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >
->> > Thanks, I have queued this up for v4.12.
->> >
->> > The fixes tag above indicates this is a fix for v4.10, however, when I
->> > tried to apply it on top of v4.11-rc1 there was a conflict.  So I think a
->> > backport will be required if we want it to be considered for v4.11 and be
->> > considered for and in turn v4.10-stable.
->>
->> That's because of commit 3d2abda02ad2d06d
->> ("ARM: dts: r7s72100: update sdhi clock bindings")
->>
->> > This makes things a bit messy with regards to conflicts between v4.11 and
->> > v4.12 and I'm inclined to pass on the backport.
->>
->> If you ever want to backport, you'll have two backport changes too the
->> SDHI driver, too.
->
-> Is that the case if only this patch (and not 3d2abda02ad2d06d) is backported?
-
-No, but if you backport this patch only, you'll have to handle the conflicts...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Is that the case if only this patch (and not 3d2abda02ad2d06d) is backported?
