@@ -1,51 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753116AbdCTI7O (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33834 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751227AbdCZItx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:14 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Sun, 26 Mar 2017 04:49:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <1490369323-13866-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org> <1490369323-13866-5-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 26 Mar 2017 10:49:50 +0200
+Message-ID: <CAMuHMdUA2FVaSnNo=jELEKe=ON4g2TuLV=GjhrqvBR33rr5ovQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] arm64: dts: salvator-x: Add current sense amplifiers
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/32] arm64: dts: r8a7795: salvator-x: Enable I2C for DVFS device
-Date: Mon, 20 Mar 2017 09:57:15 +0100
-Message-Id: <006ced572a3b2247639ce06443aff00704888001.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+Hi Jacopo,
 
-This patch enables I2C for DVFS device for for Salvator-X board on
-R8A7795 SoC.
+On Fri, Mar 24, 2017 at 4:28 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add device nodes for two Maxim max961x current sense amplifiers
+> sensing VDD_08 and DVFS_08 lines.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 7a8986edcdc0..dc1177c76aa5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -485,6 +485,10 @@
- 	clock-frequency = <22579200>;
- };
- 
-+&i2c_dvfs {
-+	status = "okay";
-+};
-+
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
