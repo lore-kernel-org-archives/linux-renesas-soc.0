@@ -1,82 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33136 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753932AbdC1JjR (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36512 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751227AbdCZIjM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 05:39:17 -0400
-Received: by mail-pg0-f66.google.com with SMTP id 79so20018820pgf.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 02:39:16 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Tue, 28 Mar 2017 18:33:01 +0900
-Message-Id: <149069358130.22662.6490709289181526281.sendpatchset@little-apple>
-In-Reply-To: <149069355375.22662.10367253365715059744.sendpatchset@little-apple>
-References: <149069355375.22662.10367253365715059744.sendpatchset@little-apple>
-Subject: [PATCH 03/03] arm64: dts: r8a7795: Tie USB2 and USB1 Host to IPMMU-HC
+        Sun, 26 Mar 2017 04:39:12 -0400
+MIME-Version: 1.0
+In-Reply-To: <1490369323-13866-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490369323-13866-1-git-send-email-jacopo+renesas@jmondi.org> <1490369323-13866-3-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 26 Mar 2017 10:38:24 +0200
+Message-ID: <CAMuHMdUMksHLC_0Nnhi=vWHTgQLbHMRdpWCCM4S3Bew+i1ffKA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] iio: Documentation: Add max9611 sysfs documentation
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Mar 24, 2017 at 4:28 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add documentation for max9611 driver.
+> Document attributes describing value of shunt resistor installed between
+> RS+ and RS- voltage sense inputs.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+> new file mode 100644
+> index 0000000..9c60824
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+> @@ -0,0 +1,16 @@
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_shunt_resistor_power
+> +Date:          March 2017
+> +KernelVersion: 4.12
+> +Contact:       linux-iio@vger.kernel.org
+> +Description:   The value of the shunt resistor used to compute power drain on
+> +                common input voltage pin (RS+). In micro Ohms.
+> +
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_shunt_resistor_current
+> +Date:          March 2017
+> +KernelVersion: 4.12
+> +Contact:       linux-iio@vger.kernel.org
+> +Description:   The value of the shunt resistor used to compute current flowing
+> +                between RS+ and RS- voltage sense inputs. In micro Ohms.
 
-Point the USB2.0 Host CH0, CH1 and CH2 devices to IPMMU-HC.
-This includes 3 channels of both EHCI and OHCI.
+I'd add a blank line here, to make it clear the following paragraph applies
+to both attributes above.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> +               This attributes describe a single physical component, exposed
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
+These attributes
 
---- 0004/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-28 18:13:26.230607110 +0900
-@@ -1551,6 +1551,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
-+			iommus = <&ipmmu_hc 4>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
-@@ -1563,6 +1564,7 @@
- 			clocks = <&cpg CPG_MOD 702>;
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
-+			iommus = <&ipmmu_hc 5>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
-@@ -1575,6 +1577,7 @@
- 			clocks = <&cpg CPG_MOD 701>;
- 			phys = <&usb2_phy2>;
- 			phy-names = "usb";
-+			iommus = <&ipmmu_hc 6>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 701>;
- 			status = "disabled";
-@@ -1587,6 +1590,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
-+			iommus = <&ipmmu_hc 4>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
-@@ -1599,6 +1603,7 @@
- 			clocks = <&cpg CPG_MOD 702>;
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
-+			iommus = <&ipmmu_hc 5>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
-@@ -1611,6 +1616,7 @@
- 			clocks = <&cpg CPG_MOD 701>;
- 			phys = <&usb2_phy2>;
- 			phy-names = "usb";
-+			iommus = <&ipmmu_hc 6>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 701>;
- 			status = "disabled";
+> +               as two distinct attributes as it is used to calculate two
+> +               different values.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
