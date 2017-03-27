@@ -1,83 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:35411 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751863AbdCEVyc (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36076 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753401AbdC0POa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 16:54:32 -0500
-From: Matthew Giassa <matthew@giassa.net>
-To: wsa@the-dreams.de
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        Matthew Giassa <matthew@giassa.net>
-Subject: [PATCH 1/2] Formatting updates to remove checkpatch warnings in ks_wlan_ioctl.h.
-Date: Sun,  5 Mar 2017 13:52:19 -0800
-Message-Id: <1488750740-2091-1-git-send-email-matthew@giassa.net>
+        Mon, 27 Mar 2017 11:14:30 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 4/4] arm64: dts: salvator-x: Add current sense amplifiers
+Date: Mon, 27 Mar 2017 17:12:58 +0200
+Message-Id: <1490627578-15938-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implementing some minor formatting changes to remove checkpatch warnings.
-Removing space-hardtab instances. Removing C++-style line comments in favor of
-C-style equivalent. Re-aligning function prototype arguments to remove related
-checkpatch warning.
+Add device nodes for two Maxim max961x current sense amplifiers
+sensing VDD_08 and DVFS_08 lines.
 
-Signed-off-by: Matthew Giassa <matthew@giassa.net>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/staging/ks7010/ks_wlan_ioctl.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
-index 8e62b10..0e92495 100644
---- a/drivers/staging/ks7010/ks_wlan_ioctl.h
-+++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
-@@ -1,6 +1,6 @@
- /*
-  *   Driver for KeyStream 11b/g wireless LAN
-- *   
-+ *
-  *   Copyright (c) 2005-2008 KeyStream Corp.
-  *   Copyright (C) 2009 Renesas Technology Corp.
-  *
-@@ -20,8 +20,8 @@
- /*					SIOCIWFIRSTPRIV + 2 */
- #define KS_WLAN_GET_FIRM_VERSION	SIOCIWFIRSTPRIV + 3
- #ifdef WPS
--#define KS_WLAN_SET_WPS_ENABLE 		SIOCIWFIRSTPRIV + 4
--#define KS_WLAN_GET_WPS_ENABLE 		SIOCIWFIRSTPRIV + 5
-+#define KS_WLAN_SET_WPS_ENABLE		SIOCIWFIRSTPRIV + 4
-+#define KS_WLAN_GET_WPS_ENABLE		SIOCIWFIRSTPRIV + 5
- #define KS_WLAN_SET_WPS_PROBE_REQ	SIOCIWFIRSTPRIV + 6
- #endif
- #define KS_WLAN_GET_EEPROM_CKSUM	SIOCIWFIRSTPRIV + 7
-@@ -33,8 +33,8 @@
- #define KS_WLAN_GET_SCAN_TYPE		SIOCIWFIRSTPRIV + 13
- #define KS_WLAN_SET_RX_GAIN		SIOCIWFIRSTPRIV + 14
- #define KS_WLAN_GET_RX_GAIN		SIOCIWFIRSTPRIV + 15
--#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV + 16	/* unused */
--//#define KS_WLAN_SET_REGION            SIOCIWFIRSTPRIV + 17
-+#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV + 16 /* unused */
-+/* #define KS_WLAN_SET_REGION		SIOCIWFIRSTPRIV + 17 */
- #define KS_WLAN_SET_BEACON_LOST		SIOCIWFIRSTPRIV + 18
- #define KS_WLAN_GET_BEACON_LOST		SIOCIWFIRSTPRIV + 19
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index c7f40f8..389a177 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -257,6 +257,24 @@
+ 	status = "okay";
+ };
  
-@@ -48,8 +48,8 @@
- #define KS_WLAN_GET_CTS_MODE		SIOCIWFIRSTPRIV + 25
- /*					SIOCIWFIRSTPRIV + 26 */
- /*					SIOCIWFIRSTPRIV + 27 */
--#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV + 28	/* sleep mode */
--#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV + 29	/* sleep mode */
-+#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV + 28 /* sleep mode */
-+#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV + 29 /* sleep mode */
- /*					SIOCIWFIRSTPRIV + 30 */
- /*					SIOCIWFIRSTPRIV + 31 */
- 
-@@ -60,7 +60,7 @@
- 
- int ks_wlan_read_config_file(struct ks_wlan_private *priv);
- int ks_wlan_setup_parameter(struct ks_wlan_private *priv,
--		             unsigned int commit_flag);
-+			    unsigned int commit_flag);
- 
- #endif /* __KERNEL__ */
- 
++&i2c4 {
++	status = "okay";
++
++	csa_vdd: adc@7c {
++		compatible = "maxim,max9611";
++		reg = <0x7c>;
++
++		shunt-resistor-uohm = <5000>;
++	};
++
++	csa_dvfs: adc@7f {
++		compatible = "maxim,max9611";
++		reg = <0x7f>;
++
++		shunt-resistor-uohm = <5000>;
++	};
++};
++
+ &wdt0 {
+ 	timeout-sec = <60>;
+ 	status = "okay";
 -- 
 2.7.4
