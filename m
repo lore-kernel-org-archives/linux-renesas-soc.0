@@ -1,67 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:48154 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754181AbdCaJYQ (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56245 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753325AbdC0POa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2017 05:24:16 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.12 (take two)
-Date: Fri, 31 Mar 2017 11:24:13 +0200
-Message-Id: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+        Mon, 27 Mar 2017 11:14:30 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 1/4] Documentation: dt-bindings: iio: Add max9611 ADC
+Date: Mon, 27 Mar 2017 17:12:55 +0200
+Message-Id: <1490627578-15938-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Add device tree bindings documentation for Maxim max9611/max9612 current
+sense amplifier.
 
-The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ .../devicetree/bindings/iio/adc/max9611.txt        | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/max9611.txt
 
-  clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
-
-for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
-
-  clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.12 (take two)
-
-  - Add support for the Clock Pulse Generator / Module Standby and
-    Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
-    differs from ES1.x in some areas.
-
-Note that this pull request is on top of my previous pull request for
-v4.12, which accidentally had a wrong version number in the subject
-line, and which I believe you haven't pulled yet.
-
-Thanks for pulling (both)!
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      clk: renesas: cpg-mssr: Add support for fixing up clock tables
-      clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
-      clk: renesas: r8a7795: Add support for R-Car H3 ES2.0
-      clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c       | 201 ++++++++++++++++++++-------
- drivers/clk/renesas/rcar-gen3-cpg.c          |  38 +++--
- drivers/clk/renesas/renesas-cpg-mssr.c       |  50 +++++++
- drivers/clk/renesas/renesas-cpg-mssr.h       |  22 +++
- include/dt-bindings/clock/r8a7795-cpg-mssr.h |   7 +
- 5 files changed, 257 insertions(+), 61 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/iio/adc/max9611.txt b/Documentation/devicetree/bindings/iio/adc/max9611.txt
+new file mode 100644
+index 0000000..8430d3b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/max9611.txt
+@@ -0,0 +1,26 @@
++* Maxim max9611/max9612 current sense amplifier with 12-bits ADC interface
++
++Maxim max9611/max9612 is an high-side current sense amplifier with integrated
++12-bits ADC communicating over I2c bus.
++The device node for this driver shall be a child of a I2c controller.
++
++Required properties
++  - compatible: Should be "maxim,max9611" or "maxim,max9612"
++  - reg: The 7-bits long I2c address of the device
++  - shunt-resistor-uohm: Value, in uOhm, of the current sense shunt resistor
++
++Example:
++
++&i2c4 {
++	csa: adc@7c {
++		compatible = "maxim,max9611";
++		reg = <0x7c>;
++
++		shunt-resistor-uohm = <5000>;
++	};
++};
++
++This device node describes a current sense amplifier sitting on I2c4 bus
++with address 0x7c (read address is 0xf9, write address is 0xf8).
++A sense resistor of 0,005 Ohm is installed between RS+ and RS- current-sensing
++inputs.
+-- 
+2.7.4
