@@ -1,50 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:52154 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935024AbdCJNTW (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40353 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753428AbdC0POa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:19:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 11/13] arm64: dts: r8a7795: salvator-x: Drop superfluous status updates for frequency overrides
-Date: Fri, 10 Mar 2017 14:19:14 +0100
-Message-Id: <1489151956-19270-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
-References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+        Mon, 27 Mar 2017 11:14:30 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 2/4] iio: Documentation: Add max9611 sysfs documentation
+Date: Mon, 27 Mar 2017 17:12:56 +0200
+Message-Id: <1490627578-15938-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The scif_clk and pcie_bus_clk device nodes are already enabled in
-r8a7795.dtsi, so there is no need to update their statuses again.
+Add documentation for max9611 driver.
+Document attributes describing value of shunt resistor installed between
+RS+ and RS- voltage sense inputs.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 --
- 1 file changed, 2 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index d004eb7271578c83..3a44bd6b3455deb1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -443,7 +443,6 @@
- 
- &scif_clk {
- 	clock-frequency = <14745600>;
--	status = "okay";
- };
- 
- &i2c2 {
-@@ -669,7 +668,6 @@
- 
- &pcie_bus_clk {
- 	clock-frequency = <100000000>;
--	status = "okay";
- };
- 
- &pciec0 {
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+new file mode 100644
+index 0000000..5020d00
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+@@ -0,0 +1,17 @@
++What:		/sys/bus/iio/devices/iio:deviceX/in_power_shunt_resistor
++Date:		March 2017
++KernelVersion:	4.12
++Contact:	linux-iio@vger.kernel.org
++Description: 	The value of the shunt resistor used to compute power drain on
++                common input voltage pin (RS+). In micro Ohms.
++
++What:		/sys/bus/iio/devices/iio:deviceX/in_current_shunt_resistor
++Date:		March 2017
++KernelVersion:	4.12
++Contact:	linux-iio@vger.kernel.org
++Description: 	The value of the shunt resistor used to compute current flowing
++                between RS+ and RS- voltage sense inputs. In micro Ohms.
++
++These attributes describe a single physical component, exposed as two distinct
++attributes as it is used to calculate two different values: power load and
++current flowing between RS+ and RS- inputs.
 -- 
 2.7.4
