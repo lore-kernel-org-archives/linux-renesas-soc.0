@@ -1,171 +1,152 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40222 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753939AbdC2TjV (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:49485 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751446AbdC1Lzx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 15:39:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] base: soc: Allow early registration of a single SoC device
-Date: Wed, 29 Mar 2017 21:38:54 +0200
-Message-Id: <1490816334-14568-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1490816334-14568-1-git-send-email-geert+renesas@glider.be>
-References: <1490816334-14568-1-git-send-email-geert+renesas@glider.be>
+        Tue, 28 Mar 2017 07:55:53 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/4] usb: gadget: udc: renesas_usb3: add extcon support
+Date: Tue, 28 Mar 2017 20:53:23 +0900
+Message-ID: <1490702004-8167-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 1da1b3628df34a2a ("base: soc: Early register bus when needed")
-added support for early registration of SoC devices from a
-core_initcall().  However, some drivers need to check the SoC revision
-from an early_initcall(), which is even earlier.
+This patch adds extcon support to see VBUS/ID signal states.
 
-A specific example is the Renesas R-Car SYSC driver, which manages PM
-Domains and thus needs to be initialized from an early_initcall.
-Preproduction versions of the R-Car H3 SoC have an additional power
-area, which no longer exists on H3 ES2.0, so the R-Car SYSC driver needs
-to check the exact SoC revision before instantiating a PM Domain for
-that power area.
-
-While registering the SoC bus and device, and using soc_device_match(),
-from an early_initcall() do work, the "soc" directory and the "soc0"
-file end up wrongly in the sysfs root, as the "bus" resp. "devices"
-directories haven't been created yet.
-
-To fix this, allow to register a single SoC device early on.
-As long as the SoC bus isn't registered, soc_device_match() just
-matches against this early device.
-When the SoC bus is registered later, the early device is registered for
-real.
-
-Note that soc_device_register() returns NULL (no error, but also not a
-valid pointer) when registering an early device.  Hence platform devices
-cannot be instantiated as children of the "soc0" node representing an
-early SoC device.  This should not be an issue, as that practice has
-been deprecated for new platforms.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-v2:
-  - Drop RFC state,
-  - Add more explanation,
-  - Add Acked-by.
----
- drivers/base/soc.c | 50 ++++++++++++++++++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 18 deletions(-)
+ drivers/usb/gadget/udc/Kconfig        |  1 +
+ drivers/usb/gadget/udc/renesas_usb3.c | 43 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 50033081834a9ccd..909dedae4c4e1d48 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -109,15 +109,18 @@ static void soc_release(struct device *dev)
- 	kfree(soc_dev);
+diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
+index 4b69f28..66cb00b 100644
+--- a/drivers/usb/gadget/udc/Kconfig
++++ b/drivers/usb/gadget/udc/Kconfig
+@@ -191,6 +191,7 @@ config USB_RENESAS_USBHS_UDC
+ config USB_RENESAS_USB3
+ 	tristate 'Renesas USB3.0 Peripheral controller'
+ 	depends on ARCH_RENESAS || COMPILE_TEST
++	depends on EXTCON
+ 	help
+ 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
+ 	   that supports super, high, and full speed USB 3.0 data transfers.
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index d81953b..34ac03c 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/err.h>
++#include <linux/extcon.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+@@ -263,6 +264,8 @@ struct renesas_usb3 {
+ 
+ 	struct usb_gadget gadget;
+ 	struct usb_gadget_driver *driver;
++	struct extcon_dev *extcon;
++	struct work_struct extcon_work;
+ 
+ 	struct renesas_usb3_ep *usb3_ep;
+ 	int num_usb3_eps;
+@@ -276,6 +279,8 @@ struct renesas_usb3 {
+ 	bool softconnect;
+ 	bool workaround_for_vbus;
+ 	bool forced_b_device;
++	bool extcon_host;	/* check id  and set EXTCON_USB_HOST */
++	bool extcon_usb;	/* check vbus and set EXTCON_USB */
+ };
+ 
+ #define gadget_to_renesas_usb3(_gadget)	\
+@@ -339,6 +344,15 @@ static int usb3_wait(struct renesas_usb3 *usb3, u32 reg, u32 mask,
+ 	return -EBUSY;
  }
  
-+static struct soc_device_attribute *early_soc_dev_attr;
-+
- struct soc_device *soc_device_register(struct soc_device_attribute *soc_dev_attr)
- {
- 	struct soc_device *soc_dev;
- 	int ret;
- 
- 	if (!soc_bus_type.p) {
--		ret = bus_register(&soc_bus_type);
--		if (ret)
--			goto out1;
-+		if (early_soc_dev_attr)
-+			return ERR_PTR(-EBUSY);
-+		early_soc_dev_attr = soc_dev_attr;
-+		return NULL;
- 	}
- 
- 	soc_dev = kzalloc(sizeof(*soc_dev), GFP_KERNEL);
-@@ -159,45 +162,53 @@ void soc_device_unregister(struct soc_device *soc_dev)
- 	ida_simple_remove(&soc_ida, soc_dev->soc_dev_num);
- 
- 	device_unregister(&soc_dev->dev);
-+	early_soc_dev_attr = NULL;
- }
- 
- static int __init soc_bus_register(void)
- {
--	if (soc_bus_type.p)
--		return 0;
-+	int ret;
- 
--	return bus_register(&soc_bus_type);
-+	ret = bus_register(&soc_bus_type);
-+	if (ret)
-+		return ret;
-+
-+	if (early_soc_dev_attr)
-+		return PTR_ERR(soc_device_register(early_soc_dev_attr));
-+
-+	return 0;
- }
- core_initcall(soc_bus_register);
- 
--static int soc_device_match_one(struct device *dev, void *arg)
-+static int soc_device_match_attr(const struct soc_device_attribute *attr,
-+				 const struct soc_device_attribute *match)
- {
--	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
--	const struct soc_device_attribute *match = arg;
--
- 	if (match->machine &&
--	    (!soc_dev->attr->machine ||
--	     !glob_match(match->machine, soc_dev->attr->machine)))
-+	    (!attr->machine || !glob_match(match->machine, attr->machine)))
- 		return 0;
- 
- 	if (match->family &&
--	    (!soc_dev->attr->family ||
--	     !glob_match(match->family, soc_dev->attr->family)))
-+	    (!attr->family || !glob_match(match->family, attr->family)))
- 		return 0;
- 
- 	if (match->revision &&
--	    (!soc_dev->attr->revision ||
--	     !glob_match(match->revision, soc_dev->attr->revision)))
-+	    (!attr->revision || !glob_match(match->revision, attr->revision)))
- 		return 0;
- 
- 	if (match->soc_id &&
--	    (!soc_dev->attr->soc_id ||
--	     !glob_match(match->soc_id, soc_dev->attr->soc_id)))
-+	    (!attr->soc_id || !glob_match(match->soc_id, attr->soc_id)))
- 		return 0;
- 
- 	return 1;
- }
- 
-+static int soc_device_match_one(struct device *dev, void *arg)
++static void renesas_usb3_extcon_work(struct work_struct *work)
 +{
-+	struct soc_device *soc_dev = container_of(dev, struct soc_device, dev);
++	struct renesas_usb3 *usb3 = container_of(work, struct renesas_usb3,
++						 extcon_work);
 +
-+	return soc_device_match_attr(soc_dev->attr, arg);
++	extcon_set_state_sync(usb3->extcon, EXTCON_USB_HOST, usb3->extcon_host);
++	extcon_set_state_sync(usb3->extcon, EXTCON_USB, usb3->extcon_usb);
 +}
 +
- /*
-  * soc_device_match - identify the SoC in the machine
-  * @matches: zero-terminated array of possible matches
-@@ -230,6 +241,9 @@ const struct soc_device_attribute *soc_device_match(
- 			break;
- 		ret = bus_for_each_dev(&soc_bus_type, NULL, (void *)matches,
- 				       soc_device_match_one);
-+		if (ret < 0 && early_soc_dev_attr)
-+			ret = soc_device_match_attr(early_soc_dev_attr,
-+						    matches);
- 		if (ret < 0)
- 			return NULL;
- 		if (!ret)
+ static void usb3_enable_irq_1(struct renesas_usb3 *usb3, u32 bits)
+ {
+ 	usb3_set_bit(usb3, bits, USB3_USB_INT_ENA_1);
+@@ -539,10 +553,14 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
+ 	if (usb3->workaround_for_vbus) {
+ 		usb3_connect(usb3);
+ 	} else {
+-		if (usb3_read(usb3, USB3_USB_STA) & USB_STA_VBUS_STA)
++		usb3->extcon_usb = !!(usb3_read(usb3, USB3_USB_STA) &
++							USB_STA_VBUS_STA);
++		if (usb3->extcon_usb)
+ 			usb3_connect(usb3);
+ 		else
+ 			usb3_disconnect(usb3);
++
++		schedule_work(&usb3->extcon_work);
+ 	}
+ }
+ 
+@@ -565,10 +583,14 @@ static bool usb3_is_a_device(struct renesas_usb3 *usb3)
+ 
+ static void usb3_check_id(struct renesas_usb3 *usb3)
+ {
+-	if (usb3_is_a_device(usb3) && !usb3->forced_b_device)
++	usb3->extcon_host = usb3_is_a_device(usb3);
++
++	if (usb3->extcon_host && !usb3->forced_b_device)
+ 		usb3_mode_a_host(usb3);
+ 	else
+ 		usb3_mode_b_peri(usb3);
++
++	schedule_work(&usb3->extcon_work);
+ }
+ 
+ static void renesas_usb3_init_controller(struct renesas_usb3 *usb3)
+@@ -2000,6 +2022,12 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
+ };
+ MODULE_DEVICE_TABLE(of, usb3_of_match);
+ 
++static const unsigned int renesas_usb3_cable[] = {
++	EXTCON_USB,
++	EXTCON_USB_HOST,
++	EXTCON_NONE,
++};
++
+ static int renesas_usb3_probe(struct platform_device *pdev)
+ {
+ 	struct renesas_usb3 *usb3;
+@@ -2043,6 +2071,17 @@ static int renesas_usb3_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	INIT_WORK(&usb3->extcon_work, renesas_usb3_extcon_work);
++	usb3->extcon = devm_extcon_dev_allocate(&pdev->dev, renesas_usb3_cable);
++	if (IS_ERR(usb3->extcon))
++		return PTR_ERR(usb3->extcon);
++
++	ret = devm_extcon_dev_register(&pdev->dev, usb3->extcon);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to register extcon\n");
++		return ret;
++	}
++
+ 	/* for ep0 handling */
+ 	usb3->ep0_req = __renesas_usb3_ep_alloc_request(GFP_KERNEL);
+ 	if (!usb3->ep0_req)
 -- 
-2.7.4
+1.9.1
