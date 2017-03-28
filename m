@@ -1,78 +1,140 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
-Date: Fri, 31 Mar 2017 11:01:53 +0200
-Message-Id: <1490950916-9576-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:35178 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751364AbdC1L4I (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 28 Mar 2017 07:56:08 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/4] usb: gadget: udc: add USB ID signal monitoring
+Date: Tue, 28 Mar 2017 20:53:22 +0900
+Message-ID: <1490702004-8167-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+This usb 3.0 peripheral controller has a register (USB_OTG_STA) to monitor
+the USB ID signal. So, this patch adds the ID signal monitoring to change
+the mode to host (A-Device) or peripheral (B-Device).
 
-This patch series adds power domain support for R-Car H3 ES2.0, which
-differs from ES1.x in some areas.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/gadget/udc/renesas_usb3.c | 47 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-The goal is twofold:
-  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
-     for now,
-  2. Make it clear which code supports ES1.x, so it can easily be
-     identified and removed later, when production SoCs are deemed
-     ubiquitous.
-
-This is achieved by detecting the SoC revision at runtime using the
-soc_device_match() API, and fixing up the power area table to match the
-actual SoC revision.
-
-Changes compared to v1:
-  - Minor changes to the patch descriptions.
-
-As PM Domains are initialized quite early, the Renesas SoC device must
-be initialized earlier, and this series thus depends on the pull
-request "[git pull] base: soc: Improvements for the SoC bus and
-soc_device_match()" I've just sent.
-
-For testers, this series and its dependencies are available in the
-topic/r8a7795es2-sysc-v2 branch of my renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
-development board is provided as topic/r8a7795es2-integration.
-
-This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
-SoCs.
-
-Thanks for applying!
-
-Geert Uytterhoeven (3):
-  soc: renesas: Register SoC device early
-  soc: renesas: rcar-sysc: Add support for fixing up power area tables
-  soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
-
- drivers/soc/renesas/r8a7795-sysc.c       | 26 ++++++++++++++++++++++++--
- drivers/soc/renesas/rcar-sysc.c          | 25 ++++++++++++++++++++++++-
- drivers/soc/renesas/rcar-sysc.h          | 10 ++++++++++
- drivers/soc/renesas/renesas-soc.c        |  2 +-
- include/dt-bindings/power/r8a7795-sysc.h |  2 +-
- 5 files changed, 60 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 4029593..d81953b 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -37,6 +37,9 @@
+ #define USB3_USB_INT_ENA_2	0x22c
+ #define USB3_STUP_DAT_0		0x230
+ #define USB3_STUP_DAT_1		0x234
++#define USB3_USB_OTG_STA	0x268
++#define USB3_USB_OTG_INT_STA	0x26c
++#define USB3_USB_OTG_INT_ENA	0x270
+ #define USB3_P0_MOD		0x280
+ #define USB3_P0_CON		0x288
+ #define USB3_P0_STA		0x28c
+@@ -124,6 +127,9 @@
+ /* USB_INT_ENA_2 and USB_INT_STA_2 */
+ #define USB_INT_2_PIPE(n)	BIT(n)
+ 
++/* USB_OTG_STA, USB_OTG_INT_STA and USB_OTG_INT_ENA */
++#define USB_OTG_IDMON		BIT(4)
++
+ /* P0_MOD */
+ #define P0_MOD_DIR		BIT(6)
+ 
+@@ -540,17 +546,39 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
+ 	}
+ }
+ 
++static void usb3_mode_a_host(struct renesas_usb3 *usb3)
++{
++	usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
++	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
++}
++
+ static void usb3_mode_b_peri(struct renesas_usb3 *usb3)
+ {
+ 	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
+ 	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
+ }
+ 
++static bool usb3_is_a_device(struct renesas_usb3 *usb3)
++{
++	return !(usb3_read(usb3, USB3_USB_OTG_STA) & USB_OTG_IDMON);
++}
++
++static void usb3_check_id(struct renesas_usb3 *usb3)
++{
++	if (usb3_is_a_device(usb3) && !usb3->forced_b_device)
++		usb3_mode_a_host(usb3);
++	else
++		usb3_mode_b_peri(usb3);
++}
++
+ static void renesas_usb3_init_controller(struct renesas_usb3 *usb3)
+ {
+ 	usb3_init_axi_bridge(usb3);
+ 	usb3_init_epc_registers(usb3);
++	usb3_write(usb3, USB_OTG_IDMON, USB3_USB_OTG_INT_STA);
++	usb3_write(usb3, USB_OTG_IDMON, USB3_USB_OTG_INT_ENA);
+ 
++	usb3_check_id(usb3);
+ 	usb3_check_vbus(usb3);
+ }
+ 
+@@ -559,6 +587,7 @@ static void renesas_usb3_stop_controller(struct renesas_usb3 *usb3)
+ 	usb3_disconnect(usb3);
+ 	usb3_write(usb3, 0, USB3_P0_INT_ENA);
+ 	usb3_write(usb3, 0, USB3_PN_INT_ENA);
++	usb3_write(usb3, 0, USB3_USB_OTG_INT_ENA);
+ 	usb3_write(usb3, 0, USB3_USB_INT_ENA_1);
+ 	usb3_write(usb3, 0, USB3_USB_INT_ENA_2);
+ 	usb3_write(usb3, 0, USB3_AXI_INT_ENA);
+@@ -1492,10 +1521,22 @@ static void usb3_irq_epc_int_2(struct renesas_usb3 *usb3, u32 int_sta_2)
+ 	}
+ }
+ 
++static void usb3_irq_idmon_change(struct renesas_usb3 *usb3)
++{
++	usb3_check_id(usb3);
++}
++
++static void usb3_irq_otg_int(struct renesas_usb3 *usb3, u32 otg_int_sta)
++{
++	if (otg_int_sta & USB_OTG_IDMON)
++		usb3_irq_idmon_change(usb3);
++}
++
+ static void usb3_irq_epc(struct renesas_usb3 *usb3)
+ {
+ 	u32 int_sta_1 = usb3_read(usb3, USB3_USB_INT_STA_1);
+ 	u32 int_sta_2 = usb3_read(usb3, USB3_USB_INT_STA_2);
++	u32 otg_int_sta = usb3_read(usb3, USB3_USB_OTG_INT_STA);
+ 
+ 	int_sta_1 &= usb3_read(usb3, USB3_USB_INT_ENA_1);
+ 	if (int_sta_1) {
+@@ -1506,6 +1547,12 @@ static void usb3_irq_epc(struct renesas_usb3 *usb3)
+ 	int_sta_2 &= usb3_read(usb3, USB3_USB_INT_ENA_2);
+ 	if (int_sta_2)
+ 		usb3_irq_epc_int_2(usb3, int_sta_2);
++
++	otg_int_sta &= usb3_read(usb3, USB3_USB_OTG_INT_ENA);
++	if (otg_int_sta) {
++		usb3_write(usb3, otg_int_sta, USB3_USB_OTG_INT_STA);
++		usb3_irq_otg_int(usb3, otg_int_sta);
++	}
+ }
+ 
+ static irqreturn_t renesas_usb3_irq(int irq, void *_usb3)
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+1.9.1
