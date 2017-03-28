@@ -1,177 +1,46 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Mon, 20 Mar 2017 17:14:46 +0100
-Message-Id: <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:44612 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754758AbdC1Kqd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 28 Mar 2017 06:46:33 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] ARM: dts: alt: Correct clock of DU1
+Date: Tue, 28 Mar 2017 12:45:32 +0200
+Message-Id: <1490697933-5849-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490697933-5849-1-git-send-email-geert+renesas@glider.be>
+References: <1490697933-5849-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
-controller.
+The second channel of the display unit uses a different module clock
+than the first channel.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Fixes: 876e7fb9f418fd86 ("ARM: shmobile: r8a7794: alt: Enable VGA port")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 144 +++++++++++++++++++++
- 1 file changed, 144 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+ arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-new file mode 100644
-index 0000000..0474860
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-@@ -0,0 +1,144 @@
-+Renesas RZ/A1 combined Pin and GPIO controller
-+
-+Renesas SoCs of RZ/A1 family feature a combined Pin and GPIO controller
-+hardware controller, named "Ports" in the hardware reference manual.
-+Pin multiplexing and GPIO configuration is performed on a per-pin basis
-+writing configuration values to per-port register sets.
-+Each "port" features up to 16 pins, each of them configurable for GPIO
-+function (port mode) or in alternate function mode.
-+Up to 8 different alternate function modes exist for each single pin.
-+
-+Pin controller node
-+-------------------
-+
-+Required properties:
-+  - compatible
-+    this shall be "renesas,r7s72100-ports".
-+
-+  - #pinctrl-cells
-+    as defined by pinctrl-bindings.txt, this is the number
-+    of cells (in addition to pin index) required to configure a single pin.
-+    Shall be set to 1.
-+
-+  - reg
-+    address base and length of the memory area where pin controller
-+    hardware is mapped to.
-+
-+Example:
-+Pin controller node for RZ/A1H SoC (r7s72100)
-+
-+pinctrl: pinctrl@fcfe3000 {
-+	compatible = "renesas,r7s72100-ports";
-+
-+	#pinctrl-cells = <1>;
-+
-+	reg = <0xfcfe3000 0x4248>;
-+};
-+
-+Sub-nodes
-+---------
-+
-+The child nodes of the pin controller node describe a pin multiplexing
-+function or a gpio controller alternatively.
-+
-+- Pin multiplexing sub-nodes:
-+  A pin multiplexing sub-node describes how to configure a set of
-+  (or a single) pin in some desired alternate function mode.
-+  A single sub-node may define several pin configurations groups.
-+
-+  Required properties:
-+    - renesas,pins
-+      describes an array of pin multiplexing configurations.
-+      When a pin has to be configured in alternate function mode, use this
-+      property to identify the pin by its global index, and provide its
-+      alternate function configuration description along with it.
-+      When multiple pins are required to be configured as part of the same
-+      alternate function (odds are single-pin alternate functions exist) they
-+      shall be specified as members of the same argument list of a single
-+      "renesas-pins" property.
-+      Helper macros to ease calculating the pin index from its position
-+      (port where it sits on and pin offset), and alternate function
-+      configuration options are provided in pin controller header file at:
-+      include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-+
-+  Example:
-+  A serial communication interface with a TX output pin and a RX input pin.
-+
-+  &pinctrl {
-+	scif2_pins: serial2 {
-+		renesas,pins = <PIN(3, 0) 6>,
-+			       <PIN(3, 2) 4>;
-+	};
-+  }
-+
-+  Pin #0 on port #3 is configured in alternate function #6.
-+  Pin #2 on port #3 is configured in alternate function #4.
-+
-+  Example 2:
-+  I2c master: both SDA and SCL pins need bi-directional operations
-+
-+  &pinctrl {
-+	i2c2_pins: i2c2 {
-+		renesas,pins = <PIN(1, 4) (1 | BI_DIR)>,
-+			       <PIN(1, 5) (1 | BI_DIR)>;
-+	};
-+  }
-+
-+  Pin #4 on port #1 is configured in alternate function #1.
-+  Pin #5 on port #1 is configured in alternate function #1.
-+  Both need to work in bi-directional mode.
-+
-+  Example 3:
-+  Multi-function timer input and output compare pins.
-+  The hardware manual prescribes this pins to have input/output direction
-+  specified by software. Configure TIOC0A as input and TIOC0B as output.
-+
-+  &pinctrl {
-+	tioc0_pins: tioc0 {
-+		renesas,pins = <PIN(4, 0) (2 | SWIO_IN)>,
-+			       <PIN(4, 1) (2 | SWIO_OUT)>;
-+	};
-+  }
-+
-+  Pin #0 on port #4 is configured in alternate function #2 with IO direction
-+  specified by software as input.
-+  Pin #1 on port #4 is configured in alternate function #1 with IO direction
-+  specified by software as output.
-+
-+- GPIO controller sub-nodes:
-+  Each port of r7s72100 pin controller hardware is itself a gpio controller.
-+  Different SoCs have different number of available pins per port, but
-+  generally speaking, each of them can be configured in GPIO ("port") mode
-+  on this hardware.
-+  Describe gpio-controllers using sub-nodes with the following properties.
-+
-+  Required properties:
-+    - gpio-controller
-+      empty property as defined by gpio bindings documentation.
-+    - #gpio-cells
-+      number of cells required to identify and configure a GPIO.
-+      Shall be 2.
-+    - gpio-ranges
-+      Describes a gpio controller specifying its specific pin base, the pin
-+      base in the global pin numbering space, and the number of controlled
-+      pins, as defined by gpio bindings documentation. Refer to this file
-+      for a more detailed description.
-+
-+  Example:
-+  A gpio controller node, controlling 16 pins indexed from 0.
-+  The gpio controller base in the global pin indexing space is pin 48, thus
-+  pins [0 - 15] on this controller map to pins [48 - 63] in the global pin
-+  indexing space.
-+
-+  port3: gpio-3 {
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	gpio-ranges = <&pinctrl 0 48 16>;
-+  };
-+
-+  A device node willing to use pins controlled by this gpio controller, shall
-+  refer to it as follows:
-+
-+  led1 {
-+	gpios = <&port3 10 GPIO_ACTIVE_LOW>;
-+  };
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 3fcf76b8e923be86..f1eea13cdf44371d 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -168,7 +168,7 @@
+ 	status = "okay";
+ 
+ 	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
+-		 <&mstp7_clks R8A7794_CLK_DU0>,
++		 <&mstp7_clks R8A7794_CLK_DU1>,
+ 		 <&x13_clk>, <&x2_clk>;
+ 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
+ 
 -- 
 2.7.4
