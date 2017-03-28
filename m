@@ -1,79 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753339AbdCTJAJ (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:45669 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbdC1WmI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:00:09 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/31] ARM: dts: r8a7792: Add INTC-SYS clock to device tree
-Date: Mon, 20 Mar 2017 09:57:57 +0100
-Message-Id: <90dce5428ae5499f06d91297ef10b3b613044774.1489999063.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999062.git.horms+renesas@verge.net.au>
-References: <cover.1489999062.git.horms+renesas@verge.net.au>
+        Tue, 28 Mar 2017 18:42:08 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/3] dmaengine: rcar-dmac: fix resource freeing synchronization
+Date: Wed, 29 Mar 2017 00:40:32 +0200
+Message-Id: <20170328224035.8040-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi,
 
-Link the ARM GIC to the INTC-SYS module clock, and add it to the "always
-on" PM Domain, so it can be power managed using that clock.
+This series fix resource freeing synchronization by:
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
+1. Patch 1/3
+   Store the IRQ number in the global struct so it can be used later 
+   together with synchronize_irq().
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi            | 11 ++++++++---
- include/dt-bindings/clock/r8a7792-clock.h |  1 +
- 2 files changed, 9 insertions(+), 3 deletions(-)
+2. Patch 2/3
+   Adding support for the device_synchronize() callback in patch 2/3.
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index c762f44f7732..6c0797ebc08f 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -92,6 +92,9 @@
- 			      <0 0xf1006000 0 0x2000>;
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
- 				      IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&mstp4_clks R8A7792_CLK_INTC_SYS>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
- 		};
- 
- 		irqc: interrupt-controller@e61c0000 {
-@@ -895,10 +898,12 @@
- 			compatible = "renesas,r8a7792-mstp-clocks",
- 				     "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
--			clocks = <&cp_clk>;
-+			clocks = <&cp_clk>, <&zs_clk>;
- 			#clock-cells = <1>;
--			clock-indices = <R8A7792_CLK_IRQC>;
--			clock-output-names = "irqc";
-+			clock-indices = <
-+				R8A7792_CLK_IRQC R8A7792_CLK_INTC_SYS
-+			>;
-+			clock-output-names = "irqc", "intc-sys";
- 		};
- 		mstp7_clks: mstp7_clks@e615014c {
- 			compatible = "renesas,r8a7792-mstp-clocks",
-diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
-index 9a8b392ceb00..94dd16a1e6e6 100644
---- a/include/dt-bindings/clock/r8a7792-clock.h
-+++ b/include/dt-bindings/clock/r8a7792-clock.h
-@@ -45,6 +45,7 @@
- 
- /* MSTP4 */
- #define R8A7792_CLK_IRQC		7
-+#define R8A7792_CLK_INTC_SYS		8
- 
- /* MSTP5 */
- #define R8A7792_CLK_AUDIO_DMAC0		2
+3. Patch 3/3
+   Waiting for any ISR that might still be running after the channel is 
+   halted prior to freeing its resources. This was patch previously part 
+   of a patch sent out by Yoshihiro Shimoda and authored by Hiroyuki 
+   Yokoyama, see [1].
+
+   In that thread it was suggested by Lars-Peter Clausen to instead 
+   implement the device_synchronize() callback. Unfortunately this is not 
+   enough to solve the issue. In rcar_dmac_free_chan_resources() the 
+   channel is halted by a call to rcar_dmac_chan_halt() and then directly 
+   moves on to freeing resources, here it is still needed to add a wait 
+   for any ISR to finish before freeing the resources, despite that a 
+   device_synchronize() have been added.  This is because call chain:
+
+   dma_release_channel()
+     dma_chan_put()
+       dmaengine_synchronize()
+       rcar_dmac_free_chan_resources()
+         rcar_dmac_chan_halt()
+
+   Here dmaengine_synchronize() is called prior to rcar_dmac_chan_halt() 
+   so an extra synchronisation to wait for any running ISR is still 
+   needed.
+
+By both adding a device_synchronize() which can be used in conjunction 
+with device_terminate_all() and fiends and by adding an explicit 
+synchronize_irq() when freeing channel resources I feel the 
+synchronisation for freeing channel resources are in a much better 
+shape. It also solves the issue in the original mail thread.
+
+The series is based on v4.11-rc1 and is tested on r8a7795 Salvator-X.
+
+1. https://patchwork.kernel.org/patch/9557691/
+
+Niklas Söderlund (3):
+  dmaengine: rcar-dmac: store channel IRQ in struct rcar_dmac_chan
+  dmaengine: rcar-dmac: implement device_synchronize()
+  dmaengine: rcar-dmac: wait for ISR to finish before freeing resources
+
+ drivers/dma/sh/rcar-dmac.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.12.0
