@@ -1,116 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:37436 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbdCNTGl (ORCPT
+Received: from newton.telenet-ops.be ([195.130.132.45]:37970 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754738AbdC1JQt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:06:41 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 16/27] rcar-vin: add functions to manipulate Gen3 CHSEL value
-Date: Tue, 14 Mar 2017 20:02:57 +0100
-Message-Id: <20170314190308.25790-17-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 28 Mar 2017 05:16:49 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 3vslcr2MbbzMrdpq
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 11:16:12 +0200 (CEST)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Christoph Baumann <cbaumann@visteon.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] serial: sh-sci: Fix hang in sci_reset()
+Date: Tue, 28 Mar 2017 11:13:44 +0200
+Message-Id: <1490692426-19252-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
+References: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the CSI routing is controlled by the VnCSI_IFMD register. One
-feature of this register is that it's only present in the VIN0 and VIN4
-instances. The register in VIN0 controls the routing for VIN0-3 and the
-register in VIN4 controls routing for VIN4-7.
+When the .set_termios() callback resets the UART, it first waits (busy
+loops) until all characters in the transmit FIFO have been transmitted,
+to prevent a port configuration change from impacting these characters.
 
-To be able to control routing from a media device these functions need
-to control runtime PM for the subgroup master (VIN0 and VIN4). The
-subgroup master must be switched on before the register is manipulated,
-once the operation is complete it's safe to switch the master off and
-the new routing will still be in effect.
+However, if the UART has dedicated RTS/CTS hardware flow control
+enabled, these characters may have been stuck in the FIFO due to CTS not
+being asserted by the remote side.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+  - When a new user opens the port, .set_termios() is called while
+    transmission is still disabled, leading to an infinite loop:
+
+	NMI watchdog: BUG: soft lockup - CPU#0 stuck for 22s!
+
+  - When an active user changes port configuration without waiting for
+    the draining of the transmit FIFO, this may also block indefinitely,
+    until CTS is asserted by the remote side.
+
+This has been observed with SCIFA (on r8a7740/armadillo), and SCIFB and
+HSCIF (on r8a7791/koelsch).
+
+To fix this, remove the code that waits for the draining of the transmit
+FIFO.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 43 ++++++++++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h |  3 +++
- 2 files changed, 46 insertions(+)
+To reproduce:
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 7fecb616b6c45a32..fef31aac0ed40979 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -16,6 +16,7 @@
+    stty -echo < /dev/scifb0
+    stty crtscts < /dev/scifb0
+    echo hello > /dev/scifb0	# returns early (wrote to FIFO)
+    echo hello > /dev/scifb0	# hangs
+
+v2:
+  - Remove the draining of the transmit FIFO completely, instead of
+    skipping it when tranmission was not enabled, as the hang could
+    still be reproduced when an active user changes port configuration
+    without waiting for the draining of the transmit FIFO.
+---
+ drivers/tty/serial/sh-sci.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 1df57461ece4337b..446a23bee14008bb 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2159,10 +2159,6 @@ static void sci_reset(struct uart_port *port)
+ 	unsigned int status;
+ 	struct sci_port *s = to_sci_port(port);
  
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
+-	do {
+-		status = serial_port_in(port, SCxSR);
+-	} while (!(status & SCxSR_TEND(port)));
+-
+ 	serial_port_out(port, SCSCR, 0x00);	/* TE=0, RE=0, CKE1=0 */
  
- #include <media/videobuf2-dma-contig.h>
- 
-@@ -1240,3 +1241,45 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
- 
- 	return ret;
- }
-+
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CHSEL manipulation
-+ */
-+
-+int rvin_set_chsel(struct rvin_dev *vin, u8 chsel)
-+{
-+	u32 ifmd;
-+
-+	pm_runtime_get_sync(vin->dev);
-+
-+	/*
-+	 * Undocumented feature: Writing to VNCSI_IFMD_REG will go
-+	 * through and on read back look correct but won't have
-+	 * any effect if VNMC_REG is not first set to 0.
-+	 */
-+	rvin_write(vin, 0, VNMC_REG);
-+
-+	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
-+		VNCSI_IFMD_CSI_CHSEL(chsel);
-+
-+	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
-+
-+	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
-+
-+	pm_runtime_put(vin->dev);
-+
-+	return 0;
-+}
-+
-+int rvin_get_chsel(struct rvin_dev *vin)
-+{
-+	int chsel;
-+
-+	pm_runtime_get_sync(vin->dev);
-+
-+	chsel = rvin_read(vin, VNCSI_IFMD_REG) & VNCSI_IFMD_CSI_CHSEL_MASK;
-+
-+	pm_runtime_put(vin->dev);
-+
-+	return chsel;
-+}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 09fc70e192699f35..b1cd0abba9ca9c94 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -163,4 +163,7 @@ void rvin_v4l2_remove(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
-+int rvin_set_chsel(struct rvin_dev *vin, u8 chsel);
-+int rvin_get_chsel(struct rvin_dev *vin);
-+
- #endif
+ 	reg = sci_getreg(port, SCFCR);
 -- 
-2.12.0
+2.7.4
