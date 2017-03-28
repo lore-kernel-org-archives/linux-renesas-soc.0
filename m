@@ -1,34 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 0/2] Move uart_register_driver call to device probe for pl010 and sh-sci
-Date: Fri, 24 Mar 2017 17:26:32 +0100
-Message-Id: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58981 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751801AbdC1Maa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 28 Mar 2017 08:30:30 -0400
+Date: Tue, 28 Mar 2017 14:30:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] ARM: dts: r8a7794: Correct clock of DU1
+Message-ID: <20170328123008.GB20146@verge.net.au>
+References: <1490697933-5849-1-git-send-email-geert+renesas@glider.be>
+ <7112167.AJcfquYAnB@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7112167.AJcfquYAnB@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Mar 28, 2017 at 03:08:11PM +0300, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> Thank you for the patches.
+> 
+> On Tuesday 28 Mar 2017 12:45:29 Geert Uytterhoeven wrote:
+> > 	Hi Simon, Magnus,
+> > 
+> > In the DTS files for the R-Car E2 SoC and for development boards based
+> > on this SoC, the second channel of the display unit incorrectly points
+> > to the module clock for the first channel.
+> > 
+> > This patch series adds the missing module clock for the second channel,
+> > and refers to it from the DU device node in the various DTS files.
+> > 
+> > Untested due to lack of hardware.
+> 
+> The patches look good to me.
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-When testing on a Renesas board with the PL010 serial driver enabled
-serial output broke. Turns out the minor device numbers for both
-drivers happen to overlap, causing whichever driver happened to be the
-second one to register to fail.
-
-The attached patches move the uart_register_driver call to probe time
-for both drivers avoiding the issue.
-
-
-Sjoerd Simons (2):
-  serial: pl010: Move uart_register_driver call to device probe
-  serial: sh-sci: Move uart_register_driver call to device probe
-
- drivers/tty/serial/amba-pl010.c | 27 +++++++++++++++++----------
- drivers/tty/serial/sh-sci.c     | 21 ++++++++++-----------
- 2 files changed, 27 insertions(+), 21 deletions(-)
-
--- 
-2.11.0
+Thanks, I have queued these up.
