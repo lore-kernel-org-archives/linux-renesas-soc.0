@@ -1,120 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:33291 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752439AbdC0POa (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33008 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754691AbdC1Ji6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Mar 2017 11:14:30 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 0/4] iio: adc: Maxim max9611 driver
-Date: Mon, 27 Mar 2017 17:12:54 +0200
-Message-Id: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 28 Mar 2017 05:38:58 -0400
+Received: by mail-pg0-f65.google.com with SMTP id 79so20017772pgf.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 02:38:24 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
+        geert+renesas@glider.be
+Date: Tue, 28 Mar 2017 18:32:52 +0900
+Message-Id: <149069357209.22662.10603698005141361415.sendpatchset@little-apple>
+In-Reply-To: <149069355375.22662.10367253365715059744.sendpatchset@little-apple>
+References: <149069355375.22662.10367253365715059744.sendpatchset@little-apple>
+Subject: [PATCH 02/03] arm64: dts: r8a7795: Connect USB3 Host to IPMMU-HC
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   fourth round for max9611 driver.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Biggest shift from v3 is change in locking, now performed only at
-read_single() level.
-No locking in read_raw, nor in read_csa_voltage(), as the only thing to
-protect is the on-chip mux configuration between and I2c write and a read.
-All other functions end up in calling this read_single() one, and they do not
-share variables, so concurrent accesses to sysfs attributes should be safe.
+Point the USB3.0 Host CH0 and CH1 devices to IPMMU-HC.
 
-Changed scale of temperature channel, and fixed shunt resistor names, that now
-appears as properties of their respective power and current channels.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Ack on dt-bindings for "shunt-resistor-ohm" property pending from device
-tree guardians.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Output of iio_info on Salvator-X board for max9611 chip installed on
-VDD_0.8 lines.
-The VDD_0.8 line powers the CPU cluster and on-board RAM.
-
-        iio:device0: max9611
-                5 channels found:
-                        voltage0:  (input)
-                        1 channel-specific attributes found:
-                                attr 0: input value: 4.085000000
-                        voltage1:  (input)
-                        3 channel-specific attributes found:
-                                attr 0: scale value: 14
-                                attr 1: offset value: 1
-                                attr 2: raw value: 59
-                        power:  (input)
-                        2 channel-specific attributes found:
-                                attr 0: shunt_resistor value: 5000
-                                attr 1: input value: 663.404000000
-                        current:  (input)
-                        2 channel-specific attributes found:
-                                attr 0: shunt_resistor value: 5000
-                                attr 1: input value: 817.000000000
-                        temp:  (input)
-                        2 channel-specific attributes found:
-                                attr 0: scale value: 480.076812289
-                                attr 1: raw value: 57
-
-The collected information represent:
-
-* voltage0 (current sense voltage) Vcsa
-  voltage drop between RS+ and RS- input = 4,085 mV
-* voltage1: (common input voltage) Vcim
-  voltage at RS+ input = (59 - 1) * 14 = 812 mV
-* current flowing on shunt resistor (Icsa)
-  = Vcsa / Rshunt = 817 mA
-* power load on the sensed line (Pload)
-  = Vcim * Icsa = 663 m
-* die temperature = (57 * 480.07) = 27360 milli Celsius
-
-Thanks
-   j
-
-v1 -> v2:
-- Drop wildcard (max961x) in driver, documentation and dt-bindings. Use
-  max9611 instead.
-- Make 3 processed channels for csa voltage, csa current and power load
-- Remove wrapper functions around i2c buffer access
-- Add locking in read_raw()
-- Make 2 separate attributes for shunt resistor: current and power
-- Renamed shunt resistor attribute
-- Fixed several review comments
-
-v2 -> v3:
-- Incorporated Geert's suggestions on using a more generic name for ADC nodes
-  in device tree
-- Changed "maxim,shunt-resistor-uohm" to "shunt-resistor-uohm"
-- Update documentation accordingly to the two previous changes
-
-v3 -> v4:
-- Move all locking to read_single() function
-- Re-structure read_raw() with Jonathan's and Peter's comments
-- Rename some defines pre-pending MAX9611 prefix
-- Use values from .comaptible entries for device name
-- Change temperature scale to have a value in milli Celsius
-- Simplify init routine using read_single
-
-Jacopo Mondi (4):
-  Documentation: dt-bindings: iio: Add max9611 ADC
-  iio: Documentation: Add max9611 sysfs documentation
-  iio: adc: Add Maxim max9611 ADC driver
-  arm64: dts: salvator-x: Add current sense amplifiers
-
- .../ABI/testing/sysfs-bus-iio-adc-max9611          |  17 +
- .../devicetree/bindings/iio/adc/max9611.txt        |  26 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  18 +
- drivers/iio/adc/Kconfig                            |  10 +
- drivers/iio/adc/Makefile                           |   1 +
- drivers/iio/adc/max9611.c                          | 583 +++++++++++++++++++++
- 6 files changed, 655 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
- create mode 100644 Documentation/devicetree/bindings/iio/adc/max9611.txt
- create mode 100644 drivers/iio/adc/max9611.c
-
--- 
-2.7.4
+--- 0002/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-28 18:10:51.020607110 +0900
+@@ -1419,6 +1419,7 @@
+ 			reg = <0 0xee000000 0 0xc00>;
+ 			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 328>;
++			iommus = <&ipmmu_hc 12>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 328>;
+ 			status = "disabled";
+@@ -1429,6 +1430,7 @@
+ 			reg = <0 0xee040000 0 0xc00>;
+ 			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 327>;
++			iommus = <&ipmmu_hc 14>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 327>;
+ 			status = "disabled";
