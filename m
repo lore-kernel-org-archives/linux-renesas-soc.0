@@ -1,60 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:56412 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754451AbdCFQlh (ORCPT
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:46766 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754730AbdC1JQt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 11:41:37 -0500
+        Tue, 28 Mar 2017 05:16:49 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 3vslcr2F8kzMr0jL
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 11:16:12 +0200 (CEST)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Christoph Baumann <cbaumann@visteon.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/8] ARM: dts: r8a73a4: Remove unit-addresses and regs from integrated caches
-Date: Mon,  6 Mar 2017 17:40:36 +0100
-Message-Id: <1488818443-25196-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
-References: <1488818443-25196-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] serial: sh-sci: Assorted flow control fixes
+Date: Tue, 28 Mar 2017 11:13:43 +0200
+Message-Id: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Cortex-A15/A7 cache controllers are integrated controllers, and thus
-the device nodes representing them should not have unit-addresses or reg
-properties.
+	Hi Greg, Jiri,
 
-Fixes: b0da45c60d2f7b08 ("ARM: dts: r8a73a4: Fix W=1 dtc warnings")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a73a4.dtsi | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+This patch series fixes several issues related to hardware flow control
+on Renesas SCIF UARTs.
 
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 00eb9a7114dc2621..6fb7eaba91262edf 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -32,18 +32,16 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
--		L2_CA15: cache-controller@0 {
-+		L2_CA15: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			clocks = <&cpg_clocks R8A73A4_CLK_Z>;
- 			power-domains = <&pd_a3sm>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
- 
--		L2_CA7: cache-controller@100 {
-+		L2_CA7: cache-controller-1 {
- 			compatible = "cache";
--			reg = <0x100>;
- 			clocks = <&cpg_clocks R8A73A4_CLK_Z2>;
- 			power-domains = <&pd_a3km>;
- 			cache-unified;
+For changes compared to v1 ("[PATCH 0/2] serial: sh-sci: Assorted flow
+control fixes", https://lkml.org/lkml/2016/12/2/226), please refer to
+the comments in the individual patches.
+
+Thanks!
+
+Geert Uytterhoeven (3):
+  serial: sh-sci: Fix hang in sci_reset()
+  serial: sh-sci: Fix late enablement of AUTORTS
+  serial: sh-sci: Fix (AUTO)RTS in sci_init_pins()
+
+ drivers/tty/serial/sh-sci.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
