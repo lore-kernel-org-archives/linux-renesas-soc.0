@@ -1,74 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:29460 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1759946AbdCVO2u (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58819 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751834AbdC1MRD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Mar 2017 10:28:50 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+        Tue, 28 Mar 2017 08:17:03 -0400
+Date: Tue, 28 Mar 2017 14:16:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
         linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/7] rtc: Add rtc-sh
-Date: Wed, 22 Mar 2017 10:27:49 -0400
-Message-Id: <20170322142754.30888-3-chris.brandt@renesas.com>
-In-Reply-To: <20170322142754.30888-1-chris.brandt@renesas.com>
-References: <20170322142754.30888-1-chris.brandt@renesas.com>
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: r8a7795: salvator-x: Add current sense
+ amplifiers
+Message-ID: <20170328121633.GA20146@verge.net.au>
+References: <1490694282-9439-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1490694282-9439-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-rtc-sh is an RTC for SuperH and RZ/A SoCs.
+On Tue, Mar 28, 2017 at 11:44:42AM +0200, Geert Uytterhoeven wrote:
+> Add device nodes for two Maxim max961x current sense amplifiers
+> sensing the VDD_0.8V and DVFS_0.8V lines.
+> 
+> Based on a patch for r8a7796-salvator-x.dts by Jacopo Mondi.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Pending acceptance of the maxim,max9611 DT bindings.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* added interrupt-names and clock-names
-* clocks now include counting sources
-* changed 'is a RTC' to 'is an RTC' in commit message
----
- Documentation/devicetree/bindings/rtc/rtc-sh.txt | 29 ++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-sh.txt
-
-diff --git a/Documentation/devicetree/bindings/rtc/rtc-sh.txt b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
-new file mode 100644
-index 0000000..adbb8af
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
-@@ -0,0 +1,29 @@
-+* Real Time Clock for Renesas SH and ARM SoCs
-+
-+Required properties:
-+- compatible: Should be "renesas,r7s72100-rtc" and "renesas,sh-rtc" as a
-+  fallback.
-+- reg: physical base address and length of memory mapped region.
-+- interrupts: 3 interrupts for alarm, period, and carry.
-+- interrupt-names: The interrupts should be labeled as "alarm", "period", and
-+  "carry".
-+- clocks: The functional clock source for the RTC controller must be listed
-+  first (if exists). Additionally, potential clock counting sources are to be
-+  listed.
-+- clock-names: The functional clock must be labeled as "fck". Other clocks
-+  may be named in accordance to the SoC hardware manuals.
-+
-+
-+Example:
-+rtc: rtc@fcff1000 {
-+	compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
-+	reg = <0xfcff1000 0x2e>;
-+	interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
-+		      GIC_SPI 277 IRQ_TYPE_EDGE_RISING
-+		      GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
-+	interrupt-names = "alarm", "period", "carry";
-+	clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
-+		 <&rtc_x3_clk>, <&extal_clk>;
-+	clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
-+	power-domains = <&cpg_clocks>;
-+};
--- 
-2.10.1
+I have marked this as deferred accordingly.
