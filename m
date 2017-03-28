@@ -1,180 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:52233 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757413AbdCXPWd (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:12031 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751446AbdC1Lzu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 11:22:33 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Fri, 24 Mar 2017 16:22:09 +0100
-Message-Id: <1490368934-12494-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 28 Mar 2017 07:55:50 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/4] usb: gadget: udc: renesas_usb3: add support for usb role swap
+Date: Tue, 28 Mar 2017 20:53:24 +0900
+Message-ID: <1490702004-8167-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
-controller.
+This patch adds support for usb role swap via sysfs "role".
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+For example:
+ 1) Connect a usb cable using 2 Salvator-X boards.
+  - For A-Device, the cable is connected to CN11 (USB3.0 ch0).
+  - For B-Device, the cable is connected to CN9 (USB2.0 ch0).
+ 2) On A-Device, you input the following command:
+  # echo peripheral > /sys/devices/platform/soc/ee020000.usb/role
+ 3) On B-Device, you input the following command:
+  # echo host > /sys/devices/platform/soc/ee080200.usb-phy/role
+
+Then, the A-Device acts as a peripheral and the B-Device acts as
+a host. Please note that A-Device must input the following command
+if you want the board to act as a host again.
+ # echo host > /sys/devices/platform/soc/ee020000.usb/role
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 143 +++++++++++++++++++++
- 1 file changed, 143 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+ .../ABI/testing/sysfs-platform-renesas_usb3        |  2 ++
+ drivers/usb/gadget/udc/renesas_usb3.c              | 41 +++++++++++++++++++++-
+ 2 files changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-new file mode 100644
-index 0000000..69aafd1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-@@ -0,0 +1,143 @@
-+Renesas RZ/A1 combined Pin and GPIO controller
+diff --git a/Documentation/ABI/testing/sysfs-platform-renesas_usb3 b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
+index f5dace7..1ab919c 100644
+--- a/Documentation/ABI/testing/sysfs-platform-renesas_usb3
++++ b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
+@@ -7,6 +7,8 @@ Description:
+ 		The file can show/change the drd mode of usb.
+ 
+ 		Write the following string to change the mode:
++		 "host" - switching mode from peripheral to host.
++		 "peripheral" - switching mode from host to peripheral.
+ 		 "b-device" - switching mode as forced b-device mode.
+ 
+ 		Read the file, then it shows the following strings:
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 34ac03c..b552243 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -570,12 +570,29 @@ static void usb3_mode_a_host(struct renesas_usb3 *usb3)
+ 	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
+ }
+ 
++static void usb3_mode_a_peri(struct renesas_usb3 *usb3)
++{
++	unsigned long flags;
 +
-+The Renesas SoCs of RZ/A1 family feature a combined Pin and GPIO controller
-+hardware controller, named "Ports" in the hardware reference manual.
-+Pin multiplexing and GPIO configuration is performed on a per-pin basis
-+writing configuration values to per-port register sets.
-+Each "port" features up to 16 pins, each of them configurable for GPIO
-+function (port mode) or in alternate function mode.
-+Up to 8 different alternate function modes exist for each single pin.
++	spin_lock_irqsave(&usb3->lock, flags);
++	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
++	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
++	usb3_check_vbus(usb3);
++	spin_unlock_irqrestore(&usb3->lock, flags);
++}
 +
-+Pin controller node
-+-------------------
+ static void usb3_mode_b_peri(struct renesas_usb3 *usb3)
+ {
+ 	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
+ 	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
+ }
+ 
++static void usb3_mode_b_host(struct renesas_usb3 *usb3)
++{
++	usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
++	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
++}
 +
-+Required properties:
-+  - compatible
-+    this shall be "renesas,r7s72100-ports".
+ static bool usb3_is_a_device(struct renesas_usb3 *usb3)
+ {
+ 	return !(usb3_read(usb3, USB3_USB_OTG_STA) & USB_OTG_IDMON);
+@@ -1865,8 +1882,30 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+ 		usb3->forced_b_device = true;
+ 		renesas_usb3_init_forced_b_device(usb3);
+ 	} else {
++		bool new_mode_is_host;
 +
-+  - #pinctrl-cells
-+    as defined by pinctrl-bindings.txt, this is the number
-+    of cells (in addition to pin index) required to configure a single pin.
-+    Shall be set to 1.
+ 		usb3->forced_b_device = false;
+-		return -EINVAL;
++		if (!strncmp(buf, "host", strlen("host")))
++			new_mode_is_host = true;
++		else if (!strncmp(buf, "peripheral", strlen("peripheral")))
++			new_mode_is_host = false;
++		else
++			return -EINVAL;
 +
-+  - reg
-+    address base and length of the memory area where pin controller
-+    hardware is mapped to.
++		if (new_mode_is_host == usb3_is_host(usb3))
++			return -EINVAL;
 +
-+Example:
-+Pin controller node for RZ/A1H SoC (r7s72100)
-+
-+pinctrl: pinctrl@fcfe3000 {
-+	compatible = "renesas,r7s72100-ports";
-+
-+	#pinctrl-cells = <1>;
-+
-+	reg = <0xfcfe3000 0x4230>;
-+};
-+
-+Sub-nodes
-+---------
-+
-+The child nodes of the pin controller node describe a pin multiplexing
-+function or a gpio controller alternatively.
-+
-+- Pin multiplexing sub-nodes:
-+  A pin multiplexing sub-node describes how to configure a set of
-+  (or a single) pin in some desired alternate function mode.
-+  A single sub-node may define several pin configurations groups.
-+
-+  Required properties:
-+    - renesas,pins
-+      describes an array of pin multiplexing configurations.
-+      When a pin has to be configured in alternate function mode, use this
-+      property to identify the pin by its global index, and provide its
-+      alternate function configuration description along with it.
-+      When multiple pins are required to be configured as part of the same
-+      alternate function (odds are single-pin alternate functions exist) they
-+      shall be specified as members of the same argument list of a single
-+      "renesas-pins" property.
-+      Helper macros to ease calculating the pin index from its position
-+      (port where it sits on and pin offset), and alternate function
-+      configuration options are provided in the pin controller header file at:
-+      include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-+
-+  Example:
-+  A serial communication interface with a TX output pin and an RX input pin.
-+
-+  &pinctrl {
-+	scif2_pins: serial2 {
-+		renesas,pins = <PIN(3, 0) 6>, <PIN(3, 2) 4>;
-+	};
-+  }
-+
-+  Pin #0 on port #3 is configured as alternate function #6.
-+  Pin #2 on port #3 is configured as alternate function #4.
-+
-+  Example 2:
-+  I2c master: both SDA and SCL pins need bi-directional operations
-+
-+  &pinctrl {
-+	i2c2_pins: i2c2 {
-+		renesas,pins = <PIN(1, 4) (1 | BI_DIR)>,
-+			       <PIN(1, 5) (1 | BI_DIR)>;
-+	};
-+  }
-+
-+  Pin #4 on port #1 is configured as alternate function #1.
-+  Pin #5 on port #1 is configured as alternate function #1.
-+  Both need to work in bi-directional mode.
-+
-+  Example 3:
-+  Multi-function timer input and output compare pins.
-+  The hardware manual prescribes this pins to have input/output direction
-+  specified by software. Configure TIOC0A as input and TIOC0B as output.
-+
-+  &pinctrl {
-+	tioc0_pins: tioc0 {
-+		renesas,pins = <PIN(4, 0) (2 | SWIO_IN)>,
-+			       <PIN(4, 1) (2 | SWIO_OUT)>;
-+	};
-+  }
-+
-+  Pin #0 on port #4 is configured as alternate function #2 with IO direction
-+  specified by software as input.
-+  Pin #1 on port #4 is configured as alternate function #1 with IO direction
-+  specified by software as output.
-+
-+- GPIO controller sub-nodes:
-+  Each port of the r7s72100 pin controller hardware is itself a gpio controller.
-+  Different SoCs have different number of available pins per port, but
-+  generally speaking, each of them can be configured in GPIO ("port") mode
-+  on this hardware.
-+  Describe gpio-controllers using sub-nodes with the following properties.
-+
-+  Required properties:
-+    - gpio-controller
-+      empty property as defined by the gpio bindings documentation.
-+    - #gpio-cells
-+      number of cells required to identify and configure a GPIO.
-+      Shall be 2.
-+    - gpio-ranges
-+      Describes a gpio controller specifying its specific pin base, the pin
-+      base in the global pin numbering space, and the number of controlled
-+      pins, as defined by the gpio bindings documentation. Refer to this file
-+      for a more detailed description.
-+
-+  Example:
-+  A gpio controller node, controlling 16 pins indexed from 0.
-+  The gpio controller base in the global pin indexing space is pin 48, thus
-+  pins [0 - 15] on this controller map to pins [48 - 63] in the global pin
-+  indexing space.
-+
-+  port3: gpio-3 {
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	gpio-ranges = <&pinctrl 0 48 16>;
-+  };
-+
-+  A device node willing to use pins controlled by this gpio controller, shall
-+  refer to it as follows:
-+
-+  led1 {
-+	gpios = <&port3 10 GPIO_ACTIVE_LOW>;
-+  };
++		if (new_mode_is_host) {
++			if (usb3_is_a_device(usb3))
++				usb3_mode_a_host(usb3);
++			else
++				usb3_mode_b_host(usb3);
++		} else {
++			if (usb3_is_a_device(usb3))
++				usb3_mode_a_peri(usb3);
++			else
++				usb3_mode_b_peri(usb3);
++		}
+ 	}
+ 
+ 	return count;
 -- 
-2.7.4
+1.9.1
