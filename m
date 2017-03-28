@@ -1,72 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37860 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757379AbdCXPWn (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:44658 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754953AbdC1Kqe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 11:22:43 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-Date: Fri, 24 Mar 2017 16:22:10 +0100
-Message-Id: <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 28 Mar 2017 06:46:34 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] ARM: dts: silk: Correct clock of DU1
+Date: Tue, 28 Mar 2017 12:45:33 +0200
+Message-Id: <1490697933-5849-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490697933-5849-1-git-send-email-geert+renesas@glider.be>
+References: <1490697933-5849-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add dt-bindings for Renesas r7s72100 pin controller header file.
+The second channel of the display unit uses a different module clock
+than the first channel.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Fixes: 84e734f497cd48f6 ("ARM: dts: silk: add DU DT support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 36 ++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+ arch/arm/boot/dts/r8a7794-silk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-new file mode 100644
-index 0000000..170338b
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-@@ -0,0 +1,36 @@
-+/*
-+ * Defines macros and constants for Renesas RZ/A1 pin controller pin
-+ * muxing functions.
-+ */
-+#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
-+#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
-+
-+#define RZA1_PINS_PER_PORT	16
-+
-+/* Create the pin index from its bank and position numbers */
-+#define PIN(b, p)		((b) * RZA1_PINS_PER_PORT + (p))
-+
-+/*
-+ * Flags to apply to alternate function configuration
-+ * All of the following are mutually exclusive.
-+ */
-+
-+/*
-+ * Pin is bi-directional.
-+ * An alternate function that needs both input/output functionalities shall
-+ * be configured as bidirectional.
-+ * Eg. SDA/SCL pins of an I2c interface.
-+ */
-+#define BI_DIR			(1 << 3)
-+
-+/*
-+ * Flags used to ask software to drive the pin I/O direction overriding the
-+ * alternate function configuration.
-+ * Some alternate functions require software to force I/O direction of a pin,
-+ * overriding the designated one.
-+ * Refer to the HW manual to know when this flag shall be used.
-+ */
-+#define SWIO_IN			(1 << 4)
-+#define SWIO_OUT		(1 << 5)
-+
-+#endif
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index c742d80d6dca8548..4cb5278d104dfcb3 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -424,7 +424,7 @@
+ 	status = "okay";
+ 
+ 	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
+-		 <&mstp7_clks R8A7794_CLK_DU0>,
++		 <&mstp7_clks R8A7794_CLK_DU1>,
+ 		 <&x2_clk>, <&x3_clk>;
+ 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
+ 
 -- 
 2.7.4
