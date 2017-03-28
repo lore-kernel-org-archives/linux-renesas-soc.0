@@ -1,51 +1,96 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 2/4] iio: Documentation: Add max9611 sysfs documentation
-Date: Thu, 23 Mar 2017 13:41:11 +0100
-Message-Id: <1490272873-2532-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490272873-2532-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490272873-2532-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from newton.telenet-ops.be ([195.130.132.45]:38134 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754833AbdC1JQt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 28 Mar 2017 05:16:49 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 3vsld12rjxzMrgMY
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 11:16:21 +0200 (CEST)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Christoph Baumann <cbaumann@visteon.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/3] serial: sh-sci: Fix (AUTO)RTS in sci_init_pins()
+Date: Tue, 28 Mar 2017 11:13:46 +0200
+Message-Id: <1490692426-19252-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
+References: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add documentation for max9611 driver.
-Document attributes describing value of shunt resistor installed between
-RS+ and RS- voltage sense inputs.
+If a UART has dedicated RTS/CTS pins, and hardware control flow is
+disabled (or AUTORTS is not yet effective), changing any serial port
+configuration deasserts RTS, as .set_termios() calls sci_init_pins().
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To fix this, consider the current (AUTO)RTS state when (re)initializing
+the pins.  Note that for SCIFA/SCIFB, AUTORTS needs explicit
+configuration of the RTS# pin function, while (H)SCIF handles this
+automatically.
+
+Fixes: d2b9775d795ec05f ("serial: sh-sci: Correct pin initialization on (H)SCIF")
+Fixes: e9d7a45a03991349 ("serial: sh-sci: Add pin initialization for SCIFA/SCIFB")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
-new file mode 100644
-index 0000000..9c60824
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
-@@ -0,0 +1,16 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/in_shunt_resistor_power
-+Date:		March 2017
-+KernelVersion:	4.12
-+Contact:	linux-iio@vger.kernel.org
-+Description: 	The value of the shunt resistor used to compute power drain on
-+                common input voltage pin (RS+). In micro Ohms.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/in_shunt_resistor_current
-+Date:		March 2017
-+KernelVersion:	4.12
-+Contact:	linux-iio@vger.kernel.org
-+Description: 	The value of the shunt resistor used to compute current flowing
-+                between RS+ and RS- voltage sense inputs. In micro Ohms.
-+		This attributes describe a single physical component, exposed
-+		as two distinct attributes as it is used to calculate two
-+		different values.
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 6e405fb5a23f0b4a..71707e8e6e3ffe76 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -683,24 +683,37 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ 	}
+ 
+ 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++		u16 data = serial_port_in(port, SCPDR);
+ 		u16 ctrl = serial_port_in(port, SCPCR);
+ 
+ 		/* Enable RXD and TXD pin functions */
+ 		ctrl &= ~(SCPCR_RXDC | SCPCR_TXDC);
+ 		if (to_sci_port(port)->has_rtscts) {
+-			/* RTS# is output, driven 1 */
+-			ctrl |= SCPCR_RTSC;
+-			serial_port_out(port, SCPDR,
+-				serial_port_in(port, SCPDR) | SCPDR_RTSD);
++			/* RTS# is output, active low, unless autorts */
++			if (!(port->mctrl & TIOCM_RTS)) {
++				ctrl |= SCPCR_RTSC;
++				data |= SCPDR_RTSD;
++			} else if (!s->autorts) {
++				ctrl |= SCPCR_RTSC;
++				data &= ~SCPDR_RTSD;
++			} else {
++				/* Enable RTS# pin function */
++				ctrl &= ~SCPCR_RTSC;
++			}
+ 			/* Enable CTS# pin function */
+ 			ctrl &= ~SCPCR_CTSC;
+ 		}
++		serial_port_out(port, SCPDR, data);
+ 		serial_port_out(port, SCPCR, ctrl);
+ 	} else if (sci_getreg(port, SCSPTR)->size) {
+ 		u16 status = serial_port_in(port, SCSPTR);
+ 
+-		/* RTS# is output, driven 1 */
+-		status |= SCSPTR_RTSIO | SCSPTR_RTSDT;
++		/* RTS# is always output; and active low, unless autorts */
++		status |= SCSPTR_RTSIO;
++		if (!(port->mctrl & TIOCM_RTS))
++			status |= SCSPTR_RTSDT;
++		else if (!s->autorts)
++			status &= ~SCSPTR_RTSDT;
+ 		/* CTS# and SCK are inputs */
+ 		status &= ~(SCSPTR_CTSIO | SCSPTR_SCKIO);
+ 		serial_port_out(port, SCSPTR, status);
 -- 
 2.7.4
-
