@@ -1,205 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:64677 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754746AbdCIO6B (ORCPT
+Received: from newton.telenet-ops.be ([195.130.132.45]:38136 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754828AbdC1JQt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Mar 2017 09:58:01 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
-Date: Thu, 9 Mar 2017 14:55:41 +0000
-Message-ID: <SG2PR06MB1165969D5D3072A3A19DEDCE8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Tue, 28 Mar 2017 05:16:49 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 3vsld131Y4zMrgMp
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 11:16:21 +0200 (CEST)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Christoph Baumann <cbaumann@visteon.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/3] serial: sh-sci: Fix late enablement of AUTORTS
+Date: Tue, 28 Mar 2017 11:13:45 +0200
+Message-Id: <1490692426-19252-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
+References: <1490692426-19252-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+When changing hardware control flow for a UART with dedicated RTS/CTS
+pins, the new AUTORTS state is not immediately reflected in the
+hardware, but only when RTS is raised.  However, the serial core does
+not call .set_mctrl() after .set_termios(), hence AUTORTS may only
+become effective when the port is closed, and reopened later.
+Note that this problem does not happen when manually using stty to
+change CRTSCTS, as AUTORTS will work fine on next open.
 
-On Monday, February 20, 2017, Jacopo Mondi wrote:
->=20
-> Add combined gpio and pin controller driver for Renesas RZ/A1
-> r7s72100 SoC.
->=20
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/pinctrl/Kconfig        |   10 +
->  drivers/pinctrl/Makefile       |    1 +
->  drivers/pinctrl/pinctrl-rza1.c | 1026
-> ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 1037 insertions(+)
->  create mode 100644 drivers/pinctrl/pinctrl-rza1.c
->=20
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index 8f8c2af..61310ac 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -163,6 +163,16 @@ config PINCTRL_ROCKCHIP
->  	select GENERIC_IRQ_CHIP
->  	select MFD_SYSCON
->=20
-> +config PINCTRL_RZA1
-> +	bool "Renesas r7s72100 RZ/A1 gpio and pinctrl driver"
+To fix this, call .set_mctrl() from .set_termios() when dedicated
+RTS/CTS pins are present, to refresh the AUTORTS or RTS state.
+This is similar to what other drivers supporting AUTORTS do (e.g.
+omap-serial).
 
-You can drop the "r7s72100" and just say RZ/A1.
+Reported-by: Baumann, Christoph (C.) <cbaumann@visteon.com>
+Fixes: 33f50ffc253854cf ("serial: sh-sci: Fix support for hardware-assisted RTS/CTS")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Tested on r8a7791/koelsch with HSCIF1 (GPIO hardware flow control),
+and HSCIF2 and SCIFB0 (dedicated hardware flow control).
 
+A simple test program (basically "cat" with CRTSCTS configuration
+capability) can be found at https://github.com/geertu/sercat
 
+Without this patch the following will fail:
 
-> +/**
-> + * rza1_pin_set_direction() - set I/O direction on a pin in port mode
-> + *
-> + * When running in output port mode keep PBDC enabled to allow reading
-> the
-> + * pin value from PPR.
-> + * When in alternate mode disable that (if not explicitly required) not
-> to
-> + * interfere with the alternate function mode.
-> + *
-> + * @port: port where pin sits on
-> + * @offset: pin offset
-> + * @input: input enable/disable flag
-> + */
-> +static inline void rza1_pin_set_direction(struct rza1_port *port,
-> +					  unsigned int offset,
-> +					  bool input)
-> +{
-> +	spin_lock(&port->lock);
-> +	if (input)
-> +		rza1_set_bit(port, PIBC_REG, offset, 1);
-> +	else {
-> +		rza1_set_bit(port, PM_REG, offset, 0);
-> +		rza1_set_bit(port, PBDC_REG, offset, 1);
-> +	}
-> +	spin_unlock(&port->lock);
+  1. sercat -f /dev/hscif2 &
+     seq 100 120 | sercat -f -w /dev/hscif1 # hangs
 
-When input=3D=3Dtrue, you only set PIBC_REG. Otherwise you only set PM_REG =
-and PBDC_REG. This would imply that this function will only ever get called=
- once for a pin and never get called a second time with a different directi=
-on...meaning it would not really change a pin from output to input. I would=
- assume that you would need to change this function to set those 3 register=
-s either one way or the other.
+  2. seq 200 220 | sercat -f -w /dev/hscif2 &
+     sercat -f /dev/hscif1 # no data received
 
-I would suggest:
-   PIBC_REG =3D 1 /* always gets set for GPIO mode */
- input:
-   PM_REG =3D 1
-   PBDC_REG =3D 0
-output:
-   PM_REG =3D 0
-   PBDC_REG =3D 1
+v2:
+  - Remove the paragraph about sci_init_pins() and reword.
+    When hardware control flow is disabled, there can still be small
+    glitches in the RTS signal.
+    These glitches are now addressed in a separate patch.
+---
+ drivers/tty/serial/sh-sci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-
-
-> +/**
-> + * rza1_alternate_function_conf() - configure pin in alternate function
-> mode
-> + *
-> + * @pinctrl: RZ/A1 pin controller device
-> + * @pin_conf: single pin configuration descriptor
-> + */
-> +static int rza1_alternate_function_conf(struct rza1_pinctrl *rza1_pctl,
-> +					struct rza1_pin_conf *pin_conf)
-> +{
-> +	unsigned int offset =3D pin_conf->offset;
-> +	struct rza1_port *port =3D &rza1_pctl->ports[pin_conf->port];
-> +	u8 mux_mode =3D (pin_conf->mux_conf - 1) & MUX_FUNC_MASK;
-> +	u8 mux_conf =3D pin_conf->mux_conf >> MUX_FUNC_OFFS;
-> +	bool swio_en =3D !!(mux_conf & MUX_CONF_SWIO);
-> +	bool input_en =3D !!(mux_conf & MUX_CONF_INPUT_ENABLE);
-> +
-> +	rza1_pin_reset(port, offset);
-> +
-> +	/*
-> +	 * When configuring pin with Software Controlled IO mode in
-> alternate
-> +	 * mode, do not enable bi-directional control to avoid driving Pn
-> +	 * value to the pin input.
-> +	 * When working in direct IO mode (aka alternate function drives the
-> +	 * pin direction), enable bi-directional control for input pins in
-> +	 * order to enable the pin's input buffer as a consequence.
-> +	 */
-> +	if ((!swio_en && input_en) || (swio_en && !input_en))
-> +		rza1_set_bit(port, PBDC_REG, offset, 1);
-
-
-Maybe just set PBDC_REG at the end of the function with everything else.
-See below...
-
-
-
-> +
-> +	/*
-> +	 * Enable alternate function mode and select it.
-> +	 *
-> +	 * ----------------------------------------------------
-> +	 * Alternate mode selection table:
-> +	 *
-> +	 * PMC	PFC	PFCE	PFCAE	mux_mode
-> +	 * 1	0	0	0	0
-> +	 * 1	1	0	0	1
-> +	 * 1	0	1	0	2
-> +	 * 1	1	1	0	3
-> +	 * 1	0	0	1	4
-> +	 * 1	1	0	1	5
-> +	 * 1	0	1	1	6
-> +	 * 1	1	1	1	7
-> +	 * ----------------------------------------------------
-> +	 */
-> +	rza1_set_bit(port, PFC_REG, offset, mux_mode & MUX_FUNC_PFC_MASK);
-> +	rza1_set_bit(port, PFCE_REG, offset, mux_mode & MUX_FUNC_PFCE_MASK);
-> +	rza1_set_bit(port, PFCEA_REG, offset, mux_mode &
-> MUX_FUNC_PFCEA_MASK);
-> +
-> +	/*
-> +	 * All alternate functions except a few (4) need PIPCn =3D 1.
-> +	 * If PIPCn has to stay disabled (SW IO mode), configure PMn
-> according
-> +	 * to I/O direction specified by pin configuration -after- PMC has
-> been
-> +	 * set to one.
-> +	 */
-> +	if (!swio_en)
-> +		rza1_set_bit(port, PIPC_REG, offset, 1);
-> +
-> +	rza1_set_bit(port, PMC_REG, offset, 1);
-> +
-> +	if (swio_en)
-> +		rza1_set_bit(port, PM_REG, offset, input_en);
-
-
-I would suggest something like this:
-
-	if (bidir)
-		rza1_set_bit(port, PBDC_REG, offset, 1);
-	else {
-		rza1_set_bit(port, PBDC_REG, offset, 0);
-		rza1_set_bit(port, PM_REG, offset, swio_in);
-	}
-
-	rza1_set_bit(port, PMC_REG, offset, 1);
-
-
-> +
-> +	return 0;
-> +}
-
-
-
-
-Chris
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 446a23bee14008bb..6e405fb5a23f0b4a 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2372,6 +2372,10 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 
+ 		serial_port_out(port, SCFCR, ctrl);
+ 	}
++	if (port->flags & UPF_HARD_FLOW) {
++		/* Refresh (Auto) RTS */
++		sci_set_mctrl(port, port->mctrl);
++	}
+ 
+ 	scr_val |= SCSCR_RE | SCSCR_TE |
+ 		   (s->cfg->scscr & ~(SCSCR_CKE1 | SCSCR_CKE0));
+-- 
+2.7.4
