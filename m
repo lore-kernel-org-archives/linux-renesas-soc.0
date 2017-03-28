@@ -1,66 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:45685 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753379AbdC1WmJ (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:49485 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751494AbdC1Lzv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 18:42:09 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/3] dmaengine: rcar-dmac: implement device_synchronize()
-Date: Wed, 29 Mar 2017 00:40:34 +0200
-Message-Id: <20170328224035.8040-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170328224035.8040-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170328224035.8040-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 28 Mar 2017 07:55:51 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/4] usb: gadget: udc: renesas_usb3: add USB3.0 DRD support
+Date: Tue, 28 Mar 2017 20:53:20 +0900
+Message-ID: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement the device_synchronize() callback which wait until a dma
-channel is stopped to provide a synchronization point.
+This patch set is based on the latest Felipe's usb.bit / testing/next branch
+(commit id = 29986993f67341493988b6c5d68e0653061975b2).
 
-This protects the driver from multiple race conditions when terminating
-and freeing resources. E.g. the completion callback still running after
-device_terminate_all() has completed.
+The USB3.0 DRD controller on R-Car Gen3 can change the role via DRD_CON
+register in the periperal side sadly, so this patch adds support
+for usb role swap feature in this udc driver.
+Furtunately, the default setting of the DRD is host side, if a user want
+to use host side only, we can handle it easily just to disable the udc driver.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/dma/sh/rcar-dmac.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Yoshihiro Shimoda (4):
+  usb: gadget: udc: renesas_usb3: add sysfs "role" to set "b-device"
+    mode
+  usb: gadget: udc: add USB ID signal monitoring
+  usb: gadget: udc: renesas_usb3: add extcon support
+  usb: gadget: udc: renesas_usb3: add support for usb role swap
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 3038654f11b5c6ed..4b90deb40d559bed 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1353,6 +1353,13 @@ static void rcar_dmac_issue_pending(struct dma_chan *chan)
- 	spin_unlock_irqrestore(&rchan->lock, flags);
- }
- 
-+static void rcar_dmac_device_synchronize(struct dma_chan *chan)
-+{
-+	struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
-+
-+	synchronize_irq(rchan->irq);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * IRQ handling
-  */
-@@ -1834,6 +1841,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 	engine->device_terminate_all = rcar_dmac_chan_terminate_all;
- 	engine->device_tx_status = rcar_dmac_tx_status;
- 	engine->device_issue_pending = rcar_dmac_issue_pending;
-+	engine->device_synchronize = rcar_dmac_device_synchronize;
- 
- 	ret = dma_async_device_register(engine);
- 	if (ret < 0)
+ .../ABI/testing/sysfs-platform-renesas_usb3        |  17 ++
+ drivers/usb/gadget/udc/Kconfig                     |   1 +
+ drivers/usb/gadget/udc/renesas_usb3.c              | 201 ++++++++++++++++++++-
+ 3 files changed, 214 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-renesas_usb3
+
 -- 
-2.12.0
+1.9.1
