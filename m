@@ -1,90 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:50443 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751666AbdC2OJk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 10:09:40 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: jacopo <jacopo@jmondi.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165276F957CE63DBE0A55268A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
+ <20170323160204.GL30223@w540> <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
+ <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org> <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
+ <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
+ <CACRpkdbT3091MzAQ_hO5Hc9=gQz-eDNCDtEnVG-3G+jJ+eO+Fw@mail.gmail.com>
+ <CAMuHMdX0OdZXYDOZvFutjfBFVd65C567_G+++kHygre4KK+jLg@mail.gmail.com>
+ <20170329120530.GB6247@w540> <SG2PR06MB1165276F957CE63DBE0A55268A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Mar 2017 15:10:17 +0200
+Message-ID: <CACRpkdb+k82OUbi1y1SNC09asHsNSqbtvCkYyT=1eqjpdMt_cg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: jacopo <jacopo@jmondi.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Wed, 29 Mar 2017 14:09:33 +0000
-Message-ID: <SG2PR06MB116582E6A9D9F13F45B641B28A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
- <20170323160204.GL30223@w540>
- <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
- <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
- <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
- <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
- <CACRpkdbT3091MzAQ_hO5Hc9=gQz-eDNCDtEnVG-3G+jJ+eO+Fw@mail.gmail.com>
- <CAMuHMdX0OdZXYDOZvFutjfBFVd65C567_G+++kHygre4KK+jLg@mail.gmail.com>
- <20170329120530.GB6247@w540>
- <SG2PR06MB1165276F957CE63DBE0A55268A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CACRpkdb+k82OUbi1y1SNC09asHsNSqbtvCkYyT=1eqjpdMt_cg@mail.gmail.com>
-In-Reply-To: <CACRpkdb+k82OUbi1y1SNC09asHsNSqbtvCkYyT=1eqjpdMt_cg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gV2VkbmVzZGF5LCBNYXJjaCAyOSwgMjAxNywgTGludXMgV2FsbGVpajoNCj4gSWYgeW91IHBy
-ZWZlciB0byB1c2UgcHJlcHJvY2Vzc29yIG1hY3JvcyBvciB3aGF0ZXZlciB0byBtYWtlIHRoZSBi
-aXRtYXNrcw0KPiBvciBob3cgeW91IHdhbnQgdG8gb3JnYW5pemUgdGhlIGNvbnN0YW50cyBpbiB5
-b3VyIGluY2x1ZGUgZmlsZXMgaXMgbm90IG15DQo+IGNvbmNlcm4sIGRvIHdoYXRldmVyIHlvdSBz
-ZWVtIGZpdCwganVzdCBwYWNrIGl0IGludG8gYSAzMmJpdCB0aGluZyBzb21laG93DQo+IHdoaWNo
-IG1ha2VzIHNlbnNlIGZyb20gYSBtYWludGVuYW5jZSBwb2ludCBvZiB2aWV3Lg0KDQpPSywgSSB0
-aGluayBldmVyeW9uZSBhZ3JlZXMgdGhhdCBhIHNpbmdsZSAzMi1iaXQgdmFsdWUgaXMgZmluZSBi
-ZWNhdXNlIG1hY3Jvcw0Kd2lsbCBhbHNvIGZvciBnb29kIHJlYWRhYmlsaXR5IGFuZCBtYWludGVu
-YW5jZS4NCg0KDQo+ID4+IE5vdCBvbmx5IGJlY2F1c2UgaXQgd2lsbCBzYXZlIHVzZSBmcm9tIGhh
-dmluZyBhIGxvb25nIGxpc3QoKikgb2YNCj4gPj4gbWFjcm9zIHRoYXQgaGFzIHRvIGJlIGtlcHQg
-dXAgdG8gZGF0ZSB3aGVuL2lmIG5ldyBSWiBoYXJkd2FyZSB3aWxsDQo+ID4+IGFycml2ZSwgYnV0
-IGFsc28gYmVjYXVzZSBvZiByZWFkYWJpbGl0eSBhbmQgc2ltcGxpY2l0eSBmb3IgZG93bi1zdHJl
-YW0NCj4gYW5kIEJTUCB1c2Vycy4NCj4gPj4gU3BlYWtpbmcgb2Ygd2hpY2gsIEkgd291bGQgbGlr
-ZSB0byBrbm93IHdoYXQgZG9lcyBDaHJpcyB0aGluayBvZiB0aGlzLg0KPiA+DQo+ID4gVGhlIGxp
-c3Qgb2YgbWFjcm9zIHdvdWxkIGJlIHZlcnkgbG9uZywgZXNwZWNpYWxseSBhZ2FpbnN0IHRoZQ0K
-PiA+IGRpZmZlcmVudCBwYWNrYWdpbmcgdmVyc2lvbiBvZiB0aGUgUlovQTEgc2VyaWVzLiAxMSBw
-b3J0cywgMTYtcGlucyBmb3INCj4gPiBlYWNoIHBvcnQsIDggZGlmZmVyZW50IGZ1bmN0aW9uIG9w
-dGlvbnMgZm9yIGVhY2ggcGluLi4uLjIgZGlmZmVyZW50DQo+IHBhY2thZ2UvcGluIHZhcmlhdGlv
-bnMuDQo+ID4NCj4gPiBBbmQgYXQgdGhlIGVuZCBvZiB0aGUgZGF5Li4uLnRoZXJlIGlzIG5vIGJl
-bmVmaXQgZm9yIHRoZSB1c2VyIG92ZXINCj4gPiBqdXN0IHVzaW5nIGEgbWFjcm8uDQo+IA0KPiBJ
-IGRvbid0IGtub3cgd2hvIGhhcyB0aGlzIGlkZWEgdGhhdCB5b3UgY291bGQgbm90IHVzZSBtYWNy
-b3MsIGNlcnRhaW5seQ0KPiBub3QgbWUuIFNvbWUgbWlzdW5kZXJzdGFuZGluZyBtdXN0IGJlIGdv
-aW5nIG9uLiBGb3Igd2hhdCBJJ20gY29uY2VybmVkIHlvdQ0KPiBjYW4gd3JpdGUgaGV4IG51bWJl
-cnMgaW4gdGhlIHBpbm11eCA9IDwweDEyMzQ1Njc4PjsNCj4gDQo+ID4gVGhlIHJlYXNvbiBmb3Ig
-dGhlICJGTEFHUyIgaXMgdG8gd29yayBhcm91bmQgYSBxdWlya3kgaGFyZHdhcmUgZGVzaWduDQo+
-IChpbiBteSBvcGluaW9uKS4NCj4gDQo+IFRoZSBmbGFncyBJIGRvbid0IGxpa2UgYXQgYWxsLCBh
-bmQgdGhpbmsgdGhleSBzaG91bGQgYmUgY29udmVydGVkIHRvDQo+IGdlbmVyaWMgcGluIGNvbmZp
-ZyBiZWNhdXNlIHRoZXkgaGF2ZSBub3RoaW5nIHRvIGRvIHdpdGggbXV4aW5nLg0KPiANCj4gQnV0
-IEkgd2lsbCBwb2ludCB0aGF0IG91dCBpbiB0aGUgc3BlY2lmaWMgcGF0Y2ggYWRkaW5nIHRoZW0u
-DQoNCk9LLCBJIHRoaW5rIEkgdW5kZXJzdGFuZCB5b3VyIGlzc3VlIGEgbGl0dGxlIGJldHRlciBv
-ZiBtaXhpbmcgdXNlci1kZWZpbmVkIGNvbmZpZw0Kd2l0aCBnZW5lcmljIHBpbm11eC4NCg0KRnJv
-bSBvdXIgcGVyc3BlY3RpdmUsIHRoZSBGTEFHUyAoQklfRElSLCBTV0lPX0lOLCBhbmQgU1dJT19P
-VVQgKSB3ZXJlIG5vdCByZWFsbHkNCm9wdGlvbmFsIHdoZW4gc2VsZWN0aW5nIHdoYXQgeW91IHdh
-bnQgdGhlIHBpbiB0byBkby4uLi5zbyB3ZSBjb25zaWRlcmVkIGl0IHBhcnQNCm9mIHRoZSBwaW4t
-bXV4Lg0KDQpJbiB0aGUgaGFyZHdhcmUgbWFudWFsLCB0aGVyZSBhcmUgdGFibGVzIHRoYXQgc2F5
-IHRoYXQgZm9yICdzb21lJyBjZXJ0YWluDQpwaW5zL2Z1bmN0aW9ucyAianVzdCBzZXR0aW5nIHRo
-ZSBwaW4gdG8gYSBmdW5jdGlvbiBpcyBub3QgZW5vdWdoLi4ueW91IG5lZWQgdG8gbWFrZQ0KYW5v
-dGhlciByZWdpc3RlciBzZXR0aW5nICh0aGF0IG1heSBvciBtYXkgbm90IG1ha2Ugc2Vuc2UpLCBv
-dGhlcndpc2UgaXQncyBub3QgZ29pbmcNCnRvIHdvcmsiLg0KDQpTbywgdHJ5aW5nIHRvIGdldCB0
-aGUgZHJpdmVyIHRvIGJlIHRoYXQgc21hcnQgYWNyb3NzIGFsbCB0aGUgZGlmZmVyZW50IHBpbi9w
-YWNrYWdlDQp2YXJpYXRpb25zIHNlZW1zIHRvIGJlIHdheSB0b28gdWdseSAoYW5kIGEgbWFpbnRl
-bmFuY2UgbmlnaHRtYXJlKS4gU2ltcGx5IHB1dHRpbmcNCnRoYXQgaW4gdGhlIERUIGJpbmRpbmcg
-d2FzIG11Y2ggbW9yZSBjbGVhbmVyLg0KDQoNCkFzIGZvciBob3cgdG8gcGFzcyB0aGlzIEhXIGlu
-Zm8gaW50byB0aGUgZHJpdmVyLCBJJ2xsIG1vdmUgb3ZlciB0byB0aGUgb3RoZXIgZW1haWwNCnRo
-cmVhZCB3aGVyZSB5b3Ugc3RhcnRlZCB0byBnaXZlIHNvbWUgc3VnZ2VzdGlvbnMuLi4NCg0KDQpD
-aHJpcw0KDQo=
+On Wed, Mar 29, 2017 at 2:38 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+
+>> I'm strongly in favour of something like
+>>     pinmux = <PIN(1, 4) | FUNC# | FLAGS>, .... ;
+>>
+>> opposed to
+>>     pinmux = <PIN1_4_FUNC#_FLAGS>, ... ;
+>
+>
+> I agree. I like "<PIN(1, 4) | FUNC# | FLAGS>".
+
+I don't know if you have seen the Mediatek things really.
+include/dt-bindings/pinctrl/mt6397-pinfunc.h
+
+Example:
+#define MT6397_PIN_2_SRCLKEN_PERI__FUNC_GPIO2 (MTK_PIN_NO(2) | 0)
+
+If you prefer to use preprocessor macros or whatever to make the
+bitmasks or how you want to organize the constants in your
+include files is not my concern, do whatever you seem fit, just
+pack it into a 32bit thing somehow which makes sense from a
+maintenance point of view.
+
+>> Not only because it will save use from having a loong list(*) of macros
+>> that has to be kept up to date when/if new RZ hardware will arrive, but
+>> also because of readability and simplicity for down-stream and BSP users.
+>> Speaking of which, I would like to know what does Chris think of this.
+>
+> The list of macros would be very long, especially against the different
+> packaging version of the RZ/A1 series. 11 ports, 16-pins for each port, 8 different
+> function options for each pin....2 different package/pin variations.
+>
+> And at the end of the day....there is no benefit for the user over just using
+> a macro.
+
+I don't know who has this idea that you could not use macros, certainly
+not me. Some misunderstanding must be going on. For what I'm concerned
+you can write hex numbers in the pinmux = <0x12345678>;
+
+> The reason for the "FLAGS" is to work around a quirky hardware design (in my opinion).
+
+The flags I don't like at all, and think they should be converted to generic
+pin config because they have nothing to do with muxing.
+
+But I will point that out in the specific patch adding them.
+
+Yours,
+Linus Walleij
