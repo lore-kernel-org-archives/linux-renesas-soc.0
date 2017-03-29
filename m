@@ -1,48 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:34032 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbdCaE4y (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:47714 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932736AbdC2Uvm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2017 00:56:54 -0400
-Date: Thu, 30 Mar 2017 21:56:49 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, linux-pm@vger.kernel.org,
+        Wed, 29 Mar 2017 16:51:42 -0400
+Date: Wed, 29 Mar 2017 22:51:39 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
 Subject: Re: [PATCH v3 0/7] thermal: rcar_gen3_thermal: add support for
  interrupt triggerd trip points
-Message-ID: <20170331045647.GA2194@localhost.localdomain>
+Message-ID: <20170329205139.GB1440@katana>
 References: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
- <20170329205139.GB1440@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GID0FwUMdk1T2AWN"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170329205139.GB1440@katana>
+In-Reply-To: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 10:51:39PM +0200, Wolfram Sang wrote:
-> On Wed, Mar 29, 2017 at 08:43:49PM +0200, Niklas S�derlund wrote:
-> > Hi,
-> > 
-> > This series adds support for hardware backed trip point windows. It is
-> > based on top of v4.11-rc1 and is tested on R-Car H3 and M3-W.
-> > 
-> > The series starts out by fixing three issues (1/7, 2/7, 3/7) that should
-> > have been fixed by me before the initial driver where submitted to
-> > upstream. Sorry for not spotting the issues sooner.
-> > 
-> > The series then extends the rcar_gen3_thermal driver with hardware
-> > interrupts for trip point windows by implementing the .set_trips()
-> > callback of struct thermal_zone_of_device_ops (4/7, 5/7). It then adds
-> > suspend and resume handlers so that the hardware interrupts are
-> > preserved across suspend/resume cycles (6/7, 7/7).
-> 
-> Thanks, Niklas! From my PoV, this series is good to go upstream!
-> 
-Agreed here. Good job with the patches Niklas. Given the nature of
-changes in the driver, I am allowing some time for them to sit on
-linux-next. Queued them on my branch -linus, for next merge window.
+
+--GID0FwUMdk1T2AWN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Mar 29, 2017 at 08:43:49PM +0200, Niklas S=C3=B6derlund wrote:
+> Hi,
+>=20
+> This series adds support for hardware backed trip point windows. It is
+> based on top of v4.11-rc1 and is tested on R-Car H3 and M3-W.
+>=20
+> The series starts out by fixing three issues (1/7, 2/7, 3/7) that should
+> have been fixed by me before the initial driver where submitted to
+> upstream. Sorry for not spotting the issues sooner.
+>=20
+> The series then extends the rcar_gen3_thermal driver with hardware
+> interrupts for trip point windows by implementing the .set_trips()
+> callback of struct thermal_zone_of_device_ops (4/7, 5/7). It then adds
+> suspend and resume handlers so that the hardware interrupts are
+> preserved across suspend/resume cycles (6/7, 7/7).
+
+Thanks, Niklas! From my PoV, this series is good to go upstream!
+
+
+--GID0FwUMdk1T2AWN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJY3B5bAAoJEBQN5MwUoCm2RGIQAKGTKKibMa8+Q0kOu4yZPGlT
+4GiuYBlFm89GQsEZ1gDMVw6WcdTLuG8t5nIXkX+Fn64z47gQvc4oftlcjCYpSi0e
+psv1TcLH2w3jSHzL23JuGClDn9TQ1GrLsW6xyXQKXm6Ovh16WbGzgHUg5an7gWoW
+hfXRgbAmWUtW0Ow7aFeuYLbxeLQQnsE5hKGj+vNOmZ0n6Y7fOB7JnouMu4mFdVRr
++BMnEEL6ZGtDuMlKeFzWbaGNQ2EFlKoq3dFbI6E7M+QZ4SPdJ5TQcQr1CR+9TEXi
+/jwut2sg8covGNiAQM8qHOjmZGvHe/8v/ymbJ+3KUPOEIunBFdChBvCSoMXBac/G
+pdAYLk5E5dsFraq9aGC/BEf2sSe/qSSFXZUR3Fx4AkaftuuTeHImS8n7/hrispcJ
+BKORbopNGimOOqB3bTPTiiMQCeRtPVAgqlaYasI58TTrXvKp1/0qiVTOIYYWUkuv
+jB7ety2BMvSJQBLbhrefN/5CWj+CsRz4XwmluK3ctekW9jm0pCcHSAojyIlqSa+4
+PTYnBy7JRDKxpxK97LKfO8fJSou0NaZK/NObxdRCPiPxcsC7gwpd3VDtEpe7f+pr
+mBqlK/UlgMd/U7u7lYUdX37zZ5LgkbImoakI3WVjlDnhLp4QVd2apRMFD6+ogb7W
+1zuQ8AjkWjMzHLDuO5G3
+=Rup7
+-----END PGP SIGNATURE-----
+
+--GID0FwUMdk1T2AWN--
