@@ -1,18 +1,18 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
+In-Reply-To: <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
 References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
  <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
  <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
  <20170323160204.GL30223@w540> <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
- <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org> <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Mar 2017 09:35:17 +0200
-Message-ID: <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
+ <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Mar 2017 04:30:43 +0200
+Message-ID: <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
 Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: jacopo <jacopo@jmondi.org>,
+To: jacopo <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -28,61 +28,41 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+On Tue, Mar 28, 2017 at 4:38 PM,  <jacopo@jmondi.org> wrote:
 
-On Wed, Mar 29, 2017 at 4:30 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Mar 28, 2017 at 4:38 PM,  <jacopo@jmondi.org> wrote:
->>> The fact that historically all the early adopters of pinctrl in device
->>> tree
->>> have these funky custom bindings is unfortunate but just something
->>> that we need to live with.
+>> The fact that historically all the early adopters of pinctrl in device
+>> tree
+>> have these funky custom bindings is unfortunate but just something
+>> that we need to live with.
 >>
->> To avoid any confusion, please bear with me and clarify this once and for
->> all,
->> since I'm not certain I fully got you here.
->>
->> Are you suggesting:
->>
->> 1) Use "pins" property with the currently implemented ABI (which slightly
->> differs
->>    from the standard documented one as explained above. Not sure it is fine
->> overriding
->>    it or not)
 >
-> Correction: you should be using the property "pinmux", because you
-> are setting group and function at the same time.
-
-OK.
-
-> See for example:
-> include/dt-bindings/pinctrl/mt65xx.h
+> To avoid any confusion, please bear with me and clarify this once and for
+> all,
+> since I'm not certain I fully got you here.
 >
-> And how that is used in:
-> arch/arm/boot/dts/mt2701-pinfunc.h
-> arch/arm/boot/dts/mt2701-evb.dts
+> Are you suggesting:
 >
-> The docs are here:
-> Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> 1) Use "pins" property with the currently implemented ABI (which slightly
+> differs
+>    from the standard documented one as explained above. Not sure it is fine
+> overriding
+>    it or not)
 
-All of the above pack the information for a pin into a single 32-bit integer.
-Is that what you want us to use, too?
-Currently we use two integers: 1) pin index, and 2) function/flags combo.
+Correction: you should be using the property "pinmux", because you
+are setting group and function at the same time.
 
-> I'm sorry that "pinmux" is not part of the generic documentation, it'd be
-> great if you would like to add it with a patch.
+See for example:
+include/dt-bindings/pinctrl/mt65xx.h
 
-That would mean pinmux could be an array of single values, or tuples.
-Is that OK?
+And how that is used in:
+arch/arm/boot/dts/mt2701-pinfunc.h
+arch/arm/boot/dts/mt2701-evb.dts
 
-Thanks!
+The docs are here:
+Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
 
-Gr{oetje,eeting}s,
+I'm sorry that "pinmux" is not part of the generic documentation, it'd be
+great if you would like to add it with a patch.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
