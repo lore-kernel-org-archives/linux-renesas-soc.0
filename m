@@ -1,71 +1,117 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:32913 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751936AbdC2O70 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 29 Mar 2017 10:59:26 -0400
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11659AB956F83E8DCE2C9AA18A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com> <SG2PR06MB11659AB956F83E8DCE2C9AA18A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Mar 2017 16:59:24 +0200
+Message-ID: <CAMuHMdVx_fyGsw0p-s4ZAoe2k+r0RuwxjwNV_-8fXY7Yv8y3kQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl
- header
-Date: Wed, 29 Mar 2017 15:18:21 +0000
-Message-ID: <SG2PR06MB1165F5D4CFC50CADC609451C8A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com>
- <SG2PR06MB11659AB956F83E8DCE2C9AA18A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdVx_fyGsw0p-s4ZAoe2k+r0RuwxjwNV_-8fXY7Yv8y3kQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVx_fyGsw0p-s4ZAoe2k+r0RuwxjwNV_-8fXY7Yv8y3kQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgTWFyY2ggMjksIDIwMTcsIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiB3cm90ZToNCj4gPiBCdXQsIHdoYXQgZG8gd2UgZG8gZm9yIEV0aGVybmV0PyBBbGwgdGhl
-IHBpbnMgYXJlICJub3JtYWwiIGV4Y2VwdCBqdXN0DQo+ID4gdGhlIE1ESU8gcGluIG5lZWRzIHRv
-IGJlIGJpZGlyZWN0aW9uYWwuDQo+ID4gVGhhdCdzIHRoZSBwYXJ0IEknbSBjb25mdXNlZCBieS4N
-Cj4gPiBIb3cgZG8gd2UgZmxhZyB0aGF0IGp1c3QgdGhlIEVUX01ESU8gbmVlZHMgImJpZGlyZWN0
-aW9uYWwiPw0KPiANCj4gWW91IGFkZCBzdWJub2RlcywgY2ZyLiBhcmNoL2FybTY0L2Jvb3QvZHRz
-L3JlbmVzYXMvcjhhNzc5NS1zYWx2YXRvci14LmR0czoNCj4gDQo+ICAgICAgICAgYXZiX3BpbnM6
-IGF2YiB7DQo+ICAgICAgICAgICAgICAgICBtdXggew0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICBncm91cHMgPSAiYXZiX2xpbmsiLCAiYXZiX3BoeV9pbnQiLCAiYXZiX21kYyIsDQo+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICJhdmJfbWlpIjsNCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgZnVuY3Rpb24gPSAiYXZiIjsNCj4gICAgICAgICAgICAgICAgIH07DQo+IA0KPiAg
-ICAgICAgICAgICAgICAgcGluc19tZGMgew0KPiAgICAgICAgICAgICAgICAgICAgICAgICBncm91
-cHMgPSAiYXZiX21kYyI7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRyaXZlLXN0cmVuZ3Ro
-ID0gPDI0PjsNCj4gICAgICAgICAgICAgICAgIH07DQo+IA0KPiAgICAgICAgICAgICAgICAgcGlu
-c19taWlfdHggew0KPiAgICAgICAgICAgICAgICAgICAgICAgICBwaW5zID0gIlBJTl9BVkJfVFhf
-Q1RMIiwgIlBJTl9BVkJfVFhDIiwNCj4gIlBJTl9BVkJfVEQwIiwNCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICJQSU5fQVZCX1REMSIsICJQSU5fQVZCX1REMiIsDQo+ICJQSU5fQVZC
-X1REMyI7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRyaXZlLXN0cmVuZ3RoID0gPDEyPjsN
-Cj4gICAgICAgICAgICAgICAgIH07DQo+ICAgICAgICAgfTsNCg0KT2gsIHNvIHRoZXJlIGlzIGEg
-d2F5IQ0KDQpUaGFuayB5b3UuDQoNCg0KU28sIGZvciBjbGFyaXR5Og0KDQoJLyogRXRoZXJuZXQg
-Ki8NCglldGhlcl9waW5zOiBldGhlciB7DQoJCS8qIEV0aGVybmV0IG9uIFBvcnRzIDEsMiwzLDUg
-Ki8NCgkJbXV4IHsNCgkJCXBpbnMgPSA8UElOKDEsIDE0KSB8IEZVTkNfNCk+LCAvKiBQMV8xNCA9
-IEVUX0NPTCAqLw0KCQkJCTxQSU4oNSwgOSkgfCBGVU5DXzIpPiwJLyogUDVfOSA9IEVUX01EQyAq
-Lw0KCQkJCTxQSU4oMywgNCkgfCBGVU5DXzIpPiwJLyogUDNfNCA9IEVUX1JYQ0xLICovDQoJCQkJ
-PFBJTigzLCA1KSB8IEZVTkNfMik+LAkvKiBQM181ID0gRVRfUlhFUiAqLw0KCQkJCTxQSU4oMywg
-NikgfCBGVU5DXzIpPiwJLyogUDNfNiA9IEVUX1JYRFYgKi8NCgkJCQk8UElOKDIsIDApIHwgRlVO
-Q18yKT4sCS8qIFAyXzAgPSBFVF9UWENMSyAqLw0KCQkJCTxQSU4oMiwgMSkgfCBGVU5DXzIpPiwJ
-LyogUDJfMSA9IEVUX1RYRVIgKi8NCgkJCQk8UElOKDIsIDIpIHwgRlVOQ18yKT4sCS8qIFAyXzIg
-PSBFVF9UWEVOICovDQoJCQkJPFBJTigyLCAzKSB8IEZVTkNfMik+LAkvKiBQMl8zID0gRVRfQ1JT
-ICovDQoJCQkJPFBJTigyLCA0KSB8IEZVTkNfMik+LAkvKiBQMl80ID0gRVRfVFhEMCAqLw0KCQkJ
-CTxQSU4oMiwgNSkgfCBGVU5DXzIpPiwJLyogUDJfNSA9IEVUX1RYRDEgKi8NCgkJCQk8UElOKDIs
-IDYpIHwgRlVOQ18yKT4sCS8qIFAyXzYgPSBFVF9UWEQyICovDQoJCQkJPFBJTigyLCA3KSB8IEZV
-TkNfMik+LAkvKiBQMl83ID0gRVRfVFhEMyAqLw0KCQkJCTxQSU4oMiwgOCkgfCBGVU5DXzIpPiwJ
-LyogUDJfOCA9IEVUX1JYRDAgKi8NCgkJCQk8UElOKDIsIDkpIHwgRlVOQ18yKT4sCS8qIFAyXzkg
-PSBFVF9SWEQxICovDQoJCQkJPFBJTigyLCAxMCkgfCBGVU5DXzIpPiwgLyogUDJfMTAgPSBFVF9S
-WEQyICovDQoJCQkJPFBJTigyLCAxMSkgfCBGVU5DXzIpPjsgLyogUDJfMTEgPSBFVF9SWEQzICov
-DQoJCX07DQoJCXBpbnNfYmlkaXIgew0KCQkJcGlucyA9IDxQSU4oMywgMykgfCBGVU5DXzIpPiwJ
-LyogUDNfMyA9IEVUX01ESU8gKi8NCgkJCWJpZGlyZWN0aW9uYWw7DQoJCX07DQoJfTsNCg0KDQoN
-CkNocmlzDQoNCg==
+Hi Chris,
+
+On Wed, Mar 29, 2017 at 4:55 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Wednesday, March 29, 2017, Linus Walleij wrote:
+>> On Fri, Mar 24, 2017 at 4:22 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>> > +/*
+>> > + * Flags used to ask software to drive the pin I/O direction
+>> > +overriding the
+>> > + * alternate function configuration.
+>> > + * Some alternate functions require software to force I/O direction
+>> > +of a pin,
+>> > + * overriding the designated one.
+>> > + * Refer to the HW manual to know when this flag shall be used.
+>> > + */
+>> > +#define SWIO_IN                        (1 << 4)
+>> > +#define SWIO_OUT               (1 << 5)
+>>
+>> What is wrong in doing this with generic pin config using
+>> PIN_CONFIG_INPUT_ENABLE and PIN_CONFIG_OUTPUT (ignoring the argument)?
+>>
+>> In the device tree use input-enable and add a new output-enable (with
+>> unspecified value) with proper description and DT bindings?
+>
+> Again, that's probably fine. It seems we are still doing the same thing
+> which is using the DT to pass extra config information to the driver.
+> And, we can do whatever we want with that info.
+>
+>
+>> And if you think these have no general applicability, by the end of the
+>> day they are *still* pin config, not magic flags we can choose to toss in
+>> with the muxing, so you can do what the Qualcomm driver does and add
+>> custom pin configurations extending the generic pin config, see
+>> drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> qcom,pull-up-strength etc.
+>
+> But, it seems that when you set a config option, it applies to everything
+> in "pins"?
+>
+> I2C Example: (seem OK)
+>         /* P1_6 = RIIC3SCL (bi dir) */
+>         /* P1_7 = RIIC3SDA (bi dir) */
+>         i2c3_pins: i2c3 {
+>                 pins = <PIN(1, 6) | FUNC_1>,
+>                        <PIN(1, 7) | FUNC_1>;
+>                 bidirectional;
+>         };
+
+Correct.
+
+> But, what do we do for Ethernet? All the pins are "normal" except just
+> the MDIO pin needs to be bidirectional.
+> That's the part I'm confused by.
+> How do we flag that just the ET_MDIO needs "bidirectional"?
+
+You add subnodes, cfr. arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts:
+
+        avb_pins: avb {
+                mux {
+                        groups = "avb_link", "avb_phy_int", "avb_mdc",
+                                 "avb_mii";
+                        function = "avb";
+                };
+
+                pins_mdc {
+                        groups = "avb_mdc";
+                        drive-strength = <24>;
+                };
+
+                pins_mii_tx {
+                        pins = "PIN_AVB_TX_CTL", "PIN_AVB_TXC", "PIN_AVB_TD0",
+                               "PIN_AVB_TD1", "PIN_AVB_TD2", "PIN_AVB_TD3";
+                        drive-strength = <12>;
+                };
+        };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
