@@ -1,102 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59915 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754054AbdCBSYL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Mar 2017 13:24:11 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>
-Subject: [PATCH v4 1/4] devicetree/bindings: display: bridge: Add LVDS encoder DT bindings
-Date: Thu,  2 Mar 2017 12:47:25 +0200
-Message-Id: <20170302104728.7150-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170302104728.7150-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170302104728.7150-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 3/7] ARM: dts: r7s72100: add rtc clock to device tree
+Date: Wed, 29 Mar 2017 10:30:31 -0700
+Message-Id: <20170329173035.67477-4-chris.brandt@renesas.com>
+In-Reply-To: <20170329173035.67477-1-chris.brandt@renesas.com>
+References: <20170329173035.67477-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DT bindings support parallel to LVDS encoders that don't require any
-configuration, similarly to the dumb VGA DAC DT bindings.
+Add the realtime clock functional clock source.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/display/bridge/lvds-transmitter.txt   | 64 ++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+v2:
+* changed "rtc0" to "rtc"
+* added Reviewed-by
+---
+ arch/arm/boot/dts/r7s72100.dtsi            | 9 +++++++++
+ include/dt-bindings/clock/r7s72100-clock.h | 3 +++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-new file mode 100644
-index 000000000000..fd39ad34c383
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-@@ -0,0 +1,64 @@
-+Parallel to LVDS Encoder
-+------------------------
-+
-+This binding supports the parallel to LVDS encoders that don't require any
-+configuration.
-+
-+LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
-+incompatible data link layers have been used over time to transmit image data
-+to LVDS panels. This binding targets devices compatible with the following
-+specifications only.
-+
-+[JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
-+1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
-+[LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
-+Semiconductor
-+[VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
-+Electronics Standards Association (VESA)
-+
-+Those devices have been marketed under the FPD-Link and FlatLink brand names
-+among others.
-+
-+
-+Required properties:
-+
-+- compatible: Must be "lvds-encoder"
-+
-+Required nodes:
-+
-+This device has two video ports. Their connections are modeled using the OF
-+graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-+
-+- Video port 0 for parallel input
-+- Video port 1 for LVDS output
-+
-+
-+Example
-+-------
-+
-+lvds-encoder {
-+	compatible = "lvds-encoder";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			lvds_enc_in: endpoint {
-+				remote-endpoint = <&display_out_rgb>;
-+			};
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 34994afa9d15..6a1448be4e10 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -117,6 +117,15 @@
+ 			clock-output-names = "ostm0", "ostm1";
+ 		};
+ 
++		mstp6_clks: mstp6_clks@fcfe042c {
++			#clock-cells = <1>;
++			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0xfcfe042c 4>;
++			clocks = <&p0_clk>;
++			clock-indices = <R7S72100_CLK_RTC>;
++			clock-output-names = "rtc";
 +		};
 +
-+		port@1 {
-+			reg = <1>;
+ 		mstp7_clks: mstp7_clks@fcfe0430 {
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index cd2ed5194255..bc256d31099a 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -29,6 +29,9 @@
+ #define R7S72100_CLK_OSTM0	1
+ #define R7S72100_CLK_OSTM1	0
+ 
++/* MSTP6 */
++#define R7S72100_CLK_RTC	0
 +
-+			lvds_enc_out: endpoint {
-+				remote-endpoint = <&lvds_panel_in>;
-+			};
-+		};
-+	};
-+};
+ /* MSTP7 */
+ #define R7S72100_CLK_ETHER	4
+ 
 -- 
-Regards,
+2.11.0
 
-Laurent Pinchart
+
