@@ -1,57 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:36049 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752248AbdC2OOZ (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33848 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753223AbdC2Gt7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 10:14:25 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh@kernel.org>
-CC: Alessandro Zummo <a.zummo@towertech.it>,
+        Wed, 29 Mar 2017 02:49:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170329012441.bxnkyqui24mymuvr@rob-hp-laptop>
+References: <20170322142754.30888-1-chris.brandt@renesas.com>
+ <20170322142754.30888-3-chris.brandt@renesas.com> <20170329012441.bxnkyqui24mymuvr@rob-hp-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Mar 2017 08:49:57 +0200
+Message-ID: <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] rtc: Add rtc-sh
+To: Rob Herring <robh@kernel.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         RTCLINUX <rtc-linux@googlegroups.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/7] rtc: Add rtc-sh
-Date: Wed, 29 Mar 2017 14:14:20 +0000
-Message-ID: <SG2PR06MB11657A015A46C48CDD3858978A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20170322142754.30888-1-chris.brandt@renesas.com>
- <20170322142754.30888-3-chris.brandt@renesas.com>
- <20170329012441.bxnkyqui24mymuvr@rob-hp-laptop>
- <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gV2VkbmVzZGF5LCBNYXJjaCAyOSwgMjAxNywgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0K
-PiA+PiArRXhhbXBsZToNCj4gPj4gK3J0YzogcnRjQGZjZmYxMDAwIHsNCj4gPj4gKyAgICAgY29t
-cGF0aWJsZSA9ICJyZW5lc2FzLHI3czcyMTAwLXJ0YyIsICJyZW5lc2FzLHNoLXJ0YyI7DQo+ID4+
-ICsgICAgIHJlZyA9IDwweGZjZmYxMDAwIDB4MmU+Ow0KPiA+PiArICAgICBpbnRlcnJ1cHRzID0g
-PEdJQ19TUEkgMjc2IElSUV9UWVBFX0VER0VfUklTSU5HDQo+ID4+ICsgICAgICAgICAgICAgICAg
-ICAgR0lDX1NQSSAyNzcgSVJRX1RZUEVfRURHRV9SSVNJTkcNCj4gPj4gKyAgICAgICAgICAgICAg
-ICAgICBHSUNfU1BJIDI3OCBJUlFfVFlQRV9FREdFX1JJU0lORz47DQo+ID4+ICsgICAgIGludGVy
-cnVwdC1uYW1lcyA9ICJhbGFybSIsICJwZXJpb2QiLCAiY2FycnkiOw0KPiA+PiArICAgICBjbG9j
-a3MgPSA8Jm1zdHA2X2Nsa3MgUjdTNzIxMDBfQ0xLX1JUQz4sIDwmcnRjX3gxX2Nsaz4sDQo+ID4+
-ICsgICAgICAgICAgICAgIDwmcnRjX3gzX2Nsaz4sIDwmZXh0YWxfY2xrPjsNCj4gPj4gKyAgICAg
-Y2xvY2stbmFtZXMgPSAiZmNrIiwgInJ0Y194MSIsICJydGNfeDMiLCAiZXh0YWwiOw0KPiA+PiAr
-ICAgICBwb3dlci1kb21haW5zID0gPCZjcGdfY2xvY2tzPjsNCj4gPg0KPiA+IE5vdCBkb2N1bWVu
-dGVkLg0KPiANCj4gInBvd2VyLWRvbWFpbnMiIGlzIGEgcGxhdGZvcm0gcHJvcGVydHkuDQo+IA0K
-PiBBbGwgaGFyZHdhcmUgY29tcG9uZW50cyBuZWVkIHBvd2VyLg0KPiBBbGwgc3luY2hyb25vdXMg
-aGFyZHdhcmUgY29tcG9uZW50cyBuZWVkIGEgY2xvY2suDQo+IE1vc3QgaGFyZHdhcmUgY29tcG9u
-ZW50cyBoYXZlIGEgcmVzZXQgc2lnbmFsLg0KPiANCj4gV2hldGhlciB0aGVzZSBhcmUgZXhwb3Nl
-ZCBhbmQgY2FuIGJlIGNvbnRyb2xsZWQgZGVwZW5kcyBvbiB0aGUNCj4gcGxhdGZvcm0vU29DLg0K
-PiBTbyBkb2N1bWVudGluZyB0aGVtIGluIGVhY2ggYW5kIGV2ZXJ5IGRldmljZSBiaW5kaW5nIGxv
-b2tzIG92ZXJraWxsIHRvIG1lLg0KPiBJIHRoaW5rIHRoaXMgaXMgc29tZXRoaW5nIHRvIGJlIGFk
-ZHJlc3NlZCBieSBkZXZpY2V0cmVlLXNwZWNpZmljYXRpb24NCj4gKHdoaWNoIGRvZXNuJ3QgaGFu
-ZGxlIGNsb2NrcywgcG93ZXItZG9tYWlucywgcmVzZXRzIHlldCkuDQo+IA0KPiBJZiB5b3UgcHJl
-ZmVyLCB0aGUgcHJvcGVydHkgY2FuIGJlIHJlbW92ZWQgZnJvbSB0aGUgZXhhbXBsZSwgdGhvdWdo
-Lg0KDQpJJ2xsIGdvIGFoZWFkIGFuZCBwdWxsIGl0IG91dCAoc2luY2UgSSBoYXZlIHRvIHVwZGF0
-ZSB0aGUgY29tbWl0IHRpdGxlDQphbnl3YXkgYXMgcGVyIFJvYidzIHJlcXVlc3QpDQoNCkJlc2lk
-ZXMuLi5pdCdzIHByb2JhYmx5IHRoZSBtb3N0IGxlYXN0IGltcG9ydGFudCBwYXJ0IG9mIHRoZSBl
-eGFtcGxlIDspDQoNClRoYW5rcywNCkNocmlzDQo=
+Hi Rob,
+
+On Wed, Mar 29, 2017 at 3:24 AM, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Mar 22, 2017 at 10:27:49AM -0400, Chris Brandt wrote:
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
+>> @@ -0,0 +1,29 @@
+>> +* Real Time Clock for Renesas SH and ARM SoCs
+>> +
+>> +Required properties:
+>> +- compatible: Should be "renesas,r7s72100-rtc" and "renesas,sh-rtc" as a
+>> +  fallback.
+>> +- reg: physical base address and length of memory mapped region.
+>> +- interrupts: 3 interrupts for alarm, period, and carry.
+>> +- interrupt-names: The interrupts should be labeled as "alarm", "period", and
+>> +  "carry".
+>> +- clocks: The functional clock source for the RTC controller must be listed
+>> +  first (if exists). Additionally, potential clock counting sources are to be
+>> +  listed.
+>> +- clock-names: The functional clock must be labeled as "fck". Other clocks
+>> +  may be named in accordance to the SoC hardware manuals.
+>> +
+>> +
+>> +Example:
+>> +rtc: rtc@fcff1000 {
+>> +     compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
+>> +     reg = <0xfcff1000 0x2e>;
+>> +     interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
+>> +                   GIC_SPI 277 IRQ_TYPE_EDGE_RISING
+>> +                   GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
+>> +     interrupt-names = "alarm", "period", "carry";
+>> +     clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
+>> +              <&rtc_x3_clk>, <&extal_clk>;
+>> +     clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
+>> +     power-domains = <&cpg_clocks>;
+>
+> Not documented.
+
+"power-domains" is a platform property.
+
+All hardware components need power.
+All synchronous hardware components need a clock.
+Most hardware components have a reset signal.
+
+Whether these are exposed and can be controlled depends on the platform/SoC.
+So documenting them in each and every device binding looks overkill to me.
+I think this is something to be addressed by devicetree-specification (which
+doesn't handle clocks, power-domains, resets yet).
+
+If you prefer, the property can be removed from the example, though.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
