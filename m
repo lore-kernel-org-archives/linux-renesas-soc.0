@@ -1,66 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36652 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754544AbdC2IbF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43689 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754287AbdC2IOO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 04:31:05 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170329081352.GF6512@verge.net.au>
-References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
- <1490362665-4422-2-git-send-email-geert+renesas@glider.be>
- <1612430.SNEha5n02K@avalon> <20170329081352.GF6512@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Mar 2017 10:31:02 +0200
-Message-ID: <CAMuHMdWvR71V_JyR6273KmdtGfrrT_vaU2vcDTpNt2MAG0WdLg@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 1/2] arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
-To: Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 29 Mar 2017 04:14:14 -0400
+Date: Wed, 29 Mar 2017 10:13:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Wolfram Sang <wsa@sang-engineering.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH/RFC v2 1/2] arm64: dts: r8a7795: Add support for R-Car H3
+ ES2.0
+Message-ID: <20170329081352.GF6512@verge.net.au>
+References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
+ <1490362665-4422-2-git-send-email-geert+renesas@glider.be>
+ <1612430.SNEha5n02K@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1612430.SNEha5n02K@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Mon, Mar 27, 2017 at 11:48:12AM +0300, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> Thank you for the patch.
+> 
+> On Friday 24 Mar 2017 14:37:44 Geert Uytterhoeven wrote:
+> > Update r8a7795.dtsi so it corresponds to R-Car H3 ES2.0 or later:
+> >   - The following devices no longer exist on ES2.0, and are thus removed:
+> >     fcpf2, fcpvd3, fcpvi2, fdp1-2, usb3-if1, vspd3, vspi2.
+> >   - The DU <-> VSPD topology is different on ES2.0, hence remove the
+> >     "vsps" property from the DU node until the driver can handle this.
+> 
+> I think I'll need a different compatible string between ES1.x and ES2 for the 
+> DU. It could make sense to move the whole DU node to *-es1.dtsi. We can decide 
+> about that later when I'll have a DU driver prototype ready.
 
-On Wed, Mar 29, 2017 at 10:13 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Mon, Mar 27, 2017 at 11:48:12AM +0300, Laurent Pinchart wrote:
->> On Friday 24 Mar 2017 14:37:44 Geert Uytterhoeven wrote:
->> > Update r8a7795.dtsi so it corresponds to R-Car H3 ES2.0 or later:
->> >   - The following devices no longer exist on ES2.0, and are thus removed:
->> >     fcpf2, fcpvd3, fcpvi2, fdp1-2, usb3-if1, vspd3, vspi2.
->> >   - The DU <-> VSPD topology is different on ES2.0, hence remove the
->> >     "vsps" property from the DU node until the driver can handle this.
->>
->> I think I'll need a different compatible string between ES1.x and ES2 for the
->> DU. It could make sense to move the whole DU node to *-es1.dtsi. We can decide
->> about that later when I'll have a DU driver prototype ready.
->
-> That makes sense to me.
->
-> Geert, will you respin this?
+That makes sense to me.
 
-Sure. The DTS parts are definitely not v4.12 material.
-  - For ES2.0, they depend on clk/pfc/rcar-sysc updates.
-  - For ES1.x, I don't want to break people's setup (scripts copying
-    r8a7795-salvator-x.dtb) prematurely.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Geert, will you respin this?
