@@ -1,60 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:37690 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753827AbdCMQUK (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:47336 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933182AbdC2UvC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Mar 2017 12:20:10 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/7] clk: renesas: rcar-gen3: Misc fixes and cleanups
-Date: Mon, 13 Mar 2017 17:19:47 +0100
-Message-Id: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+        Wed, 29 Mar 2017 16:51:02 -0400
+Date: Wed, 29 Mar 2017 22:50:54 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 5/7] thermal: rcar_gen3_thermal: enable hardware
+ interrupts for trip points
+Message-ID: <20170329205054.GA1440@katana>
+References: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170329184356.8610-6-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Disposition: inline
+In-Reply-To: <20170329184356.8610-6-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
 
-This patch series contains miscellaneous fixes and cleanups for the
-Renesas R-Car Gen3 (H3 and M3-W) clock drivers:
-  - Correct parent clock for Audio DMACs,
-  - Correct names of watchdog clocks,
-  - Reformat core clock tables for easier comparisons between drivers,
-  - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0.
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I plan to queue these up in clk-renesas-for-v4.12.
+On Wed, Mar 29, 2017 at 08:43:54PM +0200, Niklas S=C3=B6derlund wrote:
+> Enable hardware trip points by implementing the set_trips callback. The
+> thermal core will take care of setting the initial trip point window and
+> to update it once the driver reports a TSC has moved outside it.
+>=20
+> The interrupt structure for this device is a bit odd. There is not a
+> dedicated IRQ for each TSC, instead the interrupts are shared between
+> all TSCs. IRQn is fired if the temp monitored in IRQTEMPn is reached in
+> any of the TSCs, example IRQ3 is fired if temperature in IRQTEMP3 is
+> reached in either TSC0, TSC1 or TSC2.
+>=20
+> For this reason the usage of interrupts in this driver is an all-on or
+> all-off design. When an interrupt happens all TSCs are checked and all
+> thermal zones are updated. This could be refined to be more fine grained
+> but the thermal core takes care of only updating the thermal zones that
+> have left their trip point window.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Thanks for your comments!
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Geert Uytterhoeven (7):
-  clk: renesas: r8a7795: Correct parent clock and sort order for Audio
-    DMACs
-  clk: renesas: r8a7795: Correct name of watchdog clock
-  clk: renesas: r8a7796: Correct name of watchdog clock
-  clk: renesas: r8a7795: Reformat core clock table
-  clk: renesas: r8a7796: Reformat core clock table
-  clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
-  clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3
-    ES1.0
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 28 ++++++++++++++--------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 16 ++++++++--------
- drivers/clk/renesas/rcar-gen3-cpg.c    | 28 +++++++++++++++++++++++++++-
- drivers/clk/renesas/rcar-gen3-cpg.h    |  2 +-
- 4 files changed, 50 insertions(+), 24 deletions(-)
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Gr{oetje,eeting}s,
+iQIcBAEBAgAGBQJY3B4uAAoJEBQN5MwUoCm2kowP/2rgT008E/9NP/YJVUln5cGt
+6cmmZUUMFbWVwfBcZB0bedNg5C0Q+uxVnWPKXNYHYW5wDXjM6NFwM+aPG3YdnXNB
+geVv1Zy33xomXdq/Y+qsuw1cJPXejLRudB31R3dhZP0jroLVP/puZ4wsRLSeIgah
+sWmO2qwTE/B0L3WdySklpZdmgzc4KdJc9Z6sU+F7O6lIxqp0sEA83MsipPp8LWPb
+DOTZTbO9Au6PKBgTxNfmFm/8PEgfLWaxeGXpk6fXlCmD+37lo5tX7AZ5Krf1Abtp
+6NUtxMdxvaFzn046bTvjPWzTi2OnSeKisT/mpMPVG2G3/2lADjHbooJr/ZIYKr07
+0zhIkfAFcZ/e4HllwflaU72SsSsV3IXXIeR4ylLvdBU6tA3KS6jBrjoOH/byal/i
+Xjs17p1CMpKsw/LklomGj2ECcM1IijAbM0LL8xrGL1nNGjC4w2aBu5j8gcToMf3A
+vC3lpIilwb20D0Kwa/8rRcv21YPIN9C4oO2sarhj+cxSvoJnUEIxAPTgcUVBvgZf
+sE7y/gJi6m49wLruI588m0eIilblj0CA6XH7sZxFhV4S6wV3cN5ZRtQPK408+Nty
+N/TIsPbPYAqw7s5NF4UM0MN+ue6kS/9SWSKYcBmssXhOBiZxqVHHGATBGB+84HCa
+IvFZkgDOohlOqhP07mo3
+=eVYA
+-----END PGP SIGNATURE-----
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--xHFwDpU9dbj6ez1V--
