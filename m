@@ -1,42 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:33500 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935104AbdCJNTc (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:50021 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752991AbdC2RbO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Mar 2017 08:19:32 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 12/13] arm64: dts: m3ulcb: Drop superfluous status update for frequency override
-Date: Fri, 10 Mar 2017 14:19:15 +0100
-Message-Id: <1489151956-19270-13-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
-References: <1489151956-19270-1-git-send-email-geert+renesas@glider.be>
+        Wed, 29 Mar 2017 13:31:14 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 0/7] rtc: Reuse rtc-sh driver to support RZ/A1
+Date: Wed, 29 Mar 2017 10:30:28 -0700
+Message-Id: <20170329173035.67477-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The scif_clk device node is already enabled in r8a7796.dtsi, so there is
-no need to update its status again.
+Basically, the same RTC that was used in SuperH devices is now used in
+RZ/A1 devices. Therefore with some slight changes, that driver can be
+reused.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 1 -
- 1 file changed, 1 deletion(-)
+Additionally, since ARM architectures require Device Tree configurations,
+device tree support has been added.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index c3f064ac2cb44971..372b2a9447163b24 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -180,7 +180,6 @@
- 
- &scif_clk {
- 	clock-frequency = <14745600>;
--	status = "okay";
- };
- 
- &wdt0 {
+This was tested on RZ/A1H RSK board. Once the correct time was programmed
+into the RTC running off a 32.768kHz crystal, you can retain an accurate
+system clock between reboots (hard and soft) until power is finally removed
+from the board (there is no batter backup on the RSK board).
+
+v3:
+* remove 'power-domains' from example in documentation
+* update commit message subject and body of dt-bindings
+
+v2:
+* removed HAVE_CLK from Kconfig
+* when using DT, look for "fck" instead of "rtc0"
+* changed (res == NULL) to (!res)
+* added Reviewed-by for rtc-sh.c
+* added interrupt-names and clock-names
+* clocks now include counting sources
+* added clock-names "fck", "rtc_x1", "rtc_x3", "extal"
+* changed 'is a RTC' to 'is an RTC' in commit message
+* changed "rtc0" to "rtc"
+* Added clock nodes for RTC_X1 and RTC_X3 pin inputs
+* each commit now has a log message
+
+
+Chris Brandt (7):
+  rtc: rtc-sh: add support for rza series
+  dt-bindings: rtc: document the rtc-sh bindings
+  ARM: dts: r7s72100: add rtc clock to device tree
+  ARM: dts: r7s72100: add RTC_X clock inputs to device tree
+  ARM: dts: r7s72100: add rtc to device tree
+  ARM: dts: rskrza1: set rtc_x1 clock value
+  ARM: dts: rskrza1: add rtc DT support
+
+ Documentation/devicetree/bindings/rtc/rtc-sh.txt | 28 ++++++++++++++++++
+ arch/arm/boot/dts/r7s72100-rskrza1.dts           |  8 +++++
+ arch/arm/boot/dts/r7s72100.dtsi                  | 37 ++++++++++++++++++++++++
+ drivers/rtc/Kconfig                              |  4 +--
+ drivers/rtc/rtc-sh.c                             | 33 +++++++++++++++++----
+ include/dt-bindings/clock/r7s72100-clock.h       |  3 ++
+ 6 files changed, 106 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-sh.txt
+
 -- 
-2.7.4
+2.11.0
