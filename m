@@ -1,46 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:58196 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755718AbdC2LpK (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:55203 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752290AbdC2SpT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 07:45:10 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/3] usb: gadget: udc: renesas_usb3: add USB3.0 DRD support
-Date: Wed, 29 Mar 2017 20:42:51 +0900
-Message-ID: <1490787774-5796-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 29 Mar 2017 14:45:19 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 3/7] thermal: rcar_gen3_thermal: check that TSC exists before memory allocation
+Date: Wed, 29 Mar 2017 20:43:52 +0200
+Message-Id: <20170329184356.8610-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest Felipe's usb.bit / testing/next branch
-(commit id = 29986993f67341493988b6c5d68e0653061975b2).
+Move the check for a TSC resource before allocating memory for a new
+TSC. If no TSC is found there is little point in allocating memory for
+it.
 
-The USB3.0 DRD controller on R-Car Gen3 can change the role via DRD_CON
-register in the periperal side sadly, so this patch adds support
-for usb role swap feature in this udc driver.
-Furtunately, the default setting of the DRD is host side, if a user want
-to use host side only, we can handle it easily just to disable the udc driver.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Changes from v1:
- - Remove patch 1 not to add "b-device" mode.
- - Add device_remove_file() calling in renesas_usb3_remove().
- - Use usb3_connect() instead of usb3_check_vbus() in usb3_mode_a_peri().
-
-Yoshihiro Shimoda (3):
-  usb: gadget: udc: add USB ID signal monitoring
-  usb: gadget: udc: renesas_usb3: add extcon support
-  usb: gadget: udc: renesas_usb3: add support for usb role swap
-
- .../ABI/testing/sysfs-platform-renesas_usb3        |  15 ++
- drivers/usb/gadget/udc/Kconfig                     |   1 +
- drivers/usb/gadget/udc/renesas_usb3.c              | 171 ++++++++++++++++++++-
- 3 files changed, 186 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-renesas_usb3
-
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index cb5c362c00009921..9b6bc03dd142a8dd 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -276,16 +276,16 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	for (i = 0; i < TSC_MAX_NUM; i++) {
+ 		struct rcar_gen3_thermal_tsc *tsc;
+ 
++		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
++		if (!res)
++			break;
++
+ 		tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
+ 		if (!tsc) {
+ 			ret = -ENOMEM;
+ 			goto error_unregister;
+ 		}
+ 
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			break;
+-
+ 		tsc->base = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(tsc->base)) {
+ 			ret = PTR_ERR(tsc->base);
 -- 
-1.9.1
+2.12.1
