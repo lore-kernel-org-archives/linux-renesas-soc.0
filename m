@@ -1,32 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:35562 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbdC2SjY (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:33499 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932201AbdC2ShA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 14:39:24 -0400
-Received: by mail-lf0-f42.google.com with SMTP id j90so14481093lfk.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Mar 2017 11:39:23 -0700 (PDT)
-Subject: Re: [PATCH 1/1] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux
- data
+        Wed, 29 Mar 2017 14:37:00 -0400
+Received: by mail-lf0-f48.google.com with SMTP id h125so14378503lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Mar 2017 11:36:58 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170329183653.982359372@cogentembedded.com>
+Date: Wed, 29 Mar 2017 21:36:50 +0300
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20170329183548.983179263@cogentembedded.com>
-Cc: stable@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <c3ca18cb-e803-82c9-19b4-473eca8ae851@cogentembedded.com>
-Date: Wed, 29 Mar 2017 21:39:20 +0300
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        stable@vger.kernel.org
+Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux data
 MIME-Version: 1.0
-In-Reply-To: <20170329183548.983179263@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-add-missing-HSCIF1-pinmux-data.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+The R8A7791 PFC driver  was apparently based on the preliminary revisions
+of  the  user's manual, which  omitted the HSCIF1 group E signals in  the
+IPSR4 register description. This would cause HSCIF1's probe  to fail with
+the messages like below:
 
-Ignore the postings of the single fix, I meant to post 2 patch series but 
-stupidly erred in the command line. :-<
+sh-pfc e6060000.pfc: cannot locate data/mark enum_id for mark 1989
+sh-sci e62c8000.serial: Error applying setting, reverse things back
+sh-sci: probe of e62c8000.serial failed with error -22
 
-MBR, Sergei
+Add the neceassary PINMUX_IPSR_MSEL() invocations for the HSCK1_E,
+HCTS1#_E, and HRTS1#_E signals...
+
+Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC: stable@vger.kernel.org
+
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -1010,14 +1010,17 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP4_12_10, SCL2, SEL_IIC2_0),
+ 	PINMUX_IPSR_MSEL(IP4_12_10, GPS_CLK_B, SEL_GPS_1),
+ 	PINMUX_IPSR_MSEL(IP4_12_10, GLO_Q0_D, SEL_GPS_3),
++	PINMUX_IPSR_MSEL(IP4_12_10, HSCK1_E, SEL_HSCIF1_4),
+ 	PINMUX_IPSR_GPSR(IP4_15_13, SSI_WS2),
+ 	PINMUX_IPSR_MSEL(IP4_15_13, SDA2, SEL_IIC2_0),
+ 	PINMUX_IPSR_MSEL(IP4_15_13, GPS_SIGN_B, SEL_GPS_1),
+ 	PINMUX_IPSR_MSEL(IP4_15_13, RX2_E, SEL_SCIF2_4),
+ 	PINMUX_IPSR_MSEL(IP4_15_13, GLO_Q1_D, SEL_GPS_3),
++	PINMUX_IPSR_MSEL(IP4_15_13, HCTS1_N_E, SEL_HSCIF1_4),
+ 	PINMUX_IPSR_GPSR(IP4_18_16, SSI_SDATA2),
+ 	PINMUX_IPSR_MSEL(IP4_18_16, GPS_MAG_B, SEL_GPS_1),
+ 	PINMUX_IPSR_MSEL(IP4_18_16, TX2_E, SEL_SCIF2_4),
++	PINMUX_IPSR_MSEL(IP4_18_16, HRTS1_N_E, SEL_HSCIF1_4),
+ 	PINMUX_IPSR_GPSR(IP4_19, SSI_SCK34),
+ 	PINMUX_IPSR_GPSR(IP4_20, SSI_WS34),
+ 	PINMUX_IPSR_GPSR(IP4_21, SSI_SDATA3),
