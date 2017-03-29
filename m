@@ -1,54 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38760 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932973AbdC3KsY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44095 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753226AbdC2Ipq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 06:48:24 -0400
-Message-ID: <1490870898.3471.3.camel@collabora.co.uk>
-Subject: Re: [PATCH/RFC v2 0/2] arm64: dts: r8a7795: Add support for R-Car
- H3 ES2.0
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wed, 29 Mar 2017 04:45:46 -0400
+Date: Wed, 29 Mar 2017 10:45:29 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Wolfram Sang <wsa@sang-engineering.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date: Thu, 30 Mar 2017 12:48:18 +0200
-In-Reply-To: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH/RFC v2 1/2] arm64: dts: r8a7795: Add support for R-Car H3
+ ES2.0
+Message-ID: <20170329084529.GG6512@verge.net.au>
 References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0
+ <1490362665-4422-2-git-send-email-geert+renesas@glider.be>
+ <1612430.SNEha5n02K@avalon>
+ <20170329081352.GF6512@verge.net.au>
+ <CAMuHMdWvR71V_JyR6273KmdtGfrrT_vaU2vcDTpNt2MAG0WdLg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWvR71V_JyR6273KmdtGfrrT_vaU2vcDTpNt2MAG0WdLg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, 2017-03-24 at 14:37 +0100, Geert Uytterhoeven wrote:
-> 	Hi all,
+On Wed, Mar 29, 2017 at 10:31:02AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> This patch series adds preliminary support for Renesas Salvator-X
-> development boards equipped with revision ES2.0 of the R-Car H3 Soc.
+> On Wed, Mar 29, 2017 at 10:13 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Mar 27, 2017 at 11:48:12AM +0300, Laurent Pinchart wrote:
+> >> On Friday 24 Mar 2017 14:37:44 Geert Uytterhoeven wrote:
+> >> > Update r8a7795.dtsi so it corresponds to R-Car H3 ES2.0 or later:
+> >> >   - The following devices no longer exist on ES2.0, and are thus removed:
+> >> >     fcpf2, fcpvd3, fcpvi2, fdp1-2, usb3-if1, vspd3, vspi2.
+> >> >   - The DU <-> VSPD topology is different on ES2.0, hence remove the
+> >> >     "vsps" property from the DU node until the driver can handle this.
+> >>
+> >> I think I'll need a different compatible string between ES1.x and ES2 for the
+> >> DU. It could make sense to move the whole DU node to *-es1.dtsi. We can decide
+> >> about that later when I'll have a DU driver prototype ready.
+> >
+> > That makes sense to me.
+> >
+> > Geert, will you respin this?
 > 
->   - Patch 1 adds support for the R-Car H3 ES2.0 Soc,
->     While this patch is safe as-is, as it doesn't affect any existing
->     setups, it's probably a bit premature to apply it.
->   - Patch 2 adds support for Salvator-X boards with R-Car H3 ES2.0.
->     This patch does affect existing development setups, as it changes
-> the
->     name of the DTB for Salvator-X boards equipped with ES1.x SoCs.
->     Given most developers have access to ES1.x only, this patch must
-> not be
->     applied yet.
+> Sure. The DTS parts are definitely not v4.12 material.
+>   - For ES2.0, they depend on clk/pfc/rcar-sysc updates.
+>   - For ES1.x, I don't want to break people's setup (scripts copying
+>     r8a7795-salvator-x.dtb) prematurely.
 
-Would it make more sense to add a new r8a7795-es2.dtsi and keep the
-current dtsi for es1? Having to load different device-trees based on
-which kernel is used would be rather nasty.
-
--- 
-Sjoerd Simons
-Collabora Ltd.
+Ok.
