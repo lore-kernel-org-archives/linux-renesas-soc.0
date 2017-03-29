@@ -1,66 +1,90 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        chris.brandt@renesas.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/7] Renesas RZ/A1 pin and gpio controller
-Date: Mon, 20 Mar 2017 17:14:44 +0100
-Message-Id: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:50443 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751666AbdC2OJk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 29 Mar 2017 10:09:40 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: jacopo <jacopo@jmondi.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Wed, 29 Mar 2017 14:09:33 +0000
+Message-ID: <SG2PR06MB116582E6A9D9F13F45B641B28A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
+ <20170323160204.GL30223@w540>
+ <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
+ <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
+ <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
+ <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
+ <CACRpkdbT3091MzAQ_hO5Hc9=gQz-eDNCDtEnVG-3G+jJ+eO+Fw@mail.gmail.com>
+ <CAMuHMdX0OdZXYDOZvFutjfBFVd65C567_G+++kHygre4KK+jLg@mail.gmail.com>
+ <20170329120530.GB6247@w540>
+ <SG2PR06MB1165276F957CE63DBE0A55268A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CACRpkdb+k82OUbi1y1SNC09asHsNSqbtvCkYyT=1eqjpdMt_cg@mail.gmail.com>
+In-Reply-To: <CACRpkdb+k82OUbi1y1SNC09asHsNSqbtvCkYyT=1eqjpdMt_cg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   second round of combined GPIO and pin controller driver
-for Renesas RZ/A1 SoC.
-
-Few adjustments compared to v1.
-The most visible one is the update of pin configuration flag to what
-Chris suggested, and consequent simplification of pin multiplexing routine.
-Some other fixes in DTS suggested by Geert have been applied.
-
-Testing done verifying functionalities of hardware modules enabled in device
-tree (SCIF2 for serial output, RIIC for accessing an internal eeprom chip and
-user visible leds).
-Gpio have been also verified using a i2c-gpio device in place of the native
-RIIC one to access the same eeprom device.
-
-Chris: it would be great if you could give this another spin on RSK board. In
-v4.11 generic pinmux and pinctrl function have been merged in mainline, so no
-need for an ad-hoc branch if you're willing to test this again.
-
-Thanks
-   j
-
-v1 -> v2:
-- change pin configuration flags as suggested by Chris
-- gpio set direction function fixed as suggested by Chris
-- add some more example on pin configuration flag usage to dt-binding doc
-- fix gpio-controller names to remove unit address as suggested by Geert
-- some comments chopped here and there to make the driver less verbose
-
-Jacopo Mondi (7):
-  pinctrl: Renesas RZ/A1 pin and gpio controller
-  dt-bindings: pinctrl: Add RZ/A1 bindings doc
-  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-  arm: dts: r7s72100: Add pin controller node
-  arm: dts: genmai: Add SCIF2 pin group
-  arm: dts: genmai: Add RIIC2 pin group
-  arm: dts: genmai: Add user led device nodes
-
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 144 +++
- arch/arm/boot/dts/r7s72100-genmai.dts              |  36 +
- arch/arm/boot/dts/r7s72100.dtsi                    |  80 ++
- drivers/pinctrl/Kconfig                            |  10 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-rza1.c                     | 963 +++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  36 +
- 7 files changed, 1270 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza1.c
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-
--- 
-2.7.4
+T24gV2VkbmVzZGF5LCBNYXJjaCAyOSwgMjAxNywgTGludXMgV2FsbGVpajoNCj4gSWYgeW91IHBy
+ZWZlciB0byB1c2UgcHJlcHJvY2Vzc29yIG1hY3JvcyBvciB3aGF0ZXZlciB0byBtYWtlIHRoZSBi
+aXRtYXNrcw0KPiBvciBob3cgeW91IHdhbnQgdG8gb3JnYW5pemUgdGhlIGNvbnN0YW50cyBpbiB5
+b3VyIGluY2x1ZGUgZmlsZXMgaXMgbm90IG15DQo+IGNvbmNlcm4sIGRvIHdoYXRldmVyIHlvdSBz
+ZWVtIGZpdCwganVzdCBwYWNrIGl0IGludG8gYSAzMmJpdCB0aGluZyBzb21laG93DQo+IHdoaWNo
+IG1ha2VzIHNlbnNlIGZyb20gYSBtYWludGVuYW5jZSBwb2ludCBvZiB2aWV3Lg0KDQpPSywgSSB0
+aGluayBldmVyeW9uZSBhZ3JlZXMgdGhhdCBhIHNpbmdsZSAzMi1iaXQgdmFsdWUgaXMgZmluZSBi
+ZWNhdXNlIG1hY3Jvcw0Kd2lsbCBhbHNvIGZvciBnb29kIHJlYWRhYmlsaXR5IGFuZCBtYWludGVu
+YW5jZS4NCg0KDQo+ID4+IE5vdCBvbmx5IGJlY2F1c2UgaXQgd2lsbCBzYXZlIHVzZSBmcm9tIGhh
+dmluZyBhIGxvb25nIGxpc3QoKikgb2YNCj4gPj4gbWFjcm9zIHRoYXQgaGFzIHRvIGJlIGtlcHQg
+dXAgdG8gZGF0ZSB3aGVuL2lmIG5ldyBSWiBoYXJkd2FyZSB3aWxsDQo+ID4+IGFycml2ZSwgYnV0
+IGFsc28gYmVjYXVzZSBvZiByZWFkYWJpbGl0eSBhbmQgc2ltcGxpY2l0eSBmb3IgZG93bi1zdHJl
+YW0NCj4gYW5kIEJTUCB1c2Vycy4NCj4gPj4gU3BlYWtpbmcgb2Ygd2hpY2gsIEkgd291bGQgbGlr
+ZSB0byBrbm93IHdoYXQgZG9lcyBDaHJpcyB0aGluayBvZiB0aGlzLg0KPiA+DQo+ID4gVGhlIGxp
+c3Qgb2YgbWFjcm9zIHdvdWxkIGJlIHZlcnkgbG9uZywgZXNwZWNpYWxseSBhZ2FpbnN0IHRoZQ0K
+PiA+IGRpZmZlcmVudCBwYWNrYWdpbmcgdmVyc2lvbiBvZiB0aGUgUlovQTEgc2VyaWVzLiAxMSBw
+b3J0cywgMTYtcGlucyBmb3INCj4gPiBlYWNoIHBvcnQsIDggZGlmZmVyZW50IGZ1bmN0aW9uIG9w
+dGlvbnMgZm9yIGVhY2ggcGluLi4uLjIgZGlmZmVyZW50DQo+IHBhY2thZ2UvcGluIHZhcmlhdGlv
+bnMuDQo+ID4NCj4gPiBBbmQgYXQgdGhlIGVuZCBvZiB0aGUgZGF5Li4uLnRoZXJlIGlzIG5vIGJl
+bmVmaXQgZm9yIHRoZSB1c2VyIG92ZXINCj4gPiBqdXN0IHVzaW5nIGEgbWFjcm8uDQo+IA0KPiBJ
+IGRvbid0IGtub3cgd2hvIGhhcyB0aGlzIGlkZWEgdGhhdCB5b3UgY291bGQgbm90IHVzZSBtYWNy
+b3MsIGNlcnRhaW5seQ0KPiBub3QgbWUuIFNvbWUgbWlzdW5kZXJzdGFuZGluZyBtdXN0IGJlIGdv
+aW5nIG9uLiBGb3Igd2hhdCBJJ20gY29uY2VybmVkIHlvdQ0KPiBjYW4gd3JpdGUgaGV4IG51bWJl
+cnMgaW4gdGhlIHBpbm11eCA9IDwweDEyMzQ1Njc4PjsNCj4gDQo+ID4gVGhlIHJlYXNvbiBmb3Ig
+dGhlICJGTEFHUyIgaXMgdG8gd29yayBhcm91bmQgYSBxdWlya3kgaGFyZHdhcmUgZGVzaWduDQo+
+IChpbiBteSBvcGluaW9uKS4NCj4gDQo+IFRoZSBmbGFncyBJIGRvbid0IGxpa2UgYXQgYWxsLCBh
+bmQgdGhpbmsgdGhleSBzaG91bGQgYmUgY29udmVydGVkIHRvDQo+IGdlbmVyaWMgcGluIGNvbmZp
+ZyBiZWNhdXNlIHRoZXkgaGF2ZSBub3RoaW5nIHRvIGRvIHdpdGggbXV4aW5nLg0KPiANCj4gQnV0
+IEkgd2lsbCBwb2ludCB0aGF0IG91dCBpbiB0aGUgc3BlY2lmaWMgcGF0Y2ggYWRkaW5nIHRoZW0u
+DQoNCk9LLCBJIHRoaW5rIEkgdW5kZXJzdGFuZCB5b3VyIGlzc3VlIGEgbGl0dGxlIGJldHRlciBv
+ZiBtaXhpbmcgdXNlci1kZWZpbmVkIGNvbmZpZw0Kd2l0aCBnZW5lcmljIHBpbm11eC4NCg0KRnJv
+bSBvdXIgcGVyc3BlY3RpdmUsIHRoZSBGTEFHUyAoQklfRElSLCBTV0lPX0lOLCBhbmQgU1dJT19P
+VVQgKSB3ZXJlIG5vdCByZWFsbHkNCm9wdGlvbmFsIHdoZW4gc2VsZWN0aW5nIHdoYXQgeW91IHdh
+bnQgdGhlIHBpbiB0byBkby4uLi5zbyB3ZSBjb25zaWRlcmVkIGl0IHBhcnQNCm9mIHRoZSBwaW4t
+bXV4Lg0KDQpJbiB0aGUgaGFyZHdhcmUgbWFudWFsLCB0aGVyZSBhcmUgdGFibGVzIHRoYXQgc2F5
+IHRoYXQgZm9yICdzb21lJyBjZXJ0YWluDQpwaW5zL2Z1bmN0aW9ucyAianVzdCBzZXR0aW5nIHRo
+ZSBwaW4gdG8gYSBmdW5jdGlvbiBpcyBub3QgZW5vdWdoLi4ueW91IG5lZWQgdG8gbWFrZQ0KYW5v
+dGhlciByZWdpc3RlciBzZXR0aW5nICh0aGF0IG1heSBvciBtYXkgbm90IG1ha2Ugc2Vuc2UpLCBv
+dGhlcndpc2UgaXQncyBub3QgZ29pbmcNCnRvIHdvcmsiLg0KDQpTbywgdHJ5aW5nIHRvIGdldCB0
+aGUgZHJpdmVyIHRvIGJlIHRoYXQgc21hcnQgYWNyb3NzIGFsbCB0aGUgZGlmZmVyZW50IHBpbi9w
+YWNrYWdlDQp2YXJpYXRpb25zIHNlZW1zIHRvIGJlIHdheSB0b28gdWdseSAoYW5kIGEgbWFpbnRl
+bmFuY2UgbmlnaHRtYXJlKS4gU2ltcGx5IHB1dHRpbmcNCnRoYXQgaW4gdGhlIERUIGJpbmRpbmcg
+d2FzIG11Y2ggbW9yZSBjbGVhbmVyLg0KDQoNCkFzIGZvciBob3cgdG8gcGFzcyB0aGlzIEhXIGlu
+Zm8gaW50byB0aGUgZHJpdmVyLCBJJ2xsIG1vdmUgb3ZlciB0byB0aGUgb3RoZXIgZW1haWwNCnRo
+cmVhZCB3aGVyZSB5b3Ugc3RhcnRlZCB0byBnaXZlIHNvbWUgc3VnZ2VzdGlvbnMuLi4NCg0KDQpD
+aHJpcw0KDQo=
