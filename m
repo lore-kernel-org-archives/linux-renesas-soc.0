@@ -1,120 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37309 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753425AbdCTJHw (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:55196 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbdC2SpS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 05:07:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.12
-Date: Mon, 20 Mar 2017 09:57:30 +0100
-Message-Id: <cover.1489999913.git.horms+renesas@verge.net.au>
+        Wed, 29 Mar 2017 14:45:18 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 2/7] thermal: rcar_gen3_thermal: remove unneeded mutex
+Date: Wed, 29 Mar 2017 20:43:51 +0200
+Message-Id: <20170329184356.8610-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+There is no point in protecting a register read with a lock. This is
+most likely a leftover from when the driver was reworked before being
+submitted for upstream.
 
-Please consider these Renesas ARM64 based SoC DT updates for v4.12.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.12
-
-for you to fetch changes up to 3cbe33367d4fd480a92fbc131a96fa925be9e95d:
-
-  arm64: dts: r8a7796: salvator-x: Drop superfluous status update for frequency override (2017-03-13 10:21:16 +0100)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC DT Updates for v4.12
-
-Cleanup:
-* Drop superfluous status update for frequency override from all
-  r8a779[56] boards
-* Tidyup Audio-DMAC channel for DVC for r8a7795 SoC
-* Remove unit-address and reg from integrated cache on r8a779[56] SoCs
-
-Enhancements:
-* Add all Cortex-A53 and Cortex-A57 CPU cores to r8a7796 SoC
-* Add Cortex-A53 CPU cores to r8a7795 SoC
-* Update memory node to 4 GiB map on h3ulcb board
-* Upgrade to PSCI v1.0 to support Suspend-to-RAM on r8a779[56] SoCs
-* Add SCIF1 (DEBUG1) to r8a7796/salvator-x board
-* Add all SCIF and HSCIF nodes with DMA enabled to r8a7796 SoC
-* Set drive-strength for ravb pins for r8a7795/salvator-x board
-* Enable gigabit ethernet on r8a779[56]/salvator-x boards
-* Enable I2C for DVFS device r8a779[56]/salvator-x boards
-
-----------------------------------------------------------------
-Dien Pham (2):
-      arm64: dts: r8a7796: Add I2C for DVFS device node
-      arm64: dts: r8a7796: salvator-x: Add I2C for DVFS device support
-
-Geert Uytterhoeven (11):
-      arm64: dts: r8a7795: Add Cortex-A53 CPU cores
-      arm64: dts: r8a7795: Add Cortex-A53 PMU node
-      arm64: dts: r8a7795: Remove unit-addresses and regs from integrated caches
-      arm64: dts: r8a7796: Remove unit-address and reg from integrated cache
-      arm64: dts: r8a7796: Add CA53 L2 cache-controller node
-      arm64: dts: r8a7796: Add Cortex-A53 CPU cores
-      arm64: dts: r8a7796: Add Cortex-A53 PMU node
-      arm64: dts: h3ulcb: Drop superfluous status update for frequency override
-      arm64: dts: r8a7795: salvator-x: Drop superfluous status updates for frequency overrides
-      arm64: dts: m3ulcb: Drop superfluous status update for frequency override
-      arm64: dts: r8a7796: salvator-x: Drop superfluous status update for frequency override
-
-Kazuya Mizuguchi (4):
-      arm64: dts: r8a7795: Use rgmii-txid phy-mode for EthernetAVB
-      arm64: dts: r8a7795: salvator-x: Fix EthernetAVB PHY timing
-      arm64: dts: r8a7796: Use rgmii-txid phy-mode for EthernetAVB
-      arm64: dts: r8a7796: salvator-x: Fix EthernetAVB PHY timing
-
-Keita Kobayashi (2):
-      arm64: dts: r8a7795: Add I2C for DVFS core to dtsi
-      arm64: dts: r8a7795: salvator-x: Enable I2C for DVFS device
-
-Khiem Nguyen (2):
-      arm64: dts: r8a7795: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-      arm64: dts: r8a7796: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-
-Kuninori Morimoto (1):
-      arm64: dts: r8a7795: Tidyup Audio-DMAC channel for DVC
-
-Niklas Söderlund (1):
-      arm64: dts: r8a7795: salvator-x: Set drive-strength for ravb pins
-
-Takeshi Kihara (2):
-      arm64: dts: r8a7796: Add Cortex-A57 CPU cores
-      arm64: dts: r8a7796: Add Cortex-A57 PMU node
-
-Ulrich Hecht (5):
-      arm64: dts: r8a7796 dtsi: Add all HSCIF nodes
-      arm64: dts: r8a7796: Add all SCIF nodes
-      arm64: dts: r8a7796: Enable SCIF DMA
-      arm64: dts: r8a7796: salvator-x: add SCIF1 (DEBUG1)
-      arm64: dts: r8a7796: Enable HSCIF DMA
-
-Vladimir Barinov (2):
-      arm64: dts: h3ulcb: Update memory node to 4 GiB map
-      arm64: dts: h3ulcb: Fix EthernetAVB PHY timing
-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  29 ++-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  37 +--
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  86 ++++++-
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |   1 -
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  32 ++-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 265 ++++++++++++++++++++-
- 6 files changed, 384 insertions(+), 66 deletions(-)
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index ec477d47d0bae8e5..cb5c362c00009921 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -20,7 +20,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/mutex.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+@@ -72,7 +71,6 @@ struct rcar_gen3_thermal_tsc {
+ 	void __iomem *base;
+ 	struct thermal_zone_device *zone;
+ 	struct equation_coefs coef;
+-	struct mutex lock;
+ };
+ 
+ struct rcar_gen3_thermal_priv {
+@@ -163,16 +161,12 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
+ 	u32 reg;
+ 
+ 	/* Read register and convert to mili Celsius */
+-	mutex_lock(&tsc->lock);
+-
+ 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+ 
+ 	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
+ 	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
+ 	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
+ 
+-	mutex_unlock(&tsc->lock);
+-
+ 	/* Make sure we are inside specifications */
+ 	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
+ 		return -EIO;
+@@ -299,7 +293,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		priv->tscs[i] = tsc;
+-		mutex_init(&tsc->lock);
+ 
+ 		match_data->thermal_init(tsc);
+ 		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i]);
+-- 
+2.12.1
