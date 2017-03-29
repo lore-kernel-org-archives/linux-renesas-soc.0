@@ -1,21 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:37810 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755152AbdC2KDJ (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:32801 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754020AbdC2HaX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 06:03:09 -0400
-Received: by mail-it0-f46.google.com with SMTP id 190so49663874itm.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Mar 2017 03:03:08 -0700 (PDT)
+        Wed, 29 Mar 2017 03:30:23 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWVM2K4V+TnUGiW601+OjUBQTbnd9LU7yLGRRew06KxjQ@mail.gmail.com>
+In-Reply-To: <CACRpkdYjZJ7e0tJy6_jfpRT+UDFWqnu8ZX18-gaAHVZLgW-prA@mail.gmail.com>
 References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490368934-12494-2-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdYjZJ7e0tJy6_jfpRT+UDFWqnu8ZX18-gaAHVZLgW-prA@mail.gmail.com> <CAMuHMdWVM2K4V+TnUGiW601+OjUBQTbnd9LU7yLGRRew06KxjQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Mar 2017 12:03:06 +0200
-Message-ID: <CACRpkdayQSv4S7VhbkigYTXCrr8R23dFXRLXSW+OKjjM57-0HQ@mail.gmail.com>
+ <1490368934-12494-2-git-send-email-jacopo+renesas@jmondi.org> <CACRpkdYjZJ7e0tJy6_jfpRT+UDFWqnu8ZX18-gaAHVZLgW-prA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Mar 2017 09:30:21 +0200
+Message-ID: <CAMuHMdWVM2K4V+TnUGiW601+OjUBQTbnd9LU7yLGRRew06KxjQ@mail.gmail.com>
 Subject: Re: [PATCH v3 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -31,16 +28,22 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 9:30 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Mar 24, 2017 at 4:42 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Fri, Mar 24, 2017 at 4:22 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->>
->> I assume Geert will queue this driver even if it is outside of sh-pfc?
+Hi Linus,
+
+On Fri, Mar 24, 2017 at 4:42 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Mar 24, 2017 at 4:22 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 >
-> OK for me, thanks. I was actually wondering about that ;-)
+> I assume Geert will queue this driver even if it is outside of sh-pfc?
 
-Thanks Geert, much appreciated.
+OK for me, thanks. I was actually wondering about that ;-)
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
