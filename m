@@ -1,49 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:32888 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754440AbdC1JiZ (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:55230 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbdC2SpV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 05:38:25 -0400
-Received: by mail-pg0-f68.google.com with SMTP id 79so20016846pgf.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Mar 2017 02:38:24 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Tue, 28 Mar 2017 18:32:42 +0900
-Message-Id: <149069356279.22662.11780869318220176981.sendpatchset@little-apple>
-In-Reply-To: <149069355375.22662.10367253365715059744.sendpatchset@little-apple>
-References: <149069355375.22662.10367253365715059744.sendpatchset@little-apple>
-Subject: [PATCH 01/03] arm64: dts: r8a7795: Connect USB-DMAC0/1 to IPMMU-HC
+        Wed, 29 Mar 2017 14:45:21 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 7/7] thermal: rcar_gen3_thermal: add suspend and resume support
+Date: Wed, 29 Mar 2017 20:43:56 +0200
+Message-Id: <20170329184356.8610-8-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170329184356.8610-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+To restore operation it's easiest to reinitialise all TSCs. In order to
+do this the current trip window needs to be stored in the TSC structure
+so that it can be restored upon resume.
 
-Point the USB-DMAC0 and USB-DMAC1 devices to IPMMU-HC.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+ drivers/thermal/rcar_gen3_thermal.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    2 ++
- 1 file changed, 2 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2017-03-28 18:09:09.580607110 +0900
-@@ -1442,6 +1442,7 @@
- 				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "ch0", "ch1";
- 			clocks = <&cpg CPG_MOD 330>;
-+			iommus = <&ipmmu_hc 9>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 330>;
- 			#dma-cells = <1>;
-@@ -1456,6 +1457,7 @@
- 				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "ch0", "ch1";
- 			clocks = <&cpg CPG_MOD 331>;
-+			iommus = <&ipmmu_hc 10>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 331>;
- 			#dma-cells = <1>;
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index f259a995c66c976a..37fcefd06d9f81b4 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -82,6 +82,8 @@ struct rcar_gen3_thermal_tsc {
+ 	void __iomem *base;
+ 	struct thermal_zone_device *zone;
+ 	struct equation_coefs coef;
++	int low;
++	int high;
+ };
+ 
+ struct rcar_gen3_thermal_priv {
+@@ -217,6 +219,9 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
+ 				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
+ 
++	tsc->low = low;
++	tsc->high = high;
++
+ 	return 0;
+ }
+ 
+@@ -454,9 +459,39 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int __maybe_unused rcar_gen3_thermal_suspend(struct device *dev)
++{
++	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
++
++	rcar_thermal_irq_set(priv, false);
++
++	return 0;
++}
++
++static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
++{
++	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
++	unsigned int i;
++
++	for (i = 0; i < priv->num_tscs; i++) {
++		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
++
++		priv->data->thermal_init(tsc);
++		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
++	}
++
++	rcar_thermal_irq_set(priv, true);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(rcar_gen3_thermal_pm_ops, rcar_gen3_thermal_suspend,
++			 rcar_gen3_thermal_resume);
++
+ static struct platform_driver rcar_gen3_thermal_driver = {
+ 	.driver	= {
+ 		.name	= "rcar_gen3_thermal",
++		.pm = &rcar_gen3_thermal_pm_ops,
+ 		.of_match_table = rcar_gen3_thermal_dt_ids,
+ 	},
+ 	.probe		= rcar_gen3_thermal_probe,
+-- 
+2.12.1
