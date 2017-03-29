@@ -1,14 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34554 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932201AbdC2Sfz (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:35934 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbdC2S0S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 14:35:55 -0400
-Received: by mail-lf0-f44.google.com with SMTP id z15so14411173lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Mar 2017 11:35:53 -0700 (PDT)
+        Wed, 29 Mar 2017 14:26:18 -0400
+Received: by mail-lf0-f41.google.com with SMTP id x137so14320687lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Mar 2017 11:26:16 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170329183548.983179263@cogentembedded.com>
-Date: Wed, 29 Mar 2017 21:35:45 +0300
+Message-Id: <20170329182612.448637615@cogentembedded.com>
+Date: Wed, 29 Mar 2017 21:26:09 +0300
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
