@@ -1,61 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60146 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752398AbdCFBYk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43630 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753993AbdC2IJQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 20:24:40 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [GIT PULL FOR renesas-drivers] DU + VSP display flicker fixes
-Date: Mon, 06 Mar 2017 03:14:23 +0200
-Message-ID: <1733929.kTfEm8KghY@avalon>
+        Wed, 29 Mar 2017 04:09:16 -0400
+Date: Wed, 29 Mar 2017 10:09:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: r7s72100: add power-domains to sdhi
+Message-ID: <20170329080909.GE6512@verge.net.au>
+References: <20170209133803.21539-1-chris.brandt@renesas.com>
+ <CAMuHMdXRD3o7KdaADvPYxzeuEVo44nRVWHfCverPc+9s=0owPA@mail.gmail.com>
+ <20170324070228.GI1319@verge.net.au>
+ <CAMuHMdUJMEjb8UhaHHK3aE2uEoUpKFtSFXLhYwgJHKu9YDeVHQ@mail.gmail.com>
+ <SG2PR06MB116573C9325106B5ED4580578A3E0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB116573C9325106B5ED4580578A3E0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Fri, Mar 24, 2017 at 11:17:25AM +0000, Chris Brandt wrote:
+> On Friday, March 24, 2017, Geert Uytterhoeven wrote:
+> > > The fixes tag above indicates this is a fix for v4.10, however, when I
+> > > tried to apply it on top of v4.11-rc1 there was a conflict.  So I
+> > > think a backport will be required if we want it to be considered for
+> > > v4.11 and be considered for and in turn v4.10-stable.
+> > 
+> > That's because of commit 3d2abda02ad2d06d
+> > ("ARM: dts: r7s72100: update sdhi clock bindings")
+> 
+> 
+> Between the two, "update sdhi clock bindings" is more important this this patch ("add power-domains").
+> Without "update sdhi clock bindings", the SDHI /might/ not work.
+> 
+> 
+> But, "update sdhi clock bindings", also relies on the driver update 34a1654706c6 ("mmc: sh_mobile_sdhi: add support for 2 clocks").
+> That one is in v4.11-rc1, but not in 4.10.5.
+> 
+> I just noticed now that 34a1654706c6 does not have "Fixes" in the commit log, so it is probably not marked to go into v4.10-stable, so in that case backporting the dtsi is pointless.
 
-(Resending with the linux-renesas-soc mailing list CC'ed, sorry about the 
-trouble)
-
-The following changes since commit a10afcaf9d180e2cc1dff623081e12fe5275fd38:
-
-  Merge branch 'vsp1/next' into HEAD (2017-03-05 01:55:06 +0200)
-
-are available in the git repository at:
-
-  git://linuxtv.org/pinchartl/media.git tags/drm-next-du-vsp-v3-20170305
-
-for you to fetch changes up to 6208a2aec17b45be0d10921135c112c57138bca0:
-
-  drm: rcar-du: Register a completion callback with VSP1 (2017-03-06 03:05:58 
-+0200)
-
-----------------------------------------------------------------
-Kieran Bingham (4):
-      v4l: vsp1: Adapt vsp1_du_setup_lif() interface to use a structure
-      v4l: vsp1: Postpone frame end handling in event of display list race
-      v4l: vsp1: Extend VSP1 module API to allow DRM callbacks
-      drm: rcar-du: Register a completion callback with VSP1
-
-Laurent Pinchart (1):
-      drm: rcar-du: Arm the page flip event after queuing the page flip
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 30 ++++++++++++++-----------
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 17 ++++++++++++--
- drivers/media/platform/vsp1/vsp1_dl.c   | 19 ++++++++++++++--
- drivers/media/platform/vsp1/vsp1_dl.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_drm.c  | 50 ++++++++++++++++++++------------
- drivers/media/platform/vsp1/vsp1_drm.h  | 11 +++++++++
- drivers/media/platform/vsp1/vsp1_pipe.c | 13 ++++++++++-
- include/media/vsp1.h                    | 20 +++++++++++++++--
- 9 files changed, 125 insertions(+), 38 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+We could try to coordinate getting 34a1654706c6 and the dtsi changes into
+v4.10-stable if you it is sufficiently important. What are your thoughts on
+that?
