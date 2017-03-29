@@ -1,124 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12031 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:43911 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751446AbdC1Lzu (ORCPT
+        by vger.kernel.org with ESMTP id S1752206AbdC2IjX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 07:55:50 -0400
+        Wed, 29 Mar 2017 04:39:23 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/4] usb: gadget: udc: renesas_usb3: add support for usb role swap
-Date: Tue, 28 Mar 2017 20:53:24 +0900
-Message-ID: <1490702004-8167-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Felipe Balbi <balbi@kernel.org>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 1/4] usb: gadget: udc: renesas_usb3: add sysfs "role" to
+ set "b-device" mode
+Date: Wed, 29 Mar 2017 08:39:16 +0000
+Message-ID: <PS1PR06MB1692295968CBE06D989A7633D8350@PS1PR06MB1692.apcprd06.prod.outlook.com>
 References: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1490702004-8167-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <87efxhhahj.fsf@linux.intel.com>
+ <PS1PR06MB1692F6A720410D53A6972379D8350@PS1PR06MB1692.apcprd06.prod.outlook.com>
+ <87d1d0fx4j.fsf@linux.intel.com>
+ <PS1PR06MB1692C364D1D62FB487BD12F5D8350@PS1PR06MB1692.apcprd06.prod.outlook.com>
+ <87inmsldc4.fsf@linux.intel.com>
+In-Reply-To: <87inmsldc4.fsf@linux.intel.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for usb role swap via sysfs "role".
+Hi Felipe-san,
 
-For example:
- 1) Connect a usb cable using 2 Salvator-X boards.
-  - For A-Device, the cable is connected to CN11 (USB3.0 ch0).
-  - For B-Device, the cable is connected to CN9 (USB2.0 ch0).
- 2) On A-Device, you input the following command:
-  # echo peripheral > /sys/devices/platform/soc/ee020000.usb/role
- 3) On B-Device, you input the following command:
-  # echo host > /sys/devices/platform/soc/ee080200.usb-phy/role
+> From: Felipe Balbi, Sent: Wednesday, March 29, 2017 5:03 PM
+>=20
+> Yoshihiro-san
+>=20
+> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
+> >> >> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
+> >> >> > Sadly, to change the role ("host" and "peripheral") of USB3.0 DRD
+> >> >> > controller on R-Car Gen3, software has to set the DRD_CON registe=
+r
+> >> >> > which is included in a usb3.0 peripheral controler's register.
+> >> >> > To simply implementation, the previous code always set peripheral=
+ mode
+> >> >> > as hardcoded. However, to support usb role swap in the future,
+> >> >> > the hardcoded is not good. So, this patch adds sysfs "role" to se=
+t
+> >> >> > the mode by a user.
+> >> >> > After applied this patch, since the DRD controller will act as ho=
+st
+> >> >> > mode after probed, a user needs to change the mode via the sysfs.
+> >> >> >
+> >> >> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.co=
+m>
+> >> >>
+> >> >> in patch 3, you add extcon to monitor ID and VBUS pins. Do you real=
+ly
+> >> >> need this sysfs file at all?
+> >> >
+> >> > Yes. This is because this "role" sysfs file cannot monitor the ID an=
+d VBUS pins.
+> >> > The "role" only monitors the mode which is "host" or "peripheral".
+> >>
+> >> Right, I understand it can't monitor the state of ID/VBUS, but do you
+> >> have a usecase for that file that's not covered by the other patches i=
+n
+> >> the series? :-)
+> >
+> > Thank you for the comment. Since my English skill is not good,
+> > I don't understand your question.
+>=20
+> oh, that's alright. I'll try to explain:
+>=20
+> I'm asking if you have any situation where you need userspace to change
+> the role manually. I understand it's a very nice feature to have during
+> development because it frees us from searching for "the right cable";
+> but if the only application of this sysfs file is durinb development,
+> then perhaps it should be exposed using debugfs instead ;-)
+>=20
+> Hopefully that's easier to understand now.
 
-Then, the A-Device acts as a peripheral and the B-Device acts as
-a host. Please note that A-Device must input the following command
-if you want the board to act as a host again.
- # echo host > /sys/devices/platform/soc/ee020000.usb/role
+Thank you for the explanation! I understood this :)
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- .../ABI/testing/sysfs-platform-renesas_usb3        |  2 ++
- drivers/usb/gadget/udc/renesas_usb3.c              | 41 +++++++++++++++++++++-
- 2 files changed, 42 insertions(+), 1 deletion(-)
+This "b-device" mode is totally for development purpose.
+ - The old version SoC has a restriction (cannot monitor ID pin!),
+   So even if a board has B connector, I should turn the mode to peripheral=
+.
+ - I would like to develop this driver using A connector on a board that is=
+ related
+   to SoC and board environment specification :)
 
-diff --git a/Documentation/ABI/testing/sysfs-platform-renesas_usb3 b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
-index f5dace7..1ab919c 100644
---- a/Documentation/ABI/testing/sysfs-platform-renesas_usb3
-+++ b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
-@@ -7,6 +7,8 @@ Description:
- 		The file can show/change the drd mode of usb.
- 
- 		Write the following string to change the mode:
-+		 "host" - switching mode from peripheral to host.
-+		 "peripheral" - switching mode from host to peripheral.
- 		 "b-device" - switching mode as forced b-device mode.
- 
- 		Read the file, then it shows the following strings:
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 34ac03c..b552243 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -570,12 +570,29 @@ static void usb3_mode_a_host(struct renesas_usb3 *usb3)
- 	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
- }
- 
-+static void usb3_mode_a_peri(struct renesas_usb3 *usb3)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&usb3->lock, flags);
-+	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	usb3_set_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
-+	usb3_check_vbus(usb3);
-+	spin_unlock_irqrestore(&usb3->lock, flags);
-+}
-+
- static void usb3_mode_b_peri(struct renesas_usb3 *usb3)
- {
- 	usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
- 	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
- }
- 
-+static void usb3_mode_b_host(struct renesas_usb3 *usb3)
-+{
-+	usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	usb3_clear_bit(usb3, DRD_CON_VBOUT, USB3_DRD_CON);
-+}
-+
- static bool usb3_is_a_device(struct renesas_usb3 *usb3)
- {
- 	return !(usb3_read(usb3, USB3_USB_OTG_STA) & USB_OTG_IDMON);
-@@ -1865,8 +1882,30 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 		usb3->forced_b_device = true;
- 		renesas_usb3_init_forced_b_device(usb3);
- 	} else {
-+		bool new_mode_is_host;
-+
- 		usb3->forced_b_device = false;
--		return -EINVAL;
-+		if (!strncmp(buf, "host", strlen("host")))
-+			new_mode_is_host = true;
-+		else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+			new_mode_is_host = false;
-+		else
-+			return -EINVAL;
-+
-+		if (new_mode_is_host == usb3_is_host(usb3))
-+			return -EINVAL;
-+
-+		if (new_mode_is_host) {
-+			if (usb3_is_a_device(usb3))
-+				usb3_mode_a_host(usb3);
-+			else
-+				usb3_mode_b_host(usb3);
-+		} else {
-+			if (usb3_is_a_device(usb3))
-+				usb3_mode_a_peri(usb3);
-+			else
-+				usb3_mode_b_peri(usb3);
-+		}
- 	}
- 
- 	return count;
--- 
-1.9.1
+So, I think this code is low priority thing for now.
+Thus, I will remove this patch 1 and rebase other patches and resubmit late=
+r today.
+
+Best regards,
+Yoshihiro Shimoda
+
+> --
+> balbi
