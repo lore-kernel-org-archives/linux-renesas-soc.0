@@ -1,18 +1,17 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
 References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
  <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
  <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
  <20170323160204.GL30223@w540> <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
  <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org> <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
- <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Mar 2017 12:15:05 +0200
-Message-ID: <CACRpkdbT3091MzAQ_hO5Hc9=gQz-eDNCDtEnVG-3G+jJ+eO+Fw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Mar 2017 09:35:17 +0200
+Message-ID: <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
 Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: jacopo <jacopo@jmondi.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -29,56 +28,61 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 9:35 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Me:
+Hi Linus,
 
->> See for example:
->> include/dt-bindings/pinctrl/mt65xx.h
+On Wed, Mar 29, 2017 at 4:30 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Mar 28, 2017 at 4:38 PM,  <jacopo@jmondi.org> wrote:
+>>> The fact that historically all the early adopters of pinctrl in device
+>>> tree
+>>> have these funky custom bindings is unfortunate but just something
+>>> that we need to live with.
 >>
->> And how that is used in:
->> arch/arm/boot/dts/mt2701-pinfunc.h
->> arch/arm/boot/dts/mt2701-evb.dts
+>> To avoid any confusion, please bear with me and clarify this once and for
+>> all,
+>> since I'm not certain I fully got you here.
 >>
->> The docs are here:
->> Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+>> Are you suggesting:
+>>
+>> 1) Use "pins" property with the currently implemented ABI (which slightly
+>> differs
+>>    from the standard documented one as explained above. Not sure it is fine
+>> overriding
+>>    it or not)
 >
-> All of the above pack the information for a pin into a single 32-bit integer.
-> Is that what you want us to use, too?
-> Currently we use two integers: 1) pin index, and 2) function/flags combo.
+> Correction: you should be using the property "pinmux", because you
+> are setting group and function at the same time.
 
-I don't really know what you need, sorry. But some kind of figure, yes.
-I would say whatever makes sense. 16+16 bits makes sense in most
-combinatorial spaces does it not? If you split 32 bits  in 16 bits for
-pin and 16 bits for function, do you have more than 2^16 pins or 2^16
-functions?
+OK.
 
-If you really do we may need to go for u64 but ... really? Is there
-a rational reason for that other than "we did it like this first"?
+> See for example:
+> include/dt-bindings/pinctrl/mt65xx.h
+>
+> And how that is used in:
+> arch/arm/boot/dts/mt2701-pinfunc.h
+> arch/arm/boot/dts/mt2701-evb.dts
+>
+> The docs are here:
+> Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
 
-I do not understand the notion of "flags" here. I hope that is not referring
-to pin config, because I expect that to use the standard pin config
-bindings outside of the pinmux value which should just define the
-pin+function combo:
+All of the above pack the information for a pin into a single 32-bit integer.
+Is that what you want us to use, too?
+Currently we use two integers: 1) pin index, and 2) function/flags combo.
 
-node {
-    pinmux = <PIN_NUMBER_PINMUX>;
-    GENERIC_PINCONFIG;
-};
+> I'm sorry that "pinmux" is not part of the generic documentation, it'd be
+> great if you would like to add it with a patch.
 
-Example from Mediatek:
+That would mean pinmux could be an array of single values, or tuples.
+Is that OK?
 
-i2c1_pins_a: i2c1@0 {
-    pins {
-        pinmux = <MT8135_PIN_195_SDA1__FUNC_SDA1>,
-                        <MT8135_PIN_196_SCL1__FUNC_SCL1>;
-        bias-pull-up = <55>;
-    };
-};
+Thanks!
 
-So this allows for a combine pin+function number but pull ups,
-bias etc are not baked into the thing, they have to be added on
-separately with the generic bindings, which is nice and very readable.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
