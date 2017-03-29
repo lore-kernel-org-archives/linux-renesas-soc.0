@@ -1,109 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60095 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752500AbdCFAqd (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:36049 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752248AbdC2OOZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 5 Mar 2017 19:46:33 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] VSP1 rotation and histogram
-Date: Mon, 06 Mar 2017 02:47:08 +0200
-Message-ID: <4407429.F5AJ3MCJrM@avalon>
+        Wed, 29 Mar 2017 10:14:25 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh@kernel.org>
+CC: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        RTCLINUX <rtc-linux@googlegroups.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 2/7] rtc: Add rtc-sh
+Date: Wed, 29 Mar 2017 14:14:20 +0000
+Message-ID: <SG2PR06MB11657A015A46C48CDD3858978A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20170322142754.30888-1-chris.brandt@renesas.com>
+ <20170322142754.30888-3-chris.brandt@renesas.com>
+ <20170329012441.bxnkyqui24mymuvr@rob-hp-laptop>
+ <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-The following changes since commit 130f8756b9b83c0137ee0d587152a7ef3e10=
-f74b:
-
-  v4l: vsp1: Register pipe with output WPF (2017-03-05 01:53:46 +0200)
-
-are available in the git repository at:
-
-  git://linuxtv.org/pinchartl/media.git vsp1/histogram
-
-for you to fetch changes up to 8bcdadfb22f218a42dc07b502c2a7ffc56509874=
-:
-
-  v4l: vsp1: Add HGT support (2017-03-06 02:39:38 +0200)
-
-----------------------------------------------------------------
-Laurent Pinchart (8):
-      v4l: Clearly document interactions between formats, controls and =
-buffers
-      v4l: vsp1: wpf: Implement rotation support
-      v4l: Add metadata buffer type and format
-      v4l: vsp1: Add histogram support
-      v4l: vsp1: Support histogram generators in pipeline configuration=
-
-      v4l: vsp1: Fix HGO and HGT routing register addresses
-      v4l: Define a pixel format for the R-Car VSP1 1-D histogram engin=
-e
-      v4l: vsp1: Add HGO support
-
-Niklas S=F6derlund (2):
-      v4l: Define a pixel format for the R-Car VSP1 2-D histogram engin=
-e
-      v4l: vsp1: Add HGT support
-
- Documentation/media/uapi/v4l/buffer.rst               | 111 +++++
- Documentation/media/uapi/v4l/dev-meta.rst             |  62 +++
- Documentation/media/uapi/v4l/devices.rst              |   1 +
- Documentation/media/uapi/v4l/meta-formats.rst         |  16 +
- Documentation/media/uapi/v4l/pixfmt-meta-vsp1-hgo.rst | 168 +++++++
- Documentation/media/uapi/v4l/pixfmt-meta-vsp1-hgt.rst | 120 +++++
- Documentation/media/uapi/v4l/pixfmt.rst               |   1 +
- Documentation/media/uapi/v4l/vidioc-querycap.rst      |   3 +
- Documentation/media/videodev2.h.rst.exceptions        |   2 +
- drivers/media/platform/Kconfig                        |   1 +
- drivers/media/platform/vsp1/Makefile                  |   1 +
- drivers/media/platform/vsp1/vsp1.h                    |   6 +
- drivers/media/platform/vsp1/vsp1_drm.c                |   2 +-
- drivers/media/platform/vsp1/vsp1_drv.c                |  70 ++-
- drivers/media/platform/vsp1/vsp1_entity.c             | 154 +++++-
- drivers/media/platform/vsp1/vsp1_entity.h             |   8 +-
- drivers/media/platform/vsp1/vsp1_hgo.c                | 228 +++++++++
- drivers/media/platform/vsp1/vsp1_hgo.h                |  45 ++
- drivers/media/platform/vsp1/vsp1_hgt.c                | 222 +++++++++
- drivers/media/platform/vsp1/vsp1_hgt.h                |  42 ++
- drivers/media/platform/vsp1/vsp1_histo.c              | 646 ++++++++++=
-+++++++
- drivers/media/platform/vsp1/vsp1_histo.h              |  84 ++++
- drivers/media/platform/vsp1/vsp1_pipe.c               |  38 +-
- drivers/media/platform/vsp1/vsp1_pipe.h               |   4 +
- drivers/media/platform/vsp1/vsp1_regs.h               |  33 +-
- drivers/media/platform/vsp1/vsp1_rpf.c                |   2 +-
- drivers/media/platform/vsp1/vsp1_rwpf.c               |   5 +
- drivers/media/platform/vsp1/vsp1_rwpf.h               |   7 +-
- drivers/media/platform/vsp1/vsp1_video.c              |  42 +-
- drivers/media/platform/vsp1/vsp1_wpf.c                | 205 ++++++--
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c         |  19 +
- drivers/media/v4l2-core/v4l2-dev.c                    |  16 +-
- drivers/media/v4l2-core/v4l2-ioctl.c                  |  36 ++
- drivers/media/v4l2-core/videobuf2-v4l2.c              |   3 +
- include/media/v4l2-ioctl.h                            |  17 +
- include/trace/events/v4l2.h                           |   1 +
- include/uapi/linux/videodev2.h                        |  17 +
- 37 files changed, 2336 insertions(+), 102 deletions(-)
- create mode 100644 Documentation/media/uapi/v4l/dev-meta.rst
- create mode 100644 Documentation/media/uapi/v4l/meta-formats.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-vsp1-hgo.r=
-st
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-vsp1-hgt.r=
-st
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.h
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.h
- create mode 100644 drivers/media/platform/vsp1/vsp1_histo.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_histo.h
-
---=20
-Regards,
-
-Laurent Pinchart
+T24gV2VkbmVzZGF5LCBNYXJjaCAyOSwgMjAxNywgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0K
+PiA+PiArRXhhbXBsZToNCj4gPj4gK3J0YzogcnRjQGZjZmYxMDAwIHsNCj4gPj4gKyAgICAgY29t
+cGF0aWJsZSA9ICJyZW5lc2FzLHI3czcyMTAwLXJ0YyIsICJyZW5lc2FzLHNoLXJ0YyI7DQo+ID4+
+ICsgICAgIHJlZyA9IDwweGZjZmYxMDAwIDB4MmU+Ow0KPiA+PiArICAgICBpbnRlcnJ1cHRzID0g
+PEdJQ19TUEkgMjc2IElSUV9UWVBFX0VER0VfUklTSU5HDQo+ID4+ICsgICAgICAgICAgICAgICAg
+ICAgR0lDX1NQSSAyNzcgSVJRX1RZUEVfRURHRV9SSVNJTkcNCj4gPj4gKyAgICAgICAgICAgICAg
+ICAgICBHSUNfU1BJIDI3OCBJUlFfVFlQRV9FREdFX1JJU0lORz47DQo+ID4+ICsgICAgIGludGVy
+cnVwdC1uYW1lcyA9ICJhbGFybSIsICJwZXJpb2QiLCAiY2FycnkiOw0KPiA+PiArICAgICBjbG9j
+a3MgPSA8Jm1zdHA2X2Nsa3MgUjdTNzIxMDBfQ0xLX1JUQz4sIDwmcnRjX3gxX2Nsaz4sDQo+ID4+
+ICsgICAgICAgICAgICAgIDwmcnRjX3gzX2Nsaz4sIDwmZXh0YWxfY2xrPjsNCj4gPj4gKyAgICAg
+Y2xvY2stbmFtZXMgPSAiZmNrIiwgInJ0Y194MSIsICJydGNfeDMiLCAiZXh0YWwiOw0KPiA+PiAr
+ICAgICBwb3dlci1kb21haW5zID0gPCZjcGdfY2xvY2tzPjsNCj4gPg0KPiA+IE5vdCBkb2N1bWVu
+dGVkLg0KPiANCj4gInBvd2VyLWRvbWFpbnMiIGlzIGEgcGxhdGZvcm0gcHJvcGVydHkuDQo+IA0K
+PiBBbGwgaGFyZHdhcmUgY29tcG9uZW50cyBuZWVkIHBvd2VyLg0KPiBBbGwgc3luY2hyb25vdXMg
+aGFyZHdhcmUgY29tcG9uZW50cyBuZWVkIGEgY2xvY2suDQo+IE1vc3QgaGFyZHdhcmUgY29tcG9u
+ZW50cyBoYXZlIGEgcmVzZXQgc2lnbmFsLg0KPiANCj4gV2hldGhlciB0aGVzZSBhcmUgZXhwb3Nl
+ZCBhbmQgY2FuIGJlIGNvbnRyb2xsZWQgZGVwZW5kcyBvbiB0aGUNCj4gcGxhdGZvcm0vU29DLg0K
+PiBTbyBkb2N1bWVudGluZyB0aGVtIGluIGVhY2ggYW5kIGV2ZXJ5IGRldmljZSBiaW5kaW5nIGxv
+b2tzIG92ZXJraWxsIHRvIG1lLg0KPiBJIHRoaW5rIHRoaXMgaXMgc29tZXRoaW5nIHRvIGJlIGFk
+ZHJlc3NlZCBieSBkZXZpY2V0cmVlLXNwZWNpZmljYXRpb24NCj4gKHdoaWNoIGRvZXNuJ3QgaGFu
+ZGxlIGNsb2NrcywgcG93ZXItZG9tYWlucywgcmVzZXRzIHlldCkuDQo+IA0KPiBJZiB5b3UgcHJl
+ZmVyLCB0aGUgcHJvcGVydHkgY2FuIGJlIHJlbW92ZWQgZnJvbSB0aGUgZXhhbXBsZSwgdGhvdWdo
+Lg0KDQpJJ2xsIGdvIGFoZWFkIGFuZCBwdWxsIGl0IG91dCAoc2luY2UgSSBoYXZlIHRvIHVwZGF0
+ZSB0aGUgY29tbWl0IHRpdGxlDQphbnl3YXkgYXMgcGVyIFJvYidzIHJlcXVlc3QpDQoNCkJlc2lk
+ZXMuLi5pdCdzIHByb2JhYmx5IHRoZSBtb3N0IGxlYXN0IGltcG9ydGFudCBwYXJ0IG9mIHRoZSBl
+eGFtcGxlIDspDQoNClRoYW5rcywNCkNocmlzDQo=
