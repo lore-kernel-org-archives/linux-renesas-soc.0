@@ -1,15 +1,20 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:57450 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933331AbdC3N1k (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 09:27:40 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170329155654.GD6247@w540>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com> <20170329155654.GD6247@w540>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 30 Mar 2017 10:33:30 +0200
+Message-ID: <CACRpkdY-jXQENDvWoHDYYAg0e0xmwHAU3uj1D4ZP3tvTHXmgow@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+To: jacopo <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -17,97 +22,147 @@ CC: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl
- header
-Date: Thu, 30 Mar 2017 13:27:31 +0000
-Message-ID: <SG2PR06MB116501FDC518BB49630520588A340@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com>
- <SG2PR06MB11659AB956F83E8DCE2C9AA18A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CACRpkda_Gw9vhLqpWw8oOZyZ59nj5j9Q-T5RXVsf0vsxWcjyHg@mail.gmail.com>
-In-Reply-To: <CACRpkda_Gw9vhLqpWw8oOZyZ59nj5j9Q-T5RXVsf0vsxWcjyHg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gVGh1cnNkYXksIE1hcmNoIDMwLCAyMDE3LCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiA+PiA+
-ICsvKg0KPiA+PiA+ICsgKiBQaW4gaXMgYmktZGlyZWN0aW9uYWwuDQo+ID4+ID4gKyAqIEFuIGFs
-dGVybmF0ZSBmdW5jdGlvbiB0aGF0IG5lZWRzIGJvdGggaW5wdXQvb3V0cHV0DQo+ID4+ID4gK2Z1
-bmN0aW9uYWxpdGllcyBzaGFsbA0KPiA+PiA+ICsgKiBiZSBjb25maWd1cmVkIGFzIGJpZGlyZWN0
-aW9uYWwuDQo+ID4+ID4gKyAqIEVnLiBTREEvU0NMIHBpbnMgb2YgYW4gSTJjIGludGVyZmFjZS4N
-Cj4gPj4gPiArICovDQo+ID4+ID4gKyNkZWZpbmUgQklfRElSICAgICAgICAgICAgICAgICAoMSA8
-PCAzKQ0KPiA+Pg0KPiA+PiBBbnkgc3BlY2lmaWMgcmVhc29uIHdoeSB0aGlzIHNob3VsZCBub3Qg
-c2ltcGx5IGJlIGFkZGVkIHRvDQo+ID4+IGluY2x1ZGUvbGludXgvcGluY3RybC9waW5jb25mLWdl
-bmVyaWMuaA0KPiA+PiBhcyBQSU5fQ09ORklHX0JJRElSRUNUSU9OQUwgYW5kIHBhcnNlZCBpbiBk
-cml2ZXJzL3BpbmN0cmwvcGluY29uZi0NCj4gPj4gZ2VuZXJpYy5jIGZyb20gdGhlIChuZXcpIERU
-IHByb3BlcnR5ICJiaWRpcmVjdGlvbmFsIiBzaW1wbHk/DQo+ID4NCj4gPiBJIHNlZSB5b3VyIHBv
-aW50LiBJdCB3b3VsZCBjdXQgZG93biBmcm9tIGV2ZXJ5IGRyaXZlciBvdXQgdGhlcmUNCj4gPiBp
-bnZlbnRpbmcgc29tZSBuZXcgcHJvcGVydHkgb3IgY29uZmlnIGluc3RlYWQgb2YgZXZlcnlvbmUg
-anVzdCBzaGFyaW5nDQo+ID4gYSBmaXhlZCBzZXQuDQo+ID4gTWF5YmUgc29tZW9uZSBlbHNlIG91
-dCB0aGVyZSB3aWxsIGVuZCB1cCBoYXZpbmcgYSBuZWVkIGZvciBhDQo+ID4gImJpZGlyZWN0aW9u
-YWwiIG9wdGlvbi4NCj4gDQo+IEkgd2FzIHRoaW5raW5nIGFib3V0IHRoYXQgb25lLiBJdCBpcyBh
-IGJpdCB3ZWlyZCBlbGVjdHJpY2FsbHksIGxpa2Ugd2hhdA0KPiBraW5kIG9mIGVsZWN0cm9uaWNz
-IGlzIHJlYWxseSBiaWRpcmVjdGlvbmFsPw0KPiANCj4gSXQgc2VlbXMgbGlrZSBhIGZhbmN5IG5h
-bWUgZm9yIG9wZW4gZHJhaW4vb3BlbiBzb3VyY2UsIHdoYXQgd2UgY2FsbA0KPiAic2luZ2xlIGVu
-ZGVkIiBjb25maWd1cmF0aW9uLiAoU2VlIGRvY3MgaW4NCj4gRG9jdW1lbnRhdGlvbi9ncGlvL2Ry
-aXZlci50eHQpDQo+IA0KPiBJdCB3b3VsZCBiZSBncmVhdCBpZiB5b3UgY291bGQgY2hlY2sgaWYg
-dGhhdCBpcyB3aGF0IHRoZXkgbWVhbiwgYWN0dWFsbHkuDQoNCkhlcmUgaXMgdGhlIGRlZmluaXRp
-b24gb2YgdGhlIHJlZ2lzdGVyIGluIHRoZSBoYXJkd2FyZSBtYW51YWw6DQoNCi0tLQ0KNTQuMy4x
-MyBQb3J0IEJpZGlyZWN0aW9uIENvbnRyb2wgUmVnaXN0ZXIgKFBCRENuKQ0KDQpUaGlzIHJlZ2lz
-dGVyIGVuYWJsZXMgb3IgZGlzYWJsZXMgdGhlIGlucHV0IGJ1ZmZlciB3aGlsZSB0aGUgb3V0cHV0
-IGJ1ZmZlciBpcyBlbmFibGVkLiBXaGVuIHRoZSBpbnB1dCBidWZmZXIgaXMgZW5hYmxlZA0Kd2hp
-bGUgdGhlIG91dHB1dCBidWZmZXIgaXMgZW5hYmxlZCwgdGhlIGJpZGlyZWN0aW9uYWwgbW9kZSBp
-cyBlbnRlcmVkLCBhbGxvd2luZyB0aGUgbGV2ZWwgb2YgdGhlIFBuX20gcGluIHRvIGFsd2F5cyBi
-ZSByZWFkDQp2aWEgdGhlIFBQUm4uUFBSbm0gYml0Lg0KLS0tDQoNCg0KQnV0Li4ud2hhdCB0aGV5
-IGRvbid0IHJlYWxseSB0ZWxsIHlvdSBpcyB0aGF0IGFueSBwZXJpcGhlcmFsIHRoYXQgbmVlZHMg
-dG8gVFggYW5kIFJYIGRhdGEgb3ZlciBhIHBpbiBuZWVkcyB0aGlzIHNldC4NCg0KDQpJbiB0aGUg
-aGFyZHdhcmUgbWFudWFsLCB0aGVyZSBpcyBhIHByZXR0eSBwaWN0dXJlIChGaWd1cmUgNTQuMSBM
-b2dpY2FsIERpYWdyYW0gb2YgUG9ydCBDb250cm9sKSB0aGF0IHNob3dzIGEgZGV0YWlsZWQgbG9n
-aWMgZGlhZ3JhbSBvZiB0aGUgaW50ZXJmYWNlIGJldHdlZW4gdGhlIHBlcmlwaGVyYWwgYnVzIGFu
-ZCB0aGUgcGluIHBhZC4NCkFzIGZhciBhcyBJIGNhbiB0ZWxsLCB0aGUgImZ1bmN0aW9uIG11eCIg
-cG9ydGlvbiBvZiB0aGlzIGNvbnRyb2xsZXIgb25seSBrbm93cyBob3cgdG8gc2V0IGEgcGluIGFz
-IGRpcmVjdGlvbj1pbiBvciBkaXJlY3Rpb249b3V0Lg0KU28sIGluIHRoZSBjYXNlIG9mIEkyQyB3
-aGVyZSBlYWNoIHRoZSBTQ0wgYW5kIFNEQSBwaW5zIG5lZWRzIHRvIGJlIGRyaXZlbiBhbmQgcmVh
-ZC4uLml0IGNhbid0IGRvIHRoYXQuDQpUaGVyZWZvcmUsIHRoZXJlIGlzIGFuIGFkZGl0aW9uYWwg
-cmVnaXN0ZXIgdG8gbWFudWFsbHkgZW5hYmxlIHRoZSBpbnB1dCBidWZmZXIgYW5kIGxldCB0aGUg
-bXV4IGVuYWJsZSB0aGUgb3V0cHV0IGJ1ZmZlci4NCg0KU28gd2hpbGUgeWVzLCBJMkMgaXMgb3Bl
-bi1kcmFpbiwgdGhpcyBpcyBhbHNvIHRoZSBjYXNlIGZvciB0aGUgZGF0YSBwaW5zIGZvciB0aGUg
-U0RISS4gQW5kIHRoZSBNRElPIHBpbiBmcm9tIEV0aGVybmV0LiBJdCByZWFsbHkgaGFzIHRvIGRv
-IHdpdGggdGhlIGZhY3QgdGhhdCB0aGlzIHBpbiBjb250cm9sbGVyIHdhc24ndCBkZXNpZ25lZCB0
-byBlbmFibGUgYm90aCB0aGUgaW5wdXQgYW5kIG91dHB1dCBidWZmZXJzIGF0IHRoZSBzYW1lIHRp
-bWUuDQoNClRoZSBzaXR1YXRpb24gaXMgc2ltaWxhciBmb3Igb3VyIFNXSU9fSU4gYW5kIFNXSU9f
-T1VUIGZsYWdzLiBGb3IgZXhhbXBsZSwgdG8gdXNlIHRoZSBTU0kgc291bmQgaW50ZXJmYWNlLCB5
-b3UgaGF2ZSB0byBzZXQgdGhlIFRYIHNpZ25hbHMgdG8gImlucHV0IiAoU1dJT19JTikuIE1ha2Vz
-IHNlbnNlLCByaWdodD8/DQoNCkkgY291bGQgYXJndWUgdGhhdCBhbGwgb2YgdGhlc2UgIkZMQUdT
-IiBzZXR0aW5ncyBzaG91bGQgaGF2ZSBiZWVuIGluY29ycG9yYXRlZCBpbiB0aGUgSFcgbG9naWMg
-b2YgdGhlIHBpbiBjb250cm9sbGVyLi4uYnV0IGZvciB3aGF0ZXZlciByZWFzb24sIHRoZSB0aGV5
-IGhhZCB0byBtYWtlIHRoZW0gc2VwYXJhdGUgcmVnaXN0ZXJzIGFuZCBtYWtlIFNXIGRvIGl0Lg0K
-U28sIEkgY291bGQgYXJndWUgdGhhdCB0aGVzZSByZWdpc3RlcnMgc2V0dGluZ3MgYXJlIHJlYWxs
-eSBwYXJ0IG9mIHBpbiBtdXhpbmcsIG5vdCByZWFsbHkgdXNlciBjb25maWcuLi4uYW5kIGhlbmNl
-IGJlbG9uZyBpbiB0aGUgInBpbm11eCIgcHJvcGVydHkuDQoNCg0KSG93IGFib3V0IHRoaXMgY29t
-cHJvbWlzZTogSW5zdGVhZCBvZiBCSV9ESVIsIHdlIHVzZSAiVFlQRV9JMkMiLCAiVFlQRV9TRERB
-VEEiLCAiVFlQRV9NRElPIiwgIlRZUEVfTFZEUyIsIGV0Yy4uLiB0byBkZXNjcmliZSB0aGUgJ3Nw
-ZWNpYWwnIG9uZXMuIFRoYXQgd2F5IGl0IGNhbiBnbyBiYWNrIHVuZGVyICJwaW5tdXgiLiBMaWtl
-IEphY29wbyBzYWlkLCB0aGVzZSByZWdpc3RlciBzZXR0aW5ncyBhcmUgcmVhbGx5IHN1cHBvc2Vk
-IHRvIGJlIHNldCB3aGVuIHlvdSBhcmUgc2VsZWN0aW5nIHRoZSBwaW4tbXV4IG9wdGlvbi4NCg0K
-DQpPZiBjb3Vyc2UgYmVoaW5kIHRoZSBzY2VuZXMsIGl0J3MgcmVhbGx5Og0KICAjZGVmaW5lIFRZ
-UEVfSTJDICAgIEJJX0RJUiANCiAgI2RlZmluZSBUWVBFX1NEREFUQSBCSV9ESVINCiAgI2RlZmlu
-ZSBUWVBFX1NEQ01EICBCSV9ESVINCiAgI2RlZmluZSBUWVBFX0xWRFMgICBTV0lPX09VVA0KDQpF
-eGFtcGxlczoNCg0KCWkyYzNfcGluczogaTJjMyB7DQoJCXBpbm11eCA9IDxQSU4oMSwgNikgfCBG
-VU5DXzEgfCBUWVBFX0kyQz4sDQoJCSAgICAgICAgIDxQSU4oMSwgNykgfCBGVU5DXzEgfCBUWVBF
-X0kyQz47DQoJfTsNCg0KCS8qIFNIREkgY2gxIG9uIENOMSAqLw0KCXNkaGkxX3BpbnM6IHNkaGkx
-IHsNCgkJLyogU0hESSBjaDEgb24gUG9ydCAzICovDQoJCXBpbm11eCA9IDxQSU4oMywgOCkgfCBG
-VU5DXzc+LAkJCS8qIFNESEkxIENEICovDQoJCQkJPFBJTigzLCA5KSBGVU5DXzcpPiwJCQkvKiBT
-REhJMSBXUCAqLw0KCQkJCTxQSU4oMywgMTApIEZVTkNfNyB8IFRZUEVfU0REQVRBKT4sCS8qIFNE
-SEkxIERBVDEgKi8NCgkJCQk8UElOKDMsIDExKSBGVU5DXzcgfCBUWVBFX1NEREFUQSk+LAkvKiBT
-REhJMSBEQVQwICovDQoJCQkJPFBJTigzLCAxMikgRlVOQ183KT4sCQkJLyogU0RISTEgQ0xLICov
-DQoJCQkJPFBJTigzLCAxMykgRlVOQ183IHwgVFlQRV9TRENNRCk+LAkvKiBTREhJMSBDTUQgKi8N
-CgkJCQk8UElOKDMsIDE0KSBGVU5DXzcgfCBUWVBFX1NEREFUQSk+LAkvKiBTREhJMSBEQVQzICov
-DQoJCQkJPFBJTigzLCAxNSkgRlVOQ183IHwgVFlQRV9TRERBVEEpPjsJLyogU0RISTEgREFUMiAq
-Lw0KCX07DQoNCg0KDQojIEhvbmVzdGx5LCBJIGhhdmUgbm8gaWRlYSB3aGVyZSB0aGlzIHBpbiBj
-b250cm9sbGVyIGNhbWUgZnJvbS4gSSBoYXZlIG5vdCBzZWVuIGl0IGluIGFueSBvdGhlciBSZW5l
-c2FzIHBhcnQgKE1pdHN1YmlzaGkvSGl0YWNoaS9ORUMpLg0KDQoNCkNocmlzDQoNCg0K
+On Wed, Mar 29, 2017 at 5:56 PM, jacopo <jacopo@jmondi.org> wrote:
+
+> I can try to give you a few reasons why I don't see those flags fit in
+> the pin configuration flags definition.
+>
+> *) those flags are used during pin multiplexing procedure only and that
+> procedure has a specific order to be respected:
+>
+> You can have a look here:
+> https://www.spinics.net/lists/linux-renesas-soc/msg12793.html
+> In "rza1_alternate_function_conf()" function, we need to set bidir
+> before setting every other register.
+> The same applies some lines below:, the PIPC, PMC and PM register set order
+> has to be respected, and depends on those BIDIR and SWIO_* parameters.
+> This implies those configuration cannot be applied after pin muxing,
+> certainly not in pin_config[_group]_set() whose invocation time
+> is independent from pin_mux_set()'s one.
+
+But now you are mixing up syntax and semantics.
+
+You are describing what steps are necessary on this hardware to
+apply a certain setting. That is fine, if you didn't need any specific
+semantics there, you could be using pinctrl-single which will just
+hammer stuff into registers, one register per pin. You have a pin
+controller driver exactly beacause your hardware has semantics.
+
+How this is described in the device tree or a board file is a different
+thing from how you write your driver.
+
+I understand why i makes for easier code, but does it make for more
+generic and understandable device trees for people maintaining
+several systems? I don't think so.
+
+> One way forward would be, every time we mux a pin, look for a pinconf group
+> that includes the pin we're muxing. That would happen for each pin,
+> for no added benefits imo.
+
+The benefit is clearly abstraction, standardization and readability of the
+device tree. I, as developer, understand what is going on electrically,
+having seen this on other systems, and being able to access generic
+documentation on generic pin config properties.
+
+> *) as Geert already pointed out, we may need dedicated subnodes to
+> specify those pin configuration flags, not only because of what Chris
+> said, but because pinconf_generic_dt_subnode_to_map() wants "pins" or
+> "groups" to be there in the subnode, and in our pin multiplexing
+> sub-nodes we only have "pinmux" property (say: we cannot specify
+> pin_conf flags in the same sub-node where we describe pin
+> multiplexing, we always need a dedicated sub-node).
+> Chris and Geert gave some examples in their replies on how that would
+> like, and how it makes the bindings a little more complex.
+
+Very little more complex, and actually it could be argued that this
+is exactly why subnodes exist: to be able to have different pin config
+on pins. I think it is very readable.
+
+> *) those flags, according to Chris, won't be used in RZ/A2, and
+> reasonably not in any other RZ device. Do we want to add them to the
+> generic bindings, being them so specific to this hardware platform?
+
+I have seen so much stuff that people say is "necessarily different"
+for their platform. It turns our that silicon IO and solid state physics
+isn't that much different between systems. The same things invariably
+pop up in several chips.
+
+Hell this was what people said about this whole subsystem from the
+beginning: pin control is so necessarily different that there is no point
+in trying to create an abstraction for it.
+
+If I had listened to that kind of advice we wouldn't be where we are today.
+
+And that said, I have already pointed out that two of them already
+exist in the pin control subsystem (PIN_CONFIG*). Because other SoCs
+are doing similar things.
+
+> One thing I suggest considering is to get rid of those flags, at
+> least in bindings, and introduce 3 variants for each pin multiplexing
+> function identifier.
+>
+> Say:
+> include/dt-bindings/pinctrl/r7s72100-pinctrl.h:
+> #define MUX_1               (1 << 16)
+> #define MUX_1_BIDIR         (1 << 16 | 1 << 24)
+> #define MUX_1_SWIO_IN       (1 << 16 | 2 << 24)
+> #define MUX_1_SWIO_OUT      (1 << 16 | 3 << 24)
+> ...
+> #define MUX_8               (8 << 16)
+> #define MUX_8_BIDIR         (8 << 16 | 1 << 24)
+> ....
+
+I understand they can be made more beautiful, but in my view
+that is putting make up on a pig, I want generic pin config for these
+things.
+
+
+>> What is wrong in doing this with generic pin config using
+>> PIN_CONFIG_INPUT_ENABLE and PIN_CONFIG_OUTPUT
+>> (ignoring the argument)?
+>>
+>> In the device tree use input-enable and add a new output-enable
+>> (with unspecified value) with proper description and DT bindings?
+>>
+>> And if you think these have no general applicability, by the end
+>> of the day they are *still* pin config, not magic flags we can choose to
+>> toss in with the muxing, so you can do what the Qualcomm driver
+>> does and add custom pin configurations extending the generic
+>> pin config, see drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> qcom,pull-up-strength etc.
+>>
+>
+> I see, but that custom pin configuration flag can be applied
+> independently from pin muxing procedure and it can be applied to pins
+> while they're configured in GPIO mode.
+
+See "GPIO mode pitfalls" in Documentation/pinctrl.txt
+I've been over this hardware lingo so many times already.
+
+It is not about "GPIO" at all, it is about pin configuration. The
+generic pin config was not invented for GPIO, it was just recently
+that we started to provide pin config back-ends for GPIO. Only
+Intel do that so far.
+
+> Our "flags" are not of that nature, and only apply to some register
+> setting during pinmux, as I hopefully tried to clarify above.
+
+And that is a driver semantic. Or even a subsystem semantic. No
+big deal, accumulate such writes in the driver and apply it all when you have
+it all available no matter if pin multiplexing or pin config happens first?
+Surely this is just a hardware pecularity, then it warrants some special
+driver code.
+
+If you definately feel you must get a call from the pin control core setting
+up muxing and config at the same time we need to think of a way to
+augment the pin control core if necessary?
+
+The fact that Linux pin control subsystem semantics you don't
+like does not affect the relevant device tree bindings.
+
+Yours,
+Linus Walleij
