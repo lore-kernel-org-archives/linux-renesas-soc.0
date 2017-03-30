@@ -1,111 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:34002 "EHLO
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34721 "EHLO
         mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757383AbdCUUEx (ORCPT
+        with ESMTP id S1753749AbdC3Jjw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Mar 2017 16:04:53 -0400
-Received: by mail-lf0-f53.google.com with SMTP id z15so71290964lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Mar 2017 13:04:52 -0700 (PDT)
+        Thu, 30 Mar 2017 05:39:52 -0400
+Received: by mail-lf0-f53.google.com with SMTP id z15so22494635lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2017 02:39:51 -0700 (PDT)
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
+To: Chris Paterson <Chris.Paterson2@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20170329183658.618942497@cogentembedded.com>
+ <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+ <CAMuHMdU++fKJjAAjjEHmj0W8WZj5L+kmBeW1tjqTA+JhchKbHA@mail.gmail.com>
+ <CAMuHMdU_imTfh5Hb=BtKj6u1rJhuj4vAWarC7Xq2RZWQQkH8pg@mail.gmail.com>
+ <HK2PR0601MB1329C1778065759E02CCC15BB7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170321200448.051326718@cogentembedded.com>
-Date: Tue, 21 Mar 2017 23:04:45 +0300
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] ARM: dts: r8a7792: add IMR-L[S]X3 support
+Message-ID: <023fbd64-9337-d126-9c9c-9d713454e547@cogentembedded.com>
+Date: Thu, 30 Mar 2017 12:39:48 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=ARM-dts-r8a7792-add-IMR-L-S-X3-support.patch
+In-Reply-To: <HK2PR0601MB1329C1778065759E02CCC15BB7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IMR-LX3 and 6 IMR-LSX3 devices in the R8A7792 device tree.
+Hello!
 
-Based on the original patch by Roman Meshkevich
-<roman.meshkevich@cogentembedded.com>
+On 3/30/2017 12:16 PM, Chris Paterson wrote:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>>> From: linux-renesas-soc-owner@vger.kernel.org
+>>>>> [mailto:linux-renesas-soc- owner@vger.kernel.org] On Behalf Of
+>>>>> Sergei Shtylyov
+>>>>> Sent: 29 March 2017 19:37
+>>>>>
+>>>>> The R8A7791 PFC driver  was apparently based on the preliminary
+>>>>> revisions of the user's  manual, which  omitted the DVC_MUTE signal
+>>>>> altogether in the PFC section. The modern manual has the signal
+>>>>> described,  so just add the necassary data to the driver...
+>>>>>
+>>>>> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+>>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>>
+>>>> Should this patch also CC stable? (Patch 1/2 does)
+>>>
+>>> No need to spam stable with all these patches and reviews.
+>>> If it has a Fixes-tag, the stable team will pick it up anyway. After
+>>> it has ended up upstream.
+>
+> Okay.
+>
+>>
+>> And in this case, there's not really a need to backport it to stable, as there
+>> cannot be any users due to lack of pins using these definitions.
+>
+> Whereas the first patch in the series fixes a problem that *is* currently seen by users, so will need backporting. Makes sense now, thanks!
 
----
- arch/arm/boot/dts/r8a7792.dtsi |   63 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+    Note that it might only be seen by some out-of-tree boards, as neither 
+upstream supported R8A7791-based board enables HSCIF1...
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -734,6 +734,69 @@
- 			status = "disabled";
- 		};
- 
-+		imr-lsx3@fe840000 {
-+			compatible = "renesas,r8a7792-imr-lsx3",
-+				     "renesas,imr-lsx3";
-+			reg = <0 0xfe840000 0 0x2000>;
-+			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_0>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		imr-lsx3@fe850000 {
-+			compatible = "renesas,r8a7792-imr-lsx3",
-+				     "renesas,imr-lsx3";
-+			reg = <0 0xfe850000 0 0x2000>;
-+			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_1>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		imr-lsx3@fe860000 {
-+			compatible = "renesas,r8a7792-imr-lsx3",
-+				     "renesas,imr-lsx3";
-+			reg = <0 0xfe860000 0 0x2000>;
-+			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_2>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		imr-lsx3@fe870000 {
-+			compatible = "renesas,r8a7792-imr-lsx3",
-+				     "renesas,imr-lsx3";
-+			reg = <0 0xfe870000 0 0x2000>;
-+			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_3>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		imr-lsx3@fe880000 {
-+			compatible = "renesas,r8a7792-imr-lsx3",
-+				     "renesas,imr-lsx3";
-+			reg = <0 0xfe880000 0 0x2000>;
-+			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_4>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		imr-lsx3@fe890000 {
-+			compatible = "renesas,r8a7792-imr-lsx3",
-+				     "renesas,imr-lsx3";
-+			reg = <0 0xfe890000 0 0x2000>;
-+			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_IMR_LSX3_5>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		imr-lx3@fead0000 {
-+			compatible = "renesas,r8a7792-imr-lx3",
-+				     "renesas,imr-lx3";
-+			reg = <0 0xfead0000 0 0x2000>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_IMR_LX3>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
- 		vsp1@fe928000 {
- 			compatible = "renesas,vsp1";
- 			reg = <0 0xfe928000 0 0x8000>;
+> Kind regards, Chris
+>
+>>
+>> Gr{oetje,eeting}s,
+>>
+>>                         Geert
+
+MBR, Sergei
