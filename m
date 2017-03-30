@@ -1,126 +1,43 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 1/3] v4l: vsp1: Postpone frame end handling in event of display list race
-Date: Sun,  5 Mar 2017 16:00:02 +0000
-Message-Id: <b3bc755c2c88ce4e81e16f47f6f34de1fca79e28.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.8e2f9686131cb2299b859f056e902b4208061a4e.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.8e2f9686131cb2299b859f056e902b4208061a4e.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.8e2f9686131cb2299b859f056e902b4208061a4e.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.8e2f9686131cb2299b859f056e902b4208061a4e.1488729419.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34259 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754294AbdC3Iro (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 30 Mar 2017 04:47:44 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170329173035.67477-8-chris.brandt@renesas.com>
+References: <20170329173035.67477-1-chris.brandt@renesas.com> <20170329173035.67477-8-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Mar 2017 10:47:42 +0200
+Message-ID: <CAMuHMdUs5MgL0tJWbB5mbhbFdp8nwEop2Xwt=HR-7vrNrZUkNA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] ARM: dts: rskrza1: add rtc DT support
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        RTCLINUX <rtc-linux@googlegroups.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If we try to commit the display list while an update is pending, we have
-missed our opportunity. The display list manager will hold the commit
-until the next interrupt.
+On Wed, Mar 29, 2017 at 7:30 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Enable the realtime clock.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-In this event, we skip the pipeline completion callback handler so that
-the pipeline will not mistakenly report frame completion to the user.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c   | 19 +++++++++++++++++--
- drivers/media/platform/vsp1/vsp1_dl.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_pipe.c | 13 ++++++++++++-
- 3 files changed, 30 insertions(+), 4 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index b9e5027778ff..f449ca689554 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -562,9 +562,19 @@ void vsp1_dlm_irq_display_start(struct vsp1_dl_manager *dlm)
- 	spin_unlock(&dlm->lock);
- }
- 
--void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
-+/**
-+ * vsp1_dlm_irq_frame_end - Display list handler for the frame end interrupt
-+ * @dlm: the display list manager
-+ *
-+ * Return true if the previous display list has completed at frame end, or false
-+ * if it has been delayed by one frame because the display list commit raced
-+ * with the frame end interrupt. The function always returns true in header mode
-+ * as display list processing is then not continuous and races never occur.
-+ */
-+bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- {
- 	struct vsp1_device *vsp1 = dlm->vsp1;
-+	bool completed = false;
- 
- 	spin_lock(&dlm->lock);
- 
-@@ -576,8 +586,10 @@ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- 	 * perform any operation as there can't be any new display list queued
- 	 * in that case.
- 	 */
--	if (dlm->mode == VSP1_DL_MODE_HEADER)
-+	if (dlm->mode == VSP1_DL_MODE_HEADER) {
-+		completed = true;
- 		goto done;
-+	}
- 
- 	/*
- 	 * The UPD bit set indicates that the commit operation raced with the
-@@ -597,6 +609,7 @@ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- 	if (dlm->queued) {
- 		dlm->active = dlm->queued;
- 		dlm->queued = NULL;
-+		completed = true;
- 	}
- 
- 	/*
-@@ -619,6 +632,8 @@ void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- 
- done:
- 	spin_unlock(&dlm->lock);
-+
-+	return completed;
- }
- 
- /* Hardware Setup */
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index 7131aa3c5978..6ec1380a10af 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -28,7 +28,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
- void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
- void vsp1_dlm_irq_display_start(struct vsp1_dl_manager *dlm);
--void vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
-+bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
- 
- struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
- void vsp1_dl_list_put(struct vsp1_dl_list *dl);
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-index 35364f594e19..d15327701ad8 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-@@ -304,10 +304,21 @@ bool vsp1_pipeline_ready(struct vsp1_pipeline *pipe)
- 
- void vsp1_pipeline_frame_end(struct vsp1_pipeline *pipe)
- {
-+	bool completed;
-+
- 	if (pipe == NULL)
- 		return;
- 
--	vsp1_dlm_irq_frame_end(pipe->output->dlm);
-+	completed = vsp1_dlm_irq_frame_end(pipe->output->dlm);
-+	if (!completed) {
-+		/*
-+		 * If the DL commit raced with the frame end interrupt, the
-+		 * commit ends up being postponed by one frame. Return
-+		 * immediately without calling the pipeline's frame end handler
-+		 * or incrementing the sequence number.
-+		 */
-+		return;
-+	}
- 
- 	if (pipe->frame_end)
- 		pipe->frame_end(pipe);
--- 
-git-series 0.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
