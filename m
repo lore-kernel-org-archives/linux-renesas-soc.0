@@ -1,43 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35695 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932764AbdCaKx0 (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:32824 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934771AbdC3UVF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Mar 2017 06:53:26 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170330202059.050530179@cogentembedded.com>
-References: <20170330202059.050530179@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 31 Mar 2017 12:53:23 +0200
-Message-ID: <CAMuHMdUodJ8Eruu9F=vn922DvM+ZYJa3Ttx63Y9MnxujmdgtxA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: fix SCIF2 pinmux data
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thu, 30 Mar 2017 16:21:05 -0400
+Received: by mail-lf0-f53.google.com with SMTP id h125so33977297lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2017 13:21:03 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170330202059.050530179@cogentembedded.com>
+Date: Thu, 30 Mar 2017 23:20:48 +0300
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7791: fix SCIF2 pinmux data
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-fix-SCIF2-pinmux-data.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 30, 2017 at 10:20 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> PINMUX_IPSR_MSEL() macro invocation for the TX2 signal has apparently wrong
-> 1st argument -- most probably a result of cut&paste programming...
->
-> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+PINMUX_IPSR_MSEL() macro invocation for the TX2 signal has apparently wrong
+1st argument -- most probably a result of cut&paste programming...
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
+repo plus  2 R8A7791 fixes posted yesterday.
 
-                        Geert
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -1103,7 +1103,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP6_5_3, FMIN_E, SEL_FM_4),
+ 	PINMUX_IPSR_GPSR(IP6_7_6, AUDIO_CLKOUT),
+ 	PINMUX_IPSR_MSEL(IP6_7_6, MSIOF1_SS1_B, SEL_SOF1_1),
+-	PINMUX_IPSR_MSEL(IP6_5_3, TX2, SEL_SCIF2_0),
++	PINMUX_IPSR_MSEL(IP6_7_6, TX2, SEL_SCIF2_0),
+ 	PINMUX_IPSR_MSEL(IP6_7_6, SCIFA2_TXD, SEL_SCIFA2_0),
+ 	PINMUX_IPSR_GPSR(IP6_9_8, IRQ0),
+ 	PINMUX_IPSR_MSEL(IP6_9_8, SCIFB1_RXD_D, SEL_SCIFB1_3),
