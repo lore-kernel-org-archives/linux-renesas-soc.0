@@ -1,71 +1,50 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] base: soc: soc_device_match() improvements
-Date: Wed, 29 Mar 2017 21:38:52 +0200
-Message-Id: <1490816334-14568-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:50500 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753213AbdC3CSY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 29 Mar 2017 22:18:24 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 0/3] usb: gadget: udc: renesas_usb3: add USB3.0 DRD support
+Date: Thu, 30 Mar 2017 11:16:03 +0900
+Message-ID: <1490840166-18449-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Arnd, Greg, Kevin, Magnus, Olof, Simon,
+This patch set is based on the latest Felipe's usb.bit / testing/next branch
+(commit id = 29986993f67341493988b6c5d68e0653061975b2).
 
-This patch series contains two improvements for the SoC bus and
-soc_device_match().  The second one is a dependency for handling
-different SoC revisions in the Renesas R-Car SYSC driver, which manages
-PM Domains and thus needs to be initialized from an early_initcall[*].
+The USB3.0 DRD controller on R-Car Gen3 can change the role via DRD_CON
+register in the periperal side sadly, so this patch adds support
+for usb role swap feature in this udc driver.
+Furtunately, the default setting of the DRD is host side, if a user want
+to use host side only, we can handle it easily just to disable the udc driver.
 
-Changes compared to v1:
-  - Drop RFC state,
-  - Add more explanation,
-  - Add Acked-by.
+Changes from v2:
+ - Remove hardcoded mode setting as B-Peripheral in patch 1/3.
+ - Merge usb3_mode_[ab]_{host,peri}(usb3) to usb3_mode_config(usb3, host, a_dev)
 
-Due to the dependency, and as changes for the Renesas R-Car SYSC driver
-typically go in through the renesas and arm-soc trees, and if you agree,
-I would like to send a pull request for these changes, to be pulled by
-all of the driver core, renesas, and arm-soc trees.  This is similar to
-how soc_device_match() was integrated earlier.
-Then the Renesas R-Car SYSC driver changes can easily be queued on top
-in the renesas tree afterwards.
+Changes from v1:
+ - Remove patch 1 not to add "b-device" mode.
+ - Add device_remove_file() calling in renesas_usb3_remove().
+ - Use usb3_connect() instead of usb3_check_vbus() in usb3_mode_a_peri().
 
-Do you agree?
-Thanks for your answer!
+Yoshihiro Shimoda (3):
+  usb: gadget: udc: add USB ID signal monitoring
+  usb: gadget: udc: renesas_usb3: add extcon support
+  usb: gadget: udc: renesas_usb3: add support for usb role swap
 
-P.S. If you think it's already too late in the cycle to queue Renesas
-R-Car SYSC driver changes for v4.12 on top, please say so.  Then the
-dependency is relaxed, and this series can just go in through the
-driver core tree, with the Renesas part to follow for v4.13.
-
-[*] "[PATCH 0/3] soc: renesas: rcar-sysc: Add support for R-Car H3
-     ES2.0" (https://lkml.org/lkml/2017/3/13/833), will send v2 with
-     patch description changes only soon.
-
-Geert Uytterhoeven (2):
-  base: soc: Let soc_device_match() return no match when called too
-    early
-  base: soc: Allow early registration of a single SoC device
-
- drivers/base/soc.c | 52 ++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 34 insertions(+), 18 deletions(-)
+ .../ABI/testing/sysfs-platform-renesas_usb3        |  15 ++
+ drivers/usb/gadget/udc/Kconfig                     |   1 +
+ drivers/usb/gadget/udc/renesas_usb3.c              | 164 ++++++++++++++++++++-
+ 3 files changed, 175 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-renesas_usb3
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+1.9.1
