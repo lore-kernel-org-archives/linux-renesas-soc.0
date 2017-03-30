@@ -1,37 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33926 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932627AbdC3JJi (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36174 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753085AbdC3JA0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 05:09:38 -0400
+        Thu, 30 Mar 2017 05:00:26 -0400
 MIME-Version: 1.0
-In-Reply-To: <20170329183658.618942497@cogentembedded.com>
-References: <20170329183658.618942497@cogentembedded.com>
+In-Reply-To: <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <20170329183658.618942497@cogentembedded.com> <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Mar 2017 11:09:36 +0200
-Message-ID: <CAMuHMdULqcyj8QBy3K9V7e+Pad2cjgxkLTNDyg4BEamywFAnJA@mail.gmail.com>
+Date: Thu, 30 Mar 2017 11:00:22 +0200
+Message-ID: <CAMuHMdU++fKJjAAjjEHmj0W8WZj5L+kmBeW1tjqTA+JhchKbHA@mail.gmail.com>
 Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 8:36 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The R8A7791 PFC driver  was apparently based on the preliminary revisions
-> of  the user's  manual, which  omitted the DVC_MUTE signal  altogether in
-> the PFC section. The modern manual has the signal described,  so just add
-> the necassary data to the driver...
+On Thu, Mar 30, 2017 at 9:33 AM, Chris Paterson
+<Chris.Paterson2@renesas.com> wrote:
+>> From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-
+>> owner@vger.kernel.org] On Behalf Of Sergei Shtylyov
+>> Sent: 29 March 2017 19:37
+>>
+>> The R8A7791 PFC driver  was apparently based on the preliminary revisions of
+>> the user's  manual, which  omitted the DVC_MUTE signal  altogether in the
+>> PFC section. The modern manual has the signal described,  so just add the
+>> necassary data to the driver...
+>>
+>> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >
-> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Should this patch also CC stable? (Patch 1/2 does)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+No need to spam stable with all these patches and reviews.
+If it has a Fixes-tag, the stable team will pick it up anyway. After
+it has ended
+up upstream.
 
 Gr{oetje,eeting}s,
 
