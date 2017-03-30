@@ -1,68 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752940AbdCTI7Q (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35104 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932347AbdC3I6x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/32] arm64: dts: h3ulcb: Update memory node to 4 GiB map
-Date: Mon, 20 Mar 2017 09:57:16 +0100
-Message-Id: <a262d66224c4c34bc2bee16d4d37d460a738788c.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+        Thu, 30 Mar 2017 04:58:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170329183653.982359372@cogentembedded.com>
+References: <20170329183653.982359372@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Mar 2017 10:58:50 +0200
+Message-ID: <CAMuHMdXFsUe7=pdO1ZHzvWyA3psfMSYY6FY7AYMZAWpyMzJm2g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux data
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On Wed, Mar 29, 2017 at 8:36 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The R8A7791 PFC driver  was apparently based on the preliminary revisions
+> of  the  user's manual, which  omitted the HSCIF1 group E signals in  the
+> IPSR4 register description. This would cause HSCIF1's probe  to fail with
+> the messages like below:
+>
+> sh-pfc e6060000.pfc: cannot locate data/mark enum_id for mark 1989
+> sh-sci e62c8000.serial: Error applying setting, reverse things back
+> sh-sci: probe of e62c8000.serial failed with error -22
+>
+> Add the neceassary PINMUX_IPSR_MSEL() invocations for the HSCK1_E,
+> HCTS1#_E, and HRTS1#_E signals...
+>
+> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> CC: stable@vger.kernel.org
 
-This patch adds memory region:
-
-  - After changes, the H3ULCB board has the following map:
-    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
-    Bank1: 1GiB RAM : 0x000500000000 -> 0x0053fffffff
-    Bank2: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
-    Bank3: 1GiB RAM : 0x000700000000 -> 0x0073fffffff
-
-  - Before changes, the old map looked like this:
-    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index c5f8f69a4f5f..9811534f296e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -33,6 +33,21 @@
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
- 
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@700000000 {
-+		device_type = "memory";
-+		reg = <0x7 0x00000000 0x0 0x40000000>;
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
