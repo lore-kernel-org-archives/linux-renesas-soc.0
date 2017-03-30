@@ -1,186 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45510 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751122AbdCNTAy (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34865 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932781AbdC3Hio (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Mar 2017 15:00:54 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 14/16] rcar-vin: make use of video_device_alloc() and video_device_release()
-Date: Tue, 14 Mar 2017 19:59:55 +0100
-Message-Id: <20170314185957.25253-15-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 30 Mar 2017 03:38:44 -0400
+Received: by mail-lf0-f50.google.com with SMTP id j90so20640772lfk.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2017 00:38:42 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 30 Mar 2017 09:38:39 +0200
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Subject: Re: [PATCH 3/3] dmaengine: rcar-dmac: wait for ISR to finish before
+ freeing resources
+Message-ID: <20170330073839.GK24709@bigcity.dyn.berto.se>
+References: <20170328224035.8040-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170328224035.8040-4-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdUOFBURWOCdAbTgWtJdgEabwLeic+KVS7bHhesH_Fe3Zg@mail.gmail.com>
+ <20170329133042.GH24709@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170329133042.GH24709@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make use of the helper functions video_device_alloc() and
-video_device_release() to control the lifetime of the struct
-video_device.
+Hi Geert,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 44 ++++++++++++++++-------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 +-
- 2 files changed, 25 insertions(+), 21 deletions(-)
+On 2017-03-29 15:30:42 +0200, Niklas S�derlund wrote:
+> Hi Geert,
+> 
+> On 2017-03-29 14:31:33 +0200, Geert Uytterhoeven wrote:
+> > Hi Niklas,
+> > 
+> > On Wed, Mar 29, 2017 at 12:40 AM, Niklas S�derlund
+> > <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > > This fixes a race condition where the channel resources could be freed
+> > > before the ISR had finished running resulting in a NULL pointer
+> > > reference from the ISR.
+> > >
+> > > [  167.148934] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> > > [  167.157051] pgd = ffff80003c641000
+> > > [  167.160449] [00000000] *pgd=000000007c507003, *pud=000000007c4ff003, *pmd=0000000000000000
+> > > [  167.168719] Internal error: Oops: 96000046 [#1] PREEMPT SMP
+> > > [  167.174289] Modules linked in:
+> > > [  167.177348] CPU: 3 PID: 10547 Comm: dma_ioctl Not tainted 4.11.0-rc1-00001-g8d92afddc2f6633a #73
+> > > [  167.186131] Hardware name: Renesas Salvator-X board based on r8a7795 (DT)
+> > > [  167.192917] task: ffff80003a411a00 task.stack: ffff80003bcd4000
+> > > [  167.198850] PC is at rcar_dmac_chan_prep_sg+0xe0/0x400
+> > > [  167.203985] LR is at rcar_dmac_chan_prep_sg+0x48/0x400
+> > 
+> > Do you have a test case to trigger this?
+> 
+> Yes I have a testcase, it's rather complex and involves both a kernel 
+> module and a userspaces application to stress the rcar-dmac. I'm 
+> checking if I can share this publicly or not, please hold :-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index be6f41bf82ac3bc5..c40f5bc3e3d26472 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -489,7 +489,7 @@ static int rvin_enum_input(struct file *file, void *priv,
- 		i->std = 0;
- 	} else {
- 		i->capabilities = V4L2_IN_CAP_STD;
--		i->std = vin->vdev.tvnorms;
-+		i->std = vin->vdev->tvnorms;
- 	}
- 
- 	strlcpy(i->name, "Camera", sizeof(i->name));
-@@ -752,8 +752,8 @@ static int rvin_initialize_device(struct file *file)
- 	if (ret < 0)
- 		return ret;
- 
--	pm_runtime_enable(&vin->vdev.dev);
--	ret = pm_runtime_resume(&vin->vdev.dev);
-+	pm_runtime_enable(&vin->vdev->dev);
-+	ret = pm_runtime_resume(&vin->vdev->dev);
- 	if (ret < 0 && ret != -ENOSYS)
- 		goto eresume;
- 
-@@ -771,7 +771,7 @@ static int rvin_initialize_device(struct file *file)
- 
- 	return 0;
- esfmt:
--	pm_runtime_disable(&vin->vdev.dev);
-+	pm_runtime_disable(&vin->vdev->dev);
- eresume:
- 	rvin_power_off(vin);
- 
-@@ -823,8 +823,8 @@ static int rvin_release(struct file *file)
- 	 * Then de-initialize hw module.
- 	 */
- 	if (fh_singular) {
--		pm_runtime_suspend(&vin->vdev.dev);
--		pm_runtime_disable(&vin->vdev.dev);
-+		pm_runtime_suspend(&vin->vdev->dev);
-+		pm_runtime_disable(&vin->vdev->dev);
- 		rvin_power_off(vin);
- 	}
- 
-@@ -846,13 +846,13 @@ static const struct v4l2_file_operations rvin_fops = {
- void rvin_v4l2_remove(struct rvin_dev *vin)
- {
- 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
--		  video_device_node_name(&vin->vdev));
-+		  video_device_node_name(vin->vdev));
- 
- 	/* Checks internaly if handlers have been init or not */
- 	v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 
- 	/* Checks internaly if vdev have been init or not */
--	video_unregister_device(&vin->vdev);
-+	video_unregister_device(vin->vdev);
- }
- 
- static void rvin_notify(struct v4l2_subdev *sd,
-@@ -863,7 +863,7 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 
- 	switch (notification) {
- 	case V4L2_DEVICE_NOTIFY_EVENT:
--		v4l2_event_queue(&vin->vdev, arg);
-+		v4l2_event_queue(vin->vdev, arg);
- 		break;
- 	default:
- 		break;
-@@ -872,7 +872,7 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 
- int rvin_v4l2_probe(struct rvin_dev *vin)
- {
--	struct video_device *vdev = &vin->vdev;
-+	struct video_device *vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
- 	int ret;
- 
-@@ -880,16 +880,18 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 
- 	vin->v4l2_dev.notify = rvin_notify;
- 
--	ret = v4l2_subdev_call(sd, video, g_tvnorms, &vin->vdev.tvnorms);
-+	vdev = video_device_alloc();
-+
-+	ret = v4l2_subdev_call(sd, video, g_tvnorms, &vdev->tvnorms);
- 	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
- 		return ret;
- 
--	if (vin->vdev.tvnorms == 0) {
-+	if (vdev->tvnorms == 0) {
- 		/* Disable the STD API if there are no tvnorms defined */
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_G_STD);
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_S_STD);
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_QUERYSTD);
--		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
-+		v4l2_disable_ioctl(vdev, VIDIOC_G_STD);
-+		v4l2_disable_ioctl(vdev, VIDIOC_S_STD);
-+		v4l2_disable_ioctl(vdev, VIDIOC_QUERYSTD);
-+		v4l2_disable_ioctl(vdev, VIDIOC_ENUMSTD);
- 	}
- 
- 	/* Add the controls */
-@@ -913,7 +915,7 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
- 	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
--	vdev->release = video_device_release_empty;
-+	vdev->release = video_device_release;
- 	vdev->ioctl_ops = &rvin_ioctl_ops;
- 	vdev->lock = &vin->lock;
- 	vdev->ctrl_handler = &vin->ctrl_handler;
-@@ -923,16 +925,18 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
- 	rvin_reset_format(vin);
- 
--	ret = video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
-+	ret = video_register_device(vdev, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
- 		vin_err(vin, "Failed to register video device\n");
- 		return ret;
- 	}
- 
--	video_set_drvdata(&vin->vdev, vin);
-+	video_set_drvdata(vdev, vin);
- 
- 	v4l2_info(&vin->v4l2_dev, "Device registered as %s\n",
--		  video_device_node_name(&vin->vdev));
-+		  video_device_node_name(vdev));
-+
-+	vin->vdev = vdev;
- 
- 	return ret;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 9bfb5a7c4dc4f215..9454ef80bc2b3961 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -122,7 +122,7 @@ struct rvin_dev {
- 	void __iomem *base;
- 	enum chip_id chip;
- 
--	struct video_device vdev;
-+	struct video_device *vdev;
- 	struct v4l2_device v4l2_dev;
- 	struct v4l2_ctrl_handler ctrl_handler;
- 	struct v4l2_async_notifier notifier;
+I have now received feedback that I'm unfortunately not allowed to share 
+the test case :-(
+
+The big picture in how to trigger this problem is that you start a DMA 
+transfer like this:
+
+struct dma_async_tx_descriptor *tx = ...;
+
+...
+
+tx->tx_submit(tx);
+
+And then you directly call dma_release_channel() on this channel without 
+making sure the completion callback ran or anything. Now if you are 
+unlucky the ISR have not finished running for the DMA when 
+dma_release_channel() starts to clean up resources. The synchronisation 
+point in the dma_release_channel() call path fixes this.
+
+> 
+> > 
+> > Thanks!
+> > 
+> > Gr{oetje,eeting}s,
+> > 
+> >                         Geert
+> > 
+> > --
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > 
+> > In personal conversations with technical people, I call myself a hacker. But
+> > when I'm talking to journalists I just say "programmer" or something like that.
+> >                                 -- Linus Torvalds
+> 
+> -- 
+> Regards,
+> Niklas S�derlund
+
 -- 
-2.12.0
+Regards,
+Niklas S�derlund
