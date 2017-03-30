@@ -1,59 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753354AbdCTI7d (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33577 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933160AbdC3NIS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:33 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/32] arm64: dts: r8a7796: Upgrade to PSCI v1.0 to support Suspend-to-RAM
-Date: Mon, 20 Mar 2017 09:57:30 +0100
-Message-Id: <b3f26910c0daafded536cf5edceab2ab469252cb.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+        Thu, 30 Mar 2017 09:08:18 -0400
+MIME-Version: 1.0
+In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Mar 2017 15:08:15 +0200
+Message-ID: <CAMuHMdXEJhs97_F70BfBkbLusMT_qnVVYn_iQq8oB4B1pjf1Yg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] pinctrl: sh-pfc: Add support for R-Car H3 ES2.0
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+On Mon, Mar 13, 2017 at 6:12 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> This patch series adds pinctrl support for R-Car H3 ES2.0, which differs
+> from ES1.x in several areas.
+>
+> The goal is twofold:
+>   1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+>      for now,
+>   2. Make it clear which code supports ES1.x, so it can easily be
+>      identified and removed later, when production SoCs are deemed
+>      ubiquitous.
+>
+> This is achieved by:
+>   1. Extracting the support for R-Car H3 ES1.x into a separate file, as
+>      the differences are quite large,
+>   2. Adding code for detecting the SoC revision at runtime using the new
+>      soc_device_match() API, and selecting pinctrl tables for the actual
+>      SoC revision,
+>   3. Replacing the core register and bitfield definitions, and pins,
+>      groups, and functions for basic devices by their counterparts for
+>      R-Car H3 ES2.0.
+>
+> Changes compared to v1:
+>   - Print correct subdriver name,
+>   - Extend Proof-of-Concept to basic support (SCIF serial port).
+>
+> The addition of pins, groups, and functions for other on-chip devices is
+> left to subsequent patches.
+>
+> For testers, this series and its dependencies are available in the
+> topic/r8a7795es2-pfc-v2 branch of my renesas-drivers git repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
+> development board is provided as topic/r8a7795es2-integration.
+>
+> This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
+> SoCs.
+>
+> I plan to queue this up in sh-pfc-for-v4.12.
 
->>From PSCI v1.0, Suspend-to-RAM is supported via SYSTEM_SUSPEND PSCI
-function call. Hence, upgrade PSCI version for R-Car M3-W to support
-Suspend-to-RAM.
+In the mean time:
+  - I renamed pfc-r8a7795es1.c to pfc-r8a7795-es1.c for compatibility with
+    the BSP, but I'm not gonna spam everybody with a v3 for such a trivial
+    change.
+  - I verified all physical pins against the R-Car H3 pin function rev0.551
+    and the R-Car H3SiP pin arrangement rev1.53 documents. No updates needed.
 
-The Suspend-to-RAM is highly dependent on ARM Trusted Firwmare support
-since necessary callback functions will be registered after a query
-to ARM Trusted Firmware about SYSTEM_SUSPEND support.
+So I've queued the remainder (patches 2-4) up in sh-pfc-for-v4.12.
 
-Since PSCI v1.0 is backward compatible with PSCI v0.2, CPU Hotplug and
-CPUIdle should be able to work normally with this change.
+> Geert Uytterhoeven (4):
+>   pinctrl: sh-pfc: Update info pointer after SoC-specific init
+>   pinctrl: sh-pfc: r8a7795: Add support for R-Car H3 ES2.0
+>   pinctrl: sh-pfc: r8a7795: Add SCIF support
+>   pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
+>
+>  drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+>  drivers/pinctrl/sh-pfc/core.c                      |    3 +
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 4217 ++++----------------
+>  .../sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c}     |   25 +-
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
+>  5 files changed, 782 insertions(+), 3465 deletions(-)
+>  copy drivers/pinctrl/sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c} (99%)
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Keep "arm,psci-0.2"]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index aa404ed9142e..dbf82bc6ba64 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -29,7 +29,7 @@
- 	};
- 
- 	psci {
--		compatible = "arm,psci-0.2";
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
- 	};
- 
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
