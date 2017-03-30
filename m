@@ -1,152 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:49485 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751446AbdC1Lzx (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42750 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754346AbdC3VW6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Mar 2017 07:55:53 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/4] usb: gadget: udc: renesas_usb3: add extcon support
-Date: Tue, 28 Mar 2017 20:53:23 +0900
-Message-ID: <1490702004-8167-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1490702004-8167-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 30 Mar 2017 17:22:58 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87mvc3edvh.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1cthWq-00089S-5w@debutante>
+Date: Thu, 30 Mar 2017 22:22:48 +0100
+Subject: Applied "ASoC: rcar: call missing of_clk_del_provider() when remove" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds extcon support to see VBUS/ID signal states.
+The patch
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+   ASoC: rcar: call missing of_clk_del_provider() when remove
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b5aac5a9adf667f907c34c520e023bc19f8c226c Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 30 Mar 2017 01:49:27 +0000
+Subject: [PATCH] ASoC: rcar: call missing of_clk_del_provider() when remove
+
+adg is calling of_clk_add_provider() when probe time,
+thus, remove should call of_clk_del_provider(), it doesn't now.
+This patch fix this issue.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/usb/gadget/udc/Kconfig        |  1 +
- drivers/usb/gadget/udc/renesas_usb3.c | 43 +++++++++++++++++++++++++++++++++--
- 2 files changed, 42 insertions(+), 2 deletions(-)
+ sound/soc/sh/rcar/adg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 4b69f28..66cb00b 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -191,6 +191,7 @@ config USB_RENESAS_USBHS_UDC
- config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on EXTCON
- 	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
- 	   that supports super, high, and full speed USB 3.0 data transfers.
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index d81953b..34ac03c 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -10,6 +10,7 @@
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 56107454bdb3..9665c1fa7216 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -587,5 +587,10 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
  
- #include <linux/delay.h>
- #include <linux/err.h>
-+#include <linux/extcon.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -263,6 +264,8 @@ struct renesas_usb3 {
- 
- 	struct usb_gadget gadget;
- 	struct usb_gadget_driver *driver;
-+	struct extcon_dev *extcon;
-+	struct work_struct extcon_work;
- 
- 	struct renesas_usb3_ep *usb3_ep;
- 	int num_usb3_eps;
-@@ -276,6 +279,8 @@ struct renesas_usb3 {
- 	bool softconnect;
- 	bool workaround_for_vbus;
- 	bool forced_b_device;
-+	bool extcon_host;	/* check id  and set EXTCON_USB_HOST */
-+	bool extcon_usb;	/* check vbus and set EXTCON_USB */
- };
- 
- #define gadget_to_renesas_usb3(_gadget)	\
-@@ -339,6 +344,15 @@ static int usb3_wait(struct renesas_usb3 *usb3, u32 reg, u32 mask,
- 	return -EBUSY;
- }
- 
-+static void renesas_usb3_extcon_work(struct work_struct *work)
-+{
-+	struct renesas_usb3 *usb3 = container_of(work, struct renesas_usb3,
-+						 extcon_work);
-+
-+	extcon_set_state_sync(usb3->extcon, EXTCON_USB_HOST, usb3->extcon_host);
-+	extcon_set_state_sync(usb3->extcon, EXTCON_USB, usb3->extcon_usb);
-+}
-+
- static void usb3_enable_irq_1(struct renesas_usb3 *usb3, u32 bits)
+ void rsnd_adg_remove(struct rsnd_priv *priv)
  {
- 	usb3_set_bit(usb3, bits, USB3_USB_INT_ENA_1);
-@@ -539,10 +553,14 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
- 	if (usb3->workaround_for_vbus) {
- 		usb3_connect(usb3);
- 	} else {
--		if (usb3_read(usb3, USB3_USB_STA) & USB_STA_VBUS_STA)
-+		usb3->extcon_usb = !!(usb3_read(usb3, USB3_USB_STA) &
-+							USB_STA_VBUS_STA);
-+		if (usb3->extcon_usb)
- 			usb3_connect(usb3);
- 		else
- 			usb3_disconnect(usb3);
++	struct device *dev = rsnd_priv_to_dev(priv);
++	struct device_node *np = dev->of_node;
 +
-+		schedule_work(&usb3->extcon_work);
- 	}
++	of_clk_del_provider(np);
++
+ 	rsnd_adg_clk_disable(priv);
  }
- 
-@@ -565,10 +583,14 @@ static bool usb3_is_a_device(struct renesas_usb3 *usb3)
- 
- static void usb3_check_id(struct renesas_usb3 *usb3)
- {
--	if (usb3_is_a_device(usb3) && !usb3->forced_b_device)
-+	usb3->extcon_host = usb3_is_a_device(usb3);
-+
-+	if (usb3->extcon_host && !usb3->forced_b_device)
- 		usb3_mode_a_host(usb3);
- 	else
- 		usb3_mode_b_peri(usb3);
-+
-+	schedule_work(&usb3->extcon_work);
- }
- 
- static void renesas_usb3_init_controller(struct renesas_usb3 *usb3)
-@@ -2000,6 +2022,12 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
- };
- MODULE_DEVICE_TABLE(of, usb3_of_match);
- 
-+static const unsigned int renesas_usb3_cable[] = {
-+	EXTCON_USB,
-+	EXTCON_USB_HOST,
-+	EXTCON_NONE,
-+};
-+
- static int renesas_usb3_probe(struct platform_device *pdev)
- {
- 	struct renesas_usb3 *usb3;
-@@ -2043,6 +2071,17 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	INIT_WORK(&usb3->extcon_work, renesas_usb3_extcon_work);
-+	usb3->extcon = devm_extcon_dev_allocate(&pdev->dev, renesas_usb3_cable);
-+	if (IS_ERR(usb3->extcon))
-+		return PTR_ERR(usb3->extcon);
-+
-+	ret = devm_extcon_dev_register(&pdev->dev, usb3->extcon);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register extcon\n");
-+		return ret;
-+	}
-+
- 	/* for ep0 handling */
- 	usb3->ep0_req = __renesas_usb3_ep_alloc_request(GFP_KERNEL);
- 	if (!usb3->ep0_req)
 -- 
-1.9.1
+2.11.0
