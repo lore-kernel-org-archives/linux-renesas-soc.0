@@ -1,14 +1,9 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1490874625.3471.6.camel@collabora.co.uk>
-References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
- <1490870898.3471.3.camel@collabora.co.uk> <CAMuHMdV+=pNpFO7H3J0=JM1BnXtm4t=Q+1bx=R+f9=JxvJZT_Q@mail.gmail.com>
- <1490874625.3471.6.camel@collabora.co.uk>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Mar 2017 14:08:36 +0200
-Message-ID: <CAMuHMdUd_fYz9PEgoxEy6hgqKxfjVonyivwG1z=CRJ4RCPDYHA@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 0/2] arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Message-ID: <1490874625.3471.6.camel@collabora.co.uk>
+Subject: Re: [PATCH/RFC v2 0/2] arm64: dts: r8a7795: Add support for R-Car
+ H3 ES2.0
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -24,86 +19,98 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         <linux-arm-kernel@lists.infradead.org>,
         Daniel Stone <daniels@collabora.com>,
         Kevin Hilman <khilman@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Thu, 30 Mar 2017 13:50:25 +0200
+In-Reply-To: <CAMuHMdV+=pNpFO7H3J0=JM1BnXtm4t=Q+1bx=R+f9=JxvJZT_Q@mail.gmail.com>
+References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
+         <1490870898.3471.3.camel@collabora.co.uk>
+         <CAMuHMdV+=pNpFO7H3J0=JM1BnXtm4t=Q+1bx=R+f9=JxvJZT_Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sjoerd,
+On Thu, 2017-03-30 at 13:13 +0200, Geert Uytterhoeven wrote:
+> Hi Sjoerd,
+> 
+> On Thu, Mar 30, 2017 at 12:48 PM, Sjoerd Simons
+> <sjoerd.simons@collabora.co.uk> wrote:
+> > On Fri, 2017-03-24 at 14:37 +0100, Geert Uytterhoeven wrote:
+> > > This patch series adds preliminary support for Renesas Salvator-X
+> > > development boards equipped with revision ES2.0 of the R-Car H3
+> > > Soc.
+> > > 
+> > >   - Patch 1 adds support for the R-Car H3 ES2.0 Soc,
+> > >     While this patch is safe as-is, as it doesn't affect any
+> > > existing
+> > >     setups, it's probably a bit premature to apply it.
+> > >   - Patch 2 adds support for Salvator-X boards with R-Car H3
+> > > ES2.0.
+> > >     This patch does affect existing development setups, as it
+> > > changes
+> > > the
+> > >     name of the DTB for Salvator-X boards equipped with ES1.x
+> > > SoCs.
+> > >     Given most developers have access to ES1.x only, this patch
+> > > must
+> > > not be
+> > >     applied yet.
+> > 
+> > Would it make more sense to add a new r8a7795-es2.dtsi and keep the
+> > current dtsi for es1? Having to load different device-trees based
+> > on
+> > which kernel is used would be rather nasty.
+> 
+> We definitely considered that option.
+> However, we concluded that in the end, we want to mainly support
+> production
+> SoCs.  Hence the default files should represent the production
+> version.
+> Using a preproduction SoC can be considered a special case, and thus
+> needs
+> a file with a special esX ID in its name.
 
-On Thu, Mar 30, 2017 at 1:50 PM, Sjoerd Simons
-<sjoerd.simons@collabora.co.uk> wrote:
-> On Thu, 2017-03-30 at 13:13 +0200, Geert Uytterhoeven wrote:
->> On Thu, Mar 30, 2017 at 12:48 PM, Sjoerd Simons
->> <sjoerd.simons@collabora.co.uk> wrote:
->> > On Fri, 2017-03-24 at 14:37 +0100, Geert Uytterhoeven wrote:
->> > > This patch series adds preliminary support for Renesas Salvator-X
->> > > development boards equipped with revision ES2.0 of the R-Car H3
->> > > Soc.
->> > >
->> > >   - Patch 1 adds support for the R-Car H3 ES2.0 Soc,
->> > >     While this patch is safe as-is, as it doesn't affect any
->> > > existing
->> > >     setups, it's probably a bit premature to apply it.
->> > >   - Patch 2 adds support for Salvator-X boards with R-Car H3
->> > > ES2.0.
->> > >     This patch does affect existing development setups, as it
->> > > changes
->> > > the
->> > >     name of the DTB for Salvator-X boards equipped with ES1.x
->> > > SoCs.
->> > >     Given most developers have access to ES1.x only, this patch
->> > > must
->> > > not be
->> > >     applied yet.
->> >
->> > Would it make more sense to add a new r8a7795-es2.dtsi and keep the
->> > current dtsi for es1? Having to load different device-trees based
->> > on
->> > which kernel is used would be rather nasty.
->>
->> We definitely considered that option.
->> However, we concluded that in the end, we want to mainly support
->> production
->> SoCs.  Hence the default files should represent the production
->> version.
->> Using a preproduction SoC can be considered a special case, and thus
->> needs
->> a file with a special esX ID in its name.
->
-> The problem is that even though they are pre-production, these are out
-> there and in active use, e.g. kernelci is at least doing automated
-> testing on one of those in Kevins lab and should be an additional
-> soonish in the Collabora lab.
->
-> And for developers it'll be extra fun if halfway through a bisect the
-> dts name changes..
->
-> Having a es2 in your dtb name might be a bit quirky, but it's really
-> just a name without other meaning :).
->
->> We do realize this can cause some inconveniences during the
->> transition period,
->> when most developers don't have access to ES2.0 SoCs yet, or have
->> mixed
->> environments of ES1.x and ES2.0.
->
-> Heh yeah, i'd expect we'd have a mixed environment for quite a while
-> given these boards are a bit too expensive to just throw in the trash..
->
->> Of course you can keep on using the current DTB (binary) on your H3
->> ES1.x
->> boards, as long as you don't need to use devices not yet described in
->> that DTB.
+The problem is that even though they are pre-production, these are out
+there and in active use, e.g. kernelci is at least doing automated
+testing on one of those in Kevins lab and should be an additional
+soonish in the Collabora lab. 
 
-We can keep on discussing this for a while, this is definitely v4.13+ material.
+And for developers it'll be extra fun if halfway through a bisect the
+dts name changes..
 
-Gr{oetje,eeting}s,
+Having a es2 in your dtb name might be a bit quirky, but it's really
+just a name without other meaning :). 
 
-                        Geert
+> We do realize this can cause some inconveniences during the
+> transition period,
+> when most developers don't have access to ES2.0 SoCs yet, or have
+> mixed
+> environments of ES1.x and ES2.0.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Heh yeah, i'd expect we'd have a mixed environment for quite a while
+given these boards are a bit too expensive to just throw in the trash..
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Of course you can keep on using the current DTB (binary) on your H3
+> ES1.x
+> boards, as long as you don't need to use devices not yet described in
+> that DTB.
+> 
+> Thanks!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linu
+> x-m68k.org
+> 
+> In personal conversations with technical people, I call myself a
+> hacker. But
+> when I'm talking to journalists I just say "programmer" or something
+> like that.
+>                                 -- Linus Torvalds
+
+-- 
+Sjoerd Simons
+Collabora Ltd.
