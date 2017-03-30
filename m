@@ -1,64 +1,109 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56245 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753325AbdC0POa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Mar 2017 11:14:30 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 1/4] Documentation: dt-bindings: iio: Add max9611 ADC
-Date: Mon, 27 Mar 2017 17:12:55 +0200
-Message-Id: <1490627578-15938-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1490874625.3471.6.camel@collabora.co.uk>
+References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
+ <1490870898.3471.3.camel@collabora.co.uk> <CAMuHMdV+=pNpFO7H3J0=JM1BnXtm4t=Q+1bx=R+f9=JxvJZT_Q@mail.gmail.com>
+ <1490874625.3471.6.camel@collabora.co.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Mar 2017 14:08:36 +0200
+Message-ID: <CAMuHMdUd_fYz9PEgoxEy6hgqKxfjVonyivwG1z=CRJ4RCPDYHA@mail.gmail.com>
+Subject: Re: [PATCH/RFC v2 0/2] arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Daniel Stone <daniels@collabora.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Maxim max9611/max9612 current
-sense amplifier.
+Hi Sjoerd,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../devicetree/bindings/iio/adc/max9611.txt        | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/max9611.txt
+On Thu, Mar 30, 2017 at 1:50 PM, Sjoerd Simons
+<sjoerd.simons@collabora.co.uk> wrote:
+> On Thu, 2017-03-30 at 13:13 +0200, Geert Uytterhoeven wrote:
+>> On Thu, Mar 30, 2017 at 12:48 PM, Sjoerd Simons
+>> <sjoerd.simons@collabora.co.uk> wrote:
+>> > On Fri, 2017-03-24 at 14:37 +0100, Geert Uytterhoeven wrote:
+>> > > This patch series adds preliminary support for Renesas Salvator-X
+>> > > development boards equipped with revision ES2.0 of the R-Car H3
+>> > > Soc.
+>> > >
+>> > >   - Patch 1 adds support for the R-Car H3 ES2.0 Soc,
+>> > >     While this patch is safe as-is, as it doesn't affect any
+>> > > existing
+>> > >     setups, it's probably a bit premature to apply it.
+>> > >   - Patch 2 adds support for Salvator-X boards with R-Car H3
+>> > > ES2.0.
+>> > >     This patch does affect existing development setups, as it
+>> > > changes
+>> > > the
+>> > >     name of the DTB for Salvator-X boards equipped with ES1.x
+>> > > SoCs.
+>> > >     Given most developers have access to ES1.x only, this patch
+>> > > must
+>> > > not be
+>> > >     applied yet.
+>> >
+>> > Would it make more sense to add a new r8a7795-es2.dtsi and keep the
+>> > current dtsi for es1? Having to load different device-trees based
+>> > on
+>> > which kernel is used would be rather nasty.
+>>
+>> We definitely considered that option.
+>> However, we concluded that in the end, we want to mainly support
+>> production
+>> SoCs.  Hence the default files should represent the production
+>> version.
+>> Using a preproduction SoC can be considered a special case, and thus
+>> needs
+>> a file with a special esX ID in its name.
+>
+> The problem is that even though they are pre-production, these are out
+> there and in active use, e.g. kernelci is at least doing automated
+> testing on one of those in Kevins lab and should be an additional
+> soonish in the Collabora lab.
+>
+> And for developers it'll be extra fun if halfway through a bisect the
+> dts name changes..
+>
+> Having a es2 in your dtb name might be a bit quirky, but it's really
+> just a name without other meaning :).
+>
+>> We do realize this can cause some inconveniences during the
+>> transition period,
+>> when most developers don't have access to ES2.0 SoCs yet, or have
+>> mixed
+>> environments of ES1.x and ES2.0.
+>
+> Heh yeah, i'd expect we'd have a mixed environment for quite a while
+> given these boards are a bit too expensive to just throw in the trash..
+>
+>> Of course you can keep on using the current DTB (binary) on your H3
+>> ES1.x
+>> boards, as long as you don't need to use devices not yet described in
+>> that DTB.
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/max9611.txt b/Documentation/devicetree/bindings/iio/adc/max9611.txt
-new file mode 100644
-index 0000000..8430d3b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/max9611.txt
-@@ -0,0 +1,26 @@
-+* Maxim max9611/max9612 current sense amplifier with 12-bits ADC interface
-+
-+Maxim max9611/max9612 is an high-side current sense amplifier with integrated
-+12-bits ADC communicating over I2c bus.
-+The device node for this driver shall be a child of a I2c controller.
-+
-+Required properties
-+  - compatible: Should be "maxim,max9611" or "maxim,max9612"
-+  - reg: The 7-bits long I2c address of the device
-+  - shunt-resistor-uohm: Value, in uOhm, of the current sense shunt resistor
-+
-+Example:
-+
-+&i2c4 {
-+	csa: adc@7c {
-+		compatible = "maxim,max9611";
-+		reg = <0x7c>;
-+
-+		shunt-resistor-uohm = <5000>;
-+	};
-+};
-+
-+This device node describes a current sense amplifier sitting on I2c4 bus
-+with address 0x7c (read address is 0xf9, write address is 0xf8).
-+A sense resistor of 0,005 Ohm is installed between RS+ and RS- current-sensing
-+inputs.
--- 
-2.7.4
+We can keep on discussing this for a while, this is definitely v4.13+ material.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
