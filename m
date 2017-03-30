@@ -1,91 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42772 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933271AbdC3VXK (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34493 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753971AbdC3Ir3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 17:23:10 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87o9wjedvz.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1cthX5-0008Ae-Jb@debutante>
-Date: Thu, 30 Mar 2017 22:23:03 +0100
-Subject: Applied "ASoC: rcar: fixup of_clk_add_provider() usage for multi clkout" to the asoc tree
+        Thu, 30 Mar 2017 04:47:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170329173035.67477-7-chris.brandt@renesas.com>
+References: <20170329173035.67477-1-chris.brandt@renesas.com> <20170329173035.67477-7-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Mar 2017 10:47:26 +0200
+Message-ID: <CAMuHMdVvEAH82vC8WPx6ZmimVxD-_t4JpDa8OLXs_f_UEtHtPg@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] ARM: dts: rskrza1: set rtc_x1 clock value
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        RTCLINUX <rtc-linux@googlegroups.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Wed, Mar 29, 2017 at 7:30 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Enable the 32.768 kHz RTC_X1 clock by setting the frequency value to
+> non-zero.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-   ASoC: rcar: fixup of_clk_add_provider() usage for multi clkout
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-has been applied to the asoc tree at
+Gr{oetje,eeting}s,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+                        Geert
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d7f298197a22f11b38059f257842dac7c30a564c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 30 Mar 2017 01:49:06 +0000
-Subject: [PATCH] ASoC: rcar: fixup of_clk_add_provider() usage for multi
- clkout
-
-Current adg is calling of_clk_add_povider() multiple times,
-but it is not correct usage. This patch fixup its parameter
-and call it once.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/adg.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 85a33ac0a5c4..56107454bdb3 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -537,16 +537,14 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
- 			clk = clk_register_fixed_rate(dev, clkout_name[i],
- 						      parent_clk_name, 0,
- 						      req_rate);
--			if (!IS_ERR(clk)) {
--				adg->onecell.clks	= adg->clkout;
--				adg->onecell.clk_num	= CLKOUTMAX;
--
-+			adg->clkout[i] = ERR_PTR(-ENOENT);
-+			if (!IS_ERR(clk))
- 				adg->clkout[i] = clk;
--
--				of_clk_add_provider(np, of_clk_src_onecell_get,
--						    &adg->onecell);
--			}
- 		}
-+		adg->onecell.clks	= adg->clkout;
-+		adg->onecell.clk_num	= CLKOUTMAX;
-+		of_clk_add_provider(np, of_clk_src_onecell_get,
-+				    &adg->onecell);
- 	}
- 
- 	adg->ckr = ckr;
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
