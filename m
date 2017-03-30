@@ -1,169 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:46437 "EHLO
+Received: from relmlor1.renesas.com ([210.160.252.171]:17774 "EHLO
         relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753303AbdC3CSZ (ORCPT
+        by vger.kernel.org with ESMTP id S933201AbdC3BXr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 22:18:25 -0400
+        Wed, 29 Mar 2017 21:23:47 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 3/3] usb: gadget: udc: renesas_usb3: add support for usb role swap
-Date: Thu, 30 Mar 2017 11:16:06 +0900
-Message-ID: <1490840166-18449-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1490840166-18449-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1490840166-18449-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Felipe Balbi <balbi@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "USB list" <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 3/3] usb: gadget: udc: renesas_usb3: add support for
+ usb role swap
+Date: Thu, 30 Mar 2017 01:23:38 +0000
+Message-ID: <PS1PR06MB169291D1F04B8A68003A03F3D8340@PS1PR06MB1692.apcprd06.prod.outlook.com>
+References: <1490787774-5796-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1490787774-5796-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdVPRZd5=TUcRsMvrYSFwRStLMcMqk-k+x4aYK4wKRC6-w@mail.gmail.com>
+In-Reply-To: <CAMuHMdVPRZd5=TUcRsMvrYSFwRStLMcMqk-k+x4aYK4wKRC6-w@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for usb role swap via sysfs "role".
-
-For example:
- 1) Connect a usb cable using 2 Salvator-X boards.
-  - For A-Device, the cable is connected to CN11 (USB3.0 ch0).
-  - For B-Device, the cable is connected to CN9 (USB2.0 ch0).
- 2) On A-Device, you input the following command:
-  # echo peripheral > /sys/devices/platform/soc/ee020000.usb/role
- 3) On B-Device, you input the following command:
-  # echo host > /sys/devices/platform/soc/ee080200.usb-phy/role
-
-Then, the A-Device acts as a peripheral and the B-Device acts as
-a host. Please note that A-Device must input the following command
-if you want the board to act as a host again.
- # echo host > /sys/devices/platform/soc/ee020000.usb/role
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- .../ABI/testing/sysfs-platform-renesas_usb3        | 15 ++++++
- drivers/usb/gadget/udc/renesas_usb3.c              | 56 ++++++++++++++++++++++
- 2 files changed, 71 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-renesas_usb3
-
-diff --git a/Documentation/ABI/testing/sysfs-platform-renesas_usb3 b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
-new file mode 100644
-index 0000000..1f63190
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
-@@ -0,0 +1,15 @@
-+What:		/sys/devices/platform/<udc-name>/role
-+Date:		March 2017
-+KernelVersion:	4.13
-+Contact:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-+Description:
-+		This file can be read and write.
-+		The file can show/change the drd mode of usb.
-+
-+		Write the following string to change the mode:
-+		 "host" - switching mode from peripheral to host.
-+		 "peripheral" - switching mode from host to peripheral.
-+
-+		Read the file, then it shows the following strings:
-+		 "host" - The mode is host now.
-+		 "peripheral" - The mode is peripheral now.
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index a1e79fc..5a2d845 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -372,6 +372,11 @@ static void usb3_disable_pipe_irq(struct renesas_usb3 *usb3, int num)
- 	usb3_clear_bit(usb3, USB_INT_2_PIPE(num), USB3_USB_INT_ENA_2);
- }
- 
-+static bool usb3_is_host(struct renesas_usb3 *usb3)
-+{
-+	return !(usb3_read(usb3, USB3_DRD_CON) & DRD_CON_PERI_CON);
-+}
-+
- static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
- {
- 	/* Set AXI_INT */
-@@ -576,8 +581,14 @@ static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
- 
- static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- {
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&usb3->lock, flags);
- 	usb3_set_mode(usb3, host);
- 	usb3_vbus_out(usb3, a_dev);
-+	if (!host && a_dev)		/* for A-Peripheral */
-+		usb3_connect(usb3);
-+	spin_unlock_irqrestore(&usb3->lock, flags);
- }
- 
- static bool usb3_is_a_device(struct renesas_usb3 *usb3)
-@@ -1837,11 +1848,49 @@ static int renesas_usb3_set_selfpowered(struct usb_gadget *gadget, int is_self)
- 	.set_selfpowered	= renesas_usb3_set_selfpowered,
- };
- 
-+static ssize_t role_store(struct device *dev, struct device_attribute *attr,
-+			  const char *buf, size_t count)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+	bool new_mode_is_host;
-+
-+	if (!usb3->driver)
-+		return -ENODEV;
-+
-+	if (!strncmp(buf, "host", strlen("host")))
-+		new_mode_is_host = true;
-+	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+		new_mode_is_host = false;
-+	else
-+		return -EINVAL;
-+
-+	if (new_mode_is_host == usb3_is_host(usb3))
-+		return -EINVAL;
-+
-+	usb3_mode_config(usb3, new_mode_is_host, usb3_is_a_device(usb3));
-+
-+	return count;
-+}
-+
-+static ssize_t role_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+
-+	if (!usb3->driver)
-+		return -ENODEV;
-+
-+	return sprintf(buf, "%s\n", usb3_is_host(usb3) ? "host" : "peripheral");
-+}
-+static DEVICE_ATTR_RW(role);
-+
- /*------- platform_driver ------------------------------------------------*/
- static int renesas_usb3_remove(struct platform_device *pdev)
- {
- 	struct renesas_usb3 *usb3 = platform_get_drvdata(pdev);
- 
-+	device_remove_file(&pdev->dev, &dev_attr_role);
-+
- 	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
-@@ -2044,6 +2093,10 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_add_udc;
- 
-+	ret = device_create_file(&pdev->dev, &dev_attr_role);
-+	if (ret < 0)
-+		goto err_dev_create;
-+
- 	usb3->workaround_for_vbus = priv->workaround_for_vbus;
- 
- 	pm_runtime_enable(&pdev->dev);
-@@ -2053,6 +2106,9 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+err_dev_create:
-+	usb_del_gadget_udc(&usb3->gadget);
-+
- err_add_udc:
- 	__renesas_usb3_ep_free_request(usb3->ep0_req);
- 
--- 
-1.9.1
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
+ZGF5LCBNYXJjaCAyOSwgMjAxNyA5OjIzIFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+
+IE9uIFdlZCwgTWFyIDI5LCAyMDE3IGF0IDE6NDIgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5
+b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gLS0tIGEvZHJpdmVy
+cy91c2IvZ2FkZ2V0L3VkYy9yZW5lc2FzX3VzYjMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvdXNiL2dh
+ZGdldC91ZGMvcmVuZXNhc191c2IzLmMNCj4gPiBAQCAtNTY4LDEyICs1NzMsMjkgQEAgc3RhdGlj
+IHZvaWQgdXNiM19tb2RlX2FfaG9zdChzdHJ1Y3QgcmVuZXNhc191c2IzICp1c2IzKQ0KPiA+ICAg
+ICAgICAgdXNiM19zZXRfYml0KHVzYjMsIERSRF9DT05fVkJPVVQsIFVTQjNfRFJEX0NPTik7DQo+
+ID4gIH0NCj4gPg0KPiA+ICtzdGF0aWMgdm9pZCB1c2IzX21vZGVfYV9wZXJpKHN0cnVjdCByZW5l
+c2FzX3VzYjMgKnVzYjMpDQo+ID4gK3sNCj4gPiArICAgICAgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7
+DQo+ID4gKw0KPiA+ICsgICAgICAgc3Bpbl9sb2NrX2lycXNhdmUoJnVzYjMtPmxvY2ssIGZsYWdz
+KTsNCj4gPiArICAgICAgIHVzYjNfc2V0X2JpdCh1c2IzLCBEUkRfQ09OX1BFUklfQ09OLCBVU0Iz
+X0RSRF9DT04pOw0KPiA+ICsgICAgICAgdXNiM19zZXRfYml0KHVzYjMsIERSRF9DT05fVkJPVVQs
+IFVTQjNfRFJEX0NPTik7DQo+ID4gKyAgICAgICB1c2IzX2Nvbm5lY3QodXNiMyk7DQo+ID4gKyAg
+ICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZ1c2IzLT5sb2NrLCBmbGFncyk7DQo+ID4gK30N
+Cj4gPiArDQo+ID4gIHN0YXRpYyB2b2lkIHVzYjNfbW9kZV9iX3Blcmkoc3RydWN0IHJlbmVzYXNf
+dXNiMyAqdXNiMykNCj4gPiAgew0KPiA+ICAgICAgICAgdXNiM19zZXRfYml0KHVzYjMsIERSRF9D
+T05fUEVSSV9DT04sIFVTQjNfRFJEX0NPTik7DQo+ID4gICAgICAgICB1c2IzX2NsZWFyX2JpdCh1
+c2IzLCBEUkRfQ09OX1ZCT1VULCBVU0IzX0RSRF9DT04pOw0KPiA+ICB9DQo+ID4NCj4gPiArc3Rh
+dGljIHZvaWQgdXNiM19tb2RlX2JfaG9zdChzdHJ1Y3QgcmVuZXNhc191c2IzICp1c2IzKQ0KPiA+
+ICt7DQo+ID4gKyAgICAgICB1c2IzX2NsZWFyX2JpdCh1c2IzLCBEUkRfQ09OX1BFUklfQ09OLCBV
+U0IzX0RSRF9DT04pOw0KPiA+ICsgICAgICAgdXNiM19jbGVhcl9iaXQodXNiMywgRFJEX0NPTl9W
+Qk9VVCwgVVNCM19EUkRfQ09OKTsNCj4gPiArfQ0KPiA+ICsNCj4gPiAgc3RhdGljIGJvb2wgdXNi
+M19pc19hX2RldmljZShzdHJ1Y3QgcmVuZXNhc191c2IzICp1c2IzKQ0KPiA+ICB7DQo+ID4gICAg
+ICAgICByZXR1cm4gISh1c2IzX3JlYWQodXNiMywgVVNCM19VU0JfT1RHX1NUQSkgJiBVU0JfT1RH
+X0lETU9OKTsNCj4gPiBAQCAtMTgzMSwxMSArMTg1Myw1OSBAQCBzdGF0aWMgaW50IHJlbmVzYXNf
+dXNiM19zZXRfc2VsZnBvd2VyZWQoc3RydWN0IHVzYl9nYWRnZXQgKmdhZGdldCwgaW50IGlzX3Nl
+bGYpDQo+ID4gICAgICAgICAuc2V0X3NlbGZwb3dlcmVkICAgICAgICA9IHJlbmVzYXNfdXNiM19z
+ZXRfc2VsZnBvd2VyZWQsDQo+ID4gIH07DQo+ID4NCj4gPiArc3RhdGljIHNzaXplX3Qgcm9sZV9z
+dG9yZShzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLA0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgY2hhciAqYnVmLCBzaXplX3QgY291
+bnQpDQo+ID4gK3sNCj4gDQo+ID4gKyAgICAgICBpZiAobmV3X21vZGVfaXNfaG9zdCkgew0KPiA+
+ICsgICAgICAgICAgICAgICBpZiAodXNiM19pc19hX2RldmljZSh1c2IzKSkNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICB1c2IzX21vZGVfYV9ob3N0KHVzYjMpOw0KPiA+ICsgICAgICAgICAg
+ICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdXNiM19tb2RlX2JfaG9zdCh1
+c2IzKTsNCj4gPiArICAgICAgIH0gZWxzZSB7DQo+ID4gKyAgICAgICAgICAgICAgIGlmICh1c2Iz
+X2lzX2FfZGV2aWNlKHVzYjMpKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHVzYjNfbW9k
+ZV9hX3BlcmkodXNiMyk7DQo+ID4gKyAgICAgICAgICAgICAgIGVsc2UNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICB1c2IzX21vZGVfYl9wZXJpKHVzYjMpOw0KPiA+ICsgICAgICAgfQ0KPiAN
+Cj4gR2l2ZW4gdGhlIHNpbWlsYXJpdHkgb2YgdGhlIHVzYjNfbW9kZV9YX3tob3N0LHBlcml9KCkg
+ZnVuY3Rpb25zLCBJJ20gd29uZGVyaW5nDQo+IGlmIHRoZSBjb2RlIHdvdWxkIGJlY29tZSBlYXNp
+ZXIgdG8gcmVhZCBhbmQgbWFpbnRhaW4gYnkgbWVyZ2luZyB0aGVtIHBhaXJ3aXNlDQo+IGludG8g
+dXNiM19tb2RlX1hfY29uZmlnKCksIGFuZCB3cml0aW5nIHRoZSBhYm92ZSBibG9jayBsaWtlOg0K
+PiANCj4gICAgICAgICBpZiAodXNiM19pc19hX2RldmljZSh1c2IzKSkNCj4gICAgICAgICAgICAg
+ICAgIHVzYjNfbW9kZV9hX2NvbmZpZyh1c2IzLCBuZXdfbW9kZV9pc19ob3N0KTsNCj4gICAgICAg
+ICBlbHNlDQo+ICAgICAgICAgICAgICAgICB1c2IzX21vZGVfYl9jb25maWcodXNiMywgbmV3X21v
+ZGVfaXNfaG9zdCk7DQo+IA0KPiA/DQoNClRoYW5rIHlvdSBmb3IgdGhlIGNvbW1lbnQhIEkgdGhp
+bmsgc28uDQpTbywgSSB3aWxsIG1vZGlmeSB0aGUgY29kZSBhbmQgc2VuZCB2MyBwYXRjaCBzZXQu
+DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCg0KPiBHcntvZXRqZSxlZXRp
+bmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBH
+ZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0t
+IGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdp
+dGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4g
+SSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29t
+ZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBM
+aW51cyBUb3J2YWxkcw0K
