@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34709 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933024AbdC3Q7O (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:36508 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933024AbdC3QyU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Mar 2017 12:59:14 -0400
-Received: by mail-lf0-f51.google.com with SMTP id z15so31516535lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2017 09:59:12 -0700 (PDT)
+        Thu, 30 Mar 2017 12:54:20 -0400
+Received: by mail-lf0-f46.google.com with SMTP id x137so31535878lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Mar 2017 09:54:18 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170330165906.716654232@cogentembedded.com>
-Date: Thu, 30 Mar 2017 19:59:02 +0300
+Message-Id: <20170330165412.949875557@cogentembedded.com>
+Date: Thu, 30 Mar 2017 19:53:37 +0300
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/1] pinctrl: sh-pfc: r8a7791: grand I2C rename
+Subject: [PATCH] pinctrl: sh-pfc: r8a7791: grand I2C rename
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-grand-I2C-rename.patch
@@ -33,7 +33,7 @@ Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
 This patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus 2 R8A7791 fixes posted yesterday.
+rep plus 2 R8A7791 fixes posted yeterday.
 
  drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  521 +++++++++++++++++------------------
  1 file changed, 264 insertions(+), 257 deletions(-)
