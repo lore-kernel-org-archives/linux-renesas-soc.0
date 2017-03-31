@@ -1,71 +1,125 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753119AbdCTI7P (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Dien Pham <dien.pham.ry@rvc.renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/32] arm64: dts: r8a7795: Add I2C for DVFS core to dtsi
-Date: Mon, 20 Mar 2017 09:57:14 +0100
-Message-Id: <d7e0d64a46f97f67ecbc0194ce6a394f512109c5.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/3] soc: renesas: rcar-sysc: Add support for fixing up power area tables
+Date: Fri, 31 Mar 2017 11:01:55 +0200
+Message-Id: <1490950916-9576-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490950916-9576-1-git-send-email-geert+renesas@glider.be>
+References: <1490950916-9576-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+The same SoC may have different power areas, depending on SoC revision.
+One option is to use different sets of power area tables for each SoC
+revision.  However, if the differences are small, it is much more
+space-efficient to have a single set of tables, and fix those up at
+runtime instead.
 
-This patch adds I2C for DVFS device support for R8A7795 SoC.
+Hence provide a helper to NULLify power areas that do not exist on some
+revisions (NULLified power areas are skipped during the registration
+phase), and support for an optional initialization callback to e.g. fix
+up power area tables.
 
-Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+v2:
+  - Add missing "tables" to one-line summary.
+---
+ drivers/soc/renesas/rcar-sysc.c | 25 ++++++++++++++++++++++++-
+ drivers/soc/renesas/rcar-sysc.h | 10 ++++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index eac4f29aa5cd..fe266bb3d913 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -25,6 +25,7 @@
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
- 		i2c6 = &i2c6;
-+		i2c7 = &i2c_dvfs;
- 	};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 225c35c79d9abad0..528a13742aeb98d8 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -2,7 +2,7 @@
+  * R-Car SYSC Power management support
+  *
+  * Copyright (C) 2014  Magnus Damm
+- * Copyright (C) 2015-2016 Glider bvba
++ * Copyright (C) 2015-2017 Glider bvba
+  *
+  * This file is subject to the terms and conditions of the GNU General Public
+  * License.  See the file "COPYING" in the main directory of this archive
+@@ -334,6 +334,12 @@ static int __init rcar_sysc_pd_init(void)
  
- 	psci {
-@@ -793,6 +794,19 @@
- 			status = "disabled";
- 		};
+ 	info = match->data;
  
-+		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7795",
-+				     "renesas,rcar-gen3-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe60b0000 0 0x425>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
++	if (info->init) {
++		error = info->init();
++		if (error)
++			return error;
++	}
 +
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+ 	has_cpg_mstp = of_find_compatible_node(NULL, NULL,
+ 					       "renesas,cpg-mstp-clocks");
+ 
+@@ -377,6 +383,11 @@ static int __init rcar_sysc_pd_init(void)
+ 		const struct rcar_sysc_area *area = &info->areas[i];
+ 		struct rcar_sysc_pd *pd;
+ 
++		if (!area->name) {
++			/* Skip NULLified area */
++			continue;
++		}
++
+ 		pd = kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
+ 		if (!pd) {
+ 			error = -ENOMEM;
+@@ -406,6 +417,18 @@ static int __init rcar_sysc_pd_init(void)
+ }
+ early_initcall(rcar_sysc_pd_init);
+ 
++void __init rcar_sysc_nullify(struct rcar_sysc_area *areas,
++			      unsigned int num_areas, u8 id)
++{
++	unsigned int i;
++
++	for (i = 0; i < num_areas; i++)
++		if (areas[i].isr_bit == id) {
++			areas[i].name = NULL;
++			return;
++		}
++}
++
+ void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ {
+ 	u32 syscimr;
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index f6e842e2976ebe32..07edb049a401196c 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -46,6 +46,7 @@ struct rcar_sysc_area {
+  */
+ 
+ struct rcar_sysc_info {
++	int (*init)(void);	/* Optional */
+ 	const struct rcar_sysc_area *areas;
+ 	unsigned int num_areas;
+ };
+@@ -59,4 +60,13 @@ extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ extern const struct rcar_sysc_info r8a7796_sysc_info;
++
++
++    /*
++     * Helpers for fixing up power area tables depending on SoC revision
++     */
++
++extern void rcar_sysc_nullify(struct rcar_sysc_area *areas,
++			      unsigned int num_areas, u8 id);
++
+ #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
