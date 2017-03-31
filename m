@@ -1,111 +1,78 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <kishon@ti.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] phy: rcar-gen3-usb2: fix implementation for runtime PM
-Date: Mon, 13 Mar 2017 15:24:18 +0900
-Message-ID: <1489386258-31279-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <8105647.ANSr0hWnZy@avalon>
+References: <20170327095652.5755-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdUiDzGt6bz96D-5yRLF-HiZfpQTTxKP5Y4+j-9HiF1LLQ@mail.gmail.com> <8105647.ANSr0hWnZy@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Mar 2017 11:21:56 +0200
+Message-ID: <CAMuHMdWSuz79mdHLuT4jDQsNvecFck21aBNLOrs5JHmMXnyTCQ@mail.gmail.com>
+Subject: Re: [PATCH] drm: rcar-du: Document the vsps property in the DT bindings
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that this driver doesn't take care of the runtime
-PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
-but it misunderstood the dev_phy_create()'s specification.
-This driver should call the own pm_runtime_pm() before dev_phy_create().
+Hi Laurent,
 
-Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/phy-rcar-gen3-usb2.c | 29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+On Fri, Mar 31, 2017 at 11:19 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Monday 27 Mar 2017 13:05:48 Geert Uytterhoeven wrote:
+>> On Mon, Mar 27, 2017 at 11:56 AM, Laurent Pinchart wrote:
+>> > The property is used by the driver but is missing from the DT bindings.
+>> > Document it.
+>> >
+>> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> > Signed-off-by: Laurent Pinchart
+>> > <laurent.pinchart+renesas@ideasonboard.com>
+>> > ---
+>> >  Documentation/devicetree/bindings/display/renesas,du.txt | 5 +++++
+>> >  1 file changed, 5 insertions(+)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+>> > b/Documentation/devicetree/bindings/display/renesas,du.txt index
+>> > 1a02f099a0ff..cf34893a1b53 100644
+>> > --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+>> > +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+>> >
+>> > @@ -36,6 +36,11 @@ Required Properties:
+>> >        When supplied they must be named "dclkin.x" with "x" being the
+>> >        input
+>> >        clock numerical index.
+>> >
+>> > +Optional Properties:
+>> > +
+>> > +  - vsps: A list of phandles to the VSP nodes that handle the memory
+>> > +    interfaces for the DU channels (Gen3 only).
+>>
+>> ", one per channel"?
+>>
+>> Required for Gen3, optional for Gen2? (cfr. Sergei's patches).
+>
+> How about making it mandatory on Gen2 as well ? The VSPs are there, even if
+> the driver doesn't use them, it makes sense to describe the connection. Of
 
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index afb4d04..23c4e86 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -20,6 +20,7 @@
- #include <linux/of_address.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/workqueue.h>
- 
-@@ -395,7 +396,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	struct rcar_gen3_chan *channel;
- 	struct phy_provider *provider;
- 	struct resource *res;
--	int irq;
-+	int irq, ret = 0;
- 
- 	if (!dev->of_node) {
- 		dev_err(dev, "This driver needs device tree\n");
-@@ -434,17 +435,24 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	/* devm_phy_create() will call pm_runtime_enable(dev); */
-+	/*
-+	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
-+	 * And then, phy-core will manage runtime pm for this device.
-+	 */
-+	pm_runtime_enable(dev);
- 	channel->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb2_ops);
- 	if (IS_ERR(channel->phy)) {
- 		dev_err(dev, "Failed to create USB2 PHY\n");
--		return PTR_ERR(channel->phy);
-+		ret = PTR_ERR(channel->phy);
-+		goto error;
- 	}
- 
- 	channel->vbus = devm_regulator_get_optional(dev, "vbus");
- 	if (IS_ERR(channel->vbus)) {
--		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER)
--			return PTR_ERR(channel->vbus);
-+		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
-+			ret = PTR_ERR(channel->vbus);
-+			goto error;
-+		}
- 		channel->vbus = NULL;
- 	}
- 
-@@ -454,15 +462,22 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
- 	if (IS_ERR(provider)) {
- 		dev_err(dev, "Failed to register PHY provider\n");
-+		ret = PTR_ERR(provider);
-+		goto error;
- 	} else if (channel->has_otg) {
- 		int ret;
- 
- 		ret = device_create_file(dev, &dev_attr_role);
- 		if (ret < 0)
--			return ret;
-+			goto error;
- 	}
- 
- 	return PTR_ERR_OR_ZERO(provider);
-+
-+error:
-+	pm_runtime_disable(dev);
-+
-+	return ret;
- }
- 
- static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
-@@ -472,6 +487,8 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- 	if (channel->has_otg)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
-+	pm_runtime_disable(&pdev->dev);
-+
- 	return 0;
- };
- 
--- 
-1.9.1
+Fine for me, as this is hardware description.
+
+> course the driver will treat the property as optional for backward
+> compatibility.
+
+OK.
+
+Disclaimer: I didn't follow the discussion about using or not using the vsps
+on Gen2 that closely, and don't remember the outcome.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
