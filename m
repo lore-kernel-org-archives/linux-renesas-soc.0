@@ -1,59 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 5/7] ARM: dts: r7s72100: add rtc to device tree
-Date: Wed, 29 Mar 2017 10:30:33 -0700
-Message-Id: <20170329173035.67477-6-chris.brandt@renesas.com>
-In-Reply-To: <20170329173035.67477-1-chris.brandt@renesas.com>
-References: <20170329173035.67477-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 31 Mar 2017 15:27:42 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: Re: [PATCH 0/2] Move uart_register_driver call to device probe for
+ pl010 and sh-sci
+Message-ID: <20170331132742.GA23739@kroah.com>
+References: <20170324162634.8880-1-sjoerd.simons@collabora.co.uk>
+ <20170324164202.GI7909@n2100.armlinux.org.uk>
+ <CAMuHMdUkfzJw6W0jQZPChN+Uqb0Ewkn86o0Pzd+9+Wi1-XZRAw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUkfzJw6W0jQZPChN+Uqb0Ewkn86o0Pzd+9+Wi1-XZRAw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the realtime clock device node.
+On Sun, Mar 26, 2017 at 11:22:57AM +0200, Geert Uytterhoeven wrote:
+> Hi Russell, Sjoerd,
+> 
+> On Fri, Mar 24, 2017 at 5:42 PM, Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+> > On Fri, Mar 24, 2017 at 05:26:32PM +0100, Sjoerd Simons wrote:
+> >> When testing on a Renesas board with the PL010 serial driver enabled
+> >> serial output broke. Turns out the minor device numbers for both
+> >> drivers happen to overlap, causing whichever driver happened to be the
+> >> second one to register to fail.
+> >
+> > How the **** has the SH serial driver ended up with overlapping device
+> > numbers?
+> 
+> Interesting...
+> 
+> > What happened to our maintained list of allocated major/minor device
+> > numbers, which is supposed to stop crap like this happening?
+> 
+> AMBA PL010 has been assigned major 204, minors 16..31,
+> SCI has been assigned major 204, minors 8..11.
+> 
+> Over the years, Renesas SoCs have been gaining more and more serial
+> ports, leading to
+> 
+>     #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
+> 
+> with CONFIG_SERIAL_SH_SCI_NR_UARTS=20 in shmobile_defconfig and
+> multi_v7_defconfig (although the maximum value on any supported SoC is 18).
+> 
+> But once the value becomes 5 or more, it starts overflowing into the ttyFWx
+> and ttyAMx space.
+> 
+> How to solve this?
+> Time for the serial subsystem to switch to dynamic minors, and get rid of the
+> what-is-your-serial-port-called-again-on-this-platform
+> multi-million-euro question?
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* added interrupt-names
-* added clock counting sources
-* added clock-names "fck", "rtc_x1", "rtc_x3", "extal"
----
- arch/arm/boot/dts/r7s72100.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Yes, please, we need to do that.  Let's provide a build option for it,
+like USB has had for over a decade.  If it's enabled, it's all dynamic,
+if not, the "old style" ones are used.  Then we don't accept any new
+reservations, making new drivers use the dynamic number, and over a long
+time, all should be good.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 632a6a481be8..f74a8ec385b6 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -652,4 +652,18 @@
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-+
-+	rtc: rtc@fcff1000 {
-+		compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
-+		reg = <0xfcff1000 0x2e>;
-+		interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
-+			      GIC_SPI 277 IRQ_TYPE_EDGE_RISING
-+			      GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "alarm", "period", "carry";
-+		clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
-+			 <&rtc_x3_clk>, <&extal_clk>;
-+		clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
- };
--- 
-2.11.0
+thanks,
 
-
+greg k-h
