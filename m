@@ -1,59 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36673 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753365AbdCTI7g (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35188 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932739AbdCaLBG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Mar 2017 04:59:36 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 31 Mar 2017 07:01:06 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170330165412.949875557@cogentembedded.com>
+References: <20170330165412.949875557@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Mar 2017 13:01:04 +0200
+Message-ID: <CAMuHMdXa+y9mJsMD9v4o9AOxyp__2LZmqpAR7=4PG3x_7pSQDw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: grand I2C rename
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 20/32] arm64: dts: r8a7795: Remove unit-addresses and regs from integrated caches
-Date: Mon, 20 Mar 2017 09:57:31 +0100
-Message-Id: <d165856de103a6d317a9c9a5782eacd5dc90a9dc.1489999913.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1489999913.git.horms+renesas@verge.net.au>
-References: <cover.1489999913.git.horms+renesas@verge.net.au>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Sergei,
 
-The Cortex-A57/A53 cache controllers are integrated controllers, and
-thus the device nodes representing them should not have unit-addresses
-or reg properties.
+On Thu, Mar 30, 2017 at 6:53 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The R8A7791 PFC driver  was apparently based on the preliminary revisions
+> of  the  user's manual, which called all the I2C signals {SCL|SDA}<n> and
+> MOD_SEL register fields SEL_IIC<n> without making a difference between two
+> types of the I2C controllers used. The recent manual calls the signals
+> {I2C|IIC}<n>_{SCL|SDA> and the MOD_SEL fields SEL_{I2C|IIC}<n> finally
+> making this difference. Follow the suit, also renaming the I2C{7|8} pin
+> arrays and groups/functions (luckily, they haven't been used so far).
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Fixes: 6f7bf82cc912441f ("arm64: dts: r8a7795: Fix W=1 dtc warnings")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Thanks for your patch!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index c1e00a3e7c45..14772bc02125 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -109,17 +109,15 @@
- 			enable-method = "psci";
- 		};
- 
--		L2_CA57: cache-controller@0 {
-+		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			power-domains = <&sysc R8A7795_PD_CA57_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
- 
--		L2_CA53: cache-controller@100 {
-+		L2_CA53: cache-controller-1 {
- 			compatible = "cache";
--			reg = <0x100>;
- 			power-domains = <&sysc R8A7795_PD_CA53_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
--- 
-2.7.0.rc3.207.g0ac5344
+>  drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  521 +++++++++++++++++------------------
+>  1 file changed, 264 insertions(+), 257 deletions(-)
+>
+> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> ===================================================================
+> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> @@ -119,22 +119,22 @@ enum {
+>         /* IPSR0 */
+>         FN_D0, FN_D1, FN_D2, FN_D3, FN_D4, FN_D5, FN_D6, FN_D7, FN_D8,
+>         FN_D9, FN_D10, FN_D11, FN_D12, FN_D13, FN_D14, FN_D15,
+> -       FN_A0, FN_ATAWR0_N_C, FN_MSIOF0_SCK_B, FN_SCL0_C, FN_PWM2_B,
+> +       FN_A0, FN_ATAWR0_N_C, FN_MSIOF0_SCK_B, FN_I2C0_SCL_C, FN_PWM2_B,
+
+While I have no issue with renaming internal definitions...
+
+> @@ -4507,12 +4514,12 @@ static const struct sh_pfc_pin_group pin
+>         SH_PFC_PIN_GROUP(i2c4),
+>         SH_PFC_PIN_GROUP(i2c4_b),
+>         SH_PFC_PIN_GROUP(i2c4_c),
+> -       SH_PFC_PIN_GROUP(i2c7),
+> -       SH_PFC_PIN_GROUP(i2c7_b),
+> -       SH_PFC_PIN_GROUP(i2c7_c),
+> -       SH_PFC_PIN_GROUP(i2c8),
+> -       SH_PFC_PIN_GROUP(i2c8_b),
+> -       SH_PFC_PIN_GROUP(i2c8_c),
+> +       SH_PFC_PIN_GROUP(iic0),
+> +       SH_PFC_PIN_GROUP(iic0_b),
+> +       SH_PFC_PIN_GROUP(iic0_c),
+> +       SH_PFC_PIN_GROUP(iic1),
+> +       SH_PFC_PIN_GROUP(iic1_b),
+> +       SH_PFC_PIN_GROUP(iic1_c),
+
+I do object against renaming the user-visible names, like pin groups...
+
+> @@ -5298,8 +5305,8 @@ static const struct sh_pfc_function pinm
+>         SH_PFC_FUNCTION(i2c2),
+>         SH_PFC_FUNCTION(i2c3),
+>         SH_PFC_FUNCTION(i2c4),
+> -       SH_PFC_FUNCTION(i2c7),
+> -       SH_PFC_FUNCTION(i2c8),
+> +       SH_PFC_FUNCTION(iic0),
+> +       SH_PFC_FUNCTION(iic1),
+
+... and pin functions. Technically, they are part of the DT bindings,
+and thus are not allowed to change.
+
+IMHO either the user-visible names should be left alone, or the new names
+should be added as alternatives, next to the existing names.
+
+What do other people think?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
