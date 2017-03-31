@@ -1,137 +1,171 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56084 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932125AbdC2LCu (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:61848 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750727AbdCaEAU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Mar 2017 07:02:50 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87o9wmkueb.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1ctBMx-0007K9-Fk@debutante>
-Date: Wed, 29 Mar 2017 12:02:27 +0100
-Subject: Applied "ASoC: rcar: remove rsnd_kctrl_remove()" to the asoc tree
+        Fri, 31 Mar 2017 00:00:20 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4] usb: gadget: udc: renesas_usb3: add support for usb role swap
+Date: Fri, 31 Mar 2017 12:58:05 +0900
+Message-ID: <1490932685-23115-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch adds support for usb role swap via sysfs "role".
 
-   ASoC: rcar: remove rsnd_kctrl_remove()
+For example:
+ 1) Connect a usb cable using 2 Salvator-X boards.
+  - For A-Device, the cable is connected to CN11 (USB3.0 ch0).
+  - For B-Device, the cable is connected to CN9 (USB2.0 ch0).
+ 2) On A-Device, you input the following command:
+  # echo peripheral > /sys/devices/platform/soc/ee020000.usb/role
+ 3) On B-Device, you input the following command:
+  # echo host > /sys/devices/platform/soc/ee080200.usb-phy/role
 
-has been applied to the asoc tree at
+Then, the A-Device acts as a peripheral and the B-Device acts as
+a host. Please note that A-Device must input the following command
+if you want the board to act as a host again.
+ # echo host > /sys/devices/platform/soc/ee020000.usb/role
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e0c4211854bfebd5507761a2bfddaa9e37074230 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 28 Mar 2017 02:31:23 +0000
-Subject: [PATCH] ASoC: rcar: remove rsnd_kctrl_remove()
-
-Current rcar driver is trying to remove kctrl when remove time.
-But, 1) rcar driver can't/shouldn't remove before removing sound
-card driver, 2) sound card driver will call snd_ctl_dev_free()
-and removes all kctrls by snd_ctl_remove().
-Thus, rsnd_kctrl_remove() is not necessary. Current implementation
-will get Oops when removing rcar driver after sound card.
-This patch fix this issue.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- sound/soc/sh/rcar/core.c |  9 ---------
- sound/soc/sh/rcar/dvc.c  | 16 ----------------
- sound/soc/sh/rcar/rsnd.h |  3 ---
- 3 files changed, 28 deletions(-)
+ Changes from v3:
+  - Revise the doc about "What" from "<udc-name>" to "<renesas_usb3's name>".
+  - Rebase the latest Felipe's usb.git / testing/next branch.
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 3e852e00b277..134fe2ea4d9e 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -1039,15 +1039,6 @@ static int __rsnd_kctrl_new(struct rsnd_mod *mod,
- 	return 0;
+ .../ABI/testing/sysfs-platform-renesas_usb3        | 15 ++++++
+ drivers/usb/gadget/udc/renesas_usb3.c              | 56 ++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-renesas_usb3
+
+diff --git a/Documentation/ABI/testing/sysfs-platform-renesas_usb3 b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
+new file mode 100644
+index 0000000..5621c15
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-platform-renesas_usb3
+@@ -0,0 +1,15 @@
++What:		/sys/devices/platform/<renesas_usb3's name>/role
++Date:		March 2017
++KernelVersion:	4.13
++Contact:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
++Description:
++		This file can be read and write.
++		The file can show/change the drd mode of usb.
++
++		Write the following string to change the mode:
++		 "host" - switching mode from peripheral to host.
++		 "peripheral" - switching mode from host to peripheral.
++
++		Read the file, then it shows the following strings:
++		 "host" - The mode is host now.
++		 "peripheral" - The mode is peripheral now.
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index a1e79fc..5a2d845 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -372,6 +372,11 @@ static void usb3_disable_pipe_irq(struct renesas_usb3 *usb3, int num)
+ 	usb3_clear_bit(usb3, USB_INT_2_PIPE(num), USB3_USB_INT_ENA_2);
  }
  
--void _rsnd_kctrl_remove(struct rsnd_kctrl_cfg *cfg)
--{
--	if (cfg->card && cfg->kctrl)
--		snd_ctl_remove(cfg->card, cfg->kctrl);
--
--	cfg->card = NULL;
--	cfg->kctrl = NULL;
--}
--
- int rsnd_kctrl_new_m(struct rsnd_mod *mod,
- 		     struct rsnd_dai_stream *io,
- 		     struct snd_soc_pcm_runtime *rtd,
-diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
-index cf8f59cdd8d7..994fdb7d0034 100644
---- a/sound/soc/sh/rcar/dvc.c
-+++ b/sound/soc/sh/rcar/dvc.c
-@@ -218,21 +218,6 @@ static int rsnd_dvc_probe_(struct rsnd_mod *mod,
- 	return rsnd_cmd_attach(io, rsnd_mod_id(mod));
++static bool usb3_is_host(struct renesas_usb3 *usb3)
++{
++	return !(usb3_read(usb3, USB3_DRD_CON) & DRD_CON_PERI_CON);
++}
++
+ static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
+ {
+ 	/* Set AXI_INT */
+@@ -576,8 +581,14 @@ static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
+ 
+ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
+ {
++	unsigned long flags;
++
++	spin_lock_irqsave(&usb3->lock, flags);
+ 	usb3_set_mode(usb3, host);
+ 	usb3_vbus_out(usb3, a_dev);
++	if (!host && a_dev)		/* for A-Peripheral */
++		usb3_connect(usb3);
++	spin_unlock_irqrestore(&usb3->lock, flags);
  }
  
--static int rsnd_dvc_remove_(struct rsnd_mod *mod,
--			    struct rsnd_dai_stream *io,
--			    struct rsnd_priv *priv)
--{
--	struct rsnd_dvc *dvc = rsnd_mod_to_dvc(mod);
--
--	rsnd_kctrl_remove(dvc->volume);
--	rsnd_kctrl_remove(dvc->mute);
--	rsnd_kctrl_remove(dvc->ren);
--	rsnd_kctrl_remove(dvc->rup);
--	rsnd_kctrl_remove(dvc->rdown);
--
--	return 0;
--}
--
- static int rsnd_dvc_init(struct rsnd_mod *mod,
- 			 struct rsnd_dai_stream *io,
- 			 struct rsnd_priv *priv)
-@@ -332,7 +317,6 @@ static struct rsnd_mod_ops rsnd_dvc_ops = {
- 	.name		= DVC_NAME,
- 	.dma_req	= rsnd_dvc_dma_req,
- 	.probe		= rsnd_dvc_probe_,
--	.remove		= rsnd_dvc_remove_,
- 	.init		= rsnd_dvc_init,
- 	.quit		= rsnd_dvc_quit,
- 	.pcm_new	= rsnd_dvc_pcm_new,
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 7410ec0174db..81ef3f18834a 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -611,9 +611,6 @@ struct rsnd_kctrl_cfg_s {
- 	u32 val;
+ static bool usb3_is_a_device(struct renesas_usb3 *usb3)
+@@ -1837,11 +1848,49 @@ static int renesas_usb3_set_selfpowered(struct usb_gadget *gadget, int is_self)
+ 	.set_selfpowered	= renesas_usb3_set_selfpowered,
  };
  
--void _rsnd_kctrl_remove(struct rsnd_kctrl_cfg *cfg);
--#define rsnd_kctrl_remove(_cfg)	_rsnd_kctrl_remove(&((_cfg).cfg))
--
- int rsnd_kctrl_new_m(struct rsnd_mod *mod,
- 		     struct rsnd_dai_stream *io,
- 		     struct snd_soc_pcm_runtime *rtd,
++static ssize_t role_store(struct device *dev, struct device_attribute *attr,
++			  const char *buf, size_t count)
++{
++	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
++	bool new_mode_is_host;
++
++	if (!usb3->driver)
++		return -ENODEV;
++
++	if (!strncmp(buf, "host", strlen("host")))
++		new_mode_is_host = true;
++	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
++		new_mode_is_host = false;
++	else
++		return -EINVAL;
++
++	if (new_mode_is_host == usb3_is_host(usb3))
++		return -EINVAL;
++
++	usb3_mode_config(usb3, new_mode_is_host, usb3_is_a_device(usb3));
++
++	return count;
++}
++
++static ssize_t role_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
++
++	if (!usb3->driver)
++		return -ENODEV;
++
++	return sprintf(buf, "%s\n", usb3_is_host(usb3) ? "host" : "peripheral");
++}
++static DEVICE_ATTR_RW(role);
++
+ /*------- platform_driver ------------------------------------------------*/
+ static int renesas_usb3_remove(struct platform_device *pdev)
+ {
+ 	struct renesas_usb3 *usb3 = platform_get_drvdata(pdev);
+ 
++	device_remove_file(&pdev->dev, &dev_attr_role);
++
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+@@ -2044,6 +2093,10 @@ static int renesas_usb3_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_add_udc;
+ 
++	ret = device_create_file(&pdev->dev, &dev_attr_role);
++	if (ret < 0)
++		goto err_dev_create;
++
+ 	usb3->workaround_for_vbus = priv->workaround_for_vbus;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+@@ -2053,6 +2106,9 @@ static int renesas_usb3_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++err_dev_create:
++	usb_del_gadget_udc(&usb3->gadget);
++
+ err_add_udc:
+ 	__renesas_usb3_ep_free_request(usb3->ep0_req);
+ 
 -- 
-2.11.0
+1.9.1
