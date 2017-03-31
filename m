@@ -1,63 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:17943 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752994AbdCAW4T (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36493 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754669AbdCaJTt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Mar 2017 17:56:19 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 3/3] ARM: dts: r7s72100: Add watchdog timer
-Date: Wed,  1 Mar 2017 17:54:55 -0500
-Message-Id: <20170301225455.22818-4-chris.brandt@renesas.com>
-In-Reply-To: <20170301225455.22818-1-chris.brandt@renesas.com>
-References: <20170301225455.22818-1-chris.brandt@renesas.com>
+        Fri, 31 Mar 2017 05:19:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <1490348353-10989-1-git-send-email-geert+renesas@glider.be>
+References: <1490348353-10989-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Mar 2017 11:19:46 +0200
+Message-ID: <CAMuHMdUFJ40ojaBBZ82wGm=xE+BkTxiTKAbjxYcvTd6ku0=Mwg@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.11
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add watchdog timer support for RZ/A1.
-For the RZ/A1, the only way to do a reset is to overflow the WDT, so this
-is useful even if you don't need the watchdog functionality.
+Hi Mike, Stephen,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-* added Reviewed-by
-v2:
-* changed "renesas,r7s72100-reset" to "renesas,r7s72100-wdt"
-* changed "renesas,wdt-reset" to "renesas,rza-wdt"
-* added interupt property (even though it is not used)
-* added clocks property
----
- arch/arm/boot/dts/r7s72100.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Fri, Mar 24, 2017 at 10:39 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+>
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag1
+>
+> for you to fetch changes up to cecbe87d73006cb321dec79b349e3fefd1a80962:
+>
+>   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
+>
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.12
+>
+>   - Add IMR clocks for R-Car H3 and M3-W,
+>   - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0,
+>   - Small fixes and cleanups.
+>
+> Thanks for pulling!
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index ed62e19..6ecee72 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -382,6 +382,13 @@
- 		cache-level = <2>;
- 	};
- 
-+	wdt: timer@fcfe0000 {
-+		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
-+		reg = <0xfcfe0000 0x6>;
-+		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&p0_clk>;
-+	};
-+
- 	i2c0: i2c@fcfee000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.10.1
+Obviously the subject should have said "clk: renesas: Updates for v4.12".
+Sorry for that.
+
+Thanks for pulling!
+
+> ----------------------------------------------------------------
+> Geert Uytterhoeven (7):
+>       clk: renesas: r8a7795: Correct parent clock and sort order for Audio DMACs
+>       clk: renesas: r8a7795: Correct name of watchdog clock
+>       clk: renesas: r8a7796: Correct name of watchdog clock
+>       clk: renesas: r8a7795: Reformat core clock table
+>       clk: renesas: r8a7796: Reformat core clock table
+>       clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
+>       clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0
+>
+> Sergei Shtylyov (2):
+>       clk: renesas: r8a7795: Add IMR clocks
+>       clk: renesas: r8a7796: Add IMR clocks
+>
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 32 ++++++++++++++++++--------------
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 18 ++++++++++--------
+>  drivers/clk/renesas/rcar-gen3-cpg.c    | 28 +++++++++++++++++++++++++++-
+>  drivers/clk/renesas/rcar-gen3-cpg.h    |  2 +-
+>  4 files changed, 56 insertions(+), 24 deletions(-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
