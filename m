@@ -1,142 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
         linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 1/7] rtc: rtc-sh: add support for rza series
-Date: Wed, 29 Mar 2017 10:30:29 -0700
-Message-Id: <20170329173035.67477-2-chris.brandt@renesas.com>
-In-Reply-To: <20170329173035.67477-1-chris.brandt@renesas.com>
-References: <20170329173035.67477-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] soc: renesas: Register SoC device early
+Date: Fri, 31 Mar 2017 11:01:54 +0200
+Message-Id: <1490950916-9576-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490950916-9576-1-git-send-email-geert+renesas@glider.be>
+References: <1490950916-9576-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This same RTC is used in RZ/A series MPUs, therefore with some slight
-changes, this driver can be reused. Additionally, since ARM architectures
-require Device Tree configurations, device tree support has been added.
+The r8a7795 SYSC driver manages PM Domains, and thus is initialized from
+an early_initcall().  However, this means the driver cannot check the
+SoC revision, as the SoC device hasn't been registered yet.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Change renesas_soc_init() from a core_initcall() to an early_initcall()
+to fix this (renesas-soc.o is listed before rcar-sysc.o in the Makefile).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
-* removed HAVE_CLK from Kconfig
-* when using DT, look for "fck" instead of "rtc0"
-* changed (res == NULL) to (!res)
-* added Reviewed-by
+  - No changes.
 ---
- drivers/rtc/Kconfig  |  4 ++--
- drivers/rtc/rtc-sh.c | 33 ++++++++++++++++++++++++++++-----
- 2 files changed, 30 insertions(+), 7 deletions(-)
+ drivers/soc/renesas/renesas-soc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index ee1b0e9dde79..c2d1f0ed47a1 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1303,10 +1303,10 @@ config RTC_DRV_SA1100
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 330960312296f603..51ed33f3426dddc0 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -254,4 +254,4 @@ static int __init renesas_soc_init(void)
  
- config RTC_DRV_SH
- 	tristate "SuperH On-Chip RTC"
--	depends on SUPERH && HAVE_CLK
-+	depends on SUPERH || ARCH_RENESAS
- 	help
- 	  Say Y here to enable support for the on-chip RTC found in
--	  most SuperH processors.
-+	  most SuperH processors. This RTC is also found in RZ/A SoCs.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rtc-sh.
-diff --git a/drivers/rtc/rtc-sh.c b/drivers/rtc/rtc-sh.c
-index c626e43a9cbb..00b396e96cbe 100644
---- a/drivers/rtc/rtc-sh.c
-+++ b/drivers/rtc/rtc-sh.c
-@@ -27,7 +27,15 @@
- #include <linux/log2.h>
- #include <linux/clk.h>
- #include <linux/slab.h>
-+#ifdef CONFIG_SUPERH
- #include <asm/rtc.h>
-+#else
-+/* Default values for RZ/A RTC */
-+#define rtc_reg_size		sizeof(u16)
-+#define RTC_BIT_INVERTED        0	/* no chip bugs */
-+#define RTC_CAP_4_DIGIT_YEAR    (1 << 0)
-+#define RTC_DEF_CAPABILITIES    RTC_CAP_4_DIGIT_YEAR
-+#endif
- 
- #define DRV_NAME	"sh-rtc"
- 
-@@ -570,6 +578,8 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 	rtc->alarm_irq = platform_get_irq(pdev, 2);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-+	if (!res)
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (unlikely(res == NULL)) {
- 		dev_err(&pdev->dev, "No IO resource\n");
- 		return -ENOENT;
-@@ -587,12 +597,15 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 	if (unlikely(!rtc->regbase))
- 		return -EINVAL;
- 
--	clk_id = pdev->id;
--	/* With a single device, the clock id is still "rtc0" */
--	if (clk_id < 0)
--		clk_id = 0;
-+	if (!pdev->dev.of_node) {
-+		clk_id = pdev->id;
-+		/* With a single device, the clock id is still "rtc0" */
-+		if (clk_id < 0)
-+			clk_id = 0;
- 
--	snprintf(clk_name, sizeof(clk_name), "rtc%d", clk_id);
-+		snprintf(clk_name, sizeof(clk_name), "rtc%d", clk_id);
-+	} else
-+		snprintf(clk_name, sizeof(clk_name), "fck");
- 
- 	rtc->clk = devm_clk_get(&pdev->dev, clk_name);
- 	if (IS_ERR(rtc->clk)) {
-@@ -608,6 +621,8 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 	clk_enable(rtc->clk);
- 
- 	rtc->capabilities = RTC_DEF_CAPABILITIES;
-+
-+#ifdef CONFIG_SUPERH
- 	if (dev_get_platdata(&pdev->dev)) {
- 		struct sh_rtc_platform_info *pinfo =
- 			dev_get_platdata(&pdev->dev);
-@@ -618,6 +633,7 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 		 */
- 		rtc->capabilities |= pinfo->capabilities;
- 	}
-+#endif
- 
- 	if (rtc->carry_irq <= 0) {
- 		/* register shared periodic/carry/alarm irq */
-@@ -738,10 +754,17 @@ static int sh_rtc_resume(struct device *dev)
- 
- static SIMPLE_DEV_PM_OPS(sh_rtc_pm_ops, sh_rtc_suspend, sh_rtc_resume);
- 
-+static const struct of_device_id sh_rtc_of_match[] = {
-+	{ .compatible = "renesas,sh-rtc", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, sh_rtc_of_match);
-+
- static struct platform_driver sh_rtc_platform_driver = {
- 	.driver		= {
- 		.name	= DRV_NAME,
- 		.pm	= &sh_rtc_pm_ops,
-+		.of_match_table = sh_rtc_of_match,
- 	},
- 	.remove		= __exit_p(sh_rtc_remove),
- };
+ 	return 0;
+ }
+-core_initcall(renesas_soc_init);
++early_initcall(renesas_soc_init);
 -- 
-2.11.0
-
-
+2.7.4
