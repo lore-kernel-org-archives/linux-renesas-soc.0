@@ -1,84 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33966 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752476AbdCPOLM (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:33622 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755104AbdCaU3s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Mar 2017 10:11:12 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87k27rcfv9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1coW7N-0002ay-Fc@debutante>
-Date: Thu, 16 Mar 2017 14:11:05 +0000
-Subject: Applied "ASoC: simple-scu-card: use defined dev on probe()" to the asoc tree
+        Fri, 31 Mar 2017 16:29:48 -0400
+Received: by mail-lf0-f47.google.com with SMTP id h125so49393377lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Mar 2017 13:29:47 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170331202941.678985389@cogentembedded.com>
+Date: Fri, 31 Mar 2017 23:29:23 +0300
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7791: fix IPSR comment typos
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-fix-IPSR-comment-typos.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The IPSR field names in the comments have been fat-fingered in a couple
+places --  fix those silly typos...
 
-   ASoC: simple-scu-card: use defined dev on probe()
+Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 40b68dac75a1d16266d3c89244ccf7b899afac3e Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 15 Mar 2017 04:43:40 +0000
-Subject: [PATCH] ASoC: simple-scu-card: use defined dev on probe()
-
-Current asoc_simple_card_probe() already has dev definition,
-but some place doesn't use it. Let's fix this issue.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-scu-card.c | 4 ++--
+This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
+repo plus  3 R8A7791 fixes posted in the last couple days...
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
-index bb86ee042490..93d7d8980cd5 100644
---- a/sound/soc/generic/simple-scu-card.c
-+++ b/sound/soc/generic/simple-scu-card.c
-@@ -257,7 +257,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 	struct snd_soc_dai_link *dai_link;
- 	struct asoc_simple_dai *dai_props;
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = dev->of_node;
- 	int num, ret;
- 
- 	/* Allocate the private data */
-@@ -292,7 +292,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 
- 	snd_soc_card_set_drvdata(&priv->snd_card, priv);
- 
--	ret = devm_snd_soc_register_card(&pdev->dev, &priv->snd_card);
-+	ret = devm_snd_soc_register_card(dev, &priv->snd_card);
- 	if (ret >= 0)
- 		return ret;
- err:
--- 
-2.11.0
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -5711,7 +5711,7 @@ static const struct pinmux_cfg_reg pinmu
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("IPSR2", 0xE6060028, 32,
+ 			     2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 3) {
+-		/* IP2_31_20 [2] */
++		/* IP2_31_30 [2] */
+ 		0, 0, 0, 0,
+ 		/* IP2_29_27 [3] */
+ 		FN_EX_CS3_N, FN_ATADIR0_N, FN_MSIOF2_TXD,
+@@ -6042,7 +6042,7 @@ static const struct pinmux_cfg_reg pinmu
+ 		/* IP10_24_22 [3] */
+ 		FN_VI0_R1, FN_VI2_DATA2, FN_GLO_I1_B, FN_TS_SCK0_C, FN_ATAG1_N,
+ 		0, 0, 0,
+-		/* IP10_21_29 [3] */
++		/* IP10_21_19 [3] */
+ 		FN_VI0_R0, FN_VI2_DATA1, FN_GLO_I0_B,
+ 		FN_TS_SDATA0_C, FN_ATACS11_N,
+ 		0, 0, 0,
