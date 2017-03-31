@@ -1,39 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Message-ID: <1489788135.8957.2.camel@collabora.co.uk>
-Subject: Re: [PATCH 0/4] arm64: renesas: enable M3ULCB board peripherals
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Date: Fri, 17 Mar 2017 23:02:15 +0100
-In-Reply-To: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:48154 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754181AbdCaJYQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 31 Mar 2017 05:24:16 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.12 (take two)
+Date: Fri, 31 Mar 2017 11:24:13 +0200
+Message-Id: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, 2017-01-26 at 17:53 +0300, Vladimir Barinov wrote:
-> Hello,
-> 
-> This adds the folowing:
-> - R8A7796 SoC based M3ULCB board peripherals
-> 
-> Vladimir Barinov (4):
-> [1/4] arm64: dts: m3ulcb: enable I2C
-> [2/4] arm64: dts: m3ulcb: Update memory node to 2 GiB map
-> [3/4] arm64: dts: m3ulcb: enable EthernetAVB
-> [4/4] arm64: dts: m3ulcb: enable HS200 for eMMC
+	Hi Mike, Stephen,
 
-Seems these didn't hit -next just yet, for this series (tested on a
-M3ULCB)
+The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
 
-Tested-By: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+  clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
 
--- 
-Sjoerd Simons
-Collabora Ltd.
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
+
+for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
+
+  clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.12 (take two)
+
+  - Add support for the Clock Pulse Generator / Module Standby and
+    Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
+    differs from ES1.x in some areas.
+
+Note that this pull request is on top of my previous pull request for
+v4.12, which accidentally had a wrong version number in the subject
+line, and which I believe you haven't pulled yet.
+
+Thanks for pulling (both)!
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      clk: renesas: cpg-mssr: Add support for fixing up clock tables
+      clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
+      clk: renesas: r8a7795: Add support for R-Car H3 ES2.0
+      clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c       | 201 ++++++++++++++++++++-------
+ drivers/clk/renesas/rcar-gen3-cpg.c          |  38 +++--
+ drivers/clk/renesas/renesas-cpg-mssr.c       |  50 +++++++
+ drivers/clk/renesas/renesas-cpg-mssr.h       |  22 +++
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h |   7 +
+ 5 files changed, 257 insertions(+), 61 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
