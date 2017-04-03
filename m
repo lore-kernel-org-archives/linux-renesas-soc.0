@@ -1,66 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34221 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753553AbdDNVPS (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:51038 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752239AbdDCKIM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Apr 2017 17:15:18 -0400
-Received: by mail-lf0-f51.google.com with SMTP id t144so46216115lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Apr 2017 14:15:18 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170414211513.443487793@cogentembedded.com>
-Date: Sat, 15 Apr 2017 00:09:44 +0300
+        Mon, 3 Apr 2017 06:08:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 3/3] ARM: dts: sk-rzg1m: add Ether pins
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=ARM-dts-sk-rzg1m-add-Ether-pins.patch
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
+Date: Mon,  3 Apr 2017 12:08:07 +0200
+Message-Id: <1491214089-14093-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) Ether/PHY pin data to the SK-RZG1M board's
-device tree.
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-+++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-@@ -44,6 +44,16 @@
- 		groups = "scif0_data";
- 		function = "scif0";
- 	};
-+
-+	ether_pins: ether {
-+		groups = "eth_link", "eth_mdio", "eth_rmii";
-+		function = "eth";
-+	};
-+
-+	phy1_pins: phy1 {
-+		groups = "intc_irq0";
-+		function = "intc";
-+	};
- };
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index fe6b8c2a2d711536..99269aaca6fc953e 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1101,7 +1101,7 @@
+ 		};
  
- &scif0 {
-@@ -54,6 +64,9 @@
- };
- 
- &ether {
-+	pinctrl-0 = <&ether_pins &phy1_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy1>;
- 	renesas,ether-link-active-low;
- 	status = "okay";
+ 		/* External CAN clock */
+-		can_clk: can_clk {
++		can_clk: can {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+-- 
+2.7.4
