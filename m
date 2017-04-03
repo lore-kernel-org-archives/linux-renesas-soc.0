@@ -1,92 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33623 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756326AbdD1Ryd (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:37638 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751933AbdDCKIM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Apr 2017 13:54:33 -0400
-Received: by mail-lf0-f47.google.com with SMTP id 88so37904796lfr.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Apr 2017 10:54:32 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170428175428.588162131@cogentembedded.com>
-Date: Fri, 28 Apr 2017 20:50:28 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7794: remove AVB_AVTP_* groups
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7794-remove-AVB_AVTP_-groups.patch
+        Mon, 3 Apr 2017 06:08:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
+Date: Mon,  3 Apr 2017 12:08:08 +0200
+Message-Id: <1491214089-14093-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ATA_AVTP_* signals are documented as reserved in the recent R-Car E2
-user's manual (the only remaining mention is in the table 5.2 and I believe
-it's a simple overlook).  Remove the AVB_AVTP_* pinmux groups -- we will
-remove the signals themselves in the next patch, along with the other now
-reserved bits...
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   32 --------------------------------
- 1 file changed, 32 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1660,30 +1660,6 @@ static const unsigned int avb_gmii_mux[]
- 	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
- 	AVB_COL_MARK,
- };
--static const unsigned int avb_avtp_capture_pins[] = {
--	RCAR_GP_PIN(5, 11),
--};
--static const unsigned int avb_avtp_capture_mux[] = {
--	AVB_AVTP_CAPTURE_MARK,
--};
--static const unsigned int avb_avtp_match_pins[] = {
--	RCAR_GP_PIN(5, 12),
--};
--static const unsigned int avb_avtp_match_mux[] = {
--	AVB_AVTP_MATCH_MARK,
--};
--static const unsigned int avb_avtp_capture_b_pins[] = {
--	RCAR_GP_PIN(1, 1),
--};
--static const unsigned int avb_avtp_capture_b_mux[] = {
--	AVB_AVTP_CAPTURE_B_MARK,
--};
--static const unsigned int avb_avtp_match_b_pins[] = {
--	RCAR_GP_PIN(1, 2),
--};
--static const unsigned int avb_avtp_match_b_mux[] = {
--	AVB_AVTP_MATCH_B_MARK,
--};
- /* - DU --------------------------------------------------------------------- */
- static const unsigned int du0_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -3535,10 +3511,6 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(avb_mdio),
- 	SH_PFC_PIN_GROUP(avb_mii),
- 	SH_PFC_PIN_GROUP(avb_gmii),
--	SH_PFC_PIN_GROUP(avb_avtp_capture),
--	SH_PFC_PIN_GROUP(avb_avtp_match),
--	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
--	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(du0_rgb666),
- 	SH_PFC_PIN_GROUP(du0_rgb888),
- 	SH_PFC_PIN_GROUP(du0_clk0_out),
-@@ -3809,10 +3781,6 @@ static const char * const avb_groups[] =
- 	"avb_mdio",
- 	"avb_mii",
- 	"avb_gmii",
--	"avb_avtp_capture",
--	"avb_avtp_match",
--	"avb_avtp_capture_b",
--	"avb_avtp_match_b",
- };
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index a6478ca3f4ca7554..4d0c2ce59900f811 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1126,7 +1126,7 @@
+ 		};
  
- static const char * const du0_groups[] = {
+ 		/* External CAN clock */
+-		can_clk: can_clk {
++		can_clk: can {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+-- 
+2.7.4
