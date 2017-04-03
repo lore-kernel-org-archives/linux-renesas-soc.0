@@ -1,41 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:44846 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753464AbdDEBiR (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:59246 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752028AbdDCKIM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 21:38:17 -0400
-Date: Tue, 4 Apr 2017 18:38:15 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/3] arm: dts: renesas: Drop _clk suffix from clock node
- names
-Message-ID: <20170405013815.GK18246@codeaurora.org>
-References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+        Mon, 3 Apr 2017 06:08:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] arm: dts: renesas: Drop _clk suffix from clock node names
+Date: Mon,  3 Apr 2017 12:08:06 +0200
+Message-Id: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/03, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> The current practice is to not add _clk suffixes to clock node names in
-> DT, as these names are used as the actual clock names.
-> 
-> This patch removes the remaining offenders in the various Renesas DTSes.
-> 
+	Hi Simon, Magnus,
 
-This changes the names in the clk framework too though? If you're
-ok with that I'm ok too.
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+This patch removes the remaining offenders in the various Renesas DTSes.
+
+Thanks!
+
+Geert Uytterhoeven (3):
+  ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
+  ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
+  arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node
+    name
+
+ arch/arm/boot/dts/r8a7790.dtsi                     | 2 +-
+ arch/arm/boot/dts/r8a7791.dtsi                     | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
