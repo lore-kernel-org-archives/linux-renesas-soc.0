@@ -1,49 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:38952 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751904AbdDCKL3 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38232 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbdDCKCg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 06:11:29 -0400
+        Mon, 3 Apr 2017 06:02:36 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] can: rcar_can: Do not print virtual addresses
-Date: Mon,  3 Apr 2017 12:11:26 +0200
-Message-Id: <1491214286-14370-1-git-send-email-geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: rcar-gen2: Fix PLL0 on R-Car V2H and E2
+Date: Mon,  3 Apr 2017 12:02:33 +0200
+Message-Id: <1491213753-13731-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-During probe, the rcar_can driver prints:
+R-Car V2H and E2 do not have the PLL0CR register, but use a fixed
+multiplier (depending on mode pins) and divider.
 
-    rcar_can e6e80000.can: device registered (regs @ e08bc000, IRQ76)
+This corrects the clock rate of "pll0" (PLL0 VCO after post divider) on
+R-Car V2H and E2 from 1.5 GHz to 1 GHz.
 
-The "regs" value is a virtual address, exposing internal information,
-hence stop printing it.  The (useful) physical address is already
-printed as part of the device name.
+Inspired by Sergei Shtylyov's work for the common R-Car Gen2 and RZ/G
+Clock Pulse Generator support core.
 
-Fixes: fd1159318e55e901 ("can: add Renesas R-Car CAN driver")
+Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
+Fixes: 0dce5454d5c25858 ("ARM: shmobile: Initial r8a7794 SoC device tree")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/can/rcar/rcar_can.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/renesas/clk-rcar-gen2.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-index caed4e6960f8c77f..11662f479e760ba7 100644
---- a/drivers/net/can/rcar/rcar_can.c
-+++ b/drivers/net/can/rcar/rcar_can.c
-@@ -826,8 +826,7 @@ static int rcar_can_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index f39519edc645ca87..51a2479ed5d7c817 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -272,11 +272,14 @@ struct cpg_pll_config {
+ 	unsigned int extal_div;
+ 	unsigned int pll1_mult;
+ 	unsigned int pll3_mult;
++	unsigned int pll0_mult;		/* For R-Car V2H and E2 only */
+ };
  
- 	devm_can_led_init(ndev);
+ static const struct cpg_pll_config cpg_pll_configs[8] __initconst = {
+-	{ 1, 208, 106 }, { 1, 208,  88 }, { 1, 156,  80 }, { 1, 156,  66 },
+-	{ 2, 240, 122 }, { 2, 240, 102 }, { 2, 208, 106 }, { 2, 208,  88 },
++	{ 1, 208, 106, 200 }, { 1, 208,  88, 200 },
++	{ 1, 156,  80, 150 }, { 1, 156,  66, 150 },
++	{ 2, 240, 122, 230 }, { 2, 240, 102, 230 },
++	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
+ };
  
--	dev_info(&pdev->dev, "device registered (regs @ %p, IRQ%d)\n",
--		 priv->regs, ndev->irq);
-+	dev_info(&pdev->dev, "device registered (IRQ%d)\n", ndev->irq);
+ /* SDHI divisors */
+@@ -298,6 +301,12 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
  
- 	return 0;
- fail_candev:
+ static u32 cpg_mode __initdata;
+ 
++static const char * const pll0_mult_match[] = {
++	"renesas,r8a7792-cpg-clocks",
++	"renesas,r8a7794-cpg-clocks",
++	NULL
++};
++
+ static struct clk * __init
+ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
+ 			     const struct cpg_pll_config *config,
+@@ -318,9 +327,15 @@ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
+ 		 * clock implementation and we currently have no need to change
+ 		 * the multiplier value.
+ 		 */
+-		u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++		if (of_device_compatible_match(np, pll0_mult_match)) {
++			/* R-Car V2H and E2 do not have PLL0CR */
++			mult = config->pll0_mult;
++			div = 3;
++		} else {
++			u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++			mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
++		}
+ 		parent_name = "main";
+-		mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
+ 	} else if (!strcmp(name, "pll1")) {
+ 		parent_name = "main";
+ 		mult = config->pll1_mult / 2;
 -- 
 2.7.4
