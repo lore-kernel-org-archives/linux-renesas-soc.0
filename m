@@ -1,37 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53849 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751714AbdDHL2L (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:51046 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752374AbdDCKIM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 07:28:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/2] arm64: dts: r8a7796: enable HS200 for eMMC
-Date: Sat,  8 Apr 2017 13:27:59 +0200
-Message-Id: <20170408112759.26724-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170408112759.26724-1-wsa+renesas@sang-engineering.com>
-References: <20170408112759.26724-1-wsa+renesas@sang-engineering.com>
+        Mon, 3 Apr 2017 06:08:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node name
+Date: Mon,  3 Apr 2017 12:08:09 +0200
+Message-Id: <1491214089-14093-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 1 +
- 1 file changed, 1 insertion(+)
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index c9f59b6ce33f69..7f0ac6a9d49b8d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -216,6 +216,7 @@
- 	vmmc-supply = <&reg_3p3v>;
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
-+	mmc-hs200-1_8v;
- 	non-removable;
- 	status = "okay";
- };
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index f25241921067dcef..639aa085d9966676 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -56,7 +56,7 @@
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
+ 
+-	x12_clk: x12_clk {
++	x12_clk: x12 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <24576000>;
 -- 
-2.11.0
+2.7.4
