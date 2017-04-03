@@ -1,66 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34169 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754308AbdDOUUp (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35372 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751496AbdDCPQI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Apr 2017 16:20:45 -0400
-Received: by mail-lf0-f44.google.com with SMTP id t144so52826796lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Apr 2017 13:20:44 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170415202040.456202938@cogentembedded.com>
-Date: Sat, 15 Apr 2017 23:18:27 +0300
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 3 Apr 2017 11:16:08 -0400
+Date: Mon, 3 Apr 2017 10:16:06 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/3] ARM: dts: sk-rzg1e: add SCIF2 pins
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] dt-bindings: rtc: document the rtc-sh bindings
+Message-ID: <20170403151606.lnayy6p5lp4rmvrj@rob-hp-laptop>
+References: <20170329173035.67477-1-chris.brandt@renesas.com>
+ <20170329173035.67477-3-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=ARM-dts-sk-rzg1e-add-SCIF2-pins.patch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170329173035.67477-3-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) SCIF2 pin data to the SK-RZG1E board's
-device tree.
+On Wed, Mar 29, 2017 at 10:30:30AM -0700, Chris Brandt wrote:
+> Add the binding documentation for rtc-sh which is an RTC for
+> SuperH and RZ/A SoCs.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v3:
+> * remove 'power-domains' from example
+> * update commit message subject and body
+> v2:
+> * added interrupt-names and clock-names
+> * clocks now include counting sources
+> * changed 'is a RTC' to 'is an RTC' in commit message
+> ---
+>  Documentation/devicetree/bindings/rtc/rtc-sh.txt | 28 ++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/rtc-sh.txt
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-Index: renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-+++ renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -1,7 +1,7 @@
- /*
-  * Device Tree Source for the SK-RZG1E board
-  *
-- * Copyright (C) 2016 Cogent Embedded, Inc.
-+ * Copyright (C) 2016-2017 Cogent Embedded, Inc.
-  *
-  * This file is licensed under the terms of the GNU General Public License
-  * version 2. This program is licensed "as is" without any warranty of any
-@@ -34,7 +34,17 @@
- 	clock-frequency = <20000000>;
- };
- 
-+&pfc {
-+	scif2_pins: scif2 {
-+		groups = "scif2_data";
-+		function = "scif2";
-+	};
-+};
-+
- &scif2 {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
- 
+Acked-by: Rob Herring <robh@kernel.org> 
