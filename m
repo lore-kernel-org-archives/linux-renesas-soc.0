@@ -1,100 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59036 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754302AbdDFKtC (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:47222 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752071AbdDCKDi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 06:49:02 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        alsa-devel@alsa-project.org
-In-Reply-To: <87vaqi3stx.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1cw4yG-0004QS-2a@debutante>
-Date: Thu, 06 Apr 2017 11:48:56 +0100
-Subject: Applied "ASoC: rsnd: tidyup src->convert_rate reset timing" to the asoc tree
+        Mon, 3 Apr 2017 06:03:38 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7745: Remove nonexisting scu-src[0789] clocks
+Date: Mon,  3 Apr 2017 12:03:34 +0200
+Message-Id: <1491213814-13826-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+RZ/G1E does not have the SCU-SRC[0789] modules and module clocks.
 
-   ASoC: rsnd: tidyup src->convert_rate reset timing
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From fc99d23f6d3ec6b17772915114018444393e0ad1 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 6 Apr 2017 07:24:36 +0000
-Subject: [PATCH] ASoC: rsnd: tidyup src->convert_rate reset timing
-
-Current src->convert_rate will be set on .hw_param, and
-be reset on .quit timing.
-But, .hw_param will not be called again if user did Ctrl-Z + fg.
-It should be reset on initial of .hw_param to keep its value.
-Here, ctu.c already do this.
-This patch solves this issue, other wise, MIXed sound will be
-strange if user did like below.
-
-	> aplay -D plughw:0,0 sound_44100.wav &
-	> aplay -D plughw:0,1 sound_96000.wav
-	> Ctrl-Z
-	> fg # 96kHz will be played as 44.1kHz
-
-Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- sound/soc/sh/rcar/src.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index 42db48db09ba..20b5b2ec625e 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -167,6 +167,7 @@ static int rsnd_src_hw_params(struct rsnd_mod *mod,
- 	 *	dpcm_fe_dai_hw_params()
- 	 *	dpcm_be_dai_hw_params()
- 	 */
-+	src->convert_rate = 0;
- 	if (fe->dai_link->dynamic) {
- 		int stream = substream->stream;
- 		struct snd_soc_dpcm *dpcm;
-@@ -414,8 +415,6 @@ static int rsnd_src_quit(struct rsnd_mod *mod,
- 
- 	rsnd_mod_power_off(mod);
- 
--	src->convert_rate = 0;
--
- 	/* reset sync convert_rate */
- 	src->sync.val = 0;
- 
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 2f15ba786c3b0ea1..08db21cc6436bdc5 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -167,16 +167,12 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+ 	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scifa3",		1106,	R8A7745_CLK_MP),
+ 	DEF_MOD("scifa4",		1107,	R8A7745_CLK_MP),
+ 	DEF_MOD("scifa5",		1108,	R8A7745_CLK_MP),
 -- 
-2.11.0
+2.7.4
