@@ -1,91 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35762 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032265AbdDUH0Z (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:50646 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751947AbdDCJpz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Apr 2017 03:26:25 -0400
-MIME-Version: 1.0
-In-Reply-To: <41d6bb75-5be0-c563-0569-ea37aab58f1e@landley.net>
-References: <41d6bb75-5be0-c563-0569-ea37aab58f1e@landley.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Apr 2017 09:26:23 +0200
-Message-ID: <CAMuHMdWtBHTBCNo2-oO2Zv7O8McypcaEMh+_8DD+D1T7GTxAzw@mail.gmail.com>
-Subject: Re: Commit 18e8cf159177 broke qemu-system-sh4 serial input.
-To: Rob Landley <rob@landley.net>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 3 Apr 2017 05:45:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] ARM: dts: r8a7793: Correct parent of SSI[0-9] clocks
+Date: Mon,  3 Apr 2017 11:45:43 +0200
+Message-Id: <1491212743-6911-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491212743-6911-1-git-send-email-geert+renesas@glider.be>
+References: <1491212743-6911-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+The SSI-ALL gate clock is located in between the P clock and the
+individual SSI[0-9] clocks, hence the former should be listed as their
+parent.
 
-CC Adrian, linux-serial, linux-renesas-soc
+Fixes: 072d326542e49187 ("ARM: dts: r8a7793: add MSTP10 clocks to device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-On Fri, Apr 21, 2017 at 8:21 AM, Rob Landley <rob@landley.net> wrote:
-> In 4.11-rc7 the qemu serial console hangs after the first character you
-> type. To reproduce, configure linux with this mini.config:
->
-> CONFIG_CPU_SUBTYPE_SH7751R=y
-> CONFIG_MMU=y
-> CONFIG_MEMORY_START=0x0c000000
-> CONFIG_VSYSCALL=y
-> CONFIG_SH_FPU=y
-> CONFIG_SH_RTS7751R2D=y
-> CONFIG_RTS7751R2D_PLUS=y
-> CONFIG_SERIAL_SH_SCI=y
-> CONFIG_SERIAL_SH_SCI_CONSOLE=y
-> CONFIG_EARLY_PRINTK=y
-> CONFIG_BLK_DEV_INITRD=y"
-> CONFIG_RD_GZIP=y
-> CONFIG_BINFMT_ELF=y
-> CONFIG_BINFMT_SCRIPT=y
-> CONFIG_MISC_FILESYSTEMS=y
-> CONFIG_DEVTMPFS=y
->
-> Using "make ARCH=sh allnoconfig KCONFIG_ALLCONFIG=mini.conf", then build
-> the result, then boot under qemu using the following command line:
->
-> qemu-system-sh4 -M r2d -monitor null -serial null -serial stdio
-> -nographic -no-reboot -append "panic=1 HOST=sh4 console=ttySC1 noiotrap"
-> -kernel zImage -initrd sh4-linux-musl-root.cpio.gz
->
-> You'll need a simple cpio.gz initramfs (I built one using
-> https://github.com/landley/mkroot and the musl-cross-make cross
-> compiler, the cpio.gz is ~450k or I'd attach it here).
->
-> I bisected it to commit 18e8cf159177 back in February. If you do this
-> with the revision _before_ that commit, typing "ls -l" and hitting enter
-> works fine. Afterwards you get an "l" and then it hangs. (If type enough
-> it'll eventually deal a burst of characters all at once, and then hang
-> again.)
-
-SH7751R has both SCI and SCIF ports. ttySC1 is the second (SCIF) port.
-
-arch/sh/kernel/cpu/sh4/setup-sh7750.c registers a port with type PORT_SCIF,
-so that should become SCIx_SH4_SCIF_REGTYPE. Hence I don't think the issue
-is caused by changing fifosize to 64 for SCIx_SH7705_SCIF_REGTYPE.
-
-My first guess is that qemu has a bug emulating the triggering.
-According to the SH7751R datasheet, SCFCR does have the RTRG1 and RTRG0 bits.
-I assume the problem goes away if you comment out the call to scif_set_rtrg()?
-
-Does anyone have access to real hardware to try?
-Adrian: does it work on your LANDISK, which also has SH7751R?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 9fcf3a9ca0846047..4de6041d61f9d4ec 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1269,8 +1269,11 @@
+ 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
+ 			clocks = <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+ 				<&p_clk>,
+ 				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+ 				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+-- 
+2.7.4
