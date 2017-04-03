@@ -1,85 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:45188 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1947196AbdDYQx2 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45156 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752431AbdDCKEm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 12:53:28 -0400
+        Mon, 3 Apr 2017 06:04:42 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/10] clk: renesas: Add r8a7791 CPG Core Clock Definitions
-Date: Tue, 25 Apr 2017 18:53:13 +0200
-Message-Id: <1493139200-27396-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7745: Remove PLL configs for MD19=0
+Date: Mon,  3 Apr 2017 12:04:34 +0200
+Message-Id: <1491213874-13922-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car M2-W Clock Pulse Generator Core Clock Outputs, as listed
-in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
-Hardware User's Manual rev. 2.00.
+According to tables 7.5b and 7.6b of the RZ/G Series Hardware User's
+Manual Rev.1.00, MD19=0 is a prohibited setting.
 
+Hence stop looking at MD19, and remove all PLL configurations for
+MD19=0.
+
+Fixes: 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/clock/r8a7791-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/include/dt-bindings/clock/r8a7791-cpg-mssr.h b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..e8823410c01c5a09
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
-@@ -0,0 +1,48 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7791 CPG Core Clocks */
-+#define R8A7791_CLK_Z			0
-+#define R8A7791_CLK_ZG			1
-+#define R8A7791_CLK_ZTR			2
-+#define R8A7791_CLK_ZTRD2		3
-+#define R8A7791_CLK_ZT			4
-+#define R8A7791_CLK_ZX			5
-+#define R8A7791_CLK_ZS			6
-+#define R8A7791_CLK_HP			7
-+#define R8A7791_CLK_I			8
-+#define R8A7791_CLK_B			9
-+#define R8A7791_CLK_LB			10
-+#define R8A7791_CLK_P			11
-+#define R8A7791_CLK_CL			12
-+#define R8A7791_CLK_M2			13
-+#define R8A7791_CLK_ADSP		14
-+#define R8A7791_CLK_ZB3			15
-+#define R8A7791_CLK_ZB3D2		16
-+#define R8A7791_CLK_DDR			17
-+#define R8A7791_CLK_SDH			18
-+#define R8A7791_CLK_SD0			19
-+#define R8A7791_CLK_SD2			20
-+#define R8A7791_CLK_SD3			21
-+#define R8A7791_CLK_MMC0		22
-+#define R8A7791_CLK_MP			23
-+#define R8A7791_CLK_SSP			24
-+#define R8A7791_CLK_SSPRS		25
-+#define R8A7791_CLK_QSPI		26
-+#define R8A7791_CLK_CP			27
-+#define R8A7791_CLK_RCAN		28
-+#define R8A7791_CLK_R			29
-+#define R8A7791_CLK_OSC			30
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__ */
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 08db21cc6436bdc5..9e2360a8e14b860e 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -190,31 +190,22 @@ static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
+  *    MD	EXTAL		PLL0	PLL1	PLL3
+  * 14 13 19	(MHz)		*1	*2
+  *---------------------------------------------------
+- * 0  0  0	15		x200/3	x208/2	x106
+  * 0  0  1	15		x200/3	x208/2	x88
+- * 0  1  0	20		x150/3	x156/2	x80
+  * 0  1  1	20		x150/3	x156/2	x66
+- * 1  0  0	26 / 2		x230/3	x240/2	x122
+  * 1  0  1	26 / 2		x230/3	x240/2	x102
+- * 1  1  0	30 / 2		x200/3	x208/2	x106
+  * 1  1  1	30 / 2		x200/3	x208/2	x88
+  *
+  * *1 :	Table 7.5b indicates VCO output (PLL0 = VCO/3)
+  * *2 :	Table 7.5b indicates VCO output (PLL1 = VCO/2)
+  */
+-#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
+-					 (((md) & BIT(13)) >> 12) | \
+-					 (((md) & BIT(19)) >> 19))
++#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
++					 (((md) & BIT(13)) >> 13))
+ 
+ static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
+ 	/* EXTAL div	PLL1 mult	PLL3 mult	PLL0 mult */
+-	{ 1,		208,		106,		200	},
+ 	{ 1,		208,		88,		200	},
+-	{ 1,		156,		80,		150	},
+ 	{ 1,		156,		66,		150	},
+-	{ 2,		240,		122,		230	},
+ 	{ 2,		240,		102,		230	},
+-	{ 2,		208,		106,		200	},
+ 	{ 2,		208,		88,		200	},
+ };
+ 
 -- 
 2.7.4
