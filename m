@@ -1,72 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33663 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763594AbdDSNZO (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51564 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752369AbdDCJqA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 09:25:14 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 5/5] arm64: dts: r8a7795-salvator-x: Enable PWM
-Date: Wed, 19 Apr 2017 15:24:53 +0200
-Message-Id: <1492608293-12435-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 3 Apr 2017 05:46:00 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] ARM: dts: r8a7790: Correct parent of SSI[0-9] clocks
+Date: Mon,  3 Apr 2017 11:45:41 +0200
+Message-Id: <1491212743-6911-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491212743-6911-1-git-send-email-geert+renesas@glider.be>
+References: <1491212743-6911-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The SSI-ALL gate clock is located in between the P clock and the
+individual SSI[0-9] clocks, hence the former should be listed as their
+parent.
 
-This patch enables PWM{1,2} for Salvator-X board on R8A7795 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Fixes: bcde372254386872 ("ARM: shmobile: r8a7790: add MSTP10 support on DTSI")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index bf4674e..842b0dd 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -282,6 +282,18 @@
- 	};
- };
- 
-+&pwm1 {
-+	pinctrl-0 = <&pwm1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&pwm2 {
-+	pinctrl-0 = <&pwm2_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
-@@ -324,6 +336,16 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	pwm1_pins: pwm1 {
-+		groups = "pwm1_a", "pwm1_b";
-+		function = "pwm1";
-+	};
-+
-+	pwm2_pins: pwm2 {
-+		groups = "pwm2_a", "pwm2_b";
-+		function = "pwm2";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_a", "scif1_ctrl";
- 		function = "scif1";
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 534525665bb3a922..fe6b8c2a2d711536 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1443,8 +1443,11 @@
+ 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
+ 			clocks = <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
++				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
+ 				<&p_clk>,
+ 				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+ 				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
 -- 
 2.7.4
