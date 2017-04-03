@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:56370 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752013AbdDCJyR (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:57918 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbdDCJyH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 05:54:17 -0400
+        Mon, 3 Apr 2017 05:54:07 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -12,8 +12,8 @@ Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: [PATCH] ARM: dts: r8a7794: Add Z2 clock
-Date: Mon,  3 Apr 2017 11:54:14 +0200
-Message-Id: <1491213254-7532-1-git-send-email-geert+renesas@glider.be>
+Date: Mon,  3 Apr 2017 11:54:03 +0200
+Message-Id: <1491213243-7448-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
