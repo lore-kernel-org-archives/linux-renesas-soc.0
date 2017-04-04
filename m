@@ -1,77 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50692 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932134AbdDPXM2 (ORCPT
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:34791 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753759AbdDDQAj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Apr 2017 19:12:28 -0400
-Date: Mon, 17 Apr 2017 08:12:23 +0900
-From: Simon Horman <horms@verge.net.au>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>, mark.rutland@arm.com,
-        panand@redhat.com, ard.biesheuvel@linaro.org, geoff@infradead.org,
-        catalin.marinas@arm.com, kexec@lists.infradead.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        james.morse@arm.com, Mark Salter <msalter@redhat.com>,
-        bauerman@linux.vnet.ibm.com, sgoel@codeaurora.org,
-        dyoung@redhat.com, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: Fix power-of-ten vs. power-of-two prefixes in
- comments etc.
-Message-ID: <20170416231223.GA31693@verge.net.au>
-References: <20170328064831.15894-1-takahiro.akashi@linaro.org>
- <20170328065130.16019-2-takahiro.akashi@linaro.org>
- <1491207492.6020.8.camel@infradead.org>
- <20170404054144.GG16309@linaro.org>
- <e275e8c8b8d81d97b6a28b860820a27c.squirrel@twosheds.infradead.org>
- <20170404073504.GI16309@linaro.org>
- <1491291844.6218.25.camel@infradead.org>
- <20170404092604.GB14898@arm.com>
- <1492085938.20068.6.camel@infradead.org>
+        Tue, 4 Apr 2017 12:00:39 -0400
+Subject: Re: [PATCH] can: rcar_can: Do not print virtual addresses
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+References: <1491214286-14370-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <f7fd0378-1ae7-d3f0-6ccb-ea506815c9e8@pengutronix.de>
+Date: Tue, 4 Apr 2017 18:00:29 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1492085938.20068.6.camel@infradead.org>
+In-Reply-To: <1491214286-14370-1-git-send-email-geert+renesas@glider.be>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="BGrSe6rsiEw8spEUIxAkdoxNeO2IIs847"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[Cc linux-renesas-soc]
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--BGrSe6rsiEw8spEUIxAkdoxNeO2IIs847
+Content-Type: multipart/mixed; boundary="0gLcRcEWAh6o9jLb0wBAkiCLBgwKKDgHk";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfgang Grandegger <wg@grandegger.com>,
+ Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org
+Message-ID: <f7fd0378-1ae7-d3f0-6ccb-ea506815c9e8@pengutronix.de>
+Subject: Re: [PATCH] can: rcar_can: Do not print virtual addresses
+References: <1491214286-14370-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491214286-14370-1-git-send-email-geert+renesas@glider.be>
 
-On Thu, Apr 13, 2017 at 01:18:58PM +0100, David Woodhouse wrote:
-> Less important than in user-visible messages, but still good practice as
-> there's still no excuse for ARM64 code to look like it was written before
-> 1996.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+--0gLcRcEWAh6o9jLb0wBAkiCLBgwKKDgHk
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+On 04/03/2017 12:11 PM, Geert Uytterhoeven wrote:
+> During probe, the rcar_can driver prints:
+>=20
+>     rcar_can e6e80000.can: device registered (regs @ e08bc000, IRQ76)
+>=20
+> The "regs" value is a virtual address, exposing internal information,
+> hence stop printing it.  The (useful) physical address is already
+> printed as part of the device name.
+>=20
+> Fixes: fd1159318e55e901 ("can: add Renesas R-Car CAN driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I'd be happy to take the Renesas portions of this change if they were
-broken out into a separate patch. The reason I would prefer a separate
-patch is to avoid the possibility of conflicts, even trivial ones.
+Thanks, applied and included in pull request.
 
-> ---
->  arch/arm64/boot/dts/arm/juno-base.dtsi             |  2 +-
->  .../boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts      |  2 +-
->  arch/arm64/boot/dts/broadcom/ns2-xmc.dts           | 24 +++++++++++-----------
->  arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts  |  2 +-
->  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |  2 +-
->  arch/arm64/boot/dts/marvell/berlin4ct-dmp.dts      |  2 +-
->  arch/arm64/boot/dts/marvell/berlin4ct-stb.dts      |  2 +-
->  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  2 +-
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  2 +-
->  arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |  2 +-
->  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  2 +-
->  arch/arm64/include/asm/assembler.h                 |  2 +-
->  arch/arm64/include/asm/boot.h                      |  4 ++--
->  arch/arm64/include/asm/elf.h                       |  2 +-
->  arch/arm64/include/asm/fixmap.h                    |  6 +++---
->  arch/arm64/kernel/head.S                           |  8 ++++----
->  arch/arm64/kernel/hyp-stub.S                       |  2 +-
->  arch/arm64/kernel/kaslr.c                          | 14 ++++++-------
->  arch/arm64/kernel/module-plts.c                    |  2 +-
->  arch/arm64/kernel/vmlinux.lds.S                    | 18 ++++++++--------
->  arch/arm64/mm/mmu.c                                |  2 +-
->  arch/arm64/mm/proc.S                               |  2 +-
->  22 files changed, 53 insertions(+), 53 deletions(-)
+Mar
 
-...
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--0gLcRcEWAh6o9jLb0wBAkiCLBgwKKDgHk--
+
+--BGrSe6rsiEw8spEUIxAkdoxNeO2IIs847
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEE4bay/IylYqM/npjQHv7KIOw4HPYFAljjwx0ACgkQHv7KIOw4
+HPZhfgf/X1J5WvE27xyYb9VKkg/fC6ZFuFzD2xWtWk7m/PcEkTYpvaqQKzBNYrBD
+LdicbRvX2ttPMMTDNxq9CiiDUBv5xJi1KL9TUnCXQCf1VKsywbbZoulA/clS42l2
+xVlng9rxz1/16wljtQu2Yyp/n6vVxjwwc+wdGXxhfuhT1A6oRL1ocsE5qGK9N7Zq
+nWQmOJ9j/MQ10oRQknvoh+zxAIZfR3zGql3Xe3I91OjBbhCH/02eDq1sYb5OmE29
+VAf3K6My+96Fiq+tLEBj53Olms9q4QcqRDAXjY5Vx6TQ6c5t5Nk2LrGKmL1BxugD
++9M2STXRopX7uafnChxqJLENkdqBnw==
+=KzDu
+-----END PGP SIGNATURE-----
+
+--BGrSe6rsiEw8spEUIxAkdoxNeO2IIs847--
