@@ -1,48 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from slow1-d.mail.gandi.net ([217.70.178.86]:35907 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755595AbdDFOhN (ORCPT
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:12232 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753502AbdDDNYX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 10:37:13 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by slow1-d.mail.gandi.net (Postfix) with ESMTP id B49A54869CD
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Apr 2017 16:31:30 +0200 (CEST)
-Date: Thu, 6 Apr 2017 16:31:20 +0200
-From: jmondi <jacopo@jmondi.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: r8a7795: salvator-x: Add current sense
- amplifiers
-Message-ID: <20170406143120.GA22962@w540>
-References: <1490694282-9439-1-git-send-email-geert+renesas@glider.be>
- <20170328121633.GA20146@verge.net.au>
+        Tue, 4 Apr 2017 09:24:23 -0400
+Subject: Re: [PATCH v3] phy: rcar-gen3-usb2: fix implementation for runtime PM
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+References: <1489448261-4477-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <PS1PR06MB1692D44568A686A74DC7573AD80B0@PS1PR06MB1692.apcprd06.prod.outlook.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <3af8a3d4-9801-b015-ed83-7f0a190cb767@ti.com>
+Date: Tue, 4 Apr 2017 18:53:52 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20170328121633.GA20146@verge.net.au>
+In-Reply-To: <PS1PR06MB1692D44568A686A74DC7573AD80B0@PS1PR06MB1692.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert, Simon,
+Hi,
 
-On Tue, Mar 28, 2017 at 02:16:38PM +0200, Simon Horman wrote:
-> On Tue, Mar 28, 2017 at 11:44:42AM +0200, Geert Uytterhoeven wrote:
-> > Add device nodes for two Maxim max961x current sense amplifiers
-> > sensing the VDD_0.8V and DVFS_0.8V lines.
-> >
-> > Based on a patch for r8a7796-salvator-x.dts by Jacopo Mondi.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Pending acceptance of the maxim,max9611 DT bindings.
->
-> I have marked this as deferred accordingly.
+On Tuesday 04 April 2017 05:06 PM, Yoshihiro Shimoda wrote:
+> Hi Kishon,
+> 
+>> From: Yoshihiro Shimoda, Sent: Tuesday, March 14, 2017 8:38 AM
+>>
+>> This patch fixes an issue that this driver doesn't take care of the runtime
+>> PM. This code assumed that devm_phy_create() called pm_runtime_enable(dev),
+>> but it misunderstood the dev_phy_create()'s specification.
+>> This driver should call its own pm_runtime_enable() before dev_phy_create().
+>>
+>> Fixes: f3b5a8d9b50d ("phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver")
+>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> ---
+>>  Changes from v2:
+>>   - revise the commit log (s/pm_runtime_pm/pm_runtime_enable)
+>>
+>>  Changes from v1:
+>>   - revise the commit log (s/the own/its own/)
+>>   - simplify return code in probe().
+> 
+> I'm afraid but would you review this patch?
 
-Just to point out that in v5 I just sent out, bindings are different
-and this patch needs an update.
+sure, the patch looks good.
 
-Thanks
-  j
+merged now, thanks.
+
+-Kishon
