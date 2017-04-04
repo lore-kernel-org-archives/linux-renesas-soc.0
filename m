@@ -1,410 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54577 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933347AbdDGP6L (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34367 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752670AbdDDP1h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:11 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/4] arm64: dts: r8a7796: Add reset control properties
-Date: Fri,  7 Apr 2017 11:58:01 -0400
-Message-Id: <bec0948e810fffce38b9b886b0283a44eb025043.1491578743.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491578743.git.horms+renesas@verge.net.au>
-References: <cover.1491578743.git.horms+renesas@verge.net.au>
+        Tue, 4 Apr 2017 11:27:37 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqLLZsLzS4ONOexJADQXXXr9iquFUcVj8kX6AEVwM+x56A@mail.gmail.com>
+References: <20170322142754.30888-1-chris.brandt@renesas.com>
+ <20170322142754.30888-3-chris.brandt@renesas.com> <20170329012441.bxnkyqui24mymuvr@rob-hp-laptop>
+ <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com> <CAL_JsqLLZsLzS4ONOexJADQXXXr9iquFUcVj8kX6AEVwM+x56A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Apr 2017 17:27:35 +0200
+Message-ID: <CAMuHMdWs5ecdD6oCZ9ZO-mWkqwTJabHcn26TgfSwA4cGbp=9=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] rtc: Add rtc-sh
+To: Rob Herring <robh@kernel.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        RTCLINUX <rtc-linux@googlegroups.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Rob,
 
-Add properties to describe the reset topology for on-SoC devices:
-  - Add the "#reset-cells" property to the CPG/MSSR device node,
-  - Add resets and reset-names properties to the various device nodes.
+On Tue, Apr 4, 2017 at 4:29 PM, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Mar 29, 2017 at 1:49 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Mar 29, 2017 at 3:24 AM, Rob Herring <robh@kernel.org> wrote:
+>>> On Wed, Mar 22, 2017 at 10:27:49AM -0400, Chris Brandt wrote:
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
 
-This allows to reset SoC devices using the Reset Controller API.
+>>>> +Example:
+>>>> +rtc: rtc@fcff1000 {
+>>>> +     compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
+>>>> +     reg = <0xfcff1000 0x2e>;
+>>>> +     interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
+>>>> +                   GIC_SPI 277 IRQ_TYPE_EDGE_RISING
+>>>> +                   GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
+>>>> +     interrupt-names = "alarm", "period", "carry";
+>>>> +     clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
+>>>> +              <&rtc_x3_clk>, <&extal_clk>;
+>>>> +     clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
+>>>> +     power-domains = <&cpg_clocks>;
+>>>
+>>> Not documented.
+>>
+>> "power-domains" is a platform property.
+>>
+>> All hardware components need power.
+>> All synchronous hardware components need a clock.
+>> Most hardware components have a reset signal.
+>
+> And we document clocks and reset for every binding.
 
-Note that all resets added match the corresponding module clocks.
+Then we'll have to add lots of them ;-)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 46 ++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Usually these are documented only if the user (the driver) cares about them,
+and/or if there are multiple of the same type. E.g.
+  - The driver needs to know or control a clock frequency,
+  - The driver needs to enable/disable a clock,
+  - The driver needs to know or control one or more voltages,
+  - ...
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index a90abf14dc4e..2ec1ed5f4991 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -155,6 +155,7 @@
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
- 		};
- 
- 		timer {
-@@ -175,6 +176,7 @@
- 			reg = <0 0xe6020000 0 0x0c>;
- 			clocks = <&cpg CPG_MOD 402>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
- 			status = "disabled";
- 		};
- 
-@@ -190,6 +192,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 912>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
- 		};
- 
- 		gpio1: gpio@e6051000 {
-@@ -204,6 +207,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 911>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
- 		};
- 
- 		gpio2: gpio@e6052000 {
-@@ -218,6 +222,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 910>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
- 		};
- 
- 		gpio3: gpio@e6053000 {
-@@ -232,6 +237,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 909>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 909>;
- 		};
- 
- 		gpio4: gpio@e6054000 {
-@@ -246,6 +252,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 908>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 908>;
- 		};
- 
- 		gpio5: gpio@e6055000 {
-@@ -260,6 +267,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 907>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 907>;
- 		};
- 
- 		gpio6: gpio@e6055400 {
-@@ -274,6 +282,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 906>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 906>;
- 		};
- 
- 		gpio7: gpio@e6055800 {
-@@ -288,6 +297,7 @@
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 905>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 905>;
- 		};
- 
- 		pfc: pin-controller@e6060000 {
-@@ -322,6 +332,7 @@
- 			clock-names = "extal", "extalr";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
- 
- 		rst: reset-controller@e6160000 {
-@@ -350,6 +361,7 @@
- 			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 926>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 926>;
- 			status = "disabled";
- 		};
- 
-@@ -362,6 +374,7 @@
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 931>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 931>;
- 			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
- 			       <&dmac2 0x91>, <&dmac2 0x90>;
- 			dma-names = "tx", "rx", "tx", "rx";
-@@ -378,6 +391,7 @@
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 930>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 930>;
- 			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
- 			       <&dmac2 0x93>, <&dmac2 0x92>;
- 			dma-names = "tx", "rx", "tx", "rx";
-@@ -394,6 +408,7 @@
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 929>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 929>;
- 			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
- 			       <&dmac2 0x95>, <&dmac2 0x94>;
- 			dma-names = "tx", "rx", "tx", "rx";
-@@ -410,6 +425,7 @@
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 928>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 928>;
- 			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
- 			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
-@@ -425,6 +441,7 @@
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 927>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 927>;
- 			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
- 			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
-@@ -440,6 +457,7 @@
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 919>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 919>;
- 			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
- 			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
-@@ -455,6 +473,7 @@
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 918>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 918>;
- 			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
- 			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
-@@ -473,6 +492,7 @@
- 			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
- 			assigned-clock-rates = <40000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 916>;
- 			status = "disabled";
- 		};
- 
-@@ -488,6 +508,7 @@
- 			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
- 			assigned-clock-rates = <40000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 915>;
- 			status = "disabled";
- 		};
- 
-@@ -504,6 +525,7 @@
- 			assigned-clocks = <&cpg CPG_CORE R8A7796_CLK_CANFD>;
- 			assigned-clock-rates = <40000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 914>;
- 			status = "disabled";
- 
- 			channel0 {
-@@ -553,6 +575,7 @@
- 					  "ch24";
- 			clocks = <&cpg CPG_MOD 812>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 812>;
- 			phy-mode = "rgmii-txid";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -573,6 +596,7 @@
- 			       <&dmac2 0x31>, <&dmac2 0x30>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 520>;
- 			status = "disabled";
- 		};
- 
-@@ -590,6 +614,7 @@
- 			       <&dmac2 0x33>, <&dmac2 0x32>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 519>;
- 			status = "disabled";
- 		};
- 
-@@ -607,6 +632,7 @@
- 			       <&dmac2 0x35>, <&dmac2 0x34>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 518>;
- 			status = "disabled";
- 		};
- 
-@@ -623,6 +649,7 @@
- 			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 517>;
- 			status = "disabled";
- 		};
- 
-@@ -639,6 +666,7 @@
- 			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 516>;
- 			status = "disabled";
- 		};
- 
-@@ -655,6 +683,7 @@
- 			       <&dmac2 0x51>, <&dmac2 0x50>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
- 			status = "disabled";
- 		};
- 
-@@ -671,6 +700,7 @@
- 			       <&dmac2 0x53>, <&dmac2 0x52>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
- 			status = "disabled";
- 		};
- 
-@@ -684,6 +714,7 @@
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 310>;
- 			status = "disabled";
- 		};
- 
-@@ -699,6 +730,7 @@
- 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
- 			status = "disabled";
- 		};
- 
-@@ -714,6 +746,7 @@
- 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
- 
-@@ -730,6 +763,7 @@
- 			       <&dmac2 0x5b>, <&dmac2 0x5a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
- 			status = "disabled";
- 		};
- 
-@@ -743,6 +777,7 @@
- 			       <&dmac2 0x41>, <&dmac2 0x40>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 211>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -758,6 +793,7 @@
- 			       <&dmac2 0x43>, <&dmac2 0x42>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 210>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -772,6 +808,7 @@
- 			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 209>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -786,6 +823,7 @@
- 			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 208>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -820,6 +858,7 @@
- 			clocks = <&cpg CPG_MOD 219>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
- 		};
-@@ -853,6 +892,7 @@
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
- 		};
-@@ -886,6 +926,7 @@
- 			clocks = <&cpg CPG_MOD 217>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
- 		};
-@@ -897,6 +938,7 @@
- 			clocks = <&cpg CPG_MOD 314>;
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
- 			status = "disabled";
- 		};
- 
-@@ -907,6 +949,7 @@
- 			clocks = <&cpg CPG_MOD 313>;
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 313>;
- 			status = "disabled";
- 		};
- 
-@@ -917,6 +960,7 @@
- 			clocks = <&cpg CPG_MOD 312>;
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 312>;
- 			status = "disabled";
- 		};
- 
-@@ -927,6 +971,7 @@
- 			clocks = <&cpg CPG_MOD 311>;
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 311>;
- 			status = "disabled";
- 		};
- 
-@@ -940,6 +985,7 @@
- 				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 522>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
- 			#thermal-sensor-cells = <1>;
- 			status = "okay";
- 		};
--- 
-2.7.0.rc3.207.g0ac5344
+It's not that devices without documented regulators, power-domains, or clocks
+properties no longer consume power or don't run from a clock.  These are just
+not described in DT, as deemed unimportant.  But on some platforms, they may
+become important.
+
+>> Whether these are exposed and can be controlled depends on the platform/SoC.
+>> So documenting them in each and every device binding looks overkill to me.
+>> I think this is something to be addressed by devicetree-specification (which
+>> doesn't handle clocks, power-domains, resets yet).
+>
+> It's a question of validation. How do I validate power-domains is a
+> valid property for a given compatible? What if it is required, but not
+
+With platform property, I mean that it depends on the platform, not on the
+compatible value of the device.
+
+For a generic compatible value ("renesas,sh-srtc") you cannot know, as
+it depends on the actual SoC the (same) RTC device is part of.
+
+For an SoC-specific compatible value ("renesas,r7s72100-rtc"), you could know
+from the compatible value (an r7s72100 SoC must have r7s72100 clocks, and the
+r7s72100 clock domain, cfr.
+Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt).
+However. the SoC-specific compatible values exist only as a workaround
+for not knowing
+the exact version of the IP cores.
+
+> present? Any node can have it? So it is valid for memory and chosen
+> nodes, an i2c device, an LCD panel, etc?
+
+It's not valid for a chosen node ;-)
+
+It can be valid for memory (or the memory-controller; oops, the memory node is
+not a child of the memory-controller node), i2c devices, LCD panels, ...
+depending on the platform.
+
+Consider e.g. i2c devices. I can add a GPIO-controlled MOSFET bank to my board,
+to enable power to individual i2c devices, and abstract that as a
+power-controller in DT.  Suddenly I have to add power-domains properties to the
+individual i2c device nodes, while the i2c devices itself haven't changed, and
+thus keep the same compatible values.
+Should I now document the power-domains property in the i2c devices' DT binding
+documents?
+
+On Linux, the drivers won't care, as the platform-specific things are handled
+transparently by Runtime PM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
