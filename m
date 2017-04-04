@@ -1,92 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:57620 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S970304AbdDTR7L (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57006 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753798AbdDDRRc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 13:59:11 -0400
-Date: Thu, 20 Apr 2017 18:59:06 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v5] arm64: Add support for DMA_ATTR_FORCE_CONTIGUOUS to
- IOMMU
-Message-ID: <20170420175905.GB755@e104818-lin.cambridge.arm.com>
-References: <1488908612-22522-1-git-send-email-geert+renesas@glider.be>
+        Tue, 4 Apr 2017 13:17:32 -0400
+Date: Tue, 4 Apr 2017 13:17:28 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: chris.brandt@renesas.com, geert@linux-m68k.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, rtc-linux@googlegroups.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm: dts: genmai: Enable rtc and rtc_x1 clock
+Message-ID: <20170404171728.GB14047@verge.net.au>
+References: <1491235398-26549-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1488908612-22522-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491235398-26549-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Catching up with these threads, so replying to a patch I already
-applied.
+On Mon, Apr 03, 2017 at 06:03:18PM +0200, Jacopo Mondi wrote:
+> Enable the 32.768 kHz RTC_X1 clock by setting the frequency value to
+> non-zero and enable the realtime clock.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> 
+> This patch depends on Chris Brandt's series
+> "rtc: Reuse rtc-sh driver to support RZ/A1"
+> Please queue this on top of that.
 
-On Tue, Mar 07, 2017 at 06:43:32PM +0100, Geert Uytterhoeven wrote:
-> --- a/arch/arm64/mm/dma-mapping.c
-> +++ b/arch/arm64/mm/dma-mapping.c
-> @@ -584,20 +584,7 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
->  	 */
->  	gfp |= __GFP_ZERO;
->  
-> -	if (gfpflags_allow_blocking(gfp)) {
-> -		struct page **pages;
-> -		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-> -
-> -		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
-> -					handle, flush_page);
-> -		if (!pages)
-> -			return NULL;
-> -
-> -		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
-> -					      __builtin_return_address(0));
-> -		if (!addr)
-> -			iommu_dma_free(dev, pages, iosize, handle);
-> -	} else {
-> +	if (!gfpflags_allow_blocking(gfp)) {
->  		struct page *page;
->  		/*
->  		 * In atomic context we can't remap anything, so we'll only
-> @@ -621,6 +608,45 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
->  				__free_from_pool(addr, size);
->  			addr = NULL;
->  		}
-> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
-> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
-> +		struct page *page;
-> +
-> +		page = dma_alloc_from_contiguous(dev, size >> PAGE_SHIFT,
-> +						 get_order(size), gfp);
-> +		if (!page)
-> +			return NULL;
-> +
-> +		*handle = iommu_dma_map_page(dev, page, 0, iosize, ioprot);
-> +		if (iommu_dma_mapping_error(dev, *handle)) {
-> +			dma_release_from_contiguous(dev, page,
-> +						    size >> PAGE_SHIFT);
-> +			return NULL;
-> +		}
-> +		if (!coherent)
-> +			__dma_flush_area(page_to_virt(page), iosize);
-> +
-> +		addr = dma_common_contiguous_remap(page, size, VM_USERMAP,
-> +						   prot,
-> +						   __builtin_return_address(0));
-
-Do we need to call dma_common_pages_remap() if the allocation is
-coherent? In the __dma_alloc() case we don't do it but simply use
-page_address(page) as returned by __dma_alloc_coherent().
-
-(note that my comment is not meant to fix the issue reported by Andrzej
-Hajda but I just spotted it)
-
--- 
-Catalin
+Thanks, done.
