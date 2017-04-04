@@ -1,59 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44942 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44910 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752268AbdDDMm7 (ORCPT
+        with ESMTP id S1751031AbdDDMiE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 08:42:59 -0400
-Date: Tue, 4 Apr 2017 13:42:52 +0100
+        Tue, 4 Apr 2017 08:38:04 -0400
+Date: Tue, 4 Apr 2017 13:37:53 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Takashi Iwai <tiwai@suse.de>
 Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux-ALSA <alsa-devel@alsa-project.org>,
         Lars-Peter <lars@metafoo.de>, Simon <horms@verge.net.au>
-Message-ID: <20170404124252.zyty3chncs72nhg5@sirena.org.uk>
+Message-ID: <20170404123753.7tqnrrea4cce4tcp@sirena.org.uk>
 References: <87vaqsajo0.wl%kuninori.morimoto.gx@renesas.com>
  <20170330215334.zwashvjerpfnkk3u@sirena.org.uk>
  <s5hefxdhop9.wl-tiwai@suse.de>
- <878tninh21.wl%kuninori.morimoto.gx@renesas.com>
- <s5hk272dmcv.wl-tiwai@suse.de>
- <87fuhpnbnu.wl%kuninori.morimoto.gx@renesas.com>
- <s5h60il28fd.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ojjt72b7z3akkk3e"
+        protocol="application/pgp-signature"; boundary="pp2snqjbdcmn2sam"
 Content-Disposition: inline
-In-Reply-To: <s5h60il28fd.wl-tiwai@suse.de>
+In-Reply-To: <s5hefxdhop9.wl-tiwai@suse.de>
 Subject: Re: [alsa-devel] [RFC][PATCH] ASoC: soc-core: verify Sound Card
  normality
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---ojjt72b7z3akkk3e
+--pp2snqjbdcmn2sam
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Apr 03, 2017 at 10:37:42AM +0200, Takashi Iwai wrote:
+On Fri, Mar 31, 2017 at 09:48:02AM +0200, Takashi Iwai wrote:
+> Mark Brown wrote:
 
-> Ah, I see that snd_soc_unregister_card() has the check of
-> card->instantiated, so it should be fine to call multiple times.
+> > flag directly when we see a problem call a function to do it.  That way
+> > if we want to improve things in the future we can do that without having
+> > to update the callers again.
 
-Yeah, we'd run into that often enough that it's worth handling nicely.
+> BTW, ALSA core has snd_card_disconnect() that does this kind of
+> shut-up from user-space.  It was introduced for hot-unplug, but
+> basically unbinding is the software hot-unplug.  So, if ASoC won't
+> rebind a once-unbound component, you can simply call
+> snd_card_disconnect() at the component unbinding time to assure that
+> no further user actions can be done.
 
---ojjt72b7z3akkk3e
+Ah, that's exactly the sort of improvement I was thinking of!
+
+--pp2snqjbdcmn2sam
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljjlMsACgkQJNaLcl1U
-h9CWGQf/fqL4Q4YT/S0g7io1ahR0nxtm37ALhMi3WKP3WZ78+x/ucxK6RyG7UOHz
-prgbqUeoehWZkmT1Aif9+U0ZPCwRnrGeFYVLQRY1bF8H9UFFjJMTz6KYtWa35AEW
-iJPcmxyuqrQw70+KnYZ6C5xFOXcjCB39M7PO45K8/W/ihdYaHuYXj8hOcErmuEGw
-ZTXru54C79usedy6yR+SoKCe/JEgFRNx0MKgQxddj7i39NV9CBHxwdiYAVmvY0sB
-tMgpbr6oN2fnD8C09I9g/Ro71Q0EmyCjdT+zmeB8haJF38G25KxsvHR8vTjzkXJP
-iYFU++WGJBFjkTci7JpGFZbbbK68pg==
-=KlIR
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljjk6AACgkQJNaLcl1U
+h9D9QQf/d/WsUkZ1N5jRzx4F+9ERtQ8Ca8Ko8b3xOH0DuR3FKeVWcDmeeK9ATyK3
+cs/M03P70KTSQdSVICogbcnq2DUYczpmPJ6KIaQNhJPS0HjdcpB+A8iqTRsWTj8j
+oLAjy4LSBJp5XtgC5IWoqqqVYdQ0WEhh7IwJtpnZ5j1B+mc5dSkMqncypdBgJW68
+qQXkF6dVNvjBoRanTwRX8JYUeaqVPykTc0jATPLISyxdPFk7n/Qwk5TKFXrp7ci5
+kWkJHcR7A+j9DpGkmsPv1Mt+xqid+bNxy9Rne0j7bdwcVQLiKPtNZqMjXUYfm6qU
+XAYzAMV/ebV9FyiSpzLHIghZc2K9cA==
+=xO01
 -----END PGP SIGNATURE-----
 
---ojjt72b7z3akkk3e--
+--pp2snqjbdcmn2sam--
