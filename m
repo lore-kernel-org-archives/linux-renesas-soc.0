@@ -1,60 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59395 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753758AbdDGSOW (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34260 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753284AbdDDLKW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 14:14:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Tue, 4 Apr 2017 07:10:22 -0400
+Received: by mail-lf0-f49.google.com with SMTP id z15so90640636lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Apr 2017 04:10:22 -0700 (PDT)
+Date: Tue, 4 Apr 2017 13:10:19 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven /0000-* <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Sysc Updates for v4.12
-Date: Fri,  7 Apr 2017 14:14:07 -0400
-Message-Id: <cover.1491588035.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ARM: dts: koelsch: Correct clock frequency of X2 DU
+ clock input
+Message-ID: <20170404111019.GF18945@bigcity.dyn.berto.se>
+References: <1491213319-7668-1-git-send-email-geert+renesas@glider.be>
+ <2246751.IOz92zzvZ6@avalon>
+ <CAMuHMdXqEhjzo5PH3a7JyUsuCBpnDGibGabD5k5oVhZY=FkRow@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXqEhjzo5PH3a7JyUsuCBpnDGibGabD5k5oVhZY=FkRow@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Geert,
 
-Please consider these Renesas ARM based SoC sysc updates for v4.12.
+On 2017-04-04 12:31:39 +0200, Geert Uytterhoeven wrote:
+> Hi Laurent,
+> 
+> On Tue, Apr 4, 2017 at 12:05 PM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > On Monday 03 Apr 2017 11:55:19 Geert Uytterhoeven wrote:
+> >> The X2 crystal oscillator on the Koelsch development board provides a
+> >> 74.25 MHz clock, not a 148.5 MHz clock.
+> >>
+> >> Fixes: cd21cb46e14aae3a ("ARM: shmobile: koelsch: Add DU external pixel
+> >> clocks to DT") Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> Confirmed by schematics, user manual, and physical inspection of 2
+> >> Koelsch instances (my scope has not enough bandwidth to measure the
+> >> actual frequency).
+> >
+> > Stupid question, have you tested the corresponding (HDMI) DU output ? If so,
+> 
+> No I haven't.
+> 
+> Niklas, can you please fire up your display? Thanks!
 
-This pull request is based on the soc-device-match-tag2 tag of
-Geert Uytterhoeven's renesas-drivers tree which he has already
-sent a pull-request for.
+Console during boot works and
 
+modetest -M rcar-du -s 46:1920x1080-60Hz
+modetest -M rcar-du -s 46:1280x720-60Hz
+modetest -M rcar-du -s 46:720x480-60Hz
 
-The following changes since commit 6e12db376b60b7158e4e6006af60566f8c68f7ab:
+Produce stable test patterns.
 
-  base: soc: Allow early registration of a single SoC device (2017-03-29 21:43:26 +0200)
+Tested-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-are available in the git repository at:
+> 
+> > Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> Thanks ;-)
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-sysc-for-v4.12
-
-for you to fetch changes up to fcb87087261e1be51b4c03677f39246bdc312b1c:
-
-  soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0 (2017-04-07 13:53:41 -0400)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Sysc Updates for v4.12
-
-* Add support for R-Car H3 ES2.0
-
-----------------------------------------------------------------
-Geert Uytterhoeven (3):
-      soc: renesas: Register SoC device early
-      soc: renesas: rcar-sysc: Add support for fixing up power area tables
-      soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
-
- drivers/soc/renesas/r8a7795-sysc.c       | 26 ++++++++++++++++++++++++--
- drivers/soc/renesas/rcar-sysc.c          | 25 ++++++++++++++++++++++++-
- drivers/soc/renesas/rcar-sysc.h          | 10 ++++++++++
- drivers/soc/renesas/renesas-soc.c        |  2 +-
- include/dt-bindings/power/r8a7795-sysc.h |  2 +-
- 5 files changed, 60 insertions(+), 5 deletions(-)
+-- 
+Regards,
+Niklas S�derlund
