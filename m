@@ -1,60 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36818 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970769AbdDTPmd (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44942 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752268AbdDDMm7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 11:42:33 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH] iio: adc: Drop if clock from Renesas GyroADC bindings
-Date: Thu, 20 Apr 2017 17:42:16 +0200
-Message-Id: <20170420154216.32709-1-marek.vasut+renesas@gmail.com>
+        Tue, 4 Apr 2017 08:42:59 -0400
+Date: Tue, 4 Apr 2017 13:42:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Lars-Peter <lars@metafoo.de>, Simon <horms@verge.net.au>
+Message-ID: <20170404124252.zyty3chncs72nhg5@sirena.org.uk>
+References: <87vaqsajo0.wl%kuninori.morimoto.gx@renesas.com>
+ <20170330215334.zwashvjerpfnkk3u@sirena.org.uk>
+ <s5hefxdhop9.wl-tiwai@suse.de>
+ <878tninh21.wl%kuninori.morimoto.gx@renesas.com>
+ <s5hk272dmcv.wl-tiwai@suse.de>
+ <87fuhpnbnu.wl%kuninori.morimoto.gx@renesas.com>
+ <s5h60il28fd.wl-tiwai@suse.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ojjt72b7z3akkk3e"
+Content-Disposition: inline
+In-Reply-To: <s5h60il28fd.wl-tiwai@suse.de>
+Subject: Re: [alsa-devel] [RFC][PATCH] ASoC: soc-core: verify Sound Card
+ normality
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The "if" interface clock speed is actually derived from the "fck"
-block clock, as in the hardware they are the same clock. Drop the
-incorrect second "if" clock and retain only the "fck" clock.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
----
- Documentation/devicetree/bindings/iio/adc/renesas,gyroadc.txt | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+--ojjt72b7z3akkk3e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,gyroadc.txt b/Documentation/devicetree/bindings/iio/adc/renesas,gyroadc.txt
-index f5b0adae6010..2a62908a774a 100644
---- a/Documentation/devicetree/bindings/iio/adc/renesas,gyroadc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/renesas,gyroadc.txt
-@@ -16,8 +16,7 @@ Required properties:
- - clocks:	References to all the clocks specified in the clock-names
- 		property as specified in
- 		Documentation/devicetree/bindings/clock/clock-bindings.txt.
--- clock-names:	Shall contain "fck" and "if". The "fck" is the GyroADC block
--		clock, the "if" is the interface clock.
-+- clock-names:	Shall contain "fck". The "fck" is the GyroADC block clock.
- - power-domains: Must contain a reference to the PM domain, if available.
- - #address-cells: Should be <1> (setting for the subnodes) for all ADCs
- 		except for "fujitsu,mb88101a". Should be <0> (setting for
-@@ -75,8 +74,8 @@ Example:
- 	adc@e6e54000 {
- 		compatible = "renesas,r8a7791-gyroadc", "renesas,rcar-gyroadc";
- 		reg = <0 0xe6e54000 0 64>;
--		clocks = <&mstp9_clks R8A7791_CLK_GYROADC>, <&clk_65m>;
--		clock-names = "fck", "if";
-+		clocks = <&mstp9_clks R8A7791_CLK_GYROADC>;
-+		clock-names = "fck";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 
- 		pinctrl-0 = <&adc_pins>;
--- 
-2.11.0
+On Mon, Apr 03, 2017 at 10:37:42AM +0200, Takashi Iwai wrote:
+
+> Ah, I see that snd_soc_unregister_card() has the check of
+> card->instantiated, so it should be fine to call multiple times.
+
+Yeah, we'd run into that often enough that it's worth handling nicely.
+
+--ojjt72b7z3akkk3e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljjlMsACgkQJNaLcl1U
+h9CWGQf/fqL4Q4YT/S0g7io1ahR0nxtm37ALhMi3WKP3WZ78+x/ucxK6RyG7UOHz
+prgbqUeoehWZkmT1Aif9+U0ZPCwRnrGeFYVLQRY1bF8H9UFFjJMTz6KYtWa35AEW
+iJPcmxyuqrQw70+KnYZ6C5xFOXcjCB39M7PO45K8/W/ihdYaHuYXj8hOcErmuEGw
+ZTXru54C79usedy6yR+SoKCe/JEgFRNx0MKgQxddj7i39NV9CBHxwdiYAVmvY0sB
+tMgpbr6oN2fnD8C09I9g/Ro71Q0EmyCjdT+zmeB8haJF38G25KxsvHR8vTjzkXJP
+iYFU++WGJBFjkTci7JpGFZbbbK68pg==
+=KlIR
+-----END PGP SIGNATURE-----
+
+--ojjt72b7z3akkk3e--
