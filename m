@@ -1,52 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36361 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751220AbdDEHWg (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:33984 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754090AbdDDUWH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 03:22:36 -0400
-MIME-Version: 1.0
-In-Reply-To: <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
-References: <20170404202025.306556752@cogentembedded.com> <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Apr 2017 09:22:34 +0200
-Message-ID: <CAMuHMdX6-CEL6c8say8VkRkvhXCSBPCTDZzpqRJTbTjeBXpP9w@mail.gmail.com>
+        Tue, 4 Apr 2017 16:22:07 -0400
+Received: by mail-lf0-f50.google.com with SMTP id z15so99477503lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Apr 2017 13:22:07 -0700 (PDT)
 Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: swap ATA signals
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20170404202025.306556752@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
+Date: Tue, 4 Apr 2017 23:22:03 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170404202025.306556752@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On 04/04/2017 11:20 PM, Sergei Shtylyov wrote:
 
-On Tue, Apr 4, 2017 at 10:22 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 04/04/2017 11:20 PM, Sergei Shtylyov wrote:
->> All R8A7794 manuals  I have here (0.50 and 1.10) agree that the PFC driver
->> has ATAG0#  and ATAWR# signals in IPSR12 swapped -- fix this.
+> All R8A7794 manuals  I have here (0.50 and 1.10) agree that the PFC driver
+> has ATAG0#  and ATAWR# signals in IPSR12 swapped -- fix this.
 
-Thanks!
+    Oops, ATAWR0#. Do I need to resend?
 
->    Oops, ATAWR0#. Do I need to resend?
+> Fixes: 43c4436e2f18 ("pinctrl: sh-pfc: add R8A7794 PFC support")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
 
-No, I can handle that.
-
->> Fixes: 43c4436e2f18 ("pinctrl: sh-pfc: add R8A7794 PFC support")
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
