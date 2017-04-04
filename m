@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34367 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752670AbdDDP1h (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:51086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753017AbdDDO3w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 11:27:37 -0400
+        Tue, 4 Apr 2017 10:29:52 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLLZsLzS4ONOexJADQXXXr9iquFUcVj8kX6AEVwM+x56A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
 References: <20170322142754.30888-1-chris.brandt@renesas.com>
  <20170322142754.30888-3-chris.brandt@renesas.com> <20170329012441.bxnkyqui24mymuvr@rob-hp-laptop>
- <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com> <CAL_JsqLLZsLzS4ONOexJADQXXXr9iquFUcVj8kX6AEVwM+x56A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Apr 2017 17:27:35 +0200
-Message-ID: <CAMuHMdWs5ecdD6oCZ9ZO-mWkqwTJabHcn26TgfSwA4cGbp=9=Q@mail.gmail.com>
+ <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 4 Apr 2017 09:29:27 -0500
+Message-ID: <CAL_JsqLLZsLzS4ONOexJADQXXXr9iquFUcVj8kX6AEVwM+x56A@mail.gmail.com>
 Subject: Re: [PATCH v2 2/7] rtc: Add rtc-sh
-To: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Chris Brandt <chris.brandt@renesas.com>,
         Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@free-electrons.com>,
@@ -26,102 +26,66 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
-
-On Tue, Apr 4, 2017 at 4:29 PM, Rob Herring <robh@kernel.org> wrote:
-> On Wed, Mar 29, 2017 at 1:49 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, Mar 29, 2017 at 3:24 AM, Rob Herring <robh@kernel.org> wrote:
->>> On Wed, Mar 22, 2017 at 10:27:49AM -0400, Chris Brandt wrote:
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
-
->>>> +Example:
->>>> +rtc: rtc@fcff1000 {
->>>> +     compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
->>>> +     reg = <0xfcff1000 0x2e>;
->>>> +     interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
->>>> +                   GIC_SPI 277 IRQ_TYPE_EDGE_RISING
->>>> +                   GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
->>>> +     interrupt-names = "alarm", "period", "carry";
->>>> +     clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
->>>> +              <&rtc_x3_clk>, <&extal_clk>;
->>>> +     clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
->>>> +     power-domains = <&cpg_clocks>;
->>>
->>> Not documented.
->>
->> "power-domains" is a platform property.
->>
->> All hardware components need power.
->> All synchronous hardware components need a clock.
->> Most hardware components have a reset signal.
+On Wed, Mar 29, 2017 at 1:49 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Rob,
 >
-> And we document clocks and reset for every binding.
-
-Then we'll have to add lots of them ;-)
-
-Usually these are documented only if the user (the driver) cares about them,
-and/or if there are multiple of the same type. E.g.
-  - The driver needs to know or control a clock frequency,
-  - The driver needs to enable/disable a clock,
-  - The driver needs to know or control one or more voltages,
-  - ...
-
-It's not that devices without documented regulators, power-domains, or clocks
-properties no longer consume power or don't run from a clock.  These are just
-not described in DT, as deemed unimportant.  But on some platforms, they may
-become important.
-
->> Whether these are exposed and can be controlled depends on the platform/SoC.
->> So documenting them in each and every device binding looks overkill to me.
->> I think this is something to be addressed by devicetree-specification (which
->> doesn't handle clocks, power-domains, resets yet).
+> On Wed, Mar 29, 2017 at 3:24 AM, Rob Herring <robh@kernel.org> wrote:
+>> On Wed, Mar 22, 2017 at 10:27:49AM -0400, Chris Brandt wrote:
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
+>>> @@ -0,0 +1,29 @@
+>>> +* Real Time Clock for Renesas SH and ARM SoCs
+>>> +
+>>> +Required properties:
+>>> +- compatible: Should be "renesas,r7s72100-rtc" and "renesas,sh-rtc" as a
+>>> +  fallback.
+>>> +- reg: physical base address and length of memory mapped region.
+>>> +- interrupts: 3 interrupts for alarm, period, and carry.
+>>> +- interrupt-names: The interrupts should be labeled as "alarm", "period", and
+>>> +  "carry".
+>>> +- clocks: The functional clock source for the RTC controller must be listed
+>>> +  first (if exists). Additionally, potential clock counting sources are to be
+>>> +  listed.
+>>> +- clock-names: The functional clock must be labeled as "fck". Other clocks
+>>> +  may be named in accordance to the SoC hardware manuals.
+>>> +
+>>> +
+>>> +Example:
+>>> +rtc: rtc@fcff1000 {
+>>> +     compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
+>>> +     reg = <0xfcff1000 0x2e>;
+>>> +     interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
+>>> +                   GIC_SPI 277 IRQ_TYPE_EDGE_RISING
+>>> +                   GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
+>>> +     interrupt-names = "alarm", "period", "carry";
+>>> +     clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
+>>> +              <&rtc_x3_clk>, <&extal_clk>;
+>>> +     clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
+>>> +     power-domains = <&cpg_clocks>;
+>>
+>> Not documented.
 >
-> It's a question of validation. How do I validate power-domains is a
-> valid property for a given compatible? What if it is required, but not
+> "power-domains" is a platform property.
+>
+> All hardware components need power.
+> All synchronous hardware components need a clock.
+> Most hardware components have a reset signal.
 
-With platform property, I mean that it depends on the platform, not on the
-compatible value of the device.
+And we document clocks and reset for every binding.
 
-For a generic compatible value ("renesas,sh-srtc") you cannot know, as
-it depends on the actual SoC the (same) RTC device is part of.
+> Whether these are exposed and can be controlled depends on the platform/SoC.
+> So documenting them in each and every device binding looks overkill to me.
+> I think this is something to be addressed by devicetree-specification (which
+> doesn't handle clocks, power-domains, resets yet).
 
-For an SoC-specific compatible value ("renesas,r7s72100-rtc"), you could know
-from the compatible value (an r7s72100 SoC must have r7s72100 clocks, and the
-r7s72100 clock domain, cfr.
-Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt).
-However. the SoC-specific compatible values exist only as a workaround
-for not knowing
-the exact version of the IP cores.
+It's a question of validation. How do I validate power-domains is a
+valid property for a given compatible? What if it is required, but not
+present? Any node can have it? So it is valid for memory and chosen
+nodes, an i2c device, an LCD panel, etc?
 
-> present? Any node can have it? So it is valid for memory and chosen
-> nodes, an i2c device, an LCD panel, etc?
+> If you prefer, the property can be removed from the example, though.
 
-It's not valid for a chosen node ;-)
+If it is valid, then I don't want it removed.
 
-It can be valid for memory (or the memory-controller; oops, the memory node is
-not a child of the memory-controller node), i2c devices, LCD panels, ...
-depending on the platform.
-
-Consider e.g. i2c devices. I can add a GPIO-controlled MOSFET bank to my board,
-to enable power to individual i2c devices, and abstract that as a
-power-controller in DT.  Suddenly I have to add power-domains properties to the
-individual i2c device nodes, while the i2c devices itself haven't changed, and
-thus keep the same compatible values.
-Should I now document the power-domains property in the i2c devices' DT binding
-documents?
-
-On Linux, the drivers won't care, as the platform-specific things are handled
-transparently by Runtime PM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
