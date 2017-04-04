@@ -1,47 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:33055 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968672AbdDSRsu (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34052 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbdDDGaz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:48:50 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        Tue, 4 Apr 2017 02:30:55 -0400
+Received: by mail-wr0-f195.google.com with SMTP id w43so39223546wrb.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Apr 2017 23:30:55 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170403112206.GD4683@8bytes.org>
+References: <149069355375.22662.10367253365715059744.sendpatchset@little-apple>
+ <20170403112206.GD4683@8bytes.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 4 Apr 2017 15:30:53 +0900
+Message-ID: <CANqRtoSraH-tnXYNdpvO9jnZEJwMtOienq-bXsXbZSnpmiDFKg@mail.gmail.com>
+Subject: Re: [PATCH 00/03] arm64: dts: r8a7795: IPMMU upstream USB integration
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add HS-USB clock
-Date: Thu, 20 Apr 2017 02:46:37 +0900
-Message-Id: <1492624001-3758-17-git-send-email-ykaneko0929@gmail.com>
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Hi Joerg,
 
-This patch adds HS-USB-IF clock for R8A7796 SoC.
+On Mon, Apr 3, 2017 at 8:22 PM, Joerg Roedel <joro@8bytes.org> wrote:
+> On Tue, Mar 28, 2017 at 06:32:33PM +0900, Magnus Damm wrote:
+>> The recommended IPMMU driver patch stack consists of the following series:
+>>  [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
+>>  [PATCH v3 00/09] iommu/ipmmu-vmsa: r8a7795 support V3
+>
+> These two patch-sets have unaddressed comments. Please address these and
+> get a Reviewed-by from Robin on the re-posts.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+Thanks, yes will do!
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Best,
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 1e16b17..c5523aa 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -171,6 +171,7 @@ enum clk_ids {
- 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
- 	DEF_MOD("ehci1",		 702,	R8A7796_CLK_S3D4),
- 	DEF_MOD("ehci0",		 703,	R8A7796_CLK_S3D4),
-+	DEF_MOD("hsusb",		 704,	R8A7796_CLK_S3D4),
- 	DEF_MOD("csi20",		 714,	R8A7796_CLK_CSI0),
- 	DEF_MOD("csi40",		 716,	R8A7796_CLK_CSI0),
- 	DEF_MOD("du2",			 722,	R8A7796_CLK_S2D1),
--- 
-1.9.1
+/ magnus
