@@ -1,60 +1,57 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 10/21] ARM: dts: r7s72100: Add generic compatible string for I2C EEPROM
-Date: Thu, 13 Apr 2017 22:04:34 -0300
-Message-Id: <20170414010445.21727-11-javier@osg.samsung.com>
-In-Reply-To: <20170414010445.21727-1-javier@osg.samsung.com>
-References: <20170414010445.21727-1-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54893 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932616AbdDEOID (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Apr 2017 10:08:03 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 7/9] arm: dts: genmai: Add RIIC2 pin group
+Date: Wed,  5 Apr 2017 16:07:25 +0200
+Message-Id: <1491401247-7030-8-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+Add pin configuration subnode for RIIC2 interface.
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
-
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
 ---
-
-Changes in v3:
-- Add Geert Uytterhoeven reviewed-by tag.
-
-Changes in v2: None
-
- arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r7s72100-genmai.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 52a7b586bac7..b0db621ff176 100644
+index c28d74b..9add1b6 100644
 --- a/arch/arm/boot/dts/r7s72100-genmai.dts
 +++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -57,7 +57,7 @@
+@@ -43,6 +43,12 @@
+ 		/* P3_0 as TxD2; P3_2 as RxD2 */
+ 		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
+ 	};
++
++	i2c2_pins: i2c2 {
++		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
++		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
++		bi-directional;
++	};
+ };
+ 
+ &extal_clk {
+@@ -61,6 +67,9 @@
+ 	status = "okay";
  	clock-frequency = <400000>;
  
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_pins>;
++
  	eeprom@50 {
--		compatible = "renesas,24c128";
-+		compatible = "renesas,24c128", "atmel,24c128";
+ 		compatible = "renesas,24c128";
  		reg = <0x50>;
- 		pagesize = <64>;
- 	};
 -- 
-2.9.3
+2.7.4
