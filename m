@@ -1,66 +1,116 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34175 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754157AbdDOUUs (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Apr 2017 16:20:48 -0400
-Received: by mail-lf0-f49.google.com with SMTP id t144so52827048lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Apr 2017 13:20:48 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170415202044.157568901@cogentembedded.com>
-Date: Sat, 15 Apr 2017 23:18:28 +0300
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 3/3] ARM: dts: sk-rzg1e: add Ether pins
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=ARM-dts-sk-rzg1e-add-Ether-pins.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 5/9] arm: dts: r7s72100: Add pin controller node
+Date: Wed,  5 Apr 2017 16:07:23 +0200
+Message-Id: <1491401247-7030-6-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) Ether/PHY pin data to the SK-RZG1E board's
-device tree.
+Add pin controller node with 12 gpio controller sub-nodes to
+r7s72100 dtsi.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r7s72100.dtsi | 78 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-+++ renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -39,6 +39,16 @@
- 		groups = "scif2_data";
- 		function = "scif2";
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index b8aa256..9342ff4 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -180,6 +180,84 @@
+ 		};
  	};
+ 
++	pinctrl: pin-controller@fcfe3000 {
++		compatible = "renesas,r7s72100-ports";
 +
-+	ether_pins: ether {
-+		groups = "eth_link", "eth_mdio", "eth_rmii";
-+		function = "eth";
++		reg = <0xfcfe3000 0x4230>;
++
++		port0: gpio-0 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 0 6>;
++		};
++
++		port1: gpio-1 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 16 16>;
++		};
++
++		port2: gpio-2 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 32 16>;
++		};
++
++		port3: gpio-3 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 48 16>;
++		};
++
++		port4: gpio-4 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 64 16>;
++		};
++
++		port5: gpio-5 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 80 11>;
++		};
++
++		port6: gpio-6 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 96 16>;
++		};
++
++		port7: gpio-7 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 112 16>;
++		};
++
++		port8: gpio-8 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 128 16>;
++		};
++
++		port9: gpio-9 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 144 8>;
++		};
++
++		port10: gpio-10 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 160 16>;
++		};
++
++		port11: gpio-11 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 176 16>;
++		};
 +	};
 +
-+	phy1_pins: phy1 {
-+		groups = "intc_irq8";
-+		function = "intc";
-+	};
- };
- 
- &scif2 {
-@@ -49,6 +59,9 @@
- };
- 
- &ether {
-+	pinctrl-0 = <&ether_pins &phy1_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy1>;
- 	renesas,ether-link-active-low;
- 	status = "okay";
+ 	scif0: serial@e8007000 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8007000 64>;
+-- 
+2.7.4
