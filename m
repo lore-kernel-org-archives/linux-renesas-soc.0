@@ -1,46 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:33475 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751961AbdDILrD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Apr 2017 07:47:03 -0400
-MIME-Version: 1.0
-In-Reply-To: <1479526093-7014-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1479526093-7014-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Date: Sun, 9 Apr 2017 12:47:01 +0100
-Message-ID: <CACvgo52dydV5fpcDDPnFaRN32uxoeitvazwPpxOs4wOqg0=45A@mail.gmail.com>
-Subject: Re: [PATCH v2 01/13] devicetree/bindings: display: Document common
- panel properties
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: ML dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-renesas-soc@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 6/9] arm: dts: genmai: Add SCIF2 pin group
+Date: Wed,  5 Apr 2017 16:07:24 +0200
+Message-Id: <1491401247-7030-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Add pin configuration subnode for SCIF2 serial debug interface.
 
-Pardon for reviving this old thread. I've noticed a couple of things
-which might want some attention.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r7s72100-genmai.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-On 19 November 2016 at 03:28, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-
-> +
-> +- panel-timing: Most display panels are restricted to a single resolution and
-> +  require specific display timings. The panel-timing subnode expresses those
-> +  timings as specified in the timing subnode section of the display timing
-> +  bindings defined in
-> +  Documentation/devicetree/bindings/display/display-timing.txt.
-Cannot find such a file in linux-next. Perhaps you meant
-Documentation/devicetree/bindings/display/panel/display-timing.txt?
-
-Documentation/devicetree/bindings/display/panel/panel.txt includes a
-"rotation" property, which we might want to fold here.
-
-Regards,
-Emil
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index 118a8e2..c28d74b 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+ 	model = "Genmai";
+@@ -36,6 +37,14 @@
+ 	};
+ };
+ 
++&pinctrl {
++
++	scif2_pins: serial2 {
++		/* P3_0 as TxD2; P3_2 as RxD2 */
++		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <13330000>;
+ };
+@@ -60,6 +69,9 @@
+ };
+ 
+ &scif2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif2_pins>;
++
+ 	status = "okay";
+ };
+ 
+-- 
+2.7.4
