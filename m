@@ -1,72 +1,88 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 0/9] Renesas RZ/A1 pin and gpio controller
-Date: Mon, 10 Apr 2017 02:33:36 +0000
-Message-ID: <SG2PR06MB1165D83E182D6B043C3C59928A010@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/9] Renesas RZ/A1 pin and gpio controller
+Date: Wed,  5 Apr 2017 16:07:18 +0200
+Message-Id: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Hi Linus,
+   this is 4th round of gpio/pincontroller for RZ/A1 devices.
 
-On Wednesday, April 05, 2017, Jacopo Mondi wrote:
-> v3 -> v4:
-> - use "pinmux" property in pmx sub-nodes in place of "renesas,pins"
-> - use pinconf standard properties to set pin mux additional flags
-> - add "bi-directional" and "output-enable" to pinconf generic properties
-> - perform pmx function parsing at dt_node_to_map() time
-> - change DT bindings to use GENERIC_PINCONF
-> - change DT bindings to allow sub-nodes to have "pinmux" property
-> specified
-> - several renames (register names, DT parse functions, set_mux() function=
-)
+As you suggested in v3 review, I have now added what we called pinmux flags
+to the list of standard pinconf generic properties, and we're now using
+generic parsing routines to collect them and apply them when multiplexing
+pins.
 
+The device tree bindings changed significantly, and as anticipated I have not
+incorporated Rob's ack as I would like him to have a look there again.
 
-I just tested this driver on the RZ/A1 RSK board.
-The following worked good.
+As a bonus, parsing of pin mux nodes now happens at dt_node_to_map() time, and
+not at probe time. This makes the driver play nicely with device tree
+overlays, that as Geert pointed out, were not supported in v3.
 
-   SCIF2, I2C, SDHI, Ethernet
+Tested with SCIF, RIIC, ETHER and gpio-leds on Genmai board.
 
-
-SDHI also has bi-direction pins. For your reference, here was my DT:
+Thanks
+   j
 
 
-	/* SHDI ch1 on CN1 */
-	sdhi1_pins: sdhi1 {
-		pins {
-			pinmux =3D <RZA1_PINMUX(3, 8, 7)>,	/* SD_CD_1 */
-				 <RZA1_PINMUX(3, 9, 7)>,	/* SD_WP_1 */
-				 <RZA1_PINMUX(3, 12, 7)>,	/* SD_CLK_1 */
-				 <RZA1_PINMUX(3, 13, 7)>;	/* SD_CMD_1 */
-		};
+v1 -> v2:
+- change pin configuration flags as suggested by Chris
+- gpio set direction function fixed as suggested by Chris
+- add some more example on pin configuration flag usage to dt-binding doc
+- fix gpio-controller names to remove unit address as suggested by Geert
+- some comments chopped here and there to make the driver less verbose
 
-		pins_bidir {
-			pinmux =3D <RZA1_PINMUX(3, 10, 7)>,	/* SD_D1_1 */
-				 <RZA1_PINMUX(3, 11, 7)>,	/* SD_D0_1 */
-				 <RZA1_PINMUX(3, 14, 7)>,	/* SD_D3_1 */
-				 <RZA1_PINMUX(3, 15, 7)>;	/* SD_D2_1 */
-			bi-directional;
-		};
-	};
+v2 -> v3:
+- fix grammar and syntax in comment and documentation
+- fix code style (reverse xmas tree ordering in variable declaration)
+- use irqsave/irqrestore in spinlock lock/unlock
+- use devm_ version of kasprintf (memory returned was not properly free)
+- use bitops.h operation ffs and fls to make sure a single bit is set in pmx
+  mask
+- Add Geert's reviewed-by to DTS patches
 
+v3 -> v4:
+- use "pinmux" property in pmx sub-nodes in place of "renesas,pins"
+- use pinconf standard properties to set pin mux additional flags
+- add "bi-directional" and "output-enable" to pinconf generic properties
+- perform pmx function parsing at dt_node_to_map() time
+- change DT bindings to use GENERIC_PINCONF
+- change DT bindings to allow sub-nodes to have "pinmux" property specified
+- several renames (register names, DT parse functions, set_mux() function)
 
-Thanks,
-Chris
+Jacopo Mondi (9):
+  pinctrl: generic: Add bi-directional and output-enable
+  pinctrl: Renesas RZ/A1 pin and gpio controller
+  dt-bindings: pinctrl: Add RZ/A1 bindings doc
+  arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
+  arm: dts: r7s72100: Add pin controller node
+  arm: dts: genmai: Add SCIF2 pin group
+  arm: dts: genmai: Add RIIC2 pin group
+  arm: dts: genmai: Add user led device nodes
+  arm: dts: genmai: Add ethernet pin group
+
+ .../bindings/pinctrl/pinctrl-bindings.txt          |   2 +
+ .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 218 +++++
+ arch/arm/boot/dts/r7s72100-genmai.dts              |  76 ++
+ arch/arm/boot/dts/r7s72100.dtsi                    |  78 ++
+ drivers/pinctrl/Kconfig                            |  11 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinconf-generic.c                  |   3 +
+ drivers/pinctrl/pinctrl-rza1.c                     | 995 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  16 +
+ include/linux/pinctrl/pinconf-generic.h            |   3 +
+ 10 files changed, 1403 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rza1.c
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+
+--
+2.7.4
