@@ -1,88 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38232 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbdDCKCg (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36361 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbdDEHWg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 06:02:36 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: rcar-gen2: Fix PLL0 on R-Car V2H and E2
-Date: Mon,  3 Apr 2017 12:02:33 +0200
-Message-Id: <1491213753-13731-1-git-send-email-geert+renesas@glider.be>
+        Wed, 5 Apr 2017 03:22:36 -0400
+MIME-Version: 1.0
+In-Reply-To: <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
+References: <20170404202025.306556752@cogentembedded.com> <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Apr 2017 09:22:34 +0200
+Message-ID: <CAMuHMdX6-CEL6c8say8VkRkvhXCSBPCTDZzpqRJTbTjeBXpP9w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: swap ATA signals
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car V2H and E2 do not have the PLL0CR register, but use a fixed
-multiplier (depending on mode pins) and divider.
+Hi Sergei,
 
-This corrects the clock rate of "pll0" (PLL0 VCO after post divider) on
-R-Car V2H and E2 from 1.5 GHz to 1 GHz.
+On Tue, Apr 4, 2017 at 10:22 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 04/04/2017 11:20 PM, Sergei Shtylyov wrote:
+>> All R8A7794 manuals  I have here (0.50 and 1.10) agree that the PFC driver
+>> has ATAG0#  and ATAWR# signals in IPSR12 swapped -- fix this.
 
-Inspired by Sergei Shtylyov's work for the common R-Car Gen2 and RZ/G
-Clock Pulse Generator support core.
+Thanks!
 
-Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
-Fixes: 0dce5454d5c25858 ("ARM: shmobile: Initial r8a7794 SoC device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/clk-rcar-gen2.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+>    Oops, ATAWR0#. Do I need to resend?
 
-diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
-index f39519edc645ca87..51a2479ed5d7c817 100644
---- a/drivers/clk/renesas/clk-rcar-gen2.c
-+++ b/drivers/clk/renesas/clk-rcar-gen2.c
-@@ -272,11 +272,14 @@ struct cpg_pll_config {
- 	unsigned int extal_div;
- 	unsigned int pll1_mult;
- 	unsigned int pll3_mult;
-+	unsigned int pll0_mult;		/* For R-Car V2H and E2 only */
- };
- 
- static const struct cpg_pll_config cpg_pll_configs[8] __initconst = {
--	{ 1, 208, 106 }, { 1, 208,  88 }, { 1, 156,  80 }, { 1, 156,  66 },
--	{ 2, 240, 122 }, { 2, 240, 102 }, { 2, 208, 106 }, { 2, 208,  88 },
-+	{ 1, 208, 106, 200 }, { 1, 208,  88, 200 },
-+	{ 1, 156,  80, 150 }, { 1, 156,  66, 150 },
-+	{ 2, 240, 122, 230 }, { 2, 240, 102, 230 },
-+	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
- };
- 
- /* SDHI divisors */
-@@ -298,6 +301,12 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
- 
- static u32 cpg_mode __initdata;
- 
-+static const char * const pll0_mult_match[] = {
-+	"renesas,r8a7792-cpg-clocks",
-+	"renesas,r8a7794-cpg-clocks",
-+	NULL
-+};
-+
- static struct clk * __init
- rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
- 			     const struct cpg_pll_config *config,
-@@ -318,9 +327,15 @@ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
- 		 * clock implementation and we currently have no need to change
- 		 * the multiplier value.
- 		 */
--		u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
-+		if (of_device_compatible_match(np, pll0_mult_match)) {
-+			/* R-Car V2H and E2 do not have PLL0CR */
-+			mult = config->pll0_mult;
-+			div = 3;
-+		} else {
-+			u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
-+			mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
-+		}
- 		parent_name = "main";
--		mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
- 	} else if (!strcmp(name, "pll1")) {
- 		parent_name = "main";
- 		mult = config->pll1_mult / 2;
--- 
-2.7.4
+No, I can handle that.
+
+>> Fixes: 43c4436e2f18 ("pinctrl: sh-pfc: add R8A7794 PFC support")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
