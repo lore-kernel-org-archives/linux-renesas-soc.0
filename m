@@ -1,126 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59456 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932127AbdDGSOf (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52392 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752510AbdDERa3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 14:14:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] soc: renesas: rcar-sysc: Add support for fixing up power area tables
-Date: Fri,  7 Apr 2017 14:14:20 -0400
-Message-Id: <afa6f53df6052968ce3934ad324777c0057e31d1.1491588035.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491588035.git.horms+renesas@verge.net.au>
-References: <cover.1491588035.git.horms+renesas@verge.net.au>
+        Wed, 5 Apr 2017 13:30:29 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Lars-Peter <lars@metafoo.de>, Simon <horms@verge.net.au>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <877f32ngz0.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1cvolA-0000af-Vr@debutante>
+Date: Wed, 05 Apr 2017 18:30:20 +0100
+Subject: Applied "ASoC: soc-core: verify Sound Card normality" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The patch
 
-The same SoC may have different power areas, depending on SoC revision.
-One option is to use different sets of power area tables for each SoC
-revision.  However, if the differences are small, it is much more
-space-efficient to have a single set of tables, and fix those up at
-runtime instead.
+   ASoC: soc-core: verify Sound Card normality
 
-Hence provide a helper to NULLify power areas that do not exist on some
-revisions (NULLified power areas are skipped during the registration
-phase), and support for an optional initialization callback to e.g. fix
-up power area tables.
+has been applied to the asoc tree at
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From c12c1aad98bb75b435e79c6208b56d2018b42f8b Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 3 Apr 2017 06:31:22 +0000
+Subject: [PATCH] ASoC: soc-core: verify Sound Card normality
+
+Current ALSA SoC Sound Card basically consists of CPU/Codec/Platform
+components. If system uses Kernel modules, we can disable these drivers
+by using rmmod command. In such case, we can't disable
+CPU/Codec/Platform driver without disabling Sound Card driver.
+
+But on the other hand, we can disable these drivers by using unbind
+command. In such case, we can disable these drivers randomly.
+In this case, we can create dirty Sound Card which is missing necessary
+components.
+
+(1) If user disabled Sound Card first, but did nothing to other drivers,
+user can't use Sound because Sound Card is no longer exists.
+(2) If user disabled CPU/Codec/Platform driver randomly, but did nothing
+to Sound Card, user still be able to use Sound Card, because dirty Sound
+Card still exists. In this case, Sound system will be crashed if user
+started sound playback/capture. But we can't block such random unbind
+now.
+
+To avoid Sound Card crash in (2) case, we need to unregister Sound Card
+whenever CPU/Codec/Platform component were unregistered.
+This patch solves this issue.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/soc/renesas/rcar-sysc.c | 25 ++++++++++++++++++++++++-
- drivers/soc/renesas/rcar-sysc.h | 10 ++++++++++
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ sound/soc/soc-core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 225c35c79d9a..528a13742aeb 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -2,7 +2,7 @@
-  * R-Car SYSC Power management support
-  *
-  * Copyright (C) 2014  Magnus Damm
-- * Copyright (C) 2015-2016 Glider bvba
-+ * Copyright (C) 2015-2017 Glider bvba
-  *
-  * This file is subject to the terms and conditions of the GNU General Public
-  * License.  See the file "COPYING" in the main directory of this archive
-@@ -334,6 +334,12 @@ static int __init rcar_sysc_pd_init(void)
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index f1901bb1466e..de6d5609c252 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -3076,6 +3076,11 @@ static void snd_soc_component_cleanup(struct snd_soc_component *component)
  
- 	info = match->data;
- 
-+	if (info->init) {
-+		error = info->init();
-+		if (error)
-+			return error;
-+	}
-+
- 	has_cpg_mstp = of_find_compatible_node(NULL, NULL,
- 					       "renesas,cpg-mstp-clocks");
- 
-@@ -377,6 +383,11 @@ static int __init rcar_sysc_pd_init(void)
- 		const struct rcar_sysc_area *area = &info->areas[i];
- 		struct rcar_sysc_pd *pd;
- 
-+		if (!area->name) {
-+			/* Skip NULLified area */
-+			continue;
-+		}
-+
- 		pd = kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
- 		if (!pd) {
- 			error = -ENOMEM;
-@@ -406,6 +417,18 @@ static int __init rcar_sysc_pd_init(void)
- }
- early_initcall(rcar_sysc_pd_init);
- 
-+void __init rcar_sysc_nullify(struct rcar_sysc_area *areas,
-+			      unsigned int num_areas, u8 id)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < num_areas; i++)
-+		if (areas[i].isr_bit == id) {
-+			areas[i].name = NULL;
-+			return;
-+		}
-+}
-+
- void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ static void snd_soc_component_del_unlocked(struct snd_soc_component *component)
  {
- 	u32 syscimr;
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index f6e842e2976e..07edb049a401 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -46,6 +46,7 @@ struct rcar_sysc_area {
-  */
++	struct snd_soc_card *card = component->card;
++
++	if (card)
++		snd_soc_unregister_card(card);
++
+ 	list_del(&component->list);
+ }
  
- struct rcar_sysc_info {
-+	int (*init)(void);	/* Optional */
- 	const struct rcar_sysc_area *areas;
- 	unsigned int num_areas;
- };
-@@ -59,4 +60,13 @@ extern const struct rcar_sysc_info r8a7792_sysc_info;
- extern const struct rcar_sysc_info r8a7794_sysc_info;
- extern const struct rcar_sysc_info r8a7795_sysc_info;
- extern const struct rcar_sysc_info r8a7796_sysc_info;
-+
-+
-+    /*
-+     * Helpers for fixing up power area tables depending on SoC revision
-+     */
-+
-+extern void rcar_sysc_nullify(struct rcar_sysc_area *areas,
-+			      unsigned int num_areas, u8 id);
-+
- #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
