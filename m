@@ -1,91 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753017AbdDDO3w (ORCPT
+Received: from slow1-d.mail.gandi.net ([217.70.178.86]:35907 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755595AbdDFOhN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Apr 2017 10:29:52 -0400
+        Thu, 6 Apr 2017 10:37:13 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by slow1-d.mail.gandi.net (Postfix) with ESMTP id B49A54869CD
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  6 Apr 2017 16:31:30 +0200 (CEST)
+Date: Thu, 6 Apr 2017 16:31:20 +0200
+From: jmondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: r8a7795: salvator-x: Add current sense
+ amplifiers
+Message-ID: <20170406143120.GA22962@w540>
+References: <1490694282-9439-1-git-send-email-geert+renesas@glider.be>
+ <20170328121633.GA20146@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
-References: <20170322142754.30888-1-chris.brandt@renesas.com>
- <20170322142754.30888-3-chris.brandt@renesas.com> <20170329012441.bxnkyqui24mymuvr@rob-hp-laptop>
- <CAMuHMdVmwJYMzspVeDqToBrkfK+zGLMNhxGvEbqCA-vuCUXqoQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 4 Apr 2017 09:29:27 -0500
-Message-ID: <CAL_JsqLLZsLzS4ONOexJADQXXXr9iquFUcVj8kX6AEVwM+x56A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] rtc: Add rtc-sh
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        RTCLINUX <rtc-linux@googlegroups.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20170328121633.GA20146@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 1:49 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Rob,
+Hi Geert, Simon,
+
+On Tue, Mar 28, 2017 at 02:16:38PM +0200, Simon Horman wrote:
+> On Tue, Mar 28, 2017 at 11:44:42AM +0200, Geert Uytterhoeven wrote:
+> > Add device nodes for two Maxim max961x current sense amplifiers
+> > sensing the VDD_0.8V and DVFS_0.8V lines.
+> >
+> > Based on a patch for r8a7796-salvator-x.dts by Jacopo Mondi.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Pending acceptance of the maxim,max9611 DT bindings.
 >
-> On Wed, Mar 29, 2017 at 3:24 AM, Rob Herring <robh@kernel.org> wrote:
->> On Wed, Mar 22, 2017 at 10:27:49AM -0400, Chris Brandt wrote:
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/rtc/rtc-sh.txt
->>> @@ -0,0 +1,29 @@
->>> +* Real Time Clock for Renesas SH and ARM SoCs
->>> +
->>> +Required properties:
->>> +- compatible: Should be "renesas,r7s72100-rtc" and "renesas,sh-rtc" as a
->>> +  fallback.
->>> +- reg: physical base address and length of memory mapped region.
->>> +- interrupts: 3 interrupts for alarm, period, and carry.
->>> +- interrupt-names: The interrupts should be labeled as "alarm", "period", and
->>> +  "carry".
->>> +- clocks: The functional clock source for the RTC controller must be listed
->>> +  first (if exists). Additionally, potential clock counting sources are to be
->>> +  listed.
->>> +- clock-names: The functional clock must be labeled as "fck". Other clocks
->>> +  may be named in accordance to the SoC hardware manuals.
->>> +
->>> +
->>> +Example:
->>> +rtc: rtc@fcff1000 {
->>> +     compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
->>> +     reg = <0xfcff1000 0x2e>;
->>> +     interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
->>> +                   GIC_SPI 277 IRQ_TYPE_EDGE_RISING
->>> +                   GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
->>> +     interrupt-names = "alarm", "period", "carry";
->>> +     clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
->>> +              <&rtc_x3_clk>, <&extal_clk>;
->>> +     clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
->>> +     power-domains = <&cpg_clocks>;
->>
->> Not documented.
->
-> "power-domains" is a platform property.
->
-> All hardware components need power.
-> All synchronous hardware components need a clock.
-> Most hardware components have a reset signal.
+> I have marked this as deferred accordingly.
 
-And we document clocks and reset for every binding.
+Just to point out that in v5 I just sent out, bindings are different
+and this patch needs an update.
 
-> Whether these are exposed and can be controlled depends on the platform/SoC.
-> So documenting them in each and every device binding looks overkill to me.
-> I think this is something to be addressed by devicetree-specification (which
-> doesn't handle clocks, power-domains, resets yet).
-
-It's a question of validation. How do I validate power-domains is a
-valid property for a given compatible? What if it is required, but not
-present? Any node can have it? So it is valid for memory and chosen
-nodes, an i2c device, an LCD panel, etc?
-
-> If you prefer, the property can be removed from the example, though.
-
-If it is valid, then I don't want it removed.
-
-Rob
+Thanks
+  j
