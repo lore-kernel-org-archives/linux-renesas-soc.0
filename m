@@ -1,75 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932703AbdDGP6i (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59036 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754302AbdDFKtC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/22] ARM: dts: r8a7794: Add DU1 clock to device tree
-Date: Fri,  7 Apr 2017 11:58:05 -0400
-Message-Id: <1764f8081f1524bf629e0744b277db751281ff56.1491580547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
-References: <cover.1491580547.git.horms+renesas@verge.net.au>
+        Thu, 6 Apr 2017 06:49:02 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <87vaqi3stx.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1cw4yG-0004QS-2a@debutante>
+Date: Thu, 06 Apr 2017 11:48:56 +0100
+Subject: Applied "ASoC: rsnd: tidyup src->convert_rate reset timing" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The patch
 
-Add the missing module clock for the second channel of the display unit.
+   ASoC: rsnd: tidyup src->convert_rate reset timing
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From fc99d23f6d3ec6b17772915114018444393e0ad1 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 6 Apr 2017 07:24:36 +0000
+Subject: [PATCH] ASoC: rsnd: tidyup src->convert_rate reset timing
+
+Current src->convert_rate will be set on .hw_param, and
+be reset on .quit timing.
+But, .hw_param will not be called again if user did Ctrl-Z + fg.
+It should be reset on initial of .hw_param to keep its value.
+Here, ctu.c already do this.
+This patch solves this issue, other wise, MIXed sound will be
+strange if user did like below.
+
+	> aplay -D plughw:0,0 sound_44100.wav &
+	> aplay -D plughw:0,1 sound_96000.wav
+	> Ctrl-Z
+	> fg # 96kHz will be played as 44.1kHz
+
+Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7794.dtsi            | 8 +++++---
- include/dt-bindings/clock/r8a7794-clock.h | 1 +
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ sound/soc/sh/rcar/src.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 38bf9ed8e739..f5f8d1c03ef7 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1270,19 +1270,21 @@
- 			clocks = <&mp_clk>, <&hp_clk>,
- 				 <&zs_clk>, <&p_clk>, <&p_clk>, <&zs_clk>,
- 				 <&zs_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
--				 <&zx_clk>;
-+				 <&zx_clk>, <&zx_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 				R8A7794_CLK_EHCI R8A7794_CLK_HSUSB
- 				R8A7794_CLK_HSCIF2 R8A7794_CLK_SCIF5
- 				R8A7794_CLK_SCIF4 R8A7794_CLK_HSCIF1 R8A7794_CLK_HSCIF0
- 				R8A7794_CLK_SCIF3 R8A7794_CLK_SCIF2 R8A7794_CLK_SCIF1
--				R8A7794_CLK_SCIF0 R8A7794_CLK_DU0
-+				R8A7794_CLK_SCIF0
-+				R8A7794_CLK_DU1 R8A7794_CLK_DU0
- 			>;
- 			clock-output-names =
- 				"ehci", "hsusb",
- 				"hscif2", "scif5", "scif4", "hscif1", "hscif0",
--				"scif3", "scif2", "scif1", "scif0", "du0";
-+				"scif3", "scif2", "scif1", "scif0",
-+				"du1", "du0";
- 		};
- 		mstp8_clks: mstp8_clks@e6150990 {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index a26776f7dedd..93e99c3ffc8d 100644
---- a/include/dt-bindings/clock/r8a7794-clock.h
-+++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -82,6 +82,7 @@
- #define R8A7794_CLK_SCIF2		19
- #define R8A7794_CLK_SCIF1		20
- #define R8A7794_CLK_SCIF0		21
-+#define R8A7794_CLK_DU1			23
- #define R8A7794_CLK_DU0			24
+diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
+index 42db48db09ba..20b5b2ec625e 100644
+--- a/sound/soc/sh/rcar/src.c
++++ b/sound/soc/sh/rcar/src.c
+@@ -167,6 +167,7 @@ static int rsnd_src_hw_params(struct rsnd_mod *mod,
+ 	 *	dpcm_fe_dai_hw_params()
+ 	 *	dpcm_be_dai_hw_params()
+ 	 */
++	src->convert_rate = 0;
+ 	if (fe->dai_link->dynamic) {
+ 		int stream = substream->stream;
+ 		struct snd_soc_dpcm *dpcm;
+@@ -414,8 +415,6 @@ static int rsnd_src_quit(struct rsnd_mod *mod,
  
- /* MSTP8 */
+ 	rsnd_mod_power_off(mod);
+ 
+-	src->convert_rate = 0;
+-
+ 	/* reset sync convert_rate */
+ 	src->sync.val = 0;
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
