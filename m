@@ -1,44 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53765 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934208AbdDGO6h (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41324 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933707AbdDFNbb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 10:58:37 -0400
-Date: Fri, 7 Apr 2017 10:58:33 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
+        Thu, 6 Apr 2017 09:31:31 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] arm64: dts: r8a7795-salvator-x: Update memory node to 4
- GiB map
-Message-ID: <20170407145832.GB1278@verge.net.au>
-References: <1491485487-2006-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1491485487-2006-1-git-send-email-geert+renesas@glider.be>
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: r8a7795-salvator-x: Update memory node to 4 GiB map
+Date: Thu,  6 Apr 2017 15:31:27 +0200
+Message-Id: <1491485487-2006-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 06, 2017 at 03:31:27PM +0200, Geert Uytterhoeven wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch addes memory region:
-> 
->   - After changes, the Salvator-X board has the following map:
->     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
->     Bank1: 1GiB RAM : 0x000500000000 -> 0x0053fffffff
->     Bank2: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
->     Bank3: 1GiB RAM : 0x000700000000 -> 0x0073fffffff
-> 
->   - Before changes, the old map looked like this:
->     Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This patch is looooong overdue.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Thanks, I have queued this up for v4.13.
+This patch addes memory region:
+
+  - After changes, the Salvator-X board has the following map:
+    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
+    Bank1: 1GiB RAM : 0x000500000000 -> 0x0053fffffff
+    Bank2: 1GiB RAM : 0x000600000000 -> 0x0063fffffff
+    Bank3: 1GiB RAM : 0x000700000000 -> 0x0073fffffff
+
+  - Before changes, the old map looked like this:
+    Bank0: 1GiB RAM : 0x000048000000 -> 0x0007fffffff
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This patch is looooong overdue.
+
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 639aa085d9966676..f1b6ad3def15b2f5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -56,6 +56,21 @@
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
+ 
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x40000000>;
++	};
++
+ 	x12_clk: x12 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-- 
+2.7.4
