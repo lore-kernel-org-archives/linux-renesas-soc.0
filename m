@@ -1,12 +1,13 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52918 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932075AbdDGNwS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 09:52:18 -0400
-Date: Fri, 7 Apr 2017 09:52:13 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1489788135.8957.2.camel@collabora.co.uk>
+References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1489788135.8957.2.camel@collabora.co.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Apr 2017 11:53:45 +0200
+Message-ID: <CAMuHMdX9caECvsBnfUQhbQKdW_uGJ_VXAUksMMXw7EAGP8QUCQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] arm64: renesas: enable M3ULCB board peripherals
+To: Simon Horman <horms@verge.net.au>
 Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -14,47 +15,40 @@ Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH 0/4] arm64: renesas: enable M3ULCB board peripherals
-Message-ID: <20170407135212.GA24096@verge.net.au>
-References: <1485442422-18259-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1489788135.8957.2.camel@collabora.co.uk>
- <CAMuHMdX9caECvsBnfUQhbQKdW_uGJ_VXAUksMMXw7EAGP8QUCQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX9caECvsBnfUQhbQKdW_uGJ_VXAUksMMXw7EAGP8QUCQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 06, 2017 at 11:53:45AM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Fri, Mar 17, 2017 at 11:02 PM, Sjoerd Simons
-> <sjoerd.simons@collabora.co.uk> wrote:
-> > On Thu, 2017-01-26 at 17:53 +0300, Vladimir Barinov wrote:
-> >> This adds the folowing:
-> >> - R8A7796 SoC based M3ULCB board peripherals
-> >>
-> >> Vladimir Barinov (4):
-> >> [1/4] arm64: dts: m3ulcb: enable I2C
-> >> [2/4] arm64: dts: m3ulcb: Update memory node to 2 GiB map
+Hi Simon,
 
-I have queued up the above two patches.
-> >> [3/4] arm64: dts: m3ulcb: enable EthernetAVB
+On Fri, Mar 17, 2017 at 11:02 PM, Sjoerd Simons
+<sjoerd.simons@collabora.co.uk> wrote:
+> On Thu, 2017-01-26 at 17:53 +0300, Vladimir Barinov wrote:
+>> This adds the folowing:
+>> - R8A7796 SoC based M3ULCB board peripherals
+>>
+>> Vladimir Barinov (4):
+>> [1/4] arm64: dts: m3ulcb: enable I2C
+>> [2/4] arm64: dts: m3ulcb: Update memory node to 2 GiB map
+>> [3/4] arm64: dts: m3ulcb: enable EthernetAVB
+>> [4/4] arm64: dts: m3ulcb: enable HS200 for eMMC
+>
+> Seems these didn't hit -next just yet, for this series (tested on a
+> M3ULCB)
+>
+> Tested-By: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Please update the above patch to reflect the changes made in
-ef3f08c83fd1 ("arm64: dts: r8a7796: salvator-x: Fix EthernetAVB PHY timing")
+It seems this series is still pending? Any reason (not) to apply it?
 
-> >> [4/4] arm64: dts: m3ulcb: enable HS200 for eMMC
+Thanks!
 
-I will look at queuing this up in the near future
-with other HS200 enablement patches.
+Gr{oetje,eeting}s,
 
-> > Seems these didn't hit -next just yet, for this series (tested on a
-> > M3ULCB)
-> >
-> > Tested-By: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> 
-> It seems this series is still pending? Any reason (not) to apply it?
+                        Geert
 
-Sorry for the extended delay.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
