@@ -1,140 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:57356 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753240AbdD0Wmu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933632AbdDGP7J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:42:50 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 00/27] rcar-vin: Add Gen3 with media controller support
-Date: Fri, 28 Apr 2017 00:41:36 +0200
-Message-Id: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Apr 2017 11:59:09 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/22] ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
+Date: Fri,  7 Apr 2017 11:58:23 -0400
+Message-Id: <eb77d7260c4c25206e2a455be0dbe6443e0856b5.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi All,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This series enable Gen3 VIN support in rcar-vin driver for Renesas r8a7795 and
-r8a7796. It is based on top of v4.11-rc1.
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-Patches that previously have been part of this series have been broken out to a
-separate series since they fix issues in the rcar-vin driver which are not
-strictly related to the Gen3 MC enablement. This series depends on that
-patch series which is posted separately as '[PATCH 00/16] rcar-vin: fix
-issues with format and capturing'.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The driver is tested on both Renesas H3 (r8a7795) and M3-W (r8a7796) together
-with the rcar-csi2 driver (posted separately) and a prototype driver of the
-ADV7482 (not ready for upstream but publicly available). It is possible to
-capture both CVBS and HDMI video streams, v4l2-compliance passes with no
-errors and media-ctl can be used to change the routing and formats for
-the different entities in the media graph.
-
-Gen2 compatibility is verified on Koelsch and no problems where found, video
-can be captured just like before and v4l2-compliance passes without errors or
-warnings.
-
-I have started on a very basic test suite for the VIN driver at:
-
-  https://git.ragnatech.se/vin-tests
-
-And as before the state of the driver and information about how to test it can
-be found on the elinux wiki:
-
-  http://elinux.org/R-Car/Tests:rcar-vin
-
-* Changes since v3
-- Only add neighboring subdevices to the async notifier. Instead of 
-  parsing the whole OF graph depend on incremental async subnotifier to 
-  discover the whole pipeline. This is needed to support arbitrarily 
-  long graphs and support the new ADV7482 prototype driver which Kieran 
-  is working on.
-- Fix warning from lockdep, reported by Kieran.
-- Fix commit messeges from feedback from Sergei, thanks.
-- Fix chip info an OF device ids sorting order, thanks Geert.
-- Use subdev->of_node instead of subdev->dev->of_node, thanks Kieran.
-
-* Changes since v2
-- Do not try to control the subdevices in the media graph from the rcar-vin
-  driver. Have user-space configure to format in the pipeline instead.
-- Add link validation before starting the stream.
-- Rework on how the subdevices are and the video node behave by defining
-  specific V4L2 operations for the MC mode of operation, this simplified the
-  driver quit a bit, thanks Laurent!
-- Add a new 'renesas,id' DT property which is needed to to be able to keep the
-  VIN to CSI-2 routing table inside the driver. Previously this information was
-  taken from the CSI-2 DT node which is obviusly the wrong way to do things.
-  Thanks Laurent for pointing this out.
-- Fixed a memory leek in the group allocator function.
-- Return -EMLINK instead of -EBUSY if a MC link is not possible given the
-  current routing setup.
-- Add comments to clarify that the 4 channels from the CSI-2 node is not
-  directly related to CSI-2 virtual channels, the CSI-2 node can output any VC
-  on any of its output channels.
-
-* Changes since v1
-- Remove unneeded casts as pointed out by Geert.
-- Fix spelling and DT documentation as pointed out by Geert and Sergei, thanks!
-- Refresh patch 2/32 with an updated version, thanks Sakari for pointing this
-  out.
-- Add Sakaris Ack to patch 1/32.
-- Rebase on top of v4.9-rc1 instead of v4.9-rc3 to ease integration testing
-  together with renesas-drivers tree.
-
-Laurent Pinchart (2):
-  media: entity: Add has_route entity operation
-  media: entity: Add media_entity_has_route() function
-
-Niklas Söderlund (24):
-  rcar-vin: add Gen3 devicetree bindings documentation
-  rcar-vin: move chip information to own struct
-  rcar-vin: move max width and height information to chip information
-  rcar-vin: change name of video device
-  rcar-vin: move functions regarding scaling
-  rcar-vin: all Gen2 boards can scale simplify logic
-  rcar-vin: do not reset crop and compose when setting format
-  rcar-vin: do not allow changing scaling and composing while streaming
-  rcar-vin: read subdevice format for crop only when needed
-  rcar-vin: do not cut height in two for top, bottom or alternate fields
-  rcar-vin: move media bus configuration to struct rvin_info
-  rcar-vin: enable Gen3 hardware configuration
-  rcar-vin: add functions to manipulate Gen3 CHSEL value
-  rcar-vin: prepare digital notifier for group notifier
-  rcar-vin: add flag to switch to media controller mode
-  rcar-vin: use different v4l2 operations in media controller mode
-  rcar-vin: register a media pad if running in media controller mode
-  rcar-vin: add group allocator functions
-  rcar-vin: add chsel information to rvin_info
-  rcar-vin: parse Gen3 OF and setup media graph
-  rcar-vin: add link notify for Gen3
-  rcar-vin: extend {start,stop}_streaming to work with media controller
-  rcar-vin: enable support for r8a7795
-  rcar-vin: enable support for r8a7796
-
-Sakari Ailus (1):
-  media: entity: Swap pads if route is checked from source to sink
-
- .../devicetree/bindings/media/rcar_vin.txt         | 123 ++-
- drivers/media/media-entity.c                       |  20 +
- drivers/media/platform/rcar-vin/Kconfig            |   2 +-
- drivers/media/platform/rcar-vin/rcar-core.c        | 934 +++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-dma.c         | 976 ++++++++++++---------
- drivers/media/platform/rcar-vin/rcar-v4l2.c        | 369 ++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h         | 115 ++-
- include/media/media-entity.h                       |  21 +
- 8 files changed, 1990 insertions(+), 570 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index a6478ca3f4ca..4d0c2ce59900 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1126,7 +1126,7 @@
+ 		};
+ 
+ 		/* External CAN clock */
+-		can_clk: can_clk {
++		can_clk: can {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
 -- 
-2.12.2
+2.7.0.rc3.207.g0ac5344
