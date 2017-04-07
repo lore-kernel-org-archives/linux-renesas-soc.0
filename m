@@ -1,171 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sakari.ailus@iki.fi
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 5/5] arm64: dts: r8a7796: salvator-x: enable VIN, CSI and ADV7482
-Date: Thu, 27 Apr 2017 19:26:04 +0100
-Message-Id: <1493317564-18026-6-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
-References: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933632AbdDGP66 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 7 Apr 2017 11:58:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/22] ARM: dts: r8a7791: Correct parent of SSI[0-9] clocks
+Date: Fri,  7 Apr 2017 11:58:11 -0400
+Message-Id: <16fe68dcab5702a024d85229ff7e98979cb701a5.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Provide bindings between the VIN, CSI and the ADV7482 on the r8a7796.
+The SSI-ALL gate clock is located in between the P clock and the
+individual SSI[0-9] clocks, hence the former should be listed as their
+parent.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Fixes: ee9141522dcf13f8 ("ARM: shmobile: r8a7791: add MSTP10 support on DTSI")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 129 +++++++++++++++++++++
- 1 file changed, 129 insertions(+)
+ arch/arm/boot/dts/r8a7791.dtsi | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 2637e4042705..d6f25e1ab455 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -102,6 +102,22 @@
- 		states = <3300000 1
- 			  1800000 0>;
- 	};
-+
-+	hdmi {
-+		port {
-+			hdmi_in: endpoint {
-+				remote-endpoint = <&adv7482_hdmi>;
-+			};
-+		};
-+	};
-+
-+	cvbs {
-+		port {
-+			cvbs_in: endpoint {
-+				remote-endpoint = <&adv7482_ain8>;
-+			};
-+		};
-+	};
- };
- 
- &pfc {
-@@ -261,3 +277,116 @@
- 	timeout-sec = <60>;
- 	status = "okay";
- };
-+
-+&i2c4 {
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	video_receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@8 {
-+			adv7482_ain8: endpoint@1 {
-+				remote-endpoint = <&cvbs_in>;
-+			};
-+		};
-+
-+		port@9 {
-+			adv7482_hdmi: endpoint@1 {
-+				remote-endpoint = <&hdmi_in>;
-+			};
-+		};
-+
-+		port@11 {
-+			reg = <11>;
-+			adv7482_txa: endpoint@1 {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+
-+		port@12 {
-+			reg = <12>;
-+			adv7482_txb: endpoint@1 {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&csi20_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin0 {
-+	status = "okay";
-+};
-+
-+&vin1 {
-+	status = "okay";
-+};
-+
-+&vin2 {
-+	status = "okay";
-+};
-+
-+&vin3 {
-+	status = "okay";
-+};
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
-+
-+&vin6 {
-+	status = "okay";
-+};
-+
-+&vin7 {
-+	status = "okay";
-+};
-+
-+&csi20 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			csi20_in: endpoint@0 {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&adv7482_txb>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint@0 {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index b319ef4d57b0..a6478ca3f4ca 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1447,8 +1447,11 @@
+ 			compatible = "renesas,r8a7791-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
+ 			clocks = <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+-				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
++				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
++				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
+ 				<&p_clk>,
+ 				<&mstp10_clks R8A7791_CLK_SCU_ALL>, <&mstp10_clks R8A7791_CLK_SCU_ALL>,
+ 				<&mstp10_clks R8A7791_CLK_SCU_ALL>, <&mstp10_clks R8A7791_CLK_SCU_ALL>,
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
