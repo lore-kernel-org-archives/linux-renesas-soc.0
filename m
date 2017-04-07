@@ -1,54 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51568 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751647AbdDCJqA (ORCPT
+Received: from sauhun.de ([88.99.104.3]:49013 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933389AbdDGMN2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 05:46:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] ARM: dts: rcar-gen2: Correct parent of SSI[0-9] clocks
-Date: Mon,  3 Apr 2017 11:45:40 +0200
-Message-Id: <1491212743-6911-1-git-send-email-geert+renesas@glider.be>
+        Fri, 7 Apr 2017 08:13:28 -0400
+Date: Fri, 7 Apr 2017 14:13:25 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH i2c-tools 1/2] i2ctransfer: replace broken "force"
+ handling
+Message-ID: <20170407121325.7icxzkagsguv3gpd@ninjato>
+References: <20170403173613.2238-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yfrkrra6hhwfgghr"
+Content-Disposition: inline
+In-Reply-To: <20170403173613.2238-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus, Morimoto-san,
 
-The SSI-ALL gate clock is located in between the P clock and the
-individual SSI[0-9] clocks, hence the former should be listed as their
-parent.
+--yfrkrra6hhwfgghr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch series corrects the parents in the DTSes r8a7790, r8a7791,
-and r8a7793.  The DTS for r8a7794, and the CPG/MSSR-based clock drivers
-for r8a7743, r8a7745, and r8a7795 already describe the correct parent.
+On Mon, Apr 03, 2017 at 07:36:12PM +0200, Wolfram Sang wrote:
+> Probably because of a bad rebase, the old and bogus handling (v1) of "for=
+ce"
+> slipped into the latest version of the patch (v3). Apply the better
+> version from v2 which does the error handling correct and makes the code
+> a lot easier to understand.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks!
+Pushed out to i2c-tools/master.
 
-Geert Uytterhoeven (3):
-  ARM: dts: r8a7790: Correct parent of SSI[0-9] clocks
-  ARM: dts: r8a7791: Correct parent of SSI[0-9] clocks
-  ARM: dts: r8a7793: Correct parent of SSI[0-9] clocks
 
- arch/arm/boot/dts/r8a7790.dtsi | 7 +++++--
- arch/arm/boot/dts/r8a7791.dtsi | 7 +++++--
- arch/arm/boot/dts/r8a7793.dtsi | 7 +++++--
- 3 files changed, 15 insertions(+), 6 deletions(-)
+--yfrkrra6hhwfgghr
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
 
-Gr{oetje,eeting}s,
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljngmUACgkQFA3kzBSg
+KbYJXA//UZtIh8nzxkQLe2dmQfr7Lv3Vgf6JgoSmIntefeLyP3Pkneh1U2Vi249s
+lTsonGiFr8HwcFePoKmVdhkQM9RgKxTERKRtLc1Ry0xJom6OL728Mr1i9g+GRrMa
+ud7ncKHMlzQWvNn2f2EuG2mKLdkGBqdhzkneuIYbo9qK2rFPp+Q7b8ZeldVfr4GO
+wwSNwHpye7vg+W4zHhxox12uGTnWPuV9MdaKO1zFL+gW26kvYmTliggq7GzzZP4e
+1SOyKj6H0ykRF3eaQvQwrybG5zNLXBOGjBLagx9iu5uQjgFDaBfyYMV9YVaDeZih
+ZGvU5BtS+Rc1qDaHUkk4hfY9EMv8VS0reTRL1MhsQHQFHQCzxNubS+b7bn6WwTpZ
+Uhovcgaaif5KijOeVRcYNMk2UqKdKfZt+mp1zJenN+CzHRigjSFytbGV60GIETen
+oDi/kZUe3O11sfv0M7wbWLzSzRJnbDty+NzNqKcUOcQBaU/NKeBzeFJakO7uC9D1
+p7y2Rg3yB571GxXJU1VdexN5daUX443uuMoJKzwP8jGHY2gGmS8It12+Wfw42Dwi
+ooDU5glXfc6IacTtITNfNtYOAjTV/JUL82sPeTX4/4Tz6S16xpJtZ/gG0A+ywGg8
+Yp1w7fG68V70PWM3PAtu2xa5rvtNymYKdvlj18kNR1dHZt8GZfs=
+=86ss
+-----END PGP SIGNATURE-----
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--yfrkrra6hhwfgghr--
