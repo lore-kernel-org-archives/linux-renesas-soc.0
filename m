@@ -1,50 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:35743 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968604AbdDSRrV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933632AbdDGP7F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:47:21 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 7 Apr 2017 11:59:05 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7795: Add USB-DMAC ch3 clock
-Date: Thu, 20 Apr 2017 02:46:24 +0900
-Message-Id: <1492624001-3758-4-git-send-email-ykaneko0929@gmail.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/22] ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
+Date: Fri,  7 Apr 2017 11:58:22 -0400
+Message-Id: <5b476a9610910a6ac5222bee4ae83a8d41800dbd.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch supports the clock of USB-DMAC ch3 module added from R8A7795
-ES2.0 SoC.
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is based on the clk-next branch of linux-clk tree.
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index e48d5cf..fd4dbc6 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -142,8 +142,10 @@ enum clk_ids {
- 	DEF_MOD("sdif0",		 314,	R8A7795_CLK_SD0),
- 	DEF_MOD("pcie1",		 318,	R8A7795_CLK_S3D1),
- 	DEF_MOD("pcie0",		 319,	R8A7795_CLK_S3D1),
-+	DEF_MOD("usb-dmac30",		 326,	R8A7795_CLK_S3D1),
- 	DEF_MOD("usb3-if1",		 327,	R8A7795_CLK_S3D1), /* ES1.x */
- 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
-+	DEF_MOD("usb-dmac31",		 329,	R8A7795_CLK_S3D1),
- 	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
- 	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
- 	DEF_MOD("rwdt",			 402,	R8A7795_CLK_R),
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index fe6b8c2a2d71..99269aaca6fc 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1101,7 +1101,7 @@
+ 		};
+ 
+ 		/* External CAN clock */
+-		can_clk: can_clk {
++		can_clk: can {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
