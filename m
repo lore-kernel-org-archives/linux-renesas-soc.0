@@ -1,37 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53844 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751684AbdDHL2K (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933632AbdDGP7G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 07:28:10 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Fri, 7 Apr 2017 11:59:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 1/2] arm64: dts: r8a7795: enable HS200 for eMMC
-Date: Sat,  8 Apr 2017 13:27:58 +0200
-Message-Id: <20170408112759.26724-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170408112759.26724-1-wsa+renesas@sang-engineering.com>
-References: <20170408112759.26724-1-wsa+renesas@sang-engineering.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/22] ARM: dts: rskrza1: add rtc DT support
+Date: Fri,  7 Apr 2017 11:58:20 -0400
+Message-Id: <931f3dc3f0d14cc7758aa2d48fc2d713f8c6ebff.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
- 1 file changed, 1 insertion(+)
+From: Chris Brandt <chris.brandt@renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 639aa085d99666..594bd6a1386499 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -467,6 +467,7 @@
- 	vmmc-supply = <&reg_3p3v>;
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
-+	mmc-hs200-1_8v;
- 	non-removable;
+Enable the realtime clock.
+
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index cab5857bfb41..72df20a04320 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -73,6 +73,10 @@
+ 	status = "okay";
+ };
+ 
++&rtc {
++	status = "okay";
++};
++
+ &scif2 {
  	status = "okay";
  };
 -- 
-2.11.0
+2.7.0.rc3.207.g0ac5344
