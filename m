@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:32925 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968756AbdDSRrn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54642 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756141AbdDGP6d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:47:43 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 7 Apr 2017 11:58:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add EHCI/OHCI clocks
-Date: Thu, 20 Apr 2017 02:46:27 +0900
-Message-Id: <1492624001-3758-7-git-send-email-ykaneko0929@gmail.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/22] ARM: dts: alt: Correct clock of DU1
+Date: Fri,  7 Apr 2017 11:58:07 -0400
+Message-Id: <7f698bf60e3a13c991577f5360f371e2a41cf40e.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds EHCI/OHCI{0,1} clocks for R8A7796 SoC.
+The second channel of the display unit uses a different module clock
+than the first channel.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Fixes: 876e7fb9f418fd86 ("ARM: shmobile: r8a7794: alt: Enable VGA port")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is based on the clk-next branch of linux-clk tree.
+ arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 1d8c5c2..c6c5026 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -165,6 +165,8 @@ enum clk_ids {
- 	DEF_MOD("vspd0",		 623,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vspb",			 626,	R8A7796_CLK_S0D1),
- 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
-+	DEF_MOD("ehci1",		 702,	R8A7796_CLK_S3D4),
-+	DEF_MOD("ehci0",		 703,	R8A7796_CLK_S3D4),
- 	DEF_MOD("csi20",		 714,	R8A7796_CLK_CSI0),
- 	DEF_MOD("csi40",		 716,	R8A7796_CLK_CSI0),
- 	DEF_MOD("du2",			 722,	R8A7796_CLK_S2D1),
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 3fcf76b8e923..f1eea13cdf44 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -168,7 +168,7 @@
+ 	status = "okay";
+ 
+ 	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
+-		 <&mstp7_clks R8A7794_CLK_DU0>,
++		 <&mstp7_clks R8A7794_CLK_DU1>,
+ 		 <&x13_clk>, <&x2_clk>;
+ 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
+ 
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
