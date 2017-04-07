@@ -1,53 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:39488 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1949599AbdDZLwg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933632AbdDGP6z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 07:52:36 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/5] usb: gadget: udc: renesas_usb3: fix deadlock by spinlock
-Date: Wed, 26 Apr 2017 20:50:08 +0900
-Message-ID: <1493207411-24416-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 7 Apr 2017 11:58:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 13/22] ARM: dts: r8a7794: Add Z2 clock
+Date: Fri,  7 Apr 2017 11:58:14 -0400
+Message-Id: <57ff9d736e05bede56fdb47599fdddb3408d4651.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that this driver is possible to cause
-deadlock by double-spinclocked in renesas_usb3_stop_controller().
-So, this patch removes spinlock API calling in renesas_usb3_stop().
-(In other words, the previous code had a redundant lock.)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add the Z2 clock (Cortex-A7 CPU core clock), which uses a fixed divider,
+and link the first CPU node to it.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 10585da..e27d948 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -1810,14 +1810,11 @@ static int renesas_usb3_start(struct usb_gadget *gadget,
- static int renesas_usb3_stop(struct usb_gadget *gadget)
- {
- 	struct renesas_usb3 *usb3 = gadget_to_renesas_usb3(gadget);
--	unsigned long flags;
- 
--	spin_lock_irqsave(&usb3->lock, flags);
- 	usb3->softconnect = false;
- 	usb3->gadget.speed = USB_SPEED_UNKNOWN;
- 	usb3->driver = NULL;
- 	renesas_usb3_stop_controller(usb3);
--	spin_unlock_irqrestore(&usb3->lock, flags);
- 
- 	pm_runtime_put(usb3_to_dev(usb3));
- 	pm_runtime_disable(usb3_to_dev(usb3));
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 2f6e94fd408c..a19b884fb258 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -43,6 +43,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0>;
+ 			clock-frequency = <1000000000>;
++			clocks = <&z2_clk>;
+ 			power-domains = <&sysc R8A7794_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+@@ -1064,6 +1065,13 @@
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+ 		};
++		z2_clk: z2 {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7794_CLK_PLL0>;
++			#clock-cells = <0>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
+ 		zg_clk: zg {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
