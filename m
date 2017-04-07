@@ -1,57 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54893 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932616AbdDEOID (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 10:08:03 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 7/9] arm: dts: genmai: Add RIIC2 pin group
-Date: Wed,  5 Apr 2017 16:07:25 +0200
-Message-Id: <1491401247-7030-8-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: drm: rcar-du: Document optional reset properties
+Date: Fri, 07 Apr 2017 15:55:19 +0300
+Message-ID: <2015685.1dmalSy0Yr@avalon>
+In-Reply-To: <CAMuHMdU0=WfkUUjXTYpp4JWM4mzFcV3AwSwf_7p+YnQQh=uE-w@mail.gmail.com>
+References: <1488817556-21410-1-git-send-email-geert+renesas@glider.be> <20170316205639.xufbtbnqgy72bwyc@rob-hp-laptop> <CAMuHMdU0=WfkUUjXTYpp4JWM4mzFcV3AwSwf_7p+YnQQh=uE-w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for RIIC2 interface.
+Hi Geert and Rob,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Thursday 16 Mar 2017 21:59:04 Geert Uytterhoeven wrote:
+> On Thu, Mar 16, 2017 at 9:56 PM, Rob Herring <robh@kernel.org> wrote:
+> > On Thu, Mar 16, 2017 at 09:13:16AM +0100, Geert Uytterhoeven wrote:
+> >> On Wed, Mar 15, 2017 at 6:01 PM, Rob Herring <robh@kernel.org> wrote:
+> >>> On Mon, Mar 06, 2017 at 05:25:56PM +0100, Geert Uytterhoeven wrote:
+> >>>> Document the optional properties for describing module resets, to
+> >>>> support resetting display channels and LVDS encoders on R-Car Gen2 and
+> >>>> Gen3.
+> >>>> 
+> >>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>>> ---
+> >>>> See "[v2,1/4] dt-bindings: clock: renesas: cpg-mssr: Document reset
+> >>>> control support" (https://patchwork.kernel.org/patch/9536627/) for the
+> >>>> format of a reset specifier in the Renesas CPG/MSSR case.
+> >>>> 
+> >>>> E.g. "resets = <&cpg 310>;"
+> >>>> 
+> >>>> v2:
+> >>>>   - s/phandles/phandle/.
+> >>>> 
+> >>>> ---
+> >>>> 
+> >>>>  Documentation/devicetree/bindings/display/renesas,du.txt | 10 ++++++++
+> >>>>  1 file changed, 10 insertions(+)
+> >>>> 
+> >>>> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+> >>>> b/Documentation/devicetree/bindings/display/renesas,du.txt index
+> >>>> 1a02f099a0ff0a3a..3db418c827193e82 100644
+> >>>> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> >>>> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> >>>> @@ -36,6 +36,16 @@ Required Properties:
+> >>>>        When supplied they must be named "dclkin.x" with "x" being the
+> >>>>        input clock numerical index.
+> >>>> 
+> >>>> +Optional properties:
+> >>>> +  - resets: A list of phandle + reset-specifier pairs, one for each
+> >>>> entry in
+> >>>> +    the reset-names property.
+> >>>> +  - reset-names: Names of the resets. This property is
+> >>>> model-dependent.
+> >>>> +    - R8A779[0123456] use one reset for a group of one or more
+> >>>> successive
+> >>>> +      channels, and one reset per LVDS encoder (if available). The
+> >>>> resets
+> >>>> +      must be named "du.x" with "x" being the numerical index of the
+> >>>> lowest
+> >>>> +      channel in the group. The LVDS resets must be named "lvds.x"
+> >>>> with "x"
+> >>>> +      being the LVDS encoder numerical index.
+> >>> 
+> >>> LVDS is not a separate block?
+> >> 
+> >> Well... from a hardware point of view, the LVDS encoders and DU channels
+> >> are all separate blocks (they have separate reg blocks, clocks, and
+> >> resets). But due to the dependencies between the blocks, they're modeled
+> >> in DT as a single device, with multiple reg, clocks, and resets
+> >> properties.
+> >
+> > Dependencies being DRM requirement of wanting a single device with
+> > sub-devices or some h/w dependencies? The former shouldn't define your
+> > binding.
+> 
+> Hardware dependencies. Laurent can tell you more about them (when he'll
+> be back).
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index c28d74b..9add1b6 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -43,6 +43,12 @@
- 		/* P3_0 as TxD2; P3_2 as RxD2 */
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
- 	};
-+
-+	i2c2_pins: i2c2 {
-+		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
-+		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
-+		bi-directional;
-+	};
- };
- 
- &extal_clk {
-@@ -61,6 +67,9 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
-+
- 	eeprom@50 {
- 		compatible = "renesas,24c128";
- 		reg = <0x50>;
+I believe we could model the LVDS encoder as a separate DT node. It was 
+probably a historical mistake (that would however need to be confirmed, I 
+haven't double-checked all details). Obviously I can't break backward 
+compatibility, so we're kind of stuck :-S
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
+
