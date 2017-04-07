@@ -1,77 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:38393 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751803AbdDCQDt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933502AbdDGP6n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 12:03:49 -0400
-Date: Mon, 3 Apr 2017 18:03:37 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] rtc: Reuse rtc-sh driver to support RZ/A1
-Message-ID: <20170403160337.g3fzjbfhllnaoafz@piout.net>
-References: <20170329173035.67477-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170329173035.67477-1-chris.brandt@renesas.com>
+        Fri, 7 Apr 2017 11:58:43 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/22] ARM: dts: r7s72100: add power-domains to sdhi
+Date: Fri,  7 Apr 2017 11:58:04 -0400
+Message-Id: <3932197c01e4ca7d743d07728656d938f1ae93d5.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Chris Brandt <chris.brandt@renesas.com>
 
-On 29/03/2017 at 10:30:28 -0700, Chris Brandt wrote:
-> Basically, the same RTC that was used in SuperH devices is now used in
-> RZ/A1 devices. Therefore with some slight changes, that driver can be
-> reused.
-> 
-> Additionally, since ARM architectures require Device Tree configurations,
-> device tree support has been added.
-> 
-> This was tested on RZ/A1H RSK board. Once the correct time was programmed
-> into the RTC running off a 32.768kHz crystal, you can retain an accurate
-> system clock between reboots (hard and soft) until power is finally removed
-> from the board (there is no batter backup on the RSK board).
-> 
-> v3:
-> * remove 'power-domains' from example in documentation
-> * update commit message subject and body of dt-bindings
-> 
-> v2:
-> * removed HAVE_CLK from Kconfig
-> * when using DT, look for "fck" instead of "rtc0"
-> * changed (res == NULL) to (!res)
-> * added Reviewed-by for rtc-sh.c
-> * added interrupt-names and clock-names
-> * clocks now include counting sources
-> * added clock-names "fck", "rtc_x1", "rtc_x3", "extal"
-> * changed 'is a RTC' to 'is an RTC' in commit message
-> * changed "rtc0" to "rtc"
-> * Added clock nodes for RTC_X1 and RTC_X3 pin inputs
-> * each commit now has a log message
-> 
-> 
-> Chris Brandt (7):
->   rtc: rtc-sh: add support for rza series
->   dt-bindings: rtc: document the rtc-sh bindings
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Fixes: 66474697923c ("ARM: dts: r7s72100: add sdhi to device tree")
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I applied those two, I'll let Simon take the device tree patches.
-
-Thanks!
-
->   ARM: dts: r7s72100: add rtc clock to device tree
->   ARM: dts: r7s72100: add RTC_X clock inputs to device tree
->   ARM: dts: r7s72100: add rtc to device tree
->   ARM: dts: rskrza1: set rtc_x1 clock value
->   ARM: dts: rskrza1: add rtc DT support
-
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 9b12d73e67dc..9fb2e510958a 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -501,6 +501,7 @@
+ 		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
+ 			 <&mstp12_clks R7S72100_CLK_SDHI01>;
+ 		clock-names = "core", "cd";
++		power-domains = <&cpg_clocks>;
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
+@@ -516,6 +517,7 @@
+ 		clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
+ 			 <&mstp12_clks R7S72100_CLK_SDHI11>;
+ 		clock-names = "core", "cd";
++		power-domains = <&cpg_clocks>;
+ 		cap-sd-highspeed;
+ 		cap-sdio-irq;
+ 		status = "disabled";
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.7.0.rc3.207.g0ac5344
