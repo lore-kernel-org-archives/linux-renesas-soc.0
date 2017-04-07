@@ -1,59 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933632AbdDGP7I (ORCPT
+        with ESMTP id S933632AbdDGP7B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:59:08 -0400
+        Fri, 7 Apr 2017 11:59:01 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 20/22] ARM: dts: genmai: Enable rtc and rtc_x1 clock
-Date: Fri,  7 Apr 2017 11:58:21 -0400
-Message-Id: <e533a459f07c2b7bcc60121032b3b24d0c58133a.1491580547.git.horms+renesas@verge.net.au>
+Subject: [PATCH 16/22] ARM: dts: r7s72100: add RTC_X clock inputs to device tree
+Date: Fri,  7 Apr 2017 11:58:17 -0400
+Message-Id: <deddcb891d0d2b4f437dea9bdea4752982c4b133.1491580547.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
 References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-Enable the 32.768 kHz RTC_X1 clock by setting the frequency value to
-non-zero and enable the realtime clock.
+Add the RTC clocks to device tree. The frequencies must be fixed values
+according to the hardware manual.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/r7s72100.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 118a8e2b86bd..52a7b586bac7 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -44,6 +44,10 @@
- 	clock-frequency = <48000000>;
- };
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 9eace892fec7..9db46ac08ba7 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -51,6 +51,20 @@
+ 			clock-frequency = <0>;
+ 		};
  
-+&rtc_x1_clk {
-+	clock-frequency = <32768>;
-+};
++		rtc_x1_clk: rtc_x1 {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			/* If clk present, value must be set by board to 32678 */
++			clock-frequency = <0>;
++		};
 +
- &mtu2 {
- 	status = "okay";
- };
-@@ -59,6 +63,10 @@
- 	};
- };
- 
-+&rtc {
-+	status = "okay";
-+};
++		rtc_x3_clk: rtc_x3 {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			/* If clk present, value must be set by board to 4000000 */
++			clock-frequency = <0>;
++		};
 +
- &scif2 {
- 	status = "okay";
- };
+ 		/* Fixed factor clocks */
+ 		b_clk: b {
+ 			#clock-cells = <0>;
 -- 
 2.7.0.rc3.207.g0ac5344
