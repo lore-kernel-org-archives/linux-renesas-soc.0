@@ -1,38 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53838 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751764AbdDHL2L (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933632AbdDGP67 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 07:28:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Fri, 7 Apr 2017 11:58:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 0/2] arm64: gen3: enable eMMC HS200 in DT
-Date: Sat,  8 Apr 2017 13:27:57 +0200
-Message-Id: <20170408112759.26724-1-wsa+renesas@sang-engineering.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/22] ARM: dts: r7s72100: add rtc clock to device tree
+Date: Fri,  7 Apr 2017 11:58:16 -0400
+Message-Id: <929ded3dd7ce91d9ef4143d673b4ace2eb9ab355.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Simon,
+From: Chris Brandt <chris.brandt@renesas.com>
 
-the driver patches for HS200 support are now upstream. So, based on the earlier
-discussion [1] it should be now safe to pick up the DTS patches. I rebased them
-to the arm64-dt-for-v4.12 branch.
+Add the realtime clock functional clock source.
 
-Thanks,
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r7s72100.dtsi            | 9 +++++++++
+ include/dt-bindings/clock/r7s72100-clock.h | 3 +++
+ 2 files changed, 12 insertions(+)
 
-   Wolfram
-
-[1] http://www.spinics.net/lists/linux-renesas-soc/msg11230.html
-
-Wolfram Sang (2):
-  arm64: dts: r8a7795: enable HS200 for eMMC
-  arm64: dts: r8a7796: enable HS200 for eMMC
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 1 +
- 2 files changed, 2 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 47ef53a4c8bf..9eace892fec7 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -117,6 +117,15 @@
+ 			clock-output-names = "ostm0", "ostm1";
+ 		};
+ 
++		mstp6_clks: mstp6_clks@fcfe042c {
++			#clock-cells = <1>;
++			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0xfcfe042c 4>;
++			clocks = <&p0_clk>;
++			clock-indices = <R7S72100_CLK_RTC>;
++			clock-output-names = "rtc";
++		};
++
+ 		mstp7_clks: mstp7_clks@fcfe0430 {
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index cd2ed5194255..bc256d31099a 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -29,6 +29,9 @@
+ #define R7S72100_CLK_OSTM0	1
+ #define R7S72100_CLK_OSTM1	0
+ 
++/* MSTP6 */
++#define R7S72100_CLK_RTC	0
++
+ /* MSTP7 */
+ #define R7S72100_CLK_ETHER	4
+ 
 -- 
-2.11.0
+2.7.0.rc3.207.g0ac5344
