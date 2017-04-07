@@ -1,106 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35614 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763594AbdDSNZK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932703AbdDGP6i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 09:25:10 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 3/5] arm64: dts: r8a7796: Add PWM device nodes
-Date: Wed, 19 Apr 2017 15:24:51 +0200
-Message-Id: <1492608293-12435-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 7 Apr 2017 11:58:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/22] ARM: dts: r8a7794: Add DU1 clock to device tree
+Date: Fri,  7 Apr 2017 11:58:05 -0400
+Message-Id: <1764f8081f1524bf629e0744b277db751281ff56.1491580547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
+References: <cover.1491580547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds PWM{0,1,2,3,4,5,6} device nodes for R8A7796 SoC.
+Add the missing module clock for the second channel of the display unit.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 63 ++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi            | 8 +++++---
+ include/dt-bindings/clock/r8a7794-clock.h | 1 +
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 798fe0f..578b318 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -455,6 +455,69 @@
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 38bf9ed8e739..f5f8d1c03ef7 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1270,19 +1270,21 @@
+ 			clocks = <&mp_clk>, <&hp_clk>,
+ 				 <&zs_clk>, <&p_clk>, <&p_clk>, <&zs_clk>,
+ 				 <&zs_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+-				 <&zx_clk>;
++				 <&zx_clk>, <&zx_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+ 				R8A7794_CLK_EHCI R8A7794_CLK_HSUSB
+ 				R8A7794_CLK_HSCIF2 R8A7794_CLK_SCIF5
+ 				R8A7794_CLK_SCIF4 R8A7794_CLK_HSCIF1 R8A7794_CLK_HSCIF0
+ 				R8A7794_CLK_SCIF3 R8A7794_CLK_SCIF2 R8A7794_CLK_SCIF1
+-				R8A7794_CLK_SCIF0 R8A7794_CLK_DU0
++				R8A7794_CLK_SCIF0
++				R8A7794_CLK_DU1 R8A7794_CLK_DU0
+ 			>;
+ 			clock-output-names =
+ 				"ehci", "hsusb",
+ 				"hscif2", "scif5", "scif4", "hscif1", "hscif0",
+-				"scif3", "scif2", "scif1", "scif0", "du0";
++				"scif3", "scif2", "scif1", "scif0",
++				"du1", "du0";
  		};
+ 		mstp8_clks: mstp8_clks@e6150990 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
+index a26776f7dedd..93e99c3ffc8d 100644
+--- a/include/dt-bindings/clock/r8a7794-clock.h
++++ b/include/dt-bindings/clock/r8a7794-clock.h
+@@ -82,6 +82,7 @@
+ #define R8A7794_CLK_SCIF2		19
+ #define R8A7794_CLK_SCIF1		20
+ #define R8A7794_CLK_SCIF0		21
++#define R8A7794_CLK_DU1			23
+ #define R8A7794_CLK_DU0			24
  
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a7796", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+ /* MSTP8 */
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
