@@ -1,48 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45776 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:59466 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2997051AbdDZKGp (ORCPT
+        with ESMTP id S932127AbdDGSOh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 06:06:45 -0400
+        Fri, 7 Apr 2017 14:14:37 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/9] ARM: dts: r8a7740: update PFC node name to pin-controller
-Date: Wed, 26 Apr 2017 12:05:32 +0200
-Message-Id: <20170426100538.22060-4-horms+renesas@verge.net.au>
-In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
-References: <20170426100538.22060-1-horms+renesas@verge.net.au>
+Subject: [PATCH 3/3] soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
+Date: Fri,  7 Apr 2017 14:14:21 -0400
+Message-Id: <fcb87087261e1be51b4c03677f39246bdc312b1c.1491588035.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491588035.git.horms+renesas@verge.net.au>
+References: <cover.1491588035.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from e6050000.pfc and pfc@e6050000 to
-e6050000.pin-controller and pin-controller@e6050000.
+Power area A2VC0 was removed in revision ES2.0, cfr. R-Car Gen3 Hardware
+User's Manual rev. 0.53E.
 
+Hence remove it from the power area table when not running on ES1.x.
+
+This is in line with the goal to:
+  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+     for now,
+  2. Make it clear which code supports ES1.x, so it can easily be
+     identified and removed later, when production SoCs are deemed
+     ubiquitous.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7740.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/renesas/r8a7795-sysc.c       | 26 ++++++++++++++++++++++++--
+ include/dt-bindings/power/r8a7795-sysc.h |  2 +-
+ 2 files changed, 25 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 34159a8349de..d37d22682a63 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -299,7 +299,7 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/soc/renesas/r8a7795-sysc.c b/drivers/soc/renesas/r8a7795-sysc.c
+index 5e7537c96f7b..7412666187b3 100644
+--- a/drivers/soc/renesas/r8a7795-sysc.c
++++ b/drivers/soc/renesas/r8a7795-sysc.c
+@@ -1,7 +1,7 @@
+ /*
+  * Renesas R-Car H3 System Controller
+  *
+- * Copyright (C) 2016 Glider bvba
++ * Copyright (C) 2016-2017 Glider bvba
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -10,12 +10,13 @@
  
--	pfc: pfc@e6050000 {
-+	pfc: pin-controller@e6050000 {
- 		compatible = "renesas,pfc-r8a7740";
- 		reg = <0xe6050000 0x8000>,
- 		      <0xe605800c 0x20>;
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/sys_soc.h>
+ 
+ #include <dt-bindings/power/r8a7795-sysc.h>
+ 
+ #include "rcar-sysc.h"
+ 
+-static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
++static struct rcar_sysc_area r8a7795_areas[] __initdata = {
+ 	{ "always-on",	    0, 0, R8A7795_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
+ 	{ "ca57-scu",	0x1c0, 0, R8A7795_PD_CA57_SCU,	R8A7795_PD_ALWAYS_ON,
+ 	  PD_SCU },
+@@ -40,6 +41,7 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
+ 	{ "a3vp",	0x340, 0, R8A7795_PD_A3VP,	R8A7795_PD_ALWAYS_ON },
+ 	{ "cr7",	0x240, 0, R8A7795_PD_CR7,	R8A7795_PD_ALWAYS_ON },
+ 	{ "a3vc",	0x380, 0, R8A7795_PD_A3VC,	R8A7795_PD_ALWAYS_ON },
++	/* A2VC0 exists on ES1.x only */
+ 	{ "a2vc0",	0x3c0, 0, R8A7795_PD_A2VC0,	R8A7795_PD_A3VC },
+ 	{ "a2vc1",	0x3c0, 1, R8A7795_PD_A2VC1,	R8A7795_PD_A3VC },
+ 	{ "3dg-a",	0x100, 0, R8A7795_PD_3DG_A,	R8A7795_PD_ALWAYS_ON },
+@@ -50,7 +52,27 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
+ 	{ "a3ir",	0x180, 0, R8A7795_PD_A3IR,	R8A7795_PD_ALWAYS_ON },
+ };
+ 
++
++	/*
++	 * Fixups for R-Car H3 revisions after ES1.x
++	 */
++
++static const struct soc_device_attribute r8a7795es1[] __initconst = {
++	{ .soc_id = "r8a7795", .revision = "ES1.*" },
++	{ /* sentinel */ }
++};
++
++static int __init r8a7795_sysc_init(void)
++{
++	if (!soc_device_match(r8a7795es1))
++		rcar_sysc_nullify(r8a7795_areas, ARRAY_SIZE(r8a7795_areas),
++				  R8A7795_PD_A2VC0);
++
++	return 0;
++}
++
+ const struct rcar_sysc_info r8a7795_sysc_info __initconst = {
++	.init = r8a7795_sysc_init,
+ 	.areas = r8a7795_areas,
+ 	.num_areas = ARRAY_SIZE(r8a7795_areas),
+ };
+diff --git a/include/dt-bindings/power/r8a7795-sysc.h b/include/dt-bindings/power/r8a7795-sysc.h
+index ee2e26ba605e..ad679eeda137 100644
+--- a/include/dt-bindings/power/r8a7795-sysc.h
++++ b/include/dt-bindings/power/r8a7795-sysc.h
+@@ -33,7 +33,7 @@
+ #define R8A7795_PD_CA53_SCU		21
+ #define R8A7795_PD_3DG_E		22
+ #define R8A7795_PD_A3IR			24
+-#define R8A7795_PD_A2VC0		25
++#define R8A7795_PD_A2VC0		25	/* ES1.x only */
+ #define R8A7795_PD_A2VC1		26
+ 
+ /* Always-on power area */
 -- 
-2.12.2.816.g2cccc81164
+2.7.0.rc3.207.g0ac5344
