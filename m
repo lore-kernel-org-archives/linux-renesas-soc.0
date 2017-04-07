@@ -1,51 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:59246 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752028AbdDCKIM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59456 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932127AbdDGSOf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 06:08:12 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] arm: dts: renesas: Drop _clk suffix from clock node names
-Date: Mon,  3 Apr 2017 12:08:06 +0200
-Message-Id: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+        Fri, 7 Apr 2017 14:14:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] soc: renesas: rcar-sysc: Add support for fixing up power area tables
+Date: Fri,  7 Apr 2017 14:14:20 -0400
+Message-Id: <afa6f53df6052968ce3934ad324777c0057e31d1.1491588035.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1491588035.git.horms+renesas@verge.net.au>
+References: <cover.1491588035.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The current practice is to not add _clk suffixes to clock node names in
-DT, as these names are used as the actual clock names.
+The same SoC may have different power areas, depending on SoC revision.
+One option is to use different sets of power area tables for each SoC
+revision.  However, if the differences are small, it is much more
+space-efficient to have a single set of tables, and fix those up at
+runtime instead.
 
-This patch removes the remaining offenders in the various Renesas DTSes.
+Hence provide a helper to NULLify power areas that do not exist on some
+revisions (NULLified power areas are skipped during the registration
+phase), and support for an optional initialization callback to e.g. fix
+up power area tables.
 
-Thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/rcar-sysc.c | 25 ++++++++++++++++++++++++-
+ drivers/soc/renesas/rcar-sysc.h | 10 ++++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-Geert Uytterhoeven (3):
-  ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
-  ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
-  arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node
-    name
-
- arch/arm/boot/dts/r8a7790.dtsi                     | 2 +-
- arch/arm/boot/dts/r8a7791.dtsi                     | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 225c35c79d9a..528a13742aeb 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -2,7 +2,7 @@
+  * R-Car SYSC Power management support
+  *
+  * Copyright (C) 2014  Magnus Damm
+- * Copyright (C) 2015-2016 Glider bvba
++ * Copyright (C) 2015-2017 Glider bvba
+  *
+  * This file is subject to the terms and conditions of the GNU General Public
+  * License.  See the file "COPYING" in the main directory of this archive
+@@ -334,6 +334,12 @@ static int __init rcar_sysc_pd_init(void)
+ 
+ 	info = match->data;
+ 
++	if (info->init) {
++		error = info->init();
++		if (error)
++			return error;
++	}
++
+ 	has_cpg_mstp = of_find_compatible_node(NULL, NULL,
+ 					       "renesas,cpg-mstp-clocks");
+ 
+@@ -377,6 +383,11 @@ static int __init rcar_sysc_pd_init(void)
+ 		const struct rcar_sysc_area *area = &info->areas[i];
+ 		struct rcar_sysc_pd *pd;
+ 
++		if (!area->name) {
++			/* Skip NULLified area */
++			continue;
++		}
++
+ 		pd = kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
+ 		if (!pd) {
+ 			error = -ENOMEM;
+@@ -406,6 +417,18 @@ static int __init rcar_sysc_pd_init(void)
+ }
+ early_initcall(rcar_sysc_pd_init);
+ 
++void __init rcar_sysc_nullify(struct rcar_sysc_area *areas,
++			      unsigned int num_areas, u8 id)
++{
++	unsigned int i;
++
++	for (i = 0; i < num_areas; i++)
++		if (areas[i].isr_bit == id) {
++			areas[i].name = NULL;
++			return;
++		}
++}
++
+ void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ {
+ 	u32 syscimr;
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index f6e842e2976e..07edb049a401 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -46,6 +46,7 @@ struct rcar_sysc_area {
+  */
+ 
+ struct rcar_sysc_info {
++	int (*init)(void);	/* Optional */
+ 	const struct rcar_sysc_area *areas;
+ 	unsigned int num_areas;
+ };
+@@ -59,4 +60,13 @@ extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ extern const struct rcar_sysc_info r8a7796_sysc_info;
++
++
++    /*
++     * Helpers for fixing up power area tables depending on SoC revision
++     */
++
++extern void rcar_sysc_nullify(struct rcar_sysc_area *areas,
++			      unsigned int num_areas, u8 id);
++
+ #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.7.0.rc3.207.g0ac5344
