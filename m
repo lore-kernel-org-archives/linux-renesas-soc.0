@@ -1,54 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37577 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbdDRF17 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:55496 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751838AbdDHUUV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 01:27:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT] ARM: dts: silk: Enable UHS-I SDR-50
-Date: Tue, 18 Apr 2017 14:27:47 +0900
-Message-Id: <1492493267-20807-1-git-send-email-horms+renesas@verge.net.au>
+        Sat, 8 Apr 2017 16:20:21 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v2 2/2] mmc: core: for data errors, take response of stop cmd into account
+Date: Sat,  8 Apr 2017 22:20:06 +0200
+Message-Id: <20170408202006.27276-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170408202006.27276-1-wsa+renesas@sang-engineering.com>
+References: <20170408202006.27276-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI1.
+Some errors are flagged only with the next command after a multiblock
+transfer, e.g. ECC error. So, when checking for data transfer errors,
+we check the result from the stop command as well.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-* Compile tested only; no access to silk board
----
- arch/arm/boot/dts/r8a7794-silk.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/mmc/core/block.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 4cb5278d104d..b0ef8ea75c29 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -226,6 +226,13 @@
- 	du1_pins: du1 {
- 		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
- 		function = "du1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
- 	};
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index bacaa255c4b16a..ea3dc8a22ad2cb 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -1374,7 +1374,8 @@ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
+ 		return MMC_BLK_RETRY;
+ 	}
  
- 	ssi_pins: sound {
-@@ -343,6 +350,7 @@
- 	vmmc-supply = <&vcc_sdhi1>;
- 	vqmmc-supply = <&vccq_sdhi1>;
- 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
+-	if (brq->data.error) {
++	/* Some errors (ECC) are flagged on the next commmand, so check stop, too */
++	if (brq->data.error || brq->stop.error) {
+ 		if (need_retune && !brq->retune_retry_done) {
+ 			pr_debug("%s: retrying because a re-tune was needed\n",
+ 				 req->rq_disk->disk_name);
+@@ -1382,7 +1383,7 @@ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
+ 			return MMC_BLK_RETRY;
+ 		}
+ 		pr_err("%s: error %d transferring data, sector %u, nr %u, cmd response %#x, card status %#x\n",
+-		       req->rq_disk->disk_name, brq->data.error,
++		       req->rq_disk->disk_name, brq->data.error ?: brq->stop.error,
+ 		       (unsigned)blk_rq_pos(req),
+ 		       (unsigned)blk_rq_sectors(req),
+ 		       brq->cmd.resp[0], brq->stop.resp[0]);
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
