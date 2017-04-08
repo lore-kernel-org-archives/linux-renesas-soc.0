@@ -1,66 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36458 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938475AbdD0OiB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57286 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752146AbdDHUIx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 10:38:01 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        Ryo Kodama <ryo.kodama.vz@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 5/8] arm64: dts: r8a7796-salvator-x: Add PWM device support
-Date: Thu, 27 Apr 2017 16:37:40 +0200
-Message-Id: <1493303863-23719-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Sat, 8 Apr 2017 16:08:53 -0400
+Date: Sat, 8 Apr 2017 16:08:48 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [git pull] base: soc: Improvements for the SoC bus and
+ soc_device_match()
+Message-ID: <20170408200848.GC6533@verge.net.au>
+References: <1490950460-8945-1-git-send-email-geert+renesas@glider.be>
+ <20170403102831.GF31988@verge.net.au>
+ <20170408153505.GA1140@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170408153505.GA1140@kroah.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+On Sat, Apr 08, 2017 at 05:35:05PM +0200, Greg Kroah-Hartman wrote:
+> On Mon, Apr 03, 2017 at 06:28:31AM -0400, Simon Horman wrote:
+> > On Fri, Mar 31, 2017 at 10:54:20AM +0200, Geert Uytterhoeven wrote:
+> > > 	Hi Greg,
+> > > 	Hi Arnd, Kevin, Olof,
+> > > 	Hi Magnus, Simon,
+> > > 
+> > > The following changes since commit c470abd4fde40ea6a0846a2beab642a578c0b8cd:
+> > > 
+> > >   Linux 4.10 (2017-02-19 14:34:00 -0800)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/soc-device-match-tag2
+> > > 
+> > > for you to fetch changes up to 6e12db376b60b7158e4e6006af60566f8c68f7ab:
+> > > 
+> > >   base: soc: Allow early registration of a single SoC device (2017-03-29 21:43:26 +0200)
+> > 
+> > Hi Geert,
+> > 
+> > I have pulled this into the renesas tree.
+> > 
+> > Hi Greg,
+> > 
+> > I would be most grateful if you could pull the above tag too.
+> 
+> Pull it into where?  Why do I need this if they are going in through
+> your tree?
 
-This patch adds support of PWM2 device for Salvator-X board on
-R8A7796 SoC.
-
-Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index abda84c..1516959 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -138,6 +138,11 @@
- 		function = "pwm1";
- 	};
- 
-+	pwm2_pins: pwm2 {
-+		groups = "pwm2_a";
-+		function = "pwm2";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -257,6 +262,14 @@
- 	status = "okay";
- };
- 
-+&pwm2 {
-+	/* PMIC DC/DC switching frequency synchronization */
-+	pinctrl-0 = <&pwm2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &scif1 {
- 	pinctrl-0 = <&scif1_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+Good point. I don't think you need to pull it unless it would satisfy
+dependencies you have and it seems there are none at this time.
