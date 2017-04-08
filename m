@@ -1,16 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53813 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:53758 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751772AbdDHLUJ (ORCPT
+        id S1752520AbdDHLGW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 07:20:09 -0400
-Date: Sat, 8 Apr 2017 13:20:06 +0200
+        Sat, 8 Apr 2017 07:06:22 -0400
+Date: Sat, 8 Apr 2017 13:06:19 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Simon Horman <horms@verge.net.au>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH RESEND 0/2] arm64: gen3: enable eMMC HS200 in DT
-Message-ID: <20170408112006.sisvziqb4lsqfe5b@ninjato>
+Message-ID: <20170408110619.ctleghvryw6ju2td@ninjato>
 References: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
  <20170126135453.GB2718@katana>
  <20170126140643.GA11104@verge.net.au>
@@ -22,41 +22,67 @@ References: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
  <20170127081608.GG21195@verge.net.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2kcfce4jp2kzlvsg"
+        protocol="application/pgp-signature"; boundary="sojy6fkkqpgolhle"
 Content-Disposition: inline
 In-Reply-To: <20170127081608.GG21195@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---2kcfce4jp2kzlvsg
+--sojy6fkkqpgolhle
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Simon,
+
+On Fri, Jan 27, 2017 at 09:16:08AM +0100, Simon Horman wrote:
+> On Fri, Jan 27, 2017 at 08:27:28AM +0100, Wolfram Sang wrote:
+> >=20
+> > > Using renesas-next without mmc-next I see the problem above on the M3=
+-W.
+> > > Using renesas-next with mmc-next I do not see the problem above.
+> > > Using v4.10-rc2 I also do not see the problem above.
+> >=20
+> > OK. So there is no problem with the code, at least.
+> >=20
+> > > So I believe we should delay the integration change, which is current=
+ly in
+> > > renesas-next, until the driver change in mmc-next hits Linus's tree.
+> >=20
+> > Whatever you do, H3 and M3-W should be treated equally IMO.
+>=20
+> Sure, that is reasonable. This is what I plan to do:
+>=20
+> 1. Drop this series from v4.11
+> 2. Re-queue them for v4.12 once the driver changes hit an rc release
 >    - Please ping me one that happens
 
-Well, to ease and speed up things, I'll simply resend in a minute based
-on arm64-dt-for-v4.12.
+Ping :) Do I need to resend? If so, what branch should I base this on?
+
+Have a nice weekend,
+
+   Wolfram
 
 
---2kcfce4jp2kzlvsg
+--sojy6fkkqpgolhle
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljox2YACgkQFA3kzBSg
-KbZshQ//VNtuYZN50d1g4/MggraV9vVtobLZ/wvJ8HbVCqROt6PFx8/FC88nDzF/
-5/39oDr58cVcn9BkQ0NCtKxtJjTVmVsre9f7KvQWmB0nmnL/VWL8zMn80/P/p7mX
-l9jNVugD05jZ1kcro0B/B3jqyy6/T+OnQ5YGhUBg0UkB0GO3TQRMxDIyXiHRDql3
-eB8NfoOqwjNmOZ9DdEfjRfRHVM+9e4uNd4VnFOCcD1gzYPgOHte/R8DaNCXxupYK
-izL/L0lypAjFoecAKpQpCJksyA7maUVZF09hGJDENOBg15fy3qvan4tPvzQ/9rWR
-uLpcV+IJBbYSChibj3TNVGaPfO3myYbvKYqkBzHyfuhLOQiU5Qic/icMFsiDqwEj
-Ez+Zl/GaLjpZbo7ut8j6zFU4xcq8xKBV9kfFu7AwfsAsqq4v6mY03LewGIkXjUMu
-hNVomc8gRAAhAS3bupOLlVaLEhPOXPeE4nh8cX/q6M6NvGVAzObFw0rvQzp7Qlcq
-Jpq6GZ3C+iDQWjf0Usqg9h5Lm98hr0tTudWgsdI/GX6TwpJ7IuUxJvC9Qiha2Nsb
-1KxHyLPlyZKq4JfgEK9HtVjwgZNYMejhJDfGHSlgOYGQmsC/uBTTc6EIL36hpwAI
-b1zMpzw8cHUZW0VvAUVg+A/iaLXdRnrsjtW88hyyIuVm1RA2JJ0=
-=4Px3
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljoxCcACgkQFA3kzBSg
+KbZbDQ/+OUT4dNHgGnLtacJqq0fkLBKVuwPXQm99tgSS9IDBWpdCoNqbKnQiIZo4
+bDdBfzkkpIsqbcZpmme4DSbcGhio+Mh5kgyv0wzTEwR98hrfeRqruY6Z8721Z0A6
+Bhx3/uu+vwy8RmwGZbrp9Yl1YT587scytEw9/7PLEKPRBkv55UumBOCPNYx0OezA
+Sm15ldrj4nqxNBo7UoasKso9BRPhEpjiYpoH0657PZrGNjqUweEQ/WjYQ0obdxa5
+J0cqjNygGo3P5g3xcjkM8/kBMLN+qGvEUfsfu8dApe/DN3yGurjx6goX1F+X8V16
+yfht8/I8UvSclwYSLJ3hcTWAlHFOkiLaHPUeD6IwjCvOEZBY3IgW8gSkr92Xlpak
+4TY9nRbX7xY6hUMirUcdZIKjDKsvIReaCQalnI3ygK+i5krDGmPYu1cQGY/ofrvP
+hmvo07Q03xxRrNeOwDlLevPbmeKQvoC4eajyN7aMn8fAuqzHVZQXHptAqOi3H1uN
+hBQlpAeLZ5zfK3VE+FnvYIY4X3VOvLwZYyZgd8S3E+F1raOfh3OA/q40E4IaSsZ9
+JQIlAygKp5sKzUq2LsNlDBMt4frEH8SDingi5TBnLD8XGCnSi68OHHzK7ITDPifV
+89QiPRxUo8U8FGIqyP059xdvIn0a1B/dl/Yn7Gvgh3Q/N4LydLw=
+=Kc4r
 -----END PGP SIGNATURE-----
 
---2kcfce4jp2kzlvsg--
+--sojy6fkkqpgolhle--
