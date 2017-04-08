@@ -1,72 +1,28 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f182.google.com ([209.85.213.182]:33958 "EHLO
-        mail-yb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S946428AbdDTOv6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50501 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbdDHNFP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 10:51:58 -0400
-Received: by mail-yb0-f182.google.com with SMTP id 11so25573289ybw.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Apr 2017 07:51:58 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
-        sergei.shtylyov@cogentembedded.com, geert+renesas@glider.be
-Date: Thu, 20 Apr 2017 23:46:57 +0900
-Message-Id: <149269961740.23335.7950127209713140684.sendpatchset@little-apple>
-Subject: [PATCH] ARM: dts: blanche: Add support for HSCIF0 on CN5
+        Sat, 8 Apr 2017 09:05:15 -0400
+Date: Sat, 8 Apr 2017 09:05:11 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] arm64: gen3: enable eMMC HS200 in DT
+Message-ID: <20170408130511.GA20684@verge.net.au>
+References: <20170408112759.26724-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170408112759.26724-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Sat, Apr 08, 2017 at 01:27:57PM +0200, Wolfram Sang wrote:
+> Simon,
+> 
+> the driver patches for HS200 support are now upstream. So, based on the
+> earlier discussion [1] it should be now safe to pick up the DTS patches.
+> I rebased them to the arm64-dt-for-v4.12 branch.
 
-r8a7792 Blanche has depending on dip switch and jumper settings
-either HSCIF0 or CAN0 exposed on the on-board CN5 connector.
-
-This patch adds HSCIF0 to the Blanche dts as serial2.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Currently the r8a7792 PFC is lacking support for HSCIF devices
- so the PFC driver needs to be updated to avoid error messages
- on the boot console.
-
- arch/arm/boot/dts/r8a7792-blanche.dts |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
---- 0001/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ work/arch/arm/boot/dts/r8a7792-blanche.dts	2017-04-20 23:35:50.440607110 +0900
-@@ -21,6 +21,7 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scif3;
-+		serial2 = &hscif0;
- 	};
- 
- 	chosen {
-@@ -207,6 +208,11 @@
- 		function = "scif3";
- 	};
- 
-+	hscif0_pins: hscif0 {
-+		groups = "hscif0_data", "hscif0_ctrl";
-+		function = "hscif0";
-+	};
-+
- 	lan89218_pins: lan89218 {
- 		intc {
- 			groups = "intc_irq0";
-@@ -253,6 +259,14 @@
- 	status = "okay";
- };
- 
-+&hscif0 {
-+	pinctrl-0 = <&hscif0_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
- &can0 {
- 	pinctrl-0 = <&can0_pins>;
- 	pinctrl-names = "default";
+Thanks, I have queued these up.
