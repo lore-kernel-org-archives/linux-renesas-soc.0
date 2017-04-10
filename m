@@ -1,48 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:33802 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751921AbdDKJFn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Apr 2017 05:05:43 -0400
-Received: by mail-io0-f170.google.com with SMTP id a103so63115826ioj.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Apr 2017 02:05:42 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Apr 2017 11:05:41 +0200
-Message-ID: <CACRpkdaxdDX71m4EGSHD2OV1gQsCwQeOCyeMDCndPxNpZU-oPw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] Renesas RZ/A1 pin and gpio controller
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: RE: [PATCH v4 0/9] Renesas RZ/A1 pin and gpio controller
+Date: Mon, 10 Apr 2017 02:33:36 +0000
+Message-ID: <SG2PR06MB1165D83E182D6B043C3C59928A010@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 5, 2017 at 4:07 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+Hi Jacopo,
 
-> Hi Linus,
->    this is 4th round of gpio/pincontroller for RZ/A1 devices.
->
-> As you suggested in v3 review, I have now added what we called pinmux flags
-> to the list of standard pinconf generic properties, and we're now using
-> generic parsing routines to collect them and apply them when multiplexing
-> pins.
+On Wednesday, April 05, 2017, Jacopo Mondi wrote:
+> v3 -> v4:
+> - use "pinmux" property in pmx sub-nodes in place of "renesas,pins"
+> - use pinconf standard properties to set pin mux additional flags
+> - add "bi-directional" and "output-enable" to pinconf generic properties
+> - perform pmx function parsing at dt_node_to_map() time
+> - change DT bindings to use GENERIC_PINCONF
+> - change DT bindings to allow sub-nodes to have "pinmux" property
+> specified
+> - several renames (register names, DT parse functions, set_mux() function=
+)
 
-I have merged patch 1/9 so you have the necessary infrastructure in place.
 
-If Geert want to send a pull request based on my devel branch that is fine
-(but a bit late) else the requirements are there for a merge in the early
-v4.12 kernel cycle.
+I just tested this driver on the RZ/A1 RSK board.
+The following worked good.
 
-Yours,
-Linus Walleij
+   SCIF2, I2C, SDHI, Ethernet
+
+
+SDHI also has bi-direction pins. For your reference, here was my DT:
+
+
+	/* SHDI ch1 on CN1 */
+	sdhi1_pins: sdhi1 {
+		pins {
+			pinmux =3D <RZA1_PINMUX(3, 8, 7)>,	/* SD_CD_1 */
+				 <RZA1_PINMUX(3, 9, 7)>,	/* SD_WP_1 */
+				 <RZA1_PINMUX(3, 12, 7)>,	/* SD_CLK_1 */
+				 <RZA1_PINMUX(3, 13, 7)>;	/* SD_CMD_1 */
+		};
+
+		pins_bidir {
+			pinmux =3D <RZA1_PINMUX(3, 10, 7)>,	/* SD_D1_1 */
+				 <RZA1_PINMUX(3, 11, 7)>,	/* SD_D0_1 */
+				 <RZA1_PINMUX(3, 14, 7)>,	/* SD_D3_1 */
+				 <RZA1_PINMUX(3, 15, 7)>;	/* SD_D2_1 */
+			bi-directional;
+		};
+	};
+
+
+Thanks,
+Chris
