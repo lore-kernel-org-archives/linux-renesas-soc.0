@@ -1,94 +1,154 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 2/2] serial: sh-sci: Move uart_register_driver call to device probe
-Date: Thu, 20 Apr 2017 14:13:01 +0200
-Message-Id: <20170420121301.382-3-sjoerd.simons@collabora.co.uk>
-In-Reply-To: <20170420121301.382-1-sjoerd.simons@collabora.co.uk>
-References: <20170420121301.382-1-sjoerd.simons@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:56493
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753366AbdDJSN4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Apr 2017 14:13:56 -0400
+Date: Mon, 10 Apr 2017 15:13:45 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?=
+        <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH v3 1/8] v4l: Add metadata buffer type and format
+Message-ID: <20170410151345.5744cbb6@vento.lan>
+In-Reply-To: <9012f4cc-f13f-b3b2-3599-c4f693acf70c@xs4all.nl>
+References: <20170228155648.12051-1-laurent.pinchart+renesas@ideasonboard.com>
+        <20170228155648.12051-2-laurent.pinchart+renesas@ideasonboard.com>
+        <20170410142355.196d4eb4@vento.lan>
+        <9012f4cc-f13f-b3b2-3599-c4f693acf70c@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-uart_register_driver call binds the driver to a specific device
-node through tty_register_driver call. This should typically
-happen during device probe call.
+Em Mon, 10 Apr 2017 19:58:46 +0200
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
 
-In a multiplatform scenario, it is possible that multiple serial
-drivers are part of the kernel. Currently the driver registration fails
-if multiple serial drivers with overlapping major/minor numbers are
-included.
+> On 04/10/2017 07:23 PM, Mauro Carvalho Chehab wrote:
+> > Em Tue, 28 Feb 2017 17:56:41 +0200
+> > Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
+> >   
+> >> The metadata buffer type is used to transfer metadata between userspace
+> >> and kernelspace through a V4L2 buffers queue. It comes with a new
+> >> metadata capture capability and format description.
+> >>
+> >> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >> Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+> >> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> >> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> >> ---
+> >>  Documentation/media/uapi/v4l/buffer.rst          |  3 ++
+> >>  Documentation/media/uapi/v4l/dev-meta.rst        | 62 ++++++++++++++++++++++++
+> >>  Documentation/media/uapi/v4l/devices.rst         |  1 +
+> >>  Documentation/media/uapi/v4l/vidioc-querycap.rst |  3 ++
+> >>  Documentation/media/videodev2.h.rst.exceptions   |  2 +
+> >>  drivers/media/v4l2-core/v4l2-compat-ioctl32.c    | 19 ++++++++
+> >>  drivers/media/v4l2-core/v4l2-dev.c               | 16 +++---
+> >>  drivers/media/v4l2-core/v4l2-ioctl.c             | 34 +++++++++++++
+> >>  drivers/media/v4l2-core/videobuf2-v4l2.c         |  3 ++
+> >>  include/media/v4l2-ioctl.h                       | 17 +++++++
+> >>  include/trace/events/v4l2.h                      |  1 +
+> >>  include/uapi/linux/videodev2.h                   | 13 +++++
+> >>  12 files changed, 168 insertions(+), 6 deletions(-)
+> >>  create mode 100644 Documentation/media/uapi/v4l/dev-meta.rst
+> >>
+> >> diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
+> >> index 5c58db98ab7a..02834ce7fa4d 100644
+> >> --- a/Documentation/media/uapi/v4l/buffer.rst
+> >> +++ b/Documentation/media/uapi/v4l/buffer.rst
+> >> @@ -418,6 +418,9 @@ enum v4l2_buf_type
+> >>        - 12
+> >>        - Buffer for Software Defined Radio (SDR) output stream, see
+> >>  	:ref:`sdr`.
+> >> +    * - ``V4L2_BUF_TYPE_META_CAPTURE``
+> >> +      - 13
+> >> +      - Buffer for metadata capture, see :ref:`metadata`.
+> >>  
+> >>  
+> >>  
+> >> diff --git a/Documentation/media/uapi/v4l/dev-meta.rst b/Documentation/media/uapi/v4l/dev-meta.rst
+> >> new file mode 100644
+> >> index 000000000000..b6044c54082a
+> >> --- /dev/null
+> >> +++ b/Documentation/media/uapi/v4l/dev-meta.rst
+> >> @@ -0,0 +1,62 @@
+> >> +.. -*- coding: utf-8; mode: rst -*-
+> >> +
+> >> +.. _metadata:
+> >> +
+> >> +******************
+> >> +Metadata Interface
+> >> +******************
+> >> +
+> >> +Metadata refers to any non-image data that supplements video frames with
+> >> +additional information. This may include statistics computed over the image
+> >> +or frame capture parameters supplied by the image source. This interface is
+> >> +intended for transfer of metadata to userspace and control of that operation.
+> >> +
+> >> +The metadata interface is implemented on video capture device nodes. The device
+> >> +can be dedicated to metadata or can implement both video and metadata capture
+> >> +as specified in its reported capabilities.
+> >> +
+> >> +.. note::
+> >> +
+> >> +    This is an :ref:`experimental` interface and may
+> >> +    change in the future.  
+> > 
+> > While I'm ok with this comment, in practice, this comment is bogus. Once we
+> > merge it, it is unlikely that we'll be able to change it.
+> > 
+> > That would just add a task on our TODO list that we'll need to remove this
+> > comment some day.  
+> 
+> I'll remove this. These notes were all removed some time ago. This patch was most
+> likely made when these notes were still in use.
+> 
+> >   
+> >> +
+> >> +Querying Capabilities
+> >> +=====================
+> >> +
+> >> +Device nodes supporting the metadata interface set the ``V4L2_CAP_META_CAPTURE``
+> >> +flag in the ``device_caps`` field of the
+> >> +:c:type:`v4l2_capability` structure returned by the :c:func:`VIDIOC_QUERYCAP`
+> >> +ioctl. That flag means the device can capture metadata to memory.
+> >> +
+> >> +At least one of the read/write or streaming I/O methods must be supported.
+> >> +
+> >> +
+> >> +Data Format Negotiation
+> >> +=======================
+> >> +
+> >> +The metadata device uses the :ref:`format` ioctls to select the capture format.
+> >> +The metadata buffer content format is bound to that selected format. In addition
+> >> +to the basic :ref:`format` ioctls, the :c:func:`VIDIOC_ENUM_FMT` ioctl must be
+> >> +supported as well.
+> >> +
+> >> +To use the :ref:`format` ioctls applications set the ``type`` field of the
+> >> +:c:type:`v4l2_format` structure to ``V4L2_BUF_TYPE_META_CAPTURE`` and use the
+> >> +:c:type:`v4l2_meta_format` ``meta`` member of the ``fmt`` union as needed per
+> >> +the desired operation. Both drivers and applications must set the remainder of
+> >> +the :c:type:`v4l2_format` structure to 0.
+> >> +
+> >> +.. _v4l2-meta-format:  
+> > 
+> > Better to add an space after the label. My experience with random versions
+> > of Sphinx is that it doesn't like to have different types of paragraph
+> > without at least one blank line between them.  
+> 
+> You mean 'Better to add a newline after the label'? It's a bit confusing.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Yes, that's what I meant.
 
----
+> 
+> Regards,
+> 
+> 	Hans
 
-Changes in v2:
-- Add locking to prevent issues when two probes run in parallel
 
- drivers/tty/serial/sh-sci.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 9a47cc4f16a2..f23254add9a7 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2935,6 +2935,7 @@ static inline int sci_probe_earlyprintk(struct platform_device *pdev)
- 
- static const char banner[] __initconst = "SuperH (H)SCI(F) driver initialized";
- 
-+static DEFINE_MUTEX(sci_uart_registration_lock);
- static struct uart_driver sci_uart_driver = {
- 	.owner		= THIS_MODULE,
- 	.driver_name	= "sci",
-@@ -3063,6 +3064,16 @@ static int sci_probe_single(struct platform_device *dev,
- 		return -EINVAL;
- 	}
- 
-+	mutex_lock(&sci_uart_registration_lock);
-+	if (!sci_uart_driver.state) {
-+		ret = uart_register_driver(&sci_uart_driver);
-+		if (ret) {
-+			mutex_unlock(&sci_uart_registration_lock);
-+			return ret;
-+		}
-+	}
-+	mutex_unlock(&sci_uart_registration_lock);
-+
- 	ret = sci_init_single(dev, sciport, index, p, false);
- 	if (ret)
- 		return ret;
-@@ -3186,24 +3197,17 @@ static struct platform_driver sci_driver = {
- 
- static int __init sci_init(void)
- {
--	int ret;
--
- 	pr_info("%s\n", banner);
- 
--	ret = uart_register_driver(&sci_uart_driver);
--	if (likely(ret == 0)) {
--		ret = platform_driver_register(&sci_driver);
--		if (unlikely(ret))
--			uart_unregister_driver(&sci_uart_driver);
--	}
--
--	return ret;
-+	return platform_driver_register(&sci_driver);
- }
- 
- static void __exit sci_exit(void)
- {
- 	platform_driver_unregister(&sci_driver);
--	uart_unregister_driver(&sci_uart_driver);
-+
-+	if (sci_uart_driver.state)
-+		uart_unregister_driver(&sci_uart_driver);
- }
- 
- #ifdef CONFIG_SERIAL_SH_SCI_CONSOLE
--- 
-2.11.0
+Thanks,
+Mauro
