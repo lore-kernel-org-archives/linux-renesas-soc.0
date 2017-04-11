@@ -1,76 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58877 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752881AbdDCRgW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 13:36:22 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-        <u.kleine-koenig@pengutronix.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH i2c-tools 1/2] i2ctransfer: replace broken "force" handling
-Date: Mon,  3 Apr 2017 19:36:12 +0200
-Message-Id: <20170403173613.2238-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1491401247-7030-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org> <1491401247-7030-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 11 Apr 2017 11:01:22 +0200
+Message-ID: <CACRpkdYAbJBgBbPEfhixJ9TrA45bOrzYHEWazyx1yMDm8jTZ+w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/9] pinctrl: generic: Add bi-directional and output-enable
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Probably because of a bad rebase, the old and bogus handling (v1) of "force"
-slipped into the latest version of the patch (v3). Apply the better
-version from v2 which does the error handling correct and makes the code
-a lot easier to understand.
+On Wed, Apr 5, 2017 at 4:07 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- tools/i2ctransfer.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+> Add bi-directional and output-enable pin configuration properties.
+>
+> bi-directional allows to specify when a pin shall operate in input and
+> output mode at the same time. This is particularly useful in platforms
+> where input and output buffers have to be manually enabled.
+>
+> output-enable is just syntactic sugar to specify that a pin shall
+> operate in output mode, ignoring the provided argument.
+> This pairs with input-enable pin configuration option.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/tools/i2ctransfer.c b/tools/i2ctransfer.c
-index 0f7ddd5..bc027c3 100644
---- a/tools/i2ctransfer.c
-+++ b/tools/i2ctransfer.c
-@@ -199,8 +199,6 @@ int main(int argc, char *argv[])
- 
- 			arg_ptr = end;
- 			if (*arg_ptr) {
--				int whole_range_ok;
--
- 				if (*arg_ptr++ != '@') {
- 					fprintf(stderr, "Error: Unknown seperator after length\n");
- 					goto err_out_with_arg;
-@@ -211,16 +209,22 @@ int main(int argc, char *argv[])
- 				 * the address here.
- 				 */
- 
--				address = parse_i2c_address(arg_ptr);
--				/* With 'force', allow whole address range */
--				whole_range_ok = force && address == -2;
--				if (address < 0 && !whole_range_ok)
--					goto err_out_with_arg;
--
--				/* Ensure address is not busy */
--				if (!force && set_slave_addr(file, address, 0))
--					goto err_out_with_arg;
--
-+				if (!force) {
-+					address = parse_i2c_address(arg_ptr);
-+					if (address < 0)
-+						goto err_out_with_arg;
-+
-+					/* Ensure address is not busy */
-+					if (set_slave_addr(file, address, 0))
-+						goto err_out_with_arg;
-+				} else {
-+					/* 'force' allows whole address range */
-+					address = strtol(arg_ptr, &end, 0);
-+					if (arg_ptr == end || *end || address > 0x7f) {
-+						fprintf(stderr, "Error: Invalid chip address\n");
-+						goto err_out_with_arg;
-+					}
-+				}
- 			} else {
- 				/* Reuse last address if possible */
- 				if (address < 0) {
--- 
-2.11.0
+Patch applied with Rob's ACK.
+
+Yours,
+Linus Walleij
