@@ -1,53 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933632AbdDGP6w (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:36409 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755623AbdDLUyB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Wed, 12 Apr 2017 16:54:01 -0400
+Received: by mail-lf0-f52.google.com with SMTP id s141so20472808lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Apr 2017 13:54:00 -0700 (PDT)
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: add R8A7745 support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/22] ARM: dts: r8a7793: Correct parent of SSI[0-9] clocks
-Date: Fri,  7 Apr 2017 11:58:12 -0400
-Message-Id: <1cd9028027c7a7c10b774df698c3cfafec6aa67d.1491580547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
-References: <cover.1491580547.git.horms+renesas@verge.net.au>
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20170412204839.408318444@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <834c47a2-048b-5052-2cc9-3e636fd27677@cogentembedded.com>
+Date: Wed, 12 Apr 2017 23:53:52 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170412204839.408318444@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-The SSI-ALL gate clock is located in between the P clock and the
-individual SSI[0-9] clocks, hence the former should be listed as their
-parent.
-
-Fixes: 072d326542e49187 ("ARM: dts: r8a7793: add MSTP10 clocks to device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7793.dtsi | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 9fcf3a9ca084..4de6041d61f9 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1269,8 +1269,11 @@
- 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
- 			clocks = <&p_clk>,
--				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
--				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
-+				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
- 				<&p_clk>,
- 				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
- 				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
--- 
-2.7.0.rc3.207.g0ac5344
+Apparently forgot to run checkpatch.pl on this patch before sending... :-<
