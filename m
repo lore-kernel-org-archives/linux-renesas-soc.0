@@ -1,68 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34011 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752331AbdDMTwV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Apr 2017 15:52:21 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170413182839.25381-12-javier@osg.samsung.com>
-References: <20170413182839.25381-1-javier@osg.samsung.com> <20170413182839.25381-12-javier@osg.samsung.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Apr 2017 21:52:19 +0200
-Message-ID: <CAMuHMdUsQP9QutaHAix+tmmofcr=xe_oKJzmeOqk1tUuZedVRg@mail.gmail.com>
-Subject: Re: [PATCH v2 11/22] ARM: dts: koelsch: Add generic compatible string
- for I2C EEPROM
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
         Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 11/22] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
+Date: Thu, 13 Apr 2017 15:28:28 -0300
+Message-Id: <20170413182839.25381-12-javier@osg.samsung.com>
+In-Reply-To: <20170413182839.25381-1-javier@osg.samsung.com>
+References: <20170413182839.25381-1-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 13, 2017 at 8:28 PM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> The at24 driver allows to register I2C EEPROM chips using different vendor
-> and devices, but the I2C subsystem does not take the vendor into account
-> when matching using the I2C table since it only has device entries.
->
-> But when matching using an OF table, both the vendor and device has to be
-> taken into account so the driver defines only a set of compatible strings
-> using the "atmel" vendor as a generic fallback for compatible I2C devices.
->
-> So add this generic fallback to the device node compatible string to make
-> the device to match the driver using the OF device ID table.
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+The at24 driver allows to register I2C EEPROM chips using different vendor
+and devices, but the I2C subsystem does not take the vendor into account
+when matching using the I2C table since it only has device entries.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+But when matching using an OF table, both the vendor and device has to be
+taken into account so the driver defines only a set of compatible strings
+using the "atmel" vendor as a generic fallback for compatible I2C devices.
 
-> --- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-> +++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-> @@ -702,7 +702,7 @@
->         };
->
->         eeprom@50 {
-> -               compatible = "renesas,24c02";
-> +               compatible = "renesas,24c02","atmel,24c02";
+So add this generic fallback to the device node compatible string to make
+the device to match the driver using the OF device ID table.
 
-Missing space after comma.
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
 
-Gr{oetje,eeting}s,
+Changes in v2: None
 
-                        Geert
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 001e6116c47c..8dbee2f890b7 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -702,7 +702,7 @@
+ 	};
+ 
+ 	eeprom@50 {
+-		compatible = "renesas,24c02";
++		compatible = "renesas,24c02","atmel,24c02";
+ 		reg = <0x50>;
+ 		pagesize = <16>;
+ 	};
+-- 
+2.9.3
