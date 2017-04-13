@@ -1,84 +1,46 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 9/9] arm: dts: genmai: Add ethernet pin group
-Date: Wed,  5 Apr 2017 16:07:27 +0200
-Message-Id: <1491401247-7030-10-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:56471 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750745AbdDMINm (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Apr 2017 04:13:42 -0400
+Subject: Re: [PATCH 0/3] usb: host: xhci-plat: add support suspend/resume for
+ R-Car
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+References: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <PS1PR06MB1692F1F7FCB02AC52E227FFCD8030@PS1PR06MB1692.apcprd06.prod.outlook.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <58EF33B8.4030003@linux.intel.com>
+Date: Thu, 13 Apr 2017 11:15:52 +0300
+MIME-Version: 1.0
+In-Reply-To: <PS1PR06MB1692F1F7FCB02AC52E227FFCD8030@PS1PR06MB1692.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for ETHER ethernet controller.
+On 12.04.2017 03:46, Yoshihiro Shimoda wrote:
+> Hi Mathias,
+>
+>> From: Yoshihiro Shimoda, Sent: Friday, March 17, 2017 7:03 PM
+>>
+>> This patch adds support suspend/resume for R-Car controllers.
+>> The controllers need firmware downloading and the current code has
+>> such process only when probe timing. After suspend the system and
+>> the power of controller down, the driver needs to re-download the firmware
+>> in resume timing. This patch adds such a process.
+>> Also, since previous xhci-plat code didnn't handle the clk in suspend/resume,
+>> this patch set has such process.
+>
+> I'm afraid but would you review this patch set?
+> This can be applied on the latest Greg's usb.git / usb-next branch at the moment.
+>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 41 +++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+Sorry about the delay, I'll start looking at these.
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index f7c512e..328f4c9 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -63,6 +63,34 @@
- 		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
- 		bi-directional;
- 	};
-+
-+	ether_pins: ether {
-+		pins {
-+			/* Ethernet on Ports 1,2,3,5 */
-+			pinmux = <RZA1_PINMUX(1, 14, 4)>,/* P1_14 = ET_COL  */
-+				 <RZA1_PINMUX(5, 9, 2)>, /* P5_9 = ET_MDC   */
-+				 <RZA1_PINMUX(3, 4, 2)>, /* P3_4 = ET_RXCLK */
-+				 <RZA1_PINMUX(3, 5, 2)>, /* P3_5 = ET_RXER  */
-+				 <RZA1_PINMUX(3, 6, 2)>, /* P3_6 = ET_RXDV  */
-+				 <RZA1_PINMUX(2, 0, 2)>, /* P2_0 = ET_TXCLK */
-+				 <RZA1_PINMUX(2, 1, 2)>, /* P2_1 = ET_TXER  */
-+				 <RZA1_PINMUX(2, 2, 2)>, /* P2_2 = ET_TXEN  */
-+				 <RZA1_PINMUX(2, 3, 2)>, /* P2_3 = ET_CRS   */
-+				 <RZA1_PINMUX(2, 4, 2)>, /* P2_4 = ET_TXD0  */
-+				 <RZA1_PINMUX(2, 5, 2)>, /* P2_5 = ET_TXD1  */
-+				 <RZA1_PINMUX(2, 6, 2)>, /* P2_6 = ET_TXD2  */
-+				 <RZA1_PINMUX(2, 7, 2)>, /* P2_7 = ET_TXD3  */
-+				 <RZA1_PINMUX(2, 8, 2)>, /* P2_8 = ET_RXD0  */
-+				 <RZA1_PINMUX(2, 9, 2)>, /* P2_9 = ET_RXD1  */
-+				 <RZA1_PINMUX(2, 10, 2)>,/* P2_10 = ET_RXD2 */
-+				 <RZA1_PINMUX(2, 11, 2)>;/* P2_11 = ET_RXD3 */
-+		};
-+
-+		pins_bidir {
-+			pinmux = <RZA1_PINMUX(3, 3, 2)>;/* P3_3 = ET_MDIO  */
-+			bi-directional;
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -77,6 +105,19 @@
- 	status = "okay";
- };
- 
-+&ether {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ether_pins>;
-+
-+	status = "okay";
-+
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	phy0: ethernet-phy@0 {
-+		reg = <0>;
-+	};
-+};
-+
- &i2c2 {
- 	status = "okay";
- 	clock-frequency = <400000>;
--- 
-2.7.4
+-Mathias
