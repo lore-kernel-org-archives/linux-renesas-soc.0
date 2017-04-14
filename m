@@ -1,77 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49759 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753993AbdDEIpP (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 04:45:15 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 09/13] arm64: dts: r8a7795: salvator-x: Add panel backlight support
-Date: Wed, 05 Apr 2017 11:45:59 +0300
-Message-ID: <18654178.y7VdoJ3ein@avalon>
-In-Reply-To: <2227128.532ZZ8dc1T@avalon>
-References: <1479526093-7014-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWcyJsBEbCFoQe7LcUn+1EeCH_F+6yUSR8hsgy_PQOJrg@mail.gmail.com> <2227128.532ZZ8dc1T@avalon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 11/21] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
+Date: Thu, 13 Apr 2017 22:04:35 -0300
+Message-Id: <20170414010445.21727-12-javier@osg.samsung.com>
+In-Reply-To: <20170414010445.21727-1-javier@osg.samsung.com>
+References: <20170414010445.21727-1-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+The at24 driver allows to register I2C EEPROM chips using different vendor
+and devices, but the I2C subsystem does not take the vendor into account
+when matching using the I2C table since it only has device entries.
 
-On Monday 21 Nov 2016 11:59:47 Laurent Pinchart wrote:
-> On Monday 21 Nov 2016 10:23:46 Geert Uytterhoeven wrote:
-> > On Mon, Nov 21, 2016 at 10:19 AM, Laurent Pinchart wrote:
-> >> On Monday 21 Nov 2016 09:36:22 Geert Uytterhoeven wrote:
-> >>> On Sat, Nov 19, 2016 at 4:28 AM, Laurent Pinchart wrote:
-> >>>> The panel backlight is controlled through a GPIO and a PWM channel.
-> >>>> 
-> >>>> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> >>>> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> >>>> @@ -178,6 +178,16 @@
-> >>>>                         };
-> >>>>                 };
-> >>>>         };
-> >>>> +
-> >>>> +       backlight: backlight {
-> >>>> +               compatible = "pwm-backlight";
-> >>>> +               pwms = <&pwm1 0 50000>;
-> >>>> +
-> >>>> +               brightness-levels = <256 128 64 16 8 4 0>;
-> >>> 
-> >>> Would it make sense to define more and/or linear levels?
-> >> 
-> >> Possibly, this is pretty arbitrary. Linear levels might not be the best
-> >> option given that the human eye doesn't have a linear response to light
-> >> power, but we
-> > 
-> > It not only depends on the human eye, but also on the backlight hardware
-> > (is the conversion from voltage (L_VBRT) to light linear?).
-> 
-> So we need to specify transfer functions in DT ;-)
-> 
-> >> could certainly have more levels. In that case I'd prefer modifying the
-> >> pwm- backlight DT bindings though, and specifying the PWM resolution
-> >> instead of discrete levels.
-> >> 
-> >> Note that the LVDS panel backlight PWM control signal is multiplexed
-> >> with the external memory A21 signal on the Salvator-X board, with SW5
-> >> selecting which how to route the signal. When using backlight control we
-> >> can't access the whole NOR flash anymore, so I'm not sure this patch
-> >> should be merged.
-> > 
-> > That NOR flash is also optional, right?
-> > My Ex Memory Connector is not populated.
-> 
-> That's correct. The Salvator-X DT file in mainline is just an example
-> anyway, and we should pick the most useful peripherals for that purpose.
+But when matching using an OF table, both the vendor and device has to be
+taken into account so the driver defines only a set of compatible strings
+using the "atmel" vendor as a generic fallback for compatible I2C devices.
 
-Would you like me to include this in my next Salvator-X DT patch series for 
-upstream merge ?
+So add this generic fallback to the device node compatible string to make
+the device to match the driver using the OF device ID table.
 
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+---
+
+Changes in v3:
+- Add Geert Uytterhoeven reviewed-by tag.
+
+Changes in v2: None
+
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 001e6116c47c..dc8ed02de707 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -702,7 +702,7 @@
+ 	};
+ 
+ 	eeprom@50 {
+-		compatible = "renesas,24c02";
++		compatible = "renesas,24c02", "atmel,24c02";
+ 		reg = <0x50>;
+ 		pagesize = <16>;
+ 	};
 -- 
-Regards,
-
-Laurent Pinchart
+2.9.3
