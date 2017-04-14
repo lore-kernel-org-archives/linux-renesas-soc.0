@@ -1,56 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37832 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754761AbdDRFz5 (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:34221 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753553AbdDNVPS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 01:55:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT 1/2] ARM: dts: r8a7793: set maximum frequency for SDHI clocks
-Date: Tue, 18 Apr 2017 14:55:38 +0900
-Message-Id: <1492494939-24568-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1492494939-24568-1-git-send-email-horms+renesas@verge.net.au>
-References: <1492494939-24568-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 14 Apr 2017 17:15:18 -0400
+Received: by mail-lf0-f51.google.com with SMTP id t144so46216115lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Apr 2017 14:15:18 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170414211513.443487793@cogentembedded.com>
+Date: Sat, 15 Apr 2017 00:09:44 +0300
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 3/3] ARM: dts: sk-rzg1m: add Ether pins
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-sk-rzg1m-add-Ether-pins.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the upper limit otherwise the driver cannot utilize max speeds.
+Add the (previously omitted) Ether/PHY pin data to the SK-RZG1M board's
+device tree.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 4de6041d61f9..08b7b0f97909 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -542,6 +542,7 @@
- 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
- 		       <&dmac1 0xcd>, <&dmac1 0xce>;
- 		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <195000000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		status = "disabled";
+Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
++++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -44,6 +44,16 @@
+ 		groups = "scif0_data";
+ 		function = "scif0";
  	};
-@@ -554,6 +555,7 @@
- 		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
- 		       <&dmac1 0xc1>, <&dmac1 0xc2>;
- 		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -566,6 +568,7 @@
- 		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
- 		       <&dmac1 0xd3>, <&dmac1 0xd4>;
- 		dma-names = "tx", "rx", "tx", "rx";
-+		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
--- 
-2.7.0.rc3.207.g0ac5344
++
++	ether_pins: ether {
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
++	};
++
++	phy1_pins: phy1 {
++		groups = "intc_irq0";
++		function = "intc";
++	};
+ };
+ 
+ &scif0 {
+@@ -54,6 +64,9 @@
+ };
+ 
+ &ether {
++	pinctrl-0 = <&ether_pins &phy1_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy1>;
+ 	renesas,ether-link-active-low;
+ 	status = "okay";
