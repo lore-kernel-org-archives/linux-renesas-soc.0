@@ -1,66 +1,53 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49458 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030833AbdDTIvW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 04:51:22 -0400
-Date: Thu, 20 Apr 2017 17:51:12 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170414211505.733692280@cogentembedded.com>
+Date: Sat, 15 Apr 2017 00:09:42 +0300
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] ARM: dts: r8a7743: add PFC support
-Message-ID: <20170420085112.GF3760@verge.net.au>
-References: <20170414211505.733692280@cogentembedded.com>
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 1/3] ARM: dts: r8a7743: add PFC support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170414211505.733692280@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-r8a7743-add-PFC-support.patch
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Apr 15, 2017 at 12:09:42AM +0300, Sergei Shtylyov wrote:
-> Define the generic R8A7743 part of the PFC device node.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
->  arch/arm/boot/dts/r8a7743.dtsi |    7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
-> ===================================================================
-> --- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-> +++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-> @@ -1,7 +1,7 @@
->  /*
->   * Device Tree Source for the r8a7743 SoC
->   *
-> - * Copyright (C) 2016 Cogent Embedded Inc.
-> + * Copyright (C) 2016-2017 Cogent Embedded Inc.
->   *
->   * This file is licensed under the terms of the GNU General Public License
->   * version 2. This program is licensed "as is" without any warranty of any
-> @@ -123,6 +123,11 @@
->  			#power-domain-cells = <1>;
->  		};
->  
-> +		pfc: pin-controller@e6060000 {
-> +			compatible = "renesas,pfc-r8a7743";
-> +			reg = <0 0xe6060000 0 0x250>;
-> +		};
-> +
+Define the generic R8A7743 part of the PFC device node.
 
-I am curious to know why pin-controller was chosen rather than pfc which
-is dominant in the DT for Renesas SoCs. And as a follow-up question, do
-you think it would be worth creating patches to make this uniform
-across the DT for Renesas SoCs.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
->  		dmac0: dma-controller@e6700000 {
->  			compatible = "renesas,dmac-r8a7743",
->  				     "renesas,rcar-dmac";
-> 
+---
+ arch/arm/boot/dts/r8a7743.dtsi |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -1,7 +1,7 @@
+ /*
+  * Device Tree Source for the r8a7743 SoC
+  *
+- * Copyright (C) 2016 Cogent Embedded Inc.
++ * Copyright (C) 2016-2017 Cogent Embedded Inc.
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2. This program is licensed "as is" without any warranty of any
+@@ -123,6 +123,11 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a7743";
++			reg = <0 0xe6060000 0 0x250>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7743",
+ 				     "renesas,rcar-dmac";
+
