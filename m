@@ -1,77 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33739 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938488AbdD0OiD (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:33455 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751616AbdDOUUi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 10:38:03 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v2 6/8] arm64: dts: r8a7795: salvator-x: Add panel backlight support
-Date: Thu, 27 Apr 2017 16:37:41 +0200
-Message-Id: <1493303863-23719-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Sat, 15 Apr 2017 16:20:38 -0400
+Received: by mail-lf0-f52.google.com with SMTP id 88so5693023lfr.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Apr 2017 13:20:37 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170415201825.223149827@cogentembedded.com>
+Date: Sat, 15 Apr 2017 23:18:25 +0300
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+To: linux-renesas-soc@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/3] Add R8A7745/SK-RZG1E PFC support
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Hello.
 
-The panel backlight is controlled through a GPIO and a PWM channel.
+   Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20170410-v4.11-rc6' tag.  We're adding the R8A7745 PFC node and
+then describe the pins for SCIF2 and Ether devices declared earlier. These
+patches depend on the R8A7745 PFC suport in order to work properly.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+[1/3] ARM: dts: r8a7745: add PFC support
+[2/3] ARM: dts: sk-rzg1e: add SCIF2 pins
+[3/3] ARM: dts: sk-rzg1e: add Ether pins
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index bf4674e..8558b27 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -280,6 +280,16 @@
- 			};
- 		};
- 	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm1 0 50000>;
-+
-+		brightness-levels = <256 128 64 16 8 4 0>;
-+		default-brightness-level = <6>;
-+
-+		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
-+	};
- };
- 
- &du {
-@@ -366,6 +376,11 @@
- 		function = "du";
- 	};
- 
-+	pwm1_pins: pwm {
-+		groups = "pwm1_a";
-+		function = "pwm1";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -441,6 +456,13 @@
- 	};
- };
- 
-+&pwm1 {
-+	pinctrl-0 = <&pwm1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &scif1 {
- 	pinctrl-0 = <&scif1_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+WBR, Sergei
