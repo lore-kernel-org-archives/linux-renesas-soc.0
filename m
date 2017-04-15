@@ -1,40 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:42066 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S944099AbdDTJqu (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34175 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754157AbdDOUUs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 05:46:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+        Sat, 15 Apr 2017 16:20:48 -0400
+Received: by mail-lf0-f49.google.com with SMTP id t144so52827048lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Apr 2017 13:20:48 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170415202044.157568901@cogentembedded.com>
+Date: Sat, 15 Apr 2017 23:18:28 +0300
 To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a7796: salvator-x: Enable NFS root
-Date: Thu, 20 Apr 2017 11:46:44 +0200
-Message-Id: <1492681604-19860-1-git-send-email-geert+renesas@glider.be>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 3/3] ARM: dts: sk-rzg1e: add Ether pins
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-sk-rzg1e-add-Ether-pins.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Cfr. commit b2407c566ba29215 ("arm64: dts: r8a7795: enable nfs root on
-Salvator-X board").
+Add the (previously omitted) Ether/PHY pin data to the SK-RZG1E board's
+device tree.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 7f0ac6a9d49b8da6..18b478be484cfd83 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -23,7 +23,7 @@
+Index: renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
++++ renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+@@ -39,6 +39,16 @@
+ 		groups = "scif2_data";
+ 		function = "scif2";
  	};
++
++	ether_pins: ether {
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
++	};
++
++	phy1_pins: phy1 {
++		groups = "intc_irq8";
++		function = "intc";
++	};
+ };
  
- 	chosen {
--		bootargs = "ignore_loglevel";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial0:115200n8";
- 	};
+ &scif2 {
+@@ -49,6 +59,9 @@
+ };
  
--- 
-2.7.4
+ &ether {
++	pinctrl-0 = <&ether_pins &phy1_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy1>;
+ 	renesas,ether-link-active-low;
+ 	status = "okay";
