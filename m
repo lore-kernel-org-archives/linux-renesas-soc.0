@@ -1,89 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:50758 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752256AbdDCJxL (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:34169 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754308AbdDOUUp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 05:53:11 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+        Sat, 15 Apr 2017 16:20:45 -0400
+Received: by mail-lf0-f44.google.com with SMTP id t144so52826796lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Apr 2017 13:20:44 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170415202040.456202938@cogentembedded.com>
+Date: Sat, 15 Apr 2017 23:18:27 +0300
 To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: r8a7792: Correct Z clock
-Date: Mon,  3 Apr 2017 11:53:08 +0200
-Message-Id: <1491213188-7305-1-git-send-email-geert+renesas@glider.be>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 2/3] ARM: dts: sk-rzg1e: add SCIF2 pins
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-sk-rzg1e-add-SCIF2-pins.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Unlike other R-Car Gen2 SoCs with Cortex-A15 CPU cores, R-Car V2H does
-not have a programmable Z clock (Cortex-A15 CPU core clock), but uses a
-fixed divider.
-This is similar to the Z2 clock (Cortex-A7 CPU core clock) on R-Car E2.
+Add the (previously omitted) SCIF2 pin data to the SK-RZG1E board's
+device tree.
 
-Hence:
-  - Remove the Z clock output from the cpg_clocks node, as this implied
-    a programmable clock,
-  - Add the Z clock as a fixed factor clock,
-  - Let the first CPU node point to the new Z clock,
-  - Remove the Z clock index from the bindings (this definition was used
-    by r8a7792.dtsi only, and was not a contract between DT and driver).
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7792.dtsi            | 11 +++++++++--
- include/dt-bindings/clock/r8a7792-clock.h |  1 -
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 6c0797ebc08f029c..0efecb232ee52ce0 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -46,7 +46,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
--			clocks = <&cpg_clocks R8A7792_CLK_Z>;
-+			clocks = <&z_clk>;
- 			power-domains = <&sysc R8A7792_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
- 		};
-@@ -766,7 +766,7 @@
- 			clocks = <&extal_clk>;
- 			#clock-cells = <1>;
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
--					     "lb", "qspi", "z";
-+					     "lb", "qspi";
- 			#power-domain-cells = <0>;
- 		};
+Index: renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
++++ renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
+@@ -1,7 +1,7 @@
+ /*
+  * Device Tree Source for the SK-RZG1E board
+  *
+- * Copyright (C) 2016 Cogent Embedded, Inc.
++ * Copyright (C) 2016-2017 Cogent Embedded, Inc.
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2. This program is licensed "as is" without any warranty of any
+@@ -34,7 +34,17 @@
+ 	clock-frequency = <20000000>;
+ };
  
-@@ -778,6 +778,13 @@
- 			clock-div = <2>;
- 			clock-mult = <1>;
- 		};
-+		z_clk: z {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL0>;
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
- 		zx_clk: zx {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
-index 94dd16a1e6e6963d..5be90bc23bd79097 100644
---- a/include/dt-bindings/clock/r8a7792-clock.h
-+++ b/include/dt-bindings/clock/r8a7792-clock.h
-@@ -17,7 +17,6 @@
- #define R8A7792_CLK_PLL3		3
- #define R8A7792_CLK_LB			4
- #define R8A7792_CLK_QSPI		5
--#define R8A7792_CLK_Z			6
++&pfc {
++	scif2_pins: scif2 {
++		groups = "scif2_data";
++		function = "scif2";
++	};
++};
++
+ &scif2 {
++	pinctrl-0 = <&scif2_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
  
- /* MSTP0 */
- #define R8A7792_CLK_MSIOF0		0
--- 
-2.7.4
