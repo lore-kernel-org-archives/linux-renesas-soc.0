@@ -1,41 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33729 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753865AbdDRNfq (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:32920 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756258AbdDPSBf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 09:35:46 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170416180111.16795-1-marek.vasut+renesas@gmail.com>
-References: <20170416180111.16795-1-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Apr 2017 15:35:44 +0200
-Message-ID: <CAMuHMdUFo2iUoiGD1-u-u4jfZ=eBiztcRSHWk7n=LraZ1P9Zjw@mail.gmail.com>
-Subject: Re: [PATCH] of: Add vendor prefix for ROHM Semiconductor
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sun, 16 Apr 2017 14:01:35 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Rob Herring <robh@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] of: Add vendor prefix for ROHM Semiconductor
+Date: Sun, 16 Apr 2017 20:01:11 +0200
+Message-Id: <20170416180111.16795-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Apr 16, 2017 at 8:01 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> ROHM Semiconductor Co., Ltd. offer PMICs, touchscreen controllers etc.
-> http://www.rohm.com/web/global/
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+ROHM Semiconductor Co., Ltd. offer PMICs, touchscreen controllers etc.
+http://www.rohm.com/web/global/
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index c7d1b72ec3c5..de191865d1ed 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -266,6 +266,7 @@ richtek	Richtek Technology Corporation
+ ricoh	Ricoh Co. Ltd.
+ rikomagic	Rikomagic Tech Corp. Ltd
+ rockchip	Fuzhou Rockchip Electronics Co., Ltd
++rohm	ROHM Semiconductor Co., Ltd
+ samsung	Samsung Semiconductor
+ samtec	Samtec/Softing company
+ sandisk	Sandisk Corporation
+-- 
+2.11.0
