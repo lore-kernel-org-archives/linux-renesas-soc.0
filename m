@@ -1,45 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35184 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763594AbdDSNZJ (ORCPT
+Received: from mga06.intel.com ([134.134.136.31]:39599 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755053AbdDRKZ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 09:25:09 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, Ryo Kodama <ryo.kodama.vz@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/5] clk: renesas: r8a7796: add PWM clock
-Date: Wed, 19 Apr 2017 15:24:50 +0200
-Message-Id: <1492608293-12435-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 18 Apr 2017 06:25:59 -0400
+Subject: Re: [PATCH 3/3] usb: host: xhci-plat: set resume_quirk() for R-Car
+ controllers
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        mathias.nyman@intel.com, gregkh@linuxfoundation.org
+References: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1489744955-29553-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <58F5EA3C.8020100@linux.intel.com>
+Date: Tue, 18 Apr 2017 13:28:12 +0300
+MIME-Version: 1.0
+In-Reply-To: <1489744955-29553-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+On 17.03.2017 12:02, Yoshihiro Shimoda wrote:
+> This patch sets resume_quirk() for R-Car controllers to re-download
+> the firmware in resume timing. Otherwise, if the controller's power
+> is down in suspend timing, the firmware in the controller goes away,
+> and then the controller doesn't work after resume.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
 
-This patch adds PWM clock for PWM.
+Added to queue for usb next
 
-Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 9d114b3..be0fc00 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -151,6 +151,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("hscif1",		 519,	R8A7796_CLK_S3D1),
- 	DEF_MOD("hscif0",		 520,	R8A7796_CLK_S3D1),
- 	DEF_MOD("thermal",		 522,	R8A7796_CLK_CP),
-+	DEF_MOD("pwm",			 523,	R8A7796_CLK_S3D4),
- 	DEF_MOD("fcpvd2",		 601,	R8A7796_CLK_S0D2),
- 	DEF_MOD("fcpvd1",		 602,	R8A7796_CLK_S0D2),
- 	DEF_MOD("fcpvd0",		 603,	R8A7796_CLK_S0D2),
--- 
-2.7.4
+-Mathias
