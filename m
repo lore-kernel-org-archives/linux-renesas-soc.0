@@ -1,59 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38557 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751641AbdDRHDX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 03:03:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>, linux-ide@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Subject: [PATCH/RFT] sata: rcar_sata: Reset SATA PHY on resume
-Date: Tue, 18 Apr 2017 16:02:53 +0900
-Message-Id: <1492498973-2969-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <8105647.ANSr0hWnZy@avalon>
+References: <20170327095652.5755-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdUiDzGt6bz96D-5yRLF-HiZfpQTTxKP5Y4+j-9HiF1LLQ@mail.gmail.com> <8105647.ANSr0hWnZy@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Apr 2017 19:36:07 +0200
+Message-ID: <CAMuHMdVOZm1oA+EvaOGpgbpsVJ1sZwLiCNBJG+NS+Xtdtvhpnw@mail.gmail.com>
+Subject: Re: [PATCH] drm: rcar-du: Document the vsps property in the DT bindings
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case where power is cut on suspend the SATA PHY state needs to be
-suspended on resume.
+Hi Laurent,
 
-This is the case on the Salvator-X board with the r8a7795 or r8a7796 SoC.
-In that environment it has been observed that SATA partitions cannot not be
-accessed on resume.
+On Fri, Mar 31, 2017 at 11:19 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Monday 27 Mar 2017 13:05:48 Geert Uytterhoeven wrote:
+>> On Mon, Mar 27, 2017 at 11:56 AM, Laurent Pinchart wrote:
+>> > The property is used by the driver but is missing from the DT bindings.
+>> > Document it.
+>> >
+>> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> > Signed-off-by: Laurent Pinchart
+>> > <laurent.pinchart+renesas@ideasonboard.com>
+>> > ---
+>> >
+>> >  Documentation/devicetree/bindings/display/renesas,du.txt | 5 +++++
+>> >  1 file changed, 5 insertions(+)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+>> > b/Documentation/devicetree/bindings/display/renesas,du.txt index
+>> > 1a02f099a0ff..cf34893a1b53 100644
+>> > --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+>> > +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+>> >
+>> > @@ -36,6 +36,11 @@ Required Properties:
+>> >        When supplied they must be named "dclkin.x" with "x" being the
+>> >        input
+>> >        clock numerical index.
+>> >
+>> > +Optional Properties:
+>> > +
+>> > +  - vsps: A list of phandles to the VSP nodes that handle the memory
+>> > +    interfaces for the DU channels (Gen3 only).
+>>
+>> ", one per channel"?
+>>
+>> Required for Gen3, optional for Gen2? (cfr. Sergei's patches).
+>
+> How about making it mandatory on Gen2 as well ? The VSPs are there, even if
+> the driver doesn't use them, it makes sense to describe the connection. Of
+> course the driver will treat the property as optional for backward
+> compatibility.
 
-Based on work by Khiem Nguyen.
+Now it's mandatory, the vsps property should be present in the example, too.
 
-Cc: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-* Compile and boot tested only
----
- drivers/ata/sata_rcar.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 5d38245a7a73..4f4f7788a6cf 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -969,16 +969,9 @@ static int sata_rcar_resume(struct device *dev)
- {
- 	struct ata_host *host = dev_get_drvdata(dev);
- 	struct sata_rcar_priv *priv = host->private_data;
--	void __iomem *base = priv->base;
- 
- 	clk_prepare_enable(priv->clk);
--
--	/* ack and mask */
--	iowrite32(0, base + SATAINTSTAT_REG);
--	iowrite32(0x7ff, base + SATAINTMASK_REG);
--	/* enable interrupts */
--	iowrite32(ATAPI_INT_ENABLE_SATAINT, base + ATAPI_INT_ENABLE_REG);
--
-+	sata_rcar_init_controller(host);
- 	ata_host_resume(host);
- 
- 	return 0;
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
