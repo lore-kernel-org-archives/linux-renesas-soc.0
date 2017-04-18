@@ -1,35 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50026 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940026AbdDTJAK (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34311 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752902AbdDRNm1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 05:00:10 -0400
-Date: Thu, 20 Apr 2017 18:00:05 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 18 Apr 2017 09:42:27 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
+References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Apr 2017 15:42:25 +0200
+Message-ID: <CAMuHMdWLWTpH27Zbwdf4SfQ-Ws2PC0sqwFPQrL3Ndry9-KeWTg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: shmobile: r8a7791: add GyroADC clock
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 1/2] ARM: shmobile: r8a7791: add GyroADC clock
-Message-ID: <20170420090004.GH3760@verge.net.au>
-References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
- <CAMuHMdWLWTpH27Zbwdf4SfQ-Ws2PC0sqwFPQrL3Ndry9-KeWTg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWLWTpH27Zbwdf4SfQ-Ws2PC0sqwFPQrL3Ndry9-KeWTg@mail.gmail.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 18, 2017 at 03:42:25PM +0200, Geert Uytterhoeven wrote:
-> On Sun, Apr 16, 2017 at 6:57 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> > Add the GyroADC clock to the R8A7791 device tree.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sun, Apr 16, 2017 at 6:57 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Add the GyroADC clock to the R8A7791 device tree.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Thanks I have queued this patch (1/2) up for v4.13.
-I am expecting a v2 of patch 2/2 given the review it received.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
