@@ -1,35 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:36079 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbdDNVPH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Apr 2017 17:15:07 -0400
-Received: by mail-lf0-f52.google.com with SMTP id s141so46079537lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Apr 2017 14:15:06 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170414210941.143838720@cogentembedded.com>
-Date: Sat, 15 Apr 2017 00:09:41 +0300
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-To: linux-renesas-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] Add R8A7743/SK-RZG1M PFC support
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 4/4] regulator: Add ROHM BD9571MWV-M PMIC regulator driver
+To: Mark Brown <broonie@kernel.org>
+References: <20170416180801.17828-1-marek.vasut+renesas@gmail.com>
+ <20170416180801.17828-4-marek.vasut+renesas@gmail.com>
+ <20170418175738.bqsjyltki7zujbjn@sirena.org.uk>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <5f76efbb-851a-9c69-0b6e-a5bae2ed2e57@gmail.com>
+Date: Tue, 18 Apr 2017 20:39:17 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170418175738.bqsjyltki7zujbjn@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On 04/18/2017 07:57 PM, Mark Brown wrote:
+> On Sun, Apr 16, 2017 at 08:08:01PM +0200, Marek Vasut wrote:
+> 
+> This looks good, a couple of minor things though:
+> 
+>> +static int bd9571mwv_regulator_is_enabled(struct regulator_dev *reg)
+>> +{
+>> +	/* Always enabled. */
+>> +	return 1;
+>> +}
+> 
+> This should be the default implementation, no need to open code it.
 
-Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20170410-v4.11-rc6' tag.  We're adding the R8A7743 PFC node and
-then describe the pins for SCIF0 and Ether devices described eralier. These
-patches depend on the R8A7743 PFC suport in order to work properly.
+Fixed.
 
-[1/3] ARM: dts: r8a7743: add PFC support
-[2/3] ARM: dts: sk-rzg1m: add SCIF0 pins
-[3/3] ARM: dts: sk-rzg1m: add Ether pins
+>> +int bd9571mwv_set_voltage_sel_regmap(struct regulator_dev *rdev,
+>> +				     unsigned int sel)
+>> +{
+>> +	return regmap_write_bits(rdev->regmap, BD9571MWV_DVFS_SETVID,
+>> +				 rdev->desc->vsel_mask, sel);
+>> +}
+> 
+> regulator_set_voltage_sel_regmap().
 
-WBR, Sergei
+I'm using different register for reading and setting the voltage, so
+this doesn't work in this case. Plus these two registers have different
+format to make it more fun.
+
+-- 
+Best regards,
+Marek Vasut
