@@ -1,223 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:33812 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756638AbdDPUCD (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:33676 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752784AbdDRMrZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Apr 2017 16:02:03 -0400
-Received: by mail-lf0-f43.google.com with SMTP id t144so58326487lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 16 Apr 2017 13:02:03 -0700 (PDT)
+        Tue, 18 Apr 2017 08:47:25 -0400
+Received: by mail-lf0-f46.google.com with SMTP id 88so33321164lfr.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Apr 2017 05:47:24 -0700 (PDT)
+Subject: Re: [PATCH net-next] ravb: Fix ravb_ptp_interrupt clear interrupt all
+ status
+To: Simon Horman <horms+renesas@verge.net.au>,
+        David Miller <davem@davemloft.net>
+References: <1492476933-7952-1-git-send-email-horms+renesas@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170416200157.111095876@cogentembedded.com>
-Date: Sun, 16 Apr 2017 23:01:48 +0300
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] sh_eth: unmap DMA buffers when freeing rings
+Message-ID: <6c952a9b-a8f3-9890-e985-8081ee8de215@cogentembedded.com>
+Date: Tue, 18 Apr 2017 15:47:21 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=sh_eth-unmap-DMA-buffers-when-freeing-rings.patch
+In-Reply-To: <1492476933-7952-1-git-send-email-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DMA API debugging (when enabled) causes:
+Hello!
 
-WARNING: CPU: 0 PID: 1445 at lib/dma-debug.c:519 add_dma_entry+0xe0/0x12c
-DMA-API: exceeded 7 overlapping mappings of cacheline 0x01b2974d
+On 04/18/2017 03:55 AM, Simon Horman wrote:
 
-to be  printed after repeated initialization of the Ether device, e.g.
-suspend/resume or 'ifconfig' up/down. This is because DMA buffers mapped
-using dma_map_single() in sh_eth_ring_format() and sh_eth_start_xmit() are
-never unmapped. Resolve this problem by unmapping the buffers when freeing
-the descriptor  rings;  in order  to do it right, we'd have to add an extra
-parameter to sh_eth_txfree() (we rename this function to sh_eth_tx_free(),
-while at it).
+> From: Tsutomu Izawa <tsutomu.izawa.xk@renesas.com>
+>
+> This patch fixes ravb_ptp_interrupt clears GIS register of all interrupts
 
-Based on the commit a47b70ea86bd ("ravb: unmap descriptors when freeing
-rings").
+     Clearing, maybe?
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> status. It corrects to clear PTCF bit or PTMF bit.
 
----
- drivers/net/ethernet/renesas/sh_eth.c |  122 ++++++++++++++++++----------------
- 1 file changed, 67 insertions(+), 55 deletions(-)
+     Well, it's safer to clear all of them, I think...
 
-Index: net/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1127,12 +1127,70 @@ static struct mdiobb_ops bb_ops = {
- 	.get_mdio_data = sh_get_mdio,
- };
- 
-+/* free Tx skb function */
-+static int sh_eth_tx_free(struct net_device *ndev, bool sent_only)
-+{
-+	struct sh_eth_private *mdp = netdev_priv(ndev);
-+	struct sh_eth_txdesc *txdesc;
-+	int free_num = 0;
-+	int entry;
-+	bool sent;
-+
-+	for (; mdp->cur_tx - mdp->dirty_tx > 0; mdp->dirty_tx++) {
-+		entry = mdp->dirty_tx % mdp->num_tx_ring;
-+		txdesc = &mdp->tx_ring[entry];
-+		sent = txdesc->status & cpu_to_le32(TD_TACT);
-+		if (sent_only && !sent)
-+			break;
-+		/* TACT bit must be checked before all the following reads */
-+		dma_rmb();
-+		netif_info(mdp, tx_done, ndev,
-+			   "tx entry %d status 0x%08x\n",
-+			   entry, le32_to_cpu(txdesc->status));
-+		/* Free the original skb. */
-+		if (mdp->tx_skbuff[entry]) {
-+			dma_unmap_single(&ndev->dev, le32_to_cpu(txdesc->addr),
-+					 le32_to_cpu(txdesc->len) >> 16,
-+					 DMA_TO_DEVICE);
-+			dev_kfree_skb_irq(mdp->tx_skbuff[entry]);
-+			mdp->tx_skbuff[entry] = NULL;
-+			free_num++;
-+		}
-+		txdesc->status = cpu_to_le32(TD_TFP);
-+		if (entry >= mdp->num_tx_ring - 1)
-+			txdesc->status |= cpu_to_le32(TD_TDLE);
-+
-+		if (sent) {
-+			ndev->stats.tx_packets++;
-+			ndev->stats.tx_bytes += le32_to_cpu(txdesc->len) >> 16;
-+		}
-+	}
-+	return free_num;
-+}
-+
- /* free skb and descriptor buffer */
- static void sh_eth_ring_free(struct net_device *ndev)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
- 	int ringsize, i;
- 
-+	if (mdp->rx_ring) {
-+		for (i = 0; i < mdp->num_rx_ring; i++) {
-+			if (mdp->rx_skbuff[i]) {
-+				struct sh_eth_rxdesc *rxdesc = &mdp->rx_ring[i];
-+
-+				dma_unmap_single(&ndev->dev,
-+						 le32_to_cpu(rxdesc->addr),
-+						 ALIGN(mdp->rx_buf_sz, 32),
-+						 DMA_FROM_DEVICE);
-+			}
-+		}
-+		ringsize = sizeof(struct sh_eth_rxdesc) * mdp->num_rx_ring;
-+		dma_free_coherent(NULL, ringsize, mdp->rx_ring,
-+				  mdp->rx_desc_dma);
-+		mdp->rx_ring = NULL;
-+	}
-+
- 	/* Free Rx skb ringbuffer */
- 	if (mdp->rx_skbuff) {
- 		for (i = 0; i < mdp->num_rx_ring; i++)
-@@ -1141,27 +1199,18 @@ static void sh_eth_ring_free(struct net_
- 	kfree(mdp->rx_skbuff);
- 	mdp->rx_skbuff = NULL;
- 
--	/* Free Tx skb ringbuffer */
--	if (mdp->tx_skbuff) {
--		for (i = 0; i < mdp->num_tx_ring; i++)
--			dev_kfree_skb(mdp->tx_skbuff[i]);
--	}
--	kfree(mdp->tx_skbuff);
--	mdp->tx_skbuff = NULL;
--
--	if (mdp->rx_ring) {
--		ringsize = sizeof(struct sh_eth_rxdesc) * mdp->num_rx_ring;
--		dma_free_coherent(NULL, ringsize, mdp->rx_ring,
--				  mdp->rx_desc_dma);
--		mdp->rx_ring = NULL;
--	}
--
- 	if (mdp->tx_ring) {
-+		sh_eth_tx_free(ndev, false);
-+
- 		ringsize = sizeof(struct sh_eth_txdesc) * mdp->num_tx_ring;
- 		dma_free_coherent(NULL, ringsize, mdp->tx_ring,
- 				  mdp->tx_desc_dma);
- 		mdp->tx_ring = NULL;
- 	}
-+
-+	/* Free Tx skb ringbuffer */
-+	kfree(mdp->tx_skbuff);
-+	mdp->tx_skbuff = NULL;
- }
- 
- /* format skb and descriptor buffer */
-@@ -1409,43 +1458,6 @@ static void sh_eth_dev_exit(struct net_d
- 	update_mac_address(ndev);
- }
- 
--/* free Tx skb function */
--static int sh_eth_txfree(struct net_device *ndev)
--{
--	struct sh_eth_private *mdp = netdev_priv(ndev);
--	struct sh_eth_txdesc *txdesc;
--	int free_num = 0;
--	int entry;
--
--	for (; mdp->cur_tx - mdp->dirty_tx > 0; mdp->dirty_tx++) {
--		entry = mdp->dirty_tx % mdp->num_tx_ring;
--		txdesc = &mdp->tx_ring[entry];
--		if (txdesc->status & cpu_to_le32(TD_TACT))
--			break;
--		/* TACT bit must be checked before all the following reads */
--		dma_rmb();
--		netif_info(mdp, tx_done, ndev,
--			   "tx entry %d status 0x%08x\n",
--			   entry, le32_to_cpu(txdesc->status));
--		/* Free the original skb. */
--		if (mdp->tx_skbuff[entry]) {
--			dma_unmap_single(&ndev->dev, le32_to_cpu(txdesc->addr),
--					 le32_to_cpu(txdesc->len) >> 16,
--					 DMA_TO_DEVICE);
--			dev_kfree_skb_irq(mdp->tx_skbuff[entry]);
--			mdp->tx_skbuff[entry] = NULL;
--			free_num++;
--		}
--		txdesc->status = cpu_to_le32(TD_TFP);
--		if (entry >= mdp->num_tx_ring - 1)
--			txdesc->status |= cpu_to_le32(TD_TDLE);
--
--		ndev->stats.tx_packets++;
--		ndev->stats.tx_bytes += le32_to_cpu(txdesc->len) >> 16;
--	}
--	return free_num;
--}
--
- /* Packet receive function */
- static int sh_eth_rx(struct net_device *ndev, u32 intr_status, int *quota)
- {
-@@ -1690,7 +1702,7 @@ static void sh_eth_error(struct net_devi
- 			   intr_status, mdp->cur_tx, mdp->dirty_tx,
- 			   (u32)ndev->state, edtrr);
- 		/* dirty buffer free */
--		sh_eth_txfree(ndev);
-+		sh_eth_tx_free(ndev, true);
- 
- 		/* SH7712 BUG */
- 		if (edtrr ^ sh_eth_get_edtrr_trns(mdp)) {
-@@ -1751,7 +1763,7 @@ static irqreturn_t sh_eth_interrupt(int
- 		/* Clear Tx interrupts */
- 		sh_eth_write(ndev, intr_status & cd->tx_check, EESR);
- 
--		sh_eth_txfree(ndev);
-+		sh_eth_tx_free(ndev, true);
- 		netif_wake_queue(ndev);
- 	}
- 
-@@ -2412,7 +2424,7 @@ static int sh_eth_start_xmit(struct sk_b
- 
- 	spin_lock_irqsave(&mdp->lock, flags);
- 	if ((mdp->cur_tx - mdp->dirty_tx) >= (mdp->num_tx_ring - 4)) {
--		if (!sh_eth_txfree(ndev)) {
-+		if (!sh_eth_tx_free(ndev, true)) {
- 			netif_warn(mdp, tx_queued, ndev, "TxFD exhausted.\n");
- 			netif_stop_queue(ndev);
- 			spin_unlock_irqrestore(&mdp->lock, flags);
+> Also it fixes returned value to IRQ_HANDLED or IRQ_NONE.
+>
+> Signed-off-by: Tsutomu Izawa <tsutomu.izawa.xk@renesas.com>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  drivers/net/ethernet/renesas/ravb.h      |  4 ++--
+>  drivers/net/ethernet/renesas/ravb_main.c | 12 ++++--------
+>  drivers/net/ethernet/renesas/ravb_ptp.c  | 15 ++++++++++++---
+>  3 files changed, 18 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+> index 0525bd696d5d..fbfdefa659ce 100644
+> --- a/drivers/net/ethernet/renesas/ravb.h
+> +++ b/drivers/net/ethernet/renesas/ravb.h
+[...]
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 8cfc4a54f2dc..747686386513 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -820,10 +820,8 @@ static irqreturn_t ravb_interrupt(int irq, void *dev_id)
+>  	}
+>
+>  	/* gPTP interrupt status summary */
+> -	if (iss & ISS_CGIS) {
+> -		ravb_ptp_interrupt(ndev);
+> -		result = IRQ_HANDLED;
+> -	}
+> +	if (iss & ISS_CGIS)
+> +		result = ravb_ptp_interrupt(ndev);
+
+    No, this reintroduces the same kind of bug that we've fixed already:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=38c848c73180fb1d142a39e664b6d9663751f6b2
+
+[...]
+> @@ -853,10 +851,8 @@ static irqreturn_t ravb_multi_interrupt(int irq, void *dev_id)
+>  	}
+>
+>  	/* gPTP interrupt status summary */
+> -	if (iss & ISS_CGIS) {
+> -		ravb_ptp_interrupt(ndev);
+> -		result = IRQ_HANDLED;
+> -	}
+> +	if (iss & ISS_CGIS)
+> +		result = ravb_ptp_interrupt(ndev);
+
+    Here as well... look at the other handlers returning success.
+
+[...]
+
+MBR, Sergei
