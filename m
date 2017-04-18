@@ -1,88 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53758 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752520AbdDHLGW (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36576 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755504AbdDRUJ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 07:06:22 -0400
-Date: Sat, 8 Apr 2017 13:06:19 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RESEND 0/2] arm64: gen3: enable eMMC HS200 in DT
-Message-ID: <20170408110619.ctleghvryw6ju2td@ninjato>
-References: <CAMuHMdVQVX9T7kxo-akbJQdcTwV2hA4188T57KBMGVdCFYw3jA@mail.gmail.com>
- <20170126135453.GB2718@katana>
- <20170126140643.GA11104@verge.net.au>
- <20170126141656.GD2718@katana>
- <20170126152413.GA12534@verge.net.au>
- <20170126201702.6kb62spuvx6jgll2@ninjato>
- <20170127063327.GA13565@verge.net.au>
- <20170127072728.GA1473@katana>
- <20170127081608.GG21195@verge.net.au>
+        Tue, 18 Apr 2017 16:09:26 -0400
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7791: Add GyroADC bindings
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
+ <20170416165709.27449-2-marek.vasut+renesas@gmail.com>
+ <CAMuHMdXFUkLypckz2n27or268xiMXCpX+YB3+-beTt92EFA=rQ@mail.gmail.com>
+ <85ca1a60-3367-1282-28f4-e94409a391a7@gmail.com>
+ <CAMuHMdUoaRSGX7=Jh28d9SRRj3MQ+M4k1Bo1qH1OsWPkqEc3ow@mail.gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <d9ca7b13-cdc7-32b9-b931-e66ee70d1b66@gmail.com>
+Date: Tue, 18 Apr 2017 21:57:08 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sojy6fkkqpgolhle"
-Content-Disposition: inline
-In-Reply-To: <20170127081608.GG21195@verge.net.au>
+In-Reply-To: <CAMuHMdUoaRSGX7=Jh28d9SRRj3MQ+M4k1Bo1qH1OsWPkqEc3ow@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 04/18/2017 09:09 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
---sojy6fkkqpgolhle
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi!
 
-Hi Simon,
+> On Tue, Apr 18, 2017 at 9:05 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 04/18/2017 03:59 PM, Geert Uytterhoeven wrote:
+>>> On Sun, Apr 16, 2017 at 6:57 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>> --- a/arch/arm/boot/dts/r8a7791.dtsi
+>>>> +++ b/arch/arm/boot/dts/r8a7791.dtsi
+>>>> @@ -776,6 +776,15 @@
+>>>>                 status = "disabled";
+>>>>         };
+>>>>
+>>>> +       adc: adc@e6e54000 {
+>>>> +               compatible = "renesas,r8a7791-gyroadc", "renesas,rcar-gyroadc";
+>>>> +               reg = <0 0xe6e54000 0 64>;
+>>>> +               clocks = <&mstp9_clks R8A7791_CLK_GYROADC>, <&adc_clk>;
+>>>> +               clock-names = "fck", "if";
+>>>> +               power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+>>>> +               status = "disabled";
+>>>> +       };
+>>>> +
+>>>>         scif2: serial@e6e58000 {
+>>>>                 compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
+>>>>                              "renesas,scif";
+>>>> @@ -1133,6 +1142,13 @@
+>>>>                         clock-frequency = <0>;
+>>>>                 };
+>>>>
+>>>> +               /* GyroADC clock */
+>>>> +               adc_clk: adc_clk {
+>>>> +                       compatible = "fixed-clock";
+>>>> +                       #clock-cells = <0>;
+>>>> +                       clock-frequency = <65000000>;
+>>>> +               };
+>>>
+>>> Why do you have to add a clock?
+>>> I think you should just refer to the on-SoC peripheral clock: &cp_clk.
+>>
+>> I think you are right, in fact, see below ...
+>>
+>>>> +
+>>>>                 /* Special CPG clocks */
+>>>>                 cpg_clocks: cpg_clocks@e6150000 {
+>>>>                         compatible = "renesas,r8a7791-cpg-clocks",
+>>>> @@ -1432,6 +1448,7 @@
+>>>>                                  <&hp_clk>, <&hp_clk>;
+>>>
+>>> Missing addition of the parent clock for the newly added module clock.
+>>> Perhaps this should be the peripheral clock (<&cp_clk>)?
+>>>
+>>> Oops, that means there's no need to have two clock inputs in the adc device
+>>> node, and thus we screwed up when reviewing the GyroADC bindings :-(
+>>
+>> I think you're right. I should be just getting the clk rate of the fck
+>> and derive the gyroadc timings from that, correct ? I can send a patch
+>> for the driver to just ignore the second clock entry and update the DT
+>> binding document to drop the "if" clock (?) .
+> 
+> Fine for me. Thanks!
 
-On Fri, Jan 27, 2017 at 09:16:08AM +0100, Simon Horman wrote:
-> On Fri, Jan 27, 2017 at 08:27:28AM +0100, Wolfram Sang wrote:
-> >=20
-> > > Using renesas-next without mmc-next I see the problem above on the M3=
--W.
-> > > Using renesas-next with mmc-next I do not see the problem above.
-> > > Using v4.10-rc2 I also do not see the problem above.
-> >=20
-> > OK. So there is no problem with the code, at least.
-> >=20
-> > > So I believe we should delay the integration change, which is current=
-ly in
-> > > renesas-next, until the driver change in mmc-next hits Linus's tree.
-> >=20
-> > Whatever you do, H3 and M3-W should be treated equally IMO.
->=20
-> Sure, that is reasonable. This is what I plan to do:
->=20
-> 1. Drop this series from v4.11
-> 2. Re-queue them for v4.12 once the driver changes hit an rc release
->    - Please ping me one that happens
+OK, patches are ready. I need to find koelsch to test on ..
 
-Ping :) Do I need to resend? If so, what branch should I base this on?
-
-Have a nice weekend,
-
-   Wolfram
-
-
---sojy6fkkqpgolhle
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAljoxCcACgkQFA3kzBSg
-KbZbDQ/+OUT4dNHgGnLtacJqq0fkLBKVuwPXQm99tgSS9IDBWpdCoNqbKnQiIZo4
-bDdBfzkkpIsqbcZpmme4DSbcGhio+Mh5kgyv0wzTEwR98hrfeRqruY6Z8721Z0A6
-Bhx3/uu+vwy8RmwGZbrp9Yl1YT587scytEw9/7PLEKPRBkv55UumBOCPNYx0OezA
-Sm15ldrj4nqxNBo7UoasKso9BRPhEpjiYpoH0657PZrGNjqUweEQ/WjYQ0obdxa5
-J0cqjNygGo3P5g3xcjkM8/kBMLN+qGvEUfsfu8dApe/DN3yGurjx6goX1F+X8V16
-yfht8/I8UvSclwYSLJ3hcTWAlHFOkiLaHPUeD6IwjCvOEZBY3IgW8gSkr92Xlpak
-4TY9nRbX7xY6hUMirUcdZIKjDKsvIReaCQalnI3ygK+i5krDGmPYu1cQGY/ofrvP
-hmvo07Q03xxRrNeOwDlLevPbmeKQvoC4eajyN7aMn8fAuqzHVZQXHptAqOi3H1uN
-hBQlpAeLZ5zfK3VE+FnvYIY4X3VOvLwZYyZgd8S3E+F1raOfh3OA/q40E4IaSsZ9
-JQIlAygKp5sKzUq2LsNlDBMt4frEH8SDingi5TBnLD8XGCnSi68OHHzK7ITDPifV
-89QiPRxUo8U8FGIqyP059xdvIn0a1B/dl/Yn7Gvgh3Q/N4LydLw=
-=Kc4r
------END PGP SIGNATURE-----
-
---sojy6fkkqpgolhle--
+-- 
+Best regards,
+Marek Vasut
