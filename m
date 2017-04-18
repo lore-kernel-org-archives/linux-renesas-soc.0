@@ -1,67 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54555 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:38957 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754148AbdDGP6H (ORCPT
+        with ESMTP id S932195AbdDRHbc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.12
-Date: Fri,  7 Apr 2017 11:57:59 -0400
-Message-Id: <cover.1491578743.git.horms+renesas@verge.net.au>
+        Tue, 18 Apr 2017 03:31:32 -0400
+Date: Tue, 18 Apr 2017 16:31:28 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH/RFT] ARM: dts: silk: Enable UHS-I SDR-50
+Message-ID: <20170418073127.GC16340@verge.net.au>
+References: <1492493267-20807-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdV_L_Fpm0=WQkHgVn123G4X+cUSxECqw4yi3TYvdSSGCA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV_L_Fpm0=WQkHgVn123G4X+cUSxECqw4yi3TYvdSSGCA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Tue, Apr 18, 2017 at 09:22:24AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Apr 18, 2017 at 7:27 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI1.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > * Compile tested only; no access to silk board
+> > ---
+> >  arch/arm/boot/dts/r8a7794-silk.dts | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+> > index 4cb5278d104d..b0ef8ea75c29 100644
+> > --- a/arch/arm/boot/dts/r8a7794-silk.dts
+> > +++ b/arch/arm/boot/dts/r8a7794-silk.dts
+> > @@ -226,6 +226,13 @@
+> >         du1_pins: du1 {
+> >                 groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
+> >                 function = "du1";
+> > +               power-source = <3300>;
+> > +       };
+> > +
+> > +       sdhi1_pins_uhs: sd1_uhs {
+> > +               groups = "sdhi1_data4", "sdhi1_ctrl";
+> > +               function = "sdhi1";
+> > +               power-source = <1800>;
+> 
+> Shouldn't this be inserted right after the existing sdhi1_pins?
+> Yes, the list is only partially sorted.
 
-Please consider these second round of Renesas ARM64 based SoC DT updates
-for v4.12.
-
-This pull request is based on the previous round of
-such requests, tagged as renesas-arm64-dt-for-v4.12,
-which you have already pulled.
-
-
-The following changes since commit 3cbe33367d4fd480a92fbc131a96fa925be9e95d:
-
-  arm64: dts: r8a7796: salvator-x: Drop superfluous status update for frequency override (2017-03-13 10:21:16 +0100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.12
-
-for you to fetch changes up to 6922bd71adab0a7fe8ffbdc3e72a46431fa29656:
-
-  arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node name (2017-04-05 14:17:19 -0400)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM64 Based SoC DT Updates for v4.12
-
-Corrections:
-* r8a7795: Correct SATA device size to 2MiB for r8a7795 SoC
-
-Cleanup:
-* Drop _clk suffix from X12 clock node name for r8a7795 SoC
-
-Enhancements:
-* Add reset control properties for r8a779[56]
-
-----------------------------------------------------------------
-Geert Uytterhoeven (3):
-      arm64: dts: r8a7795: Add reset control properties
-      arm64: dts: r8a7796: Add reset control properties
-      arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node name
-
-Magnus Damm (1):
-      arm64: dts: r8a7795: Correct SATA device size to 2MiB
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 95 +++++++++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 46 +++++++++++
- 3 files changed, 141 insertions(+), 2 deletions(-)
+Oh wow, I messed that up completely.
+Let me post a v2.
