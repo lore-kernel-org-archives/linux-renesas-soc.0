@@ -1,84 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:59092 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1431695AbdDYQ1Y (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51107 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756198AbdDRIzf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 12:27:24 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/2] clk / soc: renesas: Rework Kconfig and Makefile logic
-Date: Tue, 25 Apr 2017 18:27:04 +0200
-Message-Id: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
+        Tue, 18 Apr 2017 04:55:35 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [GIT PULL FOR renesas-drivers] R-Car Gen3 HDMI output support
+Date: Tue, 18 Apr 2017 11:56:35 +0300
+Message-ID: <4801770.S3YjAIert9@avalon>
+In-Reply-To: <CAMuHMdUrTxowdyhFVaiJRkP7Ypyy_w6FYUaQqQ0uNsF1FErZyw@mail.gmail.com>
+References: <19852948.3die4YcTFG@avalon> <CAMuHMdUrTxowdyhFVaiJRkP7Ypyy_w6FYUaQqQ0uNsF1FErZyw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Hi Geert,
 
-This RFC patch series reworks the Kconfig and Makefile logic for the
-Renesas clock and SoC drivers. It was sparked by a discussion with Olof
-about the Renesas clock driver dependencies.
+On Tuesday 18 Apr 2017 10:54:43 Geert Uytterhoeven wrote:
+> On Mon, Mar 6, 2017 at 1:32 AM, Laurent Pinchart wrote:
+> > Please find two pull requests below for renesas-drivers (in a single
+> > e-mail, lucky you :-)).
+> > 
+> > The first tag contains driver changes only and is based on a merge of
+> > drm-next and drm-misc-next. The 5 patches from Maarten Lankhorst should
+> > be merged in drm-misc-next tomorrow (if all goes according to the plan).
+> > I'll rebase my tree on top of that, but that will only affect branches,
+> > not tags. More patches should also be merged in drm-misc-next in the next
+> > couple of days, I'll then send a pull request for the rest to Dave
+> > Airlie. In a few weeks I hope all of this to be in mainline.
+> > 
+> > The second tag contains DT changes only and is based on Simon's latest
+> > devel branch. Nothing special there, it should just not make it to
+> > mainline before the driver changes get accepted.
+> > 
+> > The following changes since commit 
+8d9874ba9561805fa7134c3371f8bf6b0650eb43:
+> >   Merge remote-tracking branch 'drm-misc/drm-misc-next' into drm/next/base
+> > 
+> > (2017-03-03 16:57:48 +0200)
+> > 
+> > are available in the git repository at:
+> >   git://linuxtv.org/pinchartl/media.git tags/drm-du-hdmi-v3-20170306
+> 
+> Dropped, as I assume all of this has been merged in -next.
 
-The goals are to:
-  - Allow precise control over and automatic selection of which
-    (sub)drivers are used for which SoC (which may change in the
-    future),
-  - Allow adding support for new SoCs easily,
-  - Allow compile-testing of all (sub)drivers,
-  - Keep driver selection logic in the subsystem-specific Kconfig
-    independent from the architecture-specific Kconfig (i.e. no "select"
-    from arch/arm64/Kconfig.platforms), to avoid dependencies.
-
-The series can't be applied as-is, because compile-testing all drivers
-depends on independent fixes, some in other subsystems.
-
-More details are provided in the individual patch descriptions.
-
-For testing, this patch series, plus several fixes to allow more
-compile-testing, are available in the
-topic/clk-soc-renesas-Kconfig-rework branch of my renesas-drivers git
-repository at 
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-This has been tested on R-Car Gen2 and Gen3, and compile-tested for
-various other configurations.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  [RFC] clk: renesas: Rework Kconfig and Makefile logic
-  [RFC] soc: renesas: Rework Kconfig and Makefile logic
-
- drivers/clk/Makefile                   |   2 +-
- drivers/clk/renesas/Kconfig            | 129 ++++++++++++++++++++++++++++-----
- drivers/clk/renesas/Makefile           |  37 +++++-----
- drivers/clk/renesas/renesas-cpg-mssr.c |   8 +-
- drivers/soc/Kconfig                    |   1 +
- drivers/soc/Makefile                   |   2 +-
- drivers/soc/renesas/Kconfig            |  63 ++++++++++++++++
- drivers/soc/renesas/Makefile           |  31 ++++----
- drivers/soc/renesas/rcar-sysc.c        |  24 +++---
- include/linux/soc/renesas/rcar-rst.h   |   3 +-
- 10 files changed, 229 insertions(+), 71 deletions(-)
- create mode 100644 drivers/soc/renesas/Kconfig
+It's been in drm-next for a few weeks now, and should end up in v4.12-rc1.
 
 -- 
-2.7.4
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
