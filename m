@@ -1,69 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36649 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968685AbdDSRsE (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44232 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968867AbdDSSNA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:48:04 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: cs2000: Add cs2000_set_saved_rate
-Date: Thu, 20 Apr 2017 02:46:31 +0900
-Message-Id: <1492624001-3758-11-git-send-email-ykaneko0929@gmail.com>
+        Wed, 19 Apr 2017 14:13:00 -0400
+Date: Wed, 19 Apr 2017 20:12:57 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jean Delvare <jdelvare@suse.de>
+Subject: Re: [PATCH i2c-tools-3.1] i2c-tools: add new tool 'i2ctransfer'
+Message-ID: <20170419181257.bgzi2o4ygwdpquvs@ninjato>
+References: <20170407124403.1880-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s7v73zfqj4ibczma"
+Content-Disposition: inline
+In-Reply-To: <20170407124403.1880-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 
-This patch adds the common function to reset the clk rate in order to
-be able to use it in other cases.
+--s7v73zfqj4ibczma
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+On Fri, Apr 07, 2017 at 02:44:03PM +0200, Wolfram Sang wrote:
+> This tool allows to construct and concat multiple I2C messages into one
+> single transfer. Its aim is to test I2C master controllers, and so there
+> is no SMBus fallback.
+>=20
+> I've been missing such a tool a number of times now, so I finally got
+> around to writing it myself. As with all I2C tools, it can be dangerous,
+> but it can also be very useful when developing.
+>=20
+> It has been tested with various Renesas I2C IP cores as well as Tegra,
+> i.MX and AT91.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
 
- drivers/clk/clk-cs2000-cp.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Pushed to i2c-tools-3.1.
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 4df38c5..5b3516d 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -324,6 +324,15 @@ static int cs2000_set_rate(struct clk_hw *hw,
- 	return __cs2000_set_rate(priv, ch, rate, parent_rate);
- }
- 
-+static int cs2000_set_saved_rate(struct cs2000_priv *priv)
-+{
-+	int ch = 0; /* it uses ch0 only at this point */
-+
-+	return __cs2000_set_rate(priv, ch,
-+				 priv->saved_rate,
-+				 priv->saved_parent_rate);
-+}
-+
- static int cs2000_enable(struct clk_hw *hw)
- {
- 	struct cs2000_priv *priv = hw_to_priv(hw);
-@@ -516,11 +525,8 @@ static int cs2000_probe(struct i2c_client *client,
- static int cs2000_resume(struct device *dev)
- {
- 	struct cs2000_priv *priv = dev_get_drvdata(dev);
--	int ch = 0; /* it uses ch0 only at this point */
- 
--	return __cs2000_set_rate(priv, ch,
--				 priv->saved_rate,
--				 priv->saved_parent_rate);
-+	return cs2000_set_saved_rate(priv);
- }
- 
- static const struct dev_pm_ops cs2000_pm_ops = {
--- 
-1.9.1
+
+--s7v73zfqj4ibczma
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlj3qKUACgkQFA3kzBSg
+Kbb9ZA//cNroG+NxB/ldJiEYDEdPLaU9hBjeCvyqyt0vxYiqLDudZi4EtWzF+GHI
+WFXMYPwCBmhD7Bsn6HZDGUzsIK3ea3YfWWYpUbGaBjDXhC4LIMrlnAfn9BNiP6yJ
+BsIamyUiQO186G2ySPx3gy6FMGws13I4H4kB8uWfrH0GJeQ4TsJrgxJTxGuIfgj1
+CM++XG3AyvcJQBLV1HrVyI2SsZs268JhhMDF65bYHq5HT4/Y4kgbtk4x7iggX1nG
++F4+m1lL36H8e+5Suvnrhcxcuh9bDPsPTtRKzQK+6Dq+hcf+AJ58SgBEIG8PpOCK
+6R+8hoHdgTC2ZhUcb76NRnty+QTITKlHlchBC2pU2ftwV3qmvTadG+e9+8I+l1sy
+p24IcFUVng2rvGrMoD8mSsithfOqtXtVW+LWkQBmJfQI3O/Q15D00N0Wdv7iPnWT
+hSGwgUaAYIg2aGmRRWoDs9cReVovu4vnz2mi6Hj7CmVu3MZ27XTGQeRj9q5ETUxd
+5cLBqp9vbsYXDKqWd71Ll4HUrz0+y2S2XqAgTcrzX9113mAiXONMNnKu0+cOOnLq
+5aGi0AjnzRTzBDJn25pcnZ6aV5cAZhxWR+6a9fdCoi1waVmSoxeyn2T+mdR/xEd0
+mrDQ9mf1AC5mxbfLKIjw+luiSaYVUsGsO7g9eszKx9E38pOt5+U=
+=ypZ1
+-----END PGP SIGNATURE-----
+
+--s7v73zfqj4ibczma--
