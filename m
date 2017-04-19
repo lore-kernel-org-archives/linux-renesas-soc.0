@@ -1,9 +1,9 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 19 Apr 2017 09:57:12 +0200
+Date: Wed, 19 Apr 2017 09:45:30 +0200
 From: Michal Hocko <mhocko@kernel.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -12,56 +12,42 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Tejun Heo <tj@kernel.org>
-Subject: Re: Re: Re: "mm: move pcp and lru-pcp draining into single wq" broke
+Subject: Re: Re: "mm: move pcp and lru-pcp draining into single wq" broke
  resume from s2ram
-Message-ID: <20170419075712.GB29789@dhcp22.suse.cz>
-References: <201704190541.v3J5fUE3054131@www262.sakura.ne.jp>
- <20170419071039.GB28263@dhcp22.suse.cz>
- <201704190726.v3J7QAiC076509@www262.sakura.ne.jp>
+Message-ID: <20170419074530.GA29789@dhcp22.suse.cz>
+References: <CAMuHMdUJSfrZ=2zy88_zojDek3CHEWKhv_qoJAVgDpPWz8V=Ew@mail.gmail.com>
+ <20170418201907.GC20671@dhcp22.suse.cz>
+ <201704190541.v3J5fUE3054131@www262.sakura.ne.jp>
+ <CAMuHMdVJ1ewJW4VFxeLEtOd8o_TtVZMSj0OYHdjRf4ykZYUFhQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201704190726.v3J7QAiC076509@www262.sakura.ne.jp>
+In-Reply-To: <CAMuHMdVJ1ewJW4VFxeLEtOd8o_TtVZMSj0OYHdjRf4ykZYUFhQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed 19-04-17 16:26:10, Tetsuo Handa wrote:
-> > On Wed 19-04-17 14:41:30, Tetsuo Handa wrote:
-> > [...]
-> > > Somebody is waiting forever with cpu_hotplug.lock held?
-> > 
-> > Why would that matter for drain_all_pages? It doesn't use
-> > get_online_cpus since a459eeb7b852 ("mm, page_alloc: do not depend on
-> > cpu hotplug locks inside the allocator") while ce612879ddc7 ("mm: move
-> > pcp and lru-pcp draining into single wq") was merged later.
-> > 
+On Wed 19-04-17 09:16:42, Geert Uytterhoeven wrote:
+> Hi Tetsuo,
 > 
-> Looking at ce612879ddc7 ("mm: move pcp and lru-pcp draining into single wq"),
-> we merged "lru-add-drain" (!WQ_FREEZABLE && WQ_MEM_RECLAIM) workqueue and
-> "vmstat" (WQ_FREEZABLE && WQ_MEM_RECLAIM) workqueue into
-> "mm_percpu_wq" (WQ_FREEZABLE && WQ_MEM_RECLAIM) workqueue.
+> On Wed, Apr 19, 2017 at 7:41 AM, Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+[...]
+> > Somebody is waiting forever with cpu_hotplug.lock held?
+> > I think that full dmesg with SysRq-t output is appreciated.
 > 
-> -       lru_add_drain_wq = alloc_workqueue("lru-add-drain", WQ_MEM_RECLAIM, 0);
-> -       vmstat_wq = alloc_workqueue("vmstat", WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-> +       mm_percpu_wq = alloc_workqueue("mm_percpu_wq",
-> +                                      WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
+> As SysRq doesn't work with my serial console, I added calls to show_state()
+> and show_workqueue_state() to check_hung_task().
 > 
-> That means "lru-add-drain" became freezable, doesn't it? And this problem
-> occurs around resume operation where all freezable threads are frozen?
-> Then, lru_add_drain_per_cpu() cannot be performed due to mm_percpu_wq frozen?
+> Result with current linus/master attached.
+[   47.165412] Enabling non-boot CPUs ...
+[   47.205615] CPU1 is up
+[   47.382002] PM: noirq resume of devices complete after 174.017 msecs
+[   47.390181] PM: early resume of devices complete after 1.468 msecs
 
-Ohh, right you are! Very well spotted. I have completely missed
-WQ_FREEZABLE there. The following should work
----
->From f3c6e287042259d6ae9916f1ff66392c46ce2a3c Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Wed, 19 Apr 2017 09:52:46 +0200
-Subject: [PATCH] mm: make mm_percpu_wq non freezable
+OK, so this is still the early resume path AFAIU which means that the
+userspace is still in the fridge... Is it possible that new workers
+cannot be spawned?
 
-Geert has reported a freeze during PM resume and some additional
-debugging has shown that the device_resume worker cannot make a forward
-progress because it waits for an event which is stuck waiting in
-drain_all_pages:
 [  243.691979] INFO: task kworker/u4:0:5 blocked for more than 120 seconds.
 [  243.698684]       Not tainted 4.11.0-rc7-koelsch-00029-g005882e53d62f25d-dirty #3476
 [  243.706439] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
@@ -116,36 +102,32 @@ drain_all_pages:
 [  254.870111]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=0/0
 [  254.875957]     delayed: drain_local_pages_wq BAR(1703), vmstat_update
 
-Tetsuo has properly noted that mm_percpu_wq is created as WQ_FREEZABLE
-so it is frozen this early during resume so we are effectively deadlocked.
-Fix this by dropping WQ_FREEZABLE when creating mm_percpu_wq. We really want to
-have it operational all the time.
-
-Fixes: ce612879ddc7 ("mm: move pcp and lru-pcp draining into single wq")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Debugged-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
+I got lost in the indirection here. But is it possible that the
+allocating context will wake up the workqeue context? Anyway the patch
+you have bisected to doesn't change a lot in this scenario as I've said
+before. If anything the change to using WQ for the draining rather than
+smp_function_call would change the behavior. Does the below help by any
+chance?
 ---
- mm/vmstat.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 757be8303aa0..f5fa1bd1eb16 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1766,8 +1766,7 @@ void __init init_mm_internals(void)
- {
- 	int ret __maybe_unused;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5fca73c7881a..a9a1ab7ea4c9 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2417,6 +2417,14 @@ void drain_all_pages(struct zone *zone)
+ 	static cpumask_t cpus_with_pcps;
  
--	mm_percpu_wq = alloc_workqueue("mm_percpu_wq",
--				       WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+	mm_percpu_wq = alloc_workqueue("mm_percpu_wq", WQ_MEM_RECLAIM, 0);
- 
- #ifdef CONFIG_SMP
- 	ret = cpuhp_setup_state_nocalls(CPUHP_MM_VMSTAT_DEAD, "mm/vmstat:dead",
--- 
-2.11.0
-
+ 	/*
++	 * This is an uggly hack but let's back off in the early PM suspend/resume
++	 * paths because the whole infrastructure might not be available yet for
++	 * us - namely kworkers might be still frozen
++	 */
++	if (pm_suspended_storage())
++		return;
++
++	/*
+ 	 * Make sure nobody triggers this path before mm_percpu_wq is fully
+ 	 * initialized.
+ 	 */
 -- 
 Michal Hocko
 SUSE Labs
