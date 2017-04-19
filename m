@@ -1,77 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38014 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761473AbdDSJPz (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:33340 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S939021AbdDSVgj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 05:15:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 6/8] [RFC] arm64: dts: renesas: Migrate R-Car M3-W Salvator-X to r8j7796-2x2g.dtsi
-Date: Wed, 19 Apr 2017 11:15:49 +0200
-Message-Id: <1492593351-13835-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
-References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+        Wed, 19 Apr 2017 17:36:39 -0400
+Date: Wed, 19 Apr 2017 17:36:35 -0400 (EDT)
+Message-Id: <20170419.173635.467763181064731648.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        horms@verge.net.au
+Subject: Re: [PATCH v2] sh_eth: unmap DMA buffers when freeing rings
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <de18ee2d-b401-5542-7901-c35cee0adc70@cogentembedded.com>
+References: <20170417125532.826640693@cogentembedded.com>
+        <20170417.161051.805859402797991771.davem@redhat.com>
+        <de18ee2d-b401-5542-7901-c35cee0adc70@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car M3-W Salvator-X development board is equipped with an
-r8j7796 SiP with 4 GiB of RAM.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Wed, 19 Apr 2017 22:09:51 +0300
 
-Hence migrate from r8a7796.dtsi to r8j7796-2x2g.dtsi.
+> On 04/17/2017 11:10 PM, David Miller wrote:
+> 
+>>> The DMA API debugging (when enabled) causes:
+>>>
+>>> WARNING: CPU: 0 PID: 1445 at lib/dma-debug.c:519
+>>> add_dma_entry+0xe0/0x12c
+>>> DMA-API: exceeded 7 overlapping mappings of cacheline 0x01b2974d
+>>>
+>>> to be  printed after repeated initialization of the Ether device, e.g.
+>>> suspend/resume or 'ifconfig' up/down. This is because DMA buffers
+>>> mapped
+>>> using dma_map_single() in sh_eth_ring_format() and sh_eth_start_xmit()
+>>> are
+>>> never unmapped. Resolve this problem by unmapping the buffers when
+>>> freeing
+>>> the descriptor rings; in order to do it right, we'd have to add an
+>>> extra
+>>> parameter to sh_eth_txfree() (we rename this function to
+>>> sh_eth_tx_free(),
+>>> while at it).
+>>>
+>>> Based on the commit a47b70ea86bd ("ravb: unmap descriptors when
+>>> freeing
+>>> rings").
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> Applied, thanks.
+> 
+>    Please don;t forget to send it to -stable.
+>    The bug seems to be there from the very beginning.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Questions:
-  - Should this file be renamed to r8j7796-salvator-x.dts?
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 7f0ac6a9d49b8da6..26f5ff938bd2728d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -9,12 +9,12 @@
-  */
- 
- /dts-v1/;
--#include "r8a7796.dtsi"
-+#include "r8j7796-2x2g.dtsi"
- #include <dt-bindings/gpio/gpio.h>
- 
- / {
--	model = "Renesas Salvator-X board based on r8a7796";
--	compatible = "renesas,salvator-x", "renesas,r8a7796";
-+	model = "Renesas Salvator-X board based on r8j7796";
-+	compatible = "renesas,salvator-x", "renesas,r8j7796", "renesas,r8a7796";
- 
- 	aliases {
- 		serial0 = &scif2;
-@@ -27,17 +27,6 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
--	memory@48000000 {
--		device_type = "memory";
--		/* first 128MB is reserved for secure area. */
--		reg = <0x0 0x48000000 0x0 0x78000000>;
--	};
--
--	memory@600000000 {
--		device_type = "memory";
--		reg = <0x6 0x00000000 0x0 0x80000000>;
--	};
--
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
--- 
-2.7.4
+Ok, queued up.
