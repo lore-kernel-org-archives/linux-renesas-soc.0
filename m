@@ -1,63 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35124 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033586AbdDTRxg (ORCPT
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:34098 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968651AbdDSRtB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 13:53:36 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-18-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-18-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 19:53:34 +0200
-Message-ID: <CAMuHMdVvo2XSmvgfDqijur20NBvMchJThsRt86Eijx46meV08Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: add PWM clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:49:01 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: add PWM clock
+Date: Thu, 20 Apr 2017 02:46:38 +0900
+Message-Id: <1492624001-3758-18-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
->
-> This patch adds PWM clock for PWM.
->
-> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
-> This patch is based on the clk-next branch of linux-clk tree.
->
->  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> index c5523aa..64714ca 100644
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -156,6 +156,7 @@ enum clk_ids {
->         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
->         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
->         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
-> +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S3D4),
+From: Ryo Kodama <ryo.kodama.vz@renesas.com>
 
-Repeating myself, cfr. my response to Ulrich:
+This patch adds PWM clock for PWM.
 
-     My copy of the R-Car Gen3 user manual rev. 0.53 says S0D12.
+Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-Gr{oetje,eeting}s,
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index c5523aa..64714ca 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -156,6 +156,7 @@ enum clk_ids {
+ 	DEF_MOD("hscif1",		 519,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("hscif0",		 520,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("thermal",		 522,	R8A7796_CLK_CP),
++	DEF_MOD("pwm",			 523,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("fcpvd2",		 601,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("fcpvd1",		 602,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("fcpvd0",		 603,	R8A7796_CLK_S0D2),
+-- 
+1.9.1
