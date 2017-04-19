@@ -1,214 +1,90 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] phy: Group phy drivers based on vendor listing
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-References: <1490015997-12956-1-git-send-email-vivek.gautam@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-usb@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <05b651c2-a634-b092-cd40-8ba9851ca6d0@ti.com>
-Date: Wed, 5 Apr 2017 16:34:18 +0530
-MIME-Version: 1.0
-In-Reply-To: <1490015997-12956-1-git-send-email-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/8] arm64: dts: renesas: Break out R-Car H3 and M3-W SiP
+Date: Wed, 19 Apr 2017 11:15:43 +0200
+Message-Id: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Vivek,
+	Hi all,
 
-On Monday 20 March 2017 06:49 PM, Vivek Gautam wrote:
-> This is the next version to an earlier posted series [1].
-> Missed Cc'ing the first patch of the previous series [1] to lkml.
-> Posting out this series now after addressing comments
-> and after adding the received 'Acked-by' and 'Reviewed-by'
-> tags.
-> 
-> This series is based on linux-phy/next branch.
-> 
-> [1] https://www.spinics.net/lists/arm-kernel/msg568370.html
-> 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-usb@vger.kernel.org
+Renesas R-Car H3 and M3-W are available as SoC (r8a779[56]) or SiP
+(r8j779[56]).  The latter is an integrated package
+("System-in-Package"), containing an SoC, RAM, and HyperFlash.
 
-The best time to merge this would be immediately after -rc1 is tagged. Can you
-resend when 4.12-rc1 is tagged?
+This patch series adds DT bindings for the SiPs, breaks out hardware
+descriptions for the SiPs into separate .dtsi files, and migrates the
+board-specific DTSes from the SoC-specific to the SiP-specific .dtsi
+files.
 
-Thanks
-Kishon
+The motivations for this are:
+  - Provide a better description of the hardware hierarchy,
+  - Share more DTS fragments (not that visible due to boilerplate and
+    limited number of boards),
+  - Some quirks may be SiP-specific.
+    I believe this is the case for the limitation of RAVB Ethernet to
+    10/100 Mbps on H3 ES1.0.
 
-> 
-> --
-> Vivek Gautam (3):
->   phy: qcom-usb: Remove unused ulpi phy header
->   phy: Move ULPI phy header out of drivers to include path
->   phy: Group vendor specific phy drivers
-> 
->  MAINTAINERS                                        |  18 +-
->  drivers/phy/Kconfig                                | 471 +--------------------
->  drivers/phy/Makefile                               |  67 +--
->  drivers/phy/allwinner/Kconfig                      |  31 ++
->  drivers/phy/allwinner/Makefile                     |   2 +
->  drivers/phy/{ => allwinner}/phy-sun4i-usb.c        |   0
->  drivers/phy/{ => allwinner}/phy-sun9i-usb.c        |   0
->  drivers/phy/broadcom/Kconfig                       |  64 +++
->  drivers/phy/broadcom/Makefile                      |   7 +
->  drivers/phy/{ => broadcom}/phy-bcm-cygnus-pcie.c   |   0
->  drivers/phy/{ => broadcom}/phy-bcm-kona-usb2.c     |   0
->  drivers/phy/{ => broadcom}/phy-bcm-ns-usb2.c       |   0
->  drivers/phy/{ => broadcom}/phy-bcm-ns-usb3.c       |   0
->  drivers/phy/{ => broadcom}/phy-bcm-ns2-pcie.c      |   0
->  drivers/phy/{ => broadcom}/phy-bcm-nsp-usb3.c      |   0
->  drivers/phy/{ => broadcom}/phy-brcm-sata.c         |   0
->  drivers/phy/hisilicon/Kconfig                      |  20 +
->  drivers/phy/hisilicon/Makefile                     |   2 +
->  drivers/phy/{ => hisilicon}/phy-hi6220-usb.c       |   0
->  drivers/phy/{ => hisilicon}/phy-hix5hd2-sata.c     |   0
->  drivers/phy/marvell/Kconfig                        |  50 +++
->  drivers/phy/marvell/Makefile                       |   6 +
->  drivers/phy/{ => marvell}/phy-armada375-usb2.c     |   0
->  drivers/phy/{ => marvell}/phy-berlin-sata.c        |   0
->  drivers/phy/{ => marvell}/phy-berlin-usb.c         |   0
->  drivers/phy/{ => marvell}/phy-mvebu-sata.c         |   0
->  drivers/phy/{ => marvell}/phy-pxa-28nm-hsic.c      |   0
->  drivers/phy/{ => marvell}/phy-pxa-28nm-usb2.c      |   0
->  drivers/phy/qualcomm/Kconfig                       |  38 ++
->  drivers/phy/qualcomm/Makefile                      |   7 +
->  drivers/phy/{ => qualcomm}/phy-qcom-apq8064-sata.c |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-ipq806x-sata.c |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-ufs-i.h        |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.c |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.h |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.c |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.h |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-ufs.c          |   0
->  drivers/phy/{ => qualcomm}/phy-qcom-usb-hs.c       |   2 -
->  drivers/phy/{ => qualcomm}/phy-qcom-usb-hsic.c     |   2 -
->  drivers/phy/renesas/Kconfig                        |  17 +
->  drivers/phy/renesas/Makefile                       |   2 +
->  drivers/phy/{ => renesas}/phy-rcar-gen2.c          |   0
->  drivers/phy/{ => renesas}/phy-rcar-gen3-usb2.c     |   0
->  drivers/phy/rockchip/Kconfig                       |  51 +++
->  drivers/phy/rockchip/Makefile                      |   6 +
->  drivers/phy/{ => rockchip}/phy-rockchip-dp.c       |   0
->  drivers/phy/{ => rockchip}/phy-rockchip-emmc.c     |   0
->  .../phy/{ => rockchip}/phy-rockchip-inno-usb2.c    |   0
->  drivers/phy/{ => rockchip}/phy-rockchip-pcie.c     |   0
->  drivers/phy/{ => rockchip}/phy-rockchip-typec.c    |   0
->  drivers/phy/{ => rockchip}/phy-rockchip-usb.c      |   0
->  drivers/phy/samsung/Kconfig                        |  96 +++++
->  drivers/phy/samsung/Makefile                       |  11 +
->  drivers/phy/{ => samsung}/phy-exynos-dp-video.c    |   0
->  drivers/phy/{ => samsung}/phy-exynos-mipi-video.c  |   0
->  drivers/phy/{ => samsung}/phy-exynos-pcie.c        |   0
->  drivers/phy/{ => samsung}/phy-exynos4210-usb2.c    |   0
->  drivers/phy/{ => samsung}/phy-exynos4x12-usb2.c    |   0
->  drivers/phy/{ => samsung}/phy-exynos5-usbdrd.c     |   0
->  drivers/phy/{ => samsung}/phy-exynos5250-sata.c    |   0
->  drivers/phy/{ => samsung}/phy-exynos5250-usb2.c    |   0
->  drivers/phy/{ => samsung}/phy-s5pv210-usb2.c       |   0
->  drivers/phy/{ => samsung}/phy-samsung-usb2.c       |   0
->  drivers/phy/{ => samsung}/phy-samsung-usb2.h       |   0
->  drivers/phy/st/Kconfig                             |  33 ++
->  drivers/phy/st/Makefile                            |   4 +
->  drivers/phy/{ => st}/phy-miphy28lp.c               |   0
->  drivers/phy/{ => st}/phy-spear1310-miphy.c         |   0
->  drivers/phy/{ => st}/phy-spear1340-miphy.c         |   0
->  drivers/phy/{ => st}/phy-stih407-usb.c             |   0
->  drivers/phy/ti/Kconfig                             |  78 ++++
->  drivers/phy/ti/Makefile                            |   7 +
->  drivers/phy/{ => ti}/phy-da8xx-usb.c               |   0
->  drivers/phy/{ => ti}/phy-dm816x-usb.c              |   0
->  drivers/phy/{ => ti}/phy-omap-control.c            |   0
->  drivers/phy/{ => ti}/phy-omap-usb2.c               |   0
->  drivers/phy/{ => ti}/phy-ti-pipe3.c                |   0
->  drivers/phy/{ => ti}/phy-tusb1210.c                |   3 +-
->  drivers/phy/{ => ti}/phy-twl4030-usb.c             |   0
->  {drivers => include/linux}/phy/ulpi_phy.h          |   0
->  81 files changed, 568 insertions(+), 527 deletions(-)
->  create mode 100644 drivers/phy/allwinner/Kconfig
->  create mode 100644 drivers/phy/allwinner/Makefile
->  rename drivers/phy/{ => allwinner}/phy-sun4i-usb.c (100%)
->  rename drivers/phy/{ => allwinner}/phy-sun9i-usb.c (100%)
->  create mode 100644 drivers/phy/broadcom/Kconfig
->  create mode 100644 drivers/phy/broadcom/Makefile
->  rename drivers/phy/{ => broadcom}/phy-bcm-cygnus-pcie.c (100%)
->  rename drivers/phy/{ => broadcom}/phy-bcm-kona-usb2.c (100%)
->  rename drivers/phy/{ => broadcom}/phy-bcm-ns-usb2.c (100%)
->  rename drivers/phy/{ => broadcom}/phy-bcm-ns-usb3.c (100%)
->  rename drivers/phy/{ => broadcom}/phy-bcm-ns2-pcie.c (100%)
->  rename drivers/phy/{ => broadcom}/phy-bcm-nsp-usb3.c (100%)
->  rename drivers/phy/{ => broadcom}/phy-brcm-sata.c (100%)
->  create mode 100644 drivers/phy/hisilicon/Kconfig
->  create mode 100644 drivers/phy/hisilicon/Makefile
->  rename drivers/phy/{ => hisilicon}/phy-hi6220-usb.c (100%)
->  rename drivers/phy/{ => hisilicon}/phy-hix5hd2-sata.c (100%)
->  create mode 100644 drivers/phy/marvell/Kconfig
->  create mode 100644 drivers/phy/marvell/Makefile
->  rename drivers/phy/{ => marvell}/phy-armada375-usb2.c (100%)
->  rename drivers/phy/{ => marvell}/phy-berlin-sata.c (100%)
->  rename drivers/phy/{ => marvell}/phy-berlin-usb.c (100%)
->  rename drivers/phy/{ => marvell}/phy-mvebu-sata.c (100%)
->  rename drivers/phy/{ => marvell}/phy-pxa-28nm-hsic.c (100%)
->  rename drivers/phy/{ => marvell}/phy-pxa-28nm-usb2.c (100%)
->  create mode 100644 drivers/phy/qualcomm/Kconfig
->  create mode 100644 drivers/phy/qualcomm/Makefile
->  rename drivers/phy/{ => qualcomm}/phy-qcom-apq8064-sata.c (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-ipq806x-sata.c (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-i.h (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.c (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-14nm.h (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.c (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-ufs-qmp-20nm.h (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-ufs.c (100%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-usb-hs.c (99%)
->  rename drivers/phy/{ => qualcomm}/phy-qcom-usb-hsic.c (99%)
->  create mode 100644 drivers/phy/renesas/Kconfig
->  create mode 100644 drivers/phy/renesas/Makefile
->  rename drivers/phy/{ => renesas}/phy-rcar-gen2.c (100%)
->  rename drivers/phy/{ => renesas}/phy-rcar-gen3-usb2.c (100%)
->  create mode 100644 drivers/phy/rockchip/Kconfig
->  create mode 100644 drivers/phy/rockchip/Makefile
->  rename drivers/phy/{ => rockchip}/phy-rockchip-dp.c (100%)
->  rename drivers/phy/{ => rockchip}/phy-rockchip-emmc.c (100%)
->  rename drivers/phy/{ => rockchip}/phy-rockchip-inno-usb2.c (100%)
->  rename drivers/phy/{ => rockchip}/phy-rockchip-pcie.c (100%)
->  rename drivers/phy/{ => rockchip}/phy-rockchip-typec.c (100%)
->  rename drivers/phy/{ => rockchip}/phy-rockchip-usb.c (100%)
->  create mode 100644 drivers/phy/samsung/Kconfig
->  create mode 100644 drivers/phy/samsung/Makefile
->  rename drivers/phy/{ => samsung}/phy-exynos-dp-video.c (100%)
->  rename drivers/phy/{ => samsung}/phy-exynos-mipi-video.c (100%)
->  rename drivers/phy/{ => samsung}/phy-exynos-pcie.c (100%)
->  rename drivers/phy/{ => samsung}/phy-exynos4210-usb2.c (100%)
->  rename drivers/phy/{ => samsung}/phy-exynos4x12-usb2.c (100%)
->  rename drivers/phy/{ => samsung}/phy-exynos5-usbdrd.c (100%)
->  rename drivers/phy/{ => samsung}/phy-exynos5250-sata.c (100%)
->  rename drivers/phy/{ => samsung}/phy-exynos5250-usb2.c (100%)
->  rename drivers/phy/{ => samsung}/phy-s5pv210-usb2.c (100%)
->  rename drivers/phy/{ => samsung}/phy-samsung-usb2.c (100%)
->  rename drivers/phy/{ => samsung}/phy-samsung-usb2.h (100%)
->  create mode 100644 drivers/phy/st/Kconfig
->  create mode 100644 drivers/phy/st/Makefile
->  rename drivers/phy/{ => st}/phy-miphy28lp.c (100%)
->  rename drivers/phy/{ => st}/phy-spear1310-miphy.c (100%)
->  rename drivers/phy/{ => st}/phy-spear1340-miphy.c (100%)
->  rename drivers/phy/{ => st}/phy-stih407-usb.c (100%)
->  create mode 100644 drivers/phy/ti/Kconfig
->  create mode 100644 drivers/phy/ti/Makefile
->  rename drivers/phy/{ => ti}/phy-da8xx-usb.c (100%)
->  rename drivers/phy/{ => ti}/phy-dm816x-usb.c (100%)
->  rename drivers/phy/{ => ti}/phy-omap-control.c (100%)
->  rename drivers/phy/{ => ti}/phy-omap-usb2.c (100%)
->  rename drivers/phy/{ => ti}/phy-ti-pipe3.c (100%)
->  rename drivers/phy/{ => ti}/phy-tusb1210.c (99%)
->  rename drivers/phy/{ => ti}/phy-twl4030-usb.c (100%)
->  rename {drivers => include/linux}/phy/ulpi_phy.h (100%)
-> 
+Questions (reiterated in the individual patches):
+  - Do we need more compatible values, for different configurations?
+    At least r8j7796 is available with either 2 GiB or 4 GiB of RAM,
+    possibly using RAM parts from different vendors.
+  - How are the different SiP versions named officially?
+  - How should the .dtsi files be named?
+  - Should the board-specific files be renamed from <soc>-<board>.dts to
+    <sip>-<board>.dts?
+    Probably not, as this would inconvenience downstream developers even
+    more than the H3 ES1.x rename, and <soc> is not that incorrect.
+
+DTB changes have been inspected using scripts/dtc/dtx_diff.
+This has been tested on Salvator-X (both H3 and M3-W).
+
+Thanks for your comments!
+
+Geert Uytterhoeven (8):
+  [RFC] dt-bindings: renesas: Document R-Car H3 and M3-W SiP DT bindings
+  [RFC] arm64: dts: renesas: Add R-Car H3 SiP (4 x 1 GiB) support
+  [RFC] arm64: dts: renesas: Add R-Car M3-W SiP (2 x 1 GiB) support
+  [RFC] arm64: dts: renesas: Add R-Car M3-W SiP (2 x 2 GiB) support
+  [RFC] arm64: dts: renesas: Migrate R-Car H3 Salvator-X to
+    r8j7795-4x1g.dtsi
+  [RFC] arm64: dts: renesas: Migrate R-Car M3-W Salvator-X to
+    r8j7796-2x2g.dtsi
+  [RFC] arm64: dts: renesas: Migrate H3ULCB to r8j7795-4x1g.dtsi
+  [RFC] arm64: dts: renesas: Migrate M3ULCB to r8j7796-2x1g.dtsi
+
+ Documentation/devicetree/bindings/arm/shmobile.txt | 16 +++++++---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     | 27 ++--------------
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 27 ++--------------
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     | 17 ++--------
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 17 ++--------
+ arch/arm64/boot/dts/renesas/r8j7795-4x1g.dtsi      | 36 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8j7796-2x1g.dtsi      | 26 ++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8j7796-2x2g.dtsi      | 26 ++++++++++++++++
+ 8 files changed, 112 insertions(+), 80 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8j7795-4x1g.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8j7796-2x1g.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8j7796-2x2g.dtsi
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
