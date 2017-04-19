@@ -1,57 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35243 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S942416AbdDTSWa (ORCPT
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:36053 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937576AbdDSRtN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:22:30 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-21-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-21-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:22:27 +0200
-Message-ID: <CAMuHMdWs_BmoAj22-C=mL4bA44T5=FiAxB8phNQAyTZZD_UpCA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add INTC-EX clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:49:13 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add INTC-EX clock
+Date: Thu, 20 Apr 2017 02:46:41 +0900
+Message-Id: <1492624001-3758-21-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kaneko-san,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Add the "intc-ex" clock to the R8A7796 CPG MSSR driver.
->
-> According to information from the hardware team the INTC-EX
-> parent clock is CP. The next data sheet version will include
-> this information.
->
-> [takeshi.kihara.df: Ported from commit f099aa075749 ("clk: shmobile:
->  r8a7795: Add INTC-EX clock") to drivers/clk/renesas/r8a7796-cpg-mssr.c]
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Add the "intc-ex" clock to the R8A7796 CPG MSSR driver.
 
-Thank you!
+According to information from the hardware team the INTC-EX
+parent clock is CP. The next data sheet version will include
+this information.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[takeshi.kihara.df: Ported from commit f099aa075749 ("clk: shmobile:
+ r8a7795: Add INTC-EX clock") to drivers/clk/renesas/r8a7796-cpg-mssr.c]
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-I.e. will queue in clk-renesas-for-v4.13.
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index a5399f7..4d1d496 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -142,6 +142,7 @@ enum clk_ids {
+ 	DEF_MOD("pcie0",		 319,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
++	DEF_MOD("intc-ex",		 407,	R8A7796_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("audmac0",		 502,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("audmac1",		 501,	R8A7796_CLK_S3D4),
+-- 
+1.9.1
