@@ -1,70 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33288 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762403AbdDTSfw (ORCPT
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:34118 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968699AbdDSRrs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:35:52 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-8-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-8-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:35:49 +0200
-Message-ID: <CAMuHMdUM=7-tMajOCUWjDTpSZO+EtDzWYz1+a2h-m=sodjTiBA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Audio-DMAC clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:47:48 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add Audio-DMAC clocks
+Date: Thu, 20 Apr 2017 02:46:28 +0900
+Message-Id: <1492624001-3758-8-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kaneko-san,
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->
-> This patch adds A-DMAC{0,1} clocks for R8A7796 SoC.
->
-> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
-> This patch is based on the clk-next branch of linux-clk tree.
->
->  drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> index c6c5026..f217796 100644
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -138,6 +138,8 @@ enum clk_ids {
->         DEF_MOD("sdif0",                 314,   R8A7796_CLK_SD0),
->         DEF_MOD("rwdt",                  402,   R8A7796_CLK_R),
->         DEF_MOD("intc-ap",               408,   R8A7796_CLK_S3D1),
-> +       DEF_MOD("audmac0",               502,   R8A7796_CLK_S3D4),
-> +       DEF_MOD("audmac1",               501,   R8A7796_CLK_S3D4),
+This patch adds A-DMAC{0,1} clocks for R8A7796 SoC.
 
-I believe the parent clock should be S0D3, like on R-Car H3 ES2.0,
-cfr. commits
-5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
-a843ed3f6c3e856f ("clk: renesas: r8a7795: Correct parent clock and
-sort order for Audio DMACs")
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-Please sort by module clock number.
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index c6c5026..f217796 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -138,6 +138,8 @@ enum clk_ids {
+ 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
+ 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
++	DEF_MOD("audmac0",		 502,	R8A7796_CLK_S3D4),
++	DEF_MOD("audmac1",		 501,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
+ 	DEF_MOD("drif6",		 509,	R8A7796_CLK_S3D2),
+ 	DEF_MOD("drif5",		 510,	R8A7796_CLK_S3D2),
+-- 
+1.9.1
