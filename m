@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34518 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S945303AbdDTSk4 (ORCPT
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:33877 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968672AbdDSRsq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:40:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-16-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-16-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:40:54 +0200
-Message-ID: <CAMuHMdVpHagph1USDuPohJ1x9xDNOFEUci9u0JBcz9s_obhygA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound DVC clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:48:46 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add Sound DVC clocks
+Date: Thu, 20 Apr 2017 02:46:36 +0900
+Message-Id: <1492624001-3758-16-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds adds SCU(DVC{0,1}) clocks for R8A7796 SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds adds SCU(DVC{0,1}) clocks for R8A7796 SoC.
 
-I.e. will queue in clk-renesas-for-v4.13.
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-Gr{oetje,eeting}s,
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 9a18cb7..1e16b17 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -220,6 +220,8 @@ enum clk_ids {
+ 	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
+ 	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
+ 	DEF_MOD("scu-all",		1017,	R8A7796_CLK_S3D4),
++	DEF_MOD("scu-dvc1",		1018,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
+-- 
+1.9.1
