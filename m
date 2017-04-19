@@ -1,55 +1,88 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:60678 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761477AbdDSJPz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Apr 2017 05:15:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 11/22] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
-Date: Thu, 13 Apr 2017 15:28:28 -0300
-Message-Id: <20170413182839.25381-12-javier@osg.samsung.com>
-In-Reply-To: <20170413182839.25381-1-javier@osg.samsung.com>
-References: <20170413182839.25381-1-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 7/8] [RFC] arm64: dts: renesas: Migrate H3ULCB to r8j7795-4x1g.dtsi
+Date: Wed, 19 Apr 2017 11:15:50 +0200
+Message-Id: <1492593351-13835-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+The Renesas R-Car Starter Kit Premier (H3ULCB) development board is
+equipped with an r8j7795 SiP with 4 GiB of RAM.
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
+Hence migrate from r8a7795.dtsi to r8j7795-4x1g.dtsi.
 
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+Questions:
+  - Should this file be renamed to r8j7795-h3ulcb.dts?
+---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 27 +++-----------------------
+ 1 file changed, 3 insertions(+), 24 deletions(-)
 
-Changes in v2: None
-
- arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 001e6116c47c..8dbee2f890b7 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -702,7 +702,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 3574965e074718d8..fe7eca39490eb1a2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -10,13 +10,13 @@
+  */
+ 
+ /dts-v1/;
+-#include "r8a7795.dtsi"
++#include "r8j7795-4x1g.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ 
+ / {
+-	model = "Renesas H3ULCB board based on r8a7795";
+-	compatible = "renesas,h3ulcb", "renesas,r8a7795";
++	model = "Renesas H3ULCB board based on r8j7795";
++	compatible = "renesas,h3ulcb", "renesas,r8j7795", "renesas,r8a7795";
+ 
+ 	aliases {
+ 		serial0 = &scif2;
+@@ -27,27 +27,6 @@
+ 		stdout-path = "serial0:115200n8";
  	};
  
- 	eeprom@50 {
--		compatible = "renesas,24c02";
-+		compatible = "renesas,24c02","atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
+-	memory@48000000 {
+-		device_type = "memory";
+-		/* first 128MB is reserved for secure area. */
+-		reg = <0x0 0x48000000 0x0 0x38000000>;
+-	};
+-
+-	memory@500000000 {
+-		device_type = "memory";
+-		reg = <0x5 0x00000000 0x0 0x40000000>;
+-	};
+-
+-	memory@600000000 {
+-		device_type = "memory";
+-		reg = <0x6 0x00000000 0x0 0x40000000>;
+-	};
+-
+-	memory@700000000 {
+-		device_type = "memory";
+-		reg = <0x7 0x00000000 0x0 0x40000000>;
+-	};
+-
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
 -- 
-2.9.3
+2.7.4
