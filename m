@@ -1,81 +1,78 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 3 Apr 2017 06:28:31 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:60646 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761495AbdDSJPz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Apr 2017 05:15:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [git pull] base: soc: Improvements for the SoC bus and
- soc_device_match()
-Message-ID: <20170403102831.GF31988@verge.net.au>
-References: <1490950460-8945-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1490950460-8945-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 8/8] [RFC] arm64: dts: renesas: Migrate M3ULCB to r8j7796-2x1g.dtsi
+Date: Wed, 19 Apr 2017 11:15:51 +0200
+Message-Id: <1492593351-13835-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Mar 31, 2017 at 10:54:20AM +0200, Geert Uytterhoeven wrote:
-> 	Hi Greg,
-> 	Hi Arnd, Kevin, Olof,
-> 	Hi Magnus, Simon,
-> 
-> The following changes since commit c470abd4fde40ea6a0846a2beab642a578c0b8cd:
-> 
->   Linux 4.10 (2017-02-19 14:34:00 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/soc-device-match-tag2
-> 
-> for you to fetch changes up to 6e12db376b60b7158e4e6006af60566f8c68f7ab:
-> 
->   base: soc: Allow early registration of a single SoC device (2017-03-29 21:43:26 +0200)
+The Renesas R-Car Starter Kit Pro (M3ULCB) development board is equipped
+with an r8j7796 SiP with 2 GiB of RAM.
 
-Hi Geert,
+Hence migrate from r8a7796.dtsi to r8j7796-2x1g.dtsi.
 
-I have pulled this into the renesas tree.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Questions:
+  - Should this file be renamed to r8j7796-m3ulcb.dts?
+---
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-Hi Greg,
-
-I would be most grateful if you could pull the above tag too.
-
-> ----------------------------------------------------------------
-> base: soc: Improvements for the SoC bus and soc_device_match()
-> 
-> This is a dependency for handling different SoC revisions in the Renesas
-> R-Car SYSC driver, which manages PM Domains and thus needs to be
-> initialized from an early_initcall().
-> 
-> Hence this will serve as an immutable branch between the driver core,
-> arm-soc, and renesas trees, to allow queueing the Renesas R-Car SYSC
-> changes on top in the renesas tree.
-> 
-> All changes in this pull request have been Acked by Arnd.
-> 
-> Thanks for pulling!
-> ----------------------------------------------------------------
-> Geert Uytterhoeven (2):
->       base: soc: Let soc_device_match() return no match when called too early
->       base: soc: Allow early registration of a single SoC device
-> 
->  drivers/base/soc.c | 52 ++++++++++++++++++++++++++++++++++------------------
->  1 file changed, 34 insertions(+), 18 deletions(-)
-> 
-> Gr{oetje,eeting}s,
-> 
-> 						Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
-> 							    -- Linus Torvalds
-> 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index c2a4549d3738f81c..533d03662e98982b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -10,13 +10,13 @@
+  */
+ 
+ /dts-v1/;
+-#include "r8a7796.dtsi"
++#include "r8j7796-2x1g.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ 
+ / {
+-	model = "Renesas M3ULCB board based on r8a7796";
+-	compatible = "renesas,m3ulcb", "renesas,r8a7796";
++	model = "Renesas M3ULCB board based on r8j7796";
++	compatible = "renesas,m3ulcb", "renesas,r8j7796", "renesas,r8a7796";
+ 
+ 	aliases {
+ 		serial0 = &scif2;
+@@ -27,17 +27,6 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory@48000000 {
+-		device_type = "memory";
+-		/* first 128MB is reserved for secure area. */
+-		reg = <0x0 0x48000000 0x0 0x38000000>;
+-	};
+-
+-	memory@600000000 {
+-		device_type = "memory";
+-		reg = <0x6 0x00000000 0x0 0x40000000>;
+-	};
+-
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+-- 
+2.7.4
