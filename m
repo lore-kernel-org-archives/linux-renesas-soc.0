@@ -1,113 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 1/2] serial: pl010: Move uart_register_driver call to device probe
-Date: Thu, 20 Apr 2017 14:13:00 +0200
-Message-Id: <20170420121301.382-2-sjoerd.simons@collabora.co.uk>
-In-Reply-To: <20170420121301.382-1-sjoerd.simons@collabora.co.uk>
-References: <20170420121301.382-1-sjoerd.simons@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33743 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754605AbdDSJtW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Apr 2017 05:49:22 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170407200300.584760058@cogentembedded.com>
+References: <20170407200300.584760058@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Apr 2017 11:49:20 +0200
+Message-ID: <CAMuHMdVfHeeBwohuoJrt_gcB5R=EhHMCaj95oErKbj5BE9LuGg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: grand I2C rename
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-uart_register_driver call binds the driver to a specific device
-node through tty_register_driver call. This should typically
-happen during device probe call.
+Hi Sergei,
 
-In a multiplatform scenario, it is possible that multiple serial
-drivers are part of the kernel. Currently the driver registration fails
-if multiple serial drivers with overlapping major/minor numbers are
-included.
+On Fri, Apr 7, 2017 at 10:02 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The R8A7791 PFC driver  was apparently based on the preliminary revisions
+> of  the  user's manual, which called all the I2C signals {SCL|SDA}<n> and
+> MOD_SEL register fields SEL_IIC<n> without making a difference between two
+> types of the I2C controllers used. The recent manual calls the signals
+> {I2C|IIC}<n>_{SCL|SDA> and the MOD_SEL fields SEL_{I2C|IIC}<n> finally
+> making this difference. Follow the suit...
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Thanks for your patch!
 
----
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Changes in v2:
-- Add locking to prevent issues when two probes run in parallel
+No difference in the generated binary, good!
 
- drivers/tty/serial/amba-pl010.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.13.
 
-diff --git a/drivers/tty/serial/amba-pl010.c b/drivers/tty/serial/amba-pl010.c
-index f2f251075109..24180adb1cbb 100644
---- a/drivers/tty/serial/amba-pl010.c
-+++ b/drivers/tty/serial/amba-pl010.c
-@@ -697,6 +697,7 @@ static struct console amba_console = {
- #define AMBA_CONSOLE	NULL
- #endif
- 
-+static DEFINE_MUTEX(amba_reg_lock);
- static struct uart_driver amba_reg = {
- 	.owner			= THIS_MODULE,
- 	.driver_name		= "ttyAM",
-@@ -749,6 +750,19 @@ static int pl010_probe(struct amba_device *dev, const struct amba_id *id)
- 	amba_ports[i] = uap;
- 
- 	amba_set_drvdata(dev, uap);
-+
-+	mutex_lock(&amba_reg_lock);
-+	if (!amba_reg.state) {
-+		ret = uart_register_driver(&amba_reg);
-+		if (ret < 0) {
-+			mutex_unlock(&amba_reg_lock);
-+			dev_err(uap->port.dev,
-+				"Failed to register AMBA-PL010 driver\n");
-+			return ret;
-+		}
-+	}
-+	mutex_unlock(&amba_reg_lock);
-+
- 	ret = uart_add_one_port(&amba_reg, &uap->port);
- 	if (ret)
- 		amba_ports[i] = NULL;
-@@ -760,12 +774,18 @@ static int pl010_remove(struct amba_device *dev)
- {
- 	struct uart_amba_port *uap = amba_get_drvdata(dev);
- 	int i;
-+	bool busy = false;
- 
- 	uart_remove_one_port(&amba_reg, &uap->port);
- 
- 	for (i = 0; i < ARRAY_SIZE(amba_ports); i++)
- 		if (amba_ports[i] == uap)
- 			amba_ports[i] = NULL;
-+		else if (amba_ports[i])
-+			busy = true;
-+
-+	if (!busy)
-+		uart_unregister_driver(&amba_reg);
- 
- 	return 0;
- }
-@@ -816,23 +836,14 @@ static struct amba_driver pl010_driver = {
- 
- static int __init pl010_init(void)
- {
--	int ret;
--
- 	printk(KERN_INFO "Serial: AMBA driver\n");
- 
--	ret = uart_register_driver(&amba_reg);
--	if (ret == 0) {
--		ret = amba_driver_register(&pl010_driver);
--		if (ret)
--			uart_unregister_driver(&amba_reg);
--	}
--	return ret;
-+	return  amba_driver_register(&pl010_driver);
- }
- 
- static void __exit pl010_exit(void)
- {
- 	amba_driver_unregister(&pl010_driver);
--	uart_unregister_driver(&amba_reg);
- }
- 
- module_init(pl010_init);
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
