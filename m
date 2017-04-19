@@ -1,62 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33510 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938370AbdDTSkH (ORCPT
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:36628 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968672AbdDSRsn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:40:07 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:40:05 +0200
-Message-ID: <CAMuHMdVGB1Rm0uRhbkbfEJkx2HA8T4nSB8XPJ+3k-9vqisM6ZA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound SRC clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:48:43 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add Sound SRC clock
+Date: Thu, 20 Apr 2017 02:46:35 +0900
+Message-Id: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kaneko-san,
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds SCU(all), SCU(SRC{0,1,2,3,4,5,6,7,8,9}), SCU(CTU00,
-> CTU01, CTU02, CTU03, MIX0) and SCU (CTU10, CTU11, CTU12, CTU13, MIX1)
-> clocks for R8A7796 SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+This patch adds SCU(all), SCU(SRC{0,1,2,3,4,5,6,7,8,9}), SCU(CTU00,
+CTU01, CTU02, CTU03, MIX0) and SCU (CTU10, CTU11, CTU12, CTU13, MIX1)
+clocks for R8A7796 SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-I.e. will queue in clk-renesas-for-v4.13.
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -219,6 +219,19 @@ enum clk_ids {
->         DEF_MOD("ssi2",                 1013,   MOD_CLK_ID(1005)),
->         DEF_MOD("ssi1",                 1014,   MOD_CLK_ID(1005)),
->         DEF_MOD("ssi0",                 1015,   MOD_CLK_ID(1005)),
-> +       DEF_MOD("scu-all",              1017,   R8A7796_CLK_S3D4),
-
-I cannot verify the parent clock, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 9be8187..9a18cb7 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -219,6 +219,19 @@ enum clk_ids {
+ 	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
+ 	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
+ 	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
++	DEF_MOD("scu-all",		1017,	R8A7796_CLK_S3D4),
++	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
+ };
+ 
+ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
+-- 
+1.9.1
