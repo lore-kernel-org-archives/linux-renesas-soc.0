@@ -1,54 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39009 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752223AbdDRHez (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39588 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937953AbdDSQd3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 03:34:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT v2] ARM: dts: silk: Enable UHS-I SDR-50
-Date: Tue, 18 Apr 2017 16:34:47 +0900
-Message-Id: <1492500887-20084-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 19 Apr 2017 12:33:29 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <877f2hkzcp.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1d0sXi-0001RK-WB@debutante>
+Date: Wed, 19 Apr 2017 17:33:22 +0100
+Subject: Applied "ASoC: ak4613: use snd_soc_update_bits() to avoid Reserve bit on I/O CTRL" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI1.
+The patch
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-* Compile tested only; no access to silk board
----
- arch/arm/boot/dts/r8a7794-silk.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+   ASoC: ak4613: use snd_soc_update_bits() to avoid Reserve bit on I/O CTRL
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 4cb5278d104d..bb0c41c2f3ac 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -196,6 +196,13 @@
- 	sdhi1_pins: sd1 {
- 		groups = "sdhi1_data4", "sdhi1_ctrl";
- 		function = "sdhi1";
-+		power-source = <3300>;
-+	};
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4898b61e40d62ca1652af40935dbbb5d2e5fd93d Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 19 Apr 2017 00:40:38 +0000
+Subject: [PATCH] ASoC: ak4613: use snd_soc_update_bits() to avoid Reserve bit
+ on I/O CTRL
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/ak4613.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
+index e819dd8c82fd..b2dfddead227 100644
+--- a/sound/soc/codecs/ak4613.c
++++ b/sound/soc/codecs/ak4613.c
+@@ -75,6 +75,12 @@
+ #define DFS_DOUBLE_SPEED	(1 << 2)
+ #define DFS_QUAD_SPEED		(2 << 2)
+ 
++/* ICTRL */
++#define ICTRL_MASK	(0x3)
 +
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
- 	};
++/* OCTRL */
++#define OCTRL_MASK	(0x3F)
++
+ struct ak4613_formats {
+ 	unsigned int width;
+ 	unsigned int fmt;
+@@ -365,8 +371,8 @@ static int ak4613_dai_hw_params(struct snd_pcm_substream *substream,
+ 	snd_soc_update_bits(codec, CTRL1, FMT_MASK, fmt_ctrl);
+ 	snd_soc_update_bits(codec, CTRL2, DFS_MASK, ctrl2);
  
- 	qspi_pins: qspi {
-@@ -343,6 +350,7 @@
- 	vmmc-supply = <&vcc_sdhi1>;
- 	vqmmc-supply = <&vccq_sdhi1>;
- 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
+-	snd_soc_write(codec, ICTRL, priv->ic);
+-	snd_soc_write(codec, OCTRL, priv->oc);
++	snd_soc_update_bits(codec, ICTRL, ICTRL_MASK, priv->ic);
++	snd_soc_update_bits(codec, OCTRL, OCTRL_MASK, priv->oc);
  
+ hw_params_end:
+ 	if (ret < 0)
 -- 
-2.7.0.rc3.207.g0ac5344
+2.11.0
