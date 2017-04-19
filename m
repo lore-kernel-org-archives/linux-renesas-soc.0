@@ -1,47 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:33509 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032639AbdDTOXf (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35114 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763531AbdDSNZB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 10:23:35 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 16:23:17 +0200
-Message-ID: <CAMuHMdXX1Q8Fh07jkRvmVHmY3OBoSMbpFtByN2+KzSMfwAYq=A@mail.gmail.com>
-Subject: Re: [PATCH 0/5] r8a7795/6 Salvator-X PWM enablement
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        Wed, 19 Apr 2017 09:25:01 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: geert@glider.be, horms@verge.net.au
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/5] r8a7795/6 Salvator-X PWM enablement
+Date: Wed, 19 Apr 2017 15:24:48 +0200
+Message-Id: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+Hi!
 
-On Wed, Apr 19, 2017 at 3:24 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> This is a straight port from the BSP, enabling PWM1 and PWM2 on the
-> Salvator-X boards. For r8a7796 it also adds the required infrastructure
-> (clock and pins).
->
-> Not fully tested because I cannot find my breakout adapter. Looks OK from
-> the software side, though.
+This is a straight port from the BSP, enabling PWM1 and PWM2 on the
+Salvator-X boards. For r8a7796 it also adds the required infrastructure
+(clock and pins).
 
-Did you manage to test it with the new "Easter bunny" adapter?
+Not fully tested because I cannot find my breakout adapter. Looks OK from
+the software side, though.
 
-Thanks!
+CU
+Uli
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Ryo Kodama (2):
+  clk: renesas: r8a7796: add PWM clock
+  arm64: dts: r8a7796-salvator-x: Add PWM device support
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Takeshi Kihara (3):
+  pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
+  arm64: dts: r8a7796: Add PWM device nodes
+  arm64: dts: r8a7795-salvator-x: Enable PWM
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  22 +++
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  21 +++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  63 +++++++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |   1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 153 +++++++++++++++++++++
+ 5 files changed, 260 insertions(+)
+
+-- 
+2.7.4
