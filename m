@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35381 "EHLO
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35897 "EHLO
         mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S946724AbdDTSoA (ORCPT
+        with ESMTP id S968620AbdDSRtF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:44:00 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-19-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-19-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:43:58 +0200
-Message-ID: <CAMuHMdVof+=gawQv4W9TTBQbQpjq=f8ErLByaBH532Xf7WHNfg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add PCIe clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:49:05 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add PCIe clocks
+Date: Thu, 20 Apr 2017 02:46:39 +0900
+Message-Id: <1492624001-3758-19-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
->
-> This patch adds PCIEC{0,1} clocks for R8A7796 SoC.
->
-> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds PCIEC{0,1} clocks for R8A7796 SoC.
 
-I.e. will queue in clk-renesas-for-v4.13.
+Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-Gr{oetje,eeting}s,
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 64714ca..877fc75 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -137,6 +137,8 @@ enum clk_ids {
+ 	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
+ 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
+ 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
++	DEF_MOD("pcie1",		 318,	R8A7796_CLK_S3D1),
++	DEF_MOD("pcie0",		 319,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
+-- 
+1.9.1
