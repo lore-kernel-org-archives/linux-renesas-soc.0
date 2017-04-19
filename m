@@ -1,48 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33955 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S946811AbdDTSsp (ORCPT
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:33917 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968734AbdDSRrg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:48:45 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:48:43 +0200
-Message-ID: <CAMuHMdWctkUWduOeQ-rXJQW7Oi=rwpW4uMEUuYgU3jbNz_Owbw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add HDMI clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:47:36 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add HDMI clock
+Date: Thu, 20 Apr 2017 02:46:26 +0900
+Message-Id: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
->
-> This patch adds HDMI-IF0 clock for R8A7796 SoC.
->
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds HDMI-IF0 clock for R8A7796 SoC.
 
-I.e. will queue in clk-renesas-for-v4.13.
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-Gr{oetje,eeting}s,
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 9d114b3..1d8c5c2 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -106,6 +106,7 @@ enum clk_ids {
+ 	DEF_DIV6P1("canfd",     R8A7796_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+ 	DEF_DIV6P1("csi0",      R8A7796_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 	DEF_DIV6P1("mso",       R8A7796_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
++	DEF_DIV6P1("hdmi",      R8A7796_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
+ 
+ 	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
+ 	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
+@@ -170,6 +171,7 @@ enum clk_ids {
+ 	DEF_MOD("du1",			 723,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("du0",			 724,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("lvds",			 727,	R8A7796_CLK_S2D1),
++	DEF_MOD("hdmi0",		 729,	R8A7796_CLK_HDMI),
+ 	DEF_MOD("vin7",			 804,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vin6",			 805,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vin5",			 806,	R8A7796_CLK_S0D2),
+-- 
+1.9.1
