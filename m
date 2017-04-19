@@ -1,96 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sakari.ailus@iki.fi
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/5] rcar-vin: Match sources against ports if specified.
-Date: Thu, 27 Apr 2017 19:26:01 +0100
-Message-Id: <1493317564-18026-3-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
-References: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:41747 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1760378AbdDSHWY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Apr 2017 03:22:24 -0400
+Date: Wed, 19 Apr 2017 09:22:16 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: Freeze PME scan before suspending devices
+Message-ID: <20170419072216.2chcdfpl6dxfgxgs@ninjato>
+References: <03aaf3220cccbabb7db86aa4eb10d1147add5c34.1492536769.git.lukas@wunner.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vrppktrdlacnrucw"
+Content-Disposition: inline
+In-Reply-To: <03aaf3220cccbabb7db86aa4eb10d1147add5c34.1492536769.git.lukas@wunner.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-If an endpoint source specifies a port number, then it may have
-multiple entities provided by one DT node. In this event, match
-against both the DT node and it's relevant port.
+--vrppktrdlacnrucw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+On Tue, Apr 18, 2017 at 08:44:30PM +0200, Lukas Wunner wrote:
+> Laurent Pinchart reported that the Renesas R-Car H2 Lager board
+> (r8a7790) crashes during suspend tests.  Geert Uytterhoeven managed to
+> reproduce the issue on an M2-W Koelsch board (r8a7791):
+>=20
+> It occurs when the PME scan runs, once per second.  During PME scan, the
+> PCI host bridge (rcar-pci) registers are accessed while its module clock
+> has already been disabled, leading to the crash.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index a530dc388b95..afe382c9a55d 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -782,7 +782,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
- 			return 0;
- 		}
- 
--		if (vin->group->source[i].asd.match.of.node == new) {
-+		if (vin->group->source[i].asd.match.of.node == new &&
-+		    subdev->port == vin->group->source[i].asd.match.of.port) {
- 			vin_dbg(vin, "Bound source %s\n", subdev->name);
- 			vin->group->source[i].subdev = subdev;
- 			mutex_unlock(&vin->group->lock);
-@@ -820,7 +821,7 @@ static struct device_node *rvin_group_get_bridge(struct rvin_dev *vin,
- static struct device_node *
- rvin_group_get_source(struct rvin_dev *vin,
- 		      struct device_node *bridge,
--		      unsigned int *remote_pad)
-+		      unsigned int *remote_port)
- {
- 	struct device_node *source, *ep, *rp;
- 	struct v4l2_mbus_config mbus_cfg;
-@@ -844,7 +845,7 @@ rvin_group_get_source(struct rvin_dev *vin,
- 	rp = of_graph_get_remote_port(ep);
- 	of_graph_parse_endpoint(rp, &endpoint);
- 	of_node_put(rp);
--	*remote_pad = endpoint.id;
-+	*remote_port = endpoint.id;
- 
- 	source = of_graph_get_remote_port_parent(ep);
- 	of_node_put(ep);
-@@ -861,7 +862,7 @@ rvin_group_get_source(struct rvin_dev *vin,
- static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
- {
- 	struct device_node *ep, *bridge, *source;
--	unsigned int i, remote_pad = 0;
-+	unsigned int i, remote_port = 0;
- 	u32 val;
- 	int ret;
- 
-@@ -910,7 +911,7 @@ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
- 		if (bridge == NULL)
- 			continue;
- 
--		source = rvin_group_get_source(vin, bridge, &remote_pad);
-+		source = rvin_group_get_source(vin, bridge, &remote_port);
- 		of_node_put(bridge);
- 		if (IS_ERR(source))
- 			return PTR_ERR(source);
-@@ -922,14 +923,14 @@ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
- 		vin->group->bridge[i].asd.match.of.node = bridge;
- 		vin->group->bridge[i].asd.match_type = V4L2_ASYNC_MATCH_OF;
- 		vin->group->source[i].asd.match.of.node = source;
-+		vin->group->source[i].asd.match.of.port = remote_port;
- 		vin->group->source[i].asd.match_type = V4L2_ASYNC_MATCH_OF;
--		vin->group->source[i].source_pad = remote_pad;
- 
- 		*bitmap |= BIT(i);
- 
- 		vin_dbg(vin, "Handle bridge %s and source %s pad %d\n",
- 			of_node_full_name(bridge), of_node_full_name(source),
--			remote_pad);
-+			remote_port);
- 	}
- 
- 	/* All our sources are CSI-2 */
--- 
-2.7.4
+Cool! I stumbled over this while testing I2C suspend behaviour the last
+days, and I can confirm that the crash is gone with this patch on my
+Lager board. Thanks!
+
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--vrppktrdlacnrucw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlj3ECQACgkQFA3kzBSg
+KbbrtRAApyiV+w4DYRzMCbFEqiSVQb4o2MN85OcmFPluzuBoMVu5VHtuiEYgg2Ix
+H9lCDH40zc3tMHnNxqI83LtGYwU9l3V0KzGRbSdm0oISXMj5IdXIdTblexsok6vY
+H5ayeNmnkpn72v19xpCorV1SvgoierVkZTRHy3XGKYUwiX/F8WBMZORkQc6gw/RR
+A8pNnMbP8AsYEhkVKL8EJYmKHb149kgfwVMOGEkqgrjhu/RrNcxaVV4M3vgtW/CJ
+fBlazFlcqIM07tvvk6YaKkeOGPOLvEjTz16qIQSi8BIiGe2kEDGAZ6mjZUNtUlIk
+3l+ytPAUi2WLBCcoF37uLJ9zmY4slp6lp2311HN0ES6sKyvO7yDqvA1PGpg7Gb6e
+hDIdohOuaBM7e93pTURR50hWK79DVIiFXAD/hRIbpMvodWWITmwivvtHs+MZHjt0
+LLyftjD4XeDit8yXQnbA0svZW+OZMofhQnIy9PGwljIizA9/IB5K5E8DQbJ4KHOv
+7u/OhrZ0Qn3dDUYPvpd7ZiCFqghePl/qlro2H1o7xkgAhQpG4uaxG9otcnx1xvQv
+xLPxHRSF+WzLDi+9RbtSi9YzdA6gQvbXL2Ec5B9kfqCoTIj1YgTSVJFeHniG4kn5
+FuhkTsBbkM3eMGuADrTOsJfslyLOaDYmc6rre8JWrMnpn7pnbHk=
+=iwyu
+-----END PGP SIGNATURE-----
+
+--vrppktrdlacnrucw--
