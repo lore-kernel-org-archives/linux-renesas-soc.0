@@ -1,62 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33388 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941187AbdDTSiR (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35800 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965414AbdDSRsU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:38:17 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492624001-3758-14-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-14-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:38:15 +0200
-Message-ID: <CAMuHMdUGS1hzH_=3U3RFhJ90jhJKdxjktsOdDm9fnwz5u2g9Cg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound SSI clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 19 Apr 2017 13:48:20 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add Sound SSI clock
+Date: Thu, 20 Apr 2017 02:46:34 +0900
+Message-Id: <1492624001-3758-14-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kaneko-san,
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds SSI(all) and SSI{0,1,2,3,4,5,6,7,8,9} clocks for R8A7796
-> SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
+This patch adds SSI(all) and SSI{0,1,2,3,4,5,6,7,8,9} clocks for R8A7796
+SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-I.e. will queue in clk-renesas-for-v4.13.
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -208,6 +208,17 @@ enum clk_ids {
->         DEF_MOD("i2c2",                  929,   R8A7796_CLK_S3D2),
->         DEF_MOD("i2c1",                  930,   R8A7796_CLK_S3D2),
->         DEF_MOD("i2c0",                  931,   R8A7796_CLK_S3D2),
-> +       DEF_MOD("ssi-all",              1005,   R8A7796_CLK_S3D4),
-
-I cannot verify the parent clock, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 27afd48..9be8187 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -208,6 +208,17 @@ enum clk_ids {
+ 	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
+ 	DEF_MOD("i2c1",			 930,	R8A7796_CLK_S3D2),
+ 	DEF_MOD("i2c0",			 931,	R8A7796_CLK_S3D2),
++	DEF_MOD("ssi-all",		1005,	R8A7796_CLK_S3D4),
++	DEF_MOD("ssi9",			1006,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi8",			1007,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi7",			1008,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi6",			1009,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi5",			1010,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi4",			1011,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi3",			1012,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
+ };
+ 
+ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
+-- 
+1.9.1
