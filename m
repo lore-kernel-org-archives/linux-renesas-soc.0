@@ -1,83 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:57458 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031313AbdD0Wmy (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38014 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761473AbdDSJPz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:42:54 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 11/27] rcar-vin: do not allow changing scaling and composing while streaming
-Date: Fri, 28 Apr 2017 00:41:47 +0200
-Message-Id: <20170427224203.14611-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 19 Apr 2017 05:15:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/8] [RFC] arm64: dts: renesas: Migrate R-Car M3-W Salvator-X to r8j7796-2x2g.dtsi
+Date: Wed, 19 Apr 2017 11:15:49 +0200
+Message-Id: <1492593351-13835-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is possible on Gen2 to change the registers controlling composing and
-scaling while the stream is running. Is however not a good idea to do so
-and could result in trouble. There are also no good reason to allow
-this, remove immediate reflection in hardware registers from
-vidioc_s_selection and only configure scaling and composing when the
-stream starts.
+The Renesas R-Car M3-W Salvator-X development board is equipped with an
+r8j7796 SiP with 4 GiB of RAM.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hence migrate from r8a7796.dtsi to r8j7796-2x2g.dtsi.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
- drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
- 3 files changed, 1 insertion(+), 7 deletions(-)
+Questions:
+  - Should this file be renamed to r8j7796-salvator-x.dts?
+---
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 286aafab533cda9d..ef029e4c7882322e 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 7f0ac6a9d49b8da6..26f5ff938bd2728d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -9,12 +9,12 @@
+  */
  
--void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp(struct rvin_dev *vin)
- {
- 	u32 xs, ys;
+ /dts-v1/;
+-#include "r8a7796.dtsi"
++#include "r8j7796-2x2g.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
  
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index e14f0aff8ceecc68..919040e40aec60f6 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -442,9 +442,6 @@ static int rvin_s_selection(struct file *file, void *fh,
- 		return -EINVAL;
- 	}
+ / {
+-	model = "Renesas Salvator-X board based on r8a7796";
+-	compatible = "renesas,salvator-x", "renesas,r8a7796";
++	model = "Renesas Salvator-X board based on r8j7796";
++	compatible = "renesas,salvator-x", "renesas,r8j7796", "renesas,r8a7796";
  
--	/* HW supports modifying configuration while running */
--	rvin_crop_scale_comp(vin);
+ 	aliases {
+ 		serial0 = &scif2;
+@@ -27,17 +27,6 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory@48000000 {
+-		device_type = "memory";
+-		/* first 128MB is reserved for secure area. */
+-		reg = <0x0 0x48000000 0x0 0x78000000>;
+-	};
 -
- 	return 0;
- }
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 6bf2e4ff8f6076c7..f1251c013d1d2d80 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -175,7 +175,4 @@ void rvin_v4l2_remove(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
--/* Cropping, composing and scaling */
--void rvin_crop_scale_comp(struct rvin_dev *vin);
+-	memory@600000000 {
+-		device_type = "memory";
+-		reg = <0x6 0x00000000 0x0 0x80000000>;
+-	};
 -
- #endif
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
 -- 
-2.12.2
+2.7.4
