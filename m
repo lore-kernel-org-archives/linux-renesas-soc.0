@@ -1,43 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:51038 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752239AbdDCKIM (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34965 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763656AbdDSO16 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 06:08:12 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Wed, 19 Apr 2017 10:27:58 -0400
+Received: by mail-lf0-f66.google.com with SMTP id i3so2586821lfh.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Apr 2017 07:27:57 -0700 (PDT)
+Date: Wed, 19 Apr 2017 06:20:41 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
-Date: Mon,  3 Apr 2017 12:08:07 +0200
-Message-Id: <1491214089-14093-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
-References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates
+ for v4.12
+Message-ID: <20170419132041.GF29219@localhost>
+References: <cover.1491578743.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1491578743.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current practice is to not add _clk suffixes to clock node names in
-DT, as these names are used as the actual clock names.
+On Fri, Apr 07, 2017 at 11:57:59AM -0400, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these second round of Renesas ARM64 based SoC DT updates
+> for v4.12.
+> 
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-arm64-dt-for-v4.12,
+> which you have already pulled.
+> 
+> 
+> The following changes since commit 3cbe33367d4fd480a92fbc131a96fa925be9e95d:
+> 
+>   arm64: dts: r8a7796: salvator-x: Drop superfluous status update for frequency override (2017-03-13 10:21:16 +0100)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.12
+> 
+> for you to fetch changes up to 6922bd71adab0a7fe8ffbdc3e72a46431fa29656:
+> 
+>   arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node name (2017-04-05 14:17:19 -0400)
+> 
+> ----------------------------------------------------------------
+> Second Round of Renesas ARM64 Based SoC DT Updates for v4.12
+> 
+> Corrections:
+> * r8a7795: Correct SATA device size to 2MiB for r8a7795 SoC
+> 
+> Cleanup:
+> * Drop _clk suffix from X12 clock node name for r8a7795 SoC
+> 
+> Enhancements:
+> * Add reset control properties for r8a779[56]
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Merged, thanks.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index fe6b8c2a2d711536..99269aaca6fc953e 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1101,7 +1101,7 @@
- 		};
- 
- 		/* External CAN clock */
--		can_clk: can_clk {
-+		can_clk: can {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
--- 
-2.7.4
+
+-Olof
