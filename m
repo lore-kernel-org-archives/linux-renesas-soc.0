@@ -1,54 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:31289 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756310AbdD0TMo (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:36400 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031189AbdDTSzs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 15:12:44 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] usb: r8a66597-hcd: select a different endpoint on timeout
-Date: Thu, 27 Apr 2017 12:12:02 -0700
-Message-Id: <20170427191202.21252-1-chris.brandt@renesas.com>
+        Thu, 20 Apr 2017 14:55:48 -0400
+Received: by mail-lf0-f51.google.com with SMTP id c80so33861997lfh.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Apr 2017 11:55:48 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170420185543.775916688@cogentembedded.com>
+Date: Thu, 20 Apr 2017 21:51:33 +0300
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] ARM: dts: r8a7743: add PFC support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-r8a7743-add-PFC-support-v2.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If multiple endpoints on a single device have pending IN URBs and one
-endpoint times out due to NAKs (perfectly legal), select a different
-endpoint URB to try.
-The existing code only checked to see another device address has pending
-URBs and ignores other IN endpoints on the current device address. This
-leads to endpoints never getting serviced if one endpoint is using NAK as
-a flow control method.
+Define the generic R8A7743 part of the PFC device node.
 
-Fixes: 5d3043586db4 ("usb: r8a66597-hcd: host controller driver for R8A6659")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/usb/host/r8a66597-hcd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changes in version 2:
+- added Geert's tag.
 
-diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
-index bfa7fa3d2eea..9c3413d550bb 100644
---- a/drivers/usb/host/r8a66597-hcd.c
-+++ b/drivers/usb/host/r8a66597-hcd.c
-@@ -1785,6 +1785,7 @@ static void r8a66597_td_timer(unsigned long _r8a66597)
- 		pipe = td->pipe;
- 		pipe_stop(r8a66597, pipe);
+ arch/arm/boot/dts/r8a7743.dtsi |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -1,7 +1,7 @@
+ /*
+  * Device Tree Source for the r8a7743 SoC
+  *
+- * Copyright (C) 2016 Cogent Embedded Inc.
++ * Copyright (C) 2016-2017 Cogent Embedded Inc.
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2. This program is licensed "as is" without any warranty of any
+@@ -123,6 +123,11 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
-+		/* Select a different address or endpoint */
- 		new_td = td;
- 		do {
- 			list_move_tail(&new_td->queue,
-@@ -1794,7 +1795,8 @@ static void r8a66597_td_timer(unsigned long _r8a66597)
- 				new_td = td;
- 				break;
- 			}
--		} while (td != new_td && td->address == new_td->address);
-+		} while (td != new_td && td->address == new_td->address &&
-+			td->pipe->info.epnum == new_td->pipe->info.epnum);
- 
- 		start_transfer(r8a66597, new_td);
- 
--- 
-2.11.0
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a7743";
++			reg = <0 0xe6060000 0 0x250>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7743",
+ 				     "renesas,rcar-dmac";
