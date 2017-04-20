@@ -1,65 +1,113 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: linux-serial@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC] i2c: rcar: reinit hardware on resume
-Date: Mon, 17 Apr 2017 20:32:49 +0200
-Message-Id: <20170417183249.19128-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 1/2] serial: pl010: Move uart_register_driver call to device probe
+Date: Thu, 20 Apr 2017 14:13:00 +0200
+Message-Id: <20170420121301.382-2-sjoerd.simons@collabora.co.uk>
+In-Reply-To: <20170420121301.382-1-sjoerd.simons@collabora.co.uk>
+References: <20170420121301.382-1-sjoerd.simons@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On resume, reinit hardware to ensure state machine and clock settings
-are proper. This code assumes:
+uart_register_driver call binds the driver to a specific device
+node through tty_register_driver call. This should typically
+happen during device probe call.
 
-* bus clock is a fixed value, so no need to recalculate timings after probe
-* handling RuntimePM is not needed, because register content is kept
-  when disabling the IP core clock
+In a multiplatform scenario, it is possible that multiple serial
+drivers are part of the kernel. Currently the driver registration fails
+if multiple serial drivers with overlapping major/minor numbers are
+included.
 
-Tested with r8a7796 (M3-W) and r8a7790 (H2).
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 
-@Geert: do you agree to my assumptions?
+Changes in v2:
+- Add locking to prevent issues when two probes run in parallel
 
- drivers/i2c/busses/i2c-rcar.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/tty/serial/amba-pl010.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 26f2ff22e97e55..7010c77df11daa 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -907,10 +907,27 @@ static int rcar_i2c_remove(struct platform_device *pdev)
+diff --git a/drivers/tty/serial/amba-pl010.c b/drivers/tty/serial/amba-pl010.c
+index f2f251075109..24180adb1cbb 100644
+--- a/drivers/tty/serial/amba-pl010.c
++++ b/drivers/tty/serial/amba-pl010.c
+@@ -697,6 +697,7 @@ static struct console amba_console = {
+ #define AMBA_CONSOLE	NULL
+ #endif
+ 
++static DEFINE_MUTEX(amba_reg_lock);
+ static struct uart_driver amba_reg = {
+ 	.owner			= THIS_MODULE,
+ 	.driver_name		= "ttyAM",
+@@ -749,6 +750,19 @@ static int pl010_probe(struct amba_device *dev, const struct amba_id *id)
+ 	amba_ports[i] = uap;
+ 
+ 	amba_set_drvdata(dev, uap);
++
++	mutex_lock(&amba_reg_lock);
++	if (!amba_reg.state) {
++		ret = uart_register_driver(&amba_reg);
++		if (ret < 0) {
++			mutex_unlock(&amba_reg_lock);
++			dev_err(uap->port.dev,
++				"Failed to register AMBA-PL010 driver\n");
++			return ret;
++		}
++	}
++	mutex_unlock(&amba_reg_lock);
++
+ 	ret = uart_add_one_port(&amba_reg, &uap->port);
+ 	if (ret)
+ 		amba_ports[i] = NULL;
+@@ -760,12 +774,18 @@ static int pl010_remove(struct amba_device *dev)
+ {
+ 	struct uart_amba_port *uap = amba_get_drvdata(dev);
+ 	int i;
++	bool busy = false;
+ 
+ 	uart_remove_one_port(&amba_reg, &uap->port);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(amba_ports); i++)
+ 		if (amba_ports[i] == uap)
+ 			amba_ports[i] = NULL;
++		else if (amba_ports[i])
++			busy = true;
++
++	if (!busy)
++		uart_unregister_driver(&amba_reg);
+ 
  	return 0;
  }
+@@ -816,23 +836,14 @@ static struct amba_driver pl010_driver = {
  
-+#ifdef CONFIG_PM_SLEEP
-+static int rcar_i2c_resume(struct device *dev)
-+{
-+	struct rcar_i2c_priv *priv = dev_get_drvdata(dev);
-+
-+	rcar_i2c_init(priv);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rcar_i2c_pm, NULL, rcar_i2c_resume);
-+#define RCAR_I2C_PM	(&rcar_i2c_pm)
-+#else
-+#define RCAR_I2C_PM	NULL
-+#endif
-+
- static struct platform_driver rcar_i2c_driver = {
- 	.driver	= {
- 		.name	= "i2c-rcar",
- 		.of_match_table = rcar_i2c_dt_ids,
-+		.pm	= RCAR_I2C_PM,
- 	},
- 	.probe		= rcar_i2c_probe,
- 	.remove		= rcar_i2c_remove,
+ static int __init pl010_init(void)
+ {
+-	int ret;
+-
+ 	printk(KERN_INFO "Serial: AMBA driver\n");
+ 
+-	ret = uart_register_driver(&amba_reg);
+-	if (ret == 0) {
+-		ret = amba_driver_register(&pl010_driver);
+-		if (ret)
+-			uart_unregister_driver(&amba_reg);
+-	}
+-	return ret;
++	return  amba_driver_register(&pl010_driver);
+ }
+ 
+ static void __exit pl010_exit(void)
+ {
+ 	amba_driver_unregister(&pl010_driver);
+-	uart_unregister_driver(&amba_reg);
+ }
+ 
+ module_init(pl010_init);
 -- 
 2.11.0
-
