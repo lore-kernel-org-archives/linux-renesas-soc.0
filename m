@@ -1,63 +1,47 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/9] arm: dts: genmai: Add SCIF2 pin group
-Date: Wed,  5 Apr 2017 16:07:24 +0200
-Message-Id: <1491401247-7030-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Date: Thu, 20 Apr 2017 08:53:27 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: Re: Re: "mm: move pcp and lru-pcp draining into single wq" broke
+ resume from s2ram
+Message-ID: <20170420065327.GA15781@dhcp22.suse.cz>
+References: <201704190541.v3J5fUE3054131@www262.sakura.ne.jp>
+ <20170419071039.GB28263@dhcp22.suse.cz>
+ <201704190726.v3J7QAiC076509@www262.sakura.ne.jp>
+ <20170419075712.GB29789@dhcp22.suse.cz>
+ <CAMuHMdVmJrr6_sGeU4oxH5fn10BRdLC5nOEePN05p3kJ1x3YBQ@mail.gmail.com>
+ <20170419081701.GC29789@dhcp22.suse.cz>
+ <CA+55aFxQOJp0jq4Z9pFQzZtyc7KHapVT=ZbYyUufyGQhY=DvkQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFxQOJp0jq4Z9pFQzZtyc7KHapVT=ZbYyUufyGQhY=DvkQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for SCIF2 serial debug interface.
+On Wed 19-04-17 15:50:01, Linus Torvalds wrote:
+> On Wed, Apr 19, 2017 at 1:17 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > Thanks for the testing. Linus will you take the patch from this thread
+> > or you prefer a resend?
+> 
+> I'll take it from this branch since I'm looking at it now, but in
+> general I prefer resends just because finding patches deep in some
+> discussion is very iffy.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Yeah, I perfectly understand this and that's why I've asked. Thanks for
+taking the patch!
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 118a8e2..c28d74b 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
- 	model = "Genmai";
-@@ -36,6 +37,14 @@
- 	};
- };
- 
-+&pinctrl {
-+
-+	scif2_pins: serial2 {
-+		/* P3_0 as TxD2; P3_2 as RxD2 */
-+		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <13330000>;
- };
-@@ -60,6 +69,9 @@
- };
- 
- &scif2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif2_pins>;
-+
- 	status = "okay";
- };
- 
 -- 
-2.7.4
+Michal Hocko
+SUSE Labs
