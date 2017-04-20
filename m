@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:32985 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1035960AbdDUHWC (ORCPT
+Received: from mail-io0-f173.google.com ([209.85.223.173]:33509 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032639AbdDTOXf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Apr 2017 03:22:02 -0400
+        Thu, 20 Apr 2017 10:23:35 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXX1Q8Fh07jkRvmVHmY3OBoSMbpFtByN2+KzSMfwAYq=A@mail.gmail.com>
-References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com> <CAMuHMdXX1Q8Fh07jkRvmVHmY3OBoSMbpFtByN2+KzSMfwAYq=A@mail.gmail.com>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Date: Fri, 21 Apr 2017 09:22:00 +0200
-Message-ID: <CAO3366zg6guSCd0CiVFq7QUAYEGWHQ_sPTfQUyAUctxfqWvLTw@mail.gmail.com>
+In-Reply-To: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 16:23:17 +0200
+Message-ID: <CAMuHMdXX1Q8Fh07jkRvmVHmY3OBoSMbpFtByN2+KzSMfwAYq=A@mail.gmail.com>
 Subject: Re: [PATCH 0/5] r8a7795/6 Salvator-X PWM enablement
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Linux PWM List <linux-pwm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -20,22 +20,28 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 4:23 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Uli,
->
-> On Wed, Apr 19, 2017 at 3:24 PM, Ulrich Hecht
-> <ulrich.hecht+renesas@gmail.com> wrote:
->> This is a straight port from the BSP, enabling PWM1 and PWM2 on the
->> Salvator-X boards. For r8a7796 it also adds the required infrastructure
->> (clock and pins).
->>
->> Not fully tested because I cannot find my breakout adapter. Looks OK from
->> the software side, though.
->
-> Did you manage to test it with the new "Easter bunny" adapter?
+Hi Uli,
 
-Yup, works. (Both the adapter and the PWMs.)
+On Wed, Apr 19, 2017 at 3:24 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> This is a straight port from the BSP, enabling PWM1 and PWM2 on the
+> Salvator-X boards. For r8a7796 it also adds the required infrastructure
+> (clock and pins).
+>
+> Not fully tested because I cannot find my breakout adapter. Looks OK from
+> the software side, though.
 
-CU
-Uli
+Did you manage to test it with the new "Easter bunny" adapter?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
