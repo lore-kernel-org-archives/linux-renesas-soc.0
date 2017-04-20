@@ -1,15 +1,12 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35418 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969568AbdDTPp7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 11:45:59 -0400
-Received: by mail-lf0-f41.google.com with SMTP id 75so31212823lfs.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Apr 2017 08:45:58 -0700 (PDT)
-Subject: Re: [PATCH 2/3] ARM: dts: sk-rzg1m: add SCIF0 pins
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170414211509.818645915@cogentembedded.com>
 References: <20170414211509.818645915@cogentembedded.com>
- <CAMuHMdWCan+XRgbjdMXNqWuUoY_ZeWR1hiicgYg3s5gKQRchpQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 16:19:09 +0200
+Message-ID: <CAMuHMdWCan+XRgbjdMXNqWuUoY_ZeWR1hiicgYg3s5gKQRchpQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: sk-rzg1m: add SCIF0 pins
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -19,51 +16,70 @@ Cc: Simon Horman <horms@verge.net.au>,
         Russell King <linux@armlinux.org.uk>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <45efbee2-eb71-a702-5c96-5312cbb4eaac@cogentembedded.com>
-Date: Thu, 20 Apr 2017 18:45:54 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWCan+XRgbjdMXNqWuUoY_ZeWR1hiicgYg3s5gKQRchpQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/20/2017 05:19 PM, Geert Uytterhoeven wrote:
+Hi Sergei,
 
->> Add the (previously omitted) SCIF0 pin data to the SK-RZG1M board's
->> device tree.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> ---
->>  arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
->> ===================================================================
->> --- renesas.orig/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
->> +++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-[...]
->> @@ -39,7 +39,17 @@
->>         clock-frequency = <20000000>;
->>  };
->>
->> +&pfc {
->> +       scif0_pins: scif0 {
->> +               groups = "scif0_data";
+On Fri, Apr 14, 2017 at 11:09 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the (previously omitted) SCIF0 pin data to the SK-RZG1M board's
+> device tree.
 >
-> I don't have schematics for this board, but you told me it's very similar to
-> Porter. Hence I'd expect "scif0_data_d" instead.
-
-    And you are absolutely right! Sorry about my overlook...
-
-> In my experience, when changing pinctrl to map the lines of a device to a new
-> set of pins, but not mapping another device to the old set of pins, it may
-> output the signals on both the old and the new set of pins.
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >
-> Does serial console input work with "scif0_data"?
+> ---
+>  arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+> ===================================================================
+> --- renesas.orig/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+> +++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+> @@ -1,7 +1,7 @@
+>  /*
+>   * Device Tree Source for the SK-RZG1M board
+>   *
+> - * Copyright (C) 2016 Cogent Embedded, Inc.
+> + * Copyright (C) 2016-2017 Cogent Embedded, Inc.
+>   *
+>   * This file is licensed under the terms of the GNU General Public License
+>   * version 2. This program is licensed "as is" without any warranty of any
+> @@ -39,7 +39,17 @@
+>         clock-frequency = <20000000>;
+>  };
+>
+> +&pfc {
+> +       scif0_pins: scif0 {
+> +               groups = "scif0_data";
 
-    Sure. :-)
+I don't have schematics for this board, but you told me it's very similar to
+Porter. Hence I'd expect "scif0_data_d" instead.
 
-MBR, Sergei
+In my experience, when changing pinctrl to map the lines of a device to a new
+set of pins, but not mapping another device to the old set of pins, it may
+output the signals on both the old and the new set of pins.
+
+Does serial console input work with "scif0_data"?
+
+> +               function = "scif0";
+> +       };
+> +};
+> +
+>  &scif0 {
+> +       pinctrl-0 = <&scif0_pins>;
+> +       pinctrl-names = "default";
+> +
+>         status = "okay";
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
