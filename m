@@ -1,55 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:33917 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968734AbdDSRrg (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34422 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965940AbdDTRv4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:47:36 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 20 Apr 2017 13:51:56 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492608293-12435-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1492608293-12435-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 19:51:54 +0200
+Message-ID: <CAMuHMdV-gnHBjorb1MC5eq6b-nLLc8jYtbfJqigu9zwuUdZJxg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: r8a7796-salvator-x: Add PWM device support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add HDMI clock
-Date: Thu, 20 Apr 2017 02:46:26 +0900
-Message-Id: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
+        Ryo Kodama <ryo.kodama.vz@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+On Wed, Apr 19, 2017 at 3:24 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+>
+> This patch adds support of PWM{1,2} device for Salvator-X board on
+> R8A7796 SoC.
+>
+> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> index 14d9e51..b4ff1b6 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
 
-This patch adds HDMI-IF0 clock for R8A7796 SoC.
+> @@ -114,6 +126,15 @@
+>                 function = "avb";
+>         };
+>
+> +       pwm1_pins: pwm1 {
+> +               groups = "pwm1_a", "pwm1_b";
+> +               function = "pwm1";
+> +       };
+> +       pwm2_pins: pwm2 {
+> +               groups = "pwm2_a", "pwm2_b";
+> +               function = "pwm2";
+> +       };
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+Same brain damage as the r8a7795 counterpart...
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 9d114b3..1d8c5c2 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -106,6 +106,7 @@ enum clk_ids {
- 	DEF_DIV6P1("canfd",     R8A7796_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- 	DEF_DIV6P1("csi0",      R8A7796_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
- 	DEF_DIV6P1("mso",       R8A7796_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
-+	DEF_DIV6P1("hdmi",      R8A7796_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
- 
- 	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
- 	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
-@@ -170,6 +171,7 @@ enum clk_ids {
- 	DEF_MOD("du1",			 723,	R8A7796_CLK_S2D1),
- 	DEF_MOD("du0",			 724,	R8A7796_CLK_S2D1),
- 	DEF_MOD("lvds",			 727,	R8A7796_CLK_S2D1),
-+	DEF_MOD("hdmi0",		 729,	R8A7796_CLK_HDMI),
- 	DEF_MOD("vin7",			 804,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vin6",			 805,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vin5",			 806,	R8A7796_CLK_S0D2),
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
