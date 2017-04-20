@@ -1,52 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:36556 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932544AbdDET4H (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:34502 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031185AbdDTSzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Apr 2017 15:56:07 -0400
-Date: Wed, 5 Apr 2017 12:56:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.12 (take two)
-Message-ID: <20170405195605.GN18246@codeaurora.org>
-References: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+        Thu, 20 Apr 2017 14:55:55 -0400
+Received: by mail-lf0-f51.google.com with SMTP id t144so33949524lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Apr 2017 11:55:54 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170420185550.571168105@cogentembedded.com>
+Date: Thu, 20 Apr 2017 21:51:35 +0300
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 3/3] ARM: dts: sk-rzg1m: add Ether pins
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-sk-rzg1m-add-Ether-pins-v2.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/31, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
-> 
->   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
-> 
-> for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
-> 
->   clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
-> 
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.12 (take two)
-> 
->   - Add support for the Clock Pulse Generator / Module Standby and
->     Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
->     differs from ES1.x in some areas.
-> 
-> Note that this pull request is on top of my previous pull request for
-> v4.12, which accidentally had a wrong version number in the subject
-> line, and which I believe you haven't pulled yet.
+Add the (previously omitted) Ether/PHY pin data to the SK-RZG1M board's
+device tree.
 
-Thanks. I pulled both by pulling this one tag.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+---
+Changes in version 2:
+- refreshed the patch.
+
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
++++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -44,6 +44,16 @@
+ 		groups = "scif0_data_d";
+ 		function = "scif0";
+ 	};
++
++	ether_pins: ether {
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
++	};
++
++	phy1_pins: phy1 {
++		groups = "intc_irq0";
++		function = "intc";
++	};
+ };
+ 
+ &scif0 {
+@@ -54,6 +64,9 @@
+ };
+ 
+ &ether {
++	pinctrl-0 = <&ether_pins &phy1_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy1>;
+ 	renesas,ether-link-active-low;
+ 	status = "okay";
