@@ -1,67 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36595 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751509AbdDCHVg (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36435 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S946318AbdDTOaB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 03:21:36 -0400
+        Thu, 20 Apr 2017 10:30:01 -0400
 MIME-Version: 1.0
-In-Reply-To: <20170331202941.678985389@cogentembedded.com>
-References: <20170331202941.678985389@cogentembedded.com>
+In-Reply-To: <1492608293-12435-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1492608293-12435-2-git-send-email-ulrich.hecht+renesas@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 3 Apr 2017 09:21:34 +0200
-Message-ID: <CAMuHMdUbYBd4OobPguB599O8Chsghv01uOTJ=6uKkM2MpGJh4w@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: fix IPSR comment typos
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Date: Thu, 20 Apr 2017 16:29:59 +0200
+Message-ID: <CAMuHMdXSVkvfRR_9oDXuRu41+VwV3CB6at6pqXXxR3VszmD54g@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergii,
-
-On Fri, Mar 31, 2017 at 10:29 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The IPSR field names in the comments have been fat-fingered in a couple
-> places --  fix those silly typos...
-
-Thanks!
-
-> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Apr 19, 2017 at 3:24 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds PWM{0,1,2,3,4,5,6} pins, groups and functions to
+> R8A7796 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> ---
-> This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
-> repo plus  3 R8A7791 fixes posted in the last couple days...
->
->  drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-> ===================================================================
-> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-> @@ -5711,7 +5711,7 @@ static const struct pinmux_cfg_reg pinmu
->         },
->         { PINMUX_CFG_REG_VAR("IPSR2", 0xE6060028, 32,
->                              2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 3) {
-> -               /* IP2_31_20 [2] */
-> +               /* IP2_31_30 [2] */
->                 0, 0, 0, 0,
->                 /* IP2_29_27 [3] */
->                 FN_EX_CS3_N, FN_ATADIR0_N, FN_MSIOF2_TXD,
-
-There's another one a few lines below:
-
--                  /* IP2_12_0 [3] */
-+                 /* IP2_12_10 [3] */
-
-I'll fix that up when applying...
+i.e. will queue in sh-pfc-for-v4.13.
 
 Gr{oetje,eeting}s,
 
