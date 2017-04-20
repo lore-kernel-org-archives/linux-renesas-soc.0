@@ -1,51 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51564 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752369AbdDCJqA (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:57620 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S970304AbdDTR7L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Apr 2017 05:46:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 20 Apr 2017 13:59:11 -0400
+Date: Thu, 20 Apr 2017 18:59:06 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] ARM: dts: r8a7790: Correct parent of SSI[0-9] clocks
-Date: Mon,  3 Apr 2017 11:45:41 +0200
-Message-Id: <1491212743-6911-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1491212743-6911-1-git-send-email-geert+renesas@glider.be>
-References: <1491212743-6911-1-git-send-email-geert+renesas@glider.be>
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v5] arm64: Add support for DMA_ATTR_FORCE_CONTIGUOUS to
+ IOMMU
+Message-ID: <20170420175905.GB755@e104818-lin.cambridge.arm.com>
+References: <1488908612-22522-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1488908612-22522-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SSI-ALL gate clock is located in between the P clock and the
-individual SSI[0-9] clocks, hence the former should be listed as their
-parent.
+Catching up with these threads, so replying to a patch I already
+applied.
 
-Fixes: bcde372254386872 ("ARM: shmobile: r8a7790: add MSTP10 support on DTSI")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790.dtsi | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+On Tue, Mar 07, 2017 at 06:43:32PM +0100, Geert Uytterhoeven wrote:
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+> @@ -584,20 +584,7 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
+>  	 */
+>  	gfp |= __GFP_ZERO;
+>  
+> -	if (gfpflags_allow_blocking(gfp)) {
+> -		struct page **pages;
+> -		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
+> -
+> -		pages = iommu_dma_alloc(dev, iosize, gfp, attrs, ioprot,
+> -					handle, flush_page);
+> -		if (!pages)
+> -			return NULL;
+> -
+> -		addr = dma_common_pages_remap(pages, size, VM_USERMAP, prot,
+> -					      __builtin_return_address(0));
+> -		if (!addr)
+> -			iommu_dma_free(dev, pages, iosize, handle);
+> -	} else {
+> +	if (!gfpflags_allow_blocking(gfp)) {
+>  		struct page *page;
+>  		/*
+>  		 * In atomic context we can't remap anything, so we'll only
+> @@ -621,6 +608,45 @@ static void *__iommu_alloc_attrs(struct device *dev, size_t size,
+>  				__free_from_pool(addr, size);
+>  			addr = NULL;
+>  		}
+> +	} else if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
+> +		pgprot_t prot = __get_dma_pgprot(attrs, PAGE_KERNEL, coherent);
+> +		struct page *page;
+> +
+> +		page = dma_alloc_from_contiguous(dev, size >> PAGE_SHIFT,
+> +						 get_order(size), gfp);
+> +		if (!page)
+> +			return NULL;
+> +
+> +		*handle = iommu_dma_map_page(dev, page, 0, iosize, ioprot);
+> +		if (iommu_dma_mapping_error(dev, *handle)) {
+> +			dma_release_from_contiguous(dev, page,
+> +						    size >> PAGE_SHIFT);
+> +			return NULL;
+> +		}
+> +		if (!coherent)
+> +			__dma_flush_area(page_to_virt(page), iosize);
+> +
+> +		addr = dma_common_contiguous_remap(page, size, VM_USERMAP,
+> +						   prot,
+> +						   __builtin_return_address(0));
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 534525665bb3a922..fe6b8c2a2d711536 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1443,8 +1443,11 @@
- 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
- 			clocks = <&p_clk>,
--				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
--				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
-+				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
- 				<&p_clk>,
- 				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
- 				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+Do we need to call dma_common_pages_remap() if the allocation is
+coherent? In the __dma_alloc() case we don't do it but simply use
+page_address(page) as returned by __dma_alloc_coherent().
+
+(note that my comment is not meant to fix the issue reported by Andrzej
+Hajda but I just spotted it)
+
 -- 
-2.7.4
+Catalin
