@@ -1,48 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33610 "EHLO mail.kernel.org"
+Received: from foss.arm.com ([217.140.101.70]:58280 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1948377AbdDYOzF (ORCPT
+        id S944302AbdDTTKt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 10:55:05 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: niklas.soderlund@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] rcar-vin: Use of_nodes as specified by the subdev
-Date: Tue, 25 Apr 2017 15:55:00 +0100
-Message-Id: <1493132100-31901-1-git-send-email-kbingham@kernel.org>
+        Thu, 20 Apr 2017 15:10:49 -0400
+Date: Thu, 20 Apr 2017 20:10:22 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCHv3 08/14] drivers/perf: arm_pmu: split cpu-local irq
+ request/free
+Message-ID: <20170420191022.GB9795@leverpostej>
+References: <1491899997-32210-1-git-send-email-mark.rutland@arm.com>
+ <1491899997-32210-9-git-send-email-mark.rutland@arm.com>
+ <CAMuHMdVV4qMyYTYN92TE4fsrxo66WK-Gd001YbJZok2txOH4ig@mail.gmail.com>
+ <20170418183316.GM17866@leverpostej>
+ <CAMuHMdVs+JQ3-Lj=TyN5Zi9fAhJROuc7upgFKmCwXVaA8eb1WQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVs+JQ3-Lj=TyN5Zi9fAhJROuc7upgFKmCwXVaA8eb1WQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Tue, Apr 18, 2017 at 08:57:04PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Apr 18, 2017 at 8:33 PM, Mark Rutland <mark.rutland@arm.com> wrote:
 
-The rvin_digital_notify_bound() call dereferences the subdev->dev
-pointer to obtain the of_node. On some error paths, this dev node can be
-set as NULL. The of_node is mapped into the subdevice structure on
-initialisation, so this is a safer source to compare the nodes.
+> > I'm somewhat surprised that this patch would have that
+> > effect -- I would imagine that the rework this is based on is more
+> > likely to. e.g. commit:
+> >
+> >   c09adab01e4aeecf ("drivers/perf: arm_pmu: split irq request from enable")
+> 
+> Bummer. You're right. It's actually due to that commit.
 
-Dereference the of_node from the subdev structure instead of the dev
-structure.
+Ok; I understand what's happening, then.
 
-Fixes: 83fba2c06f19 ("rcar-vin: rework how subdevice is found and
-	bound")
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FWIW, the warnings are benign, albeit annoying.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 5861ab281150..a530dc388b95 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -469,7 +469,7 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
- 
- 	v4l2_set_subdev_hostdata(subdev, vin);
- 
--	if (vin->digital.asd.match.of.node == subdev->dev->of_node) {
-+	if (vin->digital.asd.match.of.node == subdev->of_node) {
- 		/* Find surce and sink pad of remote subdevice */
- 
- 		ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
--- 
-2.7.4
+I'll have a go at cleaning this up.
+
+> I searched in my gmail for a patch with the specific title, and blindly
+> replied to the first match, not noticing that was not the right patch.
+> Sorry for that.
+
+No worries.
+
+> On R-Car Gen3, there's no change in PMU related messages.
+> Actual PMU messages are:
+> 
+>     hw perfevents: enabled with armv8_cortex_a57 PMU driver, 7
+> counters available
+>     hw perfevents: /soc/pmu_a53: failed to probe PMU!
+>     hw perfevents: /soc/pmu_a53: failed to register PMU devices!
+> 
+> The last two are due to the CA53 cores being described in DT, but not
+> enabled in the firmware.
+
+Ok. 
+
+> On SH-Mobile AG5 (sh73a0/kzm9g), it recently (not due to the bad commit)
+> started printing:
+> 
+>    +hw perfevents: no interrupt-affinity property for /pmu, guessing.
+>     hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7 counters available
+> 
+> which looks related.
+
+That's stating that the DTB doesn't provide a interrupt-affinity
+property for the PMU nodem so the affinity is guessed based on the
+logical CPU ordering, which is dodgy.
+
+I can see that's missing in arch/arm/boot/dts/sh73a0.dtsi.
+
+That should be easy to fix up, as per
+arch/arm64/boot/dts/renesas/r8a7795.dtsi, assuming you're aware of which
+IRQ corresponds to which CPU.
+
+Thanks,
+Mark.
