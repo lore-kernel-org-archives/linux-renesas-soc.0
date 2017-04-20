@@ -1,48 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933502AbdDGP6s (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33938 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S944445AbdDTS3C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 20 Apr 2017 14:29:02 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492624001-3758-7-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-7-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:29:00 +0200
+Message-ID: <CAMuHMdUPqSp8rb58uLtuBGYA1VWOUVfdAFCbeUD4YZ=_g6WxmQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add EHCI/OHCI clocks
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/22] ARM: dts: silk: Correct clock of DU1
-Date: Fri,  7 Apr 2017 11:58:08 -0400
-Message-Id: <403fe77e22eb72c962c3889efc9d4fa62e454737.1491580547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
-References: <cover.1491580547.git.horms+renesas@verge.net.au>
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Kaneko-san,
 
-The second channel of the display unit uses a different module clock
-than the first channel.
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+>
+> This patch adds EHCI/OHCI{0,1} clocks for R8A7796 SoC.
+>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
 
-Fixes: 84e734f497cd48f6 ("ARM: dts: silk: add DU DT support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794-silk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index c742d80d6dca..4cb5278d104d 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -424,7 +424,7 @@
- 	status = "okay";
- 
- 	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
--		 <&mstp7_clks R8A7794_CLK_DU0>,
-+		 <&mstp7_clks R8A7794_CLK_DU1>,
- 		 <&x2_clk>, <&x3_clk>;
- 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
--- 
-2.7.0.rc3.207.g0ac5344
+I.e. will queue in clk-renesas-for-v4.13.
+
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -165,6 +165,8 @@ enum clk_ids {
+>         DEF_MOD("vspd0",                 623,   R8A7796_CLK_S0D2),
+>         DEF_MOD("vspb",                  626,   R8A7796_CLK_S0D1),
+>         DEF_MOD("vspi0",                 631,   R8A7796_CLK_S0D1),
+> +       DEF_MOD("ehci1",                 702,   R8A7796_CLK_S3D4),
+> +       DEF_MOD("ehci0",                 703,   R8A7796_CLK_S3D4),
+
+I cannot confirm the parent clock, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
