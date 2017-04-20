@@ -1,136 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:55646 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164246AbdD1M6r (ORCPT
+Received: from mail-io0-f176.google.com ([209.85.223.176]:34156 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S946859AbdDTSwv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Apr 2017 08:58:47 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/5] arm64: dts: r8a7796: Add placeholders for various devices
-Date: Fri, 28 Apr 2017 14:58:42 +0200
-Message-Id: <1493384324-29344-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
-References: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
+        Thu, 20 Apr 2017 14:52:51 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492624001-3758-4-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-4-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:52:49 +0200
+Message-ID: <CAMuHMdUx3y16UpCY=RvnQTVb_qzQH_M-qYODG24vf05ki2yCtw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Add USB-DMAC ch3 clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add empty device nodes serving as placeholders for devices that are not
-yet supported and/or tested on R-Car M3-W, but are supported and used on
-Salvator-X or H3ULCB boards equipped with an R-Car H3 SoC.
+Hi Kaneko-san,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Drop RFC state.
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 82 ++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch supports the clock of USB-DMAC ch3 module added from R8A7795
+> ES2.0 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 8e2aab8b6b103cc9..60a4289d0b14fe50 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -961,6 +961,38 @@
- 			dma-channels = <16>;
- 		};
- 
-+		hsusb: usb@e6590000 {
-+			/* placeholder */
-+		};
-+
-+		xhci0: usb@ee000000 {
-+			/* placeholder */
-+		};
-+
-+		ohci0: usb@ee080000 {
-+			/* placeholder */
-+		};
-+
-+		ehci0: usb@ee080100 {
-+			/* placeholder */
-+		};
-+
-+		usb2_phy0: usb-phy@ee080200 {
-+			/* placeholder */
-+		};
-+
-+		ohci1: usb@ee0a0000 {
-+			/* placeholder */
-+		};
-+
-+		ehci1: usb@ee0a0100 {
-+			/* placeholder */
-+		};
-+
-+		usb2_phy1: usb-phy@ee0a0200 {
-+			/* placeholder */
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7796";
- 			reg = <0 0xee100000 0 0x2000>;
-@@ -1063,5 +1095,55 @@
- 				};
- 			};
- 		};
-+
-+		rcar_sound: sound@ec500000 {
-+			/* placeholder */
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {
-+				};
-+
-+				dvc1: dvc-1 {
-+				};
-+			};
-+
-+			rcar_sound,src {
-+				src0: src-0 {
-+				};
-+				src1: src-1 {
-+				};
-+			};
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+				};
-+
-+				ssi1: ssi-1 {
-+				};
-+			};
-+		};
-+
-+		pciec0: pcie@fe000000 {
-+			/* placeholder */
-+		};
-+
-+		pciec1: pcie@ee800000 {
-+			/* placeholder */
-+		};
-+
-+		du: display@feb00000 {
-+			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- };
--- 
-2.7.4
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I.e. will queue in clk-renesas-for-v4.13.
+
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -142,8 +142,10 @@ enum clk_ids {
+>         DEF_MOD("sdif0",                 314,   R8A7795_CLK_SD0),
+>         DEF_MOD("pcie1",                 318,   R8A7795_CLK_S3D1),
+>         DEF_MOD("pcie0",                 319,   R8A7795_CLK_S3D1),
+> +       DEF_MOD("usb-dmac30",            326,   R8A7795_CLK_S3D1),
+>         DEF_MOD("usb3-if1",              327,   R8A7795_CLK_S3D1), /* ES1.x */
+>         DEF_MOD("usb3-if0",              328,   R8A7795_CLK_S3D1),
+> +       DEF_MOD("usb-dmac31",            329,   R8A7795_CLK_S3D1),
+
+I cannot verify their parent clocks, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
