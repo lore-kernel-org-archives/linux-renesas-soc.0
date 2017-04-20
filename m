@@ -1,42 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42522 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1951992AbdDYR0E (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50868 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940790AbdDTJQb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 13:26:04 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: Do not build clk-div6 for R8A7792
-Date: Tue, 25 Apr 2017 19:26:01 +0200
-Message-Id: <1493141161-28069-1-git-send-email-geert+renesas@glider.be>
+        Thu, 20 Apr 2017 05:16:31 -0400
+Date: Thu, 20 Apr 2017 18:16:25 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 4/4] arm64: dts: salvator-x: Add current sense
+ amplifiers
+Message-ID: <20170420091624.GM3760@verge.net.au>
+References: <1491488454-22468-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1491488454-22468-5-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdXkixLn9xdnrhEXW9pCg-4WjOuoPdyxXYeBwRfetMSYsA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXkixLn9xdnrhEXW9pCg-4WjOuoPdyxXYeBwRfetMSYsA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car V2H does not have "DIV6" programmable clocks, hence there is no
-need to build clk-div6.o.
+On Wed, Apr 19, 2017 at 10:40:21AM +0200, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+> 
+> On Thu, Apr 6, 2017 at 4:20 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > [PATCH v5 4/4] arm64: dts: salvator-x: Add current sense amplifiers
+> 
+> This should be "arm64: dts: r8a7796: salvator-x: Add current sense amplifiers".
+> Perhaps Simon can just fix that himself while applying?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued up in clk-renesas-for-v4.13.
-
- drivers/clk/renesas/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 1072f7653c0c5e70..5b8fccf574787632 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
--- 
-2.7.4
+Done :)
