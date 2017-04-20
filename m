@@ -1,48 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45776 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2997071AbdDZKGs (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 06:06:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/9] ARM: dts: r8a7790: update PFC node name to pin-controller
-Date: Wed, 26 Apr 2017 12:05:35 +0200
-Message-Id: <20170426100538.22060-7-horms+renesas@verge.net.au>
-In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
-References: <20170426100538.22060-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20170420185547.232302495@cogentembedded.com>
+Date: Thu, 20 Apr 2017 21:51:34 +0300
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 2/3] ARM: dts: sk-rzg1m: add SCIF0 pins
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=ARM-dts-sk-rzg1m-add-SCIF0-pins-v2.patch
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
+Add the (previously omitted) SCIF0 pin data to the SK-RZG1M board's
+device tree.
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from e6060000.pfc and pfc@e6060000 to
-e6060000.pin-controller and pin-controller@e6060000.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in version 2:
+- fixed the SCIF0 data group inside the PFC node.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 99269aaca6fc..416956a42c93 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -614,7 +614,7 @@
- 		max-frequency = <97500000>;
- 	};
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
++++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -1,7 +1,7 @@
+ /*
+  * Device Tree Source for the SK-RZG1M board
+  *
+- * Copyright (C) 2016 Cogent Embedded, Inc.
++ * Copyright (C) 2016-2017 Cogent Embedded, Inc.
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2. This program is licensed "as is" without any warranty of any
+@@ -39,7 +39,17 @@
+ 	clock-frequency = <20000000>;
+ };
  
--	pfc: pfc@e6060000 {
-+	pfc: pin-controller@e6060000 {
- 		compatible = "renesas,pfc-r8a7790";
- 		reg = <0 0xe6060000 0 0x250>;
- 	};
--- 
-2.12.2.816.g2cccc81164
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data_d";
++		function = "scif0";
++	};
++};
++
+ &scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
+ 
+
