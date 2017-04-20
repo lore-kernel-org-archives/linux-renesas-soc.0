@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34318 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S979940AbdDYDIP (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33955 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S946811AbdDTSsp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 23:08:15 -0400
-Received: by mail-pf0-f193.google.com with SMTP id g23so7386756pfj.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Apr 2017 20:08:14 -0700 (PDT)
-From: Wei Yongjun <weiyj.lk@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH -next] drm/shmob: fix return value check in shmob_drm_probe()
-Date: Tue, 25 Apr 2017 03:08:08 +0000
-Message-Id: <20170425030808.7632-1-weiyj.lk@gmail.com>
+        Thu, 20 Apr 2017 14:48:45 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:48:43 +0200
+Message-ID: <CAMuHMdWctkUWduOeQ-rXJQW7Oi=rwpW4uMEUuYgU3jbNz_Owbw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add HDMI clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>
+> This patch adds HDMI-IF0 clock for R8A7796 SoC.
+>
+> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check should
-be replaced with IS_ERR().
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpu/drm/shmobile/shmob_drm_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I.e. will queue in clk-renesas-for-v4.13.
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-index 800d1d2..6bd777a 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-@@ -235,8 +235,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sdev->mmio = devm_ioremap_resource(&pdev->dev, res);
--	if (sdev->mmio == NULL)
--		return -ENOMEM;
-+	if (IS_ERR(sdev->mmio))
-+		return PTR_ERR(sdev->mmio);
- 
- 	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
- 	if (ret < 0)
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
