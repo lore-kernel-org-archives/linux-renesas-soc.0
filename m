@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36213 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1039197AbdDUNGt (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33649 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935074AbdDTSgq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Apr 2017 09:06:49 -0400
+        Thu, 20 Apr 2017 14:36:46 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
-References: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com> <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
+In-Reply-To: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Apr 2017 15:06:47 +0200
-Message-ID: <CAMuHMdW6wV01BzCwJEaZXqmqtp_yDNZN8pHuGe9BT647iFb7Cg@mail.gmail.com>
+Date: Thu, 20 Apr 2017 20:36:44 +0200
+Message-ID: <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
 Subject: Re: [PATCH] clk: renesas: r8a7796: Add USB-DMAC clocks
 To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Cc: linux-clk <linux-clk@vger.kernel.org>,
@@ -23,29 +23,20 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 8:36 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->>
->> This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
->>
->> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->> This patch is based on the clk-next branch of linux-clk tree.
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 >
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
 >
-> I.e. will queue in clk-renesas-for-v4.13.
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> This patch is based on the clk-next branch of linux-clk tree.
 
-and after correcting sort order:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> >         DEF_MOD("rwdt",                  402,   R8A7796_CLK_R),
-> > +       DEF_MOD("usb-dmac0",             330,   R8A7796_CLK_S3D1),
-> > +       DEF_MOD("usb-dmac1",             331,   R8A7796_CLK_S3D1),
-> >         DEF_MOD("intc-ap",               408,   R8A7796_CLK_S3D1),
+I.e. will queue in clk-renesas-for-v4.13.
 
 Gr{oetje,eeting}s,
 
