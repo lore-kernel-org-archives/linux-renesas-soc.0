@@ -1,46 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:36031 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968357AbdDSRrG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49537 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941959AbdDTIw2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:47:06 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 20 Apr 2017 04:52:28 -0400
+Date: Thu, 20 Apr 2017 17:52:24 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7795: Add Z clock
-Date: Thu, 20 Apr 2017 02:46:22 +0900
-Message-Id: <1492624001-3758-2-git-send-email-ykaneko0929@gmail.com>
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] Add R8A7743/SK-RZG1M PFC support
+Message-ID: <20170420085223.GG3760@verge.net.au>
+References: <20170414210941.143838720@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170414210941.143838720@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Sat, Apr 15, 2017 at 12:09:41AM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+> Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
+> 'renesas-devel-20170410-v4.11-rc6' tag.  We're adding the R8A7743 PFC node and
+> then describe the pins for SCIF0 and Ether devices described eralier. These
+> patches depend on the R8A7743 PFC suport in order to work properly.
+> 
+> [1/3] ARM: dts: r8a7743: add PFC support
+> [2/3] ARM: dts: sk-rzg1m: add SCIF0 pins
+> [3/3] ARM: dts: sk-rzg1m: add Ether pins
 
-This patch adds Z clock for R8A7795 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index eaa98b4..a9ee68e 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -74,6 +74,7 @@ enum clk_ids {
- 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
- 
- 	/* Core Clock Outputs */
-+	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
--- 
-1.9.1
+These look good to me. Please repost me or ping me once the prerequisites
+have been accepted. Likewise for the similar patchset for the R8A7745/SK-RZG1E.
