@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45776 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2997051AbdDZKGq (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33020 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S945346AbdDTS1H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 06:06:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 20 Apr 2017 14:27:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492624001-3758-3-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-3-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:27:05 +0200
+Message-ID: <CAMuHMdWYcobSuqptfmsOdg9UZFA+5hYEwi6EZZxuKwsm7nba1g@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/9] ARM: dts: r8a7779: update PFC node name to pin-controller
-Date: Wed, 26 Apr 2017 12:05:34 +0200
-Message-Id: <20170426100538.22060-6-horms+renesas@verge.net.au>
-In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
-References: <20170426100538.22060-1-horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch supports the clock of EHCI/OHCI ch3 module added from R8A7795
+> ES2.0 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from fffc0000.pfc and pfc@fffc0000 to
-fffc0000.pin-controller and pin-controller@fffc0000.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I.e. will queue in clk-renesas-for-v4.13.
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index ae2d9a9c65af..8ee0b2ca5d39 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -286,7 +286,7 @@
- 		status = "disabled";
- 	};
- 
--	pfc: pfc@fffc0000 {
-+	pfc: pin-controller@fffc0000 {
- 		compatible = "renesas,pfc-r8a7779";
- 		reg = <0xfffc0000 0x23c>;
- 	};
--- 
-2.12.2.816.g2cccc81164
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
