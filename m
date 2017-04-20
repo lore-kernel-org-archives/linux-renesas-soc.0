@@ -1,48 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45776 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2997038AbdDZKGk (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33510 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938370AbdDTSkH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 06:06:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 20 Apr 2017 14:40:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:40:05 +0200
+Message-ID: <CAMuHMdVGB1Rm0uRhbkbfEJkx2HA8T4nSB8XPJ+3k-9vqisM6ZA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound SRC clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] ARM: dts: r8a73a4: update PFC node name to pin-controller
-Date: Wed, 26 Apr 2017 12:05:31 +0200
-Message-Id: <20170426100538.22060-3-horms+renesas@verge.net.au>
-In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
-References: <20170426100538.22060-1-horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
+Hi Kaneko-san,
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from e6050000.pfc and pfc@e6050000 to
-e6050000.pin-controller and pin-controller@e6050000.
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+>
+> This patch adds SCU(all), SCU(SRC{0,1,2,3,4,5,6,7,8,9}), SCU(CTU00,
+> CTU01, CTU02, CTU03, MIX0) and SCU (CTU10, CTU11, CTU12, CTU13, MIX1)
+> clocks for R8A7796 SoC.
+>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a73a4.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 1f5c9f6dddba..310222634570 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -219,7 +219,7 @@
- 		power-domains = <&pd_c4>;
- 	};
- 
--	pfc: pfc@e6050000 {
-+	pfc: pin-controller@e6050000 {
- 		compatible = "renesas,pfc-r8a73a4";
- 		reg = <0 0xe6050000 0 0x9000>;
- 		gpio-controller;
--- 
-2.12.2.816.g2cccc81164
+I.e. will queue in clk-renesas-for-v4.13.
+
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -219,6 +219,19 @@ enum clk_ids {
+>         DEF_MOD("ssi2",                 1013,   MOD_CLK_ID(1005)),
+>         DEF_MOD("ssi1",                 1014,   MOD_CLK_ID(1005)),
+>         DEF_MOD("ssi0",                 1015,   MOD_CLK_ID(1005)),
+> +       DEF_MOD("scu-all",              1017,   R8A7796_CLK_S3D4),
+
+I cannot verify the parent clock, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
