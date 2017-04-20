@@ -1,84 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41584 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1948150AbdDYQxc (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33456 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965945AbdDTObz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 12:53:32 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/10] clk: renesas: Add r8a7794 CPG Core Clock Definitions
-Date: Tue, 25 Apr 2017 18:53:16 +0200
-Message-Id: <1493139200-27396-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+        Thu, 20 Apr 2017 10:31:55 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492608293-12435-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1492608293-12435-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 16:31:53 +0200
+Message-ID: <CAMuHMdUA6u9BSOT97Fv9WzxtcrO0wXc3C9F+mTofES=gxB+dbg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] clk: renesas: r8a7796: add PWM clock
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ryo Kodama <ryo.kodama.vz@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car E2 Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2d ("List of Clocks [R-Car E2]") of the R-Car Gen2 Hardware
-User's Manual rev. 2.00.
+On Wed, Apr 19, 2017 at 3:24 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+>
+> This patch adds PWM clock for PWM.
+>
+> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> index 9d114b3..be0fc00 100644
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -151,6 +151,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+>         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
+>         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
+>         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
+> +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S3D4),
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/dt-bindings/clock/r8a7794-cpg-mssr.h | 47 ++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
+My copy of the R-Car Gen3 user manual rev. 0.53 says S0D12.
 
-diff --git a/include/dt-bindings/clock/r8a7794-cpg-mssr.h b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..9d720311ae3a229a
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
-@@ -0,0 +1,47 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7794 CPG Core Clocks */
-+#define R8A7794_CLK_Z2			0
-+#define R8A7794_CLK_ZG			1
-+#define R8A7794_CLK_ZTR			2
-+#define R8A7794_CLK_ZTRD2		3
-+#define R8A7794_CLK_ZT			4
-+#define R8A7794_CLK_ZX			5
-+#define R8A7794_CLK_ZS			6
-+#define R8A7794_CLK_HP			7
-+#define R8A7794_CLK_I			8
-+#define R8A7794_CLK_B			9
-+#define R8A7794_CLK_LB			10
-+#define R8A7794_CLK_P			11
-+#define R8A7794_CLK_CL			12
-+#define R8A7794_CLK_CP			13
-+#define R8A7794_CLK_M2			14
-+#define R8A7794_CLK_ADSP		15
-+#define R8A7794_CLK_ZB3			16
-+#define R8A7794_CLK_ZB3D2		17
-+#define R8A7794_CLK_DDR			18
-+#define R8A7794_CLK_SDH			19
-+#define R8A7794_CLK_SD0			20
-+#define R8A7794_CLK_SD2			21
-+#define R8A7794_CLK_SD3			22
-+#define R8A7794_CLK_MMC0		23
-+#define R8A7794_CLK_MP			24
-+#define R8A7794_CLK_QSPI		25
-+#define R8A7794_CLK_CPEX		26
-+#define R8A7794_CLK_RCAN		27
-+#define R8A7794_CLK_R			28
-+#define R8A7794_CLK_OSC			29
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__ */
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
