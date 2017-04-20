@@ -1,78 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:47626 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbdDBJfn (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34559 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S944643AbdDTLgb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 2 Apr 2017 05:35:43 -0400
-Subject: Re: [PATCH v4 1/4] Documentation: dt-bindings: iio: Add max9611 ADC
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        wsa+renesas@sang-engineering.com, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, robh+dt@kernel.org,
-        mark.rutland@arm.com
-References: <1490627578-15938-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490627578-15938-2-git-send-email-jacopo+renesas@jmondi.org>
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-From: Jonathan Cameron <jic23@kernel.org>
-Message-ID: <eeffe49b-7f70-0cad-88c4-76b3e5807b7b@kernel.org>
-Date: Sun, 2 Apr 2017 10:35:40 +0100
+        Thu, 20 Apr 2017 07:36:31 -0400
 MIME-Version: 1.0
-In-Reply-To: <1490627578-15938-2-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3119026.3cPho1BBNv@avalon>
+References: <1490362665-4422-1-git-send-email-geert+renesas@glider.be>
+ <1714563.qChlbIjNcO@avalon> <CAMuHMdWmvhZjxKfEdGJ3d_w0d2s2kK+8iW1tsEM584qZc+dVEQ@mail.gmail.com>
+ <3119026.3cPho1BBNv@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 13:36:28 +0200
+Message-ID: <CAMuHMdXvd_S_mRkO1Oayuxhb1husgMZf8P1Yj+cepJu_YBEQ1w@mail.gmail.com>
+Subject: Re: [PATCH/RFC v2 1/2] arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 27/03/17 16:12, Jacopo Mondi wrote:
-> Add device tree bindings documentation for Maxim max9611/max9612 current
-> sense amplifier.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  .../devicetree/bindings/iio/adc/max9611.txt        | 26 ++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/max9611.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/max9611.txt b/Documentation/devicetree/bindings/iio/adc/max9611.txt
-> new file mode 100644
-> index 0000000..8430d3b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/max9611.txt
-> @@ -0,0 +1,26 @@
-> +* Maxim max9611/max9612 current sense amplifier with 12-bits ADC interface
-> +
-> +Maxim max9611/max9612 is an high-side current sense amplifier with integrated
-> +12-bits ADC communicating over I2c bus.
-> +The device node for this driver shall be a child of a I2c controller.
-> +
-> +Required properties
-> +  - compatible: Should be "maxim,max9611" or "maxim,max9612"
-> +  - reg: The 7-bits long I2c address of the device
-> +  - shunt-resistor-uohm: Value, in uOhm, of the current sense shunt resistor
-Just did a quick grep for this see if I felt comfortable enough to
-not wait for Rob / Mark to have a chance to look at it.
-Grep gave me:
-shunt-resistor-micro-ohms for the ina2xx.
-Feels rather like we should match that.
+Hi Laurent,
 
-Otherwise looks good to me.
+On Thu, Apr 20, 2017 at 1:24 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday 20 Apr 2017 12:55:28 Geert Uytterhoeven wrote:
+>> On Thu, Apr 20, 2017 at 12:42 PM, Laurent Pinchart wrote:
+>> > On Thursday 20 Apr 2017 11:36:59 Geert Uytterhoeven wrote:
+>> >> On Mon, Mar 27, 2017 at 10:48 AM, Laurent Pinchart wrote:
+>> >>> On Friday 24 Mar 2017 14:37:44 Geert Uytterhoeven wrote:
+>> >>>> Update r8a7795.dtsi so it corresponds to R-Car H3 ES2.0 or later:
+>> >>>>   - The following devices no longer exist on ES2.0, and are thus
+>> >>>>     removed:
+>> >>>>     fcpf2, fcpvd3, fcpvi2, fdp1-2, usb3-if1, vspd3, vspi2.
+>> >>>>
+>> >>>>   - The DU <-> VSPD topology is different on ES2.0, hence remove the
+>> >>>>     "vsps" property from the DU node until the driver can handle this.
+>> >>>
+>> >>> I think I'll need a different compatible string between ES1.x and ES2
+>> >>> for the DU. It could make sense to move the whole DU node to *-es1.dtsi.
+>> >>> We can decide about that later when I'll have a DU driver prototype
+>> >>> ready.
+>> >>
+>> >> Why would you need a different compatible string?
+>> >> Can't you use soc_device_match() to handle ES1.x SoCs?
+>> >>
+>> >> The different DU <-> VSPD topology is handled through the vsps property
+>> >> in
+>> >> DTS. Are the ports different, too? That can be handled in DTS.
+>> >
+>> > My point (not expressed clearly) was that, as I'll need a different vsps
+>> > property, I can as well go for a different compatible string.
+>>
+>> Do you need a different vsps property?
+>> AFAIK, the current array links each DU channel to a VSPD.
+>> When a VSPD is shared between multiple channels, you can still link these
+>> channels to the same VSPD.
+>>
+>> Or is my understanding incorrect?
+>
+> Do you mean listing the same VSP multiple times in the vsps array ? Yes, from
 
-Jonathan
-> +
-> +Example:
-> +
-> +&i2c4 {
-> +	csa: adc@7c {
-> +		compatible = "maxim,max9611";
-> +		reg = <0x7c>;
-> +
-> +		shunt-resistor-uohm = <5000>;
-> +	};
-> +};
-> +
-> +This device node describes a current sense amplifier sitting on I2c4 bus
-> +with address 0x7c (read address is 0xf9, write address is 0xf8).
-> +A sense resistor of 0,005 Ohm is installed between RS+ and RS- current-sensing
-> +inputs.
-> 
+Yes, that's what I mean.
+
+> a bindings point of view I think that would work too. That is, until we get a
+
+OK.
+
+> ES2.1 that will have a completely different hardware topology :-)
+
+We'll fix that after we have received ES2.1 documentation...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
