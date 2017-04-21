@@ -1,59 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50412 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162966AbdDVB1i (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34024 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161249AbdDUN7M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Apr 2017 21:27:38 -0400
-Date: Fri, 21 Apr 2017 18:27:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Fri, 21 Apr 2017 09:59:12 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492624001-3758-1-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 15:59:10 +0200
+Message-ID: <CAMuHMdWfouuGZqPGV7_-cXUmYe-SXd9popja8T43V5hPP+DQQw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Add Z clock divider support
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Add Z clock divider support
-Message-ID: <20170422012736.GW7065@codeaurora.org>
-References: <1492624001-3758-1-git-send-email-ykaneko0929@gmail.com>
- <CAMuHMdWfouuGZqPGV7_-cXUmYe-SXd9popja8T43V5hPP+DQQw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWfouuGZqPGV7_-cXUmYe-SXd9popja8T43V5hPP+DQQw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/21, Geert Uytterhoeven wrote:
-> 
-> > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> 
-> > +static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
-> > +                                          unsigned long parent_rate)
-> > +{
-> > +       struct cpg_z_clk *zclk = to_z_clk(hw);
-> > +       unsigned int mult;
-> > +       unsigned int val;
-> > +       unsigned long rate;
-> > +
-> > +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
-> > +           >> CPG_FRQCRC_ZFC_SHIFT;
-> > +       mult = 32 - val;
-> > +
-> > +       rate = div_u64((u64)parent_rate * mult + 16, 32);
-> > +       /* Round to closest value at 100MHz unit */
-> > +       rate = 100000000*DIV_ROUND_CLOSEST(rate, 100000000);
-> 
-> Mike, Stephen: what's your opinion about such rounding tricks?
-> 
+Hi Kaneko-san, and Mike, Stephen (see below),
 
-What's wrong with the true rate? I'd prefer we calculate the true
-rate unless there's some reason. Typically that's what a comment
-is for, not to explain what the code is doing which is usually
-self evident from reading it.
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z clock divider support for R-Car Gen3 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I gave this patch a try on Salvator-X.  On both R-Car H3 and M3-W,
+/sys/kernel/debug/clk/clk_summary reports:
+
+       .pll0                              0            0  2999999880
+       0 0
+          z                               0            0  3000000000
+       0 0
+
+The Z clock runs at 1.5 GHz, so the numbers are off by a factor of two.
+It seems the PLL post-divider of 1/2 is not taken into account.
+
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+
+> +static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+> +                                          unsigned long parent_rate)
+> +{
+> +       struct cpg_z_clk *zclk = to_z_clk(hw);
+> +       unsigned int mult;
+> +       unsigned int val;
+> +       unsigned long rate;
+> +
+> +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+> +           >> CPG_FRQCRC_ZFC_SHIFT;
+> +       mult = 32 - val;
+> +
+> +       rate = div_u64((u64)parent_rate * mult + 16, 32);
+> +       /* Round to closest value at 100MHz unit */
+> +       rate = 100000000*DIV_ROUND_CLOSEST(rate, 100000000);
+
+Mike, Stephen: what's your opinion about such rounding tricks?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
