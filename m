@@ -1,93 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933609AbdDGP6u (ORCPT
+Received: from mail-io0-f173.google.com ([209.85.223.173]:33108 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1035896AbdDUHEv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 21 Apr 2017 03:04:51 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170421054201.GR28868@bigcity.dyn.berto.se>
+References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+ <1492593351-13835-3-git-send-email-geert+renesas@glider.be> <20170421054201.GR28868@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 09:04:48 +0200
+Message-ID: <CAMuHMdUbhONx9=mf=EG_soLEAkrb-jsZD_pAkkovc5wMDdv8hg@mail.gmail.com>
+Subject: Re: [PATCH 2/8] [RFC] arm64: dts: renesas: Add R-Car H3 SiP (4 x 1
+ GiB) support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/22] ARM: dts: r8a7792: Correct Z clock
-Date: Fri,  7 Apr 2017 11:58:13 -0400
-Message-Id: <7b39e985cfc18bba43646240b10a830046382abf.1491580547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
-References: <cover.1491580547.git.horms+renesas@verge.net.au>
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Niklas,
 
-Unlike other R-Car Gen2 SoCs with Cortex-A15 CPU cores, R-Car V2H does
-not have a programmable Z clock (Cortex-A15 CPU core clock), but uses a
-fixed divider.
-This is similar to the Z2 clock (Cortex-A7 CPU core clock) on R-Car E2.
+On Fri, Apr 21, 2017 at 7:42 AM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/renesas/r8j7795-4x1g.dtsi
+>> @@ -0,0 +1,36 @@
+>> +/*
+>> + * Device Tree Source for the r8j7795 SiP with 4 channels of 1 GiB RAM
+>> + *
+>> + * Copyright (C) 2015 Renesas Electronics Corp.
+>
+> 2017 right? If so same comment for patches 3 and 4.
 
-Hence:
-  - Remove the Z clock output from the cpg_clocks node, as this implied
-    a programmable clock,
-  - Add the Z clock as a fixed factor clock,
-  - Let the first CPU node point to the new Z clock,
-  - Remove the Z clock index from the bindings (this definition was used
-    by r8a7792.dtsi only, and was not a contract between DT and driver).
+As I just moved statements from an existing file, I retained the original
+copyright information.
 
-Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi            | 11 +++++++++--
- include/dt-bindings/clock/r8a7792-clock.h |  1 -
- 2 files changed, 9 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 6c0797ebc08f..0efecb232ee5 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -46,7 +46,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
--			clocks = <&cpg_clocks R8A7792_CLK_Z>;
-+			clocks = <&z_clk>;
- 			power-domains = <&sysc R8A7792_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
- 		};
-@@ -766,7 +766,7 @@
- 			clocks = <&extal_clk>;
- 			#clock-cells = <1>;
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
--					     "lb", "qspi", "z";
-+					     "lb", "qspi";
- 			#power-domain-cells = <0>;
- 		};
- 
-@@ -778,6 +778,13 @@
- 			clock-div = <2>;
- 			clock-mult = <1>;
- 		};
-+		z_clk: z {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL0>;
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
- 		zx_clk: zx {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
-index 94dd16a1e6e6..5be90bc23bd7 100644
---- a/include/dt-bindings/clock/r8a7792-clock.h
-+++ b/include/dt-bindings/clock/r8a7792-clock.h
-@@ -17,7 +17,6 @@
- #define R8A7792_CLK_PLL3		3
- #define R8A7792_CLK_LB			4
- #define R8A7792_CLK_QSPI		5
--#define R8A7792_CLK_Z			6
- 
- /* MSTP0 */
- #define R8A7792_CLK_MSIOF0		0
--- 
-2.7.0.rc3.207.g0ac5344
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
