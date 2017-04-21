@@ -1,251 +1,114 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/9] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Wed,  5 Apr 2017 16:07:21 +0200
-Message-Id: <1491401247-7030-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34562 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S948133AbdDUAlC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 20 Apr 2017 20:41:02 -0400
+Received: by mail-wm0-f68.google.com with SMTP id z129so1798498wmb.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Apr 2017 17:41:01 -0700 (PDT)
+Subject: Re: [PATCH] ASoC: rsnd: Fix possible NULL pointer dereference
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+References: <20170420143858.32150-1-marek.vasut+renesas@gmail.com>
+ <87lgquwrh8.wl%kuninori.morimoto.gx@renesas.com>
+Cc: alsa-devel@alsa-project.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <309d79d3-f111-2d5d-56c8-f53da616ed43@gmail.com>
+Date: Fri, 21 Apr 2017 02:40:59 +0200
+MIME-Version: 1.0
+In-Reply-To: <87lgquwrh8.wl%kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
-controller.
+On 04/21/2017 02:14 AM, Kuninori Morimoto wrote:
+> 
+> Hi Marek
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 218 +++++++++++++++++++++
- 1 file changed, 218 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+Hi!
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-new file mode 100644
-index 0000000..46584ef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-@@ -0,0 +1,218 @@
-+Renesas RZ/A1 combined Pin and GPIO controller
-+
-+The Renesas SoCs of RZ/A1 family feature a combined Pin and GPIO controller,
-+named "Ports" in the hardware reference manual.
-+Pin multiplexing and GPIO configuration is performed on a per-pin basis
-+writing configuration values to per-port register sets.
-+Each "port" features up to 16 pins, each of them configurable for GPIO
-+function (port mode) or in alternate function mode.
-+Up to 8 different alternate function modes exist for each single pin.
-+
-+Pin controller node
-+-------------------
-+
-+Required properties:
-+  - compatible
-+    this shall be "renesas,r7s72100-ports".
-+
-+  - reg
-+    address base and length of the memory area where pin controller
-+    hardware is mapped to.
-+
-+Example:
-+Pin controller node for RZ/A1H SoC (r7s72100)
-+
-+pinctrl: pin-controller@fcfe3000 {
-+	compatible = "renesas,r7s72100-ports";
-+
-+	reg = <0xfcfe3000 0x4230>;
-+};
-+
-+Sub-nodes
-+---------
-+
-+The child nodes of the pin controller node describe a pin multiplexing
-+function or a gpio controller alternatively.
-+
-+- Pin multiplexing sub-nodes:
-+  A pin multiplexing sub-node describes how to configure a set of
-+  (or a single) pin in some desired alternate function mode.
-+  A single sub-node may define several pin configurations.
-+  Some alternate functions require special pin configuration flags to be
-+  supplied along with the alternate function configuration number.
-+  When hardware reference manual specifies a pin function to be either
-+  "bi-directional" or "software IO driven", use the generic properties from
-+  <include/linux/pinctrl/pinconf_generic.h> header file to instruct the
-+  pin controller to perform the desired pin configuration operations.
-+  Please refer to pinctrl-bindings.txt to get to know more on generic
-+  pin properties usage.
-+
-+  The allowed generic formats for a pin multiplexing sub-node are the
-+  following ones:
-+
-+  node-1 {
-+      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+      GENERIC_PINCONFIG;
-+  };
-+
-+  node-2 {
-+      sub-node-1 {
-+          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+
-+      sub-node-2 {
-+          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+
-+      ...
-+
-+      sub-node-n {
-+          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+  };
-+
-+  Use the second format when pins part of the same logical group need to have
-+  different generic pin configuration flags applied.
-+
-+  Client sub-nodes shall refer to pin multiplexing sub-nodes using the phandle
-+  of the most external one.
-+
-+  Eg.
-+
-+  client-1 {
-+      ...
-+      pinctrl-0 = <&node-1>;
-+      ...
-+  };
-+
-+  client-2 {
-+      ...
-+      pinctrl-0 = <&node-2>;
-+      ...
-+  };
-+
-+  Required properties:
-+    - pinmux:
-+      integer array representing pin number and pin multiplexing configuration.
-+      When a pin has to be configured in alternate function mode, use this
-+      property to identify the pin by its global index, and provide its
-+      alternate function configuration number along with it.
-+      When multiple pins are required to be configured as part of the same
-+      alternate function they shall be specified as members of the same
-+      argument list of a single "pinmux" property.
-+      Helper macros to ease assembling the pin index from its position
-+      (port where it sits on and pin number) and alternate function identifier
-+      are provided by the pin controller header file at:
-+      <include/dt-bindings/pinctrl/r7s72100-pinctrl.h>
-+      Integers values in "pinmux" argument list are assembled as:
-+      ((PORT * 16 + PIN) | MUX_FUNC << 16)
-+
-+  Supported generic properties:
-+    - bi-directional:
-+      for pins requiring bi-directional operations.
-+    - input-enable:
-+      for pins requiring software driven IO input operations.
-+    - output-enable:
-+      for pins requiring software driver IO output operations.
-+
-+  Example:
-+  A serial communication interface with a TX output pin and an RX input pin.
-+
-+  &pinctrl {
-+	scif2_pins: serial2 {
-+		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
-+	};
-+  };
-+
-+  Pin #0 on port #3 is configured as alternate function #6.
-+  Pin #2 on port #3 is configured as alternate function #4.
-+
-+  Example 2:
-+  I2c master: both SDA and SCL pins need bi-directional operations
-+
-+  &pinctrl {
-+	i2c2_pins: i2c2 {
-+		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
-+		bi-directional;
-+	};
-+  };
-+
-+  Pin #4 on port #1 is configured as alternate function #1.
-+  Pin #5 on port #1 is configured as alternate function #1.
-+  Both need to work in bi-directional mode.
-+  The hardware reference manual specifies when a pin has to be configured to
-+  work in bi-directional mode.
-+
-+  Example 3:
-+  Multi-function timer input and output compare pins.
-+  Configure TIOC0A as software driven input and TIOC0B as software driven
-+  output.
-+
-+  &pinctrl {
-+	tioc0_pins: tioc0 {
-+		tioc0_input_pins {
-+			pinumx = <RZA1_PINMUX(4, 0, 2)>;
-+			input-enable;
-+		};
-+
-+		tioc0_output_pins {
-+			pinmux = <RZA1_PINMUX(4, 1, 1)>;
-+			output-enable;
-+		};
-+	};
-+  };
-+
-+
-+  &tioc0 {
-+	...
-+	pinctrl-0 = <&tioc0_pins>;
-+	...
-+  };
-+
-+  Pin #0 on port #4 is configured as alternate function #2 with IO direction
-+  specified by software as input.
-+  Pin #1 on port #4 is configured as alternate function #1 with IO direction
-+  specified by software as output.
-+  The hardware reference manual specifies when a pin has to be configured with
-+  input/output direction specified by software.
-+
-+- GPIO controller sub-nodes:
-+  Each port of the r7s72100 pin controller hardware is itself a gpio controller.
-+  Different SoCs have different number of available pins per port, but
-+  generally speaking, each of them can be configured in GPIO ("port") mode
-+  on this hardware.
-+  Describe gpio-controllers using sub-nodes with the following properties.
-+
-+  Required properties:
-+    - gpio-controller
-+      empty property as defined by the gpio bindings documentation.
-+    - #gpio-cells
-+      number of cells required to identify and configure a GPIO.
-+      Shall be 2.
-+    - gpio-ranges
-+      Describes a gpio controller specifying its specific pin base, the pin
-+      base in the global pin numbering space, and the number of controlled
-+      pins, as defined by the gpio bindings documentation. Refer to this file
-+      for a more detailed description.
-+
-+  Example:
-+  A gpio controller node, controlling 16 pins indexed from 0.
-+  The gpio controller base in the global pin indexing space is pin 48, thus
-+  pins [0 - 15] on this controller map to pins [48 - 63] in the global pin
-+  indexing space.
-+
-+  port3: gpio-3 {
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	gpio-ranges = <&pinctrl 0 48 16>;
-+  };
-+
-+  A device node willing to use pins controlled by this gpio controller, shall
-+  refer to it as follows:
-+
-+  led1 {
-+	gpios = <&port3 10 GPIO_ACTIVE_LOW>;
-+  };
---
-2.7.4
+>> In case the "clock-frequency" DT property is not present, the
+>> of_find_property(np, "clock-frequency", NULL) will return NULL
+>> and the subsequent req_size = prop->length / sizeof(u32); will
+>> trigger a NULL pointer dereference.
+>>
+>> This patch adds check for the NULL return value and propagates
+>> the error into the caller of the function.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+> 
+> Thank you for your patch, it was my fail.
+> But your patch will breaks Lager board sound
+> (= it doesn't need clkout, and have no "clock-frequency")
+> 
+> I will try to fix this issue
+
+Cool, thanks!
+
+>>  sound/soc/sh/rcar/adg.c | 13 +++++++++----
+>>  1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+>> index 96fef91b480c..a7cbe7e89dfc 100644
+>> --- a/sound/soc/sh/rcar/adg.c
+>> +++ b/sound/soc/sh/rcar/adg.c
+>> @@ -425,8 +425,7 @@ static void rsnd_adg_get_clkin(struct rsnd_priv *priv,
+>>  		dev_dbg(dev, "clk %d : %p : %ld\n", i, clk, clk_get_rate(clk));
+>>  }
+>>  
+>> -static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+>> -				struct rsnd_adg *adg)
+>> +static int rsnd_adg_get_clkout(struct rsnd_priv *priv, struct rsnd_adg *adg)
+>>  {
+>>  	struct clk *clk;
+>>  	struct device *dev = rsnd_priv_to_dev(priv);
+>> @@ -459,7 +458,10 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+>>  	 * ADG supports BRRA/BRRB output only
+>>  	 * this means all clkout0/1/2/3 will be same rate
+>>  	 */
+>> -	prop = of_find_property(np, "clock-frequency", NULL);;
+>> +	prop = of_find_property(np, "clock-frequency", NULL);
+>> +	if (!prop)
+>> +		return -EINVAL;
+>> +
+>>  	req_size = prop->length / sizeof(u32);
+>>  
+>>  	of_property_read_u32_array(np, "clock-frequency", req_rate, req_size);
+>> @@ -568,6 +570,7 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+>>  		dev_dbg(dev, "clkout %d : %p : %ld\n", i, clk, clk_get_rate(clk));
+>>  	dev_dbg(dev, "BRGCKR = 0x%08x, BRRA/BRRB = 0x%x/0x%x\n",
+>>  		ckr, rbga, rbgb);
+>> +	return 0;
+>>  }
+>>  
+>>  int rsnd_adg_probe(struct rsnd_priv *priv)
+>> @@ -589,7 +592,9 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
+>>  		return ret;
+>>  
+>>  	rsnd_adg_get_clkin(priv, adg);
+>> -	rsnd_adg_get_clkout(priv, adg);
+>> +	ret = rsnd_adg_get_clkout(priv, adg);
+>> +	if (ret)
+>> +		return ret;
+>>  
+>>  	if (of_get_property(np, "clkout-lr-asynchronous", NULL))
+>>  		adg->flags = LRCLK_ASYNC;
+>> -- 
+>> 2.11.0
+>>
+
+
+-- 
+Best regards,
+Marek Vasut
