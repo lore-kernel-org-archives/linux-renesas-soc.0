@@ -1,50 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36429 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1166158AbdDXHZN (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:40990 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1035387AbdDUMz0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 03:25:13 -0400
-MIME-Version: 1.0
-In-Reply-To: <1492779321-23939-1-git-send-email-geert+renesas@glider.be>
-References: <1492779321-23939-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Apr 2017 09:25:10 +0200
-Message-ID: <CAMuHMdXWptBgSxy44zLJU+=c3ycbMJ9jkc6UzDqkbSMznJqeUQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC 0/5] arm64: dts: renesas: Break out common board support
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 21 Apr 2017 08:55:26 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/5] arm64: dts: renesas: Break out common board support
+Date: Fri, 21 Apr 2017 14:55:16 +0200
+Message-Id: <1492779321-23939-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 2:55 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Geert Uytterhoeven (5):
->   arm64: renesas: r8a7796: Add external audio clocks
->   arm64: renesas: r8a7796: Add external PCIe bus clock
+	Hi all,
 
-Oops, the above should have had the proper "arm64: dts:" prefix.
+The Renesas Salvator-X and ULCB development board can be equipped with
+either an R-Car H3 or M3-W SiP, which are pin-compatible.  All boards
+use separate DTBs, but currently there's no sharing of board-specific
+devices in DTS.
 
->   [RFC] arm64: dts: r8a7796: Add placeholders for various devices
->   [RFC] arm64: dts: renesas: Extract common Salvator-X board support
->   [RFC] arm64: dts: renesas: Extract common ULCB board support
+This series reduces duplication by extracting common board support into
+their own .dtsi files.  As the level of support varies across boards and
+SoCs, this requires the addition of a few external clocks and
+placeholder devices on R-Car M3-W, so the common board support DTS can
+refer to them.
+
+  - Patches 1 and 2 add the external audio and PCIe bus clocks on R-Car
+    M3-W, which are present in r8a7795.dtsi, and used in
+    r8a7795-salvator-x.dts,
+  - RFC patch 3 adds placeholders for devices that are not yet supported
+    and/or tested on R-Car M3-W, but used on R-Car H3,
+  - RFC patch 4 extracts common Salvator-X board support,
+  - RFC patch 5 extracts common ULCB board support.
+
+For R-Car H3 based boards, there are no functional changes.
+For R-Car M3-W based boards, some new devices are now described in DT.
+
+Dependencies:
+  - renesas-devel-20170420-v4.11-rc7,
+  - Patches 1 and 2 can be applied as-is,
+  - Patches 4 and 5 depend on "[PATCH 0/8] arm64: dts: renesas: Break
+    out R-Car H3 and M3-W SiP"
+    (http://www.spinics.net/lists/devicetree/msg173820.html).
+
+DTB changes have been inspected using scripts/dtc/dtx_diff.
+This has been tested on Salvator-X (both H3 and M3-W).
+This has not been tested on H3ULCB and M3ULCB due to lack of hardware.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (5):
+  arm64: renesas: r8a7796: Add external audio clocks
+  arm64: renesas: r8a7796: Add external PCIe bus clock
+  [RFC] arm64: dts: r8a7796: Add placeholders for various devices
+  [RFC] arm64: dts: renesas: Extract common Salvator-X board support
+  [RFC] arm64: dts: renesas: Extract common ULCB board support
+
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     | 341 +-------------
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 522 +--------------------
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     | 201 +-------
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 259 +---------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 112 +++++
+ .../{r8a7795-salvator-x.dts => salvator-x.dtsi}    | 372 +++++++--------
+ .../dts/renesas/{r8a7795-h3ulcb.dts => ulcb.dtsi}  | 243 +++++-----
+ 7 files changed, 421 insertions(+), 1629 deletions(-)
+ copy arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => salvator-x.dtsi} (95%)
+ copy arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb.dts => ulcb.dtsi} (96%)
+
+-- 
+2.7.4
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
