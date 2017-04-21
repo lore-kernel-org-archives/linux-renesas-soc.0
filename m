@@ -1,44 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:49334 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1036026AbdDUHuo (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35762 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032265AbdDUH0Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Apr 2017 03:50:44 -0400
-Subject: Re: Commit 18e8cf159177 broke qemu-system-sh4 serial input.
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Landley <rob@landley.net>
+        Fri, 21 Apr 2017 03:26:25 -0400
+MIME-Version: 1.0
+In-Reply-To: <41d6bb75-5be0-c563-0569-ea37aab58f1e@landley.net>
 References: <41d6bb75-5be0-c563-0569-ea37aab58f1e@landley.net>
- <CAMuHMdWtBHTBCNo2-oO2Zv7O8McypcaEMh+_8DD+D1T7GTxAzw@mail.gmail.com>
-Cc: Linux-sh list <linux-sh@vger.kernel.org>,
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 09:26:23 +0200
+Message-ID: <CAMuHMdWtBHTBCNo2-oO2Zv7O8McypcaEMh+_8DD+D1T7GTxAzw@mail.gmail.com>
+Subject: Re: Commit 18e8cf159177 broke qemu-system-sh4 serial input.
+To: Rob Landley <rob@landley.net>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <f27afb36-f75c-0a03-dca2-8f318265f520@physik.fu-berlin.de>
-Date: Fri, 21 Apr 2017 09:50:39 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWtBHTBCNo2-oO2Zv7O8McypcaEMh+_8DD+D1T7GTxAzw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/21/2017 09:26 AM, Geert Uytterhoeven wrote:
-> Does anyone have access to real hardware to try?
-> Adrian: does it work on your LANDISK, which also has SH7751R?
+Hi Rob,
 
-I can give it a try but that will take a few days since I am currently
-not at home where my LANDISK boxes are. I also had issues with the
-IDE driver in the past but Sato-san gave me some tips regarding it.
+CC Adrian, linux-serial, linux-renesas-soc
 
-However, Rich also has a LANDISK device that I donated for him, so if his
-hardware is currently ready to use, he could give it a try.
+On Fri, Apr 21, 2017 at 8:21 AM, Rob Landley <rob@landley.net> wrote:
+> In 4.11-rc7 the qemu serial console hangs after the first character you
+> type. To reproduce, configure linux with this mini.config:
+>
+> CONFIG_CPU_SUBTYPE_SH7751R=y
+> CONFIG_MMU=y
+> CONFIG_MEMORY_START=0x0c000000
+> CONFIG_VSYSCALL=y
+> CONFIG_SH_FPU=y
+> CONFIG_SH_RTS7751R2D=y
+> CONFIG_RTS7751R2D_PLUS=y
+> CONFIG_SERIAL_SH_SCI=y
+> CONFIG_SERIAL_SH_SCI_CONSOLE=y
+> CONFIG_EARLY_PRINTK=y
+> CONFIG_BLK_DEV_INITRD=y"
+> CONFIG_RD_GZIP=y
+> CONFIG_BINFMT_ELF=y
+> CONFIG_BINFMT_SCRIPT=y
+> CONFIG_MISC_FILESYSTEMS=y
+> CONFIG_DEVTMPFS=y
+>
+> Using "make ARCH=sh allnoconfig KCONFIG_ALLCONFIG=mini.conf", then build
+> the result, then boot under qemu using the following command line:
+>
+> qemu-system-sh4 -M r2d -monitor null -serial null -serial stdio
+> -nographic -no-reboot -append "panic=1 HOST=sh4 console=ttySC1 noiotrap"
+> -kernel zImage -initrd sh4-linux-musl-root.cpio.gz
+>
+> You'll need a simple cpio.gz initramfs (I built one using
+> https://github.com/landley/mkroot and the musl-cross-make cross
+> compiler, the cpio.gz is ~450k or I'd attach it here).
+>
+> I bisected it to commit 18e8cf159177 back in February. If you do this
+> with the revision _before_ that commit, typing "ls -l" and hitting enter
+> works fine. Afterwards you get an "l" and then it hangs. (If type enough
+> it'll eventually deal a burst of characters all at once, and then hang
+> again.)
 
-Adrian
+SH7751R has both SCI and SCIF ports. ttySC1 is the second (SCIF) port.
 
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+arch/sh/kernel/cpu/sh4/setup-sh7750.c registers a port with type PORT_SCIF,
+so that should become SCIx_SH4_SCIF_REGTYPE. Hence I don't think the issue
+is caused by changing fifosize to 64 for SCIx_SH7705_SCIF_REGTYPE.
+
+My first guess is that qemu has a bug emulating the triggering.
+According to the SH7751R datasheet, SCFCR does have the RTRG1 and RTRG0 bits.
+I assume the problem goes away if you comment out the call to scif_set_rtrg()?
+
+Does anyone have access to real hardware to try?
+Adrian: does it work on your LANDISK, which also has SH7751R?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
