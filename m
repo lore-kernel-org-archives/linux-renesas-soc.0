@@ -1,48 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35114 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763531AbdDSNZB (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33721 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161266AbdDUOFJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 09:25:01 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/5] r8a7795/6 Salvator-X PWM enablement
-Date: Wed, 19 Apr 2017 15:24:48 +0200
-Message-Id: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 21 Apr 2017 10:05:09 -0400
+MIME-Version: 1.0
+In-Reply-To: <1492624001-3758-20-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-20-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 16:05:07 +0200
+Message-ID: <CAMuHMdWWz5OiTFRjePk2fZogjn3bvxrar6ig6PYR1da=xDWkaA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add Z clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z clock for R8A7796 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> This patch is based on the clk-next branch of linux-clk tree.
+>
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> index 877fc75..a5399f7 100644
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -74,6 +74,7 @@ enum clk_ids {
+>         DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+>
+>         /* Core Clock Outputs */
+> +       DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
 
-This is a straight port from the BSP, enabling PWM1 and PWM2 on the
-Salvator-X boards. For r8a7796 it also adds the required infrastructure
-(clock and pins).
+See my comment about the patch for r8a7795.
 
-Not fully tested because I cannot find my breakout adapter. Looks OK from
-the software side, though.
+Gr{oetje,eeting}s,
 
-CU
-Uli
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Ryo Kodama (2):
-  clk: renesas: r8a7796: add PWM clock
-  arm64: dts: r8a7796-salvator-x: Add PWM device support
-
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
-  arm64: dts: r8a7796: Add PWM device nodes
-  arm64: dts: r8a7795-salvator-x: Enable PWM
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  22 +++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  21 +++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  63 +++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |   1 +
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 153 +++++++++++++++++++++
- 5 files changed, 260 insertions(+)
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
