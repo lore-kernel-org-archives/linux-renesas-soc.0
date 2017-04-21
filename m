@@ -1,72 +1,59 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: niklas.soderlund@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/2] rcar-vin: group: use correct of_node
-Date: Mon, 24 Apr 2017 19:14:26 +0100
-Message-Id: <1493057666-27961-1-git-send-email-kbingham@kernel.org>
-In-Reply-To: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314190308.25790-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36213 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1039197AbdDUNGt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Apr 2017 09:06:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
+References: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com> <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 15:06:47 +0200
+Message-ID: <CAMuHMdW6wV01BzCwJEaZXqmqtp_yDNZN8pHuGe9BT647iFb7Cg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add USB-DMAC clocks
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Thu, Apr 20, 2017 at 8:36 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>>
+>> This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
+>>
+>> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>> This patch is based on the clk-next branch of linux-clk tree.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> I.e. will queue in clk-renesas-for-v4.13.
 
-The unbind function dereferences the subdev->dev node to obtain the
-of_node. In error paths, the subdev->dev can be set to NULL, whilst the
-correct reference to the of_node is available as subdev->of_node.
+and after correcting sort order:
 
-Correct the dereferencing, and move the variable outside of the loop as
-it is constant against the subdev, and not initialised per CSI, for both
-the bind and unbind functions
+> >         DEF_MOD("rwdt",                  402,   R8A7796_CLK_R),
+> > +       DEF_MOD("usb-dmac0",             330,   R8A7796_CLK_S3D1),
+> > +       DEF_MOD("usb-dmac1",             331,   R8A7796_CLK_S3D1),
+> >         DEF_MOD("intc-ap",               408,   R8A7796_CLK_S3D1),
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 48557628e76d..a530dc388b95 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -469,7 +469,7 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
- 
- 	v4l2_set_subdev_hostdata(subdev, vin);
- 
--	if (vin->digital.asd.match.of.node == subdev->dev->of_node) {
-+	if (vin->digital.asd.match.of.node == subdev->of_node) {
- 		/* Find surce and sink pad of remote subdevice */
- 
- 		ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
-@@ -738,12 +738,11 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
- 				     struct v4l2_async_subdev *asd)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
-+	struct device_node *del = subdev->of_node;
- 	unsigned int i;
- 
- 	mutex_lock(&vin->group->lock);
- 	for (i = 0; i < RVIN_CSI_MAX; i++) {
--		struct device_node *del = subdev->dev->of_node;
--
- 		if (vin->group->bridge[i].asd.match.of.node == del) {
- 			vin_dbg(vin, "Unbind bridge %s\n", subdev->name);
- 			vin->group->bridge[i].subdev = NULL;
-@@ -768,13 +767,13 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
- 				   struct v4l2_async_subdev *asd)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
-+	struct device_node *new = subdev->of_node;
- 	unsigned int i;
- 
- 	v4l2_set_subdev_hostdata(subdev, vin);
- 
- 	mutex_lock(&vin->group->lock);
- 	for (i = 0; i < RVIN_CSI_MAX; i++) {
--		struct device_node *new = subdev->dev->of_node;
- 
- 		if (vin->group->bridge[i].asd.match.of.node == new) {
- 			vin_dbg(vin, "Bound bridge %s\n", subdev->name);
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
