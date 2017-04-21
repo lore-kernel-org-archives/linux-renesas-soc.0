@@ -1,69 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34502 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031185AbdDTSzz (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36803 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1040225AbdDUOEQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 14:55:55 -0400
-Received: by mail-lf0-f51.google.com with SMTP id t144so33949524lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Apr 2017 11:55:54 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170420185550.571168105@cogentembedded.com>
-Date: Thu, 20 Apr 2017 21:51:35 +0300
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 3/3] ARM: dts: sk-rzg1m: add Ether pins
+        Fri, 21 Apr 2017 10:04:16 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=ARM-dts-sk-rzg1m-add-Ether-pins-v2.patch
+In-Reply-To: <1492624001-3758-2-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-2-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 16:04:14 +0200
+Message-ID: <CAMuHMdWgF8SES7+D-jpkw6eG1cYv0UA5YdnJKV0SQ8Pcc06mRA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Add Z clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) Ether/PHY pin data to the SK-RZG1M board's
-device tree.
+Hi Kaneko-san,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z clock for R8A7795 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> This patch is based on the clk-next branch of linux-clk tree.
+>
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> index eaa98b4..a9ee68e 100644
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -74,6 +74,7 @@ enum clk_ids {
+>         DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+>
+>         /* Core Clock Outputs */
+> +       DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
 
----
-Changes in version 2:
-- refreshed the patch.
+Adding an internal CLK_PLL0_DIV2 (cfr. CLK_PLL1_DIV2), and using that as
+the parent clock may be the easiest fix for the wrong Z clock frequency.
 
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+However, it may complicate things when making PLL0 programmable, like is
+done in the BSP.
 
-Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-+++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-@@ -44,6 +44,16 @@
- 		groups = "scif0_data_d";
- 		function = "scif0";
- 	};
-+
-+	ether_pins: ether {
-+		groups = "eth_link", "eth_mdio", "eth_rmii";
-+		function = "eth";
-+	};
-+
-+	phy1_pins: phy1 {
-+		groups = "intc_irq0";
-+		function = "intc";
-+	};
- };
- 
- &scif0 {
-@@ -54,6 +64,9 @@
- };
- 
- &ether {
-+	pinctrl-0 = <&ether_pins &phy1_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy1>;
- 	renesas,ether-link-active-low;
- 	status = "okay";
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
