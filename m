@@ -1,58 +1,134 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 8/9] arm: dts: genmai: Add user led device nodes
-Date: Wed,  5 Apr 2017 16:07:26 +0200
-Message-Id: <1491401247-7030-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:40994 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1039391AbdDUMz0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Apr 2017 08:55:26 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 3/5] arm64: dts: r8a7796: Add placeholders for various devices
+Date: Fri, 21 Apr 2017 14:55:19 +0200
+Message-Id: <1492779321-23939-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1492779321-23939-1-git-send-email-geert+renesas@glider.be>
+References: <1492779321-23939-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device nodes for user leds on Genmai board.
+Add empty device nodes serving as placeholders for devices that are not
+yet supported and/or tested on R-Car M3-W, but are supported and used on
+Salvator-X or H3ULCB boards equipped with an R-Car H3 SoC.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 82 ++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 9add1b6..f7c512e 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 8e2aab8b6b103cc9..60a4289d0b14fe50 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -961,6 +961,38 @@
+ 			dma-channels = <16>;
+ 		};
  
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
-@@ -35,6 +36,19 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
++		hsusb: usb@e6590000 {
++			/* placeholder */
++		};
++
++		xhci0: usb@ee000000 {
++			/* placeholder */
++		};
++
++		ohci0: usb@ee080000 {
++			/* placeholder */
++		};
++
++		ehci0: usb@ee080100 {
++			/* placeholder */
++		};
++
++		usb2_phy0: usb-phy@ee080200 {
++			/* placeholder */
++		};
++
++		ohci1: usb@ee0a0000 {
++			/* placeholder */
++		};
++
++		ehci1: usb@ee0a0100 {
++			/* placeholder */
++		};
++
++		usb2_phy1: usb-phy@ee0a0200 {
++			/* placeholder */
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7796";
+ 			reg = <0 0xee100000 0 0x2000>;
+@@ -1063,5 +1095,55 @@
+ 				};
+ 			};
+ 		};
++
++		rcar_sound: sound@ec500000 {
++			/* placeholder */
++
++			rcar_sound,dvc {
++				dvc0: dvc-0 {
++				};
++
++				dvc1: dvc-1 {
++				};
++			};
++
++			rcar_sound,src {
++				src0: src-0 {
++				};
++				src1: src-1 {
++				};
++			};
++
++			rcar_sound,ssi {
++				ssi0: ssi-0 {
++				};
++
++				ssi1: ssi-1 {
++				};
++			};
++		};
++
++		pciec0: pcie@fe000000 {
++			/* placeholder */
++		};
++
++		pciec1: pcie@ee800000 {
++			/* placeholder */
++		};
++
++		du: display@feb00000 {
++			/* placeholder */
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++			};
++		};
  	};
-+
-+	leds {
-+		status = "okay";
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led2 {
-+			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
  };
- 
- &pinctrl {
 -- 
 2.7.4
