@@ -1,98 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39562 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937953AbdDSQdb (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36440 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1166446AbdDXIJy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 12:33:31 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <8760i1kzb8.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1d0sXf-0001QG-5c@debutante>
-Date: Wed, 19 Apr 2017 17:33:19 +0100
-Subject: Applied "ASoC: rsnd: rsnd_mod_make_sure() is not under DEBUG" to the asoc tree
+        Mon, 24 Apr 2017 04:09:54 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVvo2XSmvgfDqijur20NBvMchJThsRt86Eijx46meV08Q@mail.gmail.com>
+References: <1492624001-3758-18-git-send-email-ykaneko0929@gmail.com> <CAMuHMdVvo2XSmvgfDqijur20NBvMchJThsRt86Eijx46meV08Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Apr 2017 10:09:52 +0200
+Message-ID: <CAMuHMdWMXdU-7jyRFbMzm8z8WzYVUPzJFh-jGHbcTXcCT6VJmA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: add PWM clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Thu, Apr 20, 2017 at 7:53 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+>>
+>> This patch adds PWM clock for PWM.
+>>
+>> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>> This patch is based on the clk-next branch of linux-clk tree.
+>>
+>>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+>> index c5523aa..64714ca 100644
+>> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+>> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+>> @@ -156,6 +156,7 @@ enum clk_ids {
+>>         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
+>>         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
+>>         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
+>> +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S3D4),
+>
+> Repeating myself, cfr. my response to Ulrich:
+>
+>      My copy of the R-Car Gen3 user manual rev. 0.53 says S0D12.
 
-   ASoC: rsnd: rsnd_mod_make_sure() is not under DEBUG
+Fixing that up while applying.
 
-has been applied to the asoc tree at
+Gr{oetje,eeting}s,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+                        Geert
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 9ca5e57d78446c8bd42adff3dcae693703f91d9c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 19 Apr 2017 00:41:24 +0000
-Subject: [PATCH] ASoC: rsnd: rsnd_mod_make_sure() is not under DEBUG
-
-rsnd_mod_make_sure() will be used any situation,
-thus, under DEBUG is not realistic.
-This patch move it to non DEBUG area
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/core.c | 2 --
- sound/soc/sh/rcar/rsnd.h | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index f8eb9d3d1949..1744015408c3 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -110,7 +110,6 @@ MODULE_DEVICE_TABLE(of, rsnd_of_match);
- /*
-  *	rsnd_mod functions
-  */
--#ifdef DEBUG
- void rsnd_mod_make_sure(struct rsnd_mod *mod, enum rsnd_mod_type type)
- {
- 	if (mod->type != type) {
-@@ -121,7 +120,6 @@ void rsnd_mod_make_sure(struct rsnd_mod *mod, enum rsnd_mod_type type)
- 			 rsnd_mod_name(mod), rsnd_mod_id(mod));
- 	}
- }
--#endif
- 
- char *rsnd_mod_name(struct rsnd_mod *mod)
- {
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 3dc9e06f5943..dbf4163427e8 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -727,8 +727,8 @@ void rsnd_cmd_remove(struct rsnd_priv *priv);
- int rsnd_cmd_attach(struct rsnd_dai_stream *io, int id);
- struct rsnd_mod *rsnd_cmd_mod_get(struct rsnd_priv *priv, int id);
- 
--#ifdef DEBUG
- void rsnd_mod_make_sure(struct rsnd_mod *mod, enum rsnd_mod_type type);
-+#ifdef DEBUG
- #define rsnd_mod_confirm_ssi(mssi)	rsnd_mod_make_sure(mssi, RSND_MOD_SSI)
- #define rsnd_mod_confirm_src(msrc)	rsnd_mod_make_sure(msrc, RSND_MOD_SRC)
- #define rsnd_mod_confirm_dvc(mdvc)	rsnd_mod_make_sure(mdvc, RSND_MOD_DVC)
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
