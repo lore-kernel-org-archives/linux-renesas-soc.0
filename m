@@ -1,90 +1,35 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 00/10] Renesas RZ/A1 pin and gpio controller
-Date: Thu, 27 Apr 2017 10:19:44 +0200
-Message-Id: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([184.105.139.130]:55402 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1428342AbdDXR7I (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 24 Apr 2017 13:59:08 -0400
+Date: Mon, 24 Apr 2017 13:59:05 -0400 (EDT)
+Message-Id: <20170424.135905.515581977383181185.davem@davemloft.net>
+To: dan.carpenter@oracle.com
+Cc: sergei.shtylyov@cogentembedded.com,
+        kazuya.mizuguchi.ks@renesas.com, horms+renesas@verge.net.au,
+        ykaneko0929@gmail.com, masaru.nagai.vx@renesas.com,
+        geert+renesas@glider.be, niklas.soderlund+renesas@ragnatech.se,
+        tremyfr@gmail.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] ravb: Double free on error in ravb_start_xmit()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20170422104656.jjnooh3or4x3lbw3@mwanda>
+References: <20170422104656.jjnooh3or4x3lbw3@mwanda>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-   this is 5th round of gpio/pincontroller for RZ/A1 devices.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 22 Apr 2017 13:46:56 +0300
 
-I have updated the pin controller driver to use the newly introduced
-"pinctrl_enable()" function.
-This is required since v4.11-rc7 as otherwise, as reported by Chris Brandt,
-the pin controller does not start.
+> If skb_put_padto() fails then it frees the skb.  I shifted that code
+> up a bit to make my error handling a little simpler.
+> 
+> Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I have incorporated your comments on the device tree bindings documentation,
-and added to pinctrl-generic.h header file two macros to unpack generic
-properties and their arguments.
-
-Tested with SCIF, RIIC, ETHER and gpio-leds on Genmai board.
-
-Thanks
-   j
-
-v1 -> v2:
-- change pin configuration flags as suggested by Chris
-- gpio set direction function fixed as suggested by Chris
-- add some more example on pin configuration flag usage to dt-binding doc
-- fix gpio-controller names to remove unit address as suggested by Geert
-- some comments chopped here and there to make the driver less verbose
-
-v2 -> v3:
-- fix grammar and syntax in comment and documentation
-- fix code style (reverse xmas tree ordering in variable declaration)
-- use irqsave/irqrestore in spinlock lock/unlock
-- use devm_ version of kasprintf (memory returned was not properly free)
-- use bitops.h operation ffs and fls to make sure a single bit is set in pmx
-  mask
-- Add Geert's reviewed-by to DTS patches
-
-v3 -> v4:
-- use "pinmux" property in pmx sub-nodes in place of "renesas,pins"
-- use pinconf standard properties to set pin mux additional flags
-- add "bi-directional" and "output-enable" to pinconf generic properties
-- perform pmx function parsing at dt_node_to_map() time
-- change DT bindings to use GENERIC_PINCONF
-- change DT bindings to allow sub-nodes to have "pinmux" property specified
-- several renames (register names, DT parse functions, set_mux() function)
-
-v4 -> v5:
-- use pinctrl_enable() function in pin controller registration function
-- update bindings documentation to incorporate Geert's comments
-- add generic properties unpack macros
-
-Jacopo Mondi (10):
-  pinctrl: generic: Add bi-directional and output-enable
-  pinctrl: generic: Add macros to unpack properties
-  pinctrl: Renesas RZ/A1 pin and gpio controller
-  dt-bindings: pinctrl: Add RZ/A1 bindings doc
-  arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
-  arm: dts: r7s72100: Add pin controller node
-  arm: dts: genmai: Add SCIF2 pin group
-  arm: dts: genmai: Add RIIC2 pin group
-  arm: dts: genmai: Add user led device nodes
-  arm: dts: genmai: Add ethernet pin group
-
- .../bindings/pinctrl/pinctrl-bindings.txt          |   2 +
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 219 +++++
- arch/arm/boot/dts/r7s72100-genmai.dts              |  76 ++
- arch/arm/boot/dts/r7s72100.dtsi                    |  78 ++
- drivers/pinctrl/Kconfig                            |  11 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinconf-generic.c                  |   3 +
- drivers/pinctrl/pinctrl-rza1.c                     | 995 +++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  16 +
- include/linux/pinctrl/pinconf-generic.h            |   7 +-
- 10 files changed, 1407 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza1.c
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-
---
-2.7.4
+Applied.
