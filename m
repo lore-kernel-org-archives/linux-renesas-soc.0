@@ -1,61 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:55447 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753748AbdD0WeD (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36367 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1169566AbdDXPWG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:34:03 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] media: entity: Add pad_from_dt_regs entity operation
-Date: Fri, 28 Apr 2017 00:33:22 +0200
-Message-Id: <20170427223323.13861-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427223323.13861-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427223323.13861-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Apr 2017 11:22:06 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH V2 1/4] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
+Date: Mon, 24 Apr 2017 17:21:27 +0200
+Message-Id: <20170424152130.32410-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The optional operation can be used by entities to report how it maps its
-DT node ports and endpoints to media pad numbers. This is useful for
-devices which require more advanced mappings of pads then DT port
-number is equivalent with media port number.
+Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
+the following features:
+- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
+- one voltage regulator for DVFS
+- two GPIOs
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- include/media/media-entity.h | 4 ++++
- 1 file changed, 4 insertions(+)
+V2: - Drop the compatible = "regulator-fixed" from the binding example,
+      it should not be there.
+    - List the VD09 regulator
+---
+ .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index c7c254c5bca1761b..47efaf4d825e671b 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -171,6 +171,9 @@ struct media_pad {
- 
- /**
-  * struct media_entity_operations - Media entity operations
-+ * @pad_from_dt_regs:	Return the pad number based on DT port and reg
-+ *			properties. This operation can be used to map a
-+ *			DT port and reg to a media pad number. Optional.
-  * @link_setup:		Notify the entity of link changes. The operation can
-  *			return an error, in which case link setup will be
-  *			cancelled. Optional.
-@@ -184,6 +187,7 @@ struct media_pad {
-  *    mutex held.
-  */
- struct media_entity_operations {
-+	int (*pad_from_dt_regs)(int port_reg, int reg, unsigned int *pad);
- 	int (*link_setup)(struct media_entity *entity,
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
+diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+new file mode 100644
+index 000000000000..ce24231edd7d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+@@ -0,0 +1,49 @@
++* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
++
++Required properties:
++ - compatible		: Should be "rohm,bd9571mwv".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: Marks the device node as an interrupt controller.
++ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
++			    The first cell is the IRQ number.
++			    The second cell is the flags, encoded as trigger
++			    masks from ../interrupt-controller/interrupts.txt.
++ - gpio-controller      : Marks the device node as a GPIO Controller.
++ - #gpio-cells          : Should be two.  The first cell is the pin number and
++                            the second cell is used to specify flags.
++                            See ../gpio/gpio.txt for more information.
++ - regulators:          : List of child nodes that specify the regulator
++                            initialization data. Child nodes must be named
++                            after their hardware counterparts:
++			     - vd09
++			     - vd18
++			     - vd25
++			     - vd33
++			     - dvfs
++			    Each child node is defined using the standard
++			    binding for regulators.
++
++Example:
++
++	pmic: bd9571mwv@30 {
++		compatible = "rohm,bd9571mwv";
++		reg = <0x30>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		regulators {
++			dvfs: dvfs {
++				regulator-name = "dvfs";
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <1030000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
 -- 
-2.12.2
+2.11.0
