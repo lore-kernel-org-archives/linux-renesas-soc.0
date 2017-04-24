@@ -1,45 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f170.google.com ([209.85.161.170]:32859 "EHLO
-        mail-yw0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1168352AbdDXKCT (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42420 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1166837AbdDXIev (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 06:02:19 -0400
-MIME-Version: 1.0
-In-Reply-To: <2906686.sXpvJSxI8y@avalon>
-References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <2637169.nvyUM18Pqy@avalon> <CAO3366xaWH7YtktGpJ07ypzxuudyJc63PxxAeVeOi98Rann1Lg@mail.gmail.com>
- <2906686.sXpvJSxI8y@avalon>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Date: Mon, 24 Apr 2017 12:02:17 +0200
-Message-ID: <CAO3366yMRXnuL9mMPVA2-FwLmz0gaPLtk413K06Q42nQO48L7Q@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: r8a7795-salvator-x: Enable PWM
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Mon, 24 Apr 2017 04:34:51 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux PWM List <linux-pwm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 5/5] arm64: dts: r8a7795-salvator-x: Enable PWM
+Date: Mon, 24 Apr 2017 11:35:55 +0300
+Message-ID: <2906686.sXpvJSxI8y@avalon>
+In-Reply-To: <CAO3366xaWH7YtktGpJ07ypzxuudyJc63PxxAeVeOi98Rann1Lg@mail.gmail.com>
+References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com> <2637169.nvyUM18Pqy@avalon> <CAO3366xaWH7YtktGpJ07ypzxuudyJc63PxxAeVeOi98Rann1Lg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 10:35 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> Hi Ulrich,
->
-> On Monday 24 Apr 2017 10:22:31 Ulrich Hecht wrote:
->> On Mon, Apr 24, 2017 at 9:59 AM, Laurent Pinchart wrote:
->> > How about using pwm1 for backlight as done in "[PATCH v2 09/13] arm64:
->> > dts: r8a7795: salvator-x: Add panel backlight support" ?
->>
->> Makes sense. Simon, should that go in a separate patch, or should I
->> add it to this one?
->
-> How about applying "[PATCH v2 09/13] arm64: dts: r8a7795: salvator-x: Add
-> panel backlight support" and rebasing this patch to only handle pwm2 ?
+Hi Ulrich,
 
-I'll do that then.
+On Monday 24 Apr 2017 10:22:31 Ulrich Hecht wrote:
+> On Mon, Apr 24, 2017 at 9:59 AM, Laurent Pinchart wrote:
+> > How about using pwm1 for backlight as done in "[PATCH v2 09/13] arm64:
+> > dts: r8a7795: salvator-x: Add panel backlight support" ?
+> 
+> Makes sense. Simon, should that go in a separate patch, or should I
+> add it to this one?
 
-CU
-Uli
+How about applying "[PATCH v2 09/13] arm64: dts: r8a7795: salvator-x: Add 
+panel backlight support" and rebasing this patch to only handle pwm2 ?
+
+-- 
+Regards,
+
+Laurent Pinchart
