@@ -1,53 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933632AbdDGP66 (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:33664 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S973349AbdDXRxX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:58 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 24 Apr 2017 13:53:23 -0400
+Date: Mon, 24 Apr 2017 10:53:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/22] ARM: dts: r8a7791: Correct parent of SSI[0-9] clocks
-Date: Fri,  7 Apr 2017 11:58:11 -0400
-Message-Id: <16fe68dcab5702a024d85229ff7e98979cb701a5.1491580547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
-References: <cover.1491580547.git.horms+renesas@verge.net.au>
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] clk: cs2000: Fix the setting of saved_rate during the
+ resume process
+Message-ID: <20170424175320.GX7065@codeaurora.org>
+References: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com>
+ <20170422021043.GD7065@codeaurora.org>
+ <CAMuHMdVgd2c++xPd8iMOWE6c1CZWoK73Jod1WM_MSJJ2mUroNg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVgd2c++xPd8iMOWE6c1CZWoK73Jod1WM_MSJJ2mUroNg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 04/23, Geert Uytterhoeven wrote:
+> Hi Stephen,
+> 
+> On Sat, Apr 22, 2017 at 4:10 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 04/20, Yoshihiro Kaneko wrote:
+> >> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> >>
+> >> In the resume process, there is the case that other drivers call
+> >> cs2000_enable before cs2000_resume is called. Since the order of
+> >> resume process is not guaranteed, it is needed to reset the clk
+> >> rate in any cases before cs2000 is used.
+> >>
+> >> Also, the current cs2000 driver is using resume_early function.
+> >> The using .resume_early is bad idea because the dependency with
+> >> other drivers is to be complicated.
+> >>
+> >> This patch adds to reset the clk rate in cs2000_enable and
+> >> changes to use from .resume_early to .resume.
+> >>
+> >> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> >> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> >> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> >> ---
+> >
+> > Was this supposed to be sent as a series? This is the second
+> > patch in the series?
+> >
+> > In what situation does a driver call clk_prepare() on the clocks
+> > in here before the device's resume callback is called? I would
+> > think that any devices that use the clks provided by this driver
+> > would be probe defered until the clks are registered, so they
+> > would be later in the suspend/resume list than this clk driver?
+> 
+> Deferred probing is used during driver initialization only.
+> This patch is about clock users calling into the clock API during the resume
+> procedure, before the clock provider has been resumed.
+> 
 
-The SSI-ALL gate clock is located in between the P clock and the
-individual SSI[0-9] clocks, hence the former should be listed as their
-parent.
+Right, and which driver is calling into the clk API in their
+resume function before the clk provider is resume? Presumably the
+clk provider had probed "first", or at least was ordered in the
+dpm_list before the consumer drivers so that this problem
+wouldn't happen.
 
-Fixes: ee9141522dcf13f8 ("ARM: shmobile: r8a7791: add MSTP10 support on DTSI")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index b319ef4d57b0..a6478ca3f4ca 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1447,8 +1447,11 @@
- 			compatible = "renesas,r8a7791-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
- 			clocks = <&p_clk>,
--				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
--				<&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
-+				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
-+				<&mstp10_clks R8A7791_CLK_SSI_ALL>, <&mstp10_clks R8A7791_CLK_SSI_ALL>,
- 				<&p_clk>,
- 				<&mstp10_clks R8A7791_CLK_SCU_ALL>, <&mstp10_clks R8A7791_CLK_SCU_ALL>,
- 				<&mstp10_clks R8A7791_CLK_SCU_ALL>, <&mstp10_clks R8A7791_CLK_SCU_ALL>,
 -- 
-2.7.0.rc3.207.g0ac5344
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
