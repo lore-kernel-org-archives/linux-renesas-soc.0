@@ -1,169 +1,289 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout3.hostsharing.net ([176.9.242.54]:44091 "EHLO
-        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751300AbdDRSog (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33582 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1950859AbdDYPqR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Apr 2017 14:44:36 -0400
-Message-Id: <03aaf3220cccbabb7db86aa4eb10d1147add5c34.1492536769.git.lukas@wunner.de>
-From: Lukas Wunner <lukas@wunner.de>
-Date: Tue, 18 Apr 2017 20:44:30 +0200
-Subject: [PATCH] PCI: Freeze PME scan before suspending devices
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Tue, 25 Apr 2017 11:46:17 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20170424152130.32410-4-marek.vasut+renesas@gmail.com>
+Message-Id: <E1d32f6-0001n5-5D@debutante>
+Date: Tue, 25 Apr 2017 16:45:56 +0100
+Subject: Applied "regulator: Add ROHM BD9571MWV-M PMIC regulator driver" to the regulator tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Laurent Pinchart reported that the Renesas R-Car H2 Lager board
-(r8a7790) crashes during suspend tests.  Geert Uytterhoeven managed to
-reproduce the issue on an M2-W Koelsch board (r8a7791):
+The patch
 
-It occurs when the PME scan runs, once per second.  During PME scan, the
-PCI host bridge (rcar-pci) registers are accessed while its module clock
-has already been disabled, leading to the crash.
+   regulator: Add ROHM BD9571MWV-M PMIC regulator driver
 
-One reproducer is to configure s2ram to use "s2idle" instead of "deep"
-suspend:
+has been applied to the regulator tree at
 
-# echo 0 > /sys/module/printk/parameters/console_suspend
-# echo s2idle > /sys/power/mem_sleep
-# echo mem > /sys/power/state
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-Another reproducer is to write either "platform" or "processors" to
-/sys/power/pm_test.  It does not (or is less likely) to happen during
-full system suspend ("core" or "none") because system suspend also
-disables timers, and thus the workqueue handling PME scans no longer
-runs.  Geert believes the issue may still happen in the small window
-between disabling module clocks and disabling timers:
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-# echo 0 > /sys/module/printk/parameters/console_suspend
-# echo platform > /sys/power/pm_test    # Or "processors"
-# echo mem > /sys/power/state
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-(Make sure CONFIG_PCI_RCAR_GEN2 and CONFIG_USB_OHCI_HCD_PCI are
-enabled.)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Rafael Wysocki agrees that PME scans should be suspended before the host
-bridge registers become inaccessible.  To that end, queue the task on a
-workqueue that gets frozen before devices suspend.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Rafael notes however that as a result, some wakeup events may be missed
-if they are delivered via PME from a device without working IRQ (which
-hence must be polled) and occur after the workqueue has been frozen.
-If that turns out to be an issue in practice, it may be possible to
-solve it by calling pci_pme_list_scan() once directly from one of the
-host bridge's pm_ops callbacks.
+Thanks,
+Mark
 
-Stacktrace for posterity:
+>From e85c5a153fe237f261838fc9638c28f19e0f27c1 Mon Sep 17 00:00:00 2001
+From: Marek Vasut <marek.vasut@gmail.com>
+Date: Mon, 24 Apr 2017 17:21:30 +0200
+Subject: [PATCH] regulator: Add ROHM BD9571MWV-M PMIC regulator driver
 
-PM: Syncing filesystems ... [   38.566237] done.
-PM: Preparing system for sleep (mem)
-Freezing user space processes ... [   38.579813] (elapsed 0.001 seconds) done.
-Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-PM: Suspending system (mem)
-PM: suspend of devices complete after 152.456 msecs
-PM: late suspend of devices complete after 2.809 msecs
-PM: noirq suspend of devices complete after 29.863 msecs
-suspend debug: Waiting for 5 second(s).
-Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
-pgd = c0003000
-[00000000] *pgd=80000040004003, *pmd=00000000
-Internal error: : 1211 [#1] SMP ARM
-Modules linked in:
-CPU: 1 PID: 20 Comm: kworker/1:1 Not tainted
-4.9.0-rc1-koelsch-00011-g68db9bc814362e7f #3383
-Hardware name: Generic R8A7791 (Flattened Device Tree)
-Workqueue: events pci_pme_list_scan
-task: eb56e140 task.stack: eb58e000
-PC is at pci_generic_config_read+0x64/0x6c
-LR is at rcar_pci_cfg_base+0x64/0x84
-pc : [<c041d7b4>]    lr : [<c04309a0>]    psr: 600d0093
-sp : eb58fe98  ip : c041d750  fp : 00000008
-r10: c0e2283c  r9 : 00000000  r8 : 600d0013
-r7 : 00000008  r6 : eb58fed6  r5 : 00000002  r4 : eb58feb4
-r3 : 00000000  r2 : 00000044  r1 : 00000008  r0 : 00000000
-Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 30c5387d  Table: 6a9f6c80  DAC: 55555555
-Process kworker/1:1 (pid: 20, stack limit = 0xeb58e210)
-Stack: (0xeb58fe98 to 0xeb590000)
-fe80:                                                       00000002 00000044
-fea0: eb6f5800 c041d9b0 eb58feb4 00000008 00000044 00000000 eb78a000 eb78a000
-fec0: 00000044 00000000 eb9aff00 c0424bf0 eb78a000 00000000 eb78a000 c0e22830
-fee0: ea8a6fc0 c0424c5c eaae79c0 c0424ce0 eb55f380 c0e22838 eb9a9800 c0235fbc
-ff00: eb55f380 c0e22838 eb55f380 eb9a9800 eb9a9800 eb58e000 eb9a9824 c0e02100
-ff20: eb55f398 c02366c4 eb56e140 eb5631c0 00000000 eb55f380 c023641c 00000000
-ff40: 00000000 00000000 00000000 c023a928 cd105598 00000000 40506a34 eb55f380
-ff60: 00000000 00000000 dead4ead ffffffff ffffffff eb58ff74 eb58ff74 00000000
-ff80: 00000000 dead4ead ffffffff ffffffff eb58ff90 eb58ff90 eb58ffac eb5631c0
-ffa0: c023a844 00000000 00000000 c0206d68 00000000 00000000 00000000 00000000
-ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 3a81336c 10ccd1dd
-[<c041d7b4>] (pci_generic_config_read) from [<c041d9b0>]
-(pci_bus_read_config_word+0x58/0x80)
-[<c041d9b0>] (pci_bus_read_config_word) from [<c0424bf0>]
-(pci_check_pme_status+0x34/0x78)
-[<c0424bf0>] (pci_check_pme_status) from [<c0424c5c>] (pci_pme_wakeup+0x28/0x54)
-[<c0424c5c>] (pci_pme_wakeup) from [<c0424ce0>] (pci_pme_list_scan+0x58/0xb4)
-[<c0424ce0>] (pci_pme_list_scan) from [<c0235fbc>]
-(process_one_work+0x1bc/0x308)
-[<c0235fbc>] (process_one_work) from [<c02366c4>] (worker_thread+0x2a8/0x3e0)
-[<c02366c4>] (worker_thread) from [<c023a928>] (kthread+0xe4/0xfc)
-[<c023a928>] (kthread) from [<c0206d68>] (ret_from_fork+0x14/0x2c)
-Code: ea000000 e5903000 f57ff04f e3a00000 (e5843000)
----[ end trace 667d43ba3aa9e589 ]---
+Add driver for the regulator block in the ROHM BD9571MWV-W MFD PMIC.
+This block supports three voltage monitors, VD18, VD25, VD33 for the
+1V8, 2V5, 3V3 voltage rails and a single voltage regulator for the
+DVFS rail.
 
-Reported-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reported-and-tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Yinghai Lu <yinghai@kernel.org>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: stable@vger.kernel.org # 2.6.37+
-Fixes: df17e62e5bff ("PCI: Add support for polling PME state on suspended legacy PCI devices")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/pci/pci.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/regulator/Kconfig               |  11 ++
+ drivers/regulator/Makefile              |   1 +
+ drivers/regulator/bd9571mwv-regulator.c | 178 ++++++++++++++++++++++++++++++++
+ 3 files changed, 190 insertions(+)
+ create mode 100644 drivers/regulator/bd9571mwv-regulator.c
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index aa55501d2179..c561a9e4916a 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1784,8 +1784,8 @@ static void pci_pme_list_scan(struct work_struct *work)
- 		}
- 	}
- 	if (!list_empty(&pci_pme_list))
--		schedule_delayed_work(&pci_pme_work,
--				      msecs_to_jiffies(PME_TIMEOUT));
-+		queue_delayed_work(system_freezable_wq, &pci_pme_work,
-+				   msecs_to_jiffies(PME_TIMEOUT));
- 	mutex_unlock(&pci_pme_list_mutex);
- }
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index be06eb29c681..a27b97c5695b 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -163,6 +163,17 @@ config REGULATOR_BCM590XX
+ 	  BCM590xx PMUs. This will enable support for the software
+ 	  controllable LDO/Switching regulators.
  
-@@ -1850,8 +1850,9 @@ void pci_pme_active(struct pci_dev *dev, bool enable)
- 			mutex_lock(&pci_pme_list_mutex);
- 			list_add(&pme_dev->list, &pci_pme_list);
- 			if (list_is_singular(&pci_pme_list))
--				schedule_delayed_work(&pci_pme_work,
--						      msecs_to_jiffies(PME_TIMEOUT));
-+				queue_delayed_work(system_freezable_wq,
-+						   &pci_pme_work,
-+						   msecs_to_jiffies(PME_TIMEOUT));
- 			mutex_unlock(&pci_pme_list_mutex);
- 		} else {
- 			mutex_lock(&pci_pme_list_mutex);
++config REGULATOR_BD9571MWV
++	tristate "ROHM BD9571MWV Regulators"
++	depends on MFD_BD9571MWV
++	help
++	  This driver provides support for the voltage regulators on the
++	  ROHM BD9571MWV PMIC. This will enable support for the software
++	  controllable regulator and voltage sampling units.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called bd9571mwv-regulator.
++
+ config REGULATOR_CPCAP
+ 	tristate "Motorola CPCAP regulator"
+ 	depends on MFD_CPCAP
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index ef7725e2592a..439b9b21f2fe 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
++obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+ obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+ obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
+ obj-$(CONFIG_REGULATOR_DA9055)	+= da9055-regulator.o
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+new file mode 100644
+index 000000000000..8ba206fec31e
+--- /dev/null
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -0,0 +1,178 @@
++/*
++ * ROHM BD9571MWV-M regulator driver
++ *
++ * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether expressed or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License version 2 for more details.
++ *
++ * Based on the TPS65086 driver
++ *
++ * NOTE: VD09 is missing
++ */
++
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/driver.h>
++
++#include <linux/mfd/bd9571mwv.h>
++
++enum bd9571mwv_regulators { VD09, VD18, VD25, VD33, DVFS };
++
++#define BD9571MWV_REG(_name, _of, _id, _ops, _vr, _vm, _nv, _min, _step, _lmin)\
++	{							\
++		.name			= _name,		\
++		.of_match		= of_match_ptr(_of),	\
++		.regulators_node	= "regulators",		\
++		.id			= _id,			\
++		.ops			= &_ops,		\
++		.n_voltages		= _nv,			\
++		.type			= REGULATOR_VOLTAGE,	\
++		.owner			= THIS_MODULE,		\
++		.vsel_reg		= _vr,			\
++		.vsel_mask		= _vm,			\
++		.min_uV			= _min,			\
++		.uV_step		= _step,		\
++		.linear_min_sel		= _lmin,		\
++	}
++
++int bd9571mwv_avs_get_moni_state(struct regulator_dev *rdev)
++{
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(rdev->regmap, BD9571MWV_AVS_SET_MONI, &val);
++	if (ret != 0)
++		return ret;
++
++	return val & BD9571MWV_AVS_SET_MONI_MASK;
++}
++
++int bd9571mwv_avs_set_voltage_sel_regmap(struct regulator_dev *rdev,
++					 unsigned int sel)
++{
++	int ret;
++
++	ret = bd9571mwv_avs_get_moni_state(rdev);
++	if (ret < 0)
++		return ret;
++
++	return regmap_write_bits(rdev->regmap, BD9571MWV_AVS_VD09_VID(ret),
++				 rdev->desc->vsel_mask, sel);
++}
++
++int bd9571mwv_avs_get_voltage_sel_regmap(struct regulator_dev *rdev)
++{
++	unsigned int val;
++	int ret;
++
++	ret = bd9571mwv_avs_get_moni_state(rdev);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_read(rdev->regmap, BD9571MWV_AVS_VD09_VID(ret), &val);
++	if (ret != 0)
++		return ret;
++
++	val &= rdev->desc->vsel_mask;
++	val >>= ffs(rdev->desc->vsel_mask) - 1;
++
++	return val;
++}
++
++int bd9571mwv_reg_set_voltage_sel_regmap(struct regulator_dev *rdev,
++					 unsigned int sel)
++{
++	return regmap_write_bits(rdev->regmap, BD9571MWV_DVFS_SETVID,
++				 rdev->desc->vsel_mask, sel);
++}
++
++/* Operations permitted on AVS voltage regulator */
++static struct regulator_ops avs_ops = {
++	.set_voltage_sel	= bd9571mwv_avs_set_voltage_sel_regmap,
++	.map_voltage		= regulator_map_voltage_linear,
++	.get_voltage_sel	= bd9571mwv_avs_get_voltage_sel_regmap,
++	.list_voltage		= regulator_list_voltage_linear,
++};
++
++/* Operations permitted on voltage regulators */
++static struct regulator_ops reg_ops = {
++	.set_voltage_sel	= bd9571mwv_reg_set_voltage_sel_regmap,
++	.map_voltage		= regulator_map_voltage_linear,
++	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
++	.list_voltage		= regulator_list_voltage_linear,
++};
++
++/* Operations permitted on voltage monitors */
++static struct regulator_ops vid_ops = {
++	.map_voltage		= regulator_map_voltage_linear,
++	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
++	.list_voltage		= regulator_list_voltage_linear,
++};
++
++static struct regulator_desc regulators[] = {
++	BD9571MWV_REG("VD09", "vd09", VD09, avs_ops, 0, 0x7f,
++		      0x80, 600000, 10000, 0x3c),
++	BD9571MWV_REG("VD18", "vd18", VD18, vid_ops, BD9571MWV_VD18_VID, 0xf,
++		      16, 1625000, 25000, 0),
++	BD9571MWV_REG("VD25", "vd25", VD25, vid_ops, BD9571MWV_VD25_VID, 0xf,
++		      16, 2150000, 50000, 0),
++	BD9571MWV_REG("VD33", "vd33", VD33, vid_ops, BD9571MWV_VD33_VID, 0xf,
++		      11, 2800000, 100000, 0),
++	BD9571MWV_REG("DVFS", "dvfs", DVFS, reg_ops,
++		      BD9571MWV_DVFS_MONIVDAC, 0x7f,
++		      0x80, 600000, 10000, 0x3c),
++};
++
++static int bd9571mwv_regulator_probe(struct platform_device *pdev)
++{
++	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
++	struct regulator_config config = { };
++	struct regulator_dev *rdev;
++	int i;
++
++	platform_set_drvdata(pdev, bd);
++
++	config.dev = &pdev->dev;
++	config.dev->of_node = bd->dev->of_node;
++	config.driver_data = bd;
++	config.regmap = bd->regmap;
++
++	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
++		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
++					       &config);
++		if (IS_ERR(rdev)) {
++			dev_err(bd->dev, "failed to register %s regulator\n",
++				pdev->name);
++			return PTR_ERR(rdev);
++		}
++	}
++
++	return 0;
++}
++
++static const struct platform_device_id bd9571mwv_regulator_id_table[] = {
++	{ "bd9571mwv-regulator", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(platform, bd9571mwv_regulator_id_table);
++
++static struct platform_driver bd9571mwv_regulator_driver = {
++	.driver = {
++		.name = "bd9571mwv-regulator",
++	},
++	.probe = bd9571mwv_regulator_probe,
++	.id_table = bd9571mwv_regulator_id_table,
++};
++module_platform_driver(bd9571mwv_regulator_driver);
++
++MODULE_AUTHOR("Marek Vasut <marek.vasut+renesas@gmail.com>");
++MODULE_DESCRIPTION("BD9571MWV Regulator driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.11.0
