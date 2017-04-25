@@ -1,134 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:57417 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032505AbdD0Wm4 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56602 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1175183AbdDYHWl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:42:56 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 17/27] rcar-vin: prepare digital notifier for group notifier
-Date: Fri, 28 Apr 2017 00:41:53 +0200
-Message-Id: <20170427224203.14611-18-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 25 Apr 2017 03:22:41 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: David Airlie <airlied@linux.ie>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH -next] drm/shmob: fix return value check in shmob_drm_probe()
+Date: Tue, 25 Apr 2017 10:23:42 +0300
+Message-ID: <4032906.qIxZEVbvQP@avalon>
+In-Reply-To: <20170425030808.7632-1-weiyj.lk@gmail.com>
+References: <20170425030808.7632-1-weiyj.lk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The media bus parsing functions used by the digital subdevice V4L2
-notifier can be shared with the upcoming CSI-2 notifier. To prepare for
-this move and rename the function to reflect it's generic.
+Hi Wei,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 70 +++++++++++++++--------------
- 1 file changed, 37 insertions(+), 33 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index ed99b1abb99e9ef9..adc38696a0ba70b9 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -45,6 +45,42 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+static int rvin_parse_v4l2(struct rvin_dev *vin,
-+			   struct device_node *ep,
-+			   struct v4l2_mbus_config *mbus_cfg)
-+{
-+	struct v4l2_of_endpoint v4l2_ep;
-+	int ret;
-+
-+	ret = v4l2_of_parse_endpoint(ep, &v4l2_ep);
-+	if (ret) {
-+		vin_err(vin, "Could not parse v4l2 endpoint\n");
-+		return -EINVAL;
-+	}
-+
-+	mbus_cfg->type = v4l2_ep.bus_type;
-+
-+	switch (mbus_cfg->type) {
-+	case V4L2_MBUS_PARALLEL:
-+		vin_dbg(vin, "Found PARALLEL media bus\n");
-+		mbus_cfg->flags = v4l2_ep.bus.parallel.flags;
-+		break;
-+	case V4L2_MBUS_BT656:
-+		vin_dbg(vin, "Found BT656 media bus\n");
-+		mbus_cfg->flags = 0;
-+		break;
-+	default:
-+		vin_err(vin, "Unknown media bus type\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- static bool rvin_mbus_supported(struct rvin_dev *vin)
- {
- 	struct v4l2_subdev *sd = vin->digital.subdev;
-@@ -145,38 +181,6 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
- 	return -EINVAL;
- }
- 
--static int rvin_digitial_parse_v4l2(struct rvin_dev *vin,
--				    struct device_node *ep,
--				    struct v4l2_mbus_config *mbus_cfg)
--{
--	struct v4l2_of_endpoint v4l2_ep;
--	int ret;
--
--	ret = v4l2_of_parse_endpoint(ep, &v4l2_ep);
--	if (ret) {
--		vin_err(vin, "Could not parse v4l2 endpoint\n");
--		return -EINVAL;
--	}
--
--	mbus_cfg->type = v4l2_ep.bus_type;
--
--	switch (mbus_cfg->type) {
--	case V4L2_MBUS_PARALLEL:
--		vin_dbg(vin, "Found PARALLEL media bus\n");
--		mbus_cfg->flags = v4l2_ep.bus.parallel.flags;
--		break;
--	case V4L2_MBUS_BT656:
--		vin_dbg(vin, "Found BT656 media bus\n");
--		mbus_cfg->flags = 0;
--		break;
--	default:
--		vin_err(vin, "Unknown media bus type\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- static int rvin_digital_graph_parse(struct rvin_dev *vin)
- {
- 	struct device_node *ep, *np;
-@@ -201,7 +205,7 @@ static int rvin_digital_graph_parse(struct rvin_dev *vin)
- 	}
- 	of_node_put(np);
- 
--	ret = rvin_digitial_parse_v4l2(vin, ep, &vin->mbus_cfg);
-+	ret = rvin_parse_v4l2(vin, ep, &vin->mbus_cfg);
- 	of_node_put(ep);
- 	if (ret)
- 		return ret;
+On Tuesday 25 Apr 2017 03:08:08 Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+> and never returns NULL. The NULL test in the return value check should
+> be replaced with IS_ERR().
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree. I'll send a pull request for v4.13.
+
+> ---
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> b/drivers/gpu/drm/shmobile/shmob_drm_drv.c index 800d1d2..6bd777a 100644
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> +++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> @@ -235,8 +235,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
+> 
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	sdev->mmio = devm_ioremap_resource(&pdev->dev, res);
+> -	if (sdev->mmio == NULL)
+> -		return -ENOMEM;
+> +	if (IS_ERR(sdev->mmio))
+> +		return PTR_ERR(sdev->mmio);
+> 
+>  	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
+>  	if (ret < 0)
+
 -- 
-2.12.2
+Regards,
+
+Laurent Pinchart
