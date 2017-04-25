@@ -1,67 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41800 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1953015AbdDZHgH (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:59092 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1431695AbdDYQ1Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 03:36:07 -0400
-Date: Wed, 26 Apr 2017 09:36:01 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+        Tue, 25 Apr 2017 12:27:24 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFC 0/2] clk / soc: renesas: Rework Kconfig and Makefile
- logic
-Message-ID: <20170426073601.GF25517@verge.net.au>
-References: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
+        Kevin Hilman <khilman@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/2] clk / soc: renesas: Rework Kconfig and Makefile logic
+Date: Tue, 25 Apr 2017 18:27:04 +0200
+Message-Id: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 25, 2017 at 06:27:04PM +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> This RFC patch series reworks the Kconfig and Makefile logic for the
-> Renesas clock and SoC drivers. It was sparked by a discussion with Olof
-> about the Renesas clock driver dependencies.
-> 
-> The goals are to:
->   - Allow precise control over and automatic selection of which
->     (sub)drivers are used for which SoC (which may change in the
->     future),
->   - Allow adding support for new SoCs easily,
->   - Allow compile-testing of all (sub)drivers,
->   - Keep driver selection logic in the subsystem-specific Kconfig
->     independent from the architecture-specific Kconfig (i.e. no "select"
->     from arch/arm64/Kconfig.platforms), to avoid dependencies.
-> 
-> The series can't be applied as-is, because compile-testing all drivers
-> depends on independent fixes, some in other subsystems.
-> 
-> More details are provided in the individual patch descriptions.
-> 
-> For testing, this patch series, plus several fixes to allow more
-> compile-testing, are available in the
-> topic/clk-soc-renesas-Kconfig-rework branch of my renesas-drivers git
-> repository at 
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> 
-> This has been tested on R-Car Gen2 and Gen3, and compile-tested for
-> various other configurations.
-> 
-> Thanks for your comments!
+	Hi all,
 
-Hi Geert,
+This RFC patch series reworks the Kconfig and Makefile logic for the
+Renesas clock and SoC drivers. It was sparked by a discussion with Olof
+about the Renesas clock driver dependencies.
 
-thanks for working on this. I am very pleased to see something that
-is more robust with regards to adding new platforms without causing
-build breakage - I have been burnt by this several times.
+The goals are to:
+  - Allow precise control over and automatic selection of which
+    (sub)drivers are used for which SoC (which may change in the
+    future),
+  - Allow adding support for new SoCs easily,
+  - Allow compile-testing of all (sub)drivers,
+  - Keep driver selection logic in the subsystem-specific Kconfig
+    independent from the architecture-specific Kconfig (i.e. no "select"
+    from arch/arm64/Kconfig.platforms), to avoid dependencies.
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+The series can't be applied as-is, because compile-testing all drivers
+depends on independent fixes, some in other subsystems.
+
+More details are provided in the individual patch descriptions.
+
+For testing, this patch series, plus several fixes to allow more
+compile-testing, are available in the
+topic/clk-soc-renesas-Kconfig-rework branch of my renesas-drivers git
+repository at 
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+This has been tested on R-Car Gen2 and Gen3, and compile-tested for
+various other configurations.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (2):
+  [RFC] clk: renesas: Rework Kconfig and Makefile logic
+  [RFC] soc: renesas: Rework Kconfig and Makefile logic
+
+ drivers/clk/Makefile                   |   2 +-
+ drivers/clk/renesas/Kconfig            | 129 ++++++++++++++++++++++++++++-----
+ drivers/clk/renesas/Makefile           |  37 +++++-----
+ drivers/clk/renesas/renesas-cpg-mssr.c |   8 +-
+ drivers/soc/Kconfig                    |   1 +
+ drivers/soc/Makefile                   |   2 +-
+ drivers/soc/renesas/Kconfig            |  63 ++++++++++++++++
+ drivers/soc/renesas/Makefile           |  31 ++++----
+ drivers/soc/renesas/rcar-sysc.c        |  24 +++---
+ include/linux/soc/renesas/rcar-rst.h   |   3 +-
+ 10 files changed, 229 insertions(+), 71 deletions(-)
+ create mode 100644 drivers/soc/renesas/Kconfig
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
