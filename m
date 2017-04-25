@@ -1,90 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:32819 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752467AbdDPSIa (ORCPT
+Received: from 216-197-64-233.tingfiber.com ([216.197.64.233]:44896 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S979613AbdDYBaE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Apr 2017 14:08:30 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
-Date: Sun, 16 Apr 2017 20:07:58 +0200
-Message-Id: <20170416180801.17828-1-marek.vasut+renesas@gmail.com>
+        Mon, 24 Apr 2017 21:30:04 -0400
+Date: Mon, 24 Apr 2017 21:23:43 -0400
+From: Rich Felker <dalias@libc.org>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Subject: Re: Commit 18e8cf159177 broke qemu-system-sh4 serial input.
+Message-ID: <20170425012343.GS17319@brightrain.aerifal.cx>
+References: <41d6bb75-5be0-c563-0569-ea37aab58f1e@landley.net>
+ <CAMuHMdWtBHTBCNo2-oO2Zv7O8McypcaEMh+_8DD+D1T7GTxAzw@mail.gmail.com>
+ <f27afb36-f75c-0a03-dca2-8f318265f520@physik.fu-berlin.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f27afb36-f75c-0a03-dca2-8f318265f520@physik.fu-berlin.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
-the following features:
-- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
-- one voltage regulator for DVFS
-- two GPIOs
+On Fri, Apr 21, 2017 at 09:50:39AM +0200, John Paul Adrian Glaubitz wrote:
+> On 04/21/2017 09:26 AM, Geert Uytterhoeven wrote:
+> > Does anyone have access to real hardware to try?
+> > Adrian: does it work on your LANDISK, which also has SH7751R?
+> 
+> I can give it a try but that will take a few days since I am currently
+> not at home where my LANDISK boxes are. I also had issues with the
+> IDE driver in the past but Sato-san gave me some tips regarding it.
+> 
+> However, Rich also has a LANDISK device that I donated for him, so if his
+> hardware is currently ready to use, he could give it a try.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
----
- .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+Presently my LANDISK is in storage along with lots of other stuff due
+to fire, but as far as I know it was not damaged. However I never got
+directions for how to install a new kernel and point the bootloader at
+it. It'll probably be another couple months before I get to moving
+back in and unpacking everything from storage, but if you or anyone
+else can get me the info between now and then on how to install new
+kernel rather than just dd'ing a whole disk image, I'll follow up as
+soon as I can.
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-new file mode 100644
-index 000000000000..0952ee3bc30b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -0,0 +1,49 @@
-+* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd9571mwv".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
-+			    The first cell is the IRQ number.
-+			    The second cell is the flags, encoded as trigger
-+			    masks from ../interrupt-controller/interrupts.txt.
-+ - gpio-controller      : Marks the device node as a GPIO Controller.
-+ - #gpio-cells          : Should be two.  The first cell is the pin number and
-+                            the second cell is used to specify flags.
-+                            See ../gpio/gpio.txt for more information.
-+ - regulators:          : List of child nodes that specify the regulator
-+                            initialization data. Child nodes must be named
-+                            after their hardware counterparts:
-+			     - vd18
-+			     - vd25
-+			     - vd33
-+			     - dvfs
-+			    Each child node is defined using the standard
-+			    binding for regulators.
-+
-+Example:
-+
-+	pmic: bd9571mwv@30 {
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		regulators {
-+			dvfs: dvfs {
-+				compatible = "regulator-fixed";
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
--- 
-2.11.0
+Rich
