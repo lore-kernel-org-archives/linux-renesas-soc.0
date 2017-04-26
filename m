@@ -1,67 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39880 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41800 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1167177AbdDXIwP (ORCPT
+        with ESMTP id S1953015AbdDZHgH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 04:52:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 26 Apr 2017 03:36:07 -0400
+Date: Wed, 26 Apr 2017 09:36:01 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: r8a7795: update PFC node name to pin-controller
-Date: Mon, 24 Apr 2017 10:51:55 +0200
-Message-Id: <1493023915-21658-1-git-send-email-horms+renesas@verge.net.au>
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH/RFC 0/2] clk / soc: renesas: Rework Kconfig and Makefile
+ logic
+Message-ID: <20170426073601.GF25517@verge.net.au>
+References: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller
-as the node name for the PFC device. This patch is intended to take a step
-towards unifying the node name used as pin-controller which appears to
-be more the more generic of the two and thus more in keeping with the DT
-specs.
+On Tue, Apr 25, 2017 at 06:27:04PM +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> This RFC patch series reworks the Kconfig and Makefile logic for the
+> Renesas clock and SoC drivers. It was sparked by a discussion with Olof
+> about the Renesas clock driver dependencies.
+> 
+> The goals are to:
+>   - Allow precise control over and automatic selection of which
+>     (sub)drivers are used for which SoC (which may change in the
+>     future),
+>   - Allow adding support for new SoCs easily,
+>   - Allow compile-testing of all (sub)drivers,
+>   - Keep driver selection logic in the subsystem-specific Kconfig
+>     independent from the architecture-specific Kconfig (i.e. no "select"
+>     from arch/arm64/Kconfig.platforms), to avoid dependencies.
+> 
+> The series can't be applied as-is, because compile-testing all drivers
+> depends on independent fixes, some in other subsystems.
+> 
+> More details are provided in the individual patch descriptions.
+> 
+> For testing, this patch series, plus several fixes to allow more
+> compile-testing, are available in the
+> topic/clk-soc-renesas-Kconfig-rework branch of my renesas-drivers git
+> repository at 
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> 
+> This has been tested on R-Car Gen2 and Gen3, and compile-tested for
+> various other configurations.
+> 
+> Thanks for your comments!
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from e6060000.pfc and pfc@e6060000 to
-e6060000.pin-controller and pin-controller@e6060000.
+Hi Geert,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-Before:
-/sys/kernel/debug/pinctrl/e6060000.pfc
-/sys/devices/platform/soc/e6060000.pfc
-/sys/firmware/devicetree/base/soc/pfc@e6060000
-/sys/bus/platform/devices/e6060000.pfc
-/sys/bus/platform/drivers/sh-pfc
-/sys/bus/platform/drivers/sh-pfc/e6060000.pfc
+thanks for working on this. I am very pleased to see something that
+is more robust with regards to adding new platforms without causing
+build breakage - I have been burnt by this several times.
 
-After:
-/sys/kernel/debug/pinctrl/e6060000.pin-controller
-/sys/devices/platform/soc/e6060000.pin-controller
-/sys/firmware/devicetree/base/soc/pin-controller@e6060000
-/sys/bus/platform/devices/e6060000.pin-controller
-/sys/bus/platform/drivers/sh-pfc
-/sys/bus/platform/drivers/sh-pfc/e6060000.pin-controller
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index e99d6443b3e4..7d87dff70ac8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -398,7 +398,7 @@
- 			#power-domain-cells = <1>;
- 		};
- 
--		pfc: pfc@e6060000 {
-+		pfc: pin-controller@e6060000 {
- 			compatible = "renesas,pfc-r8a7795";
- 			reg = <0 0xe6060000 0 0x50c>;
- 		};
--- 
-2.7.0.rc3.207.g0ac5344
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
