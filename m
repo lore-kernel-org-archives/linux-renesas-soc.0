@@ -1,58 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35800 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965414AbdDSRsU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45749 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1037628AbdDZKGS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:48:20 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Wed, 26 Apr 2017 06:06:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add Sound SSI clock
-Date: Thu, 20 Apr 2017 02:46:34 +0900
-Message-Id: <1492624001-3758-14-git-send-email-ykaneko0929@gmail.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] ARM: dts: r8a7778: update PFC node name to pin-controller
+Date: Wed, 26 Apr 2017 12:05:33 +0200
+Message-Id: <20170426100538.22060-5-horms+renesas@verge.net.au>
+In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
+References: <20170426100538.22060-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+The device trees for Renesas SoCs use either pfc or pin-controller as the
+node name for the PFC device. This patch is intended to take a step towards
+unifying the node name used as pin-controller which appears to be the more
+generic of the two and thus more in keeping with the DT specs.
 
-This patch adds SSI(all) and SSI{0,1,2,3,4,5,6,7,8,9} clocks for R8A7796
-SoC.
+My analysis is that this is a user-visible change to the extent that kernel
+logs, and sysfs entries change from fffc0000.pfc and pfc@fffc0000 to
+fffc0000.pin-controller and pin-controller@fffc0000.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is based on the clk-next branch of linux-clk tree.
+ arch/arm/boot/dts/r8a7778.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 27afd48..9be8187 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -208,6 +208,17 @@ enum clk_ids {
- 	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
- 	DEF_MOD("i2c1",			 930,	R8A7796_CLK_S3D2),
- 	DEF_MOD("i2c0",			 931,	R8A7796_CLK_S3D2),
-+	DEF_MOD("ssi-all",		1005,	R8A7796_CLK_S3D4),
-+	DEF_MOD("ssi9",			1006,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi8",			1007,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi7",			1008,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi6",			1009,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi5",			1010,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi4",			1011,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi3",			1012,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
- };
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index 1e93c94a9eac..8f3156c0e575 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -142,7 +142,7 @@
+ 		interrupt-controller;
+ 	};
  
- static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
+-	pfc: pfc@fffc0000 {
++	pfc: pin-controller@fffc0000 {
+ 		compatible = "renesas,pfc-r8a7778";
+ 		reg = <0xfffc0000 0x118>;
+ 	};
 -- 
-1.9.1
+2.12.2.816.g2cccc81164
