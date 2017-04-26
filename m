@@ -1,48 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:34118 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968699AbdDSRrs (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35707 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1946495AbdDZNBh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:47:48 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add Audio-DMAC clocks
-Date: Thu, 20 Apr 2017 02:46:28 +0900
-Message-Id: <1492624001-3758-8-git-send-email-ykaneko0929@gmail.com>
+        Wed, 26 Apr 2017 09:01:37 -0400
+Received: by mail-it0-f68.google.com with SMTP id 70so382879ita.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Apr 2017 06:01:37 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <201704261342.ynFfd88A%fengguang.wu@intel.com>
+References: <201704261342.ynFfd88A%fengguang.wu@intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Apr 2017 15:01:35 +0200
+Message-ID: <CAMuHMdXy2mDze2iidgbFKRbtK7AOzUUZd-kCahMTbwK8q_wCTw@mail.gmail.com>
+Subject: Re: [renesas-drivers:topic/rcar2-cpg-mssr 11/32] drivers/soc/renesas/rcar-sysc.c:141:11:
+ warning: format '%x' expects argument of type 'unsigned int', but argument 5
+ has type 'long unsigned int'
+To: kbuild test robot <fengguang.wu@intel.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "kbuild-all@01.org" <kbuild-all@01.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Hi Fengguang,
 
-This patch adds A-DMAC{0,1} clocks for R8A7796 SoC.
+On Wed, Apr 26, 2017 at 7:01 AM, kbuild test robot
+<fengguang.wu@intel.com> wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/rcar2-cpg-mssr
+> head:   bd948f4b8c455dfdbc8175b5c2bc29c91b048971
+> commit: 2cf8d523ad52acbc77845a2634c229a55e849762 [11/32] [RFC] soc: renesas: Rework Kconfig and Makefile logic
+> config: m32r-allyesconfig (attached as .config)
+> compiler: m32r-linux-gcc (GCC) 6.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 2cf8d523ad52acbc77845a2634c229a55e849762
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=m32r
+>
+> All warnings (new ones prefixed by >>):
+>
+>    In file included from include/linux/kernel.h:13:0,
+>                     from include/linux/delay.h:21,
+>                     from drivers/soc/renesas/rcar-sysc.c:13:
+>    drivers/soc/renesas/rcar-sysc.c: In function 'rcar_sysc_power':
+>>> drivers/soc/renesas/rcar-sysc.c:141:11: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat=]
+>      pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
+>               ^
+>    include/linux/printk.h:285:21: note: in definition of macro 'pr_fmt'
+>     #define pr_fmt(fmt) fmt
+>                         ^~~
+>    include/linux/printk.h:333:2: note: in expansion of macro 'dynamic_pr_debug'
+>      dynamic_pr_debug(fmt, ##__VA_ARGS__)
+>      ^~~~~~~~~~~~~~~~
+>>> drivers/soc/renesas/rcar-sysc.c:141:2: note: in expansion of macro 'pr_debug'
+>      pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
+>      ^~~~~~~~
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+readl() (actually _readl()) on m32r returns unsigned long instead of
+u32 or unsigned int.
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c6c5026..f217796 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -138,6 +138,8 @@ enum clk_ids {
- 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
-+	DEF_MOD("audmac0",		 502,	R8A7796_CLK_S3D4),
-+	DEF_MOD("audmac1",		 501,	R8A7796_CLK_S3D4),
- 	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
- 	DEF_MOD("drif6",		 509,	R8A7796_CLK_S3D2),
- 	DEF_MOD("drif5",		 510,	R8A7796_CLK_S3D2),
+
 -- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
