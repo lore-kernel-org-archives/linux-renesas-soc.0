@@ -1,73 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:52470 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761476AbdDSJPz (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:17996 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1949594AbdDZLwh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 05:15:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/8] [RFC] arm64: dts: renesas: Add R-Car M3-W SiP (2 x 1 GiB) support
-Date: Wed, 19 Apr 2017 11:15:46 +0200
-Message-Id: <1492593351-13835-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
-References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+        Wed, 26 Apr 2017 07:52:37 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/5] usb: gadget: udc: renesas_usb3: Fix PN_INT_ENA disabling timing
+Date: Wed, 26 Apr 2017 20:50:10 +0900
+Message-ID: <1493207411-24416-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car M3-W System-in-Package (r8j7796), which contains:
-  - an R-Car M3-W SoC (r8a7796),
-  - 2 channels of 1 GiB of RAM (2 GiB total),
-  - HyperFlash (not yet described).
+The PN_INT_ENA register should be used after usb3_pn_change() is called.
+So, this patch moves the access from renesas_usb3_stop_controller() to
+usb3_disable_pipe_n().
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-Questions:
-  - Should this file be named r8j7796-2g.dtsi instead?
-  - What's the official name of r8j7796 with 2 x 1 GiB of RAM?
----
- arch/arm64/boot/dts/renesas/r8j7796-2x1g.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8j7796-2x1g.dtsi
+ drivers/usb/gadget/udc/renesas_usb3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8j7796-2x1g.dtsi b/arch/arm64/boot/dts/renesas/r8j7796-2x1g.dtsi
-new file mode 100644
-index 0000000000000000..ba274c132e6dd984
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8j7796-2x1g.dtsi
-@@ -0,0 +1,26 @@
-+/*
-+ * Device Tree Source for the r8a7796 SiP with 2 channels of 1 GiB RAM
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7796.dtsi"
-+
-+/ {
-+	compatible = "renesas,r8j7796", "renesas,r8a7796";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+};
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index c05097b..cd4c885 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -623,7 +623,6 @@ static void renesas_usb3_stop_controller(struct renesas_usb3 *usb3)
+ {
+ 	usb3_disconnect(usb3);
+ 	usb3_write(usb3, 0, USB3_P0_INT_ENA);
+-	usb3_write(usb3, 0, USB3_PN_INT_ENA);
+ 	usb3_write(usb3, 0, USB3_USB_OTG_INT_ENA);
+ 	usb3_write(usb3, 0, USB3_USB_INT_ENA_1);
+ 	usb3_write(usb3, 0, USB3_USB_INT_ENA_2);
+@@ -1682,6 +1681,7 @@ static int usb3_disable_pipe_n(struct renesas_usb3_ep *usb3_ep)
+ 
+ 	spin_lock_irqsave(&usb3->lock, flags);
+ 	if (!usb3_pn_change(usb3, usb3_ep->num)) {
++		usb3_write(usb3, 0, USB3_PN_INT_ENA);
+ 		usb3_write(usb3, 0, USB3_PN_RAMMAP);
+ 		usb3_clear_bit(usb3, PN_CON_EN, USB3_PN_CON);
+ 	}
 -- 
-2.7.4
+1.9.1
