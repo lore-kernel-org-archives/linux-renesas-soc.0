@@ -1,59 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54687 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933632AbdDGP7B (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:39488 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1949599AbdDZLwg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:59:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/22] ARM: dts: r7s72100: add RTC_X clock inputs to device tree
-Date: Fri,  7 Apr 2017 11:58:17 -0400
-Message-Id: <deddcb891d0d2b4f437dea9bdea4752982c4b133.1491580547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491580547.git.horms+renesas@verge.net.au>
-References: <cover.1491580547.git.horms+renesas@verge.net.au>
+        Wed, 26 Apr 2017 07:52:36 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/5] usb: gadget: udc: renesas_usb3: fix deadlock by spinlock
+Date: Wed, 26 Apr 2017 20:50:08 +0900
+Message-ID: <1493207411-24416-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+This patch fixes an issue that this driver is possible to cause
+deadlock by double-spinclocked in renesas_usb3_stop_controller().
+So, this patch removes spinlock API calling in renesas_usb3_stop().
+(In other words, the previous code had a redundant lock.)
 
-Add the RTC clocks to device tree. The frequencies must be fixed values
-according to the hardware manual.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/usb/gadget/udc/renesas_usb3.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 9eace892fec7..9db46ac08ba7 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -51,6 +51,20 @@
- 			clock-frequency = <0>;
- 		};
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 10585da..e27d948 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -1810,14 +1810,11 @@ static int renesas_usb3_start(struct usb_gadget *gadget,
+ static int renesas_usb3_stop(struct usb_gadget *gadget)
+ {
+ 	struct renesas_usb3 *usb3 = gadget_to_renesas_usb3(gadget);
+-	unsigned long flags;
  
-+		rtc_x1_clk: rtc_x1 {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			/* If clk present, value must be set by board to 32678 */
-+			clock-frequency = <0>;
-+		};
-+
-+		rtc_x3_clk: rtc_x3 {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			/* If clk present, value must be set by board to 4000000 */
-+			clock-frequency = <0>;
-+		};
-+
- 		/* Fixed factor clocks */
- 		b_clk: b {
- 			#clock-cells = <0>;
+-	spin_lock_irqsave(&usb3->lock, flags);
+ 	usb3->softconnect = false;
+ 	usb3->gadget.speed = USB_SPEED_UNKNOWN;
+ 	usb3->driver = NULL;
+ 	renesas_usb3_stop_controller(usb3);
+-	spin_unlock_irqrestore(&usb3->lock, flags);
+ 
+ 	pm_runtime_put(usb3_to_dev(usb3));
+ 	pm_runtime_disable(usb3_to_dev(usb3));
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
