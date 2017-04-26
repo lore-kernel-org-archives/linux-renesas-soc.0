@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:35352 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968769AbdDSRsF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45776 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2997071AbdDZKGs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:48:05 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Wed, 26 Apr 2017 06:06:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add USB-DMAC clocks
-Date: Thu, 20 Apr 2017 02:46:29 +0900
-Message-Id: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 6/9] ARM: dts: r8a7790: update PFC node name to pin-controller
+Date: Wed, 26 Apr 2017 12:05:35 +0200
+Message-Id: <20170426100538.22060-7-horms+renesas@verge.net.au>
+In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
+References: <20170426100538.22060-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+The device trees for Renesas SoCs use either pfc or pin-controller as the
+node name for the PFC device. This patch is intended to take a step towards
+unifying the node name used as pin-controller which appears to be the more
+generic of the two and thus more in keeping with the DT specs.
 
-This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
+My analysis is that this is a user-visible change to the extent that kernel
+logs, and sysfs entries change from e6060000.pfc and pfc@e6060000 to
+e6060000.pin-controller and pin-controller@e6060000.
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is based on the clk-next branch of linux-clk tree.
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index f217796..27afd48 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -137,6 +137,8 @@ enum clk_ids {
- 	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
- 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
-+	DEF_MOD("usb-dmac0",		 330,	R8A7796_CLK_S3D1),
-+	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
- 	DEF_MOD("audmac0",		 502,	R8A7796_CLK_S3D4),
- 	DEF_MOD("audmac1",		 501,	R8A7796_CLK_S3D4),
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 99269aaca6fc..416956a42c93 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -614,7 +614,7 @@
+ 		max-frequency = <97500000>;
+ 	};
+ 
+-	pfc: pfc@e6060000 {
++	pfc: pin-controller@e6060000 {
+ 		compatible = "renesas,pfc-r8a7790";
+ 		reg = <0 0xe6060000 0 0x250>;
+ 	};
 -- 
-1.9.1
+2.12.2.816.g2cccc81164
