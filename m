@@ -1,87 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33550 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966132AbdDTOjL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45776 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2997051AbdDZKGq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 10:39:11 -0400
-Received: by mail-oi0-f68.google.com with SMTP id a189so10323442oib.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Apr 2017 07:39:11 -0700 (PDT)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: alsa-devel@alsa-project.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ASoC: rsnd: Fix possible NULL pointer dereference
-Date: Thu, 20 Apr 2017 16:38:58 +0200
-Message-Id: <20170420143858.32150-1-marek.vasut+renesas@gmail.com>
+        Wed, 26 Apr 2017 06:06:46 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/9] ARM: dts: r8a7779: update PFC node name to pin-controller
+Date: Wed, 26 Apr 2017 12:05:34 +0200
+Message-Id: <20170426100538.22060-6-horms+renesas@verge.net.au>
+In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
+References: <20170426100538.22060-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In case the "clock-frequency" DT property is not present, the
-of_find_property(np, "clock-frequency", NULL) will return NULL
-and the subsequent req_size = prop->length / sizeof(u32); will
-trigger a NULL pointer dereference.
+The device trees for Renesas SoCs use either pfc or pin-controller as the
+node name for the PFC device. This patch is intended to take a step towards
+unifying the node name used as pin-controller which appears to be the more
+generic of the two and thus more in keeping with the DT specs.
 
-This patch adds check for the NULL return value and propagates
-the error into the caller of the function.
+My analysis is that this is a user-visible change to the extent that kernel
+logs, and sysfs entries change from fffc0000.pfc and pfc@fffc0000 to
+fffc0000.pin-controller and pin-controller@fffc0000.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/sh/rcar/adg.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 96fef91b480c..a7cbe7e89dfc 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -425,8 +425,7 @@ static void rsnd_adg_get_clkin(struct rsnd_priv *priv,
- 		dev_dbg(dev, "clk %d : %p : %ld\n", i, clk, clk_get_rate(clk));
- }
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index ae2d9a9c65af..8ee0b2ca5d39 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -286,7 +286,7 @@
+ 		status = "disabled";
+ 	};
  
--static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
--				struct rsnd_adg *adg)
-+static int rsnd_adg_get_clkout(struct rsnd_priv *priv, struct rsnd_adg *adg)
- {
- 	struct clk *clk;
- 	struct device *dev = rsnd_priv_to_dev(priv);
-@@ -459,7 +458,10 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
- 	 * ADG supports BRRA/BRRB output only
- 	 * this means all clkout0/1/2/3 will be same rate
- 	 */
--	prop = of_find_property(np, "clock-frequency", NULL);;
-+	prop = of_find_property(np, "clock-frequency", NULL);
-+	if (!prop)
-+		return -EINVAL;
-+
- 	req_size = prop->length / sizeof(u32);
- 
- 	of_property_read_u32_array(np, "clock-frequency", req_rate, req_size);
-@@ -568,6 +570,7 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
- 		dev_dbg(dev, "clkout %d : %p : %ld\n", i, clk, clk_get_rate(clk));
- 	dev_dbg(dev, "BRGCKR = 0x%08x, BRRA/BRRB = 0x%x/0x%x\n",
- 		ckr, rbga, rbgb);
-+	return 0;
- }
- 
- int rsnd_adg_probe(struct rsnd_priv *priv)
-@@ -589,7 +592,9 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 		return ret;
- 
- 	rsnd_adg_get_clkin(priv, adg);
--	rsnd_adg_get_clkout(priv, adg);
-+	ret = rsnd_adg_get_clkout(priv, adg);
-+	if (ret)
-+		return ret;
- 
- 	if (of_get_property(np, "clkout-lr-asynchronous", NULL))
- 		adg->flags = LRCLK_ASYNC;
+-	pfc: pfc@fffc0000 {
++	pfc: pin-controller@fffc0000 {
+ 		compatible = "renesas,pfc-r8a7779";
+ 		reg = <0xfffc0000 0x23c>;
+ 	};
 -- 
-2.11.0
+2.12.2.816.g2cccc81164
