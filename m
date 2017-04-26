@@ -1,12 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44485 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1951486AbdDZI4Q (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34186 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2993905AbdDZIL6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 04:56:16 -0400
-Date: Wed, 26 Apr 2017 10:56:10 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Wed, 26 Apr 2017 04:11:58 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170426080642.GK25517@verge.net.au>
+References: <1492779321-23939-1-git-send-email-geert+renesas@glider.be> <20170426080642.GK25517@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Apr 2017 10:11:55 +0200
+Message-ID: <CAMuHMdXbe=rkeS+-teg7nqbjULWY0_5pBO1XEzCGdYA4gB57oA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/5] arm64: dts: renesas: Break out common board support
+To: Simon Horman <horms@verge.net.au>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -18,68 +23,69 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: Re: [PATCH/RFC 0/5] arm64: dts: renesas: Break out common board
- support
-Message-ID: <20170426085610.GM25517@verge.net.au>
-References: <1492779321-23939-1-git-send-email-geert+renesas@glider.be>
- <20170426080642.GK25517@verge.net.au>
- <CAMuHMdXbe=rkeS+-teg7nqbjULWY0_5pBO1XEzCGdYA4gB57oA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXbe=rkeS+-teg7nqbjULWY0_5pBO1XEzCGdYA4gB57oA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 26, 2017 at 10:11:55AM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> CC Vladimir (which I forgot to CC initially, sorry for that)
-> 
-> On Wed, Apr 26, 2017 at 10:06 AM, Simon Horman <horms@verge.net.au> wrote:
-> > On Fri, Apr 21, 2017 at 02:55:16PM +0200, Geert Uytterhoeven wrote:
-> >> The Renesas Salvator-X and ULCB development board can be equipped with
-> >> either an R-Car H3 or M3-W SiP, which are pin-compatible.  All boards
-> >> use separate DTBs, but currently there's no sharing of board-specific
-> >> devices in DTS.
-> >>
-> >> This series reduces duplication by extracting common board support into
-> >> their own .dtsi files.  As the level of support varies across boards and
-> >> SoCs, this requires the addition of a few external clocks and
-> >> placeholder devices on R-Car M3-W, so the common board support DTS can
-> >> refer to them.
-> >>
-> >>   - Patches 1 and 2 add the external audio and PCIe bus clocks on R-Car
-> >>     M3-W, which are present in r8a7795.dtsi, and used in
-> >>     r8a7795-salvator-x.dts,
-> >>   - RFC patch 3 adds placeholders for devices that are not yet supported
-> >>     and/or tested on R-Car M3-W, but used on R-Car H3,
-> >>   - RFC patch 4 extracts common Salvator-X board support,
-> >>   - RFC patch 5 extracts common ULCB board support.
-> >>
-> >> For R-Car H3 based boards, there are no functional changes.
-> >> For R-Car M3-W based boards, some new devices are now described in DT.
-> >>
-> >> Dependencies:
-> >>   - renesas-devel-20170420-v4.11-rc7,
-> >>   - Patches 1 and 2 can be applied as-is,
-> >>   - Patches 4 and 5 depend on "[PATCH 0/8] arm64: dts: renesas: Break
-> >>     out R-Car H3 and M3-W SiP"
-> >>     (http://www.spinics.net/lists/devicetree/msg173820.html).
-> >>
-> >> DTB changes have been inspected using scripts/dtc/dtx_diff.
-> >> This has been tested on Salvator-X (both H3 and M3-W).
-> >> This has not been tested on H3ULCB and M3ULCB due to lack of hardware.
-> >>
-> >> Thanks for your comments!
-> >
-> > Thanks for tackling this important problem. I have looked over the changes
-> > and they seem nice to me. I would, however, be more comfortable applying
-> > them if they were rested on the ULCB boards.
-> 
-> tested?
+Hi Simon,
 
-Yes, tested :)
+CC Vladimir (which I forgot to CC initially, sorry for that)
 
-> I've pushed a branch for testing to topic/rcar3-dtsi-sharing in
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+On Wed, Apr 26, 2017 at 10:06 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Apr 21, 2017 at 02:55:16PM +0200, Geert Uytterhoeven wrote:
+>> The Renesas Salvator-X and ULCB development board can be equipped with
+>> either an R-Car H3 or M3-W SiP, which are pin-compatible.  All boards
+>> use separate DTBs, but currently there's no sharing of board-specific
+>> devices in DTS.
+>>
+>> This series reduces duplication by extracting common board support into
+>> their own .dtsi files.  As the level of support varies across boards and
+>> SoCs, this requires the addition of a few external clocks and
+>> placeholder devices on R-Car M3-W, so the common board support DTS can
+>> refer to them.
+>>
+>>   - Patches 1 and 2 add the external audio and PCIe bus clocks on R-Car
+>>     M3-W, which are present in r8a7795.dtsi, and used in
+>>     r8a7795-salvator-x.dts,
+>>   - RFC patch 3 adds placeholders for devices that are not yet supported
+>>     and/or tested on R-Car M3-W, but used on R-Car H3,
+>>   - RFC patch 4 extracts common Salvator-X board support,
+>>   - RFC patch 5 extracts common ULCB board support.
+>>
+>> For R-Car H3 based boards, there are no functional changes.
+>> For R-Car M3-W based boards, some new devices are now described in DT.
+>>
+>> Dependencies:
+>>   - renesas-devel-20170420-v4.11-rc7,
+>>   - Patches 1 and 2 can be applied as-is,
+>>   - Patches 4 and 5 depend on "[PATCH 0/8] arm64: dts: renesas: Break
+>>     out R-Car H3 and M3-W SiP"
+>>     (http://www.spinics.net/lists/devicetree/msg173820.html).
+>>
+>> DTB changes have been inspected using scripts/dtc/dtx_diff.
+>> This has been tested on Salvator-X (both H3 and M3-W).
+>> This has not been tested on H3ULCB and M3ULCB due to lack of hardware.
+>>
+>> Thanks for your comments!
+>
+> Thanks for tackling this important problem. I have looked over the changes
+> and they seem nice to me. I would, however, be more comfortable applying
+> them if they were rested on the ULCB boards.
+
+tested?
+
+I've pushed a branch for testing to topic/rcar3-dtsi-sharing in
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
