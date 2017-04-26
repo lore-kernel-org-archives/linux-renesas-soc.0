@@ -1,18 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43151 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:43913 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1955641AbdDZIAd (ORCPT
+        with ESMTP id S1036321AbdDZINy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 04:00:33 -0400
+        Wed, 26 Apr 2017 04:13:54 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: dts: silk: Enable UHS-I SDR-50
-Date: Wed, 26 Apr 2017 10:00:24 +0200
-Message-Id: <20170426080024.8391-1-horms+renesas@verge.net.au>
+Subject: [PATCH/RFT v3 renesas-devel] ARM: dts: silk: Enable UHS-I SDR-50
+Date: Wed, 26 Apr 2017 10:13:34 +0200
+Message-Id: <20170426081334.11846-1-horms+renesas@verge.net.au>
+In-Reply-To: <20170426080024.8391-1-horms+renesas@verge.net.au>
+References: <20170426080024.8391-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -20,6 +22,7 @@ Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI1.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+* Prepared on top of renesas-devel-20170424-v4.11-rc8
 * Compile tested only; no access to silk board
 
 v3
