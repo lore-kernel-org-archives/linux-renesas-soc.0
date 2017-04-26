@@ -1,60 +1,101 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 11/21] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
-Date: Thu, 13 Apr 2017 22:04:35 -0300
-Message-Id: <20170414010445.21727-12-javier@osg.samsung.com>
-In-Reply-To: <20170414010445.21727-1-javier@osg.samsung.com>
-References: <20170414010445.21727-1-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:15818 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1949623AbdDZLwh (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 26 Apr 2017 07:52:37 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/5] usb: gadget: udc: renesas_usb3: lock for PN_ registers access
+Date: Wed, 26 Apr 2017 20:50:09 +0900
+Message-ID: <1493207411-24416-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1493207411-24416-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+This controller disallows to change the PIPE until reading/writing
+a packet finishes. However. the previous code is not enough to hold
+the lock in some functions. So, this patch fixes it.
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
-
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
+ drivers/usb/gadget/udc/renesas_usb3.c | 28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
-Changes in v3:
-- Add Geert Uytterhoeven reviewed-by tag.
-
-Changes in v2: None
-
- arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 001e6116c47c..dc8ed02de707 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -702,7 +702,7 @@
- 	};
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index e27d948..c05097b 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -1475,7 +1475,13 @@ static void usb3_request_done_pipen(struct renesas_usb3 *usb3,
+ 				    struct renesas_usb3_request *usb3_req,
+ 				    int status)
+ {
+-	usb3_pn_stop(usb3);
++	unsigned long flags;
++
++	spin_lock_irqsave(&usb3->lock, flags);
++	if (usb3_pn_change(usb3, usb3_ep->num))
++		usb3_pn_stop(usb3);
++	spin_unlock_irqrestore(&usb3->lock, flags);
++
+ 	usb3_disable_pipe_irq(usb3, usb3_ep->num);
+ 	usb3_request_done(usb3_ep, usb3_req, status);
  
- 	eeprom@50 {
--		compatible = "renesas,24c02";
-+		compatible = "renesas,24c02", "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
+@@ -1504,30 +1510,46 @@ static void usb3_irq_epc_pipen_bfrdy(struct renesas_usb3 *usb3, int num)
+ {
+ 	struct renesas_usb3_ep *usb3_ep = usb3_get_ep(usb3, num);
+ 	struct renesas_usb3_request *usb3_req = usb3_get_request(usb3_ep);
++	bool done = false;
+ 
+ 	if (!usb3_req)
+ 		return;
+ 
++	spin_lock(&usb3->lock);
++	if (usb3_pn_change(usb3, num))
++		goto out;
++
+ 	if (usb3_ep->dir_in) {
+ 		/* Do not stop the IN pipe here to detect LSTTR interrupt */
+ 		if (!usb3_write_pipe(usb3_ep, usb3_req, USB3_PN_WRITE))
+ 			usb3_clear_bit(usb3, PN_INT_BFRDY, USB3_PN_INT_ENA);
+ 	} else {
+ 		if (!usb3_read_pipe(usb3_ep, usb3_req, USB3_PN_READ))
+-			usb3_request_done_pipen(usb3, usb3_ep, usb3_req, 0);
++			done = true;
+ 	}
++
++out:
++	/* need to unlock because usb3_request_done_pipen() locks it */
++	spin_unlock(&usb3->lock);
++
++	if (done)
++		usb3_request_done_pipen(usb3, usb3_ep, usb3_req, 0);
+ }
+ 
+ static void usb3_irq_epc_pipen(struct renesas_usb3 *usb3, int num)
+ {
+ 	u32 pn_int_sta;
+ 
+-	if (usb3_pn_change(usb3, num) < 0)
++	spin_lock(&usb3->lock);
++	if (usb3_pn_change(usb3, num) < 0) {
++		spin_unlock(&usb3->lock);
+ 		return;
++	}
+ 
+ 	pn_int_sta = usb3_read(usb3, USB3_PN_INT_STA);
+ 	pn_int_sta &= usb3_read(usb3, USB3_PN_INT_ENA);
+ 	usb3_write(usb3, pn_int_sta, USB3_PN_INT_STA);
++	spin_unlock(&usb3->lock);
+ 	if (pn_int_sta & PN_INT_LSTTR)
+ 		usb3_irq_epc_pipen_lsttr(usb3, num);
+ 	if (pn_int_sta & PN_INT_BFRDY)
 -- 
-2.9.3
+1.9.1
