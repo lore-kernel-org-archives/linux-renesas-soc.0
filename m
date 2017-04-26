@@ -1,102 +1,89 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:55509 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755213AbdD0WeE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:34:04 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] media: entity: Add media_entity_pad_from_dt_regs() function
-Date: Fri, 28 Apr 2017 00:33:23 +0200
-Message-Id: <20170427223323.13861-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427223323.13861-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427223323.13861-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] serial: sh-sci: Fix race condition causing garbage during
+ shutdown
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <1493144135-898-1-git-send-email-geert+renesas@glider.be>
+Cc: Jiri Slaby <jslaby@suse.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Richard Genoud <richard.genoud@gmail.com>
+Message-ID: <fd16d1a4-674a-c1cf-d8ef-ab20796ec7e6@gmail.com>
+Date: Wed, 26 Apr 2017 12:08:28 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1493144135-898-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is a wrapper around the media entity pad_from_dt_regs operation.
+On 25/04/2017 20:15, Geert Uytterhoeven wrote:
+> If DMA is enabled and used, a burst of old data may be seen on the
+> serial console during "poweroff" or "reboot".  uart_flush_buffer()
+> clears the circular buffer, but sci_port.tx_dma_len is not reset.
+> This leads to a circular buffer overflow, dumping (UART_XMIT_SIZE -
+> sci_port.tx_dma_len) bytes.
+> 
+> To fix this, add a .flush_buffer() callback that resets
+> sci_port.tx_dma_len.
+> 
+> Inspired by commit 31ca2c63fdc0aee7 ("tty/serial: atmel: fix race
+> condition (TX+DMA)").
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> A big thanks to Richard!
+> I had no idea what was happening here, until I saw his patch passing by
+> in a stable backport.
+:)
+you're welcome !
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/media-entity.c | 21 +++++++++++++++++++++
- include/media/media-entity.h | 22 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
-
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 5640ca29da8c9bbc..6ef76186d552724e 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -386,6 +386,27 @@ struct media_entity *media_graph_walk_next(struct media_graph *graph)
- }
- EXPORT_SYMBOL_GPL(media_graph_walk_next);
- 
-+int media_entity_pad_from_dt_regs(struct media_entity *entity,
-+				  int port_reg, int reg, unsigned int *pad)
-+{
-+	int ret;
-+
-+	if (!entity->ops || !entity->ops->pad_from_dt_regs) {
-+		*pad = port_reg;
-+		return 0;
-+	}
-+
-+	ret = entity->ops->pad_from_dt_regs(port_reg, reg, pad);
-+	if (ret)
-+		return ret;
-+
-+	if (*pad >= entity->num_pads)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(media_entity_pad_from_dt_regs);
-+
- /* -----------------------------------------------------------------------------
-  * Pipeline management
-  */
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 47efaf4d825e671b..c60a3713d0a21baf 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -820,6 +820,28 @@ struct media_pad *media_entity_remote_pad(struct media_pad *pad);
- struct media_entity *media_entity_get(struct media_entity *entity);
- 
- /**
-+ * media_entity_pad_from_dt_regs - Get pad number from DT regs
-+ *
-+ * @entity: The entity
-+ * @port_reg: DT port
-+ * @reg: DT reg
-+ * @pad: Pointer to pad which will be filled in
-+ *
-+ * This function can be used to resolve the media pad number from
-+ * DT port and reg numbers. This is useful for devices which
-+ * uses more complex mappings of media pads then that the
-+ * DT port number is equivalent to the media pad number.
-+ *
-+ * If the entity do not implement the pad_from_dt_regs() operation
-+ * this function assumes DT port is equivalent to media pad number
-+ * and sets @pad to @port_reg.
-+ *
-+ * Return: 0 on success else -EINVAL.
-+ */
-+int media_entity_pad_from_dt_regs(struct media_entity *entity,
-+				  int port_reg, int reg, unsigned int *pad);
-+
-+/**
-  * media_graph_walk_init - Allocate resources used by graph walk.
-  *
-  * @graph: Media graph structure that will be used to walk the graph
--- 
-2.12.2
+> In v4.3 and older, the field is called sg_len_tx.
+> ---
+>  drivers/tty/serial/sh-sci.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 9a47cc4f16a2798f..a15739202d6c75f2 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1545,7 +1545,16 @@ static void sci_free_dma(struct uart_port *port)
+>  	if (s->chan_rx)
+>  		sci_rx_dma_release(s, false);
+>  }
+> -#else
+> +
+> +static void sci_flush_buffer(struct uart_port *port)
+> +{
+> +	/*
+> +	 * In uart_flush_buffer(), the xmit circular buffer has just been
+> +	 * cleared, so we have to reset tx_dma_len accordingly.
+> +	 */
+> +	to_sci_port(port)->tx_dma_len = 0;
+> +}
+> +#else /* !CONFIG_SERIAL_SH_SCI_DMA */
+>  static inline void sci_request_dma(struct uart_port *port)
+>  {
+>  }
+> @@ -1553,7 +1562,9 @@ static inline void sci_request_dma(struct uart_port *port)
+>  static inline void sci_free_dma(struct uart_port *port)
+>  {
+>  }
+> -#endif
+> +
+> +#define sci_flush_buffer	NULL
+> +#endif /* !CONFIG_SERIAL_SH_SCI_DMA */
+>  
+>  static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+>  {
+> @@ -2566,6 +2577,7 @@ static const struct uart_ops sci_uart_ops = {
+>  	.break_ctl	= sci_break_ctl,
+>  	.startup	= sci_startup,
+>  	.shutdown	= sci_shutdown,
+> +	.flush_buffer	= sci_flush_buffer,
+>  	.set_termios	= sci_set_termios,
+>  	.pm		= sci_pm,
+>  	.type		= sci_type,
+> 
