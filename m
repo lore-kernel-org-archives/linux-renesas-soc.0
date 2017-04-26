@@ -1,71 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43913 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:40300 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1036321AbdDZINy (ORCPT
+        with ESMTP id S1751189AbdDZHJk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Apr 2017 04:13:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT v3 renesas-devel] ARM: dts: silk: Enable UHS-I SDR-50
-Date: Wed, 26 Apr 2017 10:13:34 +0200
-Message-Id: <20170426081334.11846-1-horms+renesas@verge.net.au>
-In-Reply-To: <20170426080024.8391-1-horms+renesas@verge.net.au>
-References: <20170426080024.8391-1-horms+renesas@verge.net.au>
+        Wed, 26 Apr 2017 03:09:40 -0400
+Date: Wed, 26 Apr 2017 09:09:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: Do not build clk-div6 for R8A7792
+Message-ID: <20170426070925.GA25517@verge.net.au>
+References: <1493141161-28069-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1493141161-28069-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI1.
+On Tue, Apr 25, 2017 at 07:26:01PM +0200, Geert Uytterhoeven wrote:
+> R-Car V2H does not have "DIV6" programmable clocks, hence there is no
+> need to build clk-div6.o.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued up in clk-renesas-for-v4.13.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-* Prepared on top of renesas-devel-20170424-v4.11-rc8
-* Compile tested only; no access to silk board
-
-v3
-* Added missing pinctrl-1 to sdhi0
-
-v2
-* Correct mangled addition of sdhi*_pins
----
- arch/arm/boot/dts/r8a7794-silk.dts | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 4cb5278d104d..8b416c385df7 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -196,6 +196,13 @@
- 	sdhi1_pins: sd1 {
- 		groups = "sdhi1_data4", "sdhi1_ctrl";
- 		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
- 	};
- 
- 	qspi_pins: qspi {
-@@ -338,11 +345,13 @@
- 
- &sdhi1 {
- 	pinctrl-0 = <&sdhi1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi1>;
- 	vqmmc-supply = <&vccq_sdhi1>;
- 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
--- 
-2.12.2.816.g2cccc81164
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
