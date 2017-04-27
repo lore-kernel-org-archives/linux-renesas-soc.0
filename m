@@ -1,92 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:22606 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S937903AbdD0NKV (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:50375 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750715AbdD0InB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 09:10:21 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo@jmondi.org>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "magnus.damm@gmail.com" <magnus.damm@gmail.com>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC v2 0/2] SH CEU camera driver
-Date: Thu, 27 Apr 2017 13:10:15 +0000
-Message-ID: <SG2PR06MB11655FA3940925B4139935598A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1493282548-27673-1-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1493282548-27673-1-git-send-email-jacopo@jmondi.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Thu, 27 Apr 2017 04:43:01 -0400
+From: Jacopo Mondi <jacopo@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [RFC v2 0/2] SH CEU camera driver
+Date: Thu, 27 Apr 2017 10:42:26 +0200
+Message-Id: <1493282548-27673-1-git-send-email-jacopo@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Edit: re-sending as new driver to ease review. Remove the existing
+soc-camera one in patch [2/2].
 
-> The driver is -not tested- for lack of available platforms, just
-> compiled in.
+Hello Renesas list,
+   this is a first attempt to move SH Mobile CEU driver away from soc_camera
+framework.
 
-For HW, it would be good if you use a OV7670 camera module for testing.
+The driver is -not tested- for lack of available platforms, just compiled in.
+Sending it as RFC to collect early feedbacks.
 
-Like this: https://www.amazon.com/OV7670-Compatible-Arduino-Atomic-Market/d=
-p/B00TKXAGZM/ref=3Dsr_1_2?ie=3DUTF8
+The driver lacks functionalities provided by the original one, such as
+re-scaling and cropping, originally performed using soc_camera provided helpers.
+Not yet sharing with linux-media but with original driver authors only, and
+Renesas SoC list.
 
-That's what we use for the RSK board. There is probably a header on the GEN=
-MAI board as well (but you might have to solder the header down).
+I'm particularly interested in feedbacks in size/bus_parameters configuration
+functions. While I have used most of the original driver code for functions
+dealing with hardware configuration, those two have changed quite a lot, as the
+number of FIXMEs and TODOs there show.
 
-You can just use jumper wires to hook it up.
-Like these: https://www.amazon.com/eBoot-Prototype-Solderless-Breadboard-Ad=
-hesive/dp/B06XKLRYRM/ref=3Dsr_1_2
+Thanks
+   j
 
+v1 -> v2:
+- resend as new driver and remove soc-camera based one
 
-There is also this REA (Renesas America) board (YLCDRZA1H) that comes with =
-a OV7670 module attached.
-https://www.renesas.com/en-us/products/software-tools/boards-and-kits/renes=
-as-demonstration-kits/ylcdrza1h.html
+Jacopo Mondi (2):
+  media: platform: Add SH CEU camera interface driver
+  media: platform: soc-camera: Remove SH CEU driver
 
-  Better board pictures here:
-  https://www.digikey.com/product-detail/en/renesas-electronics-america/YLC=
-DRZA1H/YLCDRZA1H-ND/6173788
+ drivers/media/platform/Kconfig                     |    9 +
+ drivers/media/platform/Makefile                    |    2 +
+ drivers/media/platform/sh_ceu_camera.c             | 1597 +++++++++++++++++
+ drivers/media/platform/soc_camera/Kconfig          |   10 -
+ drivers/media/platform/soc_camera/Makefile         |    1 -
+ .../platform/soc_camera/sh_mobile_ceu_camera.c     | 1821 --------------------
+ 6 files changed, 1608 insertions(+), 1832 deletions(-)
+ create mode 100644 drivers/media/platform/sh_ceu_camera.c
+ delete mode 100644 drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
 
-I might be able to get you one of these boards if the GENMAI board doesn't =
-work out.
-We just ported u-boot and kernel (3.14) to it this week.
-
-
-NOTE: The way the RZ/A1 RSK board is laid out, you cannot use the LCD and C=
-EU at the same time. So for testing, I had to save each image as a JPEG and=
- view it off board.
-
-
-> The driver lacks functionalities provided by the original one, such as
-> re-scaling and cropping, originally performed using soc_camera provided
-> helpers.
-
-That's fine for me. At the moment, the only users of the CEU just need capt=
-ure and are not using those other features.
-
-
-> I'm particularly interested in feedbacks in size/bus_parameters
-> configuration functions. While I have used most of the original driver
-> code for functions dealing with hardware configuration, those two have
-> changed quite a lot, as the number of FIXMEs and TODOs there show.
-
-
-NOTE: Since the existing CEU driver only seemed to work in "image capture m=
-ode" (meaning it split the Y and CbCr into different buffers), I wrote a ve=
-ry simple driver to give to customers (non-V4L2) because they really wanted=
- to use "Data synchronous fetch mode" and just keep the YUV data exactly th=
-e same as it comes out of the cameras. So, I would focus on that mode first=
-.
-Also, I can share my simple driver code with you as reference (I put some e=
-xtra comments in there). The CEU registers can be tricky to set up because =
-descriptions in the hardware manual are not always clear.
-
-
-NOTE: "Data enable fetch mode" is broken in the RZ/A1H and RZ/A1M...and not=
- one really seems to want it anyway, so don't worry about that mode.
-
-
-Chris
+--
+2.7.4
