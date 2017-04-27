@@ -1,103 +1,93 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:57543 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033145AbdD0Wm7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 27 Apr 2017 18:42:59 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Hans Verkuil <hverkuil@xs4all.nl>
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 0/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 support
-Date: Fri, 28 Apr 2017 00:36:56 +0200
-Message-Id: <20170427223658.14148-1-niklas.soderlund+renesas@ragnatech.se>
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 22/27] rcar-vin: add chsel information to rvin_info
+Date: Fri, 28 Apr 2017 00:41:58 +0200
+Message-Id: <20170427224203.14611-23-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Each Gen3 SoC has a limited set of predefined routing possibilities for
+which CSI-2 device and virtual channel can be routed to which VIN
+instance. Prepare to store this information in the struct rvin_info.
 
-This is the latest incarnation of R-Car MIPI CSI-2 receiver driver. It's 
-based on top of v4.11-rc1 and are tested on Renesas Salvator-X together 
-with the out of tree patches for rcar-vin to add support for Gen3 VIN 
-and a prototype driver for ADV7482. If anyone is interested to test 
-video grabbing using these out of tree patches please see [1].
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-vin.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-It depends on the patches:
-
-- [PATCH] v4l2-async: add subnotifier registration for subdevices
-- [PATCH 0/2] media: entity: add operation to help map DT node to media pad
-
-Changes since v5:
-- Make use of the incremental async subnotifer and helper to map DT 
-  endpoint to media pad number. This moves functionality which 
-  previously in the Gen3 patches for R-Car VIN driver to this R-Car 
-  CSI-2 driver. This is done in preparation to support the ADV7482 
-  driver in development by Kieran which will register more then one 
-  subdevice and the CSI-2 driver needs to cope wit this. Further more it 
-  prepares the driver for another use-case where more then one subdevice 
-  is present upstream for the CSI-2.
-- Small cleanups.
-- Add explicit include for linux/io.h, thanks Kieran.
-
-Changes since v4:
-- Match SoC part numbers and drop trailing space in documentation, 
-  thanks Geert for pointing this out.
-- Clarify that the driver is a CSI-2 receiver by supervised 
-  s/interface/receiver/, thanks Laurent.
-- Add entries in Kconfig and Makefile alphabetically instead of append.
-- Rename struct rcar_csi2 member swap to lane_swap.
-- Remove macros to wrap calls to dev_{dbg,info,warn,err}.
-- Add wrappers for ioread32 and iowrite32.
-- Remove unused interrupt handler, but keep checking in probe that there 
-  are a interrupt define in DT.
-- Rework how to wait for LP-11 state, thanks Laurent for the great idea!
-- Remove unneeded delay in rcar_csi2_reset()
-- Remove check for duplicated lane id:s from DT parsing. Broken out to a 
-  separate patch adding this check directly to v4l2_of_parse_endpoint().
-- Fixed rcar_csi2_start() to ask it's source subdevice for information 
-  about pixel rate and frame format. With this change having 
-  {set,get}_fmt operations became redundant, it was only used for 
-  figuring out this out so dropped them.
-- Tabulated frequency settings map.
-- Dropped V4L2_SUBDEV_FL_HAS_DEVNODE it should never have been set.
-- Switched from MEDIA_ENT_F_ATV_DECODER to 
-  MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER as entity function. I can't 
-  find a more suitable function, and what the hardware do is to fetch 
-  video from an external chip and passes it on to a another SoC internal 
-  IP it's sort of a formatter.
-- Break out DT documentation and code in two patches.
-
-Changes since v3:
-- Update DT binding documentation with input from Geert Uytterhoeven,
-  thanks!
-
-Changes since v2:
-- Added media control pads as this is needed by the new rcar-vin driver.
-- Update DT bindings after review comments and to add r8a7796 support.
-- Add get_fmt handler.
-- Fix media bus format error s/YUYV8/UYVY8/
-
-Changes since v1:
-- Drop dependency on a pad aware s_stream operation.
-- Use the DT bindings format "renesas,<soctype>-<device>", thanks Geert
-  for pointing this out.
-
-1. http://elinux.org/R-Car/Tests:rcar-vin
-
-Niklas Söderlund (2):
-  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
-
- .../devicetree/bindings/media/rcar-csi2.txt        | 116 +++
- drivers/media/platform/rcar-vin/Kconfig            |  11 +
- drivers/media/platform/rcar-vin/Makefile           |   1 +
- drivers/media/platform/rcar-vin/rcar-csi2.c        | 872 +++++++++++++++++++++
- 4 files changed, 1000 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
- create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 21b6c9292686e41a..1a5f9594460ab57b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -35,6 +35,9 @@
+ /* Max number on VIN instances that can be in a system */
+ #define RCAR_VIN_NUM 8
+ 
++/* Max number of CHSEL values for any Gen3 SoC */
++#define RCAR_CHSEL_MAX 6
++
+ enum chip_id {
+ 	RCAR_H1,
+ 	RCAR_M1,
+@@ -91,6 +94,19 @@ struct rvin_graph_entity {
+ 
+ struct rvin_group;
+ 
++
++/** struct rvin_group_chsel - Map a CSI2 device and channel for a CHSEL value
++ * @csi:		VIN internal number for CSI2 device
++ * @chan:		CSI-2 channel number on remote. Note that channel
++ *			is not the same as VC. The CSI-2 hardware have 4
++ *			channels it can output on but which VC is outputted
++ *			on which channel is configurable inside the CSI-2.
++ */
++struct rvin_group_chsel {
++	enum rvin_csi_id csi;
++	unsigned int chan;
++};
++
+ /**
+  * struct rvin_info- Information about the particular VIN implementation
+  * @chip:		type of VIN chip
+@@ -98,6 +114,9 @@ struct rvin_group;
+  *
+  * max_width:		max input width the VIN supports
+  * max_height:		max input height the VIN supports
++ *
++ * num_chsels:		number of possible chsel values for this VIN
++ * chsels:		routing table VIN <-> CSI-2 for the chsel values
+  */
+ struct rvin_info {
+ 	enum chip_id chip;
+@@ -105,6 +124,9 @@ struct rvin_info {
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
++
++	unsigned int num_chsels;
++	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
+ };
+ 
+ /**
 -- 
 2.12.2
