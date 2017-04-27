@@ -1,136 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35450 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753768AbdDRAzq (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:57391 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935255AbdD0Wmw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Apr 2017 20:55:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next] ravb: Fix ravb_ptp_interrupt clear interrupt all status
-Date: Tue, 18 Apr 2017 09:55:33 +0900
-Message-Id: <1492476933-7952-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 27 Apr 2017 18:42:52 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH v4 03/27] media: entity: Add media_entity_has_route() function
+Date: Fri, 28 Apr 2017 00:41:39 +0200
+Message-Id: <20170427224203.14611-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Tsutomu Izawa <tsutomu.izawa.xk@renesas.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-This patch fixes ravb_ptp_interrupt clears GIS register of all interrupts
-status. It corrects to clear PTCF bit or PTMF bit.
-Also it fixes returned value to IRQ_HANDLED or IRQ_NONE.
+This is a wrapper around the media entity has_route operation.
 
-Signed-off-by: Tsutomu Izawa <tsutomu.izawa.xk@renesas.com>
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/net/ethernet/renesas/ravb.h      |  4 ++--
- drivers/net/ethernet/renesas/ravb_main.c | 12 ++++--------
- drivers/net/ethernet/renesas/ravb_ptp.c  | 15 ++++++++++++---
- 3 files changed, 18 insertions(+), 13 deletions(-)
+ drivers/media/media-entity.c | 16 ++++++++++++++++
+ include/media/media-entity.h | 16 ++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 0525bd696d5d..fbfdefa659ce 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1,6 +1,6 @@
- /* Renesas Ethernet AVB device driver
-  *
-- * Copyright (C) 2014-2015 Renesas Electronics Corporation
-+ * Copyright (C) 2014-2017 Renesas Electronics Corporation
-  * Copyright (C) 2015 Renesas Solutions Corp.
-  * Copyright (C) 2015-2016 Cogent Embedded, Inc. <source@cogentembedded.com>
-  *
-@@ -1054,7 +1054,7 @@ void ravb_modify(struct net_device *ndev, enum ravb_reg reg, u32 clear,
- 		 u32 set);
- int ravb_wait(struct net_device *ndev, enum ravb_reg reg, u32 mask, u32 value);
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 5640ca29da8c9bbc..ccd991d2d3450ab3 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -244,6 +244,22 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+  * Graph traversal
+  */
  
--void ravb_ptp_interrupt(struct net_device *ndev);
-+irqreturn_t ravb_ptp_interrupt(struct net_device *ndev);
- void ravb_ptp_init(struct net_device *ndev, struct platform_device *pdev);
- void ravb_ptp_stop(struct net_device *ndev);
- 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 8cfc4a54f2dc..747686386513 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -820,10 +820,8 @@ static irqreturn_t ravb_interrupt(int irq, void *dev_id)
- 	}
- 
- 	/* gPTP interrupt status summary */
--	if (iss & ISS_CGIS) {
--		ravb_ptp_interrupt(ndev);
--		result = IRQ_HANDLED;
--	}
-+	if (iss & ISS_CGIS)
-+		result = ravb_ptp_interrupt(ndev);
- 
- 	mmiowb();
- 	spin_unlock(&priv->lock);
-@@ -853,10 +851,8 @@ static irqreturn_t ravb_multi_interrupt(int irq, void *dev_id)
- 	}
- 
- 	/* gPTP interrupt status summary */
--	if (iss & ISS_CGIS) {
--		ravb_ptp_interrupt(ndev);
--		result = IRQ_HANDLED;
--	}
-+	if (iss & ISS_CGIS)
-+		result = ravb_ptp_interrupt(ndev);
- 
- 	mmiowb();
- 	spin_unlock(&priv->lock);
-diff --git a/drivers/net/ethernet/renesas/ravb_ptp.c b/drivers/net/ethernet/renesas/ravb_ptp.c
-index eede70ec37f8..403cf85631ba 100644
---- a/drivers/net/ethernet/renesas/ravb_ptp.c
-+++ b/drivers/net/ethernet/renesas/ravb_ptp.c
-@@ -1,6 +1,6 @@
- /* PTP 1588 clock using the Renesas Ethernet AVB
-  *
-- * Copyright (C) 2013-2015 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2017 Renesas Electronics Corporation
-  * Copyright (C) 2015 Renesas Solutions Corp.
-  * Copyright (C) 2015-2016 Cogent Embedded, Inc. <source@cogentembedded.com>
-  *
-@@ -296,10 +296,11 @@ static const struct ptp_clock_info ravb_ptp_info = {
- };
- 
- /* Caller must hold the lock */
--void ravb_ptp_interrupt(struct net_device *ndev)
-+irqreturn_t ravb_ptp_interrupt(struct net_device *ndev)
++bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
++			    unsigned int pad1)
++{
++	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
++		return false;
++
++	if (pad0 == pad1)
++		return true;
++
++	if (!entity->ops || !entity->ops->has_route)
++		return true;
++
++	return entity->ops->has_route(entity, pad0, pad1);
++}
++EXPORT_SYMBOL_GPL(media_entity_has_route);
++
+ static struct media_entity *
+ media_entity_other(struct media_entity *entity, struct media_link *link)
  {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	u32 gis = ravb_read(ndev, GIS);
-+	irqreturn_t result = IRQ_NONE;
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index bcb08c1f8c6265e8..b896827b4ebdfaa6 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -830,6 +830,22 @@ __must_check int media_graph_walk_init(
+ 	struct media_graph *graph, struct media_device *mdev);
  
- 	gis &= ravb_read(ndev, GIC);
- 	if (gis & GIS_PTCF) {
-@@ -309,6 +310,9 @@ void ravb_ptp_interrupt(struct net_device *ndev)
- 		event.index = 0;
- 		event.timestamp = ravb_read(ndev, GCPT);
- 		ptp_clock_event(priv->ptp.clock, &event);
-+
-+		result = IRQ_HANDLED;
-+		gis &= ~GIS_PTCF;
- 	}
- 	if (gis & GIS_PTMF) {
- 		struct ravb_ptp_perout *perout = priv->ptp.perout;
-@@ -317,9 +321,14 @@ void ravb_ptp_interrupt(struct net_device *ndev)
- 			perout->target += perout->period;
- 			ravb_ptp_update_compare(priv, perout->target);
- 		}
-+
-+		result = IRQ_HANDLED;
-+		gis &= ~GIS_PTMF;
- 	}
- 
--	ravb_write(ndev, ~gis, GIS);
-+	ravb_write(ndev, gis, GIS);
-+
-+	return result;
- }
- 
- void ravb_ptp_init(struct net_device *ndev, struct platform_device *pdev)
+ /**
++ * media_entity_has_route - Check if two entity pads are connected internally
++ *
++ * @entity: The entity
++ * @pad0: The first pad index
++ * @pad1: The second pad index
++ *
++ * This function can be used to check whether two pads of an entity are
++ * connected internally in the entity.
++ *
++ * The caller must hold entity->graph_obj.mdev->mutex.
++ *
++ * Return: true if the pads are connected internally and false otherwise.
++ */
++bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
++			    unsigned int pad1);
++/**
+  * media_graph_walk_cleanup - Release resources used by graph walk.
+  *
+  * @graph: Media graph structure that will be used to walk the graph
 -- 
-2.7.0.rc3.207.g0ac5344
+2.12.2
