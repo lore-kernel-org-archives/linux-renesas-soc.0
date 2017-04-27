@@ -1,224 +1,216 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35603 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1950246AbdDYSdE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 14:33:04 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: lee.jones@linaro.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [RESEND][PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
-Date: Tue, 25 Apr 2017 20:32:09 +0200
-Message-Id: <20170425183210.30594-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170425183210.30594-1-marek.vasut+renesas@gmail.com>
-References: <20170425183210.30594-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 15/27] rcar-vin: enable Gen3 hardware configuration
+Date: Fri, 28 Apr 2017 00:41:51 +0200
+Message-Id: <20170427224203.14611-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
-This block is pretty trivial and supports setting GPIO direction
-as Input/Output and in case of Output, supports setting value.
+Add the register needed to work with Gen3 hardware. This patch adds
+the logic for how to work with the Gen3 hardware. More work is required
+to enable the subdevice structure needed to configure capturing.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-V2: Use linux/gpio/driver.h instead of linux/gpio.h
----
- drivers/gpio/Kconfig          |  11 ++++
- drivers/gpio/Makefile         |   1 +
- drivers/gpio/gpio-bd9571mwv.c | 144 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 156 insertions(+)
- create mode 100644 drivers/gpio/gpio-bd9571mwv.c
+ drivers/media/platform/rcar-vin/rcar-dma.c | 94 ++++++++++++++++++++----------
+ drivers/media/platform/rcar-vin/rcar-vin.h |  1 +
+ 2 files changed, 64 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 63ceed246b6f..62f810a8663c 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -844,6 +844,17 @@ config GPIO_ARIZONA
- 	help
- 	  Support for GPIOs on Wolfson Arizona class devices.
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 2931ba7998709307..7fecb616b6c45a32 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -33,21 +33,23 @@
+ #define VNELPRC_REG	0x10	/* Video n End Line Pre-Clip Register */
+ #define VNSPPRC_REG	0x14	/* Video n Start Pixel Pre-Clip Register */
+ #define VNEPPRC_REG	0x18	/* Video n End Pixel Pre-Clip Register */
+-#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
+-#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
+-#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
+-#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
+ #define VNIS_REG	0x2C	/* Video n Image Stride Register */
+ #define VNMB_REG(m)	(0x30 + ((m) << 2)) /* Video n Memory Base m Register */
+ #define VNIE_REG	0x40	/* Video n Interrupt Enable Register */
+ #define VNINTS_REG	0x44	/* Video n Interrupt Status Register */
+ #define VNSI_REG	0x48	/* Video n Scanline Interrupt Register */
+ #define VNMTC_REG	0x4C	/* Video n Memory Transfer Control Register */
+-#define VNYS_REG	0x50	/* Video n Y Scale Register */
+-#define VNXS_REG	0x54	/* Video n X Scale Register */
+ #define VNDMR_REG	0x58	/* Video n Data Mode Register */
+ #define VNDMR2_REG	0x5C	/* Video n Data Mode Register 2 */
+ #define VNUVAOF_REG	0x60	/* Video n UV Address Offset Register */
++
++/* Register offsets specific for Gen2 */
++#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
++#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
++#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
++#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
++#define VNYS_REG	0x50	/* Video n Y Scale Register */
++#define VNXS_REG	0x54	/* Video n X Scale Register */
+ #define VNC1A_REG	0x80	/* Video n Coefficient Set C1A Register */
+ #define VNC1B_REG	0x84	/* Video n Coefficient Set C1B Register */
+ #define VNC1C_REG	0x88	/* Video n Coefficient Set C1C Register */
+@@ -73,9 +75,13 @@
+ #define VNC8B_REG	0xF4	/* Video n Coefficient Set C8B Register */
+ #define VNC8C_REG	0xF8	/* Video n Coefficient Set C8C Register */
  
-+config GPIO_BD9571MWV
-+	tristate "ROHM BD9571 GPIO support"
-+	depends on MFD_BD9571MWV
-+	help
-+	  Support for GPIOs on ROHM BD9571 PMIC. There are two GPIOs
-+	  available on the ROHM PMIC in total, both of which can also
-+	  generate interrupts.
++/* Register offsets specific for Gen3 */
++#define VNCSI_IFMD_REG		0x20 /* Video n CSI2 Interface Mode Register */
+ 
+ /* Register bit fields for R-Car VIN */
+ /* Video n Main Control Register bits */
++#define VNMC_DPINE		(1 << 27) /* Gen3 specific */
++#define VNMC_SCLE		(1 << 26) /* Gen3 specific */
+ #define VNMC_FOC		(1 << 21)
+ #define VNMC_YCAL		(1 << 19)
+ #define VNMC_INF_YUV8_BT656	(0 << 16)
+@@ -119,6 +125,13 @@
+ #define VNDMR2_FTEV		(1 << 17)
+ #define VNDMR2_VLV(n)		((n & 0xf) << 12)
+ 
++/* Video n CSI2 Interface Mode Register (Gen3) */
++#define VNCSI_IFMD_DES2		(1 << 27)
++#define VNCSI_IFMD_DES1		(1 << 26)
++#define VNCSI_IFMD_DES0		(1 << 25)
++#define VNCSI_IFMD_CSI_CHSEL(n) ((n & 0xf) << 0)
++#define VNCSI_IFMD_CSI_CHSEL_MASK 0xf
 +
-+	  This driver can also be built as a module. If so, the module
-+	  will be called gpio-bd9571mwv.
-+
- config GPIO_CRYSTAL_COVE
- 	tristate "GPIO support for Crystal Cove PMIC"
- 	depends on (X86 || COMPILE_TEST) && INTEL_SOC_PMIC
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 095598e856ca..68b96277d9fa 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -33,6 +33,7 @@ obj-$(CONFIG_GPIO_ATH79)	+= gpio-ath79.o
- obj-$(CONFIG_GPIO_ASPEED)	+= gpio-aspeed.o
- obj-$(CONFIG_GPIO_AXP209)	+= gpio-axp209.o
- obj-$(CONFIG_GPIO_BCM_KONA)	+= gpio-bcm-kona.o
-+obj-$(CONFIG_GPIO_BD9571MWV)	+= gpio-bd9571mwv.o
- obj-$(CONFIG_GPIO_BRCMSTB)	+= gpio-brcmstb.o
- obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
- obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
-diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
-new file mode 100644
-index 000000000000..5224a946e8ab
---- /dev/null
-+++ b/drivers/gpio/gpio-bd9571mwv.c
-@@ -0,0 +1,144 @@
-+/*
-+ * ROHM BD9571MWV-M GPIO driver
-+ *
-+ * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether expressed or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License version 2 for more details.
-+ *
-+ * Based on the TPS65086 driver
-+ *
-+ * NOTE: Interrupts are not supported yet.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include <linux/mfd/bd9571mwv.h>
-+
-+struct bd9571mwv_gpio {
-+	struct gpio_chip chip;
-+	struct bd9571mwv *bd;
-+};
-+
-+static int bd9571mwv_gpio_get_direction(struct gpio_chip *chip,
-+				       unsigned int offset)
+ struct rvin_buffer {
+ 	struct vb2_v4l2_buffer vb;
+ 	struct list_head list;
+@@ -514,28 +527,10 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
+ 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
+ }
+ 
+-static void rvin_crop_scale_comp(struct rvin_dev *vin)
++static void rvin_crop_scale_comp_gen2(struct rvin_dev *vin)
+ {
+ 	u32 xs, ys;
+ 
+-	/* Set Start/End Pixel/Line Pre-Clip */
+-	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
+-	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
+-	switch (vin->format.field) {
+-	case V4L2_FIELD_INTERLACED:
+-	case V4L2_FIELD_INTERLACED_TB:
+-	case V4L2_FIELD_INTERLACED_BT:
+-		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
+-		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
+-			   VNELPRC_REG);
+-		break;
+-	default:
+-		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+-		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
+-			   VNELPRC_REG);
+-		break;
+-	}
+-
+ 	/* Set scaling coefficient */
+ 	ys = 0;
+ 	if (vin->crop.height != vin->compose.height)
+@@ -573,11 +568,6 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 		break;
+ 	}
+ 
+-	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
+-		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
+-	else
+-		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
+-
+ 	vin_dbg(vin,
+ 		"Pre-Clip: %ux%u@%u:%u YS: %d XS: %d Post-Clip: %ux%u@%u:%u\n",
+ 		vin->crop.width, vin->crop.height, vin->crop.left,
+@@ -585,6 +575,37 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 		0, 0);
+ }
+ 
++static void rvin_crop_scale_comp(struct rvin_dev *vin)
 +{
-+	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
-+	int ret, val;
++	/* Set Start/End Pixel/Line Pre-Clip */
++	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
++	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
 +
-+	ret = regmap_read(gpio->bd->regmap, BD9571MWV_GPIO_DIR, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return val & BIT(offset);
-+}
-+
-+static int bd9571mwv_gpio_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
-+
-+	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_DIR,
-+			   BIT(offset), 0);
-+
-+	return 0;
-+}
-+
-+static int bd9571mwv_gpio_direction_output(struct gpio_chip *chip,
-+					  unsigned int offset, int value)
-+{
-+	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
-+
-+	/* Set the initial value */
-+	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_OUT,
-+			   BIT(offset), value ? BIT(offset) : 0);
-+	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_DIR,
-+			   BIT(offset), BIT(offset));
-+
-+	return 0;
-+}
-+
-+static int bd9571mwv_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
-+	int ret, val;
-+
-+	ret = regmap_read(gpio->bd->regmap, BD9571MWV_GPIO_IN, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return val & BIT(offset);
-+}
-+
-+static void bd9571mwv_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			      int value)
-+{
-+	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
-+
-+	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_OUT,
-+			   BIT(offset), value ? BIT(offset) : 0);
-+}
-+
-+static const struct gpio_chip template_chip = {
-+	.label			= "bd9571mwv-gpio",
-+	.owner			= THIS_MODULE,
-+	.get_direction		= bd9571mwv_gpio_get_direction,
-+	.direction_input	= bd9571mwv_gpio_direction_input,
-+	.direction_output	= bd9571mwv_gpio_direction_output,
-+	.get			= bd9571mwv_gpio_get,
-+	.set			= bd9571mwv_gpio_set,
-+	.base			= -1,
-+	.ngpio			= 2,
-+	.can_sleep		= true,
-+};
-+
-+static int bd9571mwv_gpio_probe(struct platform_device *pdev)
-+{
-+	struct bd9571mwv_gpio *gpio;
-+	int ret;
-+
-+	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-+	if (!gpio)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, gpio);
-+
-+	gpio->bd = dev_get_drvdata(pdev->dev.parent);
-+	gpio->chip = template_chip;
-+	gpio->chip.parent = gpio->bd->dev;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
-+		return ret;
++	switch (vin->format.field) {
++	case V4L2_FIELD_INTERLACED:
++	case V4L2_FIELD_INTERLACED_TB:
++	case V4L2_FIELD_INTERLACED_BT:
++		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
++		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
++			   VNELPRC_REG);
++		break;
++	default:
++		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
++		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
++			   VNELPRC_REG);
++		break;
 +	}
 +
-+	return 0;
++	/* TODO: Add support for the UDS scaler. */
++	if (vin->info->chip != RCAR_GEN3)
++		rvin_crop_scale_comp_gen2(vin);
++
++	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
++		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
++	else
++		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
 +}
 +
-+static const struct platform_device_id bd9571mwv_gpio_id_table[] = {
-+	{ "bd9571mwv-gpio", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(platform, bd9571mwv_gpio_id_table);
+ /* -----------------------------------------------------------------------------
+  * Hardware setup
+  */
+@@ -660,7 +681,10 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	}
+ 
+ 	/* Enable VSYNC Field Toogle mode after one VSYNC input */
+-	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
++	if (vin->info->chip == RCAR_GEN3)
++		dmr2 = VNDMR2_FTEV;
++	else
++		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+ 
+ 	/* Hsync Signal Polarity Select */
+ 	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+@@ -712,6 +736,14 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	if (input_is_yuv == output_is_yuv)
+ 		vnmc |= VNMC_BPS;
+ 
++	if (vin->info->chip == RCAR_GEN3) {
++		/* Select between CSI-2 and Digital input */
++		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
++			vnmc &= ~VNMC_DPINE;
++		else
++			vnmc |= VNMC_DPINE;
++	}
 +
-+static struct platform_driver bd9571mwv_gpio_driver = {
-+	.driver = {
-+		.name = "bd9571mwv-gpio",
-+	},
-+	.probe = bd9571mwv_gpio_probe,
-+	.id_table = bd9571mwv_gpio_id_table,
-+};
-+module_platform_driver(bd9571mwv_gpio_driver);
-+
-+MODULE_AUTHOR("Marek Vasut <marek.vasut+renesas@gmail.com>");
-+MODULE_DESCRIPTION("BD9571MWV GPIO driver");
-+MODULE_LICENSE("GPL v2");
+ 	/* Progressive or interlaced mode */
+ 	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 43206e85bbaadb5b..09fc70e192699f35 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -33,6 +33,7 @@ enum chip_id {
+ 	RCAR_H1,
+ 	RCAR_M1,
+ 	RCAR_GEN2,
++	RCAR_GEN3,
+ };
+ 
+ /**
 -- 
-2.11.0
+2.12.2
