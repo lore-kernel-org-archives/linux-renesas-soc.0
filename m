@@ -1,218 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35586 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763597AbdDSNZH (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:57470 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032764AbdD0Wm5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 09:25:07 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/5] pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
-Date: Wed, 19 Apr 2017 15:24:49 +0200
-Message-Id: <1492608293-12435-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1492608293-12435-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 27 Apr 2017 18:42:57 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 20/27] rcar-vin: register a media pad if running in media controller mode
+Date: Fri, 28 Apr 2017 00:41:56 +0200
+Message-Id: <20170427224203.14611-21-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+When running in media controller mode a media pad is needed, register
+one.
 
-This patch adds PWM{0,1,2,3,4,5,6} pins, groups and functions to
-R8A7796 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 153 +++++++++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 9 +++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 4 ++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index b0362ae..668c688 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -2955,6 +2955,105 @@ static const unsigned int msiof3_rxd_e_mux[] = {
- 	MSIOF3_RXD_E_MARK,
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 7aaa01dee014d64b..f560d27449b84882 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -267,7 +267,16 @@ static int rvin_group_init(struct rvin_dev *vin)
+ 	if (ret)
+ 		return ret;
  
-+/* - PWM0 --------------------------------------------------------------------*/
-+static const unsigned int pwm0_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 6),
-+};
-+static const unsigned int pwm0_mux[] = {
-+	PWM0_MARK,
-+};
-+/* - PWM1 --------------------------------------------------------------------*/
-+static const unsigned int pwm1_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 7),
-+};
-+static const unsigned int pwm1_a_mux[] = {
-+	PWM1_A_MARK,
-+};
-+static const unsigned int pwm1_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 8),
-+};
-+static const unsigned int pwm1_b_mux[] = {
-+	PWM1_B_MARK,
-+};
-+/* - PWM2 --------------------------------------------------------------------*/
-+static const unsigned int pwm2_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 8),
-+};
-+static const unsigned int pwm2_a_mux[] = {
-+	PWM2_A_MARK,
-+};
-+static const unsigned int pwm2_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int pwm2_b_mux[] = {
-+	PWM2_B_MARK,
-+};
-+/* - PWM3 --------------------------------------------------------------------*/
-+static const unsigned int pwm3_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 0),
-+};
-+static const unsigned int pwm3_a_mux[] = {
-+	PWM3_A_MARK,
-+};
-+static const unsigned int pwm3_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 2),
-+};
-+static const unsigned int pwm3_b_mux[] = {
-+	PWM3_B_MARK,
-+};
-+/* - PWM4 --------------------------------------------------------------------*/
-+static const unsigned int pwm4_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 1),
-+};
-+static const unsigned int pwm4_a_mux[] = {
-+	PWM4_A_MARK,
-+};
-+static const unsigned int pwm4_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 3),
-+};
-+static const unsigned int pwm4_b_mux[] = {
-+	PWM4_B_MARK,
-+};
-+/* - PWM5 --------------------------------------------------------------------*/
-+static const unsigned int pwm5_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 2),
-+};
-+static const unsigned int pwm5_a_mux[] = {
-+	PWM5_A_MARK,
-+};
-+static const unsigned int pwm5_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 4),
-+};
-+static const unsigned int pwm5_b_mux[] = {
-+	PWM5_B_MARK,
-+};
-+/* - PWM6 --------------------------------------------------------------------*/
-+static const unsigned int pwm6_a_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(1, 3),
-+};
-+static const unsigned int pwm6_a_mux[] = {
-+	PWM6_A_MARK,
-+};
-+static const unsigned int pwm6_b_pins[] = {
-+	/* PWM */
-+	RCAR_GP_PIN(2, 5),
-+};
-+static const unsigned int pwm6_b_mux[] = {
-+	PWM6_B_MARK,
-+};
++	vin->pad.flags = MEDIA_PAD_FL_SINK;
++	ret = media_entity_pads_init(&vin->vdev->entity, 1, &vin->pad);
++	if (ret)
++		goto error_v4l2;
 +
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -3565,6 +3664,19 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(msiof3_ss2_e),
- 	SH_PFC_PIN_GROUP(msiof3_txd_e),
- 	SH_PFC_PIN_GROUP(msiof3_rxd_e),
-+	SH_PFC_PIN_GROUP(pwm0),
-+	SH_PFC_PIN_GROUP(pwm1_a),
-+	SH_PFC_PIN_GROUP(pwm1_b),
-+	SH_PFC_PIN_GROUP(pwm2_a),
-+	SH_PFC_PIN_GROUP(pwm2_b),
-+	SH_PFC_PIN_GROUP(pwm3_a),
-+	SH_PFC_PIN_GROUP(pwm3_b),
-+	SH_PFC_PIN_GROUP(pwm4_a),
-+	SH_PFC_PIN_GROUP(pwm4_b),
-+	SH_PFC_PIN_GROUP(pwm5_a),
-+	SH_PFC_PIN_GROUP(pwm5_b),
-+	SH_PFC_PIN_GROUP(pwm6_a),
-+	SH_PFC_PIN_GROUP(pwm6_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -3879,6 +3991,40 @@ static const char * const msiof3_groups[] = {
- 	"msiof3_rxd_e",
- };
+ 	return 0;
++error_v4l2:
++	rvin_v4l2_mc_remove(vin);
++
++	return ret;
+ }
  
-+static const char * const pwm0_groups[] = {
-+	"pwm0",
-+};
+ /* -----------------------------------------------------------------------------
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 6f2b1e28381678a9..06934313950253f4 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -103,6 +103,8 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @pad:		pad for media controller
++ *
+  * @lock:		protects @queue
+  * @queue:		vb2 buffers queue
+  *
+@@ -132,6 +134,8 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity digital;
+ 
++	struct media_pad pad;
 +
-+static const char * const pwm1_groups[] = {
-+	"pwm1_a",
-+	"pwm1_b",
-+};
-+
-+static const char * const pwm2_groups[] = {
-+	"pwm2_a",
-+	"pwm2_b",
-+};
-+
-+static const char * const pwm3_groups[] = {
-+	"pwm3_a",
-+	"pwm3_b",
-+};
-+
-+static const char * const pwm4_groups[] = {
-+	"pwm4_a",
-+	"pwm4_b",
-+};
-+
-+static const char * const pwm5_groups[] = {
-+	"pwm5_a",
-+	"pwm5_b",
-+};
-+
-+static const char * const pwm6_groups[] = {
-+	"pwm6_a",
-+	"pwm6_b",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -3991,6 +4137,13 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(msiof2),
- 	SH_PFC_FUNCTION(msiof3),
-+	SH_PFC_FUNCTION(pwm0),
-+	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(pwm2),
-+	SH_PFC_FUNCTION(pwm3),
-+	SH_PFC_FUNCTION(pwm4),
-+	SH_PFC_FUNCTION(pwm5),
-+	SH_PFC_FUNCTION(pwm6),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
+ 	struct mutex lock;
+ 	struct vb2_queue queue;
+ 
 -- 
-2.7.4
+2.12.2
