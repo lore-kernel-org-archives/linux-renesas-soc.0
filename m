@@ -1,48 +1,52 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 07/27] rcar-vin: change name of video device
-Date: Fri, 28 Apr 2017 00:41:43 +0200
-Message-Id: <20170427224203.14611-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33343 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938841AbdD0Sfa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 27 Apr 2017 14:35:30 -0400
+Subject: Re: [PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
+To: Linus Walleij <linus.walleij@linaro.org>
+References: <20170424152130.32410-1-marek.vasut+renesas@gmail.com>
+ <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
+ <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <b1515cf0-31b5-a413-db2e-de0385ce106a@gmail.com>
+Date: Thu, 27 Apr 2017 20:35:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar-vin driver needs to be part of a media controller to support
-Gen3. Give each VIN instance a unique name so it can be referenced from
-userspace.
+On 04/25/2017 11:32 AM, Linus Walleij wrote:
+> On Mon, Apr 24, 2017 at 5:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> 
+>> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
+>> This block is pretty trivial and supports setting GPIO direction
+>> as Input/Output and in case of Output, supports setting value.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: linux-gpio@vger.kernel.org
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> V2: Use linux/gpio/driver.h instead of linux/gpio.h
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Are you merging this through MFD?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Well, since Mark already picked the regulator patch and since the GPIO
+driver is protected from being compiled by an Kconfig symbol, you can
+take this through the GPIO tree and I can then ask Lee to apply the MFD
+bits via MFD. This will probably reduce the friction a bit ...
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 1b364f359ff4b5ed..709ee828f2ac2173 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -915,7 +915,8 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	vdev->fops = &rvin_fops;
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
--	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
-+	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
-+		 dev_name(vin->dev));
- 	vdev->release = video_device_release;
- 	vdev->ioctl_ops = &rvin_ioctl_ops;
- 	vdev->lock = &vin->lock;
 -- 
-2.12.2
+Best regards,
+Marek Vasut
