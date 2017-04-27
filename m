@@ -5,58 +5,99 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Hans Verkuil <hverkuil@xs4all.nl>
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v4 02/27] media: entity: Add has_route entity operation
-Date: Fri, 28 Apr 2017 00:41:38 +0200
-Message-Id: <20170427224203.14611-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v6 0/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 support
+Date: Fri, 28 Apr 2017 00:36:56 +0200
+Message-Id: <20170427223658.14148-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi,
 
-The optional operation can be used by entities to report whether two
-pads are internally connected.
+This is the latest incarnation of R-Car MIPI CSI-2 receiver driver. It's 
+based on top of v4.11-rc1 and are tested on Renesas Salvator-X together 
+with the out of tree patches for rcar-vin to add support for Gen3 VIN 
+and a prototype driver for ADV7482. If anyone is interested to test 
+video grabbing using these out of tree patches please see [1].
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- include/media/media-entity.h | 5 +++++
- 1 file changed, 5 insertions(+)
+It depends on the patches:
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index c7c254c5bca1761b..bcb08c1f8c6265e8 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -177,6 +177,9 @@ struct media_pad {
-  * @link_validate:	Return whether a link is valid from the entity point of
-  *			view. The media_pipeline_start() function
-  *			validates all links by calling this operation. Optional.
-+ * @has_route:		Return whether a route exists inside the entity between
-+ *			two given pads. Optional. If the operation isn't
-+ *			implemented all pads will be considered as connected.
-  *
-  * .. note::
-  *
-@@ -188,6 +191,8 @@ struct media_entity_operations {
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
- 	int (*link_validate)(struct media_link *link);
-+	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
-+			  unsigned int pad1);
- };
- 
- /**
+- [PATCH] v4l2-async: add subnotifier registration for subdevices
+- [PATCH 0/2] media: entity: add operation to help map DT node to media pad
+
+Changes since v5:
+- Make use of the incremental async subnotifer and helper to map DT 
+  endpoint to media pad number. This moves functionality which 
+  previously in the Gen3 patches for R-Car VIN driver to this R-Car 
+  CSI-2 driver. This is done in preparation to support the ADV7482 
+  driver in development by Kieran which will register more then one 
+  subdevice and the CSI-2 driver needs to cope wit this. Further more it 
+  prepares the driver for another use-case where more then one subdevice 
+  is present upstream for the CSI-2.
+- Small cleanups.
+- Add explicit include for linux/io.h, thanks Kieran.
+
+Changes since v4:
+- Match SoC part numbers and drop trailing space in documentation, 
+  thanks Geert for pointing this out.
+- Clarify that the driver is a CSI-2 receiver by supervised 
+  s/interface/receiver/, thanks Laurent.
+- Add entries in Kconfig and Makefile alphabetically instead of append.
+- Rename struct rcar_csi2 member swap to lane_swap.
+- Remove macros to wrap calls to dev_{dbg,info,warn,err}.
+- Add wrappers for ioread32 and iowrite32.
+- Remove unused interrupt handler, but keep checking in probe that there 
+  are a interrupt define in DT.
+- Rework how to wait for LP-11 state, thanks Laurent for the great idea!
+- Remove unneeded delay in rcar_csi2_reset()
+- Remove check for duplicated lane id:s from DT parsing. Broken out to a 
+  separate patch adding this check directly to v4l2_of_parse_endpoint().
+- Fixed rcar_csi2_start() to ask it's source subdevice for information 
+  about pixel rate and frame format. With this change having 
+  {set,get}_fmt operations became redundant, it was only used for 
+  figuring out this out so dropped them.
+- Tabulated frequency settings map.
+- Dropped V4L2_SUBDEV_FL_HAS_DEVNODE it should never have been set.
+- Switched from MEDIA_ENT_F_ATV_DECODER to 
+  MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER as entity function. I can't 
+  find a more suitable function, and what the hardware do is to fetch 
+  video from an external chip and passes it on to a another SoC internal 
+  IP it's sort of a formatter.
+- Break out DT documentation and code in two patches.
+
+Changes since v3:
+- Update DT binding documentation with input from Geert Uytterhoeven,
+  thanks!
+
+Changes since v2:
+- Added media control pads as this is needed by the new rcar-vin driver.
+- Update DT bindings after review comments and to add r8a7796 support.
+- Add get_fmt handler.
+- Fix media bus format error s/YUYV8/UYVY8/
+
+Changes since v1:
+- Drop dependency on a pad aware s_stream operation.
+- Use the DT bindings format "renesas,<soctype>-<device>", thanks Geert
+  for pointing this out.
+
+1. http://elinux.org/R-Car/Tests:rcar-vin
+
+Niklas Söderlund (2):
+  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
+  media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
+
+ .../devicetree/bindings/media/rcar-csi2.txt        | 116 +++
+ drivers/media/platform/rcar-vin/Kconfig            |  11 +
+ drivers/media/platform/rcar-vin/Makefile           |   1 +
+ drivers/media/platform/rcar-vin/rcar-csi2.c        | 872 +++++++++++++++++++++
+ 4 files changed, 1000 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+ create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
+
 -- 
 2.12.2
