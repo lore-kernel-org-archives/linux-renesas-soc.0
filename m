@@ -1,60 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:35343 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752600AbdD0SDc (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:44169 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034270AbdD0QPA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 14:03:32 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: jmondi <jacopo@jmondi.org>
-CC: "laurent.pinchart@ideasonboard.com"
+        Thu, 27 Apr 2017 12:15:00 -0400
+Date: Thu, 27 Apr 2017 18:14:56 +0200
+From: jmondi <jacopo@jmondi.org>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: "laurent.pinchart@ideasonboard.com"
         <laurent.pinchart@ideasonboard.com>,
         "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC v2 0/2] SH CEU camera driver
-Date: Thu, 27 Apr 2017 18:03:27 +0000
-Message-ID: <SG2PR06MB116586C496F693ADAD6C4C418A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: Re: [RFC v2 0/2] SH CEU camera driver
+Message-ID: <20170427161456.GK11761@w540>
 References: <1493282548-27673-1-git-send-email-jacopo@jmondi.org>
  <SG2PR06MB11655FA3940925B4139935598A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20170427161456.GK11761@w540>
-In-Reply-To: <20170427161456.GK11761@w540>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB11655FA3940925B4139935598A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgSmFjb3BvLA0KDQpPbiBUaHVyc2RheSwgQXByaWwgMjcsIDIwMTcsIGptb25kaSB3cm90ZToN
-Cj4gV2UgcGxhbm5lZCB0byB1c2UgdGhlIGZvbGxvd2luZyBzZXR1cCB0byB0ZXN0IHRoZSBDRVUg
-ZHJpdmVyIHdpdGggYW4NCj4gYWN0dWFsIEhXIHBsYXRmb3JtDQo+IA0KPiBHUi1QZWFjaCArIEdS
-LVBlYWNoIEF1ZGlvIENhbWVyYSBTaGllbGQgKyBPVjc2NzAgZXZhbHVhdGlvbiBtb2R1bGUNCj4g
-aHR0cHM6Ly93d3cuZGlnaWtleS5jb20vcHJvZHVjdC1kZXRhaWwvZW4vcmVuZXNhcy1lbGVjdHJv
-bmljcy0NCj4gYW1lcmljYS9ZR1JQRUFDSEFVRElPQ0FNRVJBU0hJRUxEL1lHUlBFQUNIQVVESU9D
-QU1FUkFTSElFTEQtTkQvNTgwMDMwMQ0KPiB3d3cuZWxlY2ZyZWFrcy5jb20vZXN0b3JlL292NzY3
-MC1jYW1lcmEtbW9kdWxlLmh0bWwNCg0KT2ggeWEsIEkgZm9yZ290IGFib3V0IHRoYXQgdGhpbmcu
-DQoNCg0KPiBUaGlzIGltcGxpZXMgcnVubmluZyBtYWlubGluZSBvbiBQZWFjaCBvciBiYWNrcG9y
-dGluZyBDRVUgZHJpdmVyIHRvIHlvdXINCj4gQlNQIGlmIHdlJ3JlIG5vdCBhYmxlIHRvIGRvIHNv
-LiBBIGRlc2lyYWJsZSBjb2xsYXRlcmFsIGJlbmVmaXQgaW4gYm90aA0KPiBjYXNlcywgSSBndWVz
-cy4uLg0KDQpZb3Ugc2hvdWxkIHByb2JhYmx5IGJlIGFibGUgdG8gcnVuIG1haW5saW5lIG9uIGl0
-Lg0KDQpHbyBoZXJlIGZvciB1LWJvb3QgYnVpbGQgaW5zdHJ1Y3Rpb25zOiBodHRwOi8vZWxpbnV4
-Lm9yZy9SWi1BL0JvYXJkcy9HUi1QRUFDSA0KDQpSZW1lbWJlciwgdGhhdCBib2FyZCBvbmx5IGhh
-cyA4TUIgb2YgU1BJIGZsYXNoLCBzbyB5b3Ugc2hvdWxkIGRvd25sb2FkIHVJbWFnZSBhbmQgRFRC
-IHRvIFJBTSB1c2luZyBKbGluaywgdGhlIHVzZSB0aGUgU1BJIGZsYXNoIGZvciBhIHJvb3Rmcy4g
-SSBzbyBoYXZlIFVTQiBob3N0IHdvcmtpbmcgZm9yIG1haW5saW5lLCBidXQgaXQgcmVxdWlyZXMg
-YW4gb3V0LW9mLXRyZWUgcGF0Y2ggZnJvbSBtZSAoSSdtIG5vdCBzdXJlIG9uIHdoYXQgdXBzdHJl
-YW0gcGF0aCBJIHNob3VsZCB0YWtlIGZvciBSWi9BMSBVU0IgeWV0KS4NCg0KDQoNCk9mIGNvdXJz
-ZSBpZiB5b3UgY2hhbmdlIHlvdXIgbWluZCwgdGhpcyBib2FyZDoNCiAgIGh0dHBzOi8vd3d3LmRp
-Z2lrZXkuY29tL3Byb2R1Y3QtZGV0YWlsL2VuL3JlbmVzYXMtZWxlY3Ryb25pY3MtYW1lcmljYS9Z
-TENEUlpBMUgvWUxDRFJaQTFILU5ELzYxNzM3ODgNCmhhcyBhIGNhbWVyYSwgMTI4MHg4MDAgTENE
-LCA2NE1CIG9mIFNEUkFNIGFuZCBhIFNlZ2dlciBKTElOSyBidWlsdCBpbnRvIHRoZSBib2FyZC4g
-QnV0Li4ubm8gc2VyaWFsIHBvcnQuIFlvdSBoYXZlIHRvIHBsdWcgaW4gYSBVU0ItdG8tVUFSVCBQ
-TU9EIGFkYXB0ZXIgKHNvbWV0aGluZyBsaWtlIHRoaXMgaHR0cDovL3N0b3JlLmRpZ2lsZW50aW5j
-LmNvbS9wbW9kLXVzYnVhcnQtdXNiLXRvLXVhcnQtaW50ZXJmYWNlLykuDQpPbmNlIEkgZ2V0IGV2
-ZXJ5dGhpbmcgd29ya2luZywgSSdsbCBiZSBwdXNoaW5nIHRvIG91ciBnaXRodWIgcmVwb3MgYW5k
-IHBvc3RpbmcgaW5zdHJ1Y3Rpb25zIG9uIGVMaW51eC5vcmcuDQpJIG1pZ2h0IHRlc3QgeW91ciBu
-ZXcgZHJpdmVyIHVzaW5nIHRoaXMgYm9hcmQgKHdpbGwgcmVxdWlyZSBhbiBvdXQtb2YtdHJlZSBm
-YmRldiBkcml2ZXIpDQoNCkknbSBnb2luZyB0byBzdGFydCBwaGFzaW5nIG91dCB0aGUgMy4xNCBC
-U1AgZm9yIGEgNC45IEJTUCBoZXJlIGluIGEgY291cGxlIG1vbnRocywgc28gSSdsbCBwcm9iYWJs
-eSBiYWNrcG9ydCB0aGlzIG5ldyBkcml2ZXIgdG8gNC45LCBidXQgdGhhdCdzIGFib3V0IGl0Lg0K
-DQoNCkNocmlzDQoNCg==
+Hi Chris,
+
+On Thu, Apr 27, 2017 at 01:10:15PM +0000, Chris Brandt wrote:
+> Hi Jacopo,
+>
+> > The driver is -not tested- for lack of available platforms, just
+> > compiled in.
+>
+> For HW, it would be good if you use a OV7670 camera module for testing.
+>
+> Like this: https://www.amazon.com/OV7670-Compatible-Arduino-Atomic-Market/dp/B00TKXAGZM/ref=sr_1_2?ie=UTF8
+>
+> That's what we use for the RSK board. There is probably a header on the GENMAI board as well (but you might have to solder the header down).
+>
+> You can just use jumper wires to hook it up.
+> Like these: https://www.amazon.com/eBoot-Prototype-Solderless-Breadboard-Adhesive/dp/B06XKLRYRM/ref=sr_1_2
+>
+>
+> There is also this REA (Renesas America) board (YLCDRZA1H) that comes with a OV7670 module attached.
+> https://www.renesas.com/en-us/products/software-tools/boards-and-kits/renesas-demonstration-kits/ylcdrza1h.html
+>
+>   Better board pictures here:
+>   https://www.digikey.com/product-detail/en/renesas-electronics-america/YLCDRZA1H/YLCDRZA1H-ND/6173788
+>
+> I might be able to get you one of these boards if the GENMAI board doesn't work out.
+> We just ported u-boot and kernel (3.14) to it this week.
+>
+>
+> NOTE: The way the RZ/A1 RSK board is laid out, you cannot use the LCD and CEU at the same time. So for testing, I had to save each image as a JPEG and view it off board.
+>
+>
+
+Thanks for the info.
+
+We planned to use the following setup to test the CEU
+driver with an actual HW platform
+
+GR-Peach + GR-Peach Audio Camera Shield + OV7670 evaluation module
+https://www.digikey.com/product-detail/en/renesas-electronics-america/YGRPEACHAUDIOCAMERASHIELD/YGRPEACHAUDIOCAMERASHIELD-ND/5800301
+www.elecfreaks.com/estore/ov7670-camera-module.html
+
+This implies running mainline on Peach or backporting CEU driver to
+your BSP if we're not able to do so. A desirable collateral benefit in
+both cases, I guess...
+
+Thanks
+   j
+
+
+> > helpers.
+>
+> That's fine for me. At the moment, the only users of the CEU just need capture and are not using those other features.
+>
+>
+> > I'm particularly interested in feedbacks in size/bus_parameters
+> > configuration functions. While I have used most of the original driver
+> > code for functions dealing with hardware configuration, those two have
+> > changed quite a lot, as the number of FIXMEs and TODOs there show.
+>
+>
+> NOTE: Since the existing CEU driver only seemed to work in "image capture mode" (meaning it split the Y and CbCr into different buffers), I wrote a very simple driver to give to customers (non-V4L2) because they really wanted to use "Data synchronous fetch mode" and just keep the YUV data exactly the same as it comes out of the cameras. So, I would focus on that mode first.
+> Also, I can share my simple driver code with you as reference (I put some extra comments in there). The CEU registers can be tricky to set up because descriptions in the hardware manual are not always clear.
+>
+>
+> NOTE: "Data enable fetch mode" is broken in the RZ/A1H and RZ/A1M...and not one really seems to want it anyway, so don't worry about that mode.
+>
+>
+> Chris
+>
