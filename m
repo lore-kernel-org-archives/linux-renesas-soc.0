@@ -1,256 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54831 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:57495 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162206AbdD0Wb3 (ORCPT
+        with ESMTP id S1032524AbdD0Wm4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:31:29 -0400
+        Thu, 27 Apr 2017 18:42:56 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] v4l2-async: add subnotifier registration for subdevices
-Date: Fri, 28 Apr 2017 00:30:35 +0200
-Message-Id: <20170427223035.13164-1-niklas.soderlund+renesas@ragnatech.se>
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 16/27] rcar-vin: add functions to manipulate Gen3 CHSEL value
+Date: Fri, 28 Apr 2017 00:41:52 +0200
+Message-Id: <20170427224203.14611-17-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When registered() of v4l2_subdev_internal_ops is called the subdevice
-have access to the master devices v4l2_dev and it's called with the
-async frameworks list_lock held. In this context the subdevice can
-register its own notifiers to allow for incremental discovery of
-subdevices.
+On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
+feature of this register is that it's only present in the VIN0 and VIN4
+instances. The register in VIN0 controls the routing for VIN0-3 and the
+register in VIN4 controls routing for VIN4-7.
 
-The master device registers the subdevices closest to itself in its
-notifier while the subdevice(s) themself register notifiers for there
-closest neighboring devices when they are registered. Using this
-incremental approach two problems can be solved.
-
-1. The master device no longer have to care how many subdevices exist in
-   the pipeline. It only needs to care about its closest subdevice and
-   arbitrary long pipelines can be created without having to adapt the
-   master device for each case.
-
-2. Subdevices which are represented as a single DT node but register
-   more then one subdevice can use this to further the pipeline
-   discovery. Since the subdevice driver is the only one who knows which
-   of its subdevices is linked with which subdevice of a neighboring DT
-   node.
-
-To enable subdevices to register/unregister notifiers from the
-registered()/unregistered() callback v4l2_async_subnotifier_register()
-and v4l2_async_subnotifier_unregister() are added. These new notifier
-register functions are similar to the master device equivalent functions
-but run without taking the v4l2-async list_lock which already are held
-when he registered()/unregistered() callbacks are called.
+To be able to control routing from a media device these functions need
+to control runtime PM for the subgroup master (VIN0 and VIN4). The
+subgroup master must be switched on before the register is manipulated,
+once the operation is complete it's safe to switch the master off and
+the new routing will still be in effect.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/v4l2-core/v4l2-async.c | 91 +++++++++++++++++++++++++++++-------
- include/media/v4l2-async.h           | 22 +++++++++
- 2 files changed, 95 insertions(+), 18 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 43 ++++++++++++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h |  3 +++
+ 2 files changed, 46 insertions(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 96cc733f35ef72b0..d4a676a2935eb058 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -136,12 +136,13 @@ static void v4l2_async_cleanup(struct v4l2_subdev *sd)
- 	sd->dev = NULL;
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 7fecb616b6c45a32..fef31aac0ed40979 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
++#include <linux/pm_runtime.h>
+ 
+ #include <media/videobuf2-dma-contig.h>
+ 
+@@ -1240,3 +1241,45 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
+ 
+ 	return ret;
  }
- 
--int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
--				 struct v4l2_async_notifier *notifier)
-+static int v4l2_async_do_notifier_register(struct v4l2_device *v4l2_dev,
-+					   struct v4l2_async_notifier *notifier,
-+					   bool subnotifier)
- {
- 	struct v4l2_subdev *sd, *tmp;
- 	struct v4l2_async_subdev *asd;
--	int i;
-+	int found, i;
- 
- 	if (!notifier->num_subdevs || notifier->num_subdevs > V4L2_MAX_SUBDEVS)
- 		return -EINVAL;
-@@ -168,32 +169,69 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
- 		list_add_tail(&asd->list, &notifier->waiting);
- 	}
- 
--	mutex_lock(&list_lock);
-+	if (!subnotifier)
-+		mutex_lock(&list_lock);
++
++/* -----------------------------------------------------------------------------
++ * Gen3 CHSEL manipulation
++ */
++
++int rvin_set_chsel(struct rvin_dev *vin, u8 chsel)
++{
++	u32 ifmd;
++
++	pm_runtime_get_sync(vin->dev);
 +
 +	/*
-+	 * This function can be called recursively so the list
-+	 * might be modified in a recursive call. Start from the
-+	 * top of the list each iteration.
++	 * Undocumented feature: Writing to VNCSI_IFMD_REG will go
++	 * through and on read back look correct but won't have
++	 * any effect if VNMC_REG is not first set to 0.
 +	 */
-+	found = 1;
-+	while (found) {
-+		found = 0;
- 
--	list_for_each_entry_safe(sd, tmp, &subdev_list, async_list) {
--		int ret;
-+		list_for_each_entry_safe(sd, tmp, &subdev_list, async_list) {
-+			int ret;
- 
--		asd = v4l2_async_belongs(notifier, sd);
--		if (!asd)
--			continue;
-+			asd = v4l2_async_belongs(notifier, sd);
-+			if (!asd)
-+				continue;
- 
--		ret = v4l2_async_test_notify(notifier, sd, asd);
--		if (ret < 0) {
--			mutex_unlock(&list_lock);
--			return ret;
-+			ret = v4l2_async_test_notify(notifier, sd, asd);
-+			if (ret < 0) {
-+				if (!subnotifier)
-+					mutex_unlock(&list_lock);
-+				return ret;
-+			}
++	rvin_write(vin, 0, VNMC_REG);
 +
-+			found = 1;
-+			break;
- 		}
- 	}
- 
- 	/* Keep also completed notifiers on the list */
- 	list_add(&notifier->list, &notifier_list);
- 
--	mutex_unlock(&list_lock);
-+	if (!subnotifier)
-+		mutex_unlock(&list_lock);
- 
- 	return 0;
- }
++	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
++		VNCSI_IFMD_CSI_CHSEL(chsel);
 +
-+int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-+				    struct v4l2_async_notifier *notifier)
-+{
-+	if (!sd->v4l2_dev) {
-+		dev_err(sd->dev ? sd->dev : NULL,
-+			"Can't register subnotifier for without v4l2_dev\n");
-+		return -EINVAL;
-+	}
++	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
 +
-+	return v4l2_async_do_notifier_register(sd->v4l2_dev, notifier, true);
++	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
++
++	pm_runtime_put(vin->dev);
++
++	return 0;
 +}
-+EXPORT_SYMBOL(v4l2_async_subnotifier_register);
 +
-+int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
-+				 struct v4l2_async_notifier *notifier)
++int rvin_get_chsel(struct rvin_dev *vin)
 +{
-+	return v4l2_async_do_notifier_register(v4l2_dev, notifier, false);
++	int chsel;
++
++	pm_runtime_get_sync(vin->dev);
++
++	chsel = rvin_read(vin, VNCSI_IFMD_REG) & VNCSI_IFMD_CSI_CHSEL_MASK;
++
++	pm_runtime_put(vin->dev);
++
++	return chsel;
 +}
- EXPORT_SYMBOL(v4l2_async_notifier_register);
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 09fc70e192699f35..b1cd0abba9ca9c94 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -163,4 +163,7 @@ void rvin_v4l2_remove(struct rvin_dev *vin);
  
--void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-+static void
-+v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
-+				  bool subnotifier)
- {
- 	struct v4l2_subdev *sd, *tmp;
- 	unsigned int notif_n_subdev = notifier->num_subdevs;
-@@ -210,7 +248,8 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 			"Failed to allocate device cache!\n");
- 	}
+ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
  
--	mutex_lock(&list_lock);
-+	if (!subnotifier)
-+		mutex_lock(&list_lock);
- 
- 	list_del(&notifier->list);
- 
-@@ -237,15 +276,20 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 			put_device(d);
- 	}
- 
--	mutex_unlock(&list_lock);
-+	if (!subnotifier)
-+		mutex_unlock(&list_lock);
- 
- 	/*
- 	 * Call device_attach() to reprobe devices
- 	 *
- 	 * NOTE: If dev allocation fails, i is 0, and the whole loop won't be
- 	 * executed.
-+	 * TODO: If we are unregistering a subdevice notifier we can't reprobe
-+	 * since the lock_list is held by the master device and attaching that
-+	 * device would call v4l2_async_register_subdev() and end in a deadlock
-+	 * on list_lock.
- 	 */
--	while (i--) {
-+	while (i-- && !subnotifier) {
- 		struct device *d = dev[i];
- 
- 		if (d && device_attach(d) < 0) {
-@@ -269,6 +313,17 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
- 	 * upon notifier registration.
- 	 */
- }
++int rvin_set_chsel(struct rvin_dev *vin, u8 chsel);
++int rvin_get_chsel(struct rvin_dev *vin);
 +
-+void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier)
-+{
-+	v4l2_async_do_notifier_unregister(notifier, true);
-+}
-+EXPORT_SYMBOL(v4l2_async_subnotifier_unregister);
-+
-+void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-+{
-+	v4l2_async_do_notifier_unregister(notifier, false);
-+}
- EXPORT_SYMBOL(v4l2_async_notifier_unregister);
- 
- int v4l2_async_register_subdev(struct v4l2_subdev *sd)
-diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-index 8e2a236a4d039df6..dee070be59f211bd 100644
---- a/include/media/v4l2-async.h
-+++ b/include/media/v4l2-async.h
-@@ -105,6 +105,18 @@ struct v4l2_async_notifier {
- };
- 
- /**
-+ * v4l2_async_notifier_register - registers a subdevice asynchronous subnotifier
-+ *
-+ * @sd: pointer to &struct v4l2_subdev
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ *
-+ * This function assumes the async list_lock is already locked, allowing
-+ * it to be used from struct v4l2_subdev_internal_ops registered() callback.
-+ */
-+int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-+				    struct v4l2_async_notifier *notifier);
-+
-+/**
-  * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
-  *
-  * @v4l2_dev: pointer to &struct v4l2_device
-@@ -114,6 +126,16 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
- 				 struct v4l2_async_notifier *notifier);
- 
- /**
-+ * v4l2_async_subnotifier_unregister - unregisters a asynchronous subnotifier
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ *
-+ * This function assumes the async list_lock is already locked, allowing
-+ * it to be used from struct v4l2_subdev_internal_ops unregistered() callback.
-+ */
-+void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier);
-+
-+/**
-  * v4l2_async_notifier_unregister - unregisters a subdevice asynchronous notifier
-  *
-  * @notifier: pointer to &struct v4l2_async_notifier
+ #endif
 -- 
 2.12.2
