@@ -1,55 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:55438 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753528AbdD0WeD (ORCPT
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:37486 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933955AbdD0E7y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:34:03 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] media: entity: add operation to help map DT node to media pad
-Date: Fri, 28 Apr 2017 00:33:21 +0200
-Message-Id: <20170427223323.13861-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 27 Apr 2017 00:59:54 -0400
+Subject: Re: [PATCH] iio: adc: Derive interface clock speed from fck clock
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20170420154310.32759-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdX4MWKBRKPG6OtRycGFRhOGmR556sR_SWBR3D6Sd+tggA@mail.gmail.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <db48a38f-cbca-2396-90b4-9d2426e49095@kernel.org>
+Date: Thu, 27 Apr 2017 05:59:48 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdX4MWKBRKPG6OtRycGFRhOGmR556sR_SWBR3D6Sd+tggA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GH
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On 20/04/17 18:30, Geert Uytterhoeven wrote:
+> On Thu, Apr 20, 2017 at 5:43 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> The "if" interface clock speed is actually derived from the "fck"
+>> block clock, as in the hardware they are the same clock. Drop the
+>> incorrect second "if" clock and get the clock speed from "fck".
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Jonathan Cameron <jic23@kernel.org>
+>> Cc: linux-renesas-soc@vger.kernel.orgPlease include the name of the driver in the patch title.
+I've added it.
 
-This small series add a new entity operation which will aid capture 
-drivers to map a port/endpoint in DT to a media graph pad. I looked 
-around and in my experience most drivers assume the DT port number is 
-the same as the media pad number.
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Applied to the togreg branch of iio.git - initially pushed out
+as testing for the autobuilders to play with it.
 
-This might be true for most devices but there are cases where this 
-mapping do not hold true. This series is implemented support to the 
-ongoing ADV748x work by Kieran Bingham, [1]. In his work he have a 
-driver which registers more then one subdevice. So when a driver finds 
-this subdevice it must be able to ask the subdevice itself which pad 
-number correspond to the DT endpoint the driver used to bind subdevice 
-in the first place.
+Thanks,
 
-I have updated my R-Car CSI-2 patch series to use this new function to 
-ask it's subdevice to resolve the media pad.
-
-1. [PATCH 0/5] RFC: ADV748x HDMI/Analog video receiver
-
-Niklas Söderlund (2):
-  media: entity: Add pad_from_dt_regs entity operation
-  media: entity: Add media_entity_pad_from_dt_regs() function
-
- drivers/media/media-entity.c | 21 +++++++++++++++++++++
- include/media/media-entity.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
-
--- 
-2.12.2
+Jonathan
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
