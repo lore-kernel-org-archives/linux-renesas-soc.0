@@ -1,111 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54625 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754766AbdDGP6a (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:57458 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031313AbdD0Wmy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 11:58:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for v4.12
-Date: Fri,  7 Apr 2017 11:58:21 -0400
-Message-Id: <cover.1491580547.git.horms+renesas@verge.net.au>
+        Thu, 27 Apr 2017 18:42:54 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 11/27] rcar-vin: do not allow changing scaling and composing while streaming
+Date: Fri, 28 Apr 2017 00:41:47 +0200
+Message-Id: <20170427224203.14611-12-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+It is possible on Gen2 to change the registers controlling composing and
+scaling while the stream is running. Is however not a good idea to do so
+and could result in trouble. There are also no good reason to allow
+this, remove immediate reflection in hardware registers from
+vidioc_s_selection and only configure scaling and composing when the
+stream starts.
 
-Please consider these second round of Renesas ARM based SoC DT updates for
-v4.12.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
+ 3 files changed, 1 insertion(+), 7 deletions(-)
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-dt-for-v4.12,
-which you have already pulled.
-
-
-The following changes since commit d01ff18992218f3a13f45f45a886b3bf8f250f14:
-
-  ARM: dts: silk: Drop superfluous status update for frequency override (2017-03-13 10:19:35 +0100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.12
-
-for you to fetch changes up to eb77d7260c4c25206e2a455be0dbe6443e0856b5:
-
-  ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name (2017-04-05 14:16:34 -0400)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC DT Updates for v4.12
-
-Corrections:
-* Correct clock frequency of X2 DU clock input for r8a7791/koelsch board
-* Correct Z clock for r8a7792 SoC
-* Correct parent of SSI[0-9] clocks for r8a779[013] SoCs
-* Correct ethernet clock parent on r7s72100 SoC
-* Correct DU clock for r8a7794/silk board
-
-Cleanups:
-* Drop _clk suffix from external CAN clock node name on r8a779[01] SoCs
-
-Enhancements:
-* Enable rtc r7s72100/genmai board
-* Add Z2 clock for r8a7794 SoC
-* Add DU clock for r8a7794 SoC
-* Add power-domains to SDHI for r8a7794 and r7s72100 SoCs
-* Add reset control properties for r8a774[35] SoCs
-
-----------------------------------------------------------------
-Chris Brandt (7):
-      ARM: dts: r7s72100: add power-domains to sdhi
-      ARM: dts: r7s72100: fix ethernet clock parent
-      ARM: dts: r7s72100: add rtc clock to device tree
-      ARM: dts: r7s72100: add RTC_X clock inputs to device tree
-      ARM: dts: r7s72100: add rtc to device tree
-      ARM: dts: rskrza1: set rtc_x1 clock value
-      ARM: dts: rskrza1: add rtc DT support
-
-Geert Uytterhoeven (14):
-      ARM: dts: r8a7743: Add reset control properties
-      ARM: dts: r8a7745: Add reset control properties
-      ARM: dts: r8a7794: Add DU1 clock to device tree
-      ARM: dts: r8a7794: Correct clock of DU1
-      ARM: dts: alt: Correct clock of DU1
-      ARM: dts: silk: Correct clock of DU1
-      ARM: dts: r8a7790: Correct parent of SSI[0-9] clocks
-      ARM: dts: r8a7791: Correct parent of SSI[0-9] clocks
-      ARM: dts: r8a7793: Correct parent of SSI[0-9] clocks
-      ARM: dts: r8a7792: Correct Z clock
-      ARM: dts: r8a7794: Add Z2 clock
-      ARM: dts: koelsch: Correct clock frequency of X2 DU clock input
-      ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
-      ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
-
-Jacopo Mondi (1):
-      ARM: dts: genmai: Enable rtc and rtc_x1 clock
-
- arch/arm/boot/dts/r7s72100-genmai.dts      |  8 ++++++
- arch/arm/boot/dts/r7s72100-rskrza1.dts     |  8 ++++++
- arch/arm/boot/dts/r7s72100.dtsi            | 41 +++++++++++++++++++++++++++++-
- arch/arm/boot/dts/r8a7743.dtsi             | 24 +++++++++++++++++
- arch/arm/boot/dts/r8a7745.dtsi             | 24 +++++++++++++++++
- arch/arm/boot/dts/r8a7790.dtsi             |  9 ++++---
- arch/arm/boot/dts/r8a7791-koelsch.dts      |  2 +-
- arch/arm/boot/dts/r8a7791.dtsi             |  9 ++++---
- arch/arm/boot/dts/r8a7792.dtsi             | 11 ++++++--
- arch/arm/boot/dts/r8a7793.dtsi             |  7 +++--
- arch/arm/boot/dts/r8a7794-alt.dts          |  2 +-
- arch/arm/boot/dts/r8a7794-silk.dts         |  2 +-
- arch/arm/boot/dts/r8a7794.dtsi             | 18 ++++++++++---
- include/dt-bindings/clock/r7s72100-clock.h |  3 +++
- include/dt-bindings/clock/r8a7792-clock.h  |  1 -
- include/dt-bindings/clock/r8a7794-clock.h  |  1 +
- 16 files changed, 151 insertions(+), 19 deletions(-)
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 286aafab533cda9d..ef029e4c7882322e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
+ 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
+ }
+ 
+-void rvin_crop_scale_comp(struct rvin_dev *vin)
++static void rvin_crop_scale_comp(struct rvin_dev *vin)
+ {
+ 	u32 xs, ys;
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index e14f0aff8ceecc68..919040e40aec60f6 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -442,9 +442,6 @@ static int rvin_s_selection(struct file *file, void *fh,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* HW supports modifying configuration while running */
+-	rvin_crop_scale_comp(vin);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 6bf2e4ff8f6076c7..f1251c013d1d2d80 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -175,7 +175,4 @@ void rvin_v4l2_remove(struct rvin_dev *vin);
+ 
+ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+ 
+-/* Cropping, composing and scaling */
+-void rvin_crop_scale_comp(struct rvin_dev *vin);
+-
+ #endif
+-- 
+2.12.2
