@@ -1,90 +1,171 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:50096 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761374AbdDSJPz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 05:15:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/8] [RFC] dt-bindings: renesas: Document R-Car H3 and M3-W SiP DT bindings
-Date: Wed, 19 Apr 2017 11:15:44 +0200
-Message-Id: <1492593351-13835-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
-References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sakari.ailus@iki.fi
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 5/5] arm64: dts: r8a7796: salvator-x: enable VIN, CSI and ADV7482
+Date: Thu, 27 Apr 2017 19:26:04 +0100
+Message-Id: <1493317564-18026-6-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
+References: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the SiP ("System-in-Package") versions of the R-Car H3 and M3-W
-SoCs, which contain an R-Car H3 or M3-W SoC, RAM, and HyperFlash.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Add their compatible values to all boards equipped with R-Car Gen3 SiPs.
+Provide bindings between the VIN, CSI and the ADV7482 on the r8a7796.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-Questions:
-  - Do we need more compatible values, for different configurations?
-    At least r8j7796 is available with either 2 GiB or 4 GiB of RAM,
-    possibly using RAM parts from different vendors.
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 129 +++++++++++++++++++++
+ 1 file changed, 129 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 170fe0562c637eab..8ca3f64fec21d8b0 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -41,6 +41,14 @@ SoCs:
-     compatible = "renesas,r8a7796"
- 
- 
-+SiPs:
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 2637e4042705..d6f25e1ab455 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -102,6 +102,22 @@
+ 		states = <3300000 1
+ 			  1800000 0>;
+ 	};
 +
-+  - R-Car H3 SiP (R8J77950)
-+    compatible = "renesas,r8j7795", "renesas,r8a7795"
-+  - R-Car M3-W SiP (R8J77960)
-+    compatible = "renesas,r8j7796", "renesas,r8a7796"
++	hdmi {
++		port {
++			hdmi_in: endpoint {
++				remote-endpoint = <&adv7482_hdmi>;
++			};
++		};
++	};
 +
-+
- Boards:
++	cvbs {
++		port {
++			cvbs_in: endpoint {
++				remote-endpoint = <&adv7482_ain8>;
++			};
++		};
++	};
+ };
  
-   - Alt (RTP0RC7794SEB00010S)
-@@ -58,7 +66,7 @@ Boards:
-   - Gose (RTP0RC7793SEB00010S)
-     compatible = "renesas,gose", "renesas,r8a7793"
-   - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKB00010S)
--    compatible = "renesas,h3ulcb", "renesas,r8a7795";
-+    compatible = "renesas,h3ulcb", "renesas,r8j7795", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
-   - Koelsch (RTP0RC7791SEB00010S)
-@@ -70,7 +78,7 @@ Boards:
-   - Lager (RTP0RC7790SEB00010S)
-     compatible = "renesas,lager", "renesas,r8a7790"
-   - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKB00010S)
--    compatible = "renesas,m3ulcb", "renesas,r8a7796";
-+    compatible = "renesas,m3ulcb", "renesas,r8j7796", "renesas,r8a7796";
-   - Marzen (R0P7779A00010S)
-     compatible = "renesas,marzen", "renesas,r8a7779"
-   - Porter (M2-LCDP)
-@@ -78,9 +86,9 @@ Boards:
-   - RSKRZA1 (YR0K77210C000BE)
-     compatible = "renesas,rskrza1", "renesas,r7s72100"
-   - Salvator-X (RTP0RC7795SIPB0010S)
--    compatible = "renesas,salvator-x", "renesas,r8a7795";
-+    compatible = "renesas,salvator-x", "renesas,r8j7795", "renesas,r8a7795";
-   - Salvator-X (RTP0RC7796SIPB0011S)
--    compatible = "renesas,salvator-x", "renesas,r8a7796";
-+    compatible = "renesas,salvator-x", "renesas,r8j7796", "renesas,r8a7796";
-   - SILK (RTP0RC7794LCB00011S)
-     compatible = "renesas,silk", "renesas,r8a7794"
-   - SK-RZG1E (YR8A77450S000BE)
+ &pfc {
+@@ -261,3 +277,116 @@
+ 	timeout-sec = <60>;
+ 	status = "okay";
+ };
++
++&i2c4 {
++	status = "okay";
++
++	clock-frequency = <100000>;
++
++	video_receiver@70 {
++		compatible = "adi,adv7482";
++		reg = <0x70>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@8 {
++			adv7482_ain8: endpoint@1 {
++				remote-endpoint = <&cvbs_in>;
++			};
++		};
++
++		port@9 {
++			adv7482_hdmi: endpoint@1 {
++				remote-endpoint = <&hdmi_in>;
++			};
++		};
++
++		port@11 {
++			reg = <11>;
++			adv7482_txa: endpoint@1 {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&csi40_in>;
++			};
++		};
++
++		port@12 {
++			reg = <12>;
++			adv7482_txb: endpoint@1 {
++				clock-lanes = <0>;
++				data-lanes = <1>;
++				remote-endpoint = <&csi20_in>;
++			};
++		};
++	};
++};
++
++&vin0 {
++	status = "okay";
++};
++
++&vin1 {
++	status = "okay";
++};
++
++&vin2 {
++	status = "okay";
++};
++
++&vin3 {
++	status = "okay";
++};
++
++&vin4 {
++	status = "okay";
++};
++
++&vin5 {
++	status = "okay";
++};
++
++&vin6 {
++	status = "okay";
++};
++
++&vin7 {
++	status = "okay";
++};
++
++&csi20 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			csi20_in: endpoint@0 {
++				clock-lanes = <0>;
++				data-lanes = <1>;
++				remote-endpoint = <&adv7482_txb>;
++			};
++		};
++	};
++};
++
++&csi40 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++
++			csi40_in: endpoint@0 {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&adv7482_txa>;
++			};
++		};
++	};
++};
 -- 
 2.7.4
