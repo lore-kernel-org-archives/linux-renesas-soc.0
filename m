@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:57506 "EHLO
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:57470 "EHLO
         smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032581AbdD0Wm4 (ORCPT
+        with ESMTP id S1031598AbdD0Wmz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:42:56 -0400
+        Thu, 27 Apr 2017 18:42:55 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 18/27] rcar-vin: add flag to switch to media controller mode
-Date: Fri, 28 Apr 2017 00:41:54 +0200
-Message-Id: <20170427224203.14611-19-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 13/27] rcar-vin: do not cut height in two for top, bottom or alternate fields
+Date: Fri, 28 Apr 2017 00:41:49 +0200
+Message-Id: <20170427224203.14611-14-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -26,64 +26,41 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 a media controller API needs to be used to allow userspace to
-configure the subdevices in the pipeline instead of directly controlling
-a single source subdevice, which is and will continue to be the mode of
-operation on Gen2.
+The height should not be cut in half for the format for top, bottom or
+alternate fields settings. This was a mistake and it was made
+visible by the scaling refactoring.
 
-Prepare for these two modes of operation by adding a flag to struct
-rvin_graph_entity which will control which mode to use.
+Correct behavior is that the user should request a frame size that fits
+the half height frame reflected in the field setting. If not the VIN
+will do it's best to scale the top or bottom to the requested format and
+cropping and scaling do not work as expected.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 3 +++
- drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
- 2 files changed, 5 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index adc38696a0ba70b9..8b30d8d3ec7d9c04 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -261,18 +261,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static const struct rvin_info rcar_info_h1 = {
- 	.chip = RCAR_H1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_m1 = {
- 	.chip = RCAR_M1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_gen2 = {
- 	.chip = RCAR_GEN2,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index b1cd0abba9ca9c94..512e67fdefd15015 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -77,12 +77,14 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info- Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-+ * @use_mc:		use media controller instead of controlling subdevice
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
-  */
- struct rvin_info {
- 	enum chip_id chip;
-+	bool use_mc;
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 80421421625e6f6f..28b62a514bbb93a9 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -142,8 +142,6 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
+ 	case V4L2_FIELD_ALTERNATE:
+-		vin->format.height /= 2;
+-		break;
+ 	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+@@ -245,8 +243,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
+ 	case V4L2_FIELD_ALTERNATE:
+-		pix->height /= 2;
+-		break;
+ 	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
 -- 
 2.12.2
