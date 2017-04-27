@@ -1,208 +1,96 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:57481 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032305AbdD0Wmz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:42:55 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sakari.ailus@iki.fi
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 14/27] rcar-vin: move media bus configuration to struct rvin_info
-Date: Fri, 28 Apr 2017 00:41:50 +0200
-Message-Id: <20170427224203.14611-15-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 2/5] rcar-vin: Match sources against ports if specified.
+Date: Thu, 27 Apr 2017 19:26:01 +0100
+Message-Id: <1493317564-18026-3-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
+References: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bus configuration will once the driver is extended to to support Gen3
-contain information not specific to only the directly connected parallel
-subdevice. Move it to struct rvin_info to show it's not always coupled
-to the parallel subdevice.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+If an endpoint source specifies a port number, then it may have
+multiple entities provided by one DT node. In this event, match
+against both the DT node and it's relevant port.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 14 +++++++-------
- drivers/media/platform/rcar-vin/rcar-dma.c  | 11 ++++++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  2 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  9 ++++-----
- 4 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 998617711f1ad045..ed99b1abb99e9ef9 100644
+index a530dc388b95..afe382c9a55d 100644
 --- a/drivers/media/platform/rcar-vin/rcar-core.c
 +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -45,15 +45,15 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
+@@ -782,7 +782,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+ 			return 0;
+ 		}
  
--static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
-+static bool rvin_mbus_supported(struct rvin_dev *vin)
+-		if (vin->group->source[i].asd.match.of.node == new) {
++		if (vin->group->source[i].asd.match.of.node == new &&
++		    subdev->port == vin->group->source[i].asd.match.of.port) {
+ 			vin_dbg(vin, "Bound source %s\n", subdev->name);
+ 			vin->group->source[i].subdev = subdev;
+ 			mutex_unlock(&vin->group->lock);
+@@ -820,7 +821,7 @@ static struct device_node *rvin_group_get_bridge(struct rvin_dev *vin,
+ static struct device_node *
+ rvin_group_get_source(struct rvin_dev *vin,
+ 		      struct device_node *bridge,
+-		      unsigned int *remote_pad)
++		      unsigned int *remote_port)
  {
--	struct v4l2_subdev *sd = entity->subdev;
-+	struct v4l2_subdev *sd = vin->digital.subdev;
- 	struct v4l2_subdev_mbus_code_enum code = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
- 	};
+ 	struct device_node *source, *ep, *rp;
+ 	struct v4l2_mbus_config mbus_cfg;
+@@ -844,7 +845,7 @@ rvin_group_get_source(struct rvin_dev *vin,
+ 	rp = of_graph_get_remote_port(ep);
+ 	of_graph_parse_endpoint(rp, &endpoint);
+ 	of_node_put(rp);
+-	*remote_pad = endpoint.id;
++	*remote_port = endpoint.id;
  
- 	code.index = 0;
--	code.pad = entity->source_pad;
-+	code.pad = vin->digital.source_pad;
- 	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
- 		code.index++;
- 		switch (code.code) {
-@@ -61,7 +61,7 @@ static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
- 		case MEDIA_BUS_FMT_UYVY8_2X8:
- 		case MEDIA_BUS_FMT_UYVY10_2X10:
- 		case MEDIA_BUS_FMT_RGB888_1X24:
--			entity->code = code.code;
-+			vin->code = code.code;
- 			return true;
- 		default:
- 			break;
-@@ -77,14 +77,14 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ 	source = of_graph_get_remote_port_parent(ep);
+ 	of_node_put(ep);
+@@ -861,7 +862,7 @@ rvin_group_get_source(struct rvin_dev *vin,
+ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
+ {
+ 	struct device_node *ep, *bridge, *source;
+-	unsigned int i, remote_pad = 0;
++	unsigned int i, remote_port = 0;
+ 	u32 val;
  	int ret;
  
- 	/* Verify subdevices mbus format */
--	if (!rvin_mbus_supported(&vin->digital)) {
-+	if (!rvin_mbus_supported(vin)) {
- 		vin_err(vin, "Unsupported media bus format for %s\n",
- 			vin->digital.subdev->name);
- 		return -EINVAL;
+@@ -910,7 +911,7 @@ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
+ 		if (bridge == NULL)
+ 			continue;
+ 
+-		source = rvin_group_get_source(vin, bridge, &remote_pad);
++		source = rvin_group_get_source(vin, bridge, &remote_port);
+ 		of_node_put(bridge);
+ 		if (IS_ERR(source))
+ 			return PTR_ERR(source);
+@@ -922,14 +923,14 @@ static int rvin_group_graph_parse(struct rvin_dev *vin, unsigned long *bitmap)
+ 		vin->group->bridge[i].asd.match.of.node = bridge;
+ 		vin->group->bridge[i].asd.match_type = V4L2_ASYNC_MATCH_OF;
+ 		vin->group->source[i].asd.match.of.node = source;
++		vin->group->source[i].asd.match.of.port = remote_port;
+ 		vin->group->source[i].asd.match_type = V4L2_ASYNC_MATCH_OF;
+-		vin->group->source[i].source_pad = remote_pad;
+ 
+ 		*bitmap |= BIT(i);
+ 
+ 		vin_dbg(vin, "Handle bridge %s and source %s pad %d\n",
+ 			of_node_full_name(bridge), of_node_full_name(source),
+-			remote_pad);
++			remote_port);
  	}
  
- 	vin_dbg(vin, "Found media bus format for %s: %d\n",
--		vin->digital.subdev->name, vin->digital.code);
-+		vin->digital.subdev->name, vin->code);
- 
- 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
- 	if (ret < 0) {
-@@ -201,7 +201,7 @@ static int rvin_digital_graph_parse(struct rvin_dev *vin)
- 	}
- 	of_node_put(np);
- 
--	ret = rvin_digitial_parse_v4l2(vin, ep, &vin->digital.mbus_cfg);
-+	ret = rvin_digitial_parse_v4l2(vin, ep, &vin->mbus_cfg);
- 	of_node_put(ep);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index ef029e4c7882322e..2931ba7998709307 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -634,7 +634,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 	/*
- 	 * Input interface
- 	 */
--	switch (vin->digital.code) {
-+	switch (vin->code) {
- 	case MEDIA_BUS_FMT_YUYV8_1X16:
- 		/* BT.601/BT.1358 16bit YCbCr422 */
- 		vnmc |= VNMC_INF_YUV16;
-@@ -642,7 +642,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
--		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -651,7 +651,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
--		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -663,11 +663,11 @@ static int rvin_setup(struct rvin_dev *vin)
- 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
--	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_HPS;
- 
- 	/* Vsync Signal Polarity Select */
--	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_VPS;
- 
- 	/*
-@@ -887,6 +887,7 @@ static void rvin_capture_stop(struct rvin_dev *vin)
- 	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
- }
- 
-+
- /* -----------------------------------------------------------------------------
-  * DMA Functions
-  */
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 28b62a514bbb93a9..1ee9dcb621350f77 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -180,7 +180,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	sd = vin_to_source(vin);
- 
--	v4l2_fill_mbus_format(&format.format, pix, vin->digital.code);
-+	v4l2_fill_mbus_format(&format.format, pix, vin->code);
- 
- 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
- 	if (pad_cfg == NULL)
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 4805127b7af879a3..43206e85bbaadb5b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -62,8 +62,6 @@ struct rvin_video_format {
-  * struct rvin_graph_entity - Video endpoint from async framework
-  * @asd:	sub-device descriptor for async framework
-  * @subdev:	subdevice matched using async framework
-- * @code:	Media bus format from source
-- * @mbus_cfg:	Media bus format from DT
-  * @source_pad:	source pad of remote subdevice
-  * @sink_pad:	sink pad of remote subdevice
-  */
-@@ -71,9 +69,6 @@ struct rvin_graph_entity {
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *subdev;
- 
--	u32 code;
--	struct v4l2_mbus_config mbus_cfg;
--
- 	unsigned int source_pad;
- 	unsigned int sink_pad;
- };
-@@ -115,6 +110,8 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-+ * @mbus_cfg:		media bus format from DT
-+ * @code:		media bus coide from subdevice
-  * @format:		active V4L2 pixel format
-  *
-  * @crop:		active cropping
-@@ -141,6 +138,8 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
-+	struct v4l2_mbus_config mbus_cfg;
-+	u32 code;
- 	struct v4l2_pix_format format;
- 
- 	struct v4l2_rect crop;
+ 	/* All our sources are CSI-2 */
 -- 
-2.12.2
+2.7.4
