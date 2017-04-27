@@ -1,66 +1,77 @@
-Return-Path: <SRS0=y7DD=3C=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
-Received: from 177-129-25-78.inbnet.com.br ([177.129.25.78]:36751 "HELO
-        inbnet.com.br" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S966014AbdCYDb5 (ORCPT
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49831 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162165AbdD0Ojm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Mar 2017 23:31:57 -0400
-Content-Transfer-Encoding: base64
-Reply-To: <blueten_mit_stil@t-online.de>
-Message-ID: <149041271075.16099.9182567261411008918@inbnet.com.br>
-Subject: 10771 linux-renesas-soc
-From: <blueten_mit_stil@t-online.de>
-Date: Sat, 25 Mar 2017 03:31:50 -0000
-Content-Disposition: attachment
-Content-Type: application/zip; name="2926421253.zip"
+        Thu, 27 Apr 2017 10:39:42 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: geert@glider.be, horms@verge.net.au, linux-pwm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH v2 7/8] arm64: dts: r8a7795-salvator-x: Enable PWM2
+Date: Thu, 27 Apr 2017 17:40:51 +0300
+Message-ID: <5664970.rvzlHsyOZi@avalon>
+In-Reply-To: <1493303863-23719-8-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1493303863-23719-8-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-To: "linux-renesas-soc" <linux-renesas-soc@vger.kernel.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-UEsDBAoAAgAAAARIeUrzzpstkAkAAJAJAAANABwAemlwLTI0OTkxLnppcFVUCQADN93VWDfd1Vh1
-eAsAAQQAAAAABAAAAABQSwMEFAACAAgABEh5SrgmWo3qCAAAwBMAAAgAHAAyNDk5MS5qc1VUCQAD
-N93VWDfd1Vh1eAsAAQQAAAAABAAAAADtWMtuW8kRXY8B/4PAFRkRnn4/oDBAMECALLLy0naA6u5q
-ibYsaWhKssbQv8+pvpd6jJXMBFkm8EO6vN3VVadOnapmv76o++3lxdH1ad+eLlevX317/eqHG9od
-/dw/0tlmQb5bLiYkXUOovrNlzcrqoivH6FXy3TGZRKq10HUuAc855OZrDcY36uzYmZA5hZicL7p3
-GLHZtWasy8RMtVmddOvGqgr7CfZN88xBOU/UFSvdClaF7B2pbqiFWFKvvsSaenFU8D6xdSX4HFug
-GGrlFgP7lko3XVvfSlXRYn8jpqhMUb0YrRvbbns0ueXUg/eKevesXtrfAIDvFLG/Rs61ZmMRb+HC
-WTX4XxbHwG4Rre6wbtghKtWqRNWZQgFc1aeAqOEwztVWpVi1sd6QYeJsYnZALT23KvayrA/WZ6o6
-Ku+S5sza1he8NvCyFYX1bCNMlBicRdSBg3E5Vxs01itu1ExJCs99oGB6tCqrFGxytTB78T+HGiVK
-QlaBEqU4smjxbLqCfaQhKDkf/kfYD9WZ4nsJEo+wAOdr5yhQL2xTSjVHQVHwqYYmxIYV5x3SOVDL
-LsXvrBJQi/CiWgBVKQJNMoKyskBRITwHVEm4kRtOjQ6wUSayJpmGv0C5TFzNClwKLpAHCkXCA/eq
-cwO1GEryNQIMJl8K4Cs4D6Bqyx0oWqBUKhb4RJUTtYFyjYJ6JCJvkFXUQnUW3oTOpmabuila/Wco
-jve+K5OTThYsicKSCbEeDM7MLjIYPXL/v43Kv8NjQuz/qEyoIH6g4iT+hPMDFAcK4C3Wi+K2XNrM
-MXzaJAroVIROkCFFhXsR9UupmefPovZQawU597CCbhC156Kp/5c6pBBVyaEVScHYb4AaJBYw12Kr
-go7krHof5xdRZ0Spcb4ohueILPlsJx3+o92FIKXwPxU7dApZTdp5ZBHBtGBrEn9wfqrobt2oWcfw
-KXpK6glWnY2ifoGdTp476KhKqYye4tiWApQi5W6xXjIRajJQdahtc5KLxNpQTgkMQKhoNzhVI3ch
-NB+4FF9sqNKTEJyVboMo8SC5V0m4RAySxaTBXag3ufLYcz1xD9WCa7mSt17BPrIWE3p2jkr35KQ7
-6QBuE7iWhEtYT1iPqMHVgp5bYZ9Tl6b2mAXW6PnYVBq4iyw1AopdssrJwmf4373LluOsY9q00bPU
-8AI1BqsNDNVAoXY3cvmcsVYYKz0QKJeejAV39JRL9ERMAClgMvE4RVDTRuWEii1+1sU/PJnosb5J
-kg/dqRlWJiGbGVwEE1sY3apJlhTKmZVwH6jJZJRRfw35RS/D/ooKw8lSS1AUsEBrmQkwWalkUnfG
-G8TfsV5RQyfXvuAt1gcQmdnFyBNiQEPGhyAMBwMV+O7GPDIYHIz0SHjpwB3tKqIIojsyGdRhNQ+u
-ABVXjUF0BSqB80aUcjgNRj+zj1qH11UYD/mLqChtnOjKC1F15DajFOvjvChcB0lePh+Tz6hAGD6g
-Cnb6uRZAwq5lcgD3YsWcI1lCDTuTWuEKLrHo8BSf+Iv3Mn/KHAgWPOoYaY7QHaxpB52gp1xiAmMT
-vMoy5WkNkXUy5SaZapvW0ClADIZHRKlQQAXUh9rmLBU3uGMP8xdobAZ3gmnNY5JBxcDrjAqt6QUv
-n/uH+S4IN8U/qXgAEoaivMx14BqiNCXs8N/VSmlQPiiC6ugPIBQUIfeD4sj+CsOhiY5PU/2E2GG2
-R5TfqS/UGvMZno2otfRA5J5QMSSoQeesVHDi30Qt3QGqigrCOnDFRPuES2OKxZTYhPHQJZKpGFOw
-He/beP/EHnRVGnJE5sH+pz0UFSfdqjYHBVDoPmHYS+hez9W/DBaAaw8VGIcCDS7hrpAkS1CQzmAF
-4sHUrglcdqjwDlSztUARyjoj5mS2B7bSE+eeM3KHCiNhy1xhuIEouUE8eAU1l85egZ9wDeoL3ZBc
-BgZ3ms2YJKRrQqbB1YJOf7BX5vmm4hlcBFxy1yg6DS7PugMqYJJB7hO4VrDeoT2ZCeVkof4IGdyr
-UAxUPHQM/QIq7lGhNaF7jQpF6xDuo5tIT8ZkAV321uAGpD10VlAW+xibaijTXYWNnhQB3GSwCQco
-6LnCSHPQMVVjzZrAGYxlMWNAShXRoydWh4kJ9zgN+YrobRbuSJR+zEMBOuKRmy6DA1As6EnVhYKJ
-qRZUKnqqU1IBQwcLJoU8uKOQSzLl995PUaLnCTvasyjTmAQ0UBTUvNwjo8XFc3C/t0nnwE0L0uoC
-FcX4Y2USQpahwYzuYWXSyMgSOiJKqoTYcIO1TbiJZ+l2DyjKvVvUv9VZxxRSKBUDnUgBU2JFgQ81
-lNzLM7ghFRqnzux47uzFyr1Sh4gKlj+wD3VVs5rCSyMlVq0Hd9qYIqPMNxGFCvWFDsUqXmIE0oxc
-Y0pGoxk9Dfc4sBMUlm6BCnnCVShEmXRm+EMYTuK8n7+rjd/eW02SeydGnjJ1rwidNOCSTKMstdSo
-Yp5zZuABKZFamSq0j548z2Pt92+z4zbOoq4H9Ra1XZxg/47317uL6YsQPN+/ftUP35Zsf9leXy0v
-z9vZ/slXJp/4689Ndt6ebc95ud9d80re/bDf3cmP8ftYuT3aHKmT8Tg2bZYXfHv0t9n8ckH16up8
-sV7I2svtp1428v6vux3dLXX2a20d/tl1yGvo2FpHv7Zrl1frfb+4udiM7W8+076eLX98//7tN3P/
-4+lqfXPzpW837xfvF+vb69u7zxt10i93Szlkfl7T1enHL/h8PP95WHtzzhen+7Ppo+Pjacnx8erb
-ti/H73/ZDBfndatvBxv347yjxfEvX3fn++XqeLF5u99tL07f9N3l55/OaPfTZePlFe2+8N8v9stx
-2rtxzIe1Dqt/DrPvhrkPq5P7R0P/6udiOY5cnSxWc3JWE8hlx/Rp/Hov/9WBDO9WD1mRj+8fc37I
-5NOcz4c8pvvuy+31x82Cj2/O6ZjO+WbxAPnbb1oQP3n4Lu3u9OtmrH/3D9qfvennlwB+/Lqji3b5
-ebk6+tNk8ADjh2cUxP7JnYl587d1q5NfAVBLAQIeAxQAAgAIAARIeUq4JlqN6ggAAMATAAAIABgA
-AAAAAAEAAACkgQAAAAAyNDk5MS5qc1VUBQADN93VWHV4CwABBAAAAAAEAAAAAFBLBQYAAAAAAQAB
-AE4AAAAsCQAAAABQSwECHgMKAAIAAAAESHlK886bLZAJAACQCQAADQAYAAAAAAAAAAAApIEAAAAA
-emlwLTI0OTkxLnppcFVUBQADN93VWHV4CwABBAAAAAAEAAAAAFBLBQYAAAAAAQABAFMAAADXCQAA
-AAA=
+Hi Ulrich,
+
+Thank you for the patch.
+
+On Thursday 27 Apr 2017 16:37:42 Ulrich Hecht wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch enables PWM2 for Salvator-X board on R8A7795 SoC.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts index 8558b27..534b17e
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> @@ -381,6 +381,11 @@
+>  		function = "pwm1";
+>  	};
+> 
+> +	pwm2_pins: pwm2 {
+> +		groups = "pwm2_a";
+> +		function = "pwm2";
+> +	};
+> +
+>  	sdhi0_pins: sd0 {
+>  		groups = "sdhi0_data4", "sdhi0_ctrl";
+>  		function = "sdhi0";
+> @@ -463,6 +468,13 @@
+>  	status = "okay";
+>  };
+> 
+> +&pwm2 {
+> +	/* PMIC DC/DC switching frequency synchronization */
+
+Please pardon the stupid question, but if the PWM channel is used by the PMIC, 
+is there a point in enabling it without a PMIC DT node using it ?
+
+> +	pinctrl-0 = <&pwm2_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> +
+>  &scif1 {
+>  	pinctrl-0 = <&scif1_pins>;
+>  	pinctrl-names = "default";
+
+-- 
+Regards,
+
+Laurent Pinchart
