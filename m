@@ -1,10 +1,14 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 28 Apr 2017 07:19:38 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+MIME-Version: 1.0
+In-Reply-To: <1493281194-5200-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org> <1493281194-5200-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 27 Apr 2017 10:38:39 +0200
+Message-ID: <CAMuHMdWwT6et+vRzeY1GiGYW-hS4w4ukWK8bUL+w-npMmdPkag@mail.gmail.com>
+Subject: Re: [PATCH v5 05/10] arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Chris Brandt <chris.brandt@renesas.com>,
@@ -15,26 +19,33 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 05/10] arm: dts: dt-bindings: Add Renesas RZ/A1
- pinctrl header
-Message-ID: <20170428051937.GD18349@verge.net.au>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-6-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWwT6et+vRzeY1GiGYW-hS4w4ukWK8bUL+w-npMmdPkag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWwT6et+vRzeY1GiGYW-hS4w4ukWK8bUL+w-npMmdPkag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 27, 2017 at 10:38:39AM +0200, Geert Uytterhoeven wrote:
-> On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
-> <jacopo+renesas@jmondi.org> wrote:
-> > Add dt-bindings for Renesas r7s72100 pin controller header file.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+> Add dt-bindings for Renesas r7s72100 pin controller header file.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Thanks, I have queued this up.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+> @@ -0,0 +1,16 @@
+
+> +#define RZA1_PINMUX(b, p, f)   ((b) * RZA1_PINS_PER_PORT + (p) | (f << 16))
+
+... | (f) << 16)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
