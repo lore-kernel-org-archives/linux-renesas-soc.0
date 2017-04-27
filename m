@@ -1,216 +1,74 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 15/27] rcar-vin: enable Gen3 hardware configuration
-Date: Fri, 28 Apr 2017 00:41:51 +0200
-Message-Id: <20170427224203.14611-16-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36455 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031888AbdD0MkK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 27 Apr 2017 08:40:10 -0400
+Received: by mail-it0-f65.google.com with SMTP id x188so1947315itb.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Apr 2017 05:40:09 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <201704261750.NjGZWMo1%fengguang.wu@intel.com>
+References: <201704261750.NjGZWMo1%fengguang.wu@intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 27 Apr 2017 14:40:08 +0200
+Message-ID: <CAMuHMdUBF_nxp2h5A0-Eo+p8GB6JUvO8dN-ph+CxSLaB5UkZ4A@mail.gmail.com>
+Subject: Re: [renesas-drivers:topic/rcar2-cpg-mssr 5/32] arch/mips//lantiq/clk.c:163:13:
+ error: redefinition of 'of_clk_get_from_provider'
+To: kbuild test robot <fengguang.wu@intel.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "kbuild-all@01.org" <kbuild-all@01.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        John Crispin <blogic@openwrt.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the register needed to work with Gen3 hardware. This patch adds
-the logic for how to work with the Gen3 hardware. More work is required
-to enable the subdevice structure needed to configure capturing.
+On Wed, Apr 26, 2017 at 11:50 AM, kbuild test robot
+<fengguang.wu@intel.com> wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/rcar2-cpg-mssr
+> head:   bd948f4b8c455dfdbc8175b5c2bc29c91b048971
+> commit: 647a9d3c4f83250fd1f4e6519cf785319c9afe4c [5/32] clk: Provide dummy of_clk_get_from_provider() for compile-testing
+> config: mips-xway_defconfig (attached as .config)
+> compiler: mips-linux-gnu-gcc (Debian 6.1.1-9) 6.1.1 20160705
+> reproduce:
+>         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 647a9d3c4f83250fd1f4e6519cf785319c9afe4c
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=mips
+>
+> All errors (new ones prefixed by >>):
+>
+>>> arch/mips//lantiq/clk.c:163:13: error: redefinition of 'of_clk_get_from_provider'
+>     struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+>                 ^~~~~~~~~~~~~~~~~~~~~~~~
+>    In file included from arch/mips//lantiq/clk.c:14:0:
+>    include/linux/clk.h:542:27: note: previous definition of 'of_clk_get_from_provider' was here
+>     static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+>                               ^~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 94 ++++++++++++++++++++----------
- drivers/media/platform/rcar-vin/rcar-vin.h |  1 +
- 2 files changed, 64 insertions(+), 31 deletions(-)
+Bummer, Lantiq defines its own dummy. Will fold its removal into my patch.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 2931ba7998709307..7fecb616b6c45a32 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -33,21 +33,23 @@
- #define VNELPRC_REG	0x10	/* Video n End Line Pre-Clip Register */
- #define VNSPPRC_REG	0x14	/* Video n Start Pixel Pre-Clip Register */
- #define VNEPPRC_REG	0x18	/* Video n End Pixel Pre-Clip Register */
--#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
--#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
--#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
--#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
- #define VNIS_REG	0x2C	/* Video n Image Stride Register */
- #define VNMB_REG(m)	(0x30 + ((m) << 2)) /* Video n Memory Base m Register */
- #define VNIE_REG	0x40	/* Video n Interrupt Enable Register */
- #define VNINTS_REG	0x44	/* Video n Interrupt Status Register */
- #define VNSI_REG	0x48	/* Video n Scanline Interrupt Register */
- #define VNMTC_REG	0x4C	/* Video n Memory Transfer Control Register */
--#define VNYS_REG	0x50	/* Video n Y Scale Register */
--#define VNXS_REG	0x54	/* Video n X Scale Register */
- #define VNDMR_REG	0x58	/* Video n Data Mode Register */
- #define VNDMR2_REG	0x5C	/* Video n Data Mode Register 2 */
- #define VNUVAOF_REG	0x60	/* Video n UV Address Offset Register */
-+
-+/* Register offsets specific for Gen2 */
-+#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
-+#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
-+#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
-+#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
-+#define VNYS_REG	0x50	/* Video n Y Scale Register */
-+#define VNXS_REG	0x54	/* Video n X Scale Register */
- #define VNC1A_REG	0x80	/* Video n Coefficient Set C1A Register */
- #define VNC1B_REG	0x84	/* Video n Coefficient Set C1B Register */
- #define VNC1C_REG	0x88	/* Video n Coefficient Set C1C Register */
-@@ -73,9 +75,13 @@
- #define VNC8B_REG	0xF4	/* Video n Coefficient Set C8B Register */
- #define VNC8C_REG	0xF8	/* Video n Coefficient Set C8C Register */
- 
-+/* Register offsets specific for Gen3 */
-+#define VNCSI_IFMD_REG		0x20 /* Video n CSI2 Interface Mode Register */
- 
- /* Register bit fields for R-Car VIN */
- /* Video n Main Control Register bits */
-+#define VNMC_DPINE		(1 << 27) /* Gen3 specific */
-+#define VNMC_SCLE		(1 << 26) /* Gen3 specific */
- #define VNMC_FOC		(1 << 21)
- #define VNMC_YCAL		(1 << 19)
- #define VNMC_INF_YUV8_BT656	(0 << 16)
-@@ -119,6 +125,13 @@
- #define VNDMR2_FTEV		(1 << 17)
- #define VNDMR2_VLV(n)		((n & 0xf) << 12)
- 
-+/* Video n CSI2 Interface Mode Register (Gen3) */
-+#define VNCSI_IFMD_DES2		(1 << 27)
-+#define VNCSI_IFMD_DES1		(1 << 26)
-+#define VNCSI_IFMD_DES0		(1 << 25)
-+#define VNCSI_IFMD_CSI_CHSEL(n) ((n & 0xf) << 0)
-+#define VNCSI_IFMD_CSI_CHSEL_MASK 0xf
-+
- struct rvin_buffer {
- 	struct vb2_v4l2_buffer vb;
- 	struct list_head list;
-@@ -514,28 +527,10 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
- 
--static void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp_gen2(struct rvin_dev *vin)
- {
- 	u32 xs, ys;
- 
--	/* Set Start/End Pixel/Line Pre-Clip */
--	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
--	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
--	switch (vin->format.field) {
--	case V4L2_FIELD_INTERLACED:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
--		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
--			   VNELPRC_REG);
--		break;
--	default:
--		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
--		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
--			   VNELPRC_REG);
--		break;
--	}
--
- 	/* Set scaling coefficient */
- 	ys = 0;
- 	if (vin->crop.height != vin->compose.height)
-@@ -573,11 +568,6 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
--		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
--	else
--		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
--
- 	vin_dbg(vin,
- 		"Pre-Clip: %ux%u@%u:%u YS: %d XS: %d Post-Clip: %ux%u@%u:%u\n",
- 		vin->crop.width, vin->crop.height, vin->crop.left,
-@@ -585,6 +575,37 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		0, 0);
- }
- 
-+static void rvin_crop_scale_comp(struct rvin_dev *vin)
-+{
-+	/* Set Start/End Pixel/Line Pre-Clip */
-+	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
-+	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
-+
-+	switch (vin->format.field) {
-+	case V4L2_FIELD_INTERLACED:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
-+		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
-+			   VNELPRC_REG);
-+		break;
-+	default:
-+		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
-+		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
-+			   VNELPRC_REG);
-+		break;
-+	}
-+
-+	/* TODO: Add support for the UDS scaler. */
-+	if (vin->info->chip != RCAR_GEN3)
-+		rvin_crop_scale_comp_gen2(vin);
-+
-+	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
-+		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
-+	else
-+		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Hardware setup
-  */
-@@ -660,7 +681,10 @@ static int rvin_setup(struct rvin_dev *vin)
- 	}
- 
- 	/* Enable VSYNC Field Toogle mode after one VSYNC input */
--	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
-+	if (vin->info->chip == RCAR_GEN3)
-+		dmr2 = VNDMR2_FTEV;
-+	else
-+		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
- 	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-@@ -712,6 +736,14 @@ static int rvin_setup(struct rvin_dev *vin)
- 	if (input_is_yuv == output_is_yuv)
- 		vnmc |= VNMC_BPS;
- 
-+	if (vin->info->chip == RCAR_GEN3) {
-+		/* Select between CSI-2 and Digital input */
-+		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
-+			vnmc &= ~VNMC_DPINE;
-+		else
-+			vnmc |= VNMC_DPINE;
-+	}
-+
- 	/* Progressive or interlaced mode */
- 	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 43206e85bbaadb5b..09fc70e192699f35 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -33,6 +33,7 @@ enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
- 	RCAR_GEN2,
-+	RCAR_GEN3,
- };
- 
- /**
--- 
-2.12.2
+> vim +/of_clk_get_from_provider +163 arch/mips//lantiq/clk.c
+>
+> 287e3f3f John Crispin 2012-04-17  157
+> 287e3f3f John Crispin 2012-04-17  158   if (clk->deactivate)
+> 287e3f3f John Crispin 2012-04-17  159           clk->deactivate(clk);
+> 287e3f3f John Crispin 2012-04-17  160  }
+> 287e3f3f John Crispin 2012-04-17  161  EXPORT_SYMBOL(clk_deactivate);
+> 287e3f3f John Crispin 2012-04-17  162
+> b902d9a9 John Crispin 2012-07-22 @163  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+> b902d9a9 John Crispin 2012-07-22  164  {
+> b902d9a9 John Crispin 2012-07-22  165   return NULL;
+> b902d9a9 John Crispin 2012-07-22  166  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
