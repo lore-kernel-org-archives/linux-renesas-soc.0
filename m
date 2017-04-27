@@ -1,121 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59466 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932127AbdDGSOh (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36458 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938475AbdD0OiB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Apr 2017 14:14:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/3] soc: renesas: rcar-sysc: Add support for R-Car H3 ES2.0
-Date: Fri,  7 Apr 2017 14:14:21 -0400
-Message-Id: <fcb87087261e1be51b4c03677f39246bdc312b1c.1491588035.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1491588035.git.horms+renesas@verge.net.au>
-References: <cover.1491588035.git.horms+renesas@verge.net.au>
+        Thu, 27 Apr 2017 10:38:01 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: geert@glider.be, horms@verge.net.au
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        Ryo Kodama <ryo.kodama.vz@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 5/8] arm64: dts: r8a7796-salvator-x: Add PWM device support
+Date: Thu, 27 Apr 2017 16:37:40 +0200
+Message-Id: <1493303863-23719-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Ryo Kodama <ryo.kodama.vz@renesas.com>
 
-Power area A2VC0 was removed in revision ES2.0, cfr. R-Car Gen3 Hardware
-User's Manual rev. 0.53E.
+This patch adds support of PWM2 device for Salvator-X board on
+R8A7796 SoC.
 
-Hence remove it from the power area table when not running on ES1.x.
-
-This is in line with the goal to:
-  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
-     for now,
-  2. Make it clear which code supports ES1.x, so it can easily be
-     identified and removed later, when production SoCs are deemed
-     ubiquitous.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/soc/renesas/r8a7795-sysc.c       | 26 ++++++++++++++++++++++++--
- include/dt-bindings/power/r8a7795-sysc.h |  2 +-
- 2 files changed, 25 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/soc/renesas/r8a7795-sysc.c b/drivers/soc/renesas/r8a7795-sysc.c
-index 5e7537c96f7b..7412666187b3 100644
---- a/drivers/soc/renesas/r8a7795-sysc.c
-+++ b/drivers/soc/renesas/r8a7795-sysc.c
-@@ -1,7 +1,7 @@
- /*
-  * Renesas R-Car H3 System Controller
-  *
-- * Copyright (C) 2016 Glider bvba
-+ * Copyright (C) 2016-2017 Glider bvba
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -10,12 +10,13 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index abda84c..1516959 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -138,6 +138,11 @@
+ 		function = "pwm1";
+ 	};
  
- #include <linux/bug.h>
- #include <linux/kernel.h>
-+#include <linux/sys_soc.h>
- 
- #include <dt-bindings/power/r8a7795-sysc.h>
- 
- #include "rcar-sysc.h"
- 
--static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
-+static struct rcar_sysc_area r8a7795_areas[] __initdata = {
- 	{ "always-on",	    0, 0, R8A7795_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
- 	{ "ca57-scu",	0x1c0, 0, R8A7795_PD_CA57_SCU,	R8A7795_PD_ALWAYS_ON,
- 	  PD_SCU },
-@@ -40,6 +41,7 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
- 	{ "a3vp",	0x340, 0, R8A7795_PD_A3VP,	R8A7795_PD_ALWAYS_ON },
- 	{ "cr7",	0x240, 0, R8A7795_PD_CR7,	R8A7795_PD_ALWAYS_ON },
- 	{ "a3vc",	0x380, 0, R8A7795_PD_A3VC,	R8A7795_PD_ALWAYS_ON },
-+	/* A2VC0 exists on ES1.x only */
- 	{ "a2vc0",	0x3c0, 0, R8A7795_PD_A2VC0,	R8A7795_PD_A3VC },
- 	{ "a2vc1",	0x3c0, 1, R8A7795_PD_A2VC1,	R8A7795_PD_A3VC },
- 	{ "3dg-a",	0x100, 0, R8A7795_PD_3DG_A,	R8A7795_PD_ALWAYS_ON },
-@@ -50,7 +52,27 @@ static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
- 	{ "a3ir",	0x180, 0, R8A7795_PD_A3IR,	R8A7795_PD_ALWAYS_ON },
++	pwm2_pins: pwm2 {
++		groups = "pwm2_a";
++		function = "pwm2";
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -257,6 +262,14 @@
+ 	status = "okay";
  };
  
++&pwm2 {
++	/* PMIC DC/DC switching frequency synchronization */
++	pinctrl-0 = <&pwm2_pins>;
++	pinctrl-names = "default";
 +
-+	/*
-+	 * Fixups for R-Car H3 revisions after ES1.x
-+	 */
-+
-+static const struct soc_device_attribute r8a7795es1[] __initconst = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-+	{ /* sentinel */ }
++	status = "okay";
 +};
 +
-+static int __init r8a7795_sysc_init(void)
-+{
-+	if (!soc_device_match(r8a7795es1))
-+		rcar_sysc_nullify(r8a7795_areas, ARRAY_SIZE(r8a7795_areas),
-+				  R8A7795_PD_A2VC0);
-+
-+	return 0;
-+}
-+
- const struct rcar_sysc_info r8a7795_sysc_info __initconst = {
-+	.init = r8a7795_sysc_init,
- 	.areas = r8a7795_areas,
- 	.num_areas = ARRAY_SIZE(r8a7795_areas),
- };
-diff --git a/include/dt-bindings/power/r8a7795-sysc.h b/include/dt-bindings/power/r8a7795-sysc.h
-index ee2e26ba605e..ad679eeda137 100644
---- a/include/dt-bindings/power/r8a7795-sysc.h
-+++ b/include/dt-bindings/power/r8a7795-sysc.h
-@@ -33,7 +33,7 @@
- #define R8A7795_PD_CA53_SCU		21
- #define R8A7795_PD_3DG_E		22
- #define R8A7795_PD_A3IR			24
--#define R8A7795_PD_A2VC0		25
-+#define R8A7795_PD_A2VC0		25	/* ES1.x only */
- #define R8A7795_PD_A2VC1		26
- 
- /* Always-on power area */
+ &scif1 {
+ 	pinctrl-0 = <&scif1_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
