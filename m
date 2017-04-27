@@ -1,48 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35897 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968620AbdDSRtF (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:36371 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164369AbdD0WuA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:49:05 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add PCIe clocks
-Date: Thu, 20 Apr 2017 02:46:39 +0900
-Message-Id: <1492624001-3758-19-git-send-email-ykaneko0929@gmail.com>
+        Thu, 27 Apr 2017 18:50:00 -0400
+Received: by mail-lf0-f50.google.com with SMTP id c80so25204574lfh.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Apr 2017 15:50:00 -0700 (PDT)
+Date: Fri, 28 Apr 2017 00:49:57 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH] rcar-vin: Use of_nodes as specified by the subdev
+Message-ID: <20170427224957.GA1532@bigcity.dyn.berto.se>
+References: <1493132100-31901-1-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1493132100-31901-1-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Hi Kieran,
 
-This patch adds PCIEC{0,1} clocks for R8A7796 SoC.
+Thanks for your patch. I took it for a spin on my Koelsch and it worked 
+nicely.
 
-Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 2017-04-25 15:55:00 +0100, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The rvin_digital_notify_bound() call dereferences the subdev->dev
+> pointer to obtain the of_node. On some error paths, this dev node can be
+> set as NULL. The of_node is mapped into the subdevice structure on
+> initialisation, so this is a safer source to compare the nodes.
+> 
+> Dereference the of_node from the subdev structure instead of the dev
+> structure.
+> 
+> Fixes: 83fba2c06f19 ("rcar-vin: rework how subdevice is found and
+> 	bound")
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 5861ab281150..a530dc388b95 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -469,7 +469,7 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+>  
+>  	v4l2_set_subdev_hostdata(subdev, vin);
+>  
+> -	if (vin->digital.asd.match.of.node == subdev->dev->of_node) {
+> +	if (vin->digital.asd.match.of.node == subdev->of_node) {
+>  		/* Find surce and sink pad of remote subdevice */
+>  
+>  		ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
+> -- 
+> 2.7.4
+> 
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 64714ca..877fc75 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -137,6 +137,8 @@ enum clk_ids {
- 	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
- 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
-+	DEF_MOD("pcie1",		 318,	R8A7796_CLK_S3D1),
-+	DEF_MOD("pcie0",		 319,	R8A7796_CLK_S3D1),
- 	DEF_MOD("usb-dmac0",		 330,	R8A7796_CLK_S3D1),
- 	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
 -- 
-1.9.1
+Regards,
+Niklas S�derlund
