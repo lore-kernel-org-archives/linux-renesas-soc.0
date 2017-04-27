@@ -1,44 +1,41 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org> <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 27 Apr 2017 10:37:16 +0200
-Message-ID: <CAMuHMdVPTs=GRNK3jMxf_bkUPpG==ObQFEb5wr74avGXryeedQ@mail.gmail.com>
-Subject: Re: [PATCH v5 02/10] pinctrl: generic: Add macros to unpack properties
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linus.walleij@linaro.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 02/10] pinctrl: generic: Add macros to unpack properties
+Date: Thu, 27 Apr 2017 10:19:46 +0200
+Message-Id: <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
-> Add PIN_CONF_UNPACK_PARAM and PIN_CONF_UNPACK_ARGS macros useful to
-> unpack generic properties and their arguments
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Add PIN_CONF_UNPACK_PARAM and PIN_CONF_UNPACK_ARGS macros useful to
+unpack generic properties and their arguments
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ include/linux/pinctrl/pinconf-generic.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
+index 279e3c5..2cd2a03 100644
+--- a/include/linux/pinctrl/pinconf-generic.h
++++ b/include/linux/pinctrl/pinconf-generic.h
+@@ -118,7 +118,9 @@ enum pin_config_param {
+ /*
+  * Helpful configuration macro to be used in tables etc.
+  */
+-#define PIN_CONF_PACKED(p, a) ((a << 8) | ((unsigned long) p & 0xffUL))
++#define PIN_CONF_PACKED(p, a) (((a) << 8) | ((unsigned long) (p) & 0xffUL))
++#define PIN_CONF_UNPACK_PARAM(c) ((c) & 0xffUL)
++#define PIN_CONF_UNPACK_ARGS(c) ((c) >> 8)
+ 
+ /*
+  * The following inlines stuffs a configuration parameter and data value
+-- 
+2.7.4
