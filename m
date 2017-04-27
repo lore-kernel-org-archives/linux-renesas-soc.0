@@ -1,51 +1,38 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 28 Apr 2017 07:22:09 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
-Message-ID: <20170428052208.GF18349@verge.net.au>
+Subject: RE: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
+Date: Thu, 27 Apr 2017 10:48:45 +0000
+Message-ID: <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
  <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
  <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
- <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 27, 2017 at 10:48:45AM +0000, Chris Brandt wrote:
-> Hi Geert,
-> 
-> On Thursday, April 27, 2017, Geert Uytterhoeven wrote:
-> > > +&ether {
-> > > +       pinctrl-names = "default";
-> > > +       pinctrl-0 = <&ether_pins>;
-> > > +
-> > > +       status = "okay";
-> > > +
-> > > +       renesas,no-ether-link;
-> > > +       phy-handle = <&phy0>;
-> > > +       phy0: ethernet-phy@0 {
-> > > +               reg = <0>;
-> > 
-> > Shouldn't the interrupt (connected to P1_15) be described?
-> 
-> 
-> That interrupt pin from the PHY is not used. It did not need to be connected.
-
-So things are fine as above or should I expect to see v6?
+SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBBcHJpbCAyNywgMjAxNywgR2VlcnQgVXl0dGVyaG9l
+dmVuIHdyb3RlOg0KPiA+ICsmZXRoZXIgew0KPiA+ICsgICAgICAgcGluY3RybC1uYW1lcyA9ICJk
+ZWZhdWx0IjsNCj4gPiArICAgICAgIHBpbmN0cmwtMCA9IDwmZXRoZXJfcGlucz47DQo+ID4gKw0K
+PiA+ICsgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ICsNCj4gPiArICAgICAgIHJlbmVzYXMs
+bm8tZXRoZXItbGluazsNCj4gPiArICAgICAgIHBoeS1oYW5kbGUgPSA8JnBoeTA+Ow0KPiA+ICsg
+ICAgICAgcGh5MDogZXRoZXJuZXQtcGh5QDAgew0KPiA+ICsgICAgICAgICAgICAgICByZWcgPSA8
+MD47DQo+IA0KPiBTaG91bGRuJ3QgdGhlIGludGVycnVwdCAoY29ubmVjdGVkIHRvIFAxXzE1KSBi
+ZSBkZXNjcmliZWQ/DQoNCg0KVGhhdCBpbnRlcnJ1cHQgcGluIGZyb20gdGhlIFBIWSBpcyBub3Qg
+dXNlZC4gSXQgZGlkIG5vdCBuZWVkIHRvIGJlIGNvbm5lY3RlZC4NCg0KDQpDaHJpcw0KDQo=
