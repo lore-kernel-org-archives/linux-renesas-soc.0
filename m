@@ -1,47 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:35576 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965524AbdDSRrN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:47:13 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUy3wo9x=nkpdSVSt34q5yaARc4+kFDC592V2LF7Cxzrg@mail.gmail.com>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1491401247-7030-3-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdUy3wo9x=nkpdSVSt34q5yaARc4+kFDC592V2LF7Cxzrg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Apr 2017 10:06:16 +0200
+Message-ID: <CACRpkdapS5YNk0BKXfbMOOk21X1BFuBLvTxNXWzWPeB1+PRW_A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/9] pinctrl: Renesas RZ/A1 pin and gpio controller
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
-Date: Thu, 20 Apr 2017 02:46:23 +0900
-Message-Id: <1492624001-3758-3-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Wed, Apr 26, 2017 at 2:21 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Apr 5, 2017 at 4:07 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>> Add combined gpio and pin controller driver for Renesas RZ/A1
+>> r7s72100 SoC.
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/pinctrl-rza1.c
+>
+>> +/*
+>> + * Keep this up-to-date with pinconf-generic.h: it performs packing of
+>> + * pin conf flags and argument during pinconf_generic_parse_dt_config();
+>> + * we simply discard pinconf argument here
+>> + */
+>> +#define PIN_CONF_UNPACK(pinconf)       ((pinconf) & 0xffUL)
+>
+> Perhaps this should be moved to pinconf-generic.h, to make sure it stays
+> up-to-date?
 
-This patch supports the clock of EHCI/OHCI ch3 module added from R8A7795
-ES2.0 SoC.
+I agree. Use the generic macros.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+If further processing is needed, make a static inline to discard config flags
+etc.
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index a9ee68e..e48d5cf 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -190,6 +190,7 @@ enum clk_ids {
- 	DEF_MOD("vspi2",		 629,	R8A7795_CLK_S2D1), /* ES1.x */
- 	DEF_MOD("vspi1",		 630,	R8A7795_CLK_S0D1),
- 	DEF_MOD("vspi0",		 631,	R8A7795_CLK_S0D1),
-+	DEF_MOD("ehci3",		 700,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci2",		 701,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci1",		 702,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci0",		 703,	R8A7795_CLK_S3D4),
--- 
-1.9.1
+Yours,
+Linus Walleij
