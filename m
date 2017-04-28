@@ -1,64 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42068 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1948081AbdDYQxa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45458 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162886AbdD1FKM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 12:53:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH 01/10] clk: renesas: cpg-mssr: Document R-Car Gen2 support
-Date: Tue, 25 Apr 2017 18:53:11 +0200
-Message-Id: <1493139200-27396-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+        Fri, 28 Apr 2017 01:10:12 -0400
+Date: Fri, 28 Apr 2017 07:10:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 0/9] ARM: dts: renesas: update PFC node name to
+ pin-controller
+Message-ID: <20170428051005.GA18349@verge.net.au>
+References: <20170426100538.22060-1-horms+renesas@verge.net.au>
+ <CAMuHMdVtMAMEjbEUA+ypwK5V+Sh+mEPs14_rUe0e4--sH=sTjw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVtMAMEjbEUA+ypwK5V+Sh+mEPs14_rUe0e4--sH=sTjw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document use of the Renesas Clock Pulse Generator / Module Standby and
-Software Reset DT Bindings for various member of the R-Car Gen2 family
-(H2, M2-W, V2H, M2-N, and E2).
+On Wed, Apr 26, 2017 at 01:20:52PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Apr 26, 2017 at 12:05 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > The device trees for Renesas SoCs use either pfc or pin-controller as the
+> > node name for the PFC device. This patch is intended to take a step towards
+> > unifying the node name used as pin-controller which appears to be the more
+> > generic of the two and thus more in keeping with the DT specs.
+> >
+> > My analysis is that this is a user-visible change to the extent that kernel
+> > logs, and sysfs entries change from XXX.pfc and pfc@XXX to
+> > XXX.pin-controller and pin-controller@XXX.
+> >
+> > Boot tested on:
+> >  r8a73a4/ape6evm
+> >  r8a7740/armadillo800evb
+> >  r8a7778/bockw
+> >  r8a7790/lager
+> >  r8a7791/koelsch
+> >  r8a7791/porter
+> >  r8a7793/gose
+> >  sh73a9/kzm9g
+> >
+> > Not tested on (due to lack of hw access):
+> >  evm2/kzm9d
+> >  r8a7789/marzen
+> >
+> > Simon Horman (9):
+> 
+> For the whole series:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index f4f944d813081857..0cd894f987a38e81 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -15,6 +15,11 @@ Required Properties:
-   - compatible: Must be one of:
-       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-+      - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
-+      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
-+      - "renesas,r8a7792-cpg-mssr" for the r8a7792 SoC (R-Car V2H)
-+      - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
-+      - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
-       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
-       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
- 
-@@ -24,9 +29,10 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7743, r8a7745, r8a7795, r8a7796)
-+      - "extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
-+		 r8a7795, r8a7796)
-       - "extalr" (r8a7795, r8a7796)
--      - "usb_extal" (r8a7743, r8a7745)
-+      - "usb_extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7793, r8a7794)
- 
-   - #clock-cells: Must be 2
-       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
--- 
-2.7.4
+Thanks, I have queued these up.
