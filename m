@@ -1,16 +1,19 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org> <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Apr 2017 10:49:32 +0200
-Message-ID: <CACRpkdaiDMxaGM=vqeqVQ-6i3ecYhc+pudy4yt4zAZW-XZ4vCw@mail.gmail.com>
+In-Reply-To: <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com> <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Apr 2017 09:18:42 +0200
+Message-ID: <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
 Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -22,26 +25,36 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
+Hi Chris,
 
-> Add pin configuration subnode for ETHER ethernet controller.
+On Thu, Apr 27, 2017 at 12:48 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Thursday, April 27, 2017, Geert Uytterhoeven wrote:
+>> > +&ether {
+>> > +       pinctrl-names = "default";
+>> > +       pinctrl-0 = <&ether_pins>;
+>> > +
+>> > +       status = "okay";
+>> > +
+>> > +       renesas,no-ether-link;
+>> > +       phy-handle = <&phy0>;
+>> > +       phy0: ethernet-phy@0 {
+>> > +               reg = <0>;
+>>
+>> Shouldn't the interrupt (connected to P1_15) be described?
 >
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-(...)
-> +               pins_bidir {
-> +                       pinmux = <RZA1_PINMUX(3, 3, 2)>;/* P3_3 = ET_MDIO  */
-> +                       bi-directional;
-> +               };
+> That interrupt pin from the PHY is not used. It did not need to be connected.
 
-So I'm against merging this until someone explains what "bi-directional"
-actually means, electrically speaking. What happens physically on this pin?
+But it is connected, according to the schematics.
 
-I think this just means open drain.
+DT describes hardware, not software limitations.
 
-It is dangerous to merge things we don't understand.
+Gr{oetje,eeting}s,
 
-Surely someone inside Renesas can answer this question.
+                        Geert
 
-Yours,
-Linus Walleij
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
