@@ -1,94 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35713 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970829AbdDTPnX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Apr 2017 11:43:23 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-iio@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 28 Apr 2017 07:19:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: [PATCH] iio: adc: Derive interface clock speed from fck clock
-Date: Thu, 20 Apr 2017 17:43:10 +0200
-Message-Id: <20170420154310.32759-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 05/10] arm: dts: dt-bindings: Add Renesas RZ/A1
+ pinctrl header
+Message-ID: <20170428051937.GD18349@verge.net.au>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-6-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWwT6et+vRzeY1GiGYW-hS4w4ukWK8bUL+w-npMmdPkag@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWwT6et+vRzeY1GiGYW-hS4w4ukWK8bUL+w-npMmdPkag@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The "if" interface clock speed is actually derived from the "fck"
-block clock, as in the hardware they are the same clock. Drop the
-incorrect second "if" clock and get the clock speed from "fck".
+On Thu, Apr 27, 2017 at 10:38:39AM +0200, Geert Uytterhoeven wrote:
+> On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add dt-bindings for Renesas r7s72100 pin controller header file.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/iio/adc/rcar-gyroadc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-index 018ed360e717..27a318164619 100644
---- a/drivers/iio/adc/rcar-gyroadc.c
-+++ b/drivers/iio/adc/rcar-gyroadc.c
-@@ -73,7 +73,7 @@ enum rcar_gyroadc_model {
- struct rcar_gyroadc {
- 	struct device			*dev;
- 	void __iomem			*regs;
--	struct clk			*iclk;
-+	struct clk			*clk;
- 	struct regulator		*vref[8];
- 	unsigned int			num_channels;
- 	enum rcar_gyroadc_model		model;
-@@ -83,7 +83,7 @@ struct rcar_gyroadc {
- 
- static void rcar_gyroadc_hw_init(struct rcar_gyroadc *priv)
- {
--	const unsigned long clk_mhz = clk_get_rate(priv->iclk) / 1000000;
-+	const unsigned long clk_mhz = clk_get_rate(priv->clk) / 1000000;
- 	const unsigned long clk_mul =
- 		(priv->mode == RCAR_GYROADC_MODE_SELECT_1_MB88101A) ? 10 : 5;
- 	unsigned long clk_len = clk_mhz * clk_mul;
-@@ -510,9 +510,9 @@ static int rcar_gyroadc_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->regs))
- 		return PTR_ERR(priv->regs);
- 
--	priv->iclk = devm_clk_get(dev, "if");
--	if (IS_ERR(priv->iclk)) {
--		ret = PTR_ERR(priv->iclk);
-+	priv->clk = devm_clk_get(dev, "fck");
-+	if (IS_ERR(priv->clk)) {
-+		ret = PTR_ERR(priv->clk);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(dev, "Failed to get IF clock (ret=%i)\n", ret);
- 		return ret;
-@@ -536,7 +536,7 @@ static int rcar_gyroadc_probe(struct platform_device *pdev)
- 	indio_dev->info = &rcar_gyroadc_iio_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 
--	ret = clk_prepare_enable(priv->iclk);
-+	ret = clk_prepare_enable(priv->clk);
- 	if (ret) {
- 		dev_err(dev, "Could not prepare or enable the IF clock.\n");
- 		goto err_clk_if_enable;
-@@ -565,7 +565,7 @@ static int rcar_gyroadc_probe(struct platform_device *pdev)
- 	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
- 	pm_runtime_set_suspended(dev);
--	clk_disable_unprepare(priv->iclk);
-+	clk_disable_unprepare(priv->clk);
- err_clk_if_enable:
- 	rcar_gyroadc_deinit_supplies(indio_dev);
- 
-@@ -584,7 +584,7 @@ static int rcar_gyroadc_remove(struct platform_device *pdev)
- 	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
- 	pm_runtime_set_suspended(dev);
--	clk_disable_unprepare(priv->iclk);
-+	clk_disable_unprepare(priv->clk);
- 	rcar_gyroadc_deinit_supplies(indio_dev);
- 
- 	return 0;
--- 
-2.11.0
+Thanks, I have queued this up.
