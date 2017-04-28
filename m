@@ -1,61 +1,92 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:36628 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968672AbdDSRsn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:48:43 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 28 Apr 2017 09:31:30 +0200
+From: Simon Horman <horms@verge.net.au>
+To: jmondi <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add Sound SRC clock
-Date: Thu, 20 Apr 2017 02:46:35 +0900
-Message-Id: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 00/10] Renesas RZ/A1 pin and gpio controller
+Message-ID: <20170428073129.GF10196@verge.net.au>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWw1JpFLT0QY4yQK6VH0oSeQOHUWMuKFSj6b6vrhHPCdA@mail.gmail.com>
+ <20170428072457.GA4911@w540>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170428072457.GA4911@w540>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+On Fri, Apr 28, 2017 at 09:24:57AM +0200, jmondi wrote:
+> Hi Geert, Simon,
+> 
+> On Thu, Apr 27, 2017 at 10:42:02AM +0200, Geert Uytterhoeven wrote:
+> > Hi Jacopo,
+> >
+> > On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
+> > <jacopo+renesas@jmondi.org> wrote:
+> > >    this is 5th round of gpio/pincontroller for RZ/A1 devices.
+> > >
+> > > I have updated the pin controller driver to use the newly introduced
+> > > "pinctrl_enable()" function.
+> > > This is required since v4.11-rc7 as otherwise, as reported by Chris Brandt,
+> > > the pin controller does not start.
+> > >
+> > > I have incorporated your comments on the device tree bindings documentation,
+> > > and added to pinctrl-generic.h header file two macros to unpack generic
+> > > properties and their arguments.
+> > >
+> > > Tested with SCIF, RIIC, ETHER and gpio-leds on Genmai board.
+> >
+> > Thanks for the update!
+> >
+> > > Jacopo Mondi (10):
+> > >   pinctrl: generic: Add bi-directional and output-enable
+> >
+> > Already applied by LinusW.
+> >
+> > >   pinctrl: generic: Add macros to unpack properties
+> >
+> > LinusW: do you want me to queue this together with the driver for v4.13,
+> > or will you take this single patch for v4.12?
+> >
+> > >   pinctrl: Renesas RZ/A1 pin and gpio controller
+> > >   dt-bindings: pinctrl: Add RZ/A1 bindings doc
+> >
+> > Will queue in sh-pfc-for-v4.13.
+> >
+> > >   arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
+> > >   arm: dts: r7s72100: Add pin controller node
+> > >   arm: dts: genmai: Add SCIF2 pin group
+> > >   arm: dts: genmai: Add RIIC2 pin group
+> > >   arm: dts: genmai: Add user led device nodes
+> > >   arm: dts: genmai: Add ethernet pin group
+> >
+> > These are for Simon.
+> >
+> > Does applying the DTS changes before the driver introduce regressions?
+> > If no, Simon can queue them for v4.13.
+> > If yes, they'll have to wait for v4.14.
+> >
+> 
+> I tried reverting patch [03/10] which introduces the driver, and I
+> lose serial output on Genmai. So I guess the dts patches have to be
+> taken after the driver has been merged.
+> 
+> One question: why can't they be taken at the same time? (eg. for
+> v4.13?)
 
-This patch adds SCU(all), SCU(SRC{0,1,2,3,4,5,6,7,8,9}), SCU(CTU00,
-CTU01, CTU02, CTU03, MIX0) and SCU (CTU10, CTU11, CTU12, CTU13, MIX1)
-clocks for R8A7796 SoC.
-
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 9be8187..9a18cb7 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -219,6 +219,19 @@ enum clk_ids {
- 	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
- 	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
- 	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
-+	DEF_MOD("scu-all",		1017,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
- };
- 
- static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
--- 
-1.9.1
+The problem is that the changes go through different trees. It may,
+however, be possible to arrange for both sets of changes to go into v4.13
+by negotiating with the ARM-SoC maintainers.
