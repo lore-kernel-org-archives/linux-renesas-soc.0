@@ -1,7 +1,7 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 28 Apr 2017 09:24:57 +0200
-From: jmondi <jacopo@jmondi.org>
+Date: Fri, 28 Apr 2017 07:22:48 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -16,21 +16,19 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v5 00/10] Renesas RZ/A1 pin and gpio controller
-Message-ID: <20170428072457.GA4911@w540>
+Message-ID: <20170428052247.GG18349@verge.net.au>
 References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
  <CAMuHMdWw1JpFLT0QY4yQK6VH0oSeQOHUWMuKFSj6b6vrhHPCdA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CAMuHMdWw1JpFLT0QY4yQK6VH0oSeQOHUWMuKFSj6b6vrhHPCdA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert, Simon,
-
 On Thu, Apr 27, 2017 at 10:42:02AM +0200, Geert Uytterhoeven wrote:
 > Hi Jacopo,
->
+> 
 > On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
 > <jacopo+renesas@jmondi.org> wrote:
 > >    this is 5th round of gpio/pincontroller for RZ/A1 devices.
@@ -45,57 +43,35 @@ On Thu, Apr 27, 2017 at 10:42:02AM +0200, Geert Uytterhoeven wrote:
 > > properties and their arguments.
 > >
 > > Tested with SCIF, RIIC, ETHER and gpio-leds on Genmai board.
->
+> 
 > Thanks for the update!
->
+> 
 > > Jacopo Mondi (10):
 > >   pinctrl: generic: Add bi-directional and output-enable
->
+> 
 > Already applied by LinusW.
->
+> 
 > >   pinctrl: generic: Add macros to unpack properties
->
+> 
 > LinusW: do you want me to queue this together with the driver for v4.13,
 > or will you take this single patch for v4.12?
->
+> 
 > >   pinctrl: Renesas RZ/A1 pin and gpio controller
 > >   dt-bindings: pinctrl: Add RZ/A1 bindings doc
->
+> 
 > Will queue in sh-pfc-for-v4.13.
->
+> 
 > >   arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
 > >   arm: dts: r7s72100: Add pin controller node
 > >   arm: dts: genmai: Add SCIF2 pin group
 > >   arm: dts: genmai: Add RIIC2 pin group
 > >   arm: dts: genmai: Add user led device nodes
 > >   arm: dts: genmai: Add ethernet pin group
->
+> 
 > These are for Simon.
->
+> 
 > Does applying the DTS changes before the driver introduce regressions?
 > If no, Simon can queue them for v4.13.
 > If yes, they'll have to wait for v4.14.
->
 
-I tried reverting patch [03/10] which introduces the driver, and I
-lose serial output on Genmai. So I guess the dts patches have to be
-taken after the driver has been merged.
-
-One question: why can't they be taken at the same time? (eg. for
-v4.13?)
-
-Thanks
-   j
-
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+That is my question too.
