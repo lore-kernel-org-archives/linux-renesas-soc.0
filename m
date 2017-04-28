@@ -1,56 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39491 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934593AbdDFOVa (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36456 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1035921AbdD1Mpp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Apr 2017 10:21:30 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, wsa+renesas@sang-engineering.com,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v5 2/4] iio: Documentation: Add max9611 sysfs documentation
-Date: Thu,  6 Apr 2017 16:20:52 +0200
-Message-Id: <1491488454-22468-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1491488454-22468-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1491488454-22468-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 28 Apr 2017 08:45:45 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170428123837.GF1532@bigcity.dyn.berto.se>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+ <1493139200-27396-3-git-send-email-geert+renesas@glider.be> <20170428123837.GF1532@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Apr 2017 14:45:43 +0200
+Message-ID: <CAMuHMdVHJhJ46DSF_vw+jedDJZab1+FbtzuQgopqumSAwoGUEA@mail.gmail.com>
+Subject: Re: [PATCH 02/10] clk: renesas: Add r8a7790 CPG Core Clock Definitions
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add documentation for max9611 driver.
-Document attributes describing value of shunt resistor installed between
-RS+ and RS- voltage sense inputs.
+Hi Niklas,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+On Fri, Apr 28, 2017 at 2:38 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+>
+> On 2017-04-25 18:53:12 +0200, Geert Uytterhoeven wrote:
+>> Add all R-Car H2 Clock Pulse Generator Core Clock Outputs, as listed in
+>> Table 7.2a ("List of Clocks [R-Car H2]") of the R-Car Gen2 Hardware
+>> User's Manual rev. 2.00.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
-new file mode 100644
-index 0000000..6d2d2b0
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
-@@ -0,0 +1,17 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/in_power_shunt_resistor
-+Date:		March 2017
-+KernelVersion:	4.12
-+Contact:	linux-iio@vger.kernel.org
-+Description: 	The value of the shunt resistor used to compute power drain on
-+                common input voltage pin (RS+). In Ohms.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/in_current_shunt_resistor
-+Date:		March 2017
-+KernelVersion:	4.12
-+Contact:	linux-iio@vger.kernel.org
-+Description: 	The value of the shunt resistor used to compute current flowing
-+                between RS+ and RS- voltage sense inputs. In Ohms.
-+
-+These attributes describe a single physical component, exposed as two distinct
-+attributes as it is used to calculate two different values: power load and
-+current flowing between RS+ and RS- inputs.
--- 
-2.7.4
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
+
+>> +#define R8A7790_CLK_R                        33
+>> +#define R8A7790_CLK_OSC                      34
+>
+> The last two are called RCLR and OSCCLK in the Table 7.2a ("List of
+> Clocks [R-Car H2]"). I'm sure this is intentional on your side, and if
+> so:
+
+It's a bit silly to have two clocks with "clk" in their name, while
+all others don't.
+We did the same on R-Car Gen3.
+
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
+>
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
