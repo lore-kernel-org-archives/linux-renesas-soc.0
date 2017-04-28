@@ -1,59 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:60006 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751396AbdDLAq5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Apr 2017 20:46:57 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 0/3] usb: host: xhci-plat: add support suspend/resume for
- R-Car
-Date: Wed, 12 Apr 2017 00:46:41 +0000
-Message-ID: <PS1PR06MB1692F1F7FCB02AC52E227FFCD8030@PS1PR06MB1692.apcprd06.prod.outlook.com>
-References: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1489744955-29553-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20170428133923.ycbqixcxvcsonocn@rob-hp-laptop>
+References: <1492593351-13835-1-git-send-email-geert+renesas@glider.be>
+ <1492593351-13835-2-git-send-email-geert+renesas@glider.be> <20170428133923.ycbqixcxvcsonocn@rob-hp-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Apr 2017 16:23:38 +0200
+Message-ID: <CAMuHMdXv+Eb8RRCH3u18Lm=ZeBBxkErUxb4TN=Sf6RNFP0xO3g@mail.gmail.com>
+Subject: Re: [PATCH 1/8] [RFC] dt-bindings: renesas: Document R-Car H3 and
+ M3-W SiP DT bindings
+To: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mathias,
+Hi Rob,
 
-> From: Yoshihiro Shimoda, Sent: Friday, March 17, 2017 7:03 PM
->=20
-> This patch adds support suspend/resume for R-Car controllers.
-> The controllers need firmware downloading and the current code has
-> such process only when probe timing. After suspend the system and
-> the power of controller down, the driver needs to re-download the firmwar=
-e
-> in resume timing. This patch adds such a process.
-> Also, since previous xhci-plat code didnn't handle the clk in suspend/res=
-ume,
-> this patch set has such process.
+On Fri, Apr 28, 2017 at 3:39 PM, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Apr 19, 2017 at 11:15:44AM +0200, Geert Uytterhoeven wrote:
+>> Document the SiP ("System-in-Package") versions of the R-Car H3 and M3-W
+>> SoCs, which contain an R-Car H3 or M3-W SoC, RAM, and HyperFlash.
+>>
+>> Add their compatible values to all boards equipped with R-Car Gen3 SiPs.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> Questions:
+>>   - Do we need more compatible values, for different configurations?
+>>     At least r8j7796 is available with either 2 GiB or 4 GiB of RAM,
+>>     possibly using RAM parts from different vendors.
+>
+> Same die, just a different package? If so, I don't think you need a
+> different compatible. It's going to be a different board from any
+> non-SiP which should be enough to distinguish.
 
-I'm afraid but would you review this patch set?
-This can be applied on the latest Greg's usb.git / usb-next branch at the m=
-oment.
+An SiP is more like a CPU daughterboard.
 
-Best regards,
-Yoshihiro Shimoda
+The different SiP-versions based on r8a7795 contain the same r8a7795 SoC die,
+but different amounts of RAM, i.e. different RAM dies.
 
-> Yoshihiro Shimoda (3):
->   usb: host: xhci-plat: enable clk in resume timing
->   usb: host: xhci-plat: add resume_quirk()
->   usb: host: xhci-plat: set resume_quirk() for R-Car controllers
->=20
->  drivers/usb/host/xhci-plat.c | 29 ++++++++++++++++++++++++++++-
->  drivers/usb/host/xhci-plat.h |  1 +
->  drivers/usb/host/xhci-rcar.c | 11 +++++++++++
->  drivers/usb/host/xhci-rcar.h |  6 ++++++
->  4 files changed, 46 insertions(+), 1 deletion(-)
->=20
-> --
-> 1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
