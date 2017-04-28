@@ -1,61 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34176 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932146AbdD0Ohw (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:35941 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034971AbdD1MuC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 10:37:52 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: geert@glider.be, horms@verge.net.au
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 0/8] r8a7795/6 Salvator-X PWM enablement
-Date: Thu, 27 Apr 2017 16:37:35 +0200
-Message-Id: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 28 Apr 2017 08:50:02 -0400
+Received: by mail-lf0-f53.google.com with SMTP id c80so33319209lfh.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Apr 2017 05:50:01 -0700 (PDT)
+Date: Fri, 28 Apr 2017 14:49:59 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 06/10] clk: renesas: Add r8a7794 CPG Core Clock
+ Definitions
+Message-ID: <20170428124959.GJ1532@bigcity.dyn.berto.se>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+ <1493139200-27396-7-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1493139200-27396-7-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Hi Geert,
 
-Here's the revised series enabling PWMs on r8a7795 and r8a7796 Salvator-X
-boards.
+On 2017-04-25 18:53:16 +0200, Geert Uytterhoeven wrote:
+> Add all R-Car E2 Clock Pulse Generator Core Clock Outputs, as listed in
+> Table 7.2d ("List of Clocks [R-Car E2]") of the R-Car Gen2 Hardware
+> User's Manual rev. 2.00.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  include/dt-bindings/clock/r8a7794-cpg-mssr.h | 47 ++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
+> 
+> diff --git a/include/dt-bindings/clock/r8a7794-cpg-mssr.h b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
+> new file mode 100644
+> index 0000000000000000..9d720311ae3a229a
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
+> @@ -0,0 +1,47 @@
+> +/*
+> + * Copyright (C) 2015 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7794 CPG Core Clocks */
+> +#define R8A7794_CLK_Z2			0
+> +#define R8A7794_CLK_ZG			1
+> +#define R8A7794_CLK_ZTR			2
+> +#define R8A7794_CLK_ZTRD2		3
+> +#define R8A7794_CLK_ZT			4
+> +#define R8A7794_CLK_ZX			5
+> +#define R8A7794_CLK_ZS			6
+> +#define R8A7794_CLK_HP			7
+> +#define R8A7794_CLK_I			8
+> +#define R8A7794_CLK_B			9
+> +#define R8A7794_CLK_LB			10
+> +#define R8A7794_CLK_P			11
+> +#define R8A7794_CLK_CL			12
+> +#define R8A7794_CLK_CP			13
+> +#define R8A7794_CLK_M2			14
+> +#define R8A7794_CLK_ADSP		15
+> +#define R8A7794_CLK_ZB3			16
+> +#define R8A7794_CLK_ZB3D2		17
+> +#define R8A7794_CLK_DDR			18
+> +#define R8A7794_CLK_SDH			19
+> +#define R8A7794_CLK_SD0			20
+> +#define R8A7794_CLK_SD2			21
+> +#define R8A7794_CLK_SD3			22
+> +#define R8A7794_CLK_MMC0		23
+> +#define R8A7794_CLK_MP			24
+> +#define R8A7794_CLK_QSPI		25
+> +#define R8A7794_CLK_CPEX		26
+> +#define R8A7794_CLK_RCAN		27
+> +#define R8A7794_CLK_R			28
+> +#define R8A7794_CLK_OSC			29
 
-This revision addresses the issues found by Geert and adds Laurent's
-backlight support patch, including a version for r8a7796.
+The last two are called RCLK and OSCCLK in the Table 7.2d ("List of 
+Clocks [R-Car E2]"). I'm  sure this is intentional on your side, and if 
+so:
 
-CU
-Uli
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Changes since v1:
-- PWM clock is S0D12, not S3D4
-- dts: fix register lengths, add resets
-- only enable one set of pins for each PWM
-- add backlight support
-
-
-Laurent Pinchart (1):
-  arm64: dts: r8a7795: salvator-x: Add panel backlight support
-
-Ryo Kodama (2):
-  clk: renesas: r8a7796: add PWM clock
-  arm64: dts: r8a7796-salvator-x: Add PWM device support
-
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
-  arm64: dts: r8a7796: Add PWM device nodes
-  arm64: dts: r8a7795-salvator-x: Enable PWM2
-
-Ulrich Hecht (2):
-  arm64: dts: r8a7796: salvator-x: Add panel backlight support
-  dt-bindings: pwm: Add R-Car M3-W device tree bindings
-
- .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |   1 +
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  34 +++++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  35 +++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  70 ++++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |   1 +
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 153 +++++++++++++++++++++
- 6 files changed, 294 insertions(+)
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__ */
+> -- 
+> 2.7.4
+> 
 
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
