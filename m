@@ -1,94 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36367 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1169566AbdDXPWG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Apr 2017 11:22:06 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH V2 1/4] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
-Date: Mon, 24 Apr 2017 17:21:27 +0200
-Message-Id: <20170424152130.32410-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 0/5] RFC: ADV748x HDMI/Analog video receiver
+References: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
+ <20170428070935.GC10196@verge.net.au>
+To: Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kbingham@kernel.org>
+Cc: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sakari.ailus@iki.fi, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <b0497e51-78f1-40e2-b97d-7c1ce7939b1d@ideasonboard.com>
+Date: Fri, 28 Apr 2017 09:47:05 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170428070935.GC10196@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
-the following features:
-- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
-- one voltage regulator for DVFS
-- two GPIOs
+Hi Simon,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: - Drop the compatible = "regulator-fixed" from the binding example,
-      it should not be there.
-    - List the VD09 regulator
----
- .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+On 28/04/17 08:09, Simon Horman wrote:
+> On Thu, Apr 27, 2017 at 07:25:59PM +0100, Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> This is an RFC for the Analog Devices ADV748x driver, and follows on from a
+>> previous posting by Niklas Söderlund [0] of an earlier incarnation of this
+>> driver.
+> 
+> ...
+> 
+>> This series presents the following patches:
+>>
+>>  [PATCH 1/5] v4l2-subdev: Provide a port mapping for asynchronous
+>>  [PATCH 2/5] rcar-vin: Match sources against ports if specified.
+>>  [PATCH 3/5] media: i2c: adv748x: add adv748x driver
+>>  [PATCH 4/5] arm64: dts: r8a7795: salvator-x: enable VIN, CSI and ADV7482
+>>  [PATCH 5/5] arm64: dts: r8a7796: salvator-x: enable VIN, CSI and ADV7482
+> 
+> I am marking the above dts patches as "RFC" and do not plan to apply them
+> unless you ping me or repost them.
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-new file mode 100644
-index 000000000000..ce24231edd7d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -0,0 +1,49 @@
-+* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd9571mwv".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
-+			    The first cell is the IRQ number.
-+			    The second cell is the flags, encoded as trigger
-+			    masks from ../interrupt-controller/interrupts.txt.
-+ - gpio-controller      : Marks the device node as a GPIO Controller.
-+ - #gpio-cells          : Should be two.  The first cell is the pin number and
-+                            the second cell is used to specify flags.
-+                            See ../gpio/gpio.txt for more information.
-+ - regulators:          : List of child nodes that specify the regulator
-+                            initialization data. Child nodes must be named
-+                            after their hardware counterparts:
-+			     - vd09
-+			     - vd18
-+			     - vd25
-+			     - vd33
-+			     - dvfs
-+			    Each child node is defined using the standard
-+			    binding for regulators.
-+
-+Example:
-+
-+	pmic: bd9571mwv@30 {
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		regulators {
-+			dvfs: dvfs {
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
--- 
-2.11.0
+Yes, sorry - the whole series was supposed to be marked as RFC, but I didn't
+think about it - and apparently only applied the tag to the cover letter.
+
+Apologies for any confusion.
+
+> Assuming they don't cause any
+> regressions I would be happy to consider applying them as soon as their
+> dependencies are accepted.
+
+Does that mean you've done a cursory glance over the content ? :-)
+
+In this instance, the port numbers need to revert back to a zero-base, but I
+would appreciate an eye on how and where I've put the representation of the
+physical hdmi/cvbs connectors. Having modified plenty of DT, but not actually
+submitted much - I still feel 'new' at it - so I'm sure I may not have followed
+the standards quite right yet.
+
+The dts patches are based heavily on the previous posting by Niklas, but I have
+extended to put the extra hdmi and cvbs links in.
+
+Regards
+--
+Kieran
