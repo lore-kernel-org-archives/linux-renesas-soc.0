@@ -1,80 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:45202 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1948212AbdDYQxh (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:49966 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165284AbdD1M7A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 12:53:37 -0400
+        Fri, 28 Apr 2017 08:59:00 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/10] clk: renesas: Add r8a7792 CPG Core Clock Definitions
-Date: Tue, 25 Apr 2017 18:53:14 +0200
-Message-Id: <1493139200-27396-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 2/5] arm64: dts: r8a7796: Add external PCIe bus clock
+Date: Fri, 28 Apr 2017 14:58:41 +0200
+Message-Id: <1493384324-29344-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
+References: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car V2H Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2c ("List of Clocks [R-Car V2H]") of the R-Car Gen2 Hardware
-User's Manual rev. 2.00.
+Add the external PCIe bus clock as a zero Hz fixed-frequency clock.
+Boards that provide this clock should override it.
+
+Based on r8a7795.dtsi.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/clock/r8a7792-cpg-mssr.h | 43 ++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
+v2:
+  - Correct one-line summary prefix.
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/dt-bindings/clock/r8a7792-cpg-mssr.h b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..72ce85cb2f94b0ab
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
-@@ -0,0 +1,43 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 101cd41d693a7ab5..8e2aab8b6b103cc9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -157,6 +157,13 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
 +
-+#ifndef __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7792 CPG Core Clocks */
-+#define R8A7792_CLK_Z			0
-+#define R8A7792_CLK_ZG			1
-+#define R8A7792_CLK_ZTR			2
-+#define R8A7792_CLK_ZTRD2		3
-+#define R8A7792_CLK_ZT			4
-+#define R8A7792_CLK_ZX			5
-+#define R8A7792_CLK_ZS			6
-+#define R8A7792_CLK_HP			7
-+#define R8A7792_CLK_I			8
-+#define R8A7792_CLK_B			9
-+#define R8A7792_CLK_LB			10
-+#define R8A7792_CLK_P			11
-+#define R8A7792_CLK_CL			12
-+#define R8A7792_CLK_M2			13
-+#define R8A7792_CLK_IMP			14
-+#define R8A7792_CLK_ZB3			15
-+#define R8A7792_CLK_ZB3D2		16
-+#define R8A7792_CLK_DDR			17
-+#define R8A7792_CLK_SD			18
-+#define R8A7792_CLK_MP			19
-+#define R8A7792_CLK_QSPI		20
-+#define R8A7792_CLK_CP			21
-+#define R8A7792_CLK_CPEX		22
-+#define R8A7792_CLK_RCAN		23
-+#define R8A7792_CLK_R			24
-+#define R8A7792_CLK_OSC			25
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__ */
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
 -- 
 2.7.4
