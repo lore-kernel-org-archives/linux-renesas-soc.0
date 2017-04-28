@@ -1,152 +1,86 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v4 25/27] rcar-vin: extend {start,stop}_streaming to work with media controller
-Date: Fri, 28 Apr 2017 00:42:01 +0200
-Message-Id: <20170427224203.14611-26-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33056 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753774AbdD1Tn2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 28 Apr 2017 15:43:28 -0400
+Date: Fri, 28 Apr 2017 14:43:26 -0500
+From: Rob Herring <robh@kernel.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, lee.jones@linaro.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [RESEND][PATCH V2 1/4] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
+Message-ID: <20170428194326.yshnrbwivlgniw5u@rob-hp-laptop>
+References: <20170425183210.30594-1-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170425183210.30594-1-marek.vasut+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The procedure to start or stop streaming using the none MC single
-subdevice and the MC graph and multiple subdevices are quiet different.
-Create a new function to abstract which method is used based on which
-mode the driver is running in and add logic to start the MC graph.
+On Tue, Apr 25, 2017 at 08:32:07PM +0200, Marek Vasut wrote:
+> Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
+> the following features:
+> - multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
+> - one voltage regulator for DVFS
+> - two GPIOs
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: - Drop the compatible = "regulator-fixed" from the binding example,
+>       it should not be there.
+>     - List the VD09 regulator
+> ---
+>  .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+> new file mode 100644
+> index 000000000000..ce24231edd7d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+> @@ -0,0 +1,49 @@
+> +* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
+> +
+> +Required properties:
+> + - compatible		: Should be "rohm,bd9571mwv".
+> + - reg			: I2C slave address.
+> + - interrupt-parent	: Phandle to the parent interrupt controller.
+> + - interrupts		: The interrupt line the device is connected to.
+> + - interrupt-controller	: Marks the device node as an interrupt controller.
+> + - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
+> +			    The first cell is the IRQ number.
+> +			    The second cell is the flags, encoded as trigger
+> +			    masks from ../interrupt-controller/interrupts.txt.
+> + - gpio-controller      : Marks the device node as a GPIO Controller.
+> + - #gpio-cells          : Should be two.  The first cell is the pin number and
+> +                            the second cell is used to specify flags.
+> +                            See ../gpio/gpio.txt for more information.
+> + - regulators:          : List of child nodes that specify the regulator
+> +                            initialization data. Child nodes must be named
+> +                            after their hardware counterparts:
+> +			     - vd09
+> +			     - vd18
+> +			     - vd25
+> +			     - vd33
+> +			     - dvfs
+> +			    Each child node is defined using the standard
+> +			    binding for regulators.
+> +
+> +Example:
+> +
+> +	pmic: bd9571mwv@30 {
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 79 +++++++++++++++++++++++++++---
- 1 file changed, 72 insertions(+), 7 deletions(-)
+pmic@30 ...
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 34f01f32bab7bd32..46491a6b63ed0397 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1099,15 +1099,82 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- }
- 
-+static int rvin_set_stream(struct rvin_dev *vin, int on)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	struct media_pipeline *pipe;
-+	struct  v4l2_subdev *sd;
-+	struct media_pad *pad;
-+	int ret;
-+
-+	/* Not media controller used, simply pass operation to subdevice */
-+	if (!vin->info->use_mc) {
-+		ret = v4l2_subdev_call(vin->digital.subdev, video, s_stream,
-+				       on);
-+
-+		return ret == -ENOIOCTLCMD ? 0 : ret;
-+	}
-+
-+	pad = media_entity_remote_pad(&vin->pad);
-+	if (!pad)
-+		return -EPIPE;
-+
-+	sd = media_entity_to_v4l2_subdev(pad->entity);
-+	if (!sd)
-+		return -EPIPE;
-+
-+	if (on) {
-+		fmt.pad = pad->index;
-+		if (v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt))
-+			return -EPIPE;
-+
-+		switch (fmt.format.code) {
-+		case MEDIA_BUS_FMT_YUYV8_1X16:
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		case MEDIA_BUS_FMT_UYVY10_2X10:
-+		case MEDIA_BUS_FMT_RGB888_1X24:
-+			vin->code = fmt.format.code;
-+			break;
-+		default:
-+			return -EPIPE;
-+		}
-+
-+		if (fmt.format.width != vin->format.width ||
-+		    fmt.format.height != vin->format.height)
-+			return -EPIPE;
-+
-+		pipe = sd->entity.pipe ? sd->entity.pipe : &vin->vdev->pipe;
-+		if (media_pipeline_start(&vin->vdev->entity, pipe))
-+			return -EPIPE;
-+
-+		ret = v4l2_subdev_call(sd, video, s_stream, 1);
-+		if (ret == -ENOIOCTLCMD)
-+			ret = 0;
-+		if (ret)
-+			media_pipeline_stop(&vin->vdev->entity);
-+	} else {
-+		media_pipeline_stop(&vin->vdev->entity);
-+		ret = v4l2_subdev_call(sd, video, s_stream, 0);
-+	}
-+
-+	return ret;
-+}
-+
- static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int ret;
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 1);
-+	ret = rvin_set_stream(vin, 1);
-+	if (ret) {
-+		spin_lock_irqsave(&vin->qlock, flags);
-+		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
-+		spin_unlock_irqrestore(&vin->qlock, flags);
-+		return ret;
-+	}
- 
- 	spin_lock_irqsave(&vin->qlock, flags);
- 
-@@ -1116,7 +1183,7 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	ret = rvin_capture_start(vin);
- 	if (ret) {
- 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
--		v4l2_subdev_call(sd, video, s_stream, 0);
-+		rvin_set_stream(vin, 0);
- 	}
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
-@@ -1127,7 +1194,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- static void rvin_stop_streaming(struct vb2_queue *vq)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int retries = 0;
- 
-@@ -1166,8 +1232,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 0);
-+	rvin_set_stream(vin, 0);
- 
- 	/* disable interrupts */
- 	rvin_disable_interrupts(vin);
--- 
-2.12.2
+Otherwise,
+
+Acked-by: Rob Herring <robh@kernel.org>
