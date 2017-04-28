@@ -1,174 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56256 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164325AbdD0WiA (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:35238 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1035960AbdD1Mqs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Apr 2017 18:38:00 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-Date: Fri, 28 Apr 2017 00:36:57 +0200
-Message-Id: <20170427223658.14148-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20170427223658.14148-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20170427223658.14148-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 28 Apr 2017 08:46:48 -0400
+Received: by mail-lf0-f54.google.com with SMTP id 75so33234375lfs.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Apr 2017 05:46:47 -0700 (PDT)
+Date: Fri, 28 Apr 2017 14:46:45 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 05/10] clk: renesas: Add r8a7793 CPG Core Clock
+ Definitions
+Message-ID: <20170428124645.GI1532@bigcity.dyn.berto.se>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+ <1493139200-27396-6-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1493139200-27396-6-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
-are located between the video sources (CSI-2 transmitters) and the video
-grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+Hi Geert,
 
-Each CSI-2 device is connected to more then one VIN device which
-simultaneously can receive video from the same CSI-2 device. Each VIN
-device can also be connected to more then one CSI-2 device. The routing
-of which link are used are controlled by the VIN devices. There are only
-a few possible routes which are set by hardware limitations, which are
-different for each SoC in the Gen3 family.
+On 2017-04-25 18:53:15 +0200, Geert Uytterhoeven wrote:
+> Add all R-Car M2-N Clock Pulse Generator Core Clock Outputs, as listed
+> in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+> Hardware User's Manual rev. 2.00.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  include/dt-bindings/clock/r8a7793-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
+> 
+> diff --git a/include/dt-bindings/clock/r8a7793-cpg-mssr.h b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+> new file mode 100644
+> index 0000000000000000..8809b0f62d615457
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+> @@ -0,0 +1,48 @@
+> +/*
+> + * Copyright (C) 2015 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7793 CPG Core Clocks */
+> +#define R8A7793_CLK_Z			0
+> +#define R8A7793_CLK_ZG			1
+> +#define R8A7793_CLK_ZTR			2
+> +#define R8A7793_CLK_ZTRD2		3
+> +#define R8A7793_CLK_ZT			4
+> +#define R8A7793_CLK_ZX			5
+> +#define R8A7793_CLK_ZS			6
+> +#define R8A7793_CLK_HP			7
+> +#define R8A7793_CLK_I			8
+> +#define R8A7793_CLK_B			9
+> +#define R8A7793_CLK_LB			10
+> +#define R8A7793_CLK_P			11
+> +#define R8A7793_CLK_CL			12
+> +#define R8A7793_CLK_M2			13
+> +#define R8A7793_CLK_ADSP		14
+> +#define R8A7793_CLK_ZB3			15
+> +#define R8A7793_CLK_ZB3D2		16
+> +#define R8A7793_CLK_DDR			17
+> +#define R8A7793_CLK_SDH			18
+> +#define R8A7793_CLK_SD0			19
+> +#define R8A7793_CLK_SD2			20
+> +#define R8A7793_CLK_SD3			21
+> +#define R8A7793_CLK_MMC0		22
+> +#define R8A7793_CLK_MP			23
+> +#define R8A7793_CLK_SSP			24
+> +#define R8A7793_CLK_SSPRS		25
+> +#define R8A7793_CLK_QSPI		26
+> +#define R8A7793_CLK_CP			27
+> +#define R8A7793_CLK_RCAN		28
+> +#define R8A7793_CLK_R			29
+> +#define R8A7793_CLK_OSC			30
 
-To work with the limitations of routing possibilities it is necessary
-for the DT bindings to describe which VIN device is connected to which
-CSI-2 device. This is why port 1 needs to to assign reg numbers for each
-VIN device that be connected to it. To setup and to know which links are
-valid for each SoC is the responsibility of the VIN driver since the
-register to configure it belongs to the VIN hardware.
+The last two are called RCLK and OSCCLK in the Table 7.2b ("List of 
+Clocks [R-Car M2-W/M2-N]"). I'm  sure this is intentional on your side, 
+and if so:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- .../devicetree/bindings/media/rcar-csi2.txt        | 116 +++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-new file mode 100644
-index 0000000000000000..f6e2027ee92b171a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-@@ -0,0 +1,116 @@
-+Renesas R-Car MIPI CSI-2
-+------------------------
-+
-+The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
-+family of devices. It is to be used in conjunction with the R-Car VIN module,
-+which provides the video capture capabilities.
-+
-+ - compatible: Must be one or more of the following
-+   - "renesas,r8a7795-csi2" for the R8A7795 device.
-+   - "renesas,r8a7796-csi2" for the R8A7796 device.
-+   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
-+
-+   When compatible with a generic version nodes must list the
-+   SoC-specific version corresponding to the platform first
-+   followed by the generic version.
-+
-+ - reg: the register base and size for the device registers
-+ - interrupts: the interrupt for the device
-+ - clocks: Reference to the parent clock
-+
-+The device node should contain two 'port' child nodes according to the
-+bindings defined in Documentation/devicetree/bindings/media/
-+video-interfaces.txt. Port 0 should connect the node that is the video
-+source for to the CSI-2. Port 1 should connect all the R-Car VIN
-+modules, which can make use of the CSI-2 module.
-+
-+- Port 0 - Video source
-+	- Reg 0 - sub-node describing the endpoint that is the video source
-+
-+- Port 1 - VIN instances
-+	- Reg 0 - sub-node describing the endpoint that is VIN0
-+	- Reg 1 - sub-node describing the endpoint that is VIN1
-+	- Reg 2 - sub-node describing the endpoint that is VIN2
-+	- Reg 3 - sub-node describing the endpoint that is VIN3
-+	- Reg 4 - sub-node describing the endpoint that is VIN4
-+	- Reg 5 - sub-node describing the endpoint that is VIN5
-+	- Reg 6 - sub-node describing the endpoint that is VIN6
-+	- Reg 7 - sub-node describing the endpoint that is VIN7
-+
-+Example:
-+
-+/* SoC properties */
-+
-+	 csi20: csi2@fea80000 {
-+		 compatible = "renesas,r8a7796-csi2";
-+		 reg = <0 0xfea80000 0 0x10000>;
-+		 interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
-+		 clocks = <&cpg CPG_MOD 714>;
-+		 power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		 status = "disabled";
-+
-+		 ports {
-+			 #address-cells = <1>;
-+			 #size-cells = <0>;
-+
-+			 port@1 {
-+				 #address-cells = <1>;
-+				 #size-cells = <0>;
-+
-+				 reg = <1>;
-+
-+				 csi20vin0: endpoint@0 {
-+					 reg = <0>;
-+					 remote-endpoint = <&vin0csi20>;
-+				 };
-+				 csi20vin1: endpoint@1 {
-+					 reg = <1>;
-+					 remote-endpoint = <&vin1csi20>;
-+				 };
-+				 csi20vin2: endpoint@2 {
-+					 reg = <2>;
-+					 remote-endpoint = <&vin2csi20>;
-+				 };
-+				 csi20vin3: endpoint@3 {
-+					 reg = <3>;
-+					 remote-endpoint = <&vin3csi20>;
-+				 };
-+				 csi20vin4: endpoint@4 {
-+					 reg = <4>;
-+					 remote-endpoint = <&vin4csi20>;
-+				 };
-+				 csi20vin5: endpoint@5 {
-+					 reg = <5>;
-+					 remote-endpoint = <&vin5csi20>;
-+				 };
-+				 csi20vin6: endpoint@6 {
-+					 reg = <6>;
-+					 remote-endpoint = <&vin6csi20>;
-+				 };
-+				 csi20vin7: endpoint@7 {
-+					 reg = <7>;
-+					 remote-endpoint = <&vin7csi20>;
-+				 };
-+			 };
-+		 };
-+	 };
-+
-+/* Board properties */
-+
-+	&csi20 {
-+		status = "okay";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				csi20_in: endpoint@0 {
-+					clock-lanes = <0>;
-+					data-lanes = <1>;
-+					remote-endpoint = <&adv7482_txb>;
-+				};
-+			};
-+		};
-+	};
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__ */
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.12.2
+Regards,
+Niklas S�derlund
