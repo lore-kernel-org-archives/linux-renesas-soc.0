@@ -1,53 +1,52 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 08/10] arm: dts: genmai: Add RIIC2 pin group
-Date: Thu, 27 Apr 2017 10:19:52 +0200
-Message-Id: <1493281194-5200-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:36566 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1425402AbdD1TDI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 28 Apr 2017 15:03:08 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 2/2] ARM: dts: r7s72100: add usb clocks to device tree
+Date: Fri, 28 Apr 2017 12:01:34 -0700
+Message-Id: <20170428190134.63895-2-chris.brandt@renesas.com>
+In-Reply-To: <20170428190134.63895-1-chris.brandt@renesas.com>
+References: <20170428190134.63895-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add pin configuration subnode for RIIC2 interface.
+This adds the USB0 and USB1 clocks to the device tree.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v2:
+* moved bit defines to a separate patch
+* added Reviewed-by
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index c28d74b..9add1b6 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -43,6 +43,12 @@
- 		/* P3_0 as TxD2; P3_2 as RxD2 */
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
- 	};
-+
-+	i2c2_pins: i2c2 {
-+		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
-+		pinmux = <RZA1_PINMUX(1, 4, 1)>, <RZA1_PINMUX(1, 5, 1)>;
-+		bi-directional;
-+	};
- };
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index fb54cb5d3fad..4ed12a4d9d51 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -144,9 +144,9 @@
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe0430 4>;
+-			clocks = <&b_clk>;
+-			clock-indices = <R7S72100_CLK_ETHER>;
+-			clock-output-names = "ether";
++			clocks = <&b_clk>, <&p1_clk>, <&p1_clk>;
++			clock-indices = <R7S72100_CLK_ETHER R7S72100_CLK_USB0 R7S72100_CLK_USB1>;
++			clock-output-names = "ether", "usb0", "usb1";
+ 		};
  
- &extal_clk {
-@@ -61,6 +67,9 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
-+
- 	eeprom@50 {
- 		compatible = "renesas,24c128";
- 		reg = <0x50>;
+ 		mstp8_clks: mstp8_clks@fcfe0434 {
 -- 
-2.7.4
+2.11.0
