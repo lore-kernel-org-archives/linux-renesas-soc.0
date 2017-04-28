@@ -1,54 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:55496 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751838AbdDHUUV (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:55646 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164246AbdD1M6r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Apr 2017 16:20:21 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v2 2/2] mmc: core: for data errors, take response of stop cmd into account
-Date: Sat,  8 Apr 2017 22:20:06 +0200
-Message-Id: <20170408202006.27276-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170408202006.27276-1-wsa+renesas@sang-engineering.com>
-References: <20170408202006.27276-1-wsa+renesas@sang-engineering.com>
+        Fri, 28 Apr 2017 08:58:47 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/5] arm64: dts: r8a7796: Add placeholders for various devices
+Date: Fri, 28 Apr 2017 14:58:42 +0200
+Message-Id: <1493384324-29344-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
+References: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some errors are flagged only with the next command after a multiblock
-transfer, e.g. ECC error. So, when checking for data transfer errors,
-we check the result from the stop command as well.
+Add empty device nodes serving as placeholders for devices that are not
+yet supported and/or tested on R-Car M3-W, but are supported and used on
+Salvator-X or H3ULCB boards equipped with an R-Car H3 SoC.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/core/block.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+v2:
+  - Drop RFC state.
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 82 ++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index bacaa255c4b16a..ea3dc8a22ad2cb 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -1374,7 +1374,8 @@ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
- 		return MMC_BLK_RETRY;
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 8e2aab8b6b103cc9..60a4289d0b14fe50 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -961,6 +961,38 @@
+ 			dma-channels = <16>;
+ 		};
  
--	if (brq->data.error) {
-+	/* Some errors (ECC) are flagged on the next commmand, so check stop, too */
-+	if (brq->data.error || brq->stop.error) {
- 		if (need_retune && !brq->retune_retry_done) {
- 			pr_debug("%s: retrying because a re-tune was needed\n",
- 				 req->rq_disk->disk_name);
-@@ -1382,7 +1383,7 @@ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
- 			return MMC_BLK_RETRY;
- 		}
- 		pr_err("%s: error %d transferring data, sector %u, nr %u, cmd response %#x, card status %#x\n",
--		       req->rq_disk->disk_name, brq->data.error,
-+		       req->rq_disk->disk_name, brq->data.error ?: brq->stop.error,
- 		       (unsigned)blk_rq_pos(req),
- 		       (unsigned)blk_rq_sectors(req),
- 		       brq->cmd.resp[0], brq->stop.resp[0]);
++		hsusb: usb@e6590000 {
++			/* placeholder */
++		};
++
++		xhci0: usb@ee000000 {
++			/* placeholder */
++		};
++
++		ohci0: usb@ee080000 {
++			/* placeholder */
++		};
++
++		ehci0: usb@ee080100 {
++			/* placeholder */
++		};
++
++		usb2_phy0: usb-phy@ee080200 {
++			/* placeholder */
++		};
++
++		ohci1: usb@ee0a0000 {
++			/* placeholder */
++		};
++
++		ehci1: usb@ee0a0100 {
++			/* placeholder */
++		};
++
++		usb2_phy1: usb-phy@ee0a0200 {
++			/* placeholder */
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7796";
+ 			reg = <0 0xee100000 0 0x2000>;
+@@ -1063,5 +1095,55 @@
+ 				};
+ 			};
+ 		};
++
++		rcar_sound: sound@ec500000 {
++			/* placeholder */
++
++			rcar_sound,dvc {
++				dvc0: dvc-0 {
++				};
++
++				dvc1: dvc-1 {
++				};
++			};
++
++			rcar_sound,src {
++				src0: src-0 {
++				};
++				src1: src-1 {
++				};
++			};
++
++			rcar_sound,ssi {
++				ssi0: ssi-0 {
++				};
++
++				ssi1: ssi-1 {
++				};
++			};
++		};
++
++		pciec0: pcie@fe000000 {
++			/* placeholder */
++		};
++
++		pciec1: pcie@ee800000 {
++			/* placeholder */
++		};
++
++		du: display@feb00000 {
++			/* placeholder */
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++			};
++		};
+ 	};
+ };
 -- 
-2.11.0
+2.7.4
