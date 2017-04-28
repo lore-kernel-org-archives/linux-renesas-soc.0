@@ -1,42 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:57469 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1423730AbdD1TDA (ORCPT
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:36792 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968008AbdD1I2C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Apr 2017 15:03:00 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/2] dt-bindings: clk: r7s72100: add USB bit definitions
-Date: Fri, 28 Apr 2017 12:01:33 -0700
-Message-Id: <20170428190134.63895-1-chris.brandt@renesas.com>
+        Fri, 28 Apr 2017 04:28:02 -0400
+Received: by mail-wr0-f180.google.com with SMTP id l50so29471627wrc.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Apr 2017 01:28:02 -0700 (PDT)
+Date: Fri, 28 Apr 2017 09:27:58 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [RESEND][PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO
+ driver
+Message-ID: <20170428082758.or35djbh3gqikz5e@dell>
+References: <20170425183210.30594-1-marek.vasut+renesas@gmail.com>
+ <20170425183210.30594-3-marek.vasut+renesas@gmail.com>
+ <CACRpkdbpQ=Q6zt8uzfDCvOUU40S5aEvbvNd4OP4uVwBzQJhzQQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdbpQ=Q6zt8uzfDCvOUU40S5aEvbvNd4OP4uVwBzQJhzQQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the bit locations that correspond to the USB clocks.
+On Fri, 28 Apr 2017, Linus Walleij wrote:
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/dt-bindings/clock/r7s72100-clock.h | 2 ++
- 1 file changed, 2 insertions(+)
+> On Tue, Apr 25, 2017 at 8:32 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> 
+> > Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
+> > This block is pretty trivial and supports setting GPIO direction
+> > as Input/Output and in case of Output, supports setting value.
+> >
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > Cc: linux-gpio@vger.kernel.org
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > ---
+> > V2: Use linux/gpio/driver.h instead of linux/gpio.h
+> 
+> I applied this for v4.12 to bring down the number of deps in
+> v4.13. The guarding symbol makes it not compile until the MFD
+> patch is there, the MFD_BD9571MWV is unlikely to change,
+> and Marek will certainly go through with the driver submission.
 
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index bc256d31099a..dcd2072151fc 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -34,6 +34,8 @@
- 
- /* MSTP7 */
- #define R7S72100_CLK_ETHER	4
-+#define R7S72100_CLK_USB0	1
-+#define R7S72100_CLK_USB1	0
- 
- /* MSTP8 */
- #define R7S72100_CLK_MMCIF	4
+Works for me.
+
 -- 
-2.11.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
