@@ -1,56 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:49966 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165284AbdD1M7A (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53041 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424045AbdD1Pjh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Apr 2017 08:59:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Fri, 28 Apr 2017 11:39:37 -0400
+Date: Fri, 28 Apr 2017 17:39:30 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/5] arm64: dts: r8a7796: Add external PCIe bus clock
-Date: Fri, 28 Apr 2017 14:58:41 +0200
-Message-Id: <1493384324-29344-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
-References: <1493384324-29344-1-git-send-email-geert+renesas@glider.be>
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: r7s72100: add usb clocks to device tree
+Message-ID: <20170428153927.GA21522@verge.net.au>
+References: <20170427191045.21199-1-chris.brandt@renesas.com>
+ <CAMuHMdXEtefpaUJbbJ7LYjYR2oHaE-epy=eZnAyE-+=GWsy9xg@mail.gmail.com>
+ <20170428080400.GI10196@verge.net.au>
+ <SG2PR06MB1165D398BD7100FAC5AAEDC68A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdXp75yepEMh-S0YNYqKRESb4m3DtcfG09x=uj1Fm51b_A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXp75yepEMh-S0YNYqKRESb4m3DtcfG09x=uj1Fm51b_A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the external PCIe bus clock as a zero Hz fixed-frequency clock.
-Boards that provide this clock should override it.
+On Fri, Apr 28, 2017 at 04:27:45PM +0200, Geert Uytterhoeven wrote:
+> Hi Chris,
+> 
+> On Fri, Apr 28, 2017 at 2:47 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> > On Friday, April 28, 2017, Simon Horman wrote:
+> >> On Fri, Apr 28, 2017 at 09:34:54AM +0200, Geert Uytterhoeven wrote:
+> >> > On Thu, Apr 27, 2017 at 9:10 PM, Chris Brandt <chris.brandt@renesas.com>
+> >> wrote:
+> >> > > This adds the USB0 and USB1 clocks to the device tree.
+> 
+> >> > Simon: see Section 29.3.2 (BUSWAIT) for the reference to the P1 clock.
+> >>
+> >> Thanks, I see that now.
+> >
+> > I was going to say that I simply look at sections:
+> >   6.10.6 Internal Clock Signals (1)
+> >   6.10.7 Internal Clock Signals (2)
+> >
+> > Because it lists all the IP blocks and their corresponding clock sources in one place.
+> 
+> Cool, I grew up with rev. 0.60 of the user manual, so I wasn't aware of
+> that secton.
 
-Based on r8a7795.dtsi.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Correct one-line summary prefix.
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 101cd41d693a7ab5..8e2aab8b6b103cc9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -157,6 +157,13 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
--- 
-2.7.4
+Thanks, now I'm not looking at 0.60 any more I see the sections Chris
+mentions too.
