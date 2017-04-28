@@ -1,67 +1,65 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com> <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 28 Apr 2017 15:15:33 +0300
+Message-ID: <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "Russell King - ARM Linux" <linux@armlinux.org.uk>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
- output-enable
-Date: Fri, 28 Apr 2017 13:18:06 +0000
-Message-ID: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
- <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
- <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
-In-Reply-To: <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gRnJpZGF5LCBBcHJpbCAyOCwgMjAxNywgQW5keSBTaGV2Y2hlbmtvIHdyb3RlOg0KPiA+IElu
-IHRoZSBSWi9BMSBIVyBtYW51YWwgeW91IGNhbiBraW5kIG9mIHNlZSB0aGF0IGluIDU0LjE4IFBv
-cnQgQ29udHJvbA0KPiBMb2dpY2FsIERpYWdyYW0gKGJ1dCB0aGF0IHdhc24ndCBvYnZpb3VzIHRv
-IG1lIGF0IGZpcnN0KS4NCj4gDQo+IFBsZWFzZSwgcG9zdCBhIGxpbmsgdG8gaXQgb3IgY29weSBl
-c3NlbnRpYWwgcGFydHMuDQoNCg0KVGhpcyBib2FyZCB0aGUgUlovQTEgR0VOTUFJIGJvYXJkLg0K
-aHR0cHM6Ly93d3cucmVuZXNhcy5jb20vZW4tdXMvcHJvZHVjdHMvc29mdHdhcmUtdG9vbHMvYm9h
-cmRzLWFuZC1raXRzL2V2YWx1YXRpb24tZGVtby1zb2x1dGlvbi1ib2FyZHMvZ2VubWFpLWNwdS1i
-b2FyZC1ydGs3NzIxMDBiYzAwMDAwYnIuaHRtbA0KDQoNClRoZSBzY2hlbWF0aWMgaXMgaW5jbHVk
-ZWQgaW4gdGhlICJVc2VyJ3MgbWFudWFsIg0KaHR0cHM6Ly93d3cucmVuZXNhcy5jb20vZW4tdXMv
-ZG9jL3Byb2R1Y3RzL3Rvb2wvZG9jLzAwMy9yMjB1dDI1OTZlal9yN3M3MjEwMGV2dW0ucGRmDQoN
-Cg0KVGhlIFJaL0ExSCBIYXJkd2FyZSBtYW51YWwgaXMgaGVyZToNCmh0dHBzOi8vd3d3LnJlbmVz
-YXMuY29tL2VuLXVzL2RvY3VtZW50L2h3LW1hbnVhbD9od0xheWVyU2hvd0ZsZz10cnVlJnByZExh
-eWVySWQ9MTg2Mzc0JmxheWVyTmFtZT1SWiUyNTJGQTFIJmNvcm9uclNlcnZpY2U9ZG9jdW1lbnQt
-cHJkLXNlYXJjaCZod0RvY1VybD0lMkZlbi11cyUyRmRvYyUyRnByb2R1Y3RzJTJGbXB1bWN1JTJG
-ZG9jJTJGcnolMkZyMDF1aDA0MDNlajAzMDBfcnpfYTFoLnBkZiZoYXNoS2V5PTU0ZjMzNTc1Mzc0
-MmI1YWRkNTI0ZDQ3MjViNzI0MmU2DQoNCg0KQ2hhcHRlciA1NCBpcyB0aGUgcG9ydC9waW4gY29u
-dHJvbGxlci4NCg0KIjU0LjE4IFBvcnQgQ29udHJvbCBMb2dpY2FsIERpYWdyYW0iIGlzIHRoZSBk
-aWFncmFtIEkgd2FzIHRhbGtpbmcgYWJvdXQuIE5vdGUgdGhhdCBpcyBzYXlzICJOb3RlOiBUaGlz
-IGZpZ3VyZSBzaG93cyB0aGUgbG9naWMgZm9yIHJlZmVyZW5jZSwgbm90IHRoZSBjaXJjdWl0LiIN
-Cg0KIjU0LjMuMTMgUG9ydCBCaWRpcmVjdGlvbiBDb250cm9sIFJlZ2lzdGVyIChQQkRDbikiIGlz
-IHRoZSBtYWdpYyByZWdpc3RlciBuZWVkZWQgdG8gZ2V0IHNvbWUgcGlucyB0byB3b3JrLg0KDQoN
-Cj4gSSdtIHF1aXRlIHNrZXB0aWNhbCAgdGhhdCBjaGVhcCBoYXJkd2FyZSBjYW4gaW1wbGVtZW50
-IHNvbWV0aGluZyBtb3JlDQo+IGNvc3RhYmxlIHRoYW4gc2ltcGxlc3Qgb3Blbi1zb3VyY2UgLyBv
-cGVuLWRyYWluICsgYmlhcw0KDQpJIGRvbid0IHRoaW5rIHRoaXMgaXMgYW4gb3Blbi1zb3VyY2Ug
-LyBvcGVuLWRyYWluICsgYmlhcyBpc3N1ZS4gSXQncyBhICJ0aGUgaW50ZXJuYWwgc2lnbmFsIHBh
-dGhzIGFyZSBub3QgZ2V0dGluZyBob29rZWQgdXAgY29ycmVjdGx5IiBpc3N1ZS4NCg0KDQpSZWdh
-cmRsZXNzLCBvbiB0aGlzIHBhcnQsIHdlIG5lZWRlZCBhIHdheSB0byBmbGFnIHRoYXQgc29tZSBw
-aW5zIHdoZW4gcHV0IGluIHNvbWUgZnVuY3Rpb24gbW9kZXMgbmVlZGVkICdhbiBleHRyYSByZWdp
-c3RlciBzZXR0aW5nJy4gQXQgZmlyc3Qgd2UgdHJpZWQgdG8gc25lYWsgdGhhdCBpbmZvIGluIHdp
-dGggYSBzaW1wbGUgI2RlZmluZSBpbiB0aGUgcGluL3Bpbm11eCBEVCBub2RlIHByb3BlcnRpZXMu
-IEJ1dCwgTGludXMgZGlkbid0IHdhbnQgaXQgdGhlcmUgc28gd2UgaGFkIHRvIG1ha2UgdXAgYSBu
-ZXcgZ2VuZXJpYyBwcm9wZXJ0eSBjYWxsZWQgImJpLWRpcmVjdGlvbmFsIi4NCg0KV2hhdCBpcyB5
-b3VyIGVuZCBnb2FsIGhlcmU/IEdldCAiYmktZGlyZWN0aW9uYWwiIGNoYW5nZWQgdG8gc29tZXRo
-aW5nIGVsc2U/DQoNCg0KQ2hyaXMNCg0K
+On Fri, Apr 28, 2017 at 3:07 PM, Chris Brandt <Chris.Brandt@renesas.com> wr=
+ote:
+> On Friday, April 28, 2017, Linus Walleij wrote:
+>> > For me it looks like you are trying to alias open-drain + bias or
+>> > alike. Don't actually see the benefit of it.
+>>
+>> Andy is bringing up a valid point. And I remember asking about this befo=
+re.
+>>
+>> What does "bi-directional" really mean, electrically speaking?
+
+> Take the SDHI data pins. You send AND receive data over those pins (and t=
+hey are not open drain).
+
+Can you point to schematics and electrical characteristics of such buffer?
+(Yes, I can imagine one case where it's possible to have an
+"automatic" switch based on which current is bigger output of your
+side or remote's. But! I would like to see actual specifications to
+prove this or otherwise.)
+
+> The issue is that the PFC HW that enables the connections between the SDH=
+I IP block and the I/O pad buffers can only enable one path/signal/directio=
+n to the buffer enables (in or out). So for a pin that needs both direction=
+s, the PFC enables output and the "bidirectional register" is used to enabl=
+e the input buffer as well.
+
+> In the RZ/A1 HW manual you can kind of see that in 54.18 Port Control Log=
+ical Diagram (but that wasn't obvious to me at first).
+
+Please, post a link to it or copy essential parts.
+I'm quite skeptical  that cheap hardware can implement something more
+costable than simplest open-source / open-drain + bias.
+
+--=20
+With Best Regards,
+Andy Shevchenko
