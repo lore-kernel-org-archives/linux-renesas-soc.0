@@ -1,61 +1,53 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:54800 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1952121AbdDYReC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Apr 2017 13:34:02 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: Use pm_clk_no_clocks() helper i.s.o. direct access
-Date: Tue, 25 Apr 2017 19:33:58 +0200
-Message-Id: <1493141638-28940-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
+Date: Fri, 28 Apr 2017 14:48:52 +0000
+Message-ID: <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
+ <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
+In-Reply-To: <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pm_subsys_data.clock_list member exists only if CONFIG_PM_CLK=y.
-Hence direct accesses to this field break compile-testing on platforms
-where CONFIG_PM_CLK=n.
-
-To fix this, use the pm_clk_no_clocks() helper instead, for which a
-dummy version is provided if CONFIG_PM_CLK=n.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued up in clk-renesas-for-v4.13.
-
- drivers/clk/renesas/clk-mstp.c         | 2 +-
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 4067216bf31fbce9..f1617dd044cbbe15 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -325,7 +325,7 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
- 
- void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- {
--	if (!list_empty(&dev->power.subsys_data->clock_list))
-+	if (!pm_clk_no_clocks(dev))
- 		pm_clk_destroy(dev);
- }
- 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 99eeec6f24ec6c6b..38a01406740dfc04 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -477,7 +477,7 @@ int cpg_mssr_attach_dev(struct generic_pm_domain *unused, struct device *dev)
- 
- void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- {
--	if (!list_empty(&dev->power.subsys_data->clock_list))
-+	if (!pm_clk_no_clocks(dev))
- 		pm_clk_destroy(dev);
- }
- 
--- 
-2.7.4
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgQXByaWwgMjgsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZl
+biB3cm90ZToNCj4gPj4gU2hvdWxkbid0IHRoZSBpbnRlcnJ1cHQgKGNvbm5lY3RlZCB0byBQMV8x
+NSkgYmUgZGVzY3JpYmVkPw0KPiA+DQo+ID4gVGhhdCBpbnRlcnJ1cHQgcGluIGZyb20gdGhlIFBI
+WSBpcyBub3QgdXNlZC4gSXQgZGlkIG5vdCBuZWVkIHRvIGJlDQo+IGNvbm5lY3RlZC4NCj4gDQo+
+IEJ1dCBpdCBpcyBjb25uZWN0ZWQsIGFjY29yZGluZyB0byB0aGUgc2NoZW1hdGljcy4NCg0KUDFf
+MTUgY2FuIGJlIGNvbmZpZ3VyZWQgYXM6DQogKiBHUElPX0lODQogKiBBTjcNCiAqIEFWQl9DQVBU
+VVJFDQoNClNvLi4uSSBndWVzcyB5b3Ugd291bGQgJ2Rlc2NyaWJlJyBpdCBhcyBhbiBHUElPLWlu
+cHV0Lg0KDQoNCj4gRFQgZGVzY3JpYmVzIGhhcmR3YXJlLCBub3Qgc29mdHdhcmUgbGltaXRhdGlv
+bnMuDQoNCkRlc2NyaWJpbmcgdGhpbmdzIGlzIGZpbmUsIGJ1dCB0aGUga2VybmVsIGNvZGUgdGFr
+ZXMgdGhlIERUIGFuZCB0aGVuIHN0YXJ0IGNvbmZpZ3VyaW5nIHRoaW5ncyBiYXNlZCBvbiBpdC4N
+Cg0KRm9yIGV4YW1wbGUsIG9uIHRoZSBSU0sgYm9hcmQsIHRoYXQgbGluZSBpcyBjb25uZWN0ZWQg
+dG8gUDRfMTQuIFA0XzE0IGNhbiBiZSBjb25maWd1cmVkIGFzIElSUTYuLi5idXQgSVJRNiBjb21l
+cyBvdXQgaW4gOCBkaWZmZXJlbnQgcGluIGNob2ljZXMsIGFuZCBJIG1pZ2h0IHdhbnQgdG8gdXNl
+IG9uZSBvZiB0aG9zZSBvdGhlciBjaG9pY2VzLCBzbyBJIGRvbid0IHdhbnQgdG8gZGVzY3JpYmUg
+UDRfMTQgYXMgYW4gaW50ZXJydXB0Lg0KDQpJZiBpdCB3YXMganVzdCBkZXNjcmliaW5nIHRoYXQg
+InBpbiAxNSBvZiB0aGUgUEhZIGNoaXAgaXMgdGllZCB0byBwaW4gWTE5IG9mIHRoZSBSWi9BMUgi
+LCB0aGF0J3MgZmluZSBiZWNhdXNlIGl0J3MgaGFyZHdhcmUgY29ubmVjdGlvbiB0aGF0J3Mgbm90
+IGdvaW5nIHRvIGNoYW5nZS4NCkJ1dC4uLnRoZSBEVCBhbHNvIGRlZmluZXMgdGhlIHBpbiBtdXhp
+bmcuLi53aGljaCBpcyBhIHNvZnR3YXJlIGRlY2lzaW9uIChkbyBJIHdhbnQgdG8gZ2V0IGludGVy
+cnVwdCBvciBqdXN0IG1hbnVhbGx5IHBvbGwgb3Igc2ltcGxlIGlnbm9yZSBpdCkuDQpUaGlzIGlz
+IHRoZSBwYXJ0IG9mIHRoZSB3aG9sZSAiRFQgaXMgZm9yIGhhcmR3YXJlIGRlc2NyaXB0aW9uIG9u
+bHkiIHRoYXQgZG9lc24ndCByZWFsbHkgbWFrZSBzZW5zZSB0byBtZS4NCg0KDQpDaHJpcw0KDQo=
