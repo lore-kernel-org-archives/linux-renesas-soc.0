@@ -1,90 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: lee.jones@linaro.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RESEND][PATCH V2 1/4] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
-Date: Tue, 25 Apr 2017 20:32:07 +0200
-Message-Id: <20170425183210.30594-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdbkBtJGJ_5MVy2QSAa0zcKVm=_H+vC_kH4AUcX58TiaLg@mail.gmail.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org> <CACRpkdbkBtJGJ_5MVy2QSAa0zcKVm=_H+vC_kH4AUcX58TiaLg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 28 Apr 2017 19:23:17 +0300
+Message-ID: <CAHp75VfTTQAHkZs3peTa3EE6v0FBw7D0W2q+5OO2WKA38SGE+g@mail.gmail.com>
+Subject: Re: [PATCH v5 02/10] pinctrl: generic: Add macros to unpack properties
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
-the following features:
-- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
-- one voltage regulator for DVFS
-- two GPIOs
+On Fri, Apr 28, 2017 at 11:16 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: - Drop the compatible = "regulator-fixed" from the binding example,
-      it should not be there.
-    - List the VD09 regulator
----
- .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+> But why.
+>
+> I have these two static inlines just below your new macros:
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-new file mode 100644
-index 000000000000..ce24231edd7d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -0,0 +1,49 @@
-+* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd9571mwv".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
-+			    The first cell is the IRQ number.
-+			    The second cell is the flags, encoded as trigger
-+			    masks from ../interrupt-controller/interrupts.txt.
-+ - gpio-controller      : Marks the device node as a GPIO Controller.
-+ - #gpio-cells          : Should be two.  The first cell is the pin number and
-+                            the second cell is used to specify flags.
-+                            See ../gpio/gpio.txt for more information.
-+ - regulators:          : List of child nodes that specify the regulator
-+                            initialization data. Child nodes must be named
-+                            after their hardware counterparts:
-+			     - vd09
-+			     - vd18
-+			     - vd25
-+			     - vd33
-+			     - dvfs
-+			    Each child node is defined using the standard
-+			    binding for regulators.
-+
-+Example:
-+
-+	pmic: bd9571mwv@30 {
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		regulators {
-+			dvfs: dvfs {
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
++1.
+
+> We generally prefer static inlines over macros because they are easier
+> to read.
+
+Not only. It adds type checking as well AFAIUC.
+
 -- 
-2.11.0
-
+With Best Regards,
+Andy Shevchenko
