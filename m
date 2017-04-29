@@ -1,47 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34098 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968651AbdDSRtB (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34910 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164693AbdD2EqR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Apr 2017 13:49:01 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: add PWM clock
-Date: Thu, 20 Apr 2017 02:46:38 +0900
-Message-Id: <1492624001-3758-18-git-send-email-ykaneko0929@gmail.com>
+        Sat, 29 Apr 2017 00:46:17 -0400
+Received: by mail-wr0-f196.google.com with SMTP id g12so8806201wrg.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Apr 2017 21:46:16 -0700 (PDT)
+Subject: Re: [RFC 0/2] mmc: sdhi: make use of CBSY
+To: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+References: <1453808801-12510-1-git-send-email-wsa@the-dreams.de>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <ac6f67df-b124-53c3-ee54-9f215120c556@gmail.com>
+Date: Sat, 29 Apr 2017 06:46:08 +0200
+MIME-Version: 1.0
+In-Reply-To: <1453808801-12510-1-git-send-email-wsa@the-dreams.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+Hi,
 
-This patch adds PWM clock for PWM.
+On 26.01.2016 12:46, Wolfram Sang wrote:
+> Honestly, I still think this is a micro-optimization: Assuming SCLKDIVEN is
+> basically CBSY plus 8 SD clock cycles, then we'd save in the best case (SD
+> clock is slowest, 24 MHz) around 333ns while we are polling with 1 us
+> granularity...
+>
+> However, in case I assumed something wrong and so you guys have something to
+> play with, here is an RFC. Let me know what you think.
+>
+> Wolfram Sang (2):
+>   mmc: tmio/sdhi: introduce flag for RCar specific features
+>   mmc: sdhi: on RCar, make use of CBSY bit
+>
+>  drivers/mmc/host/sh_mobile_sdhi.c | 19 +++++++++++++------
+>  drivers/mmc/host/tmio_mmc_pio.c   |  6 +++---
+>  include/linux/mfd/tmio.h          |  4 ++--
+>  include/linux/mmc/tmio.h          |  3 +++
+>  4 files changed, 21 insertions(+), 11 deletions(-)
 
-Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Checking the recent kernel [1] it seems to me that this changes never 
+made it into mainline.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c5523aa..64714ca 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -156,6 +156,7 @@ enum clk_ids {
- 	DEF_MOD("hscif1",		 519,	R8A7796_CLK_S3D1),
- 	DEF_MOD("hscif0",		 520,	R8A7796_CLK_S3D1),
- 	DEF_MOD("thermal",		 522,	R8A7796_CLK_CP),
-+	DEF_MOD("pwm",			 523,	R8A7796_CLK_S3D4),
- 	DEF_MOD("fcpvd2",		 601,	R8A7796_CLK_S0D2),
- 	DEF_MOD("fcpvd1",		 602,	R8A7796_CLK_S0D2),
- 	DEF_MOD("fcpvd0",		 603,	R8A7796_CLK_S0D2),
--- 
-1.9.1
+Does anybody remember why and/or the history?
+
+Best regards
+
+Dirk
+
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/mmc/host/sh_mobile_sdhi.c#n509
