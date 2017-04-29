@@ -1,53 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:55267 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940209AbdD3Ldp (ORCPT
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:55649 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1036459AbdD2V0i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 30 Apr 2017 07:33:45 -0400
-From: "Mirea, Bogdan-Stefan" <Bogdan-Stefan_Mirea@mentor.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "socketcan@hartkopp.net" <socketcan@hartkopp.net>
-Subject: RE: [PATCH] Enabling rcar_can changelink support
-Date: Sun, 30 Apr 2017 11:33:32 +0000
-Message-ID: <0a97b4ea6a2f494c8f597a8e69025621@svr-ies-mbx-01.mgc.mentorg.com>
+        Sat, 29 Apr 2017 17:26:38 -0400
+Subject: Re: [PATCH] Enabling rcar_can changelink support
+To: Bogdan Mirea <Bogdan-Stefan_mirea@mentor.com>,
+        linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        socketcan@hartkopp.net
 References: <1493495283-55306-1-git-send-email-Bogdan-Stefan_mirea@mentor.com>
- <01f8d1b7-0ef2-a13e-b626-5026b4409a7c@pengutronix.de>
-In-Reply-To: <01f8d1b7-0ef2-a13e-b626-5026b4409a7c@pengutronix.de>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Eugen Hristev <Eugen_hristev@mentor.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <01f8d1b7-0ef2-a13e-b626-5026b4409a7c@pengutronix.de>
+Date: Sat, 29 Apr 2017 23:26:25 +0200
 MIME-Version: 1.0
+In-Reply-To: <1493495283-55306-1-git-send-email-Bogdan-Stefan_mirea@mentor.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="iSI2rDWorKu5iaKii1v2rblb94gpXMqb8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gTWFyYywNCg0KPiBPbiAwNC8yOS8yMDE3IDA5OjQ4IFBNLCBCb2dkYW4gTWlyZWEgd3Jv
-dGU6DQo+ID4gQWRkZWQgcmNhcl9jYW5fc2V0X2JpdHRpbWluZyBhcyBjYW4uZG9fc2V0X2JpdHRp
-bWluZyBjYWxsYmFjayB0aGF0DQo+ID4gd2lsbCBiZSBjYWxsZWQgZnJvbSBjYW5fY2hhbmdlbGlu
-ayBnZW5lcmljIGNhbGxiYWNrIHdoZW4gbGluayBzdGF0ZQ0KPiA+IGlzIA0KPiA+IGNoYW5nZWQu
-DQo+ID4gDQo+ID4gVGhpcyBlbmFibGVzIHNldCBiaXR0aW1pbmcgc3VwcG9ydDoNCj4gPiAgICAg
-aXAgbGluayBzZXQgY2FuMCB0eXBlIGNhbiBiaXRyYXRlIDUwMDAwMCB0cmlwbGUtc2FtcGxpbmcg
-b24NCj4gDQo+IFdoeSBpcyB0aGlzIG5lZWRlZD8gcmNhcl9jYW5fc2V0X2JpdHRpbWluZygpIGlz
-IGNhbGxlZCBkdXJpbmcNCj4gcmNhcl9jYW5fb3BlbigpLg0KDQpJIGtub3cgdGhhdCByY2FyX2Nh
-bl9zZXRfYml0dGltaW5nKCkgaXMgY2FsbGVkIGR1cmluZyByY2FyX2Nhbl9vcGVuKCkNCmFuZCBz
-ZXR0aW5nIGJpdHRpbWluZyB3b3JrcyBmaW5lIHdoZW4gc2V0dGluZyBjYW4gdXAgd2l0aCBhIGNv
-bW1hbmQNCmxpa2U6DQooMXN0IGFwcHJvYWgpDQogICAgJGlwIGxpbmsgc2V0IGNhbjAgdXAgdHlw
-ZSBjYW4gYml0cmF0ZSA1MDAwMDANCg0KQnV0IG1vc3Qgb2YgdHV0b3JpYWxzIG9ubGluZVsxXSBh
-cmUgcHJlc2VudGluZyBhcyBhIFRPRE8gdGhlIGZvbGxvd2luZw0KcGFpciBvZiBjb21tYW5kczoN
-CigybmQgYXBwcm9haCkNCiAgICAkaXAgbGluayBzZXQgY2FuMCB0eXBlIGNhbiBiaXRyYXRlIDUw
-MDAwMA0KICAgICRpcCBsaW5rIHNldCB1cCBjYW4wDQoNCkFuZCBpbiB0aGlzIDJuZCBhcHByb2Fo
-LCB0aGUgZmlyc3QgY29tbWFuZCB3aWxsIGZhaWwgc2luY2UgaXQgd2lsbCBjYWxsDQpjYW5fY2hh
-bmdlbGluayB3aGljaCBvbiBpdHMgdHVybiB3aWxsIHRyeSBjYWxsaW5nIC5kb19zZXRfYml0dGlt
-aW5nDQpjYWxsYmFjayBhbmQgdGhlIGZvcm1lciBjYWxsYmFjayBpcyBub3QgZGVmaW5lZCBmb3Ig
-cmNhcl9jYW4uDQoNCkkgZG9uJ3Qgc2F5IHRoaXMgaXMgYSBtdXN0LWhhdmUgZmVhdHVyZSwgc2lu
-Y2UgY2FsbGluZyBpcHJvdXRlMiB3aXRoDQoic2V0IGJpdHJhdGUiIGFuZCAic2V0IGNhbiB1cCIg
-IGFzIGluIDFzdCBhcHByb2FjaCB3aWxsIHdvcmsganVzdCBmaW5lLA0Kd2lsbCB3b3JrIGp1c3Qg
-ZmluZSwgYnV0IGl0IGlzIGEgbmljZSB0byBoYXZlIGZlYXR1cmUgZm9yIHRoZSBzZWNvbmQNCmFw
-cHJvYWNoIG9mIHNldHRpbmcgYml0cmF0ZS4NCkFsc28gcGVha191c2IgcGNhblsyXSB1c2VzIHRo
-aXMgc2Vjb25kIGFwcHJvYWNoICh0aGUgY2hhbmdlbGluayBvbmUpIGFuZA0KdGhpcyBwYXRjaCB1
-cGRhdGVzIHJjYXJfY2FuIGZvciBpdC4NCg0KQmVzdCBSZWdhcmRzLA0KQm9nZGFuDQoNClsxXSBo
-dHRwOi8vZWxpbnV4Lm9yZy9CcmluZ2luZ19DQU5faW50ZXJmYWNlX3VwDQpbMl0NCmh0dHA6Ly9s
-eHIuZnJlZS1lbGVjdHJvbnMuY29tL3NvdXJjZS9kcml2ZXJzL25ldC9jYW4vdXNiL3BlYWtfdXNi
-L3BjYW5fdXNiLmMjTDkwMA0K
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--iSI2rDWorKu5iaKii1v2rblb94gpXMqb8
+Content-Type: multipart/mixed; boundary="L1roSqa2FEHd7GU3XBos1jwCroClRlgId";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Bogdan Mirea <Bogdan-Stefan_mirea@mentor.com>, linux-can@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, socketcan@hartkopp.net
+Cc: Eugen Hristev <Eugen_hristev@mentor.com>
+Message-ID: <01f8d1b7-0ef2-a13e-b626-5026b4409a7c@pengutronix.de>
+Subject: Re: [PATCH] Enabling rcar_can changelink support
+References: <1493495283-55306-1-git-send-email-Bogdan-Stefan_mirea@mentor.com>
+In-Reply-To: <1493495283-55306-1-git-send-email-Bogdan-Stefan_mirea@mentor.com>
+
+--L1roSqa2FEHd7GU3XBos1jwCroClRlgId
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 04/29/2017 09:48 PM, Bogdan Mirea wrote:
+> Added rcar_can_set_bittiming as can.do_set_bittiming callback that will=
+
+> be called from can_changelink generic callback when link state is
+> changed.
+>=20
+> This enables set bittiming support:
+> 	ip link set can0 type can bitrate 500000 triple-sampling on
+
+Why is this needed? rcar_can_set_bittiming() is called during
+rcar_can_open().
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--L1roSqa2FEHd7GU3XBos1jwCroClRlgId--
+
+--iSI2rDWorKu5iaKii1v2rblb94gpXMqb8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEE4bay/IylYqM/npjQHv7KIOw4HPYFAlkFBQEACgkQHv7KIOw4
+HPYNKQgAw1sijEl2n9s1wZcmPNRU7YPETYCdlJUQKamRyGnNp1dS1pBOwoTAVZrq
+/6QZOICwsjZTf8IeLOKETnWrWmCIVRw6lO/x59uvfTP6dGUtsZOTbz9SVji4ed9h
+kzE4NPZFcH6lSPIDErH3Tzq2y5KWdbCIuTw7KjDN7h3AsSfEO4FC6V0lu0jfUEBV
+OF4uzebevyWm05mB60gRrTKPAaNqCeWJCT2u6X5XmRNkV4+dNznwkHnLwv2W6H7S
+Eqd1c0sHPIYgYx+RA4P1oQAFRixsq0gEibbhvMhlf5szPfPP2T7MbI2onZNyrI1J
+wd5X5+vIHTWu7vXny/RbwtFoDXSr3A==
+=PtEu
+-----END PGP SIGNATURE-----
+
+--iSI2rDWorKu5iaKii1v2rblb94gpXMqb8--
