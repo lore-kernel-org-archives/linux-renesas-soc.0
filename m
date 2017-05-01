@@ -1,56 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56025 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751323AbdELJwx (ORCPT
+Received: from sauhun.de ([88.99.104.3]:48097 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1035255AbdEAJD5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 May 2017 05:52:53 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        hans.verkuil@cisco.com, sakari.ailus@linux.intel.com,
-        sre@kernel.org, magnus.damm@gmail.com,
-        wsa+renesas@sang-engineering.com
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] media: i2c: ov772x: Force use of SCCB protocol
-Date: Fri, 12 May 2017 11:52:43 +0200
-Message-Id: <1494582763-22385-1-git-send-email-jacopo@jmondi.org>
+        Mon, 1 May 2017 05:03:57 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 0/6] tmio/sdhi: add cmd23 support
+Date: Mon,  1 May 2017 11:03:40 +0200
+Message-Id: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Force use of Omnivision's SCCB protocol and make sure the I2c adapter
-supports protocol mangling during probe.
+This series adds CMD23 support to SDHI. It was tested on H2 (Gen2, Lager) and
+M3W (Gen3, Salvator-X). The test procedure can be found here:
 
-Testing done on SH4 Migo-R board.
-As commit:
-[e789029761503f0cce03e8767a56ae099b88e1bd]
-"i2c: sh_mobile: don't send a stop condition by default inside transfers"
-makes the i2c adapter emit a stop bit between messages in a single
-transfer only when explicitly required, the ov772x driver fails to
-probe due to i2c transfer timeout without SCCB flag set.
+http://elinux.org/Tests:SDHI-CMD23
 
-i2c-sh_mobile i2c-sh_mobile.0: Transfer request timed out
-ov772x 0-0021: Product ID error 92:92
+Patches are based on mmc/next from today. A branch can be found here:
 
-With this patch applied:
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-cmd23
 
-soc-camera-pdrv soc-camera-pdrv.0: Probing soc-camera-pdrv.0
-ov772x 0-0021: ov7725 Product ID 77:21 Manufacturer ID 7f:a2
+The reason these patches are RFC is that they should not be applied right now.
+We also have some heavier refactoring going on and it is likely to be better to
+apply these patches after the refactoring. However, I send them out now to
+encourage review and testing. They do work as expected in my tests.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- drivers/media/i2c/soc_camera/ov772x.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks and kind regards,
 
-diff --git a/drivers/media/i2c/soc_camera/ov772x.c b/drivers/media/i2c/soc_camera/ov772x.c
-index 985a367..8a4b29e 100644
---- a/drivers/media/i2c/soc_camera/ov772x.c
-+++ b/drivers/media/i2c/soc_camera/ov772x.c
-@@ -1067,6 +1067,7 @@ static int ov772x_probe(struct i2c_client *client,
- 			"I2C-Adapter doesn't support I2C_FUNC_SMBUS_BYTE_DATA\n");
- 		return -EIO;
- 	}
-+	client->flags |= I2C_CLIENT_SCCB;
- 
- 	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
+   Wolfram
+
+
+Wolfram Sang (6):
+  mmc: tmio: make tmio_mmc_request function more readable
+  mmc: tmio: refactor handling mrq
+  mmc: tmio: remove outdated comment
+  mmc: tmio: move finish_request function further down
+  mmc: tmio: add CMD23 support
+  mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3
+
+ drivers/mmc/host/sh_mobile_sdhi.c |   4 +-
+ drivers/mmc/host/tmio_mmc_pio.c   | 135 ++++++++++++++++++++++----------------
+ 2 files changed, 80 insertions(+), 59 deletions(-)
+
 -- 
-2.7.4
+2.11.0
