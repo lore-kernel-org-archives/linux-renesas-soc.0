@@ -1,39 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:36412 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbdEBKVn (ORCPT
+Received: from sauhun.de ([88.99.104.3]:48110 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1035596AbdEAJD6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 06:21:43 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170501090346.10801-5-wsa+renesas@sang-engineering.com>
-References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com> <20170501090346.10801-5-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 May 2017 12:21:41 +0200
-Message-ID: <CAMuHMdX8x2hV4rDQdUTMk5CNzxqBL8YyaPNJQzGPOsRPpuxYYg@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/6] mmc: tmio: move finish_request function further down
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 1 May 2017 05:03:58 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 4/6] mmc: tmio: move finish_request function further down
+Date: Mon,  1 May 2017 11:03:44 +0200
+Message-Id: <20170501090346.10801-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
+References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 1, 2017 at 11:03 AM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Plain code move with no changes. Needed for refactoring. Also, looks
-> nicer if request and finish_request are next to each other.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Plain code move with no changes. Needed for refactoring. Also, looks
+nicer if request and finish_request are next to each other.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 76 ++++++++++++++++++++---------------------
+ 1 file changed, 38 insertions(+), 38 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 36539950347fbc..b3ecb2e2e344c3 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -279,44 +279,6 @@ static void tmio_mmc_reset_work(struct work_struct *work)
+ 	mmc_request_done(host->mmc, mrq);
+ }
+ 
+-static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+-{
+-	struct mmc_request *mrq;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&host->lock, flags);
+-
+-	mrq = host->mrq;
+-	if (IS_ERR_OR_NULL(mrq)) {
+-		spin_unlock_irqrestore(&host->lock, flags);
+-		return;
+-	}
+-
+-	host->cmd = NULL;
+-	host->data = NULL;
+-	host->force_pio = false;
+-
+-	cancel_delayed_work(&host->delayed_reset_work);
+-
+-	host->mrq = NULL;
+-	spin_unlock_irqrestore(&host->lock, flags);
+-
+-	if (mrq->cmd->error || (mrq->data && mrq->data->error))
+-		tmio_mmc_abort_dma(host);
+-
+-	if (host->check_scc_error)
+-		host->check_scc_error(host);
+-
+-	mmc_request_done(host->mmc, mrq);
+-}
+-
+-static void tmio_mmc_done_work(struct work_struct *work)
+-{
+-	struct tmio_mmc_host *host = container_of(work, struct tmio_mmc_host,
+-						  done);
+-	tmio_mmc_finish_request(host);
+-}
+-
+ /* These are the bitmasks the tmio chip requires to implement the MMC response
+  * types. Note that R1 and R6 are the same in this scheme. */
+ #define APP_CMD        0x0040
+@@ -908,6 +870,44 @@ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 	tmio_process_mrq(host, mrq);
+ }
+ 
++static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
++{
++	struct mmc_request *mrq;
++	unsigned long flags;
++
++	spin_lock_irqsave(&host->lock, flags);
++
++	mrq = host->mrq;
++	if (IS_ERR_OR_NULL(mrq)) {
++		spin_unlock_irqrestore(&host->lock, flags);
++		return;
++	}
++
++	host->cmd = NULL;
++	host->data = NULL;
++	host->force_pio = false;
++
++	cancel_delayed_work(&host->delayed_reset_work);
++
++	host->mrq = NULL;
++	spin_unlock_irqrestore(&host->lock, flags);
++
++	if (mrq->cmd->error || (mrq->data && mrq->data->error))
++		tmio_mmc_abort_dma(host);
++
++	if (host->check_scc_error)
++		host->check_scc_error(host);
++
++	mmc_request_done(host->mmc, mrq);
++}
++
++static void tmio_mmc_done_work(struct work_struct *work)
++{
++	struct tmio_mmc_host *host = container_of(work, struct tmio_mmc_host,
++						  done);
++	tmio_mmc_finish_request(host);
++}
++
+ static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
+ {
+ 	if (!host->clk_enable)
+-- 
+2.11.0
