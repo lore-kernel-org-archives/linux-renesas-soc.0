@@ -1,39 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35026 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbdEBKSt (ORCPT
+Received: from sauhun.de ([88.99.104.3]:48103 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1035589AbdEAJD5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 06:18:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170501090346.10801-3-wsa+renesas@sang-engineering.com>
-References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com> <20170501090346.10801-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 May 2017 12:18:47 +0200
-Message-ID: <CAMuHMdWYfmauwb6QLgr168P7Mw9q6ADV-RxhZsrm5a0Actg8Ww@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/6] mmc: tmio: refactor handling mrq
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mon, 1 May 2017 05:03:57 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/6] mmc: tmio: refactor handling mrq
+Date: Mon,  1 May 2017 11:03:42 +0200
+Message-Id: <20170501090346.10801-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
+References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 1, 2017 at 11:03 AM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Split handling mrq into a seperate function. We need to call it from
-> another place soon.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Split handling mrq into a seperate function. We need to call it from
+another place soon.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 46 +++++++++++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index ba1a233f97f03c..9d86e3ac626444 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -857,12 +857,36 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 	return ret;
+ }
+ 
++static void tmio_process_mrq(struct tmio_mmc_host *host, struct mmc_request *mrq)
++{
++	int ret;
++
++	if (mrq->data) {
++		ret = tmio_mmc_start_data(host, mrq->data);
++		if (ret)
++			goto fail;
++	}
++
++	ret = tmio_mmc_start_command(host, mrq->cmd);
++	if (ret)
++		goto fail;
++
++	schedule_delayed_work(&host->delayed_reset_work,
++			      msecs_to_jiffies(CMDREQ_TIMEOUT));
++	return;
++
++fail:
++	host->force_pio = false;
++	host->mrq = NULL;
++	mrq->cmd->error = ret;
++	mmc_request_done(host->mmc, mrq);
++}
++
+ /* Process requests from the MMC layer */
+ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ {
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 	unsigned long flags;
+-	int ret;
+ 
+ 	spin_lock_irqsave(&host->lock, flags);
+ 
+@@ -882,25 +906,7 @@ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ 
+-	if (mrq->data) {
+-		ret = tmio_mmc_start_data(host, mrq->data);
+-		if (ret)
+-			goto fail;
+-	}
+-
+-	ret = tmio_mmc_start_command(host, mrq->cmd);
+-	if (ret)
+-		goto fail;
+-
+-	schedule_delayed_work(&host->delayed_reset_work,
+-			      msecs_to_jiffies(CMDREQ_TIMEOUT));
+-	return;
+-
+-fail:
+-	host->force_pio = false;
+-	host->mrq = NULL;
+-	mrq->cmd->error = ret;
+-	mmc_request_done(mmc, mrq);
++	tmio_process_mrq(host, mrq);
+ }
+ 
+ static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
+-- 
+2.11.0
