@@ -1,91 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:42344 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752426AbdEIOMD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 May 2017 10:12:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Cc: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] [RFC] sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl registration
-Date: Tue,  9 May 2017 16:11:55 +0200
-Message-Id: <1494339117-31221-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
-References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 1 May 2017 10:32:48 +0200
+From: Simon Horman <horms@verge.net.au>
+To: kieran.bingham@ideasonboard.com
+Cc: Kieran Bingham <kbingham@kernel.org>,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sakari.ailus@iki.fi, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] RFC: ADV748x HDMI/Analog video receiver
+Message-ID: <20170501083248.GG18349@verge.net.au>
+References: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
+ <20170428070935.GC10196@verge.net.au>
+ <b0497e51-78f1-40e2-b97d-7c1ce7939b1d@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0497e51-78f1-40e2-b97d-7c1ce7939b1d@ideasonboard.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 3810e96056ffddf6 ("sh: modify pinmux for SH7757 2nd cut") renamed
-GPIO_PT[JLNQ]7 to GPIO_PT[JLNQ]7_RESV, and removed the existing users
-from the pinmux_pins[] array.
+On Fri, Apr 28, 2017 at 09:47:05AM +0100, Kieran Bingham wrote:
+> Hi Simon,
+> 
+> On 28/04/17 08:09, Simon Horman wrote:
+> > On Thu, Apr 27, 2017 at 07:25:59PM +0100, Kieran Bingham wrote:
+> >> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >>
+> >> This is an RFC for the Analog Devices ADV748x driver, and follows on from a
+> >> previous posting by Niklas Söderlund [0] of an earlier incarnation of this
+> >> driver.
+> > 
+> > ...
+> > 
+> >> This series presents the following patches:
+> >>
+> >>  [PATCH 1/5] v4l2-subdev: Provide a port mapping for asynchronous
+> >>  [PATCH 2/5] rcar-vin: Match sources against ports if specified.
+> >>  [PATCH 3/5] media: i2c: adv748x: add adv748x driver
+> >>  [PATCH 4/5] arm64: dts: r8a7795: salvator-x: enable VIN, CSI and ADV7482
+> >>  [PATCH 5/5] arm64: dts: r8a7796: salvator-x: enable VIN, CSI and ADV7482
+> > 
+> > I am marking the above dts patches as "RFC" and do not plan to apply them
+> > unless you ping me or repost them.
+> 
+> Yes, sorry - the whole series was supposed to be marked as RFC, but I didn't
+> think about it - and apparently only applied the tag to the cover letter.
+> 
+> Apologies for any confusion.
 
-However, pinmux_pins[] is initialized through PINMUX_GPIO(), using
-designated array initializers, where the GPIO_* enums serve as indices.
-Hence entries were not really removed, but replaced by (zero-filled)
-holes.  Such entries are treated as pin zero, which was registered
-before, thus leading to initialization failures:
+It was clear enough, though an tag RFC in every patch would be better.
+In any case I was referring to how I have handled these patches in
+patchwork.
 
-    sh-pfc pfc-sh7757: pin 0 already registered
-    sh-pfc pfc-sh7757: error during pin registration
-    sh-pfc pfc-sh7757: could not register: -22
-    sh-pfc: probe of pfc-sh7757 failed with error -22
+Apologies for any confusion.
 
-Remove GPIO_PT[JLNQ]7_RESV from the enum to fix this.
+> > Assuming they don't cause any
+> > regressions I would be happy to consider applying them as soon as their
+> > dependencies are accepted.
+> 
+> Does that mean you've done a cursory glance over the content ? :-)
 
-Fixes: 3810e96056ffddf6 ("sh: modify pinmux for SH7757 2nd cut")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Untested due to lack of hardware and datasheet.
----
- arch/sh/include/cpu-sh4/cpu/sh7757.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Yes, I did take a quick glance.
 
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7757.h b/arch/sh/include/cpu-sh4/cpu/sh7757.h
-index 5340f3bc1863c389..b40fb541e72a78ae 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7757.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7757.h
-@@ -40,7 +40,7 @@ enum {
- 
- 	/* PTJ */
- 	GPIO_PTJ0, GPIO_PTJ1, GPIO_PTJ2, GPIO_PTJ3,
--	GPIO_PTJ4, GPIO_PTJ5, GPIO_PTJ6, GPIO_PTJ7_RESV,
-+	GPIO_PTJ4, GPIO_PTJ5, GPIO_PTJ6,
- 
- 	/* PTK */
- 	GPIO_PTK0, GPIO_PTK1, GPIO_PTK2, GPIO_PTK3,
-@@ -48,7 +48,7 @@ enum {
- 
- 	/* PTL */
- 	GPIO_PTL0, GPIO_PTL1, GPIO_PTL2, GPIO_PTL3,
--	GPIO_PTL4, GPIO_PTL5, GPIO_PTL6, GPIO_PTL7_RESV,
-+	GPIO_PTL4, GPIO_PTL5, GPIO_PTL6,
- 
- 	/* PTM */
- 	GPIO_PTM0, GPIO_PTM1, GPIO_PTM2, GPIO_PTM3,
-@@ -56,7 +56,7 @@ enum {
- 
- 	/* PTN */
- 	GPIO_PTN0, GPIO_PTN1, GPIO_PTN2, GPIO_PTN3,
--	GPIO_PTN4, GPIO_PTN5, GPIO_PTN6, GPIO_PTN7_RESV,
-+	GPIO_PTN4, GPIO_PTN5, GPIO_PTN6,
- 
- 	/* PTO */
- 	GPIO_PTO0, GPIO_PTO1, GPIO_PTO2, GPIO_PTO3,
-@@ -68,7 +68,7 @@ enum {
- 
- 	/* PTQ */
- 	GPIO_PTQ0, GPIO_PTQ1, GPIO_PTQ2, GPIO_PTQ3,
--	GPIO_PTQ4, GPIO_PTQ5, GPIO_PTQ6, GPIO_PTQ7_RESV,
-+	GPIO_PTQ4, GPIO_PTQ5, GPIO_PTQ6,
- 
- 	/* PTR */
- 	GPIO_PTR0, GPIO_PTR1, GPIO_PTR2, GPIO_PTR3,
--- 
-2.7.4
+> In this instance, the port numbers need to revert back to a zero-base,
+> but I would appreciate an eye on how and where I've put the
+> representation of the physical hdmi/cvbs connectors. Having modified
+> plenty of DT, but not actually submitted much - I still feel 'new' at it
+> - so I'm sure I may not have followed the standards quite right yet.
+
+Assuming you are talking about where in the DT file the hdmi and cvbs nodes
+should go, I think this is somewhat arbitrary so long as they are within
+the top-level node - what you have looks good to me.
+
+> The dts patches are based heavily on the previous posting by Niklas, but I have
+> extended to put the extra hdmi and cvbs links in.
+> 
+> Regards
+> --
+> Kieran
+> 
