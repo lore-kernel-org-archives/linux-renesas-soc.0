@@ -1,270 +1,228 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49932 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753282AbdECRHx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 May 2017 13:07:53 -0400
-Subject: Re: [PATCH] v4l2-async: add subnotifier registration for subdevices
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-media@vger.kernel.org
-References: <20170427223035.13164-1-niklas.soderlund+renesas@ragnatech.se>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <cbb1230e-43bc-5f43-d127-9e1a1364f153@ideasonboard.com>
-Date: Wed, 3 May 2017 18:07:47 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170427223035.13164-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v4 5/7] doc_rst: media: New SDR formats PC16, PC18 & PC20
+Date: Tue,  2 May 2017 14:26:13 +0100
+Message-Id: <20170502132615.42134-6-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+This patch adds documentation for the three new SDR formats
 
-Small thing to ponder discovered below:
+V4L2_SDR_FMT_PCU16BE
+V4L2_SDR_FMT_PCU18BE
+V4L2_SDR_FMT_PCU20BE
 
-On 27/04/17 23:30, Niklas Söderlund wrote:
-> When registered() of v4l2_subdev_internal_ops is called the subdevice
-> have access to the master devices v4l2_dev and it's called with the
-> async frameworks list_lock held. In this context the subdevice can
-> register its own notifiers to allow for incremental discovery of
-> subdevices.
-> 
-> The master device registers the subdevices closest to itself in its
-> notifier while the subdevice(s) themself register notifiers for there
-> closest neighboring devices when they are registered. Using this
-> incremental approach two problems can be solved.
-> 
-> 1. The master device no longer have to care how many subdevices exist in
->    the pipeline. It only needs to care about its closest subdevice and
->    arbitrary long pipelines can be created without having to adapt the
->    master device for each case.
-> 
-> 2. Subdevices which are represented as a single DT node but register
->    more then one subdevice can use this to further the pipeline
->    discovery. Since the subdevice driver is the only one who knows which
->    of its subdevices is linked with which subdevice of a neighboring DT
->    node.
-> 
-> To enable subdevices to register/unregister notifiers from the
-> registered()/unregistered() callback v4l2_async_subnotifier_register()
-> and v4l2_async_subnotifier_unregister() are added. These new notifier
-> register functions are similar to the master device equivalent functions
-> but run without taking the v4l2-async list_lock which already are held
-> when he registered()/unregistered() callbacks are called.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/v4l2-core/v4l2-async.c | 91 +++++++++++++++++++++++++++++-------
->  include/media/v4l2-async.h           | 22 +++++++++
->  2 files changed, 95 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 96cc733f35ef72b0..d4a676a2935eb058 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -136,12 +136,13 @@ static void v4l2_async_cleanup(struct v4l2_subdev *sd)
->  	sd->dev = NULL;
->  }
->  
-> -int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
-> -				 struct v4l2_async_notifier *notifier)
-> +static int v4l2_async_do_notifier_register(struct v4l2_device *v4l2_dev,
-> +					   struct v4l2_async_notifier *notifier,
-> +					   bool subnotifier)
->  {
->  	struct v4l2_subdev *sd, *tmp;
->  	struct v4l2_async_subdev *asd;
-> -	int i;
-> +	int found, i;
->  
->  	if (!notifier->num_subdevs || notifier->num_subdevs > V4L2_MAX_SUBDEVS)
->  		return -EINVAL;
-> @@ -168,32 +169,69 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
->  		list_add_tail(&asd->list, &notifier->waiting);
->  	}
->  
-> -	mutex_lock(&list_lock);
-> +	if (!subnotifier)
-> +		mutex_lock(&list_lock);
-> +
-> +	/*
-> +	 * This function can be called recursively so the list
-> +	 * might be modified in a recursive call. Start from the
-> +	 * top of the list each iteration.
-> +	 */
-> +	found = 1;
-> +	while (found) {
-> +		found = 0;
->  
-> -	list_for_each_entry_safe(sd, tmp, &subdev_list, async_list) {
-> -		int ret;
-> +		list_for_each_entry_safe(sd, tmp, &subdev_list, async_list) {
-> +			int ret;
->  
-> -		asd = v4l2_async_belongs(notifier, sd);
-> -		if (!asd)
-> -			continue;
-> +			asd = v4l2_async_belongs(notifier, sd);
-> +			if (!asd)
-> +				continue;
->  
-> -		ret = v4l2_async_test_notify(notifier, sd, asd);
-> -		if (ret < 0) {
-> -			mutex_unlock(&list_lock);
-> -			return ret;
-> +			ret = v4l2_async_test_notify(notifier, sd, asd);
-> +			if (ret < 0) {
-> +				if (!subnotifier)
-> +					mutex_unlock(&list_lock);
-> +				return ret;
-> +			}
-> +
-> +			found = 1;
-> +			break;
->  		}
->  	}
->  
->  	/* Keep also completed notifiers on the list */
->  	list_add(&notifier->list, &notifier_list);
->  
-> -	mutex_unlock(&list_lock);
-> +	if (!subnotifier)
-> +		mutex_unlock(&list_lock);
->  
->  	return 0;
->  }
-> +
-> +int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-> +				    struct v4l2_async_notifier *notifier)
-> +{
-> +	if (!sd->v4l2_dev) {
-> +		dev_err(sd->dev ? sd->dev : NULL,
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          | 55 ++++++++++++++++++++++
+ .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          | 55 ++++++++++++++++++++++
+ .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          | 54 +++++++++++++++++++++
+ Documentation/media/uapi/v4l/sdr-formats.rst       |  3 ++
+ 4 files changed, 167 insertions(+)
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
 
-Just came across this, and it seems a bit 'extraneous'
-
-'If sd->dev is not null, use sd->dev, otherwise use NULL'
-
---
-KB
-
-
-
-> +			"Can't register subnotifier for without v4l2_dev\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return v4l2_async_do_notifier_register(sd->v4l2_dev, notifier, true);
-> +}
-> +EXPORT_SYMBOL(v4l2_async_subnotifier_register);
-> +
-> +int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
-> +				 struct v4l2_async_notifier *notifier)
-> +{
-> +	return v4l2_async_do_notifier_register(v4l2_dev, notifier, false);
-> +}
->  EXPORT_SYMBOL(v4l2_async_notifier_register);
->  
-> -void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-> +static void
-> +v4l2_async_do_notifier_unregister(struct v4l2_async_notifier *notifier,
-> +				  bool subnotifier)
->  {
->  	struct v4l2_subdev *sd, *tmp;
->  	unsigned int notif_n_subdev = notifier->num_subdevs;
-> @@ -210,7 +248,8 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  			"Failed to allocate device cache!\n");
->  	}
->  
-> -	mutex_lock(&list_lock);
-> +	if (!subnotifier)
-> +		mutex_lock(&list_lock);
->  
->  	list_del(&notifier->list);
->  
-> @@ -237,15 +276,20 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  			put_device(d);
->  	}
->  
-> -	mutex_unlock(&list_lock);
-> +	if (!subnotifier)
-> +		mutex_unlock(&list_lock);
->  
->  	/*
->  	 * Call device_attach() to reprobe devices
->  	 *
->  	 * NOTE: If dev allocation fails, i is 0, and the whole loop won't be
->  	 * executed.
-> +	 * TODO: If we are unregistering a subdevice notifier we can't reprobe
-> +	 * since the lock_list is held by the master device and attaching that
-> +	 * device would call v4l2_async_register_subdev() and end in a deadlock
-> +	 * on list_lock.
->  	 */
-> -	while (i--) {
-> +	while (i-- && !subnotifier) {
->  		struct device *d = dev[i];
->  
->  		if (d && device_attach(d) < 0) {
-> @@ -269,6 +313,17 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  	 * upon notifier registration.
->  	 */
->  }
-> +
-> +void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier)
-> +{
-> +	v4l2_async_do_notifier_unregister(notifier, true);
-> +}
-> +EXPORT_SYMBOL(v4l2_async_subnotifier_unregister);
-> +
-> +void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
-> +{
-> +	v4l2_async_do_notifier_unregister(notifier, false);
-> +}
->  EXPORT_SYMBOL(v4l2_async_notifier_unregister);
->  
->  int v4l2_async_register_subdev(struct v4l2_subdev *sd)
-> diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-> index 8e2a236a4d039df6..dee070be59f211bd 100644
-> --- a/include/media/v4l2-async.h
-> +++ b/include/media/v4l2-async.h
-> @@ -105,6 +105,18 @@ struct v4l2_async_notifier {
->  };
->  
->  /**
-> + * v4l2_async_notifier_register - registers a subdevice asynchronous subnotifier
-> + *
-> + * @sd: pointer to &struct v4l2_subdev
-> + * @notifier: pointer to &struct v4l2_async_notifier
-> + *
-> + * This function assumes the async list_lock is already locked, allowing
-> + * it to be used from struct v4l2_subdev_internal_ops registered() callback.
-> + */
-> +int v4l2_async_subnotifier_register(struct v4l2_subdev *sd,
-> +				    struct v4l2_async_notifier *notifier);
-> +
-> +/**
->   * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
->   *
->   * @v4l2_dev: pointer to &struct v4l2_device
-> @@ -114,6 +126,16 @@ int v4l2_async_notifier_register(struct v4l2_device *v4l2_dev,
->  				 struct v4l2_async_notifier *notifier);
->  
->  /**
-> + * v4l2_async_subnotifier_unregister - unregisters a asynchronous subnotifier
-> + *
-> + * @notifier: pointer to &struct v4l2_async_notifier
-> + *
-> + * This function assumes the async list_lock is already locked, allowing
-> + * it to be used from struct v4l2_subdev_internal_ops unregistered() callback.
-> + */
-> +void v4l2_async_subnotifier_unregister(struct v4l2_async_notifier *notifier);
-> +
-> +/**
->   * v4l2_async_notifier_unregister - unregisters a subdevice asynchronous notifier
->   *
->   * @notifier: pointer to &struct v4l2_async_notifier
-> 
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+new file mode 100644
+index 000000000000..2de1b1a0f517
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+@@ -0,0 +1,55 @@
++.. -*- coding: utf-8; mode: rst -*-
++
++.. _V4L2-SDR-FMT-PCU16BE:
++
++******************************
++V4L2_SDR_FMT_PCU16BE ('PC16')
++******************************
++
++Planar complex unsigned 16-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 16 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 16 bits, bit 15:2 (14 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[13:6]`
++      -  I'\ :sub:`0[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[13:6]`
++      -  I'\ :sub:`1[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[13:6]`
++      -  Q'\ :sub:`0[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[13:6]`
++      -  Q'\ :sub:`1[5:0]; B1[1:0]=pad`
++      -  pad
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+new file mode 100644
+index 000000000000..da8b26bf6b95
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+@@ -0,0 +1,55 @@
++.. -*- coding: utf-8; mode: rst -*-
++
++.. _V4L2-SDR-FMT-PCU18BE:
++
++******************************
++V4L2_SDR_FMT_PCU18BE ('PC18')
++******************************
++
++Planar complex unsigned 18-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 18 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 18 bits, bit 17:2 (16 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[17:10]`
++      -  I'\ :sub:`0[9:2]`
++      -  I'\ :sub:`0[1:0]; B2[5:0]=pad`
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[17:10]`
++      -  I'\ :sub:`1[9:2]`
++      -  I'\ :sub:`1[1:0]; B2[5:0]=pad`
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[17:10]`
++      -  Q'\ :sub:`0[9:2]`
++      -  Q'\ :sub:`0[1:0]; B2[5:0]=pad`
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[17:10]`
++      -  Q'\ :sub:`1[9:2]`
++      -  Q'\ :sub:`1[1:0]; B2[5:0]=pad`
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+new file mode 100644
+index 000000000000..5499eed39477
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+@@ -0,0 +1,54 @@
++.. -*- coding: utf-8; mode: rst -*-
++.. _V4L2-SDR-FMT-PCU20BE:
++
++******************************
++V4L2_SDR_FMT_PCU20BE ('PC20')
++******************************
++
++Planar complex unsigned 20-bit big endian IQ sample
++
++Description
++===========
++
++This format contains a sequence of complex number samples. Each complex
++number consist of two parts called In-phase and Quadrature (IQ). Both I
++and Q are represented as a 20 bit unsigned big endian number stored in
++32 bit space. The remaining unused bits within the 32 bit space will be
++padded with 0. I value starts first and Q value starts at an offset
++equalling half of the buffer size (i.e.) offset = buffersize/2. Out of
++the 20 bits, bit 19:2 (18 bit) is data and bit 1:0 (2 bit) can be any
++value.
++
++**Byte Order.**
++Each cell is one byte.
++
++.. flat-table::
++    :header-rows:  1
++    :stub-columns: 0
++
++    * -  Offset:
++      -  Byte B0
++      -  Byte B1
++      -  Byte B2
++      -  Byte B3
++    * -  start + 0:
++      -  I'\ :sub:`0[19:12]`
++      -  I'\ :sub:`0[11:4]`
++      -  I'\ :sub:`0[3:0]; B2[3:0]=pad`
++      -  pad
++    * -  start + 4:
++      -  I'\ :sub:`1[19:12]`
++      -  I'\ :sub:`1[11:4]`
++      -  I'\ :sub:`1[3:0]; B2[3:0]=pad`
++      -  pad
++    * -  ...
++    * - start + offset:
++      -  Q'\ :sub:`0[19:12]`
++      -  Q'\ :sub:`0[11:4]`
++      -  Q'\ :sub:`0[3:0]; B2[3:0]=pad`
++      -  pad
++    * - start + offset + 4:
++      -  Q'\ :sub:`1[19:12]`
++      -  Q'\ :sub:`1[11:4]`
++      -  Q'\ :sub:`1[3:0]; B2[3:0]=pad`
++      -  pad
+diff --git a/Documentation/media/uapi/v4l/sdr-formats.rst b/Documentation/media/uapi/v4l/sdr-formats.rst
+index f863c08f1add..2037f5bad727 100644
+--- a/Documentation/media/uapi/v4l/sdr-formats.rst
++++ b/Documentation/media/uapi/v4l/sdr-formats.rst
+@@ -17,3 +17,6 @@ These formats are used for :ref:`SDR <sdr>` interface only.
+     pixfmt-sdr-cs08
+     pixfmt-sdr-cs14le
+     pixfmt-sdr-ru12le
++    pixfmt-sdr-pcu16be
++    pixfmt-sdr-pcu18be
++    pixfmt-sdr-pcu20be
+-- 
+2.12.2
