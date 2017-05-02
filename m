@@ -1,69 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:33242 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S376391AbdD2Jz1 (ORCPT
+Received: from mail-io0-f170.google.com ([209.85.223.170]:32922 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbdEBKWZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 29 Apr 2017 05:55:27 -0400
-Date: Sat, 29 Apr 2017 11:55:23 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [RFC 0/2] mmc: sdhi: make use of CBSY
-Message-ID: <20170429095523.GA2689@katana>
-References: <1453808801-12510-1-git-send-email-wsa@the-dreams.de>
- <ac6f67df-b124-53c3-ee54-9f215120c556@gmail.com>
+        Tue, 2 May 2017 06:22:25 -0400
+Received: by mail-io0-f170.google.com with SMTP id o22so22247493iod.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 May 2017 03:22:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
-Content-Disposition: inline
-In-Reply-To: <ac6f67df-b124-53c3-ee54-9f215120c556@gmail.com>
+In-Reply-To: <20170501091236.4nsznozv23wx2izm@ninjato>
+References: <20170501091236.4nsznozv23wx2izm@ninjato>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 May 2017 12:22:24 +0200
+Message-ID: <CAMuHMdVdVEJb117yJ6BUqqq7T6zYR+MpJ4j1K=-8SfoKTy5NZQ@mail.gmail.com>
+Subject: Re: [PULL REQUEST] renesas/topic/sdhi-cmd23 for renesas drivers
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 1, 2017 at 11:12 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> here is a new topic branch for renesas-drivers based on mmc/next as of
+> today. There are likely going to be conflicts once Simon publishes his
+> SDHI DMA refactor work. Please drop this branch then, I think it is best
+> if I will provide you with a rebased version once this happens. We will
+> see. But for now, please pull.
+>
+> Kind regards,
+>
+>    Wolfram
+>
+>
+> The following changes since commit a627f025eb0534052ff451427c16750b3530634c:
+>
+>   mmc: sdhci-of-esdhc: limit SD clock for ls1012a/ls1046a (2017-04-28 14:53:13 +0200)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-cmd23
+>
+> for you to fetch changes up to 7e4df752d57931e2962254e18cee12890f9018ce:
+>
+>   mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3 (2017-05-01 10:52:56 +0200)
 
-Hi Dirk,
+Thank you, looks good!
 
-> Checking the recent kernel [1] it seems to me that this changes never made
-> it into mainline.
->=20
-> Does anybody remember why and/or the history?
+Gr{oetje,eeting}s,
 
-As for Ulf, it was RFC, so no urge to pick it up. As for me, I was
-waiting for more feedback and then it fell through the cracks.
+                        Geert
 
-Thanks for bringing it up again. I am curious, does it make a
-difference somewhere despite being closer to the docs?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Have a nice weekend,
-
-   Wolfram
-
-
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkEYwcACgkQFA3kzBSg
-KbbMiA//YM6v9bHUkOc8bD5hQ7kezh8mNsec9JTXQQtsMRyS42k6QhVWyJGTQ1QD
-aZNBXeeZ5BYkV0yrxDphQDJG4JJh7sbP+odE1zj1cb9bBMzLpQDi7rnnEQYIqMhO
-0eIX8VvfII83nFaEhwemi2rQX+LCqoHiROAJYDKFtCKty5yoE93f3yrmPqFpw8gk
-JzQMMh+5fZxpfMRfwTgH4L86ANNqu+WLUCoMJXHpjDU9RRcHaGboYJs4nBbCOOUz
-EynlIZvO6GTm1OoxUJMDmYTnyXX7oJy8AWsvBn1rWKbJYF3tPJlAY74CyEHaf5BS
-AYFITFntvT5uOfU+uQWSvG7F6yF7tZDtN72yikoRynQmqSGLMUHL7AQLNy9YbvWz
-Kd8fzw2++E0fS14qfdPSUH3tSdhD7rkT19HMjxD/ilOoWVFYwFMGswUoNBPc7f/7
-oqoLG/6HZEi9P/Zh8fbfRbpeS9758J6BXJnyzvuL/yfGlFVuh/vFW5tSrV1kWHW/
-XvfqLd8kPruNFUPqVE0WacoL8/PcP5wX2aTcxpfR4ELjrGMNa/DkHLEb1wX9/Yur
-ujAWn1/11rs7Um5SBzeLOMb5phqJc+THdKrcpTbnJgmsH2mfIPguJKxmHoWqhoqe
-TYEqHluVcvsHBDFhAypYlVwaVltjX78LT40s0bA5LK6yAjh0SAg=
-=9kab
------END PGP SIGNATURE-----
-
---6TrnltStXW4iwmi0--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
