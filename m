@@ -1,42 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48108 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1035595AbdEAJD6 (ORCPT
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:36816 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbdEBWIP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 May 2017 05:03:58 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 3/6] mmc: tmio: remove outdated comment
-Date: Mon,  1 May 2017 11:03:43 +0200
-Message-Id: <20170501090346.10801-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
-References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
+        Tue, 2 May 2017 18:08:15 -0400
+Received: by mail-wm0-f46.google.com with SMTP id u65so127583461wmu.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 May 2017 15:08:14 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Wed, 3 May 2017 00:08:12 +0200
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kbingham@kernel.org>, hverkuil@xs4all.nl
+Subject: Re: [PATCH] v4l2-async: add v4l2_async_match()
+Message-ID: <20170502220812.GO1532@bigcity.dyn.berto.se>
+References: <20170502165413.7559-1-niklas.soderlund+renesas@ragnatech.se>
+ <e5639542-9eff-e6a0-5dbc-8ee439b64d5c@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e5639542-9eff-e6a0-5dbc-8ee439b64d5c@linux.intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The obviously wrong comment was added in 2011 with commit df3ef2d3c92c0a
-("mmc: protect the tmio_mmc driver against a theoretical race") but
-already obsoleted half a year later with commit b9269fdd4f61aa ("mmc:
-tmio: fix recursive spinlock, don't schedule with interrupts disabled").
+Hej Sakari,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc_pio.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for your feedback.
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 9d86e3ac626444..36539950347fbc 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -279,7 +279,6 @@ static void tmio_mmc_reset_work(struct work_struct *work)
- 	mmc_request_done(host->mmc, mrq);
- }
- 
--/* called with host->lock held, interrupts disabled */
- static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- {
- 	struct mmc_request *mrq;
+On 2017-05-02 23:23:47 +0300, Sakari Ailus wrote:
+> Hi Niklas,
+> 
+> Niklas S�derlund wrote:
+> > For drivers registering notifiers with more then one subdevices it's
+> > difficult to know exactly which one is being bound in each call to the
+> > notifiers bound callback. Comparing OF nodes became harder after the
+> > introduction of fwnode where the two following comparisons are not equal
+> > but where so previous to fwnode.
+> > 
+> > asd.match.fwnode.fwnode == of_fwnode_handle(subdev->dev->of_node)
+> > 
+> > asd.match.fwnode.fwnode == of_fwnode_handle(subdev->of_node)
+> > 
+> > It's also not ideal to directly access the asd.match union without first
+> > checking the match_type. So to make it easier for drivers to perform
+> > this type of matching export the v4l2 async match helpers with a new
+> > symbol v4l2_async_match(). This wold replace the comparisons above with:
+> > 
+> > v4l2_async_match(subdev, &asd)
+> 
+> Where do you need such a thing, i.e. what do you want to do? Do you have an
+> example of where this is helpful?
+> 
+> The async framework has been designed to make it easy to store driver
+> specific information to an async sub-device but I'm not sure if all drivers
+> do this. Some do at least.
+
+You are correct, there is no need for this patch. Please disregard it, 
+and sorry for the noise.
+
+Laurent also pointed this out to me and asked why I did not use the 
+v4l2_async_subdev pointer provided to the notifier bound callback 
+instead of the subdev->of_node to match. I now feel rather silly.. But 
+with that modification my issue is solved without any v4l2 modifications 
+and the code is more clear so I'm also happy.
+
+> 
+> -- 
+> Kind regards,
+> 
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
