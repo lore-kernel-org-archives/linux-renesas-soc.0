@@ -1,76 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37744 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753855AbdEQJwm (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36504 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751246AbdEBTVP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:52:42 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Tue, 2 May 2017 15:21:15 -0400
+MIME-Version: 1.0
+In-Reply-To: <1491488454-22468-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1491488454-22468-1-git-send-email-jacopo+renesas@jmondi.org> <1491488454-22468-3-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 May 2017 21:21:13 +0200
+Message-ID: <CAMuHMdUVRO3y+BfU1ynWuRddOOB59DgpbnmXMbYopT6RQ5K8BQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] iio: Documentation: Add max9611 sysfs documentation
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        alsa-devel@alsa-project.org
-In-Reply-To: <8737cvsyah.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAvdC-0006u0-Js@debutante>
-Date: Wed, 17 May 2017 10:52:34 +0100
-Subject: Applied "ASoC: rsnd: add missing clocks/clock-names on Document" to the asoc tree
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Jacopo,
 
-   ASoC: rsnd: add missing clocks/clock-names on Document
+On Thu, Apr 6, 2017 at 4:20 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add documentation for max9611 driver.
+> Document attributes describing value of shunt resistor installed between
+> RS+ and RS- voltage sense inputs.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611 b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+> new file mode 100644
+> index 0000000..6d2d2b0
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-max9611
+> @@ -0,0 +1,17 @@
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_power_shunt_resistor
+> +Date:          March 2017
+> +KernelVersion: 4.12
+> +Contact:       linux-iio@vger.kernel.org
+> +Description:   The value of the shunt resistor used to compute power drain on
+> +                common input voltage pin (RS+). In Ohms.
+> +
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_current_shunt_resistor
+> +Date:          March 2017
+> +KernelVersion: 4.12
+> +Contact:       linux-iio@vger.kernel.org
+> +Description:   The value of the shunt resistor used to compute current flowing
+> +                between RS+ and RS- voltage sense inputs. In Ohms.
+> +
+> +These attributes describe a single physical component, exposed as two distinct
+> +attributes as it is used to calculate two different values: power load and
+> +current flowing between RS+ and RS- inputs.
 
-has been applied to the asoc tree at
+On my Salvator-X, the value is "5.000", which matches milli-Ohms?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+DT says: "shunt-resistor-micro-ohms = <5000>;"
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Gr{oetje,eeting}s,
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+                        Geert
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 5b3889f80a79d9b73f73e19ba9a001c2d47ab47f Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 26 Apr 2017 02:26:48 +0000
-Subject: [PATCH] ASoC: rsnd: add missing clocks/clock-names on Document
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index 3332910a9a11..13cb21d53b8b 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -368,6 +368,10 @@ Required properties:
- 				  see below for detail.
- - #sound-dai-cells		: it must be 0 if your system is using single DAI
- 				  it must be 1 if your system is using multi  DAI
-+- clocks			: References to SSI/SRC/MIX/CTU/DVC/AUDIO_CLK clocks.
-+- clock-names			: List of necessary clock names.
-+				  "ssi-all", "ssi.X", "src.X", "mix.X", "ctu.X",
-+				  "dvc.X", "clk_a", "clk_b", "clk_c", "clk_i"
- 
- Optional properties:
- - #clock-cells			: it must be 0 if your system has audio_clkout
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
