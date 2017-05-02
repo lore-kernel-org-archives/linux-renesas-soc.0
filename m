@@ -1,59 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54206 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750740AbdEBNLg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54546 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbdEBLQG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 09:11:36 -0400
-Date: Tue, 2 May 2017 15:11:32 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH/RFC 2/5] mmc: tmio: rename tmio_mmc_{pio => core}.c
-Message-ID: <20170502131132.gqg4uem2boborohm@ninjato>
+        Tue, 2 May 2017 07:16:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC 2/5] mmc: tmio: rename tmio_mmc_{pio => core}.c
+Date: Tue,  2 May 2017 13:15:40 +0200
+Message-Id: <1493723743-22821-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1493723743-22821-1-git-send-email-horms+renesas@verge.net.au>
 References: <1493723743-22821-1-git-send-email-horms+renesas@verge.net.au>
- <1493723743-22821-3-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vctmhwfm3w5vqsmh"
-Content-Disposition: inline
-In-Reply-To: <1493723743-22821-3-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Rename tmio_mmc_pio.c to tmio_mmc_core.c to more accurately reflect its
+function: to provide core code for the tmio-mmc and sh-mobole-sdhi drivers.
 
---vctmhwfm3w5vqsmh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/Makefile                            | 1 -
+ drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+ rename drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} (99%)
 
-
-> - * linux/drivers/mmc/host/tmio_mmc_pio.c
-> + * linux/drivers/mmc/host/tmio_mmc_core.c
-
-I think we should drop the filenames here (and in other places)  and use
-a human readable string instead?
-
-
---vctmhwfm3w5vqsmh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkIhYAACgkQFA3kzBSg
-KbYSHBAAkGJ3xIafhSA9NngJ6dPiYmrbO2JEmkf9mguVRo27CH529qBQQuXEDVsM
-om5yyIXzTeen4fGp65dC0OpnXpj/1qGgKCj+cR+CYXWv9Hfc5Sk4HJMyAX9/FiJk
-dvWUwPwvLoLJqOCiCp5jHj8jpz/W06TjfOgG+ivoGT770Z9EnNUljxysvmq6p5Ve
-KZ4py5u/Swqf4eDiTmTktacsTHxRfJwan3jnPV37+3sTIZEKWGZ16gkvs20Q4FFK
-oIzhzY23LP4MNj/Ng9VNLYYARTP4teRh5ks0Es7IJllYDRXfPFg0kRbKUEuIBJ1n
-V029jecOjoQaj/hnmDhcTmn+i8JuyRB0UdYwbAjTU/tL/YB+ifvkiQN9xNQ3tp+0
-WxHw2UdWw7njoDiCQKYDx4cYWRiaVOy0gidz27rhy/RNt9hduQwuaN0/Q4//FlFL
-AGZeKNbwNvINGBerj+/XJDv6bIKmix+yxDIbAi5GV7nQsCh+tJS3j3NdvK/y+b1W
-LxAv7BCv0mIx1Uc4M7+QB2KM9aZQRbWMTLRby1f2jxnXBUtwHyBA0DbkV16WGhup
-J+yL3uNPkZn1A4OdjmtSfGeedoSHn0V9ngE6J3r3bjM0H5sMWIa4iuVtbfmJ6x3U
-FggBYOJ59ZXIZjC7C6mfDdQRk601lY4ATfIjCeh2d46vsp5UCbg=
-=IbHR
------END PGP SIGNATURE-----
-
---vctmhwfm3w5vqsmh--
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index f11b3d4b121d..f9baa943b470 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -36,7 +36,6 @@ obj-$(CONFIG_MMC_S3C)   	+= s3cmci.o
+ obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
+ obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
+ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+-tmio_mmc_core-y			:= tmio_mmc_pio.o
+ obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o tmio_mmc_dma.o
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_core.c
+similarity index 99%
+rename from drivers/mmc/host/tmio_mmc_pio.c
+rename to drivers/mmc/host/tmio_mmc_core.c
+index 96905c7187f0..d5c23496c499 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1,5 +1,5 @@
+ /*
+- * linux/drivers/mmc/host/tmio_mmc_pio.c
++ * linux/drivers/mmc/host/tmio_mmc_core.c
+  *
+  * Copyright (C) 2016 Sang Engineering, Wolfram Sang
+  * Copyright (C) 2015-16 Renesas Electronics Corporation
+-- 
+2.1.4
