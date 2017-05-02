@@ -1,96 +1,462 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35946 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbdEBMSf (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36049 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbdEBMSj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 08:18:35 -0400
+        Tue, 2 May 2017 08:18:39 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: lee.jones@linaro.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH V3 1/2] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
-Date: Tue,  2 May 2017 14:18:15 +0200
-Message-Id: <20170502121816.10572-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH V3 2/2] mfd: Add ROHM BD9571MWV-M MFD PMIC driver
+Date: Tue,  2 May 2017 14:18:16 +0200
+Message-Id: <20170502121816.10572-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170502121816.10572-1-marek.vasut+renesas@gmail.com>
+References: <20170502121816.10572-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
-the following features:
-- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
-- one voltage regulator for DVFS
-- two GPIOs
+Add the MFD part of the ROHM BD9571MWV-M PMIC driver and MAINTAINERS
+entry. The MFD part only specifies the regmap bits for the PMIC and
+binds the subdevs together.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Rob Herring <robh@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
-V2: - Drop the compatible = "regulator-fixed" from the binding example,
-      it should not be there.
-    - List the VD09 regulator
-V3: Replace bd9571@30 with pmic@30
+V2: - Change BD9571MWV_AVS_VD09_VID0,1,2,3 to BD9571MWV_AVS_VD09_VID(n)
+    - Change BD9571MWV_AVS_DVFS_VID0,1,2,3 to BD9571MWV_AVS_DVFS_VID(n)
+    - Make the AVS_VD09 range RW, so it can be used by the regulator
+      driver for the VD09 regulator
+    - Report the regmap read return values when attempting to read ID
+      registers fails
+V3: No change
 ---
- .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+ MAINTAINERS                   |  11 ++
+ drivers/mfd/Kconfig           |  13 +++
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/bd9571mwv.c       | 230 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/bd9571mwv.h | 115 +++++++++++++++++++++
+ 5 files changed, 370 insertions(+)
+ create mode 100644 drivers/mfd/bd9571mwv.c
+ create mode 100644 include/linux/mfd/bd9571mwv.h
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2a9aa4be5846..9c30e6b00358 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10942,6 +10942,17 @@ L:	linux-serial@vger.kernel.org
+ S:	Odd Fixes
+ F:	drivers/tty/serial/rp2.*
+ 
++ROHM MULTIFUNCTION BD9571MWV-M PMIC DEVICE DRIVERS
++M:	Marek Vasut <marek.vasut+renesas@gmail.com>
++L:	linux-kernel@vger.kernel.org
++L:	linux-renesas-soc@vger.kernel.org
++S:	Supported
++F:	drivers/mfd/bd9571mwv.c
++F:	drivers/regulator/bd9571mwv-regulator.c
++F:	drivers/gpio/gpio-bd9571mwv.c
++F:	include/linux/mfd/bd9571mwv.h
++F:	Documentation/devicetree/bindings/mfd/bd9571mwv.txt
++
+ ROSE NETWORK LAYER
+ M:	Ralf Baechle <ralf@linux-mips.org>
+ L:	linux-hams@vger.kernel.org
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 3eb5c93595f6..6f4668ae28cc 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -133,6 +133,19 @@ config MFD_BCM590XX
+ 	help
+ 	  Support for the BCM590xx PMUs from Broadcom
+ 
++config MFD_BD9571MWV
++	tristate "ROHM BD9571MWV PMIC"
++	select MFD_CORE
++	select REGMAP_I2C
++	depends on I2C
++	help
++	  Support for the ROHM BD9571MWV PMIC, which contains single
++	  voltage regulator, voltage sampling units, GPIO block and
++	  watchdog block.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called bd9571mwv.
++
+ config MFD_AC100
+ 	tristate "X-Powers AC100"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index c16bf1ea0ea9..3cacc9748e13 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_MFD_ACT8945A)	+= act8945a.o
+ obj-$(CONFIG_MFD_SM501)		+= sm501.o
+ obj-$(CONFIG_MFD_ASIC3)		+= asic3.o tmio_core.o
+ obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
++obj-$(CONFIG_MFD_BD9571MWV)	+= bd9571mwv.o
+ cros_ec_core-objs		:= cros_ec.o
+ cros_ec_core-$(CONFIG_ACPI)	+= cros_ec_acpi_gpe.o
+ obj-$(CONFIG_MFD_CROS_EC)	+= cros_ec_core.o
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
 new file mode 100644
-index 000000000000..9ab216a851d5
+index 000000000000..64e088dfe7b0
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -0,0 +1,49 @@
-+* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
++++ b/drivers/mfd/bd9571mwv.c
+@@ -0,0 +1,230 @@
++/*
++ * ROHM BD9571MWV-M MFD driver
++ *
++ * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether expressed or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License version 2 for more details.
++ *
++ * Based on the TPS65086 driver
++ */
 +
-+Required properties:
-+ - compatible		: Should be "rohm,bd9571mwv".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
-+			    The first cell is the IRQ number.
-+			    The second cell is the flags, encoded as trigger
-+			    masks from ../interrupt-controller/interrupts.txt.
-+ - gpio-controller      : Marks the device node as a GPIO Controller.
-+ - #gpio-cells          : Should be two.  The first cell is the pin number and
-+                            the second cell is used to specify flags.
-+                            See ../gpio/gpio.txt for more information.
-+ - regulators:          : List of child nodes that specify the regulator
-+                            initialization data. Child nodes must be named
-+                            after their hardware counterparts:
-+			     - vd09
-+			     - vd18
-+			     - vd25
-+			     - vd33
-+			     - dvfs
-+			    Each child node is defined using the standard
-+			    binding for regulators.
++#include <linux/i2c.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/core.h>
++#include <linux/module.h>
 +
-+Example:
++#include <linux/mfd/bd9571mwv.h>
 +
-+	pmic: pmic@30 {
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
++static const struct mfd_cell bd9571mwv_cells[] = {
++	{ .name = "bd9571mwv-regulator", },
++	{ .name = "bd9571mwv-gpio", },
++};
 +
-+		regulators {
-+			dvfs: dvfs {
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
++static const struct regmap_range bd9571mwv_readable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
++	regmap_reg_range(BD9571MWV_AVS_SET_MONI, BD9571MWV_AVS_DVFS_VID(3)),
++	regmap_reg_range(BD9571MWV_VD18_VID, BD9571MWV_VD33_VID),
++	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_VINIT),
++	regmap_reg_range(BD9571MWV_DVFS_SETVMAX, BD9571MWV_DVFS_MONIVDAC),
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9571mwv_readable_table = {
++	.yes_ranges	= bd9571mwv_readable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9571mwv_readable_yes_ranges),
++};
++
++static const struct regmap_range bd9571mwv_writable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_AVS_VD09_VID(0), BD9571MWV_AVS_VD09_VID(3)),
++	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
++	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
++	regmap_reg_range(BD9571MWV_GPIO_INT_SET, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9571mwv_writable_table = {
++	.yes_ranges	= bd9571mwv_writable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9571mwv_writable_yes_ranges),
++};
++
++static const struct regmap_range bd9571mwv_volatile_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
++};
++
++static const struct regmap_access_table bd9571mwv_volatile_table = {
++	.yes_ranges	= bd9571mwv_volatile_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9571mwv_volatile_yes_ranges),
++};
++
++static const struct regmap_config bd9571mwv_regmap_config = {
++	.reg_bits	= 8,
++	.val_bits	= 8,
++	.cache_type	= REGCACHE_RBTREE,
++	.rd_table	= &bd9571mwv_readable_table,
++	.wr_table	= &bd9571mwv_writable_table,
++	.volatile_table	= &bd9571mwv_volatile_table,
++	.max_register	= 0xff,
++};
++
++static const struct regmap_irq bd9571mwv_irqs[] = {
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_MD1, 0,
++		       BD9571MWV_INT_INTREQ_MD1_INT),
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_MD2_E1, 0,
++		       BD9571MWV_INT_INTREQ_MD2_E1_INT),
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_MD2_E2, 0,
++		       BD9571MWV_INT_INTREQ_MD2_E2_INT),
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_PROT_ERR, 0,
++		       BD9571MWV_INT_INTREQ_PROT_ERR_INT),
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_GP, 0,
++		       BD9571MWV_INT_INTREQ_GP_INT),
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_128H_OF, 0,
++		       BD9571MWV_INT_INTREQ_128H_OF_INT),
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_WDT_OF, 0,
++		       BD9571MWV_INT_INTREQ_WDT_OF_INT),
++	REGMAP_IRQ_REG(BD9571MWV_IRQ_BKUP_TRG, 0,
++		       BD9571MWV_INT_INTREQ_BKUP_TRG_INT),
++};
++
++static struct regmap_irq_chip bd9571mwv_irq_chip = {
++	.name		= "bd9571mwv",
++	.status_base	= BD9571MWV_INT_INTREQ,
++	.mask_base	= BD9571MWV_INT_INTMASK,
++	.ack_base	= BD9571MWV_INT_INTREQ,
++	.init_ack_masked = true,
++	.num_regs	= 1,
++	.irqs		= bd9571mwv_irqs,
++	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
++};
++
++static int bd9571mwv_identify(struct bd9571mwv *bd)
++{
++	struct device *dev = bd->dev;
++	unsigned int value;
++	int ret;
++
++	ret = regmap_read(bd->regmap, BD9571MWV_VENDOR_CODE, &value);
++	if (ret) {
++		dev_err(dev, "Failed to read vendor code register (ret=%i)\n",
++			ret);
++		return ret;
++	}
++
++	if (value != BD9571MWV_VENDOR_CODE_VAL) {
++		dev_err(dev, "Invalid vendor code ID %02x (expected %02x)\n",
++			value, BD9571MWV_VENDOR_CODE_VAL);
++		return -EINVAL;
++	}
++
++	ret = regmap_read(bd->regmap, BD9571MWV_PRODUCT_CODE, &value);
++	if (ret) {
++		dev_err(dev, "Failed to read product code register (ret=%i)\n",
++			ret);
++		return ret;
++	}
++
++	if (value != BD9571MWV_PRODUCT_CODE_VAL) {
++		dev_err(dev, "Invalid product code ID %02x (expected %02x)\n",
++			value, BD9571MWV_PRODUCT_CODE_VAL);
++		return -EINVAL;
++	}
++
++	ret = regmap_read(bd->regmap, BD9571MWV_PRODUCT_REVISION, &value);
++	if (ret) {
++		dev_err(dev, "Failed to read revision register (ret=%i)\n",
++			ret);
++		return ret;
++	}
++
++	dev_info(dev, "Device: BD9571MWV rev. %d\n", value & 0xff);
++
++	return 0;
++}
++
++static int bd9571mwv_probe(struct i2c_client *client,
++			  const struct i2c_device_id *ids)
++{
++	struct bd9571mwv *bd;
++	int ret;
++
++	bd = devm_kzalloc(&client->dev, sizeof(*bd), GFP_KERNEL);
++	if (!bd)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, bd);
++	bd->dev = &client->dev;
++	bd->irq = client->irq;
++
++	bd->regmap = devm_regmap_init_i2c(client, &bd9571mwv_regmap_config);
++	if (IS_ERR(bd->regmap)) {
++		dev_err(bd->dev, "Failed to initialize register map\n");
++		return PTR_ERR(bd->regmap);
++	}
++
++	ret = bd9571mwv_identify(bd);
++	if (ret)
++		return ret;
++
++	ret = regmap_add_irq_chip(bd->regmap, bd->irq, IRQF_ONESHOT, 0,
++				  &bd9571mwv_irq_chip, &bd->irq_data);
++	if (ret) {
++		dev_err(bd->dev, "Failed to register IRQ chip\n");
++		return ret;
++	}
++
++	ret = mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO, bd9571mwv_cells,
++			      ARRAY_SIZE(bd9571mwv_cells), NULL, 0,
++			      regmap_irq_get_domain(bd->irq_data));
++	if (ret) {
++		regmap_del_irq_chip(bd->irq, bd->irq_data);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int bd9571mwv_remove(struct i2c_client *client)
++{
++	struct bd9571mwv *bd = i2c_get_clientdata(client);
++
++	regmap_del_irq_chip(bd->irq, bd->irq_data);
++
++	return 0;
++}
++
++static const struct of_device_id bd9571mwv_of_match_table[] = {
++	{ .compatible = "rohm,bd9571mwv", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, bd9571mwv_of_match_table);
++
++static const struct i2c_device_id bd9571mwv_id_table[] = {
++	{ "bd9571mwv", 0 },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(i2c, bd9571mwv_id_table);
++
++static struct i2c_driver bd9571mwv_driver = {
++	.driver		= {
++		.name	= "bd9571mwv",
++		.of_match_table = bd9571mwv_of_match_table,
++	},
++	.probe		= bd9571mwv_probe,
++	.remove		= bd9571mwv_remove,
++	.id_table       = bd9571mwv_id_table,
++};
++module_i2c_driver(bd9571mwv_driver);
++
++MODULE_AUTHOR("Marek Vasut <marek.vasut+renesas@gmail.com>");
++MODULE_DESCRIPTION("BD9571MWV PMIC Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
+new file mode 100644
+index 000000000000..f0708ba4cbba
+--- /dev/null
++++ b/include/linux/mfd/bd9571mwv.h
+@@ -0,0 +1,115 @@
++/*
++ * ROHM BD9571MWV-M driver
++ *
++ * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether expressed or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License version 2 for more details.
++ *
++ * Based on the TPS65086 driver
++ */
++
++#ifndef __LINUX_MFD_BD9571MWV_H
++#define __LINUX_MFD_BD9571MWV_H
++
++#include <linux/device.h>
++#include <linux/regmap.h>
++
++/* List of registers for BD9571MWV */
++#define BD9571MWV_VENDOR_CODE			0x00
++#define BD9571MWV_VENDOR_CODE_VAL		0xdb
++#define BD9571MWV_PRODUCT_CODE			0x01
++#define BD9571MWV_PRODUCT_CODE_VAL		0x60
++#define BD9571MWV_PRODUCT_REVISION		0x02
++
++#define BD9571MWV_I2C_FUSA_MODE			0x10
++#define BD9571MWV_I2C_MD2_E1_BIT_1		0x11
++#define BD9571MWV_I2C_MD2_E1_BIT_2		0x12
++
++#define BD9571MWV_BKUP_MODE_CNT			0x20
++#define BD9571MWV_BKUP_MODE_STATUS		0x21
++#define BD9571MWV_BKUP_RECOVERY_CNT		0x22
++#define BD9571MWV_BKUP_CTRL_TIM_CNT		0x23
++#define BD9571MWV_WAITBKUP_WDT_CNT		0x24
++#define BD9571MWV_128H_TIM_CNT			0x26
++#define BD9571MWV_QLLM_CNT			0x27
++
++#define BD9571MWV_AVS_SET_MONI			0x31
++#define BD9571MWV_AVS_SET_MONI_MASK		0x3
++#define BD9571MWV_AVS_VD09_VID(n)		(0x32 + (n))
++#define BD9571MWV_AVS_DVFS_VID(n)		(0x36 + (n))
++
++#define BD9571MWV_VD18_VID			0x42
++#define BD9571MWV_VD25_VID			0x43
++#define BD9571MWV_VD33_VID			0x44
++
++#define BD9571MWV_DVFS_VINIT			0x50
++#define BD9571MWV_DVFS_SETVMAX			0x52
++#define BD9571MWV_DVFS_BOOSTVID			0x53
++#define BD9571MWV_DVFS_SETVID			0x54
++#define BD9571MWV_DVFS_MONIVDAC			0x55
++#define BD9571MWV_DVFS_PGD_CNT			0x56
++
++#define BD9571MWV_GPIO_DIR			0x60
++#define BD9571MWV_GPIO_OUT			0x61
++#define BD9571MWV_GPIO_IN			0x62
++#define BD9571MWV_GPIO_DEB			0x63
++#define BD9571MWV_GPIO_INT_SET			0x64
++#define BD9571MWV_GPIO_INT			0x65
++#define BD9571MWV_GPIO_INTMASK			0x66
++
++#define BD9571MWV_REG_KEEP(n)			(0x70 + (n))
++
++#define BD9571MWV_PMIC_INTERNAL_STATUS		0x80
++#define BD9571MWV_PROT_ERROR_STATUS0		0x81
++#define BD9571MWV_PROT_ERROR_STATUS1		0x82
++#define BD9571MWV_PROT_ERROR_STATUS2		0x83
++#define BD9571MWV_PROT_ERROR_STATUS3		0x84
++#define BD9571MWV_PROT_ERROR_STATUS4		0x85
++
++#define BD9571MWV_INT_INTREQ			0x90
++#define BD9571MWV_INT_INTREQ_MD1_INT		BIT(0)
++#define BD9571MWV_INT_INTREQ_MD2_E1_INT		BIT(1)
++#define BD9571MWV_INT_INTREQ_MD2_E2_INT		BIT(2)
++#define BD9571MWV_INT_INTREQ_PROT_ERR_INT	BIT(3)
++#define BD9571MWV_INT_INTREQ_GP_INT		BIT(4)
++#define BD9571MWV_INT_INTREQ_128H_OF_INT	BIT(5)
++#define BD9571MWV_INT_INTREQ_WDT_OF_INT		BIT(6)
++#define BD9571MWV_INT_INTREQ_BKUP_TRG_INT	BIT(7)
++#define BD9571MWV_INT_INTMASK			0x91
++
++#define BD9571MWV_ACCESS_KEY			0xff
++
++/* Define the BD9571MWV IRQ numbers */
++enum bd9571mwv_irqs {
++	BD9571MWV_IRQ_MD1,
++	BD9571MWV_IRQ_MD2_E1,
++	BD9571MWV_IRQ_MD2_E2,
++	BD9571MWV_IRQ_PROT_ERR,
++	BD9571MWV_IRQ_GP,
++	BD9571MWV_IRQ_128H_OF,
++	BD9571MWV_IRQ_WDT_OF,
++	BD9571MWV_IRQ_BKUP_TRG,
++};
++
++/**
++ * struct bd9571mwv - state holder for the bd9571mwv driver
++ *
++ * Device data may be used to access the BD9571MWV chip
++ */
++struct bd9571mwv {
++	struct device *dev;
++	struct regmap *regmap;
++
++	/* IRQ Data */
++	int irq;
++	struct regmap_irq_chip_data *irq_data;
++};
++
++#endif /* __LINUX_MFD_BD9571MWV_H */
 -- 
 2.11.0
