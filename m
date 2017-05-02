@@ -1,201 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36128 "EHLO mail.kernel.org"
+Received: from www.zeus03.de ([194.117.254.33]:39088 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933204AbdEKR1U (ORCPT
+        id S1750884AbdEBIqq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 13:27:20 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sakari.ailus@iki.fi
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH v2 2/4] arm64: dts: r8a7795: salvator-x: enable VIN, CSI and ADV7482
-Date: Thu, 11 May 2017 18:21:21 +0100
-Message-Id: <b7f89ec984dcb1cd14c61de72b43c6e55fd80b88.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 2 May 2017 04:46:46 -0400
+Date: Tue, 2 May 2017 10:46:44 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH/RFT v4 renesas-devel] ARM: dts: silk: Enable UHS-I SDR-50
+Message-ID: <20170502084644.GA3138@katana>
+References: <1493714605-4123-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
+In-Reply-To: <1493714605-4123-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Provide bindings between the VIN, CSI and the ADV7482 on the r8a7795.
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 147 ++++++++++++++-
- 1 file changed, 147 insertions(+)
+On Tue, May 02, 2017 at 10:43:25AM +0200, Simon Horman wrote:
+> Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI1.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 7a8986edcdc0..e295f041b36a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -196,6 +196,22 @@
- 			};
- 		};
- 	};
-+
-+	hdmi {
-+		port {
-+			hdmi_in: endpoint {
-+				remote-endpoint = <&adv7482_hdmi>;
-+			};
-+		};
-+	};
-+
-+	cvbs {
-+		port {
-+			cvbs_in: endpoint {
-+				remote-endpoint = <&adv7482_ain8>;
-+			};
-+		};
-+	};
- };
- 
- &du {
-@@ -387,6 +403,68 @@
- 	};
- };
- 
-+&i2c4 {
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	video-receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_hdmi: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint = <&hdmi_in>;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_ain8: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint = <&cvbs_in>;
-+			};
-+		};
-+
-+		port@10 {
-+			reg = <10>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_txa: endpoint@1 {
-+				reg = <1>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+
-+		port@11 {
-+			reg = <11>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adv7482_txb: endpoint@1 {
-+				reg = <1>;
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&csi20_in>;
-+			};
-+		};
-+	};
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
-@@ -577,3 +655,72 @@
- &pciec1 {
- 	status = "okay";
- };
-+
-+&vin0 {
-+	status = "okay";
-+};
-+
-+&vin1 {
-+	status = "okay";
-+};
-+
-+&vin2 {
-+	status = "okay";
-+};
-+
-+&vin3 {
-+	status = "okay";
-+};
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
-+
-+&vin6 {
-+	status = "okay";
-+};
-+
-+&vin7 {
-+	status = "okay";
-+};
-+
-+&csi20 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			csi20_in: endpoint@0 {
-+				clock-lanes = <0>;
-+				data-lanes = <1>;
-+				remote-endpoint = <&adv7482_txb>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint@0 {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
--- 
-git-series 0.9.1
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Looks good, but I also can't test.
+
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkIR3MACgkQFA3kzBSg
+KbZmMRAAlewXzypDWEW/vYOfgGtAX2m8OuuGpu0fZAHlzZ+H2GhIIi3KT+PVFuxC
+lFi0wrn5bePOyyzy0XapHFvZoiXt7UnYWFIsY+kfCpCRZL7LD20eK3ezNltsjT6c
+xPsLsHnOAcRGl82MjmsrVg1rEdUzUaloF35KT/0Kl95WIKJmoyXm1U42AZayRB5j
+myNXNtpjO9pZf4UvFlZoBY/ycbf/MrZtuScKhO+njjF0z0cDM/p2i8brRJdv+rdh
+i79c8IoArS1mMjhyaiEpUZgaH8wDas4G+ppRVVVXaTK/E1St7rKk5j8BBXoK+U5/
+FwePmOvuEqpG2AplQRNVYfH2UPg3eUZw1k0dSsBeNulAjp85hOFTPYGsa66bjWAW
+ps0yrzdotiYbG3N4Gtp8dFCNlVrwXv3XZZXT+OwMzEwFUgRes/SBPFTCYE41WBQ8
+hb9vt4cRp94rHObQ7+S63wEmnNmTtT+iJCmqax0UYdchghwL4qvBTTfRXB7a+rel
+6gRLu/Ez9wr1Jir+gKJP3jP2iMmfCoVJuk28Zs9dotXbDkxexhQjwP9Y4Y4WKHiX
+s5TJAaEhgzrAQGiQ8xFHlt6cCl9AW4Y9hHvdpbwZ3RKnRRvRucNtQiVXpJ+cgsEX
+0enlh5ItFcG6lA9WZfVowSE2IAAR4rLj10KzzYB1428wtT0IInE=
+=iMxv
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
