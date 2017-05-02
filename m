@@ -1,85 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:55378 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754889AbdEKIDk (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35946 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbdEBMSf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 04:03:40 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
+        Tue, 2 May 2017 08:18:35 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: lee.jones@linaro.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
-Date: Thu, 11 May 2017 10:03:29 +0200
-Message-Id: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH V3 1/2] mfd: Add ROHM BD9571MWV-M PMIC DT bindings
+Date: Tue,  2 May 2017 14:18:15 +0200
+Message-Id: <20170502121816.10572-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Sato-san, Rich,
+Add DT bindings for the ROHM BD9571MWV-M PMIC. This PMIC has
+the following features:
+- multiple voltage monitors for 1V8, 2V5, 3V3 voltage rail
+- one voltage regulator for DVFS
+- two GPIOs
 
-Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Rob Herring <robh@kernel.org>
+---
+V2: - Drop the compatible = "regulator-fixed" from the binding example,
+      it should not be there.
+    - List the VD09 regulator
+V3: Replace bd9571@30 with pmic@30
+---
+ .../devicetree/bindings/mfd/bd9571mwv.txt          | 49 ++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/bd9571mwv.txt
 
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
-
-pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-Apparently GPIO_PTQ7 was defined in the enum, but never used.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Hence such entries are treated as pin zero, which
-was registered before, and pinctrl registration fails.
-
-I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
-("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
-drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
-drivers/pinctrl/core.c already had the check.
-
-Some scripting revealed a few more broken drivers:
-  - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
-  - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
-    PINMUX_GPIO().
-
-Patch 1 fixes the issue on sh7722, and was tested.
-Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
-to lack of hardware.
-
-Changes compared to v1:
-  - Replace fake error messages by references to sh7722,
-  - Add Reviewed-by, Tested-by.
-
-Thanks for applying!
-
-Geert Uytterhoeven (4):
-  sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
-  sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
-    registration
-  sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-  sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
- arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
- arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
- arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
- 4 files changed, 7 insertions(+), 11 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+new file mode 100644
+index 000000000000..9ab216a851d5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+@@ -0,0 +1,49 @@
++* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
++
++Required properties:
++ - compatible		: Should be "rohm,bd9571mwv".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: Marks the device node as an interrupt controller.
++ - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
++			    The first cell is the IRQ number.
++			    The second cell is the flags, encoded as trigger
++			    masks from ../interrupt-controller/interrupts.txt.
++ - gpio-controller      : Marks the device node as a GPIO Controller.
++ - #gpio-cells          : Should be two.  The first cell is the pin number and
++                            the second cell is used to specify flags.
++                            See ../gpio/gpio.txt for more information.
++ - regulators:          : List of child nodes that specify the regulator
++                            initialization data. Child nodes must be named
++                            after their hardware counterparts:
++			     - vd09
++			     - vd18
++			     - vd25
++			     - vd33
++			     - dvfs
++			    Each child node is defined using the standard
++			    binding for regulators.
++
++Example:
++
++	pmic: pmic@30 {
++		compatible = "rohm,bd9571mwv";
++		reg = <0x30>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		regulators {
++			dvfs: dvfs {
++				regulator-name = "dvfs";
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <1030000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
