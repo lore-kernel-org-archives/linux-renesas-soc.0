@@ -1,79 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:48756 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753417AbdEDOmL (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33607 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751755AbdEBKKF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 May 2017 10:42:11 -0400
-Date: Thu, 4 May 2017 17:41:32 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v4 12/27] rcar-vin: read subdevice format for crop only
- when needed
-Message-ID: <20170504144132.GX7456@valkosipuli.retiisi.org.uk>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
- <20170427224203.14611-13-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 2 May 2017 06:10:05 -0400
+Received: by mail-it0-f65.google.com with SMTP id v135so1278179itv.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 May 2017 03:10:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170427224203.14611-13-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <3509082.7kXcTHXJsv@avalon>
+References: <19852948.3die4YcTFG@avalon> <CAMuHMdXSRN-kb0cSvi99omSYW6JA2YgvANJaLY6ysGbZpPAU2A@mail.gmail.com>
+ <3509082.7kXcTHXJsv@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 May 2017 12:10:03 +0200
+Message-ID: <CAMuHMdWGLmLrD-=xs+mhGHeBw4k5mFRzGjtXrChGSF2gBg7JUA@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] R-Car Gen3 HDMI output support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Hi Laurent,
 
-On Fri, Apr 28, 2017 at 12:41:48AM +0200, Niklas S�derlund wrote:
-> Instead of caching the subdevice format each time the video device
-> format is set read it directly when its needed. As it turns out the
-> format is only needed when figuring out the max rectangle for cropping.
-> 
-> This simplify the code and makes it clearer what the source format is
-> used for.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 76 ++++++++++++++++-------------
->  drivers/media/platform/rcar-vin/rcar-vin.h  | 12 -----
->  2 files changed, 42 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 919040e40aec60f6..80421421625e6f6f 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -90,6 +90,24 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
->   * V4L2
->   */
->  
-> +static int rvin_get_sd_format(struct rvin_dev *vin, struct v4l2_pix_format *pix)
-> +{
-> +	struct v4l2_subdev_format fmt = {
-> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> +	};
-> +	int ret;
-> +
-> +	fmt.pad = vin->digital.source_pad;
+On Tue, May 2, 2017 at 12:06 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday 02 May 2017 11:24:11 Geert Uytterhoeven wrote:
+>> On Mon, Mar 6, 2017 at 1:32 AM, Laurent Pinchart wrote:
+>> > Please find two pull requests below for renesas-drivers (in a single
+>> > e-mail, lucky you :-)).
+>> >
+>> > The second tag contains DT changes only and is based on Simon's latest
+>> > devel branch. Nothing special there, it should just not make it to
+>> > mainline before the driver changes get accepted.
+>> >
+>> > The following changes since commit
+> 2537532db23bdd9ecd2c1c956ac430a9a08738a8:
+>> >   Merge branch 'arm64-dt-for-v4.12' into devel (2017-03-02 16:02:44 +0100)
+>> >
+>> > are available in the git repository at:
+>> >   git://linuxtv.org/pinchartl/media.git tags/drm-next-dt-v3-20170306
+>> >
+>> > for you to fetch changes up to 111e8637fa9ad8261c25d437255c16f8e4e57116:
+>> >   ARM: shmobile: dts: Switch to panel-lvds bindings for Mitsubishi panels
+>> >
+>> > (2017-03-06 02:12:00 +0200)
+>>
+>> Dropped, too many conflicts ("Simon's latest devel branch", from 8 weeks
+>> ago).
+>
+> I thought the whole purpose of providing separate branches for DT integration
+> was to allow you to resolve the conflicts ?
 
-You can assign .pad in declaration, too.
+The purpose was to avoidhaving to rebase everything (driver and DT)
+when only one part needs to be rebased.
 
-> +
-> +	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	v4l2_fill_pix_format(pix, &fmt.format);
-> +
-> +	return 0;
-> +}
+Gr{oetje,eeting}s,
 
--- 
-Regards,
+                        Geert
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
