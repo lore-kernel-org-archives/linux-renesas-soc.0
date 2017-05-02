@@ -1,99 +1,52 @@
-Return-Path: <SRS0=3lbm=3X=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
-Received: from vtelinet-66-220-225-164.vermontel.net ([66.220.225.164]:34683
-        "HELO vermontel.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with SMTP id S1755149AbdDOVfG (ORCPT
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34999 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750957AbdEBJ2A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Apr 2017 17:35:06 -0400
-To: "linux-renesas-soc" <linux-renesas-soc@vger.kernel.org>
-Content-Disposition: attachment
-Date: Sat, 15 Apr 2017 21:35:01 -0000
-Content-Transfer-Encoding: base64
-Subject: 
+        Tue, 2 May 2017 05:28:00 -0400
+Received: by mail-it0-f68.google.com with SMTP id 131so1297240itz.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 May 2017 02:28:00 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <149229210108.21738.9024029214818331634@vermontel.net>
-From: <mary.lester09@gmail.com>
-Content-Type: application/zip; name="EMAIL_4055054400_linux-renesas-soc.zip"
+In-Reply-To: <1493717048-10740-1-git-send-email-horms+renesas@verge.net.au>
+References: <1493717048-10740-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 May 2017 11:27:58 +0200
+Message-ID: <CAMuHMdXbvC90k1QYZsjWx=f7QVQyWOzi_v3u8ShDoDsSAmZsjw@mail.gmail.com>
+Subject: Re: [PATCH/RFT renesas-devel] arm64: dts: ulcb: Enable NFS root
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-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
-AHMRAAAAAA==
+Hi Simon,
+
+On Tue, May 2, 2017 at 11:24 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Enable NFS root on the r8a7795/h3ulcb and r8a7796/m3ulcb
+> as per:
+> * commit b2407c566ba29215 ("arm64: dts: r8a7795: enable nfs root on Salvator-X board").
+> * commit 742a9dfb90f0 ("arm64: dts: r8a7796: salvator-x: Enable NFS root")
+>
+> Also set ignore_loglevel rw as boot args as is the case for the boards
+> for the boards for other Renesas ARM/ARM64 based SoCs.
+
+s/for the boards//
+
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
