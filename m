@@ -1,64 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:33590 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751243AbdEBSqR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49897 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751461AbdECILf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 14:46:17 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Wed, 3 May 2017 04:11:35 -0400
+Date: Wed, 3 May 2017 10:11:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6] arm64: dts: salvator-x: Add current sense amplifiers
-Date: Tue,  2 May 2017 20:46:13 +0200
-Message-Id: <1493750773-7750-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 0/9] ARM: dts: renesas: update PFC node name to
+ pin-controller
+Message-ID: <20170503081131.GA28564@verge.net.au>
+References: <20170426100538.22060-1-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170426100538.22060-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+On Wed, Apr 26, 2017 at 12:05:29PM +0200, Simon Horman wrote:
+> 
+> The device trees for Renesas SoCs use either pfc or pin-controller as the
+> node name for the PFC device. This patch is intended to take a step towards
+> unifying the node name used as pin-controller which appears to be the more
+> generic of the two and thus more in keeping with the DT specs.
+> 
+> My analysis is that this is a user-visible change to the extent that kernel
+> logs, and sysfs entries change from XXX.pfc and pfc@XXX to
+> XXX.pin-controller and pin-controller@XXX.
+> 
+> Boot tested on:
+>  r8a73a4/ape6evm
+>  r8a7740/armadillo800evb
+>  r8a7778/bockw
+>  r8a7790/lager
+>  r8a7791/koelsch
+>  r8a7791/porter
+>  r8a7793/gose
+>  sh73a9/kzm9g
+> 
+> Not tested on (due to lack of hw access):
+>  evm2/kzm9d
+>  r8a7789/marzen
 
-Add device nodes for two Maxim max961x current sense amplifiers
-sensing VDD_08 and DVFS_08 lines.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-[geert: r8a7796-salvator-x.dts => salvator-x.dtsi]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v6:
-  - r8a7796-salvator-x.dts => salvator-x.dtsi
-
- arch/arm64/boot/dts/renesas/salvator-x.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-index 47a482f20c9d511f..d5eb022d247cad6e 100644
---- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-@@ -283,6 +283,24 @@
- 	};
- };
- 
-+&i2c4 {
-+	status = "okay";
-+
-+	csa_vdd: adc@7c {
-+		compatible = "maxim,max9611";
-+		reg = <0x7c>;
-+
-+		shunt-resistor-micro-ohms = <5000>;
-+	};
-+
-+	csa_dvfs: adc@7f {
-+		compatible = "maxim,max9611";
-+		reg = <0x7f>;
-+
-+		shunt-resistor-micro-ohms = <5000>;
-+	};
-+};
-+
- &i2c_dvfs {
- 	status = "okay";
- };
--- 
-2.7.4
+I have now tested this on r8a7789/marzen
