@@ -1,92 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:38744 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755011AbdEDRqF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 May 2017 13:46:05 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/6] spi: Document SPI slave controller support
-Date: Thu,  4 May 2017 19:45:48 +0200
-Message-Id: <1493919951-32122-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493919951-32122-1-git-send-email-geert+renesas@glider.be>
-References: <1493919951-32122-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1493895213-12573-2-git-send-email-Alexandru_Gheorghe@mentor.com>
+References: <1493895213-12573-1-git-send-email-Alexandru_Gheorghe@mentor.com> <1493895213-12573-2-git-send-email-Alexandru_Gheorghe@mentor.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 4 May 2017 13:22:52 +0200
+Message-ID: <CAMuHMdV81g03TxLKx6gMGV_PqGYE4C1UVg=Z0GV3mYmtSt-Dcw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] v4l: vsp1: Add support for colorkey alpha blending
+To: agheorghe <Alexandru_Gheorghe@mentor.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - No changes,
+On Thu, May 4, 2017 at 12:53 PM, agheorghe
+<Alexandru_Gheorghe@mentor.com> wrote:
+> --- a/include/media/vsp1.h
+> +++ b/include/media/vsp1.h
+> @@ -32,6 +32,9 @@ struct vsp1_du_atomic_config {
+>         struct v4l2_rect dst;
+>         unsigned int alpha;
+>         unsigned int zpos;
+> +       u32 colorkey;
+> +       bool colorkey_en;
 
-v2:
-  - New.
----
- Documentation/spi/spi-summary | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+Please move this bool down, together with the other bool, to reduce
+object size due to alignment.
 
-diff --git a/Documentation/spi/spi-summary b/Documentation/spi/spi-summary
-index d1824b399b2d1d79..1721c1b570c32466 100644
---- a/Documentation/spi/spi-summary
-+++ b/Documentation/spi/spi-summary
-@@ -62,8 +62,8 @@ chips described as using "three wire" signaling: SCK, data, nCSx.
- (That data line is sometimes called MOMI or SISO.)
- 
- Microcontrollers often support both master and slave sides of the SPI
--protocol.  This document (and Linux) currently only supports the master
--side of SPI interactions.
-+protocol.  This document (and Linux) supports both the master and slave
-+sides of SPI interactions.
- 
- 
- Who uses it?  On what kinds of systems?
-@@ -154,9 +154,8 @@ control audio interfaces, present touchscreen sensors as input interfaces,
- or monitor temperature and voltage levels during industrial processing.
- And those might all be sharing the same controller driver.
- 
--A "struct spi_device" encapsulates the master-side interface between
--those two types of driver.  At this writing, Linux has no slave side
--programming interface.
-+A "struct spi_device" encapsulates the controller-side interface between
-+those two types of drivers.
- 
- There is a minimal core of SPI programming interfaces, focussing on
- using the driver model to connect controller and protocol drivers using
-@@ -177,10 +176,24 @@ shows up in sysfs in several locations:
-    /sys/bus/spi/drivers/D ... driver for one or more spi*.* devices
- 
-    /sys/class/spi_master/spiB ... symlink (or actual device node) to
--	a logical node which could hold class related state for the
--	controller managing bus "B".  All spiB.* devices share one
-+	a logical node which could hold class related state for the SPI
-+	master controller managing bus "B".  All spiB.* devices share one
- 	physical SPI bus segment, with SCLK, MOSI, and MISO.
- 
-+   /sys/devices/.../CTLR/slave ... virtual file for (un)registering the
-+	slave device for an SPI slave controller.
-+	Writing the driver name of an SPI slave handler to this file
-+	registers the slave device; writing "(null)" unregisters the slave
-+	device.
-+	Reading from this file shows the name of the slave device ("(null)"
-+	if not registered).
-+
-+   /sys/class/spi_slave/spiB ... symlink (or actual device node) to
-+	a logical node which could hold class related state for the SPI
-+	slave controller on bus "B".  When registered, a single spiB.*
-+	device is present here, possible sharing the physical SPI bus
-+	segment with other SPI slave devices.
-+
- Note that the actual location of the controller's class state depends
- on whether you enabled CONFIG_SYSFS_DEPRECATED or not.  At this time,
- the only class-specific state is the bus number ("B" in "spiB"), so
--- 
-2.7.4
+> +       u32 colorkey_alpha;
+>         bool interlaced;
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
