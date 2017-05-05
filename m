@@ -1,57 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59172 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969819AbdD3MwM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 30 Apr 2017 08:52:12 -0400
-Date: Sun, 30 Apr 2017 21:52:02 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
-Message-ID: <20170430125202.quxnx7jawl3k5gen@sirena.org.uk>
-References: <87efweqvh3.wl%kuninori.morimoto.gx@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sb6kycznxm2qlvzi"
-Content-Disposition: inline
-In-Reply-To: <87efweqvh3.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH] ASoC: ak4613: disable asymmetric audio interface format
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1493919951-32122-3-git-send-email-geert+renesas@glider.be>
+References: <1493919951-32122-1-git-send-email-geert+renesas@glider.be> <1493919951-32122-3-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 May 2017 11:07:31 +0200
+Message-ID: <CAMuHMdUf5Oea8seHLBdEEhFKLUB+W7ib8FWTMFJNPJAr2xZ77w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] spi: core: Add support for registering SPI slave controllers
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Wu Fengguang <fengguang.wu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Thu, May 4, 2017 at 7:45 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
 
---sb6kycznxm2qlvzi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> @@ -447,6 +448,8 @@ struct spi_master {
+>  #define SPI_MASTER_MUST_TX      BIT(4)         /* requires tx */
+>  #define SPI_MASTER_GPIO_SS      BIT(5)         /* GPIO CS must select slave */
+>
+> +       bool                    slave;          /* SPI slave controller */
 
-On Thu, Apr 27, 2017 at 05:22:51AM +0000, Kuninori Morimoto wrote:
->=20
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->=20
-> Asymmetric audio interface formats exist in ak4613 by same
-> register settings.
+0day reported I forgot to document this new field in kerneldoc, thanks!
+Will fix in v4.
 
-So long as nobody is actively using this disabling things is fine but
-it's better to just remove the code rather than commenting it out,
-people can always get the old code in git if they want.  Adding a
-comment explaining why asymmetric modes aren't supported would eb good
-though.
+Gr{oetje,eeting}s,
 
---sb6kycznxm2qlvzi
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlkF3fEACgkQJNaLcl1U
-h9D0NAf+O/IP/AmrXnvgTIZwXbrpxoRV0yfLGfeLgeNSKjEtclZeswWj7PPYKizE
-Ai1R4y7Db2jArq3BJgHnhXsXOr/vNgAZvCDA4SSq3LCC82g9NtTUV49Dkd3Z2Yq7
-Ft2/fLmCuCMU6dwqTieKuLSmhdU+W8PT7jGnlOvyBMX6coVHq9Y3Wfww5wuN+4hO
-rVj4xHx240yQbWh0ElOoOeHbPXEoWD5l8F0B52ShrowRSJv3wlslAa/ITTPj60wD
-x4swwAUilRqxuwe9o0PF5xdZxppvbM2LJQ/FQMJfx51nlbSdYy15Y9yQTnCyQFtI
-fK3tA4WrAKzFdgyDAhHsoloiSLITow==
-=wg+T
------END PGP SIGNATURE-----
-
---sb6kycznxm2qlvzi--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
