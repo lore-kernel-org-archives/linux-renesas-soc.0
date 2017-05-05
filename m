@@ -1,20 +1,12 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1165D80A4642F5A2F27FB6AA8AEB0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
- <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
- <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com> <SG2PR06MB1165D80A4642F5A2F27FB6AA8AEB0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 11 May 2017 15:48:55 +0200
-Message-ID: <CACRpkdb4-nDs2dPMgn5EBHqibeiKAcjKfiDyG3cu5y13nM3CCg@mail.gmail.com>
-Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:64742 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751645AbdEEMqB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 5 May 2017 08:46:01 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -25,36 +17,33 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: RE: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
+Date: Fri, 5 May 2017 12:45:55 +0000
+Message-ID: <SG2PR06MB1165D80A4642F5A2F27FB6AA8AEB0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
+ <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
+ <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
+In-Reply-To: <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 5, 2017 at 2:45 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Friday, May 05, 2017, Linus Walleij wrote:
->> > This is the part of the whole "DT is for hardware description only" that
->> doesn't really make sense to me.
->>
->> OK yeah we do hardware description AND configuration.
->>
->> And we never do interpreted languages.
->>
->> And then there is a bunch of grayzone things. For example we have a
->> linux,input binding for connecting keypresses to certain Linux input codes.
->> That is really grayzone, but very useful.
->
-> Ah....
->
->         compatible = "linux,grayzone";
->
-> Thanks for the reply. I'll stop ranting now.
-> Of course, I'll still probably screw it up again on a future patch somehow...
-
-For this driver I remarked in some other thread that we may
-end up with some
-
-"renesas,bidirectional"
-
-or so. But yeah, it's kinda grayzone too.
-
-Yours,
-Linus Walleij
+T24gRnJpZGF5LCBNYXkgMDUsIDIwMTcsIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+ID4gVGhpcyBp
+cyB0aGUgcGFydCBvZiB0aGUgd2hvbGUgIkRUIGlzIGZvciBoYXJkd2FyZSBkZXNjcmlwdGlvbiBv
+bmx5IiB0aGF0DQo+IGRvZXNuJ3QgcmVhbGx5IG1ha2Ugc2Vuc2UgdG8gbWUuDQo+IA0KPiBPSyB5
+ZWFoIHdlIGRvIGhhcmR3YXJlIGRlc2NyaXB0aW9uIEFORCBjb25maWd1cmF0aW9uLg0KPiANCj4g
+QW5kIHdlIG5ldmVyIGRvIGludGVycHJldGVkIGxhbmd1YWdlcy4NCj4gDQo+IEFuZCB0aGVuIHRo
+ZXJlIGlzIGEgYnVuY2ggb2YgZ3JheXpvbmUgdGhpbmdzLiBGb3IgZXhhbXBsZSB3ZSBoYXZlIGEN
+Cj4gbGludXgsaW5wdXQgYmluZGluZyBmb3IgY29ubmVjdGluZyBrZXlwcmVzc2VzIHRvIGNlcnRh
+aW4gTGludXggaW5wdXQgY29kZXMuDQo+IFRoYXQgaXMgcmVhbGx5IGdyYXl6b25lLCBidXQgdmVy
+eSB1c2VmdWwuDQoNCkFoLi4uLg0KDQoJY29tcGF0aWJsZSA9ICJsaW51eCxncmF5em9uZSI7DQoN
+Cg0KVGhhbmtzIGZvciB0aGUgcmVwbHkuIEknbGwgc3RvcCByYW50aW5nIG5vdy4NCk9mIGNvdXJz
+ZSwgSSdsbCBzdGlsbCBwcm9iYWJseSBzY3JldyBpdCB1cCBhZ2FpbiBvbiBhIGZ1dHVyZSBwYXRj
+aCBzb21laG93Li4uDQoNCkNoZWVycw0KDQpDaHJpcw0KDQo=
