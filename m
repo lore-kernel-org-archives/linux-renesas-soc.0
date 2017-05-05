@@ -1,61 +1,86 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:45064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752901AbdEEPVZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 5 May 2017 11:21:25 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 1/2] Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
-Date: Tue,  9 May 2017 17:39:51 +0100
-Message-Id: <bdf682b44a1ea5060d46f81620b82ff528fdd68a.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, mchehab@kernel.org
+Cc: kieran.bingham@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v4 1/4] drm: rcar-du: Arm the page flip event after queuing the page flip
+Date: Fri,  5 May 2017 16:21:07 +0100
+Message-Id: <41efc7efede2bab8a87ac6fd036222c32deab931.1493995408.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.7bcdc495e53f6c50c4c68df9ac0b57361b88d2f8.1493995408.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.7bcdc495e53f6c50c4c68df9ac0b57361b88d2f8.1493995408.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.7bcdc495e53f6c50c4c68df9ac0b57361b88d2f8.1493995408.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.7bcdc495e53f6c50c4c68df9ac0b57361b88d2f8.1493995408.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This reverts commit 3299ba5c0b21 ("[media] v4l: vsp1: Supply frames to
-the DU continuously")
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-The DU output mode does not rely on frames being supplied on the WPF as
-its pipeline is supplied from DRM. For the upcoming WPF writeback
-functionality, we will choose to enable writeback mode if there is an
-output buffer, or disable it (leaving the existing display pipeline
-unharmed) otherwise.
+The page flip event is armed in the atomic begin handler, creating a
+race condition with the frame end interrupt that could send the event
+before the atomic operation actually completes. To avoid that, arm the
+event in the atomic flush handler after queuing the page flip.
 
+This change doesn't fully close the race window, as the frame end
+interrupt could be generated before the page flip is committed to
+hardware but only handled after the event is armed. However, the race
+window is now much smaller.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_video.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index eab3c3ea85d7..47b5c24043d7 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -304,11 +304,6 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
-  * This function completes the current buffer by filling its sequence number,
-  * time stamp and payload size, and hands it back to the videobuf core.
-  *
-- * When operating in DU output mode (deep pipeline to the DU through the LIF),
-- * the VSP1 needs to constantly supply frames to the display. In that case, if
-- * no other buffer is queued, reuse the one that has just been processed instead
-- * of handing it back to the videobuf core.
-- *
-  * Return the next queued buffer or NULL if the queue is empty.
-  */
- static struct vsp1_vb2_buffer *
-@@ -330,12 +325,6 @@ vsp1_video_complete_buffer(struct vsp1_video *video)
- 	done = list_first_entry(&video->irqqueue,
- 				struct vsp1_vb2_buffer, queue);
- 
--	/* In DU output mode reuse the buffer if the list is singular. */
--	if (pipe->lif && list_is_singular(&video->irqqueue)) {
--		spin_unlock_irqrestore(&video->irqlock, flags);
--		return done;
--	}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 4ed6f2340af0..5f0664bcd12d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -581,17 +581,6 @@ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
+ 				      struct drm_crtc_state *old_crtc_state)
+ {
+ 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+-	struct drm_device *dev = rcrtc->crtc.dev;
+-	unsigned long flags;
 -
- 	list_del(&done->queue);
+-	if (crtc->state->event) {
+-		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+-
+-		spin_lock_irqsave(&dev->event_lock, flags);
+-		rcrtc->event = crtc->state->event;
+-		crtc->state->event = NULL;
+-		spin_unlock_irqrestore(&dev->event_lock, flags);
+-	}
  
- 	if (!list_empty(&video->irqqueue))
+ 	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		rcar_du_vsp_atomic_begin(rcrtc);
+@@ -601,9 +590,20 @@ static void rcar_du_crtc_atomic_flush(struct drm_crtc *crtc,
+ 				      struct drm_crtc_state *old_crtc_state)
+ {
+ 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
++	struct drm_device *dev = rcrtc->crtc.dev;
++	unsigned long flags;
+ 
+ 	rcar_du_crtc_update_planes(rcrtc);
+ 
++	if (crtc->state->event) {
++		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
++
++		spin_lock_irqsave(&dev->event_lock, flags);
++		rcrtc->event = crtc->state->event;
++		crtc->state->event = NULL;
++		spin_unlock_irqrestore(&dev->event_lock, flags);
++	}
++
+ 	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		rcar_du_vsp_atomic_flush(rcrtc);
+ }
 -- 
 git-series 0.9.1
