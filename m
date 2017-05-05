@@ -1,12 +1,24 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:64742 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751645AbdEEMqB (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35557 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbdEEMUV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 May 2017 08:46:01 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
+        Fri, 5 May 2017 08:20:21 -0400
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
+ <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
+ <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 May 2017 14:20:19 +0200
+Message-ID: <CAMuHMdUny65Yjp1nsOYOoOM+aMLNrjFGDM0J28paWjky5UG1+g@mail.gmail.com>
+Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
 To: Linus Walleij <linus.walleij@linaro.org>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -17,33 +29,31 @@ CC: Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
-Date: Fri, 5 May 2017 12:45:55 +0000
-Message-ID: <SG2PR06MB1165D80A4642F5A2F27FB6AA8AEB0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
- <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
- <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
-In-Reply-To: <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gRnJpZGF5LCBNYXkgMDUsIDIwMTcsIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+ID4gVGhpcyBp
-cyB0aGUgcGFydCBvZiB0aGUgd2hvbGUgIkRUIGlzIGZvciBoYXJkd2FyZSBkZXNjcmlwdGlvbiBv
-bmx5IiB0aGF0DQo+IGRvZXNuJ3QgcmVhbGx5IG1ha2Ugc2Vuc2UgdG8gbWUuDQo+IA0KPiBPSyB5
-ZWFoIHdlIGRvIGhhcmR3YXJlIGRlc2NyaXB0aW9uIEFORCBjb25maWd1cmF0aW9uLg0KPiANCj4g
-QW5kIHdlIG5ldmVyIGRvIGludGVycHJldGVkIGxhbmd1YWdlcy4NCj4gDQo+IEFuZCB0aGVuIHRo
-ZXJlIGlzIGEgYnVuY2ggb2YgZ3JheXpvbmUgdGhpbmdzLiBGb3IgZXhhbXBsZSB3ZSBoYXZlIGEN
-Cj4gbGludXgsaW5wdXQgYmluZGluZyBmb3IgY29ubmVjdGluZyBrZXlwcmVzc2VzIHRvIGNlcnRh
-aW4gTGludXggaW5wdXQgY29kZXMuDQo+IFRoYXQgaXMgcmVhbGx5IGdyYXl6b25lLCBidXQgdmVy
-eSB1c2VmdWwuDQoNCkFoLi4uLg0KDQoJY29tcGF0aWJsZSA9ICJsaW51eCxncmF5em9uZSI7DQoN
-Cg0KVGhhbmtzIGZvciB0aGUgcmVwbHkuIEknbGwgc3RvcCByYW50aW5nIG5vdy4NCk9mIGNvdXJz
-ZSwgSSdsbCBzdGlsbCBwcm9iYWJseSBzY3JldyBpdCB1cCBhZ2FpbiBvbiBhIGZ1dHVyZSBwYXRj
-aCBzb21laG93Li4uDQoNCkNoZWVycw0KDQpDaHJpcw0KDQo=
+Hi Linus,
+
+On Fri, May 5, 2017 at 2:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Apr 28, 2017 at 4:48 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+>
+> I think this was written by me, not Geert...
+>
+>>> DT describes hardware, not software limitations.
+
+Na, I did write it.
+
+I can understand you sometimes mix up things, esp. when you're
+enjoying LLC ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
