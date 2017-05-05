@@ -1,192 +1,224 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:49388 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751857AbdEGWa1 (ORCPT
+Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:36088 "EHLO
+        lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751460AbdEEMRb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 May 2017 18:30:27 -0400
-From: Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>
-To: <Alexandru_Gheorghe@mentor.com>,
-        <laurent.pinchart@ideasonboard.com>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-media@vger.kernel.org>,
-        <geert@linux-m68k.org>, <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 2/2] drm: rcar-du: Add support for colorkey alpha blending
-Date: Sun, 7 May 2017 13:13:27 +0300
-Message-ID: <1494152007-30094-3-git-send-email-Alexandru_Gheorghe@mentor.com>
-In-Reply-To: <1494152007-30094-1-git-send-email-Alexandru_Gheorghe@mentor.com>
-References: <1494152007-30094-1-git-send-email-Alexandru_Gheorghe@mentor.com>
+        Fri, 5 May 2017 08:17:31 -0400
+Subject: Re: [PATCH v4 0/7] Add V4L2 SDR (DRIF & MAX2175) driver
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, crope@iki.fi
+References: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <e534e24a-56f6-b693-522c-0a4a924b859a@xs4all.nl>
+Date: Fri, 5 May 2017 14:17:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add two new plane properties colorkey and colorkey_alpha for rcar gen3.
-* colorkey:
-	- used for specifying the color on which the filtering is done.
-	- bits 0 to 23 are interpreted as RGB888 format, in case we are
-	  dealing with an YCbCr format, only the Y componenet is
-	  compared and it is represented by the G bits from RGB888
-	  format.
-	- bit 24 tells if it is enabled or not.
-* colorkey_alpha:
-	- the alpha to be set for matching pixels, in case it is
-	  missing the pixels will be made transparent
+Hi Ramesh,
 
-Signed-off-by: Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   |  8 ++++++++
- drivers/gpu/drm/rcar-du/rcar_du_plane.c |  3 ---
- drivers/gpu/drm/rcar-du/rcar_du_plane.h |  6 ++++++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 22 ++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.h   |  5 +++++
- 6 files changed, 42 insertions(+), 3 deletions(-)
+Looks good. I replied to patch 3/7 requesting a small change, but otherwise
+I'm OK.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 91e8fc5..1cb92e3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -98,6 +98,7 @@ struct rcar_du_device {
- 	struct {
- 		struct drm_property *alpha;
- 		struct drm_property *colorkey;
-+		struct drm_property *colorkey_alpha;
- 	} props;
- 
- 	unsigned int dpad0_source;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 1cc88ed..a733fa2 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -630,6 +630,14 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- 	if (rcdu->props.colorkey == NULL)
- 		return -ENOMEM;
- 
-+	if (rcdu->info->gen == 3) {
-+		rcdu->props.colorkey_alpha =
-+			drm_property_create_range(rcdu->ddev, 0,
-+						  "colorkey_alpha", 0, 255);
-+		if (!rcdu->props.colorkey_alpha)
-+			return -ENOMEM;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index e408aa3..df689c4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -307,9 +307,6 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
-  * Plane Setup
-  */
- 
--#define RCAR_DU_COLORKEY_NONE		(0 << 24)
--#define RCAR_DU_COLORKEY_SOURCE		(1 << 24)
--#define RCAR_DU_COLORKEY_MASK		(1 << 24)
- 
- static void rcar_du_plane_write(struct rcar_du_group *rgrp,
- 				unsigned int index, u32 reg, u32 data)
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index c1de338..9e7c3b6 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -49,6 +49,12 @@ static inline struct rcar_du_plane *to_rcar_plane(struct drm_plane *plane)
- 	return container_of(plane, struct rcar_du_plane, plane);
- }
- 
-+#define RCAR_DU_COLORKEY_NONE		(0 << 24)
-+#define RCAR_DU_COLORKEY_MASK		BIT(24)
-+#define RCAR_DU_COLORKEY_EN_MASK	RCAR_DU_COLORKEY_MASK
-+#define RCAR_DU_COLORKEY_COLOR_MASK	0xFFFFFF
-+#define RCAR_DU_COLORKEY_ALPHA_MASK	0xFF
-+
- /**
-  * struct rcar_du_plane_state - Driver-specific plane state
-  * @state: base DRM plane state
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 4b460d4..b223be1 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -180,6 +180,11 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 		.pitch = fb->pitches[0],
- 		.alpha = state->alpha,
- 		.zpos = state->state.zpos,
-+		.colorkey = state->colorkey & RCAR_DU_COLORKEY_COLOR_MASK,
-+		.colorkey_en =
-+			((state->colorkey & RCAR_DU_COLORKEY_EN_MASK) != 0),
-+		.colorkey_alpha =
-+			(state->colorkey_alpha & RCAR_DU_COLORKEY_ALPHA_MASK),
- 	};
- 	unsigned int i;
- 
-@@ -379,6 +384,8 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
- 		return;
- 
- 	state->alpha = 255;
-+	state->colorkey = RCAR_DU_COLORKEY_NONE;
-+	state->colorkey_alpha = 0;
- 	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- 
- 	plane->state = &state->state;
-@@ -394,6 +401,10 @@ static int rcar_du_vsp_plane_atomic_set_property(struct drm_plane *plane,
- 
- 	if (property == rcdu->props.alpha)
- 		rstate->alpha = val;
-+	else if (property == rcdu->props.colorkey)
-+		rstate->colorkey = val;
-+	else if (property == rcdu->props.colorkey_alpha)
-+		rstate->colorkey_alpha = val;
- 	else
- 		return -EINVAL;
- 
-@@ -410,6 +421,10 @@ static int rcar_du_vsp_plane_atomic_get_property(struct drm_plane *plane,
- 
- 	if (property == rcdu->props.alpha)
- 		*val = rstate->alpha;
-+	else if (property == rcdu->props.colorkey)
-+		*val = rstate->colorkey;
-+	else if (property == rcdu->props.colorkey_alpha)
-+		*val = rstate->colorkey_alpha;
- 	else
- 		return -EINVAL;
- 
-@@ -633,6 +648,13 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp)
- 
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.alpha, 255);
-+		drm_object_attach_property(&plane->plane.base,
-+					   rcdu->props.colorkey,
-+					   RCAR_DU_COLORKEY_NONE);
-+		if (rcdu->props.colorkey_alpha)
-+			drm_object_attach_property(&plane->plane.base,
-+						   rcdu->props.colorkey_alpha,
-+						   0);
- 		drm_plane_create_zpos_property(&plane->plane, 1, 1,
- 					       vsp->num_planes - 1);
- 	}
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-index 3fd9cef..1543503 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-@@ -47,6 +47,9 @@ static inline struct rcar_du_vsp_plane *to_rcar_vsp_plane(struct drm_plane *p)
-  * @sg_tables: scatter-gather tables for the frame buffer memory
-  * @alpha: value of the plane alpha property
-  * @zpos: value of the plane zpos property
-+ * @colorkey: value of the color for which to apply colorkey_alpha, bit 24
-+ * tells if it is enabled or not
-+ * @colorkey_alpha: alpha to be used for pixels with color equal to colorkey
-  */
- struct rcar_du_vsp_plane_state {
- 	struct drm_plane_state state;
-@@ -56,6 +59,8 @@ struct rcar_du_vsp_plane_state {
- 
- 	unsigned int alpha;
- 	unsigned int zpos;
-+	u32 colorkey;
-+	u32 colorkey_alpha;
- };
- 
- static inline struct rcar_du_vsp_plane_state *
--- 
-1.9.1
+The only thing missing is an Ack from Rob for patch 6/7 (R-car DRIF bindings).
+
+Once I have that + an updated patch 3/7 I can make a pull request for this.
+
+Regards,
+
+	Hans
+
+On 05/02/17 15:26, Ramesh Shanmugasundaram wrote:
+> Hi Media, DT maintainers, All,
+> 
+> This patch set contains two drivers
+>  - Renesas R-Car Digital Radio Interface (DRIF) driver
+>  - Maxim's MAX2175 RF to Bits tuner driver
+> 
+> These patches were based on top of media-next repo
+> commit:6d95b3f24881c0fd0f345eca959a2a803a040930
+> 
+> These two drivers combined together expose a V4L2 SDR device that is compliant with the V4L2 framework [1]. Agreed review comments are incorporated in this series.
+> 
+> The rcar_drif device is modelled using "renesas,bonding" property. The discussion on this property is available here [2].
+> 
+> Change history:
+> 
+> v3 -> v4:
+>  - Added ACKs
+> rcar_drif:
+>  - Incorporated a number of review comments from Laurent on DRIF driver.
+>  - Addressed comments from Rob and Laurent on bindings.
+> max2175:
+>  - Minor changes addressing Hans and Laurent's comments
+> 
+> v2 -> v3:
+> rcar_drif:
+>  - Reduced DRIF DT properties to expose tested I2S mode only (Hans - discussion on #v4l)
+>  - Fixed error path clean up of ctrl_hdl on rcar_drif
+> 
+> v1 -> v2:
+>  - SDR formats renamed as "planar" instead of sliced (Hans)
+>  - Documentation formatting correction (Laurent)
+> 
+>  rcar_drif:
+>  - DT model using "bonding" property
+>  - Addressed Laurent's coments on bindings - DT optional parameters rename & rework
+>  - Addressed Han's comments on driver
+>  - Addressed Geert's comments on DT
+> 
+>  max2175:
+>  - Avoided scaling using method proposed by Antti. Thanks
+>  - Bindings is a separate patch (Rob)
+>  - Addressed Rob's comment on bindings
+>  - Added Custom controls documentation (Laurent)
+> 
+> [1] v4l2-compliance report:
+> root@salvator-x:~# v4l2-compliance -S /dev/swradio0
+> v4l2-compliance SHA   : b514d615166bdc0901a4c71261b87db31e89f464
+> 
+> Driver Info:
+>         Driver name   : rcar_drif
+>         Card type     : R-Car DRIF
+>         Bus info      : platform:R-Car DRIF
+>         Driver version: 4.11.0
+>         Capabilities  : 0x85310000
+>                 SDR Capture
+>                 Tuner
+>                 Read/Write
+>                 Streaming
+>                 Extended Pix Format
+>                 Device Capabilities
+>         Device Caps   : 0x05310000
+>                 SDR Capture
+>                 Tuner
+>                 Read/Write
+>                 Streaming
+>                 Extended Pix Format
+> 
+> Compliance test for device /dev/swradio0 (not using libv4l2):
+> 
+> Required ioctls:
+>         test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+>         test second sdr open: OK
+>         test VIDIOC_QUERYCAP: OK
+>         test VIDIOC_G/S_PRIORITY: OK
+>         test for unlimited opens: OK
+> 
+> Debug ioctls:
+>         test VIDIOC_DBG_G/S_REGISTER: OK
+>         test VIDIOC_LOG_STATUS: OK
+> 
+> Input ioctls:
+>         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK
+>         test VIDIOC_G/S_FREQUENCY: OK
+>         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>         test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+>         test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>         Inputs: 0 Audio Inputs: 0 Tuners: 1
+> 
+> Output ioctls:
+>         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>         test VIDIOC_G/S_FREQUENCY: OK
+>         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>         Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>         test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>         test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+>         Control ioctls:
+>                 test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>                 test VIDIOC_QUERYCTRL: OK
+>                 test VIDIOC_G/S_CTRL: OK
+>                 test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>                 test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>                 test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>                 Standard Controls: 5 Private Controls: 3
+> 
+>         Format ioctls:
+>                 test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>                 test VIDIOC_G/S_PARM: OK (Not Supported)
+>                 test VIDIOC_G_FBUF: OK (Not Supported)
+>                 test VIDIOC_G_FMT: OK
+>                 test VIDIOC_TRY_FMT: OK
+>                 test VIDIOC_S_FMT: OK
+>                 test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>                 test Cropping: OK (Not Supported)
+>                 test Composing: OK (Not Supported)
+>                 test Scaling: OK (Not Supported)
+> 
+>         Codec ioctls:
+>                 test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>                 test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>                 test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+>         Buffer ioctls:
+>                 test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>                 test VIDIOC_EXPBUF: OK (Not Supported)
+> 
+> Test input 0:
+> 
+> 
+> Total: 43, Succeeded: 43, Failed: 0, Warnings: 0
+> root@salvator-x:~#
+> 
+> [2] "bonding" DT property discussion (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg09415.html)
+> 
+> Ramesh Shanmugasundaram (7):
+>   media: v4l2-ctrls: Reserve controls for MAX217X
+>   dt-bindings: media: Add MAX2175 binding description
+>   media: i2c: max2175: Add MAX2175 support
+>   media: Add new SDR formats PC16, PC18 & PC20
+>   doc_rst: media: New SDR formats PC16, PC18 & PC20
+>   dt-bindings: media: Add Renesas R-Car DRIF binding
+>   media: platform: rcar_drif: Add DRIF support
+> 
+>  .../devicetree/bindings/media/i2c/max2175.txt      |   61 +
+>  .../devicetree/bindings/media/renesas,drif.txt     |  187 +++
+>  .../devicetree/bindings/property-units.txt         |    1 +
+>  .../media/uapi/v4l/pixfmt-sdr-pcu16be.rst          |   55 +
+>  .../media/uapi/v4l/pixfmt-sdr-pcu18be.rst          |   55 +
+>  .../media/uapi/v4l/pixfmt-sdr-pcu20be.rst          |   54 +
+>  Documentation/media/uapi/v4l/sdr-formats.rst       |    3 +
+>  Documentation/media/v4l-drivers/index.rst          |    1 +
+>  Documentation/media/v4l-drivers/max2175.rst        |   60 +
+>  drivers/media/i2c/Kconfig                          |    4 +
+>  drivers/media/i2c/Makefile                         |    2 +
+>  drivers/media/i2c/max2175/Kconfig                  |    8 +
+>  drivers/media/i2c/max2175/Makefile                 |    4 +
+>  drivers/media/i2c/max2175/max2175.c                | 1437 +++++++++++++++++++
+>  drivers/media/i2c/max2175/max2175.h                |  108 ++
+>  drivers/media/platform/Kconfig                     |   25 +
+>  drivers/media/platform/Makefile                    |    1 +
+>  drivers/media/platform/rcar_drif.c                 | 1488 ++++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |    3 +
+>  include/uapi/linux/v4l2-controls.h                 |    5 +
+>  include/uapi/linux/videodev2.h                     |    3 +
+>  21 files changed, 3565 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/max2175.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu16be.rst
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu18be.rst
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-pcu20be.rst
+>  create mode 100644 Documentation/media/v4l-drivers/max2175.rst
+>  create mode 100644 drivers/media/i2c/max2175/Kconfig
+>  create mode 100644 drivers/media/i2c/max2175/Makefile
+>  create mode 100644 drivers/media/i2c/max2175/max2175.c
+>  create mode 100644 drivers/media/i2c/max2175/max2175.h
+>  create mode 100644 drivers/media/platform/rcar_drif.c
+> 
