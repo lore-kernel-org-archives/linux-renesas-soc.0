@@ -1,51 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35904 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751087AbdEPLxI (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35037 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751266AbdEET4V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 May 2017 07:53:08 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170428185245.428747882@cogentembedded.com>
-References: <20170428185245.428747882@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 May 2017 13:53:06 +0200
-Message-ID: <CAMuHMdWJJghzfgZoSo15DSvOgs8dRL07R1RakcpUKevPA6_N1A@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7794: add R8A7745 support
+        Fri, 5 May 2017 15:56:21 -0400
+Date: Fri, 5 May 2017 14:56:19 -0500
+From: Rob Herring <robh@kernel.org>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Cc: Mark Rutland <mark.rutland@arm.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7794: add R8A7745 support
+Message-ID: <20170505195619.he7tpdtrkkb3oafq@rob-hp-laptop>
+References: <20170428185245.428747882@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170428185245.428747882@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
-
-On Fri, Apr 28, 2017 at 8:52 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
+On Fri, Apr 28, 2017 at 09:52:35PM +0300, Sergei Shtylyov wrote:
 > Renesas RZ/G1E (R8A7745) is pin compatible with R-Car E2 (R8A7794),
 > however it doesn't have several automotive specific peripherals.
 > Annotate all the items that only exist on the R-Car SoCs...
->
+> 
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> This patch is  against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
+> repo plus 3 R8A7794 PFC driver fixes/cleanups posted today and  the R8A7743 PFC
+> support patch posted last week...
+> 
+> Changes in version 3:
+> - resolved rejects atop of the new R8A7794 driver patches renaming the IIC0/1
+>   signals and removing reserved groups/signals;
+> - undid splitting of 'pinmux_{groups|functions}' arrays into the common and
+>   R8A7794 specfic parts, updated the patch description accordingly;
+> - kill double spaces in the patch description.
+> 
+> Changes in version 2:
+> - fixed indentation to use tabs instead of spaces;
+> - updated the PFC bindings.
+> 
+>  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt |    1 
 
-Thank you!
+Acked-by: Rob Herring <robh@kernel.org>
 
-Queuing in sh-pfc-for-v4.13 after dropping the annotations, as they are
-implied by pin groups/functions
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>  drivers/pinctrl/sh-pfc/Kconfig                                    |    5 
+>  drivers/pinctrl/sh-pfc/Makefile                                   |    1 
+>  drivers/pinctrl/sh-pfc/core.c                                     |    6 
+>  drivers/pinctrl/sh-pfc/pfc-r8a7794.c                              |  640 +++++-----
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                                   |    1 
+>  6 files changed, 369 insertions(+), 285 deletions(-)
