@@ -1,218 +1,218 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/6] spi: Add slave mode support
-Date: Thu,  4 May 2017 19:45:45 +0200
-Message-Id: <1493919951-32122-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay1.mentorg.com ([192.94.38.131]:52552 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753406AbdEGXgG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 7 May 2017 19:36:06 -0400
+From: "Gheorghe, Alexandru" <Alexandru_Gheorghe@mentor.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drm: rcar-du: Add support for colorkey alpha blending
+Date: Sun, 7 May 2017 10:07:39 +0000
+Message-ID: <1494151659494.51736@mentor.com>
+References: <1493895213-12573-1-git-send-email-Alexandru_Gheorghe@mentor.com>
+ <1493895213-12573-3-git-send-email-Alexandru_Gheorghe@mentor.com>,<6918649.iXqMEK0pQv@avalon>
+In-Reply-To: <6918649.iXqMEK0pQv@avalon>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Hi Laurent,
 
-This patch series adds support for SPI slave controllers to the Linux
-SPI subsystem, including:
-  - DT binding updates for SPI slave support,
-  - Core support for SPI slave controllers,
-  - SPI slave support for the Renesas MSIOF device driver (thanks to
-    Nakamura-san for the initial implementation in the R-Car BSP!),
-  - Sample SPI slave handlers.
+On Thursday, May 4, 2017 3:44 PM Laurent Pinchart wrote: 
+> Hi Alexandru,
+>
+> On Thursday 04 May 2017 13:53:33 agheorghe wrote:
+>> Add two new plane properties colorkey and colorkey_alpha for rcar gen3.
+>> * colorkey:
+>>       - used for specifying the color on which the filtering is done.
+>>       - bits 0 to 23 are interpreted as RGB888 format, in case we are
+>>         dealing with an YCbCr format, only the Y componenet is
+>>         compared and it is represented by the G bits from RGB888
+>>         format.
+>>       - bit 24 tells if it is enabled or not.
+>> * colorkey_alpha:
+>>       - the alpha to be set for matching pixels, in case it is
+>>         missing the pixels will be made transparent
+>
+> Colour keying is a feature found in most display engines, and would thus
+> benefit from standardizing the properties. Instead of adding another colorkey
+> property specific to rcar-du, could you make a proposal to standardize it ?
 
-Due to the nature of SPI slave (simultaneous transmit and receive, while
-everything runs at the pace of the master), it has hard real-time
-requirements: once an SPI transfer is started by the SPI master, a
-software SPI slave must have prepared all data to be sent back to the
-SPI master.  Hence without additional hardware support, an SPI slave
-response can never be a reply to a command being simultaneously
-transmitted, and SPI slave replies must be received by the SPI master in
-a subsequent SPI transfer.
+Yeah sure, I could give it a try and comeback with a RFC. By standardizing it
+I'm assuming you mean something similar with what we have now in drm_blend,
+with zpos and rotate properties, right? Or do you think it should get its own IOCTL? 
 
-Examples of possible use cases:
-  - Receiving streams of data in fixed-size messages (e.g. from a
-    tuner),
-  - Receiving and transmitting fixed-size messages of data (e.g. network
-    frames),
-  - Sending commands, and querying for responses,
-  - ...
+>> Signed-off-by: agheorghe <Alexandru_Gheorghe@mentor.com>
+>> ---
+>>  drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  1 +
+>>  drivers/gpu/drm/rcar-du/rcar_du_kms.c   |  8 ++++++++
+>>  drivers/gpu/drm/rcar-du/rcar_du_plane.c |  3 ---
+>>  drivers/gpu/drm/rcar-du/rcar_du_plane.h |  6 ++++++
+>>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 22 ++++++++++++++++++++++
+>>  drivers/gpu/drm/rcar-du/rcar_du_vsp.h   |  5 +++++
+>>  6 files changed, 42 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index 91e8fc5..1cb92e3 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+>> @@ -98,6 +98,7 @@ struct rcar_du_device {
+>>       struct {
+>>               struct drm_property *alpha;
+>>               struct drm_property *colorkey;
+>> +             struct drm_property *colorkey_alpha;
+>>       } props;
+>>
+>>       unsigned int dpad0_source;
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index 1cc88ed..a733fa2 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> @@ -630,6 +630,14 @@ static int rcar_du_properties_init(struct
+>> rcar_du_device *rcdu) if (rcdu->props.colorkey == NULL)
+>>               return -ENOMEM;
+>>
+>> +     if (rcdu->info->gen == 3) {
+>> +             rcdu->props.colorkey_alpha =
+>> +                     drm_property_create_range(rcdu->ddev, 0,
+>> +                                               "colorkey_alpha", 0, 255);
+>> +             if (!rcdu->props.colorkey_alpha)
+>> +                     return -ENOMEM;
+>> +     }
+>> +
+>>       return 0;
+>>  }
+>>
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>> b/drivers/gpu/drm/rcar-du/rcar_du_plane.c index e408aa3..df689c4 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>> @@ -307,9 +307,6 @@ int rcar_du_atomic_check_planes(struct drm_device *dev,
+>>   * Plane Setup
+>>   */
+>>
+>> -#define RCAR_DU_COLORKEY_NONE                (0 << 24)
+>> -#define RCAR_DU_COLORKEY_SOURCE              (1 << 24)
+>> -#define RCAR_DU_COLORKEY_MASK                (1 << 24)
+>>
+>>  static void rcar_du_plane_write(struct rcar_du_group *rgrp,
+>>                               unsigned int index, u32 reg, u32 data)
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+>> b/drivers/gpu/drm/rcar-du/rcar_du_plane.h index c1de338..9e7c3b6 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+>> @@ -49,6 +49,12 @@ static inline struct rcar_du_plane *to_rcar_plane(struct
+>> drm_plane *plane) return container_of(plane, struct rcar_du_plane, plane);
+>>  }
+>>
+>> +#define RCAR_DU_COLORKEY_NONE                (0 << 24)
+>> +#define RCAR_DU_COLORKEY_MASK                BIT(24)
+>> +#define RCAR_DU_COLORKEY_EN_MASK     RCAR_DU_COLORKEY_MASK
+>> +#define RCAR_DU_COLORKEY_COLOR_MASK  0xFFFFFF
+>> +#define RCAR_DU_COLORKEY_ALPHA_MASK  0xFF
+>> +
+>>  /**
+>>   * struct rcar_du_plane_state - Driver-specific plane state
+>>   * @state: base DRM plane state
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+>> b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c index 4b460d4..b223be1 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+>> @@ -180,6 +180,11 @@ static void rcar_du_vsp_plane_setup(struct
+>> rcar_du_vsp_plane *plane) .pitch = fb->pitches[0],
+>>               .alpha = state->alpha,
+>>               .zpos = state->state.zpos,
+>> +             .colorkey = state->colorkey & RCAR_DU_COLORKEY_COLOR_MASK,
+>> +             .colorkey_en =
+>> +                     ((state->colorkey & RCAR_DU_COLORKEY_EN_MASK) != 0),
+>> +             .colorkey_alpha =
+>> +                     (state->colorkey_alpha & RCAR_DU_COLORKEY_ALPHA_MASK),
+>>       };
+>>       unsigned int i;
+>>
+>> @@ -379,6 +384,8 @@ static void rcar_du_vsp_plane_reset(struct drm_plane
+>> *plane) return;
+>>
+>>       state->alpha = 255;
+>> +     state->colorkey = RCAR_DU_COLORKEY_NONE;
+>> +     state->colorkey_alpha = 0;
+>>       state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
+>>
+>>       plane->state = &state->state;
+>> @@ -394,6 +401,10 @@ static int rcar_du_vsp_plane_atomic_set_property(struct
+>> drm_plane *plane,
+>>
+>>       if (property == rcdu->props.alpha)
+>>               rstate->alpha = val;
+>> +     else if (property == rcdu->props.colorkey)
+>> +             rstate->colorkey = val;
+>> +     else if (property == rcdu->props.colorkey_alpha)
+>> +             rstate->colorkey_alpha = val;
+>>       else
+>>               return -EINVAL;
+>>
+>> @@ -410,6 +421,10 @@ static int rcar_du_vsp_plane_atomic_get_property(struct
+>> drm_plane *plane,
+>>
+>>       if (property == rcdu->props.alpha)
+>>               *val = rstate->alpha;
+>> +     else if (property == rcdu->props.colorkey)
+>> +             *val = rstate->colorkey;
+>> +     else if (property == rcdu->props.colorkey_alpha)
+>> +             *val = rstate->colorkey_alpha;
+>>       else
+>>               return -EINVAL;
+>>
+>> @@ -633,6 +648,13 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp)
+>>
+>>               drm_object_attach_property(&plane->plane.base,
+>>                                          rcdu->props.alpha, 255);
+>> +             drm_object_attach_property(&plane->plane.base,
+>> +                                        rcdu->props.colorkey,
+>> +                                        RCAR_DU_COLORKEY_NONE);
+>> +             if (rcdu->props.colorkey_alpha)
+>> +                     drm_object_attach_property(&plane->plane.base,
+>> +                                                rcdu->props.colorkey_alpha,
+>> +                                                0);
+>>               drm_plane_create_zpos_property(&plane->plane, 1, 1,
+>>                                              vsp->num_planes - 1);
+>>       }
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
+>> b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h index 3fd9cef..1543503 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
+>> @@ -47,6 +47,9 @@ static inline struct rcar_du_vsp_plane
+>> *to_rcar_vsp_plane(struct drm_plane *p) * @sg_tables: scatter-gather tables
+>> for the frame buffer memory
+>>   * @alpha: value of the plane alpha property
+>>   * @zpos: value of the plane zpos property
+>> + * @colorkey: value of the color for which to apply colorkey_alpha, bit 24
+>> + * tells if it is enabled or not
+>> + * @colorkey_alpha: alpha to be used for pixels with color equal to
+>> colorkey */
+>>  struct rcar_du_vsp_plane_state {
+>>       struct drm_plane_state state;
+>> @@ -56,6 +59,8 @@ struct rcar_du_vsp_plane_state {
+>>
+>>       unsigned int alpha;
+>>       unsigned int zpos;
+>> +     u32 colorkey;
+>> +     u32 colorkey_alpha;
+>>  };
+>>
+>>  static inline struct rcar_du_vsp_plane_state *
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-Binding an SPI slave handler to the SPI slave device represented by an
-SPI slave controller can either be done from DT, or through sysfs.
-The latter, which also allows unregistering, is done through a sysfs
-virtual file named "slave", cfr. Documentation/spi/spi-summary.
-
-Originally I wanted to implement a simple SPI slave handler that could
-interface with an existing Linux SPI slave driver, cfr. Wolfram Sang's
-I2C slave mode EEPROM simulator for the i2c subsystem.
-Unfortunately I couldn't find any existing driver using an SPI slave
-protocol that fulfills the above requirements. The Nordic Semiconductor
-nRF8001 BLE controller seems to use a suitable protocol, but I couldn't
-find a Linux driver for it.  Hence I created two sample SPI slave
-protocols and drivers myself:
-  1. "spi-slave-time" responds with the system uptime at the time of
-     reception of the last SPI message, which can be used by an external
-     microcontroller as a dead man's switch.
-  2. "spi-slave-system-control" allows remote control of system reboot,
-     power off, halt, and suspend.
-
-For some use cases, using spidev from user space may be a more appropriate
-solution than an in-kernel SPI protocol handler, and this is fully
-supported.
-
->From the point of view of an SPI slave protocol handler, an SPI slave
-controller looks almost like an ordinary SPI master controller. The only
-exception is that a transfer request will block on the remote SPI
-master, and may be cancelled using spi_slave_abort().
-Hence "struct spi_master" has become a misnomer.  I'll send an RFC
-follow-up patch to fix that.
-
-For now, the MSIOF SPI slave driver only supports the transmission of
-messages with a size that is known in advance (the hardware can provide
-an interrupt when CS is deasserted before, though).
-I.e. when the SPI master sends a shorter message, the slave won't
-receive it.  When the SPI master sends a longer message, the slave will
-receive the first part, and the rest will remain in the FIFO.
-
-Handshaking (5-pin SPI, RDY-signal) is optional, and not yet
-implemented.  An RDY-signal may be used for one or both of:
-  1. The SPI slave asserts RDY when it has data available, and wants to
-     be queried by the SPI master.
-       -> This can be handled on top, in the SPI slave protocol handler,
-	  using a GPIO.
-  2. After the SPI master has asserted CS, the SPI slave asserts RDY
-     when it is ready to accept the transfer.
-       -> This may need hardware support in the SPI slave controller,
-	  or dynamic GPIO vs. CS pinmuxing.
-
-Changes compared to v2 (highlights only, see individual patches for
-more details):
-  - In SPI slave mode, represent the (single) slave device again as a
-    child of the controller node, which is now optional, and must be
-    named "slave" if present,
-  - Introduce a separate spi_alloc_slave() function,
-  - Replace the SPI_CONTROLLER_IS_SLAVE flag in spi_master.flags by a
-    bool in spi_master,
-  - Fix cancellation in the spi-sh-msiof driver,
-  - Drop "spi: core: Extract of_spi_parse_dt()", which was applied,
-
-Changes compared to v1 (highlights only, see individual patches for
-more details):
-  - Do not create a child node in SPI slave mode. Instead, add an
-    "spi-slave" property, and put the mode properties in the controller
-    node.
-  - Attach SPI slave controllers to a new "spi_slave" device class,
-  - Use a "slave" virtual file in sysfs to (un)register the (single)
-    slave device for an SPI slave controller, incl. specifying the slave
-    protocol handler,
-  - Add cancellation support using spi_master.slave_abort() and
-    spi_slave_abort(),
-  - Please see the individual patches for more detailed changelog
-    information.
-
-Dependencies:
-  - Today's spi/for-next,
-  - "[PATCH] spi: core: Fix devm_spi_register_master() function name in
-    kerneldoc",
-  - "[PATCH] spi: core: Replace S_IRUGO permissions by 0444".
-
-For your convenience, I've pushed this series and its dependencies to
-the topic/spi-slave-v3 branch of the git repository at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
-
-Full test information is also available on the eLinux wiki
-(http://elinux.org/Tests:MSIOF-SPI-Slave).
-
-For testing, device tree overlays enabling SPI master and slave
-controllers on an expansion I/O connector on r8a7791/koelsch are
-available in the topic/renesas-overlays branch of my renesas-drivers git
-repository.  Please see http://elinux.org/R-Car/DT-Overlays for more
-information about using these overlays.
-
-Test wiring on r8a7791/koelsch, between MSIOF1 and MSIOF2 on EXIO
-connector A:
-   - Connect pin 48 (MSIOF1 CS#) to pin 63 (MSIOF2 CS#),
-   - Connect pin 46 (MSIOF1 SCK) to pin 61 (MSIOF2 SCK),
-   - Connect pin 54 (MSIOF1 TX/MOSI) to pin 70 (MSIOF2 RX/MOSI),
-   - Connect pin 56 (MSIOF1 RX/MISO) to pin 68 (MSIOF2 TX/MISO).
-
-Preparation for all examples below:
-    # overlay add a-msiof1-spidev # buggy DT: spidev listed directly in DT
-    # overlay add a-msiof2-slave
-
-Example 1:
-
-    # echo spi-slave-time > /sys/class/spi_slave/spi3/slave 
-    # spidev_test -D /dev/spidev2.0 -p dummy-8B
-    spi mode: 0x0
-    bits per word: 8
-    max speed: 500000 Hz (500 KHz)
-    RX | 00 00 04 6D 00 09 5B BB __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __  | ...m..[�
-               ^^^^^    ^^^^^^^^
-	       seconds  microseconds
-
-Example 2:
-
-    # echo spi-slave-system-control > /sys/class/spi_slave/spi3/slave 
-    # reboot='\x7c\x50'
-    # poweroff='\x71\x3f'
-    # halt='\x38\x76'
-    # suspend='\x1b\x1b'
-    # spidev_test -D /dev/spidev2.0 -p $suspend # or $reboot, $poweroff, $halt
-
-Example 3:
-
-    # echo spidev > /sys/class/spi_slave/spi3/slave 
-    # spidev_test -D /dev/spidev3.0 -p slave-hello-to-master &
-    # spidev_test -D /dev/spidev2.0 -p master-hello-to-slave
-
-Thanks!
-
-Geert Uytterhoeven (5):
-  spi: Document DT bindings for SPI controllers in slave mode
-  spi: core: Add support for registering SPI slave controllers
-  spi: Document SPI slave controller support
-  spi: slave: Add SPI slave handler reporting uptime at previous message
-  spi: slave: Add SPI slave handler controlling system state
-
-Hisashi Nakamura (1):
-  spi: sh-msiof: Add slave mode support
-
- Documentation/devicetree/bindings/spi/sh-msiof.txt |   2 +
- Documentation/devicetree/bindings/spi/spi-bus.txt  |  76 +++++----
- Documentation/spi/spi-summary                      |  27 +++-
- drivers/spi/Kconfig                                |  26 ++-
- drivers/spi/Makefile                               |   4 +
- drivers/spi/spi-sh-msiof.c                         | 121 ++++++++++----
- drivers/spi/spi-slave-system-control.c             | 154 ++++++++++++++++++
- drivers/spi/spi-slave-time.c                       | 127 +++++++++++++++
- drivers/spi/spi.c                                  | 179 ++++++++++++++++++---
- include/linux/spi/sh_msiof.h                       |   6 +
- include/linux/spi/spi.h                            |  33 +++-
- 11 files changed, 655 insertions(+), 100 deletions(-)
- create mode 100644 drivers/spi/spi-slave-system-control.c
- create mode 100644 drivers/spi/spi-slave-time.c
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Best Regards,
+Alex Gheorghe
