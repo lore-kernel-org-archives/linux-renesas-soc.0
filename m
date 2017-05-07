@@ -1,10 +1,27 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 8 May 2017 18:01:20 +0200
-From: jmondi <jacopo@jmondi.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:37189 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752193AbdEGXIF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 7 May 2017 19:08:05 -0400
+Received: by mail-it0-f52.google.com with SMTP id x188so30131060itb.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 07 May 2017 16:08:05 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
+ <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+ <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 7 May 2017 09:52:49 +0200
+Message-ID: <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -15,62 +32,18 @@ Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
- output-enable
-Message-ID: <20170508160120.GB25206@w540>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
- <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
- <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
- <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
- <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+On Fri, Apr 28, 2017 at 4:53 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 
-On Sun, May 07, 2017 at 09:52:49AM +0200, Linus Walleij wrote:
-> On Fri, Apr 28, 2017 at 4:53 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->
-> > Linus, for me it looks like better to revert that change, until we
-> > will have clear picture why existing configuration parameters can't
-> > work.
->
-> Yeah I'll revert the binding for fixes.
->
+> Linus, for me it looks like better to revert that change, until we
+> will have clear picture why existing configuration parameters can't
+> work.
 
-As it seems we won't be able to proceed with the currently proposed solution,
-would that be acceptable now that we use the "pinmux" property to add
-flags as BIDIR and SWIO_[INPUT|OUTPUT] directly there?
-This was my original proposal, rejected because we were using the "pins"
-property at the time.
+Yeah I'll revert the binding for fixes.
 
-Quoting to the description of "pinmux":
-
-"Each individual pin controller driver bindings documentation shall
-specify how those values (pin IDs and pin multiplexing configuration)
-are defined and assembled together"
-
-Do you think the "flags" we have failed to describe as generic pin
-configuration properties, fit the definition of "pin multiplexing
-configuration" to be assembled with pin IDs?
-
-As a reference this was the proposed bindings in v3:
-https://www.spinics.net/lists/linux-renesas-soc/msg12792.html
-
-Have a look at Pin multiplexing sub-nodes examples 2 and 3, with
-"pinmux" in place of "renesas,pins" property.
-
-Thanks
-   j
-
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
