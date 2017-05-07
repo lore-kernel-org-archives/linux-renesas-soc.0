@@ -1,30 +1,21 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:37189 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752193AbdEGXIF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 May 2017 19:08:05 -0400
-Received: by mail-it0-f52.google.com with SMTP id x188so30131060itb.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 07 May 2017 16:08:05 -0700 (PDT)
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXyWFw6YW=yruCijgzgapBZ_VAkFboTuWW=CMv+8npU4w@mail.gmail.com>
 References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
  <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
  <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
- <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
- <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
- <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com> <CAMuHMdXyWFw6YW=yruCijgzgapBZ_VAkFboTuWW=CMv+8npU4w@mail.gmail.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 7 May 2017 09:52:49 +0200
-Message-ID: <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
+Date: Sun, 7 May 2017 09:50:08 +0200
+Message-ID: <CACRpkdY5z2RZ36hEODtTnhBKF-6xZyzrW4WMGGZgTXabNSijxg@mail.gmail.com>
 Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
@@ -33,17 +24,22 @@ Cc: Chris Brandt <Chris.Brandt@renesas.com>,
         devicetree <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 4:53 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Fri, Apr 28, 2017 at 12:09 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-> Linus, for me it looks like better to revert that change, until we
-> will have clear picture why existing configuration parameters can't
-> work.
+>> You can certainly call it whatever the datasheet calls it
+>> in your driver #defines but for the DT bindings we would
+>> ideally have the physical world things.
+>
+> FWIW, you have already applied v4.
 
-Yeah I'll revert the binding for fixes.
+Yeah I noticed when sending pull requests.. let's see if it stays in or
+I will have to revert it for more discussion.
+
+Sorry for being so flimsy at times, I guess I'm overloaded.
 
 Yours,
 Linus Walleij
