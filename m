@@ -1,62 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:40216 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751255AbdEHJjk (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34127 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752921AbdEHJTq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 May 2017 05:39:40 -0400
-Subject: Re: [PATCH 0/2] Fix incorrect warning from dma-debug
-To: Jon Masters <jcm@jonmasters.org>
-References: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
- <57305A4B.70401@arm.com> <57305FD8.7070006@arm.com>
- <477ded30-eef2-3598-3a8d-95d206e11efb@jonmasters.org>
-Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <963c75b8-2d8b-8710-58af-ac0685d6aa17@arm.com>
-Date: Mon, 8 May 2017 10:39:36 +0100
+        Mon, 8 May 2017 05:19:46 -0400
 MIME-Version: 1.0
 In-Reply-To: <477ded30-eef2-3598-3a8d-95d206e11efb@jonmasters.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+References: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <57305A4B.70401@arm.com> <57305FD8.7070006@arm.com> <477ded30-eef2-3598-3a8d-95d206e11efb@jonmasters.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 May 2017 11:19:44 +0200
+Message-ID: <CAMuHMdXrBcx2kbrK+uBKvszBKCDt2f9JCLQN-GA6hruqevnC6A@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Fix incorrect warning from dma-debug
+To: Jon Masters <jcm@jonmasters.org>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/05/17 01:06, Jon Masters wrote:
+Hi Jon,
+
+On Sun, May 7, 2017 at 2:06 AM, Jon Masters <jcm@jonmasters.org> wrote:
 > On 05/09/2016 06:00 AM, Robin Murphy wrote:
 >> On 09/05/16 10:37, Robin Murphy wrote:
->>> Hi Niklas,
->>>
->>> On 08/05/16 11:59, Niklas Söderlund wrote:
->>>> Hi,
->>>>
+>>> On 08/05/16 11:59, Niklas S=C3=B6derlund wrote:
 >>>> While using CONFIG_DMA_API_DEBUG i came across this warning which I
 >>>> think is a false positive. As shown dma_sync_single_for_device() are
 >>>> called from the dma_map_single() call path. This triggers the warning
 >>>> since the dma-debug code have not yet been made aware of the mapping.
 >>>
->>> Almost right ;) The thing being mapped (the SPI device's buffer) and the
+>>> Almost right ;) The thing being mapped (the SPI device's buffer) and th=
+e
 >>> thing being synced (the IOMMU's PTE) are entirely unrelated. Due to the
 >>> current of_iommu_init() setup, the IOMMU is probed long before
->>> dma_debug_init() gets called, therefore DMA debug is missing entries for
->>> some of the initial page table mappings and gets confused when we update
+>>> dma_debug_init() gets called, therefore DMA debug is missing entries fo=
+r
+>>> some of the initial page table mappings and gets confused when we updat=
+e
 >>> them later.
-> 
+>
 > What was the eventual followup/fix for this? We're seeing similar traces
 > to this during internal testing of 4.11 kernels.
 
-The IOMMU probe-deferral patches queued for the current merge window get
-rid of the need for early device creation bodges that cause the problem
-(of IOMMU pagetables being mapped for DMA before dma-debug is up and
-running). In the meantime, I'd suggest either adjusting the initcall
-level per 256ff1cf6b44, or turning off the IOMMU driver and/or using
-dma-debug's driver-filter option if you're doing more targeted debugging.
+A quick hack is to change arch/arm64/mm/dma-mapping.c:dma_debug_do_init()
+from fs_initcall() to arch_initcall().
 
-Robin.
+However, then you loose the debugfs features. A proper fix would involve
+splitting dma_debug_init() in two phases: an early one doing the real work,
+and a late one registering the debugfs interface.
 
-> 
-> Jon.
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
