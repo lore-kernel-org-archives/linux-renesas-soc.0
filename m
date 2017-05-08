@@ -1,49 +1,74 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:50559 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750744AbdEBNix (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 09:38:53 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v4 1/7] media: v4l2-ctrls: Reserve controls for MAX217X
-Date: Tue,  2 May 2017 14:26:09 +0100
-Message-Id: <20170502132615.42134-2-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170508165502.gkse5jdm56gzo5bm@rob-hp-laptop>
+References: <1493919951-32122-1-git-send-email-geert+renesas@glider.be>
+ <1493919951-32122-2-git-send-email-geert+renesas@glider.be> <20170508165502.gkse5jdm56gzo5bm@rob-hp-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 May 2017 22:42:27 +0200
+Message-ID: <CAMuHMdXAFxSBcGD5UMb__uacyBXyNtM-fLw7y966r67ohTLVhA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] spi: Document DT bindings for SPI controllers in
+ slave mode
+To: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reserve controls for MAX217X RF to Bits tuner family. These hybrid
-radio receiver chips are highly programmable and hence reserving 32
-controls.
+Hi Rob,
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- include/uapi/linux/v4l2-controls.h | 5 +++++
- 1 file changed, 5 insertions(+)
+On Mon, May 8, 2017 at 6:55 PM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, May 04, 2017 at 07:45:46PM +0200, Geert Uytterhoeven wrote:
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v3:
+>>   - In SPI slave mode, represent the (single) slave device again as a
+>>     child of the controller node, which is now optional, and must be
+>>     named "slave" if present,
+>>   - Split slave node properties in master mode, slave mode, and common
+>>     properties,
+>>
+>> v2:
+>>   - Do not create a child node in SPI slave mode. Instead, add an
+>>     "spi-slave" property, and put the mode properties in the controller
+>>     node.
 
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 0d2e1e01fbd5..83b28b41123f 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -180,6 +180,11 @@ enum v4l2_colorfx {
-  * We reserve 16 controls for this driver. */
- #define V4L2_CID_USER_TC358743_BASE		(V4L2_CID_USER_BASE + 0x1080)
- 
-+/* The base for the max217x driver controls.
-+ * We reserve 32 controls for this driver
-+ */
-+#define V4L2_CID_USER_MAX217X_BASE		(V4L2_CID_USER_BASE + 0x1090)
-+
- /* MPEG-class control IDs */
- /* The MPEG controls are applicable to all codec controls
-  * and the 'MPEG' part of the define is historical */
--- 
-2.12.2
+>> --- a/Documentation/devicetree/bindings/spi/spi-bus.txt
+>> +++ b/Documentation/devicetree/bindings/spi/spi-bus.txt
+
+>> +In slave mode, the SPI controller node requires one additional property:
+>> +- spi-slave       - Empty property.
+>
+> Do we still need this if we have a child node called "slave".
+
+Yes, as the child node called "slave" is optional.
+In that case, configuration of the slave protocol is done through sysfs, but
+that is Linux-specific and thus doesn't belong in the DT bindings.
+
+> Otherwise,
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Thank you!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
