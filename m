@@ -1,31 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54873 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1426019AbdEAIrf (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:40216 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751255AbdEHJjk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 May 2017 04:47:35 -0400
-Date: Mon, 1 May 2017 10:47:28 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clk: r7s72100: add USB bit
- definitions
-Message-ID: <20170501084704.GH18349@verge.net.au>
-References: <20170428190134.63895-1-chris.brandt@renesas.com>
+        Mon, 8 May 2017 05:39:40 -0400
+Subject: Re: [PATCH 0/2] Fix incorrect warning from dma-debug
+To: Jon Masters <jcm@jonmasters.org>
+References: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <57305A4B.70401@arm.com> <57305FD8.7070006@arm.com>
+ <477ded30-eef2-3598-3a8d-95d206e11efb@jonmasters.org>
+Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <963c75b8-2d8b-8710-58af-ac0685d6aa17@arm.com>
+Date: Mon, 8 May 2017 10:39:36 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170428190134.63895-1-chris.brandt@renesas.com>
+In-Reply-To: <477ded30-eef2-3598-3a8d-95d206e11efb@jonmasters.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 12:01:33PM -0700, Chris Brandt wrote:
-> Add the bit locations that correspond to the USB clocks.
+On 07/05/17 01:06, Jon Masters wrote:
+> On 05/09/2016 06:00 AM, Robin Murphy wrote:
+>> On 09/05/16 10:37, Robin Murphy wrote:
+>>> Hi Niklas,
+>>>
+>>> On 08/05/16 11:59, Niklas Söderlund wrote:
+>>>> Hi,
+>>>>
+>>>> While using CONFIG_DMA_API_DEBUG i came across this warning which I
+>>>> think is a false positive. As shown dma_sync_single_for_device() are
+>>>> called from the dma_map_single() call path. This triggers the warning
+>>>> since the dma-debug code have not yet been made aware of the mapping.
+>>>
+>>> Almost right ;) The thing being mapped (the SPI device's buffer) and the
+>>> thing being synced (the IOMMU's PTE) are entirely unrelated. Due to the
+>>> current of_iommu_init() setup, the IOMMU is probed long before
+>>> dma_debug_init() gets called, therefore DMA debug is missing entries for
+>>> some of the initial page table mappings and gets confused when we update
+>>> them later.
 > 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> What was the eventual followup/fix for this? We're seeing similar traces
+> to this during internal testing of 4.11 kernels.
 
-Thanks, I have queued up this and the following patch for v4.13.
+The IOMMU probe-deferral patches queued for the current merge window get
+rid of the need for early device creation bodges that cause the problem
+(of IOMMU pagetables being mapped for DMA before dma-debug is up and
+running). In the meantime, I'd suggest either adjusting the initcall
+level per 256ff1cf6b44, or turning off the IOMMU driver and/or using
+dma-debug's driver-filter option if you're doing more targeted debugging.
+
+Robin.
+
+> 
+> Jon.
+> 
