@@ -1,130 +1,154 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51208 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbdEHSb5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 8 May 2017 14:31:57 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 3/4] v4l: vsp1: Calculate partition sizes at stream start.
+References: <1478283570-19688-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+ <1478283570-19688-4-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+ <3804080.QOE9vPlxB7@avalon>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 1/2] v4l: vsp1: Move vsp1_video_setup_pipeline()
-Date: Tue,  9 May 2017 13:37:30 +0100
-Message-Id: <3dd182284ad870021e561b00d376e18649f5bbf2.1494328856.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7da7d07a321ae8bff8445a8dd714d9a61a3ee71b.1494328856.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7da7d07a321ae8bff8445a8dd714d9a61a3ee71b.1494328856.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7da7d07a321ae8bff8445a8dd714d9a61a3ee71b.1494328856.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7da7d07a321ae8bff8445a8dd714d9a61a3ee71b.1494328856.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Message-ID: <2a02b7da-e27f-cc90-676c-f522c74715c4@ideasonboard.com>
+Date: Mon, 8 May 2017 19:31:52 +0100
+MIME-Version: 1.0
+In-Reply-To: <3804080.QOE9vPlxB7@avalon>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the static vsp1_video_setup_pipeline() function in preparation for
-the callee updates so that the vsp1_video_pipeline_run() call can
-configure pipelines following suspend resume actions.
+Hi Laurent,
 
-This commit is just a code move for clarity performing no functional
-change.
+Thanks for the review,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_video.c | 83 ++++++++++++-------------
- 1 file changed, 41 insertions(+), 42 deletions(-)
+V2 to be posted after testing.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index eab3c3ea85d7..3e9919c613fe 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -368,6 +368,47 @@ static void vsp1_video_frame_end(struct vsp1_pipeline *pipe,
- 	pipe->buffers_ready |= 1 << video->pipe_index;
- }
- 
-+static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_entity *entity;
-+
-+	/* Determine this pipelines sizes for image partitioning support. */
-+	vsp1_video_pipeline_setup_partitions(pipe);
-+
-+	/* Prepare the display list. */
-+	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-+	if (!pipe->dl)
-+		return -ENOMEM;
-+
-+	if (pipe->uds) {
-+		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
-+
-+		/* If a BRU is present in the pipeline before the UDS, the alpha
-+		 * component doesn't need to be scaled as the BRU output alpha
-+		 * value is fixed to 255. Otherwise we need to scale the alpha
-+		 * component only when available at the input RPF.
-+		 */
-+		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
-+			uds->scale_alpha = false;
-+		} else {
-+			struct vsp1_rwpf *rpf =
-+				to_rwpf(&pipe->uds_input->subdev);
-+
-+			uds->scale_alpha = rpf->fmtinfo->alpha;
-+		}
-+	}
-+
-+	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-+		vsp1_entity_route_setup(entity, pipe, pipe->dl);
-+
-+		if (entity->ops->configure)
-+			entity->ops->configure(entity, pipe, pipe->dl,
-+					       VSP1_ENTITY_PARAMS_INIT);
-+	}
-+
-+	return 0;
-+}
-+
- static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
- 					      struct vsp1_dl_list *dl)
- {
-@@ -780,48 +821,6 @@ static void vsp1_video_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&pipe->irqlock, flags);
- }
- 
--static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
--{
--	struct vsp1_entity *entity;
--
--	/* Determine this pipelines sizes for image partitioning support. */
--	vsp1_video_pipeline_setup_partitions(pipe);
--
--	/* Prepare the display list. */
--	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
--	if (!pipe->dl)
--		return -ENOMEM;
--
--	if (pipe->uds) {
--		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
--
--		/*
--		 * If a BRU is present in the pipeline before the UDS, the alpha
--		 * component doesn't need to be scaled as the BRU output alpha
--		 * value is fixed to 255. Otherwise we need to scale the alpha
--		 * component only when available at the input RPF.
--		 */
--		if (pipe->uds_input->type == VSP1_ENTITY_BRU) {
--			uds->scale_alpha = false;
--		} else {
--			struct vsp1_rwpf *rpf =
--				to_rwpf(&pipe->uds_input->subdev);
--
--			uds->scale_alpha = rpf->fmtinfo->alpha;
--		}
--	}
--
--	list_for_each_entry(entity, &pipe->entities, list_pipe) {
--		vsp1_entity_route_setup(entity, pipe, pipe->dl);
--
--		if (entity->ops->configure)
--			entity->ops->configure(entity, pipe, pipe->dl,
--					       VSP1_ENTITY_PARAMS_INIT);
--	}
--
--	return 0;
--}
--
- static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct vsp1_video *video = vb2_get_drv_priv(vq);
--- 
-git-series 0.9.1
+On 13/02/17 21:21, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Friday 04 Nov 2016 18:19:29 Kieran Bingham wrote:
+>> Previously the active window and partition sizes for each partition is
+> 
+> s/is/were/
+
+Fixed.
+
+> 
+>> calculated for each partition every frame. This data is constant and
+>> only needs to be calculated once at the start of the stream.
+>>
+>> Extend the vsp1_pipe object to store the maximum number of partitions
+>> possible and pre-calculate the partition sizes into this table.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>  drivers/media/platform/vsp1/vsp1_pipe.h  | 6 ++++++
+>>  drivers/media/platform/vsp1/vsp1_video.c | 8 ++++++--
+>>  2 files changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
+>> b/drivers/media/platform/vsp1/vsp1_pipe.h index f181949824c9..3af96c4ea244
+>> 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
+>> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+>> @@ -20,6 +20,9 @@
+>>
+>>  #include <media/media-entity.h>
+>>
+>> +/* Max Video Width / Min Partition Size = 8190/128 */
+>> +#define VSP1_PIPE_MAX_PARTITIONS 64
+>> +
+
+^ This define is removed with dynamic allocations.
+
+>>  struct vsp1_dl_list;
+>>  struct vsp1_rwpf;
+>>
+>> @@ -81,7 +84,9 @@ enum vsp1_pipeline_state {
+>>   * @dl: display list associated with the pipeline
+>>   * @div_size: The maximum allowed partition size for the pipeline
+>>   * @partitions: The number of partitions used to process one frame
+>> + * @partition: The current partition for configuration to process
+>>   * @current_partition: The partition number currently being configured
+>> + * @part_table: The pre-calculated partitions used by the pipeline
+>>   */
+>>  struct vsp1_pipeline {
+>>  	struct media_pipeline pipe;
+>> @@ -116,6 +121,7 @@ struct vsp1_pipeline {
+>>  	unsigned int partitions;
+>>  	struct v4l2_rect partition;
+>>  	unsigned int current_partition;
+>> +	struct v4l2_rect part_table[VSP1_PIPE_MAX_PARTITIONS];
+> 
+> That's an extra 1kB or kmalloc'ed data. I'd prefer allocating it dynamically 
+> as needed.
+
+Ok, allocating with kcalloc in vsp1_video_pipeline_setup_partitions() (The
+earliest opportunity to know how many partitions are needed)
+
+Free'd in vsp1_video_stop_streaming()
+
+>>  };
+>>
+>>  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
+>> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
+>> b/drivers/media/platform/vsp1/vsp1_video.c index 6d43c02bbc56..c4a8c30df108
+>> 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_video.c
+>> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+>> @@ -255,6 +255,7 @@ static void vsp1_video_pipeline_setup_partitions(struct
+>> vsp1_pipeline *pipe) const struct v4l2_mbus_framefmt *format;
+>>  	struct vsp1_entity *entity;
+>>  	unsigned int div_size;
+>> +	int i;
+> 
+> i can never be negative, you can make it an unsigned int.
+
+Fixed.
+
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Thanks, I'll tentatively add this tag, but please check you are happy with the
+dynamic allocation on the repost v2 :-) !
+
+> 
+>>  	/*
+>>  	 * Partitions are computed on the size before rotation, use the format
+>> @@ -269,6 +270,7 @@ static void vsp1_video_pipeline_setup_partitions(struct
+>> vsp1_pipeline *pipe) if (vsp1->info->gen == 2) {
+>>  		pipe->div_size = div_size;
+>>  		pipe->partitions = 1;
+>> +		pipe->part_table[0] = vsp1_video_partition(pipe, div_size, 0);
+>>  		return;
+>>  	}
+>>
+>> @@ -284,6 +286,9 @@ static void vsp1_video_pipeline_setup_partitions(struct
+>> vsp1_pipeline *pipe)
+>>
+>>  	pipe->div_size = div_size;
+>>  	pipe->partitions = DIV_ROUND_UP(format->width, div_size);
+>> +
+>> +	for (i = 0; i < pipe->partitions; i++)
+>> +		pipe->part_table[i] = vsp1_video_partition(pipe, div_size, i);
+>>  }
+>>
+>>  /* ------------------------------------------------------------------------
+>> @@ -355,8 +360,7 @@ static void vsp1_video_pipeline_run_partition(struct
+>> vsp1_pipeline *pipe, {
+>>  	struct vsp1_entity *entity;
+>>
+>> -	pipe->partition = vsp1_video_partition(pipe, pipe->div_size,
+>> -					       pipe->current_partition);
+>> +	pipe->partition = pipe->part_table[pipe->current_partition];
+>>
+>>  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
+>>  		if (entity->ops->configure)
+> 
