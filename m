@@ -1,64 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:48046 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S377005AbdD2TsW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 29 Apr 2017 15:48:22 -0400
-From: Bogdan Mirea <Bogdan-Stefan_mirea@mentor.com>
-To: <linux-can@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <mkl@pengutronix.de>, <socketcan@hartkopp.net>
-CC: Bogdan Mirea <Bogdan-Stefan_mirea@mentor.com>,
-        Eugen Hristev <Eugen_hristev@mentor.com>
-Subject: [PATCH] Enabling rcar_can changelink support
-Date: Sat, 29 Apr 2017 22:48:03 +0300
-Message-ID: <1493495283-55306-1-git-send-email-Bogdan-Stefan_mirea@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 1/2] Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
+Date: Tue,  9 May 2017 17:39:51 +0100
+Message-Id: <bdf682b44a1ea5060d46f81620b82ff528fdd68a.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Added rcar_can_set_bittiming as can.do_set_bittiming callback that will
-be called from can_changelink generic callback when link state is
-changed.
+This reverts commit 3299ba5c0b21 ("[media] v4l: vsp1: Supply frames to
+the DU continuously")
 
-This enables set bittiming support:
-	ip link set can0 type can bitrate 500000 triple-sampling on
+The DU output mode does not rely on frames being supplied on the WPF as
+its pipeline is supplied from DRM. For the upcoming WPF writeback
+functionality, we will choose to enable writeback mode if there is an
+output buffer, or disable it (leaving the existing display pipeline
+unharmed) otherwise.
 
-Signed-off-by: Bogdan Mirea <Bogdan-Stefan_mirea@mentor.com>
-Signed-off-by: Eugen Hristev <Eugen_hristev@mentor.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/net/can/rcar_can.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_video.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-index 788459f..cfabb95 100644
---- a/drivers/net/can/rcar/rcar_can.c
-+++ b/drivers/net/can/rcar/rcar_can.c
-@@ -419,7 +419,7 @@ static irqreturn_t rcar_can_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index eab3c3ea85d7..47b5c24043d7 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -304,11 +304,6 @@ static struct v4l2_rect vsp1_video_partition(struct vsp1_pipeline *pipe,
+  * This function completes the current buffer by filling its sequence number,
+  * time stamp and payload size, and hands it back to the videobuf core.
+  *
+- * When operating in DU output mode (deep pipeline to the DU through the LIF),
+- * the VSP1 needs to constantly supply frames to the display. In that case, if
+- * no other buffer is queued, reuse the one that has just been processed instead
+- * of handing it back to the videobuf core.
+- *
+  * Return the next queued buffer or NULL if the queue is empty.
+  */
+ static struct vsp1_vb2_buffer *
+@@ -330,12 +325,6 @@ vsp1_video_complete_buffer(struct vsp1_video *video)
+ 	done = list_first_entry(&video->irqqueue,
+ 				struct vsp1_vb2_buffer, queue);
  
--static void rcar_can_set_bittiming(struct net_device *dev)
-+static int rcar_can_set_bittiming(struct net_device *dev)
- {
- 	struct rcar_can_priv *priv = netdev_priv(dev);
- 	struct can_bittiming *bt = &priv->can.bittiming;
-@@ -433,6 +433,8 @@ static void rcar_can_set_bittiming(struct net_device *dev)
- 	 * read/write (but not on 8-bit, contrary to the manuals)...
- 	 */
- 	writel((bcr << 8) | priv->clock_select, &priv->regs->bcr);
-+
-+	return 0;
- }
+-	/* In DU output mode reuse the buffer if the list is singular. */
+-	if (pipe->lif && list_is_singular(&video->irqqueue)) {
+-		spin_unlock_irqrestore(&video->irqlock, flags);
+-		return done;
+-	}
+-
+ 	list_del(&done->queue);
  
- static void rcar_can_start(struct net_device *ndev)
-@@ -809,6 +811,7 @@ static int rcar_can_probe(struct platform_device *pdev)
- 	priv->clock_select = clock_select;
- 	priv->can.clock.freq = clk_get_rate(priv->can_clk);
- 	priv->can.bittiming_const = &rcar_can_bittiming_const;
-+	priv->can.do_set_bittiming = &rcar_can_set_bittiming;
- 	priv->can.do_set_mode = rcar_can_do_set_mode;
- 	priv->can.do_get_berr_counter = rcar_can_get_berr_counter;
- 	priv->can.ctrlmode_supported = CAN_CTRLMODE_BERR_REPORTING;
+ 	if (!list_empty(&video->irqqueue))
 -- 
-1.9.1
+git-series 0.9.1
