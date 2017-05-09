@@ -1,88 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37680 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753578AbdEQJw3 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:50752 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755850AbdEIPxi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:52:29 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87tw4mj37h.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAvcz-0006r0-4K@debutante>
-Date: Wed, 17 May 2017 10:52:21 +0100
-Subject: Applied "ASoC: rsnd: remove mismatch explain comment from src.c" to the asoc tree
+        Tue, 9 May 2017 11:53:38 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+CC: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: RE: [PATCH/RFC 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl
+ registration
+Date: Tue, 9 May 2017 15:53:31 +0000
+Message-ID: <HK2PR0601MB1393F1581E1650E06A5B78C0F5EF0@HK2PR0601MB1393.apcprd06.prod.outlook.com>
+References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+ <2601530.Ncn6bLinC5@avalon>
+In-Reply-To: <2601530.Ncn6bLinC5@avalon>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Geert,
 
-   ASoC: rsnd: remove mismatch explain comment from src.c
+Thanks for the patches, sorry I can't test these either... It's been quite =
+a few
+years since I had an sh7264 or sh7269 board!
 
-has been applied to the asoc tree at
+Thanks
+Phil
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+-----Original Message-----
+On: 09 May 2017 16:44, Laurent Pinchart wrote:
+Subject: Re: [PATCH/RFC 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl =
+registration
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Hi Geert,
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Thank you for the patches.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+On Tuesday 09 May 2017 16:11:53 Geert Uytterhoeven wrote:
+> 	Hi all,
+>=20
+> Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+>=20
+>     sh-pfc pfc-sh7722: pin 0 already registered
+>     sh-pfc pfc-sh7722: error during pin registration
+>     sh-pfc pfc-sh7722: could not register: -22
+>     sh-pfc: probe of pfc-sh7722 failed with error -22
+>=20
+> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated=20
+> array initializers, where the GPIO_* enums serve as indices.
+> Apparently GPIO_PTQ7 was defined in the enum, but never used.
+> If enum values are defined, but never used, pinmux_pins[] contains
+> (zero-filled) holes.  Hence such entries are treated as pin zero,=20
+> which was registered before, and initialization fails.
+>=20
+> I can't see how this ever worked, as at the time of commit=20
+> f5e25ae52feff2dc
+> ("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in=20
+> drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and=20
+> drivers/pinctrl/core.c already had the check.
+>=20
+> Some scripting revealed a few more broken drivers:
+>   - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
+>   - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
+>     PINMUX_GPIO().
+>=20
+> Patch 1 fixes the issue on sh7722, and was tested.
+> Patches 3-4 should fix the issue on the other 3 SoCs, but was untested=20
+> due to lack of hardware.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+This all looks good to me, even if I can't test or verify patches 2/4 to 4/=
+4 as I don't have access to the hardware or datasheet either. Given that th=
+ey're untested I wouldn't fake the error message in the commit log though, =
+but just refer to the problem noticed on sh7722.
 
-Thanks,
-Mark
+Apart from that, for the whole series,
 
->From 607ee05828dadfb1e65ea8d0db3c0728c6fab0df Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 15 May 2017 01:57:52 +0000
-Subject: [PATCH] ASoC: rsnd: remove mismatch explain comment from src.c
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Before, src.c cares SRC and SSIU, but now SSIU is cared by ssiu.c by
-commit c7f69ab5364d ("ASoC: rsnd: use mod base common method on SSIU").
-This patch removes mismatched explanation for SRC/SSIU from src.c
+> Thanks for your comments!
+>=20
+> Geert Uytterhoeven (4):
+>   sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+>   [RFC] sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix
+>     pinctrl registration
+>   sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>     registration
+>   [RFC] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>     registration
+>=20
+>  arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +--- =20
+> arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +--- =20
+> arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +- =20
+> arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
+>  4 files changed, 7 insertions(+), 11 deletions(-)
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/src.c | 14 --------------
- 1 file changed, 14 deletions(-)
+--
+Regards,
 
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index a8ab26d70a8b..e4bde0c8d93a 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -51,20 +51,6 @@ struct rsnd_src {
-  *
-  */
- 
--/*
-- * src.c is caring...
-- *
-- * Gen1
-- *
-- * [mem] -> [SRU] -> [SSI]
-- *        |--------|
-- *
-- * Gen2
-- *
-- * [mem] -> [SRC] -> [SSIU] -> [SSI]
-- *        |-----------------|
-- */
--
- static void rsnd_src_activation(struct rsnd_mod *mod)
- {
- 	rsnd_mod_write(mod, SRC_SWRSR, 0);
--- 
-2.11.0
+Laurent Pinchart
