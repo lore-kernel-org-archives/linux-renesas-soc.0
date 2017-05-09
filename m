@@ -1,68 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752758AbdEEPVW (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:43748 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753451AbdEINua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 May 2017 11:21:22 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, mchehab@kernel.org
-Cc: kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 0/4] RCAR-DU, VSP1: Prevent pre-emptive frame flips on VSP1-DRM pipelines
-Date: Fri,  5 May 2017 16:21:06 +0100
-Message-Id: <cover.7bcdc495e53f6c50c4c68df9ac0b57361b88d2f8.1493995408.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 9 May 2017 09:50:30 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
+Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
+        geert+renesas@glider.be, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 4/7] media: Add new SDR formats PC16, PC18 & PC20
+Date: Tue,  9 May 2017 14:37:35 +0100
+Message-Id: <20170509133738.16414-5-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <20170509133738.16414-1-ramesh.shanmugasundaram@bp.renesas.com>
+References: <20170509133738.16414-1-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RCAR-DU utilises a running VSPD pipeline to perform processing for the
-display pipeline. This presents the opportunity for some race conditions to
-affect the quality of the display output.
+This patch adds support for the three new SDR formats. These formats
+were prefixed with "planar" indicating I & Q data are not interleaved
+as in other formats. Here, I & Q data constitutes the top half and bottom
+half of the received buffer respectively.
 
-To prevent reporting page flips early, we must track this timing through the
-VSP1, and only allow the rcar-du object to report the page-flip completion
-event after the VSP1 has processed.
+V4L2_SDR_FMT_PCU16BE - 14-bit complex (I & Q) unsigned big-endian sample
+inside 16-bit. V4L2 FourCC: PC16
 
-This series ensures that tearing and flicker is prevented, without introducing
-any (substantial) performance impact.
+V4L2_SDR_FMT_PCU18BE - 16-bit complex (I & Q) unsigned big-endian sample
+inside 18-bit. V4L2 FourCC: PC18
 
-These patches have been tested by introducing artificial delays in the commit
-code paths and verifying that no visual tearing or flickering occurs.
+V4L2_SDR_FMT_PCU20BE - 18-bit complex (I & Q) unsigned big-endian sample
+inside 20-bit. V4L2 FourCC: PC20
 
-Extensive testing around the race window has been performed by dynamically
-adapting the artificial delay between 15, and 17 seconds in 100uS increments
-for periods of 5 seconds on each delay test. These tests have successfully run
-for 3 hours.
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ drivers/media/v4l2-core/v4l2-ioctl.c | 3 +++
+ include/uapi/linux/videodev2.h       | 3 +++
+ 2 files changed, 6 insertions(+)
 
-Manual start/stop testing has also been performed.
-
-Mauro: As this patchset covers two subsystems, and the DRM/DU side is dependant
-upon the media/VSP side, If you are happy with these patches, Would it be
-possible to get acks from you for integration through the DRM tree please?
-
-Regards
-
-Kieran
-
-Kieran Bingham (3):
-  v4l: vsp1: Postpone frame end handling in event of display list race
-  v4l: vsp1: Extend VSP1 module API to allow DRM callbacks
-  drm: rcar-du: Register a completion callback with VSP1
-
-Laurent Pinchart (1):
-  drm: rcar-du: Arm the page flip event after queuing the page flip
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 30 ++++++++++++++------------
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  1 +-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   |  9 ++++++++-
- drivers/media/platform/vsp1/vsp1_dl.c   | 19 ++++++++++++++--
- drivers/media/platform/vsp1/vsp1_dl.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_drm.c  | 17 +++++++++++++++-
- drivers/media/platform/vsp1/vsp1_drm.h  | 11 ++++++++++-
- drivers/media/platform/vsp1/vsp1_pipe.c | 13 ++++++++++-
- include/media/vsp1.h                    |  7 ++++++-
- 9 files changed, 92 insertions(+), 17 deletions(-)
-
-base-commit: 4df0f635a142c7498d20de9356851fb989c7f653
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index e5a2187381db..ca1e920d3e7c 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1229,6 +1229,9 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_SDR_FMT_CS8:		descr = "Complex S8"; break;
+ 	case V4L2_SDR_FMT_CS14LE:	descr = "Complex S14LE"; break;
+ 	case V4L2_SDR_FMT_RU12LE:	descr = "Real U12LE"; break;
++	case V4L2_SDR_FMT_PCU16BE:	descr = "Planar Complex U16BE"; break;
++	case V4L2_SDR_FMT_PCU18BE:	descr = "Planar Complex U18BE"; break;
++	case V4L2_SDR_FMT_PCU20BE:	descr = "Planar Complex U20BE"; break;
+ 	case V4L2_TCH_FMT_DELTA_TD16:	descr = "16-bit signed deltas"; break;
+ 	case V4L2_TCH_FMT_DELTA_TD08:	descr = "8-bit signed deltas"; break;
+ 	case V4L2_TCH_FMT_TU16:		descr = "16-bit unsigned touch data"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 2b8feb86d09e..45cf7359822c 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -669,6 +669,9 @@ struct v4l2_pix_format {
+ #define V4L2_SDR_FMT_CS8          v4l2_fourcc('C', 'S', '0', '8') /* complex s8 */
+ #define V4L2_SDR_FMT_CS14LE       v4l2_fourcc('C', 'S', '1', '4') /* complex s14le */
+ #define V4L2_SDR_FMT_RU12LE       v4l2_fourcc('R', 'U', '1', '2') /* real u12le */
++#define V4L2_SDR_FMT_PCU16BE	  v4l2_fourcc('P', 'C', '1', '6') /* planar complex u16be */
++#define V4L2_SDR_FMT_PCU18BE	  v4l2_fourcc('P', 'C', '1', '8') /* planar complex u18be */
++#define V4L2_SDR_FMT_PCU20BE	  v4l2_fourcc('P', 'C', '2', '0') /* planar complex u20be */
+ 
+ /* Touch formats - used for Touch devices */
+ #define V4L2_TCH_FMT_DELTA_TD16	v4l2_fourcc('T', 'D', '1', '6') /* 16-bit signed deltas */
 -- 
-git-series 0.9.1
+2.12.2
