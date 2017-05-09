@@ -1,114 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46686 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755569AbdESNcC (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:42344 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752426AbdEIOMD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 09:32:02 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 5/6] mmc: tmio: add CMD23 support
-Date: Fri, 19 May 2017 15:31:54 +0200
-Message-Id: <20170519133155.22945-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
-References: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
+        Tue, 9 May 2017 10:12:03 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Cc: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] [RFC] sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl registration
+Date: Tue,  9 May 2017 16:11:55 +0200
+Message-Id: <1494339117-31221-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc_core.c | 41 +++++++++++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 13 deletions(-)
+Commit 3810e96056ffddf6 ("sh: modify pinmux for SH7757 2nd cut") renamed
+GPIO_PT[JLNQ]7 to GPIO_PT[JLNQ]7_RESV, and removed the existing users
+from the pinmux_pins[] array.
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 79a973273141ed..e1ad461c4b8c8f 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -368,11 +368,11 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 			c |= TRANSFER_MULTI;
+However, pinmux_pins[] is initialized through PINMUX_GPIO(), using
+designated array initializers, where the GPIO_* enums serve as indices.
+Hence entries were not really removed, but replaced by (zero-filled)
+holes.  Such entries are treated as pin zero, which was registered
+before, thus leading to initialization failures:
+
+    sh-pfc pfc-sh7757: pin 0 already registered
+    sh-pfc pfc-sh7757: error during pin registration
+    sh-pfc pfc-sh7757: could not register: -22
+    sh-pfc: probe of pfc-sh7757 failed with error -22
+
+Remove GPIO_PT[JLNQ]7_RESV from the enum to fix this.
+
+Fixes: 3810e96056ffddf6 ("sh: modify pinmux for SH7757 2nd cut")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Untested due to lack of hardware and datasheet.
+---
+ arch/sh/include/cpu-sh4/cpu/sh7757.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/sh/include/cpu-sh4/cpu/sh7757.h b/arch/sh/include/cpu-sh4/cpu/sh7757.h
+index 5340f3bc1863c389..b40fb541e72a78ae 100644
+--- a/arch/sh/include/cpu-sh4/cpu/sh7757.h
++++ b/arch/sh/include/cpu-sh4/cpu/sh7757.h
+@@ -40,7 +40,7 @@ enum {
  
- 			/*
--			 * Disable auto CMD12 at IO_RW_EXTENDED when
--			 * multiple block transfer
-+			 * Disable auto CMD12 at IO_RW_EXTENDED and SET_BLOCK_COUNT
-+			 * when doing multiple block transfer
- 			 */
- 			if ((host->pdata->flags & TMIO_MMC_HAVE_CMD12_CTRL) &&
--			    (cmd->opcode == SD_IO_RW_EXTENDED))
-+			    (cmd->opcode == SD_IO_RW_EXTENDED || host->mrq->sbc))
- 				c |= NO_CMD12_ISSUE;
- 		}
- 		if (data->flags & MMC_DATA_READ)
-@@ -549,7 +549,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 			host->mrq);
- 	}
+ 	/* PTJ */
+ 	GPIO_PTJ0, GPIO_PTJ1, GPIO_PTJ2, GPIO_PTJ3,
+-	GPIO_PTJ4, GPIO_PTJ5, GPIO_PTJ6, GPIO_PTJ7_RESV,
++	GPIO_PTJ4, GPIO_PTJ5, GPIO_PTJ6,
  
--	if (stop) {
-+	if (stop && !host->mrq->sbc) {
- 		if (stop->opcode != MMC_STOP_TRANSMISSION || stop->arg)
- 			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
- 				stop->opcode, stop->arg);
-@@ -857,15 +857,21 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 	/* PTK */
+ 	GPIO_PTK0, GPIO_PTK1, GPIO_PTK2, GPIO_PTK3,
+@@ -48,7 +48,7 @@ enum {
  
- static void tmio_process_mrq(struct tmio_mmc_host *host, struct mmc_request *mrq)
- {
-+	struct mmc_command *cmd;
- 	int ret;
+ 	/* PTL */
+ 	GPIO_PTL0, GPIO_PTL1, GPIO_PTL2, GPIO_PTL3,
+-	GPIO_PTL4, GPIO_PTL5, GPIO_PTL6, GPIO_PTL7_RESV,
++	GPIO_PTL4, GPIO_PTL5, GPIO_PTL6,
  
--	if (mrq->data) {
--		ret = tmio_mmc_start_data(host, mrq->data);
--		if (ret)
--			goto fail;
-+	if (mrq->sbc && host->cmd != mrq->sbc) {
-+		cmd = mrq->sbc;
-+	} else {
-+		cmd = mrq->cmd;
-+		if (mrq->data) {
-+			ret = tmio_mmc_start_data(host, mrq->data);
-+			if (ret)
-+				goto fail;
-+		}
- 	}
+ 	/* PTM */
+ 	GPIO_PTM0, GPIO_PTM1, GPIO_PTM2, GPIO_PTM3,
+@@ -56,7 +56,7 @@ enum {
  
--	ret = tmio_mmc_start_command(host, mrq->cmd);
-+	ret = tmio_mmc_start_command(host, cmd);
- 	if (ret)
- 		goto fail;
+ 	/* PTN */
+ 	GPIO_PTN0, GPIO_PTN1, GPIO_PTN2, GPIO_PTN3,
+-	GPIO_PTN4, GPIO_PTN5, GPIO_PTN6, GPIO_PTN7_RESV,
++	GPIO_PTN4, GPIO_PTN5, GPIO_PTN6,
  
-@@ -920,13 +926,16 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 		return;
- 	}
+ 	/* PTO */
+ 	GPIO_PTO0, GPIO_PTO1, GPIO_PTO2, GPIO_PTO3,
+@@ -68,7 +68,7 @@ enum {
  
--	host->cmd = NULL;
--	host->data = NULL;
--	host->force_pio = false;
-+	/* If not SET_BLOCK_COUNT, clear old data */
-+	if (host->cmd != mrq->sbc) {
-+		host->cmd = NULL;
-+		host->data = NULL;
-+		host->force_pio = false;
-+		host->mrq = NULL;
-+	}
+ 	/* PTQ */
+ 	GPIO_PTQ0, GPIO_PTQ1, GPIO_PTQ2, GPIO_PTQ3,
+-	GPIO_PTQ4, GPIO_PTQ5, GPIO_PTQ6, GPIO_PTQ7_RESV,
++	GPIO_PTQ4, GPIO_PTQ5, GPIO_PTQ6,
  
- 	cancel_delayed_work(&host->delayed_reset_work);
- 
--	host->mrq = NULL;
- 	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
-@@ -935,6 +944,12 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (host->check_scc_error)
- 		host->check_scc_error(host);
- 
-+	/* If SET_BLOCK_COUNT, continue with main command */
-+	if (host->mrq) {
-+		tmio_process_mrq(host, mrq);
-+		return;
-+	}
-+
- 	mmc_request_done(host->mmc, mrq);
- }
- 
+ 	/* PTR */
+ 	GPIO_PTR0, GPIO_PTR1, GPIO_PTR2, GPIO_PTR3,
 -- 
-2.11.0
+2.7.4
