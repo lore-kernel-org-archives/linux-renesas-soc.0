@@ -1,47 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48114 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1166259AbdEAJEA (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34441 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753673AbdEIOYR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 May 2017 05:04:00 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 6/6] mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3
-Date: Mon,  1 May 2017 11:03:46 +0200
-Message-Id: <20170501090346.10801-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
-References: <20170501090346.10801-1-wsa+renesas@sang-engineering.com>
+        Tue, 9 May 2017 10:24:17 -0400
+Received: by mail-it0-f67.google.com with SMTP id c26so394488itd.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 May 2017 07:24:17 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1494335128-30563-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1494335128-30563-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 9 May 2017 16:24:10 +0200
+Message-ID: <CAMuHMdUXcHw_Yh0aEhB=NWALfxzJHY2fyCXU+Lz-15OPrv6fAQ@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] v4l: vsp1: Suspend/resume on M2M pipelines
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/sh_mobile_sdhi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Kieran,
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index bc6be0dbea3927..4843ce800c918d 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -96,7 +96,7 @@ static struct sh_mobile_sdhi_scc rcar_gen2_scc_taps[] = {
- static const struct sh_mobile_sdhi_of_data of_rcar_gen2_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
- 			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ | MMC_CAP_CMD23,
- 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.dma_rx_offset	= 0x2000,
- 	.scc_offset	= 0x0300,
-@@ -115,7 +115,7 @@ static struct sh_mobile_sdhi_scc rcar_gen3_scc_taps[] = {
- static const struct sh_mobile_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
- 			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ | MMC_CAP_CMD23,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
--- 
-2.11.0
+On Tue, May 9, 2017 at 3:05 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> The following changes since commit 13e0988140374123bead1dd27c287354cb95108e:
+>
+>   docs: complete bumping minimal GNU Make version to 3.81 (2017-05-06 18:49:09 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/submissions/vsp1/suspend-resume/v5
+>
+> for you to fetch changes up to 24697ebba024a6375ff2e793203296c70112537e:
+>
+>   v4l: vsp1: Repair suspend resume operations for video pipelines (2017-05-08 15:20:58 +0100)
+
+Thank you, looks good.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
