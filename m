@@ -1,72 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57763 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751646AbdEJHFF (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40350 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754081AbdEIOMJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 03:05:05 -0400
-Received: from avalon.ideasonboard.com (syi-ogw1-1554.syi.inet.fi [194.89.38.18])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 712192053C
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 May 2017 09:03:57 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 4/7] arm64: dts: r8a7795: salvator-x: Add DU1 and DU2 external dot clocks
-Date: Wed, 10 May 2017 10:04:55 +0300
-Message-Id: <20170510070458.21193-5-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 9 May 2017 10:12:09 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Cc: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
+Date: Tue,  9 May 2017 16:11:56 +0200
+Message-Id: <1494339117-31221-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU1 and DU2 external dot clocks are fixed frequency clock generators
-running at 33MHz.
+Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+If enum values are defined, but never used, pinmux_pins[] contains
+(zero-filled) holes.  Such entries are treated as pin zero, which was
+registered before, thus leading to pinctrl registration failures:
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+    sh-pfc pfc-sh7264: pin 0 already registered
+    sh-pfc pfc-sh7264: error during pin registration
+    sh-pfc pfc-sh7264: could not register: -22
+    sh-pfc: probe of pfc-sh7264 failed with error -22
+
+Remove GPIO_PH[0-7] from the enum to fix this.
+
+Fixes: 41797f75486d8ca3 ("sh: Add pinmux for sh7264")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/salvator-x.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Untested due to lack of hardware.
+---
+ arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-index 2cd0cce818e7..884c63ebba69 100644
---- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-@@ -212,6 +212,19 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <24576000>;
- 	};
-+
-+	/* External DU dot clocks */
-+	x21_clk: x21-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <33000000>;
-+	};
-+
-+	x22_clk: x22-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <33000000>;
-+	};
- };
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7264.h b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
+index 4d1ef6d74bd6050c..2ae0e938b657a109 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7264.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
+@@ -43,9 +43,7 @@ enum {
+ 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
+ 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
  
- &audio_clk_a {
-@@ -238,6 +251,16 @@
- 	pinctrl-names = "default";
- 	status = "okay";
+-	/* Port H */
+-	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
+-	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
++	/* Port H - Port H does not have a Data Register */
  
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&x21_clk>,
-+		 <&x22_clk>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+		      "dclkin.1", "dclkin.2";
-+
- 	ports {
- 		port@0 {
- 			endpoint {
+ 	/* Port I - not on device */
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
