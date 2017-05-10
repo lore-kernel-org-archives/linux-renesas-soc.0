@@ -1,70 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35693 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933968AbdEVOCo (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58414 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752424AbdEJNVk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 10:02:44 -0400
-Received: by mail-wm0-f67.google.com with SMTP id g15so13831791wmc.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 May 2017 07:02:43 -0700 (PDT)
-From: Javier Martinez Canillas <javier@dowhile0.org>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh@kernel.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 10/20] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
-Date: Mon, 22 May 2017 16:01:58 +0200
-Message-Id: <20170522140208.24652-11-javier@dowhile0.org>
-In-Reply-To: <20170522140208.24652-1-javier@dowhile0.org>
-References: <20170522140208.24652-1-javier@dowhile0.org>
+        Wed, 10 May 2017 09:21:40 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 06/16] rcar-vin: refactor pad lookup code
+Date: Wed, 10 May 2017 16:21:38 +0300
+Message-ID: <1777354.Z7yukgknS8@avalon>
+In-Reply-To: <20170314185957.25253-7-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-7-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+Hi Niklas,
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
+Thank you for the patch.
 
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
+On Tuesday 14 Mar 2017 19:59:47 Niklas S=F6derlund wrote:
+> The pad lookup code can be broken out to increase readability and to
+> reduce code duplication.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 38 +++++++++++++------=
+------
+>  1 file changed, 23 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 1a75191539b0e7d7..ce29a21888da48d5 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -870,11 +870,25 @@ static void rvin_notify(struct v4l2_subdev *sd,=
 
-Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>  =09}
+>  }
+>=20
+> +static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+> +{
+> +=09unsigned int pad;
+> +
+> +=09if (sd->entity.num_pads <=3D 1)
+> +=09=09return 0;
+> +
+> +=09for (pad =3D 0; pad < sd->entity.num_pads; pad++)
+> +=09=09if (sd->entity.pads[pad].flags & direction)
+> +=09=09=09return pad;
+> +
+> +=09return -EINVAL;
+> +}
+> +
+>  int rvin_v4l2_probe(struct rvin_dev *vin)
+>  {
+>  =09struct video_device *vdev =3D &vin->vdev;
+>  =09struct v4l2_subdev *sd =3D vin_to_source(vin);
+> -=09int pad_idx, ret;
+> +=09int ret;
+>=20
+>  =09v4l2_set_subdev_hostdata(sd, vin);
+>=20
+> @@ -920,21 +934,15 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+>  =09vdev->device_caps =3D V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING=
+ |
+>  =09=09V4L2_CAP_READWRITE;
+>=20
+> -=09vin->digital.source_pad =3D 0;
+> -=09for (pad_idx =3D 0; pad_idx < sd->entity.num_pads; pad_idx++)
+> -=09=09if (sd->entity.pads[pad_idx].flags =3D=3D MEDIA_PAD_FL_SOURCE)=
 
----
+> -=09=09=09break;
+> -=09if (pad_idx >=3D sd->entity.num_pads)
+> -=09=09return -EINVAL;
+> -
+> -=09vin->digital.source_pad =3D pad_idx;
+> +=09ret =3D rvin_find_pad(sd, MEDIA_PAD_FL_SOURCE);
+> +=09if (ret < 0)
+> +=09=09return ret;
+> +=09vin->digital.source_pad =3D ret;
+>=20
+> -=09vin->digital.sink_pad =3D 0;
+> -=09for (pad_idx =3D 0; pad_idx < sd->entity.num_pads; pad_idx++)
+> -=09=09if (sd->entity.pads[pad_idx].flags =3D=3D MEDIA_PAD_FL_SINK) {=
 
-Changes in v4:
-- Only use the atmel manufacturer in the compatible string instead of
-  keeping the deprecated ones (Rob Herring).
+> -=09=09=09vin->digital.sink_pad =3D pad_idx;
+> -=09=09=09break;
+> -=09=09}
+> +=09ret =3D rvin_find_pad(sd, MEDIA_PAD_FL_SINK);
+> +=09if (ret < 0)
+> +=09=09return ret;
+> +=09vin->digital.sink_pad =3D ret;
 
-Changes in v3:
-- Add Geert Uytterhoeven reviewed-by tag.
+The driver didn't previously consider the lack of a sink pad as an erro=
+r. As=20
+camera sensor subdevs typically have no sink pad, I don't think you sho=
+uld=20
+change this.
 
-Changes in v2: None
+>  =09vin->format.pixelformat=09=3D RVIN_DEFAULT_FORMAT;
+>  =09rvin_reset_format(vin);
 
- arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--=20
+Regards,
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 001e6116c47c..4234667da2b8 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -702,7 +702,7 @@
- 	};
- 
- 	eeprom@50 {
--		compatible = "renesas,24c02";
-+		compatible = "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
--- 
-2.9.3
+Laurent Pinchart
