@@ -1,43 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:35986 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752606AbdEJKHD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54398 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbdEJJuW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 06:07:03 -0400
+        Wed, 10 May 2017 05:50:22 -0400
+Date: Wed, 10 May 2017 11:50:17 +0200
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [GIT PULL FOR renesas-drivers] mmc: renesas-sdhi: refactor DMA
+ support
+Message-ID: <20170510095016.GA31001@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
-References: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 10 May 2017 12:07:02 +0200
-Message-ID: <CAK8P3a3b0cLAB_+52uXQU8NsSJ4PjAXo7JPAKKoYWiUqiP3Rjw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mmc: renesas-sdhi: refactor DMA support
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 10, 2017 at 11:25 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Hi Wolfram, Hi Ulf, Hi Arnd, Hi all,
->
-> the intention of this patch-set is to refactor the DMA support in
-> the Renesas SDHI driver in order to make it easier to add support
-> for using the SDHI hardware with different DMA implementations.
->
-> This is based on earlier work, posted as "[PATCH/RFC v3 0/6] mmc:
-> renesas_sdhi: add R-Car Gen-3 DMA support". It attempts to implement
-> the reworking of the driver proposed by Arnd[1] in his review of that
-> patch-set.
->
-> [1] http://www.spinics.net/lists/linux-mmc/msg38004.html
->
-> Unlike that patch-set this patch-set does not add support for
-> R-Car Gen-3 DMA. Rather it focuses on refactoring the code.
+Hi Geert,
 
-(whole series)
+please consider pulling the refactoring of DMA support for SDHI (v2).
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+This pull request is based on mmc-v4.12.
+
+As this pull request conflicts with recent work by Wolfram,
+"[PULL REQUEST] renesas/topic/sdhi-cmd23 for renesas drivers",
+I have provided a sample merge resolution at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-refactor-v2+sdhi-cmd23
+
+
+The following changes since commit a627f025eb0534052ff451427c16750b3530634c:
+
+  mmc: sdhci-of-esdhc: limit SD clock for ls1012a/ls1046a (2017-04-28 14:53:13 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-refactor-v2
+
+for you to fetch changes up to 2156a07053f52c85fba8b715116b0241d5fca25b:
+
+  mmc: renesas-sdhi: make renesas_sdhi_sys_dmac main module file (2017-05-09 15:19:55 +0200)
+
+----------------------------------------------------------------
+Simon Horman (6):
+      mmc: tmio: drop filenames from comment at top of source
+      mmc: renesas-sdhi, tmio: make dma more modular
+      mmc: tmio: rename tmio_mmc_{pio => core}.c
+      mmc: renesas-sdhi: rename tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c
+      mmc: renesas-sdhi: rename sh_mobile_sdhi.c => renesas_sdhi_core.c
+      mmc: renesas-sdhi: make renesas_sdhi_sys_dmac main module file
+
+ drivers/mmc/host/Kconfig                           |   4 +-
+ drivers/mmc/host/Makefile                          |   4 +-
+ drivers/mmc/host/renesas_sdhi.h                    |  39 ++++
+ .../host/{sh_mobile_sdhi.c => renesas_sdhi_core.c} | 229 +++++----------------
+ .../{tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c}    | 164 +++++++++++++--
+ drivers/mmc/host/tmio_mmc.c                        |  10 +-
+ drivers/mmc/host/tmio_mmc.h                        |  53 ++---
+ .../mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c}   |  51 ++++-
+ 8 files changed, 304 insertions(+), 250 deletions(-)
+ create mode 100644 drivers/mmc/host/renesas_sdhi.h
+ rename drivers/mmc/host/{sh_mobile_sdhi.c => renesas_sdhi_core.c} (68%)
+ rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c} (58%)
+ rename drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} (97%)
