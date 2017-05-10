@@ -1,274 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        sricharan@codeaurora.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Wed, 17 May 2017 19:07:20 +0900
-Message-Id: <149501564036.21593.16964345443958773870.sendpatchset@little-apple>
-In-Reply-To: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
-References: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
-Subject: [PATCH v8 06/08] iommu/ipmmu-vmsa: Use fwspec iommu_priv on ARM64
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58578 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753268AbdEJNjH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 10 May 2017 09:39:07 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 16/16] rcar-vin: fix bug in pixelformat selection
+Date: Wed, 10 May 2017 16:39:01 +0300
+Message-ID: <3864065.kk1yiLIP8J@avalon>
+In-Reply-To: <20170314185957.25253-17-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-17-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Niklas,
 
-Convert from archdata to iommu_priv via iommu_fwspec on ARM64 but
-let 32-bit ARM keep on using archdata for now.
+Thank you for the patch.
 
-Once the 32-bit ARM code and the IPMMU driver is able to move over
-to CONFIG_IOMMU_DMA=y then coverting to fwspec via ->of_xlate() will
-be easy.
+On Tuesday 14 Mar 2017 19:59:57 Niklas S=F6derlund wrote:
+> If the requested pixelformat is not supported only revert to the curr=
+ent
+> pixelformat, do not revert the entire format. Also if the pixelformat=
 
-For now fwspec ids and num_ids are not used to allow code sharing between
-32-bit and 64-bit ARM code inside the driver.
+> needs to be reverted the pixel information needs to be fetched once
+> more.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 956092ba6ef9bc6f..27b7733e96afe3e9 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -226,9 +226,8 @@ static int __rvin_try_format(struct rvin_dev *vin=
+,
+>  =09if (!info) {
+>  =09=09vin_dbg(vin, "Format %x not found, keeping %x\n",
+>  =09=09=09pix->pixelformat, vin->format.pixelformat);
+> -=09=09*pix =3D vin->format;
+> -=09=09pix->width =3D rwidth;
+> -=09=09pix->height =3D rheight;
+> +=09=09pix->pixelformat =3D vin->format.pixelformat;
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+You should set a fixed default in this case to achieve a more determini=
+stic=20
+behaviour. You can for instance pick the first entry of, which will als=
+o save=20
+you from calling rvin_format_from_pixel() as you can then replace it wi=
+th=20
+&rvin_formats[0].
 
- Changes since V7:
- - Rewrote code to use iommu_fwspec, thanks Robin!
- - Dropped reviewed-by from Joerg, also skipped tag from Geert
+> +=09=09info =3D rvin_format_from_pixel(pix->pixelformat);
+>  =09}
+>=20
+>  =09/* Always recalculate */
 
- drivers/iommu/ipmmu-vmsa.c |   97 ++++++++++++++++++++++++++------------------
- 1 file changed, 58 insertions(+), 39 deletions(-)
+--=20
+Regards,
 
---- 0011/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-05-17 16:45:07.510607110 +0900
-@@ -56,7 +56,7 @@ struct ipmmu_vmsa_domain {
- 	spinlock_t lock;			/* Protects mappings */
- };
- 
--struct ipmmu_vmsa_archdata {
-+struct ipmmu_vmsa_iommu_priv {
- 	struct ipmmu_vmsa_device *mmu;
- 	unsigned int *utlbs;
- 	unsigned int num_utlbs;
-@@ -72,6 +72,24 @@ static struct ipmmu_vmsa_domain *to_vmsa
- 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
- }
- 
-+
-+static struct ipmmu_vmsa_iommu_priv *to_priv(struct device *dev)
-+{
-+#if defined(CONFIG_ARM)
-+	return dev->archdata.iommu;
-+#else
-+	return dev->iommu_fwspec->iommu_priv;
-+#endif
-+}
-+static void set_priv(struct device *dev, struct ipmmu_vmsa_iommu_priv *p)
-+{
-+#if defined(CONFIG_ARM)
-+	dev->archdata.iommu = p;
-+#else
-+	dev->iommu_fwspec->iommu_priv = p;
-+#endif
-+}
-+
- #define TLB_LOOP_TIMEOUT		100	/* 100us */
- 
- /* -----------------------------------------------------------------------------
-@@ -543,8 +561,8 @@ static void ipmmu_domain_free(struct iom
- static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 			       struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
--	struct ipmmu_vmsa_device *mmu = archdata->mmu;
-+	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
-+	struct ipmmu_vmsa_device *mmu = priv->mmu;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned long flags;
- 	unsigned int i;
-@@ -577,8 +595,8 @@ static int ipmmu_attach_device(struct io
- 	if (ret < 0)
- 		return ret;
- 
--	for (i = 0; i < archdata->num_utlbs; ++i)
--		ipmmu_utlb_enable(domain, archdata->utlbs[i]);
-+	for (i = 0; i < priv->num_utlbs; ++i)
-+		ipmmu_utlb_enable(domain, priv->utlbs[i]);
- 
- 	return 0;
- }
-@@ -586,12 +604,12 @@ static int ipmmu_attach_device(struct io
- static void ipmmu_detach_device(struct iommu_domain *io_domain,
- 				struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned int i;
- 
--	for (i = 0; i < archdata->num_utlbs; ++i)
--		ipmmu_utlb_disable(domain, archdata->utlbs[i]);
-+	for (i = 0; i < priv->num_utlbs; ++i)
-+		ipmmu_utlb_disable(domain, priv->utlbs[i]);
- 
- 	/*
- 	 * TODO: Optimize by disabling the context when no device is attached.
-@@ -654,7 +672,7 @@ static int ipmmu_find_utlbs(struct ipmmu
- 
- static int ipmmu_init_platform_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata;
-+	struct ipmmu_vmsa_iommu_priv *priv;
- 	struct ipmmu_vmsa_device *mmu;
- 	unsigned int *utlbs;
- 	unsigned int i;
-@@ -697,17 +715,17 @@ static int ipmmu_init_platform_device(st
- 		}
- 	}
- 
--	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
--	if (!archdata) {
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv) {
- 		ret = -ENOMEM;
- 		goto error;
- 	}
- 
--	archdata->mmu = mmu;
--	archdata->utlbs = utlbs;
--	archdata->num_utlbs = num_utlbs;
--	archdata->dev = dev;
--	dev->archdata.iommu = archdata;
-+	priv->mmu = mmu;
-+	priv->utlbs = utlbs;
-+	priv->num_utlbs = num_utlbs;
-+	priv->dev = dev;
-+	set_priv(dev, priv);
- 	return 0;
- 
- error:
-@@ -727,12 +745,11 @@ static struct iommu_domain *ipmmu_domain
- 
- static int ipmmu_add_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata;
- 	struct ipmmu_vmsa_device *mmu = NULL;
- 	struct iommu_group *group;
- 	int ret;
- 
--	if (dev->archdata.iommu) {
-+	if (to_priv(dev)) {
- 		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
- 			 dev_name(dev));
- 		return -EINVAL;
-@@ -768,8 +785,7 @@ static int ipmmu_add_device(struct devic
- 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
- 	 *   at a 1GB offset to ensure that NULL VAs will fault.
- 	 */
--	archdata = dev->archdata.iommu;
--	mmu = archdata->mmu;
-+	mmu = to_priv(dev)->mmu;
- 	if (!mmu->mapping) {
- 		struct dma_iommu_mapping *mapping;
- 
-@@ -800,24 +816,24 @@ error:
- 	if (!IS_ERR_OR_NULL(group))
- 		iommu_group_remove_device(dev);
- 
--	kfree(archdata->utlbs);
--	kfree(archdata);
--	dev->archdata.iommu = NULL;
-+	kfree(to_priv(dev)->utlbs);
-+	kfree(to_priv(dev));
-+	set_priv(dev, NULL);
- 
- 	return ret;
- }
- 
- static void ipmmu_remove_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
- 
- 	arm_iommu_detach_device(dev);
- 	iommu_group_remove_device(dev);
- 
--	kfree(archdata->utlbs);
--	kfree(archdata);
-+	kfree(priv->utlbs);
-+	kfree(priv);
- 
--	dev->archdata.iommu = NULL;
-+	set_priv(dev, NULL);
- }
- 
- static const struct iommu_ops ipmmu_ops = {
-@@ -874,11 +890,14 @@ static void ipmmu_domain_free_dma(struct
- 
- static int ipmmu_add_device_dma(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct iommu_group *group;
- 
--	/* The device has been verified in xlate() */
--	if (!archdata)
-+	/*
-+	 * Only let through devices that have been verified in xlate()
-+	 * We may get called with dev->iommu_fwspec set to NULL.
-+	 */
-+	if (!fwspec || !fwspec->iommu_priv)
- 		return -ENODEV;
- 
- 	group = iommu_group_get_for_dev(dev);
-@@ -886,17 +905,17 @@ static int ipmmu_add_device_dma(struct d
- 		return PTR_ERR(group);
- 
- 	spin_lock(&ipmmu_slave_devices_lock);
--	list_add(&archdata->list, &ipmmu_slave_devices);
-+	list_add(&to_priv(dev)->list, &ipmmu_slave_devices);
- 	spin_unlock(&ipmmu_slave_devices_lock);
- 	return 0;
- }
- 
- static void ipmmu_remove_device_dma(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
- 
- 	spin_lock(&ipmmu_slave_devices_lock);
--	list_del(&archdata->list);
-+	list_del(&priv->list);
- 	spin_unlock(&ipmmu_slave_devices_lock);
- 
- 	iommu_group_remove_device(dev);
-@@ -904,16 +923,16 @@ static void ipmmu_remove_device_dma(stru
- 
- static struct device *ipmmu_find_sibling_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
--	struct ipmmu_vmsa_archdata *sibling_archdata = NULL;
-+	struct ipmmu_vmsa_iommu_priv *priv = to_priv(dev);
-+	struct ipmmu_vmsa_iommu_priv *sibling_priv = NULL;
- 	bool found = false;
- 
- 	spin_lock(&ipmmu_slave_devices_lock);
- 
--	list_for_each_entry(sibling_archdata, &ipmmu_slave_devices, list) {
--		if (archdata == sibling_archdata)
-+	list_for_each_entry(sibling_priv, &ipmmu_slave_devices, list) {
-+		if (priv == sibling_priv)
- 			continue;
--		if (sibling_archdata->mmu == archdata->mmu) {
-+		if (sibling_priv->mmu == priv->mmu) {
- 			found = true;
- 			break;
- 		}
-@@ -921,7 +940,7 @@ static struct device *ipmmu_find_sibling
- 
- 	spin_unlock(&ipmmu_slave_devices_lock);
- 
--	return found ? sibling_archdata->dev : NULL;
-+	return found ? sibling_priv->dev : NULL;
- }
- 
- static struct iommu_group *ipmmu_find_group_dma(struct device *dev)
+Laurent Pinchart
