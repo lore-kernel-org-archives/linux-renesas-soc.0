@@ -1,48 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39432 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753820AbdEKOyy (ORCPT
+Received: from mail-it0-f53.google.com ([209.85.214.53]:38289 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbdEJLVz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 10:54:54 -0400
-Date: Thu, 11 May 2017 16:54:51 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] mmc: renesas-sdhi: refactor DMA support
-Message-ID: <20170511145451.GE21895@verge.net.au>
-References: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
- <CAK8P3a3b0cLAB_+52uXQU8NsSJ4PjAXo7JPAKKoYWiUqiP3Rjw@mail.gmail.com>
+        Wed, 10 May 2017 07:21:55 -0400
+Received: by mail-it0-f53.google.com with SMTP id e65so17926832ita.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 May 2017 04:21:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3b0cLAB_+52uXQU8NsSJ4PjAXo7JPAKKoYWiUqiP3Rjw@mail.gmail.com>
+In-Reply-To: <20170510095016.GA31001@verge.net.au>
+References: <20170510095016.GA31001@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 May 2017 13:21:53 +0200
+Message-ID: <CAMuHMdWNWchXOCJqmy=TAhGLwHd4DU_EwwKHQDzDJ3EktR91hA@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] mmc: renesas-sdhi: refactor DMA support
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 10, 2017 at 12:07:02PM +0200, Arnd Bergmann wrote:
-> On Wed, May 10, 2017 at 11:25 AM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > Hi Wolfram, Hi Ulf, Hi Arnd, Hi all,
-> >
-> > the intention of this patch-set is to refactor the DMA support in
-> > the Renesas SDHI driver in order to make it easier to add support
-> > for using the SDHI hardware with different DMA implementations.
-> >
-> > This is based on earlier work, posted as "[PATCH/RFC v3 0/6] mmc:
-> > renesas_sdhi: add R-Car Gen-3 DMA support". It attempts to implement
-> > the reworking of the driver proposed by Arnd[1] in his review of that
-> > patch-set.
-> >
-> > [1] http://www.spinics.net/lists/linux-mmc/msg38004.html
-> >
-> > Unlike that patch-set this patch-set does not add support for
-> > R-Car Gen-3 DMA. Rather it focuses on refactoring the code.
-> 
-> (whole series)
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+Hi Simon,
 
-Wolfram, Ulf, could this series be considered for v4.13?
+On Wed, May 10, 2017 at 11:50 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> please consider pulling the refactoring of DMA support for SDHI (v2).
+>
+> This pull request is based on mmc-v4.12.
+>
+> As this pull request conflicts with recent work by Wolfram,
+> "[PULL REQUEST] renesas/topic/sdhi-cmd23 for renesas drivers",
+> I have provided a sample merge resolution at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-refactor-v2+sdhi-cmd23
+>
+>
+> The following changes since commit a627f025eb0534052ff451427c16750b3530634c:
+>
+>   mmc: sdhci-of-esdhc: limit SD clock for ls1012a/ls1046a (2017-04-28 14:53:13 +0200)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-refactor-v2
+>
+> for you to fetch changes up to 2156a07053f52c85fba8b715116b0241d5fca25b:
+>
+>   mmc: renesas-sdhi: make renesas_sdhi_sys_dmac main module file (2017-05-09 15:19:55 +0200)
+
+Thank you. Looks good, and merges cleanly into today's linux-next.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
