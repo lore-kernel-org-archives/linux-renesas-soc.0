@@ -1,80 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933876AbdEVN7p (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58493 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753106AbdEJNZu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/35] arm64: dts: salvator-x: Add panel backlight support
-Date: Mon, 22 May 2017 15:59:00 +0200
-Message-Id: <b33be336702175334031f558951374b694bc4cb1.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
+        Wed, 10 May 2017 09:25:50 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 09/16] rcar-vin: decrease buffers needed to capture
+Date: Wed, 10 May 2017 16:25:49 +0300
+Message-ID: <12667105.QFsJaJFvAH@avalon>
+In-Reply-To: <20170314185957.25253-10-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-10-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Hi Niklas,
 
-The panel backlight is controlled through a GPIO and a PWM channel.
+Thank you for the patch.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[simon: apply to salvator-x.dtsi instead of r8a7795-salvator-x.dts]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/salvator-x.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+On Tuesday 14 Mar 2017 19:59:50 Niklas S=F6derlund wrote:
+> It's possible to grab frames using only one buffer, this should never=
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-index d5eb022d247c..7240bcd75918 100644
---- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-@@ -58,6 +58,16 @@
- 		clock-frequency = <11289600>;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm1 0 50000>;
-+
-+		brightness-levels = <256 128 64 16 8 4 0>;
-+		default-brightness-level = <6>;
-+
-+		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -358,6 +368,11 @@
- 		function = "i2c2";
- 	};
- 
-+	pwm1_pins: pwm {
-+		groups = "pwm1_a";
-+		function = "pwm1";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_a", "scif1_ctrl";
- 		function = "scif1";
-@@ -443,6 +458,13 @@
- 	};
- };
- 
-+&pwm1 {
-+	pinctrl-0 = <&pwm1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
--- 
-2.1.4
+> have been set to anything else then 1.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> 9ccd5ff55e192514..c37f7a2993fb5565 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -1183,7 +1183,7 @@ int rvin_dma_probe(struct rvin_dev *vin, int ir=
+q)
+>  =09q->ops =3D &rvin_qops;
+>  =09q->mem_ops =3D &vb2_dma_contig_memops;
+>  =09q->timestamp_flags =3D V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+> -=09q->min_buffers_needed =3D 2;
+> +=09q->min_buffers_needed =3D 1;
+>  =09q->dev =3D vin->dev;
+>=20
+>  =09ret =3D vb2_queue_init(q);
+
+--=20
+Regards,
+
+Laurent Pinchart
