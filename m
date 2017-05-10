@@ -1,77 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:46708 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756155AbdEXAQ6 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57763 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751646AbdEJHFG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 20:16:58 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 00/17] rcar-vin: fix issues with format and capturing
-Date: Wed, 24 May 2017 02:15:23 +0200
-Message-Id: <20170524001540.13613-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 10 May 2017 03:05:06 -0400
+Received: from avalon.ideasonboard.com (syi-ogw1-1554.syi.inet.fi [194.89.38.18])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1BD8A202FF
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 May 2017 09:04:00 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 6/7] arm64: dts: r8a7795: salvator-x: Add panel backlight support
+Date: Wed, 10 May 2017 10:04:57 +0300
+Message-Id: <20170510070458.21193-7-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+The panel backlight is controlled through a GPIO and a PWM channel.
 
-Hi,
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/salvator-x.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-This series fix a number of issues for the rcar-vin driver regarding
-format and capturing. It is based on top of '[GIT PULL FOR v4.13] V4L2 
-fwnode support' and tested on Koelsch.
-
-Parts of this series where previously part of '[PATCH 00/11] media:
-rcar-vin: fix OPS and format/pad index issues'. But after good reviews
-a large part of that series where dropped.
-
-* Changes since v1
-- Do not consider the lack of a subdevice sink pad an error instead
-  default to use pad 0 in such case. This keeps the behavior of the
-  driver which previous versions of this series changed.
-- When printing pad numbers print using %u not %d as they are unsigned.
-- Keep comment in code which was lost when moving code around.
-- If trying to set an unsupported pixel format do not switch the current
-  format, instead switch to the first supported format of the driver to
-  achieve a more deterministic behaviour.
-- Add new patch to remove redundant checks in the async bind/unbind
-  callbacks.
-- Clarify some commit messages, thanks Laurent!
-- Fix typos in commit messages, thanks Sergei and Laurent!
-- Add Reviewed-by tags from Lauren
-
-Niklas Söderlund (17):
-  rcar-vin: reset bytesperline and sizeimage when resetting format
-  rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
-  rcar-vin: fix how pads are handled for v4l2 subdevice operations
-  rcar-vin: fix standard in input enumeration
-  rcar-vin: move subdev source and sink pad index to rvin_graph_entity
-  rcar-vin: refactor pad lookup code
-  rcar-vin: move pad lookup to async bound handler
-  rcar-vin: use pad information when verifying media bus format
-  rcar-vin: decrease buffers needed to capture
-  rcar-vin: move functions which acts on hardware
-  rcar-vin: select capture mode based on free buffers
-  rcar-vin: allow switch between capturing modes when stalling
-  rcar-vin: refactor and fold in function after stall handling rework
-  rcar-vin: remove subdevice matching from bind and unbind callbacks
-  rcar-vin: register the video device at probe time
-  rcar-vin: add missing error check to propagate error
-  rcar-vin: fix bug in pixelformat selection
-
- drivers/media/platform/rcar-vin/rcar-core.c |  96 +++++++++---
- drivers/media/platform/rcar-vin/rcar-dma.c  | 230 ++++++++++++++--------------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 139 ++++++-----------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  10 +-
- 4 files changed, 248 insertions(+), 227 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+index fd2f6fa523ae..2e199302f93c 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+@@ -58,6 +58,16 @@
+ 		clock-frequency = <11289600>;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm1 0 50000>;
++
++		brightness-levels = <256 128 64 16 8 4 0>;
++		default-brightness-level = <6>;
++
++		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
++	};
++
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -453,6 +463,11 @@
+ 		function = "i2c2";
+ 	};
+ 
++	pwm1_pins: pwm {
++		groups = "pwm1_a";
++		function = "pwm1";
++	};
++
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data_a", "scif1_ctrl";
+ 		function = "scif1";
+@@ -538,6 +553,13 @@
+ 	};
+ };
+ 
++&pwm1 {
++	pinctrl-0 = <&pwm1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &rcar_sound {
+ 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.13.0
+Regards,
+
+Laurent Pinchart
