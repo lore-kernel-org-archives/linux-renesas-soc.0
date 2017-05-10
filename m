@@ -1,65 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54118 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756134AbdERNHy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54120 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752066AbdEJJZx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 09:07:54 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] sh_eth: Use platform device for printing before register_netdev()
-Date: Thu, 18 May 2017 16:08:03 +0300
-Message-ID: <1924994.oxPFtnWdQK@avalon>
-In-Reply-To: <1495112495-25086-1-git-send-email-geert+renesas@glider.be>
-References: <1495112495-25086-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 10 May 2017 05:25:53 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 1/6] mmc: tmio: drop filenames from comment at top of source
+Date: Wed, 10 May 2017 11:25:25 +0200
+Message-Id: <1494408330-28161-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
+References: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Reshuffle the comment at the top of the source
+dropping filenames and moving up human readable strings.
 
-Thank you for the patch.
+This seems to be somewhat more useful information to start the
+source file with. It is also less fragile, f.e. to file renames.
 
-On Thursday 18 May 2017 15:01:34 Geert Uytterhoeven wrote:
-> The MDIO initialization failure message is printed using the network
-> device, before it has been registered, leading to:
-> 
->      (null): failed to initialise MDIO
-> 
-> Use the platform device instead to fix this:
-> 
->     sh-eth ee700000.ethernet: failed to initialise MDIO
-> 
-> Fixes: daacf03f0bbfefee ("sh_eth: Register MDIO bus before registering the
-> network device")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/tmio_mmc.c     | 8 +++-----
+ drivers/mmc/host/tmio_mmc.h     | 7 +++----
+ drivers/mmc/host/tmio_mmc_dma.c | 4 +---
+ drivers/mmc/host/tmio_mmc_pio.c | 8 +++-----
+ 4 files changed, 10 insertions(+), 17 deletions(-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/net/ethernet/renesas/sh_eth.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/sh_eth.c
-> b/drivers/net/ethernet/renesas/sh_eth.c index
-> f68c4db656eda846..c85222b02754f5a7 100644
-> --- a/drivers/net/ethernet/renesas/sh_eth.c
-> +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> @@ -3220,7 +3220,7 @@ static int sh_eth_drv_probe(struct platform_device
-> *pdev) /* MDIO bus init */
->  	ret = sh_mdio_init(mdp, pd);
->  	if (ret) {
-> -		dev_err(&ndev->dev, "failed to initialise MDIO\n");
-> +		dev_err(&pdev->dev, "failed to initialise MDIO\n");
->  		goto out_release;
->  	}
-
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index e897e7fc3b14..ff14311bddbe 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -1,5 +1,7 @@
+ /*
+- * linux/drivers/mmc/host/tmio_mmc.c
++ * Driver for the MMC / SD / SDIO cell found in:
++ *
++ * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
+  *
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+@@ -7,10 +9,6 @@
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+- *
+- * Driver for the MMC / SD / SDIO cell found in:
+- *
+- * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
+  */
+ 
+ #include <linux/device.h>
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index d0edb5730d3f..08076d2bc3b0 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -1,5 +1,7 @@
+ /*
+- * linux/drivers/mmc/host/tmio_mmc.h
++ * Driver for the MMC / SD / SDIO cell found in:
++ *
++ * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
+  *
+  * Copyright (C) 2016 Sang Engineering, Wolfram Sang
+  * Copyright (C) 2015-16 Renesas Electronics Corporation
+@@ -10,9 +12,6 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  *
+- * Driver for the MMC / SD / SDIO cell found in:
+- *
+- * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
+  */
+ 
+ #ifndef TMIO_MMC_H
+diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/tmio_mmc_dma.c
+index e2093db2b7ff..98ce896b13e4 100644
+--- a/drivers/mmc/host/tmio_mmc_dma.c
++++ b/drivers/mmc/host/tmio_mmc_dma.c
+@@ -1,13 +1,11 @@
+ /*
+- * linux/drivers/mmc/tmio_mmc_dma.c
++ * DMA function for TMIO MMC implementations
+  *
+  * Copyright (C) 2010-2011 Guennadi Liakhovetski
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+- *
+- * DMA function for TMIO MMC implementations
+  */
+ 
+ #include <linux/device.h>
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index a2d92f10501b..d816a1061639 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -1,5 +1,7 @@
+ /*
+- * linux/drivers/mmc/host/tmio_mmc_pio.c
++ * Driver for the MMC / SD / SDIO IP found in:
++ *
++ * TC6393XB, TC6391XB, TC6387XB, T7L66XB, ASIC3, SH-Mobile SoCs
+  *
+  * Copyright (C) 2016 Sang Engineering, Wolfram Sang
+  * Copyright (C) 2015-16 Renesas Electronics Corporation
+@@ -11,10 +13,6 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  *
+- * Driver for the MMC / SD / SDIO IP found in:
+- *
+- * TC6393XB, TC6391XB, TC6387XB, T7L66XB, ASIC3, SH-Mobile SoCs
+- *
+  * This driver draws mainly on scattered spec sheets, Reverse engineering
+  * of the toshiba e800  SD driver and some parts of the 2.4 ASIC3 driver (4 bit
+  * support). (Further 4 bit support from a later datasheet).
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
