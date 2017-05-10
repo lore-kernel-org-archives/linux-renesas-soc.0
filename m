@@ -1,53 +1,48 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
- <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com> <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 5 May 2017 14:06:01 +0200
-Message-ID: <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
-Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:54135 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752294AbdEJJZ7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 10 May 2017 05:25:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 3/6] mmc: tmio: rename tmio_mmc_{pio => core}.c
+Date: Wed, 10 May 2017 11:25:27 +0200
+Message-Id: <1494408330-28161-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
+References: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 4:48 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+Rename tmio_mmc_pio.c to tmio_mmc_core.c to more accurately reflect its
+function: to provide core code for the tmio-mmc and sh-mobole-sdhi drivers.
 
-I think this was written by me, not Geert...
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/mmc/host/Makefile                            | 1 -
+ drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} | 0
+ 2 files changed, 1 deletion(-)
+ rename drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} (100%)
 
->> DT describes hardware, not software limitations.
->
-> Describing things is fine, but the kernel code takes the DT and then start configuring things based on it.
->
-> For example, on the RSK board, that line is connected to P4_14. P4_14 can be configured as IRQ6...but IRQ6 comes out in 8 different pin choices, and I might want to use one of those other choices, so I don't want to describe P4_14 as an interrupt.
->
-> If it was just describing that "pin 15 of the PHY chip is tied to pin Y19 of the RZ/A1H", that's fine because it's hardware connection that's not going to change.
-> But...the DT also defines the pin muxing...which is a software decision (do I want to get interrupt or just manually poll or simple ignore it).
-> This is the part of the whole "DT is for hardware description only" that doesn't really make sense to me.
-
-OK yeah we do hardware description AND configuration.
-
-And we never do interpreted languages.
-
-And then there is a bunch of grayzone things. For example we have
-a linux,input binding for connecting keypresses to certain Linux input
-codes. That is really grayzone, but very useful.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index f11b3d4b121d..f9baa943b470 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -36,7 +36,6 @@ obj-$(CONFIG_MMC_S3C)   	+= s3cmci.o
+ obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
+ obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
+ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+-tmio_mmc_core-y			:= tmio_mmc_pio.o
+ obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o tmio_mmc_dma.o
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_core.c
+similarity index 100%
+rename from drivers/mmc/host/tmio_mmc_pio.c
+rename to drivers/mmc/host/tmio_mmc_core.c
+-- 
+2.1.4
