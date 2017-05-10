@@ -1,126 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49142 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932386AbdEOIDv (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58592 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbdEJNjn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 May 2017 04:03:51 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87o9v4ccid.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAAyl-0002Vo-06@finisterre>
-Date: Mon, 15 May 2017 17:03:42 +0900
-Subject: Applied "ASoC: ak4613: disable asymmetric audio interface format" to the asoc tree
+        Wed, 10 May 2017 09:39:43 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 13/16] rcar-vin: refactor and fold in function after stall handling rework
+Date: Wed, 10 May 2017 16:39:42 +0300
+Message-ID: <1661133.rgc9DWuKkP@avalon>
+In-Reply-To: <20170314185957.25253-14-niklas.soderlund+renesas@ragnatech.se>
+References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-14-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Niklas,
 
-   ASoC: ak4613: disable asymmetric audio interface format
+Thank you for the patch.
 
-has been applied to the asoc tree at
+On Tuesday 14 Mar 2017 19:59:54 Niklas S=F6derlund wrote:
+> With the driver stopping and starting the stream each time the driver=
+ is
+> stalled rvin_capture_off() can be folded in to the only caller.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> bd1ccb70ae2bc47e..c5fa176ac9d8cc4a 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -396,12 +396,6 @@ static void rvin_capture_on(struct rvin_dev *vin=
+)
+>  =09=09rvin_write(vin, VNFC_S_FRAME, VNFC_REG);
+>  }
+>=20
+> -static void rvin_capture_off(struct rvin_dev *vin)
+> -{
+> -=09/* Set continuous & single transfer off */
+> -=09rvin_write(vin, 0, VNFC_REG);
+> -}
+> -
+>  static int rvin_capture_start(struct rvin_dev *vin)
+>  {
+>  =09struct rvin_buffer *buf, *node;
+> @@ -435,7 +429,8 @@ static int rvin_capture_start(struct rvin_dev *vi=
+n)
+>=20
+>  static void rvin_capture_stop(struct rvin_dev *vin)
+>  {
+> -=09rvin_capture_off(vin);
+> +=09/* Set continuous & single transfer off */
+> +=09rvin_write(vin, 0, VNFC_REG);
+>=20
+>  =09/* Disable module */
+>  =09rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--=20
+Regards,
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From ec185f95401e36f398b39706705f10d7fe7ff058 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 May 2017 02:28:13 +0000
-Subject: [PATCH] ASoC: ak4613: disable asymmetric audio interface format
-
-Asymmetric audio interface formats exist in ak4613 by same
-register settings.
-
-	Capture		Playback
-	24bit LEFT_J	16bit RIGHT_J
-	24bit LEFT_J	20bit RIGHT_J
-	24bit LEFT_J	24bit RIGHT_J
-	24bit LEFT_J	24bit LEFT_J
-	24bit I2S	24bit I2S
-
-These asymmetric formats makes driver / behavior difficult.
-It is not HW limitation, but SW limitation. To makes code reading
-easy, this patch removes asymmetric format support.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ak4613.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
-
-diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
-index b2dfddead227..557ac16d43e2 100644
---- a/sound/soc/codecs/ak4613.c
-+++ b/sound/soc/codecs/ak4613.c
-@@ -139,9 +139,7 @@ static const struct reg_default ak4613_reg[] = {
- #define AUDIO_IFACE(b, fmt) { b, SND_SOC_DAIFMT_##fmt }
- static const struct ak4613_interface ak4613_iface[] = {
- 	/* capture */				/* playback */
--	[0] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(16, RIGHT_J) },
--	[1] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(20, RIGHT_J) },
--	[2] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(24, RIGHT_J) },
-+	/* [0] - [2] are not supported */
- 	[3] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(24, LEFT_J) },
- 	[4] = {	AUDIO_IFACE(24, I2S),		AUDIO_IFACE(24, I2S) },
- };
-@@ -262,11 +260,9 @@ static int ak4613_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	fmt &= SND_SOC_DAIFMT_FORMAT_MASK;
- 
- 	switch (fmt) {
--	case SND_SOC_DAIFMT_RIGHT_J:
- 	case SND_SOC_DAIFMT_LEFT_J:
- 	case SND_SOC_DAIFMT_I2S:
- 		priv->fmt = fmt;
--
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -286,13 +282,8 @@ static bool ak4613_dai_fmt_matching(const struct ak4613_interface *iface,
- 	if (fmts->fmt != fmt)
- 		return false;
- 
--	if (fmt == SND_SOC_DAIFMT_RIGHT_J) {
--		if (fmts->width != width)
--			return false;
--	} else {
--		if (fmts->width < width)
--			return false;
--	}
-+	if (fmts->width != width)
-+		return false;
- 
- 	return true;
- }
-@@ -420,8 +411,7 @@ static const struct snd_soc_dai_ops ak4613_dai_ops = {
- 				 SNDRV_PCM_RATE_96000  |\
- 				 SNDRV_PCM_RATE_176400 |\
- 				 SNDRV_PCM_RATE_192000)
--#define AK4613_PCM_FMTBIT	(SNDRV_PCM_FMTBIT_S16_LE |\
--				 SNDRV_PCM_FMTBIT_S24_LE)
-+#define AK4613_PCM_FMTBIT	(SNDRV_PCM_FMTBIT_S24_LE)
- 
- static struct snd_soc_dai_driver ak4613_dai = {
- 	.name = "ak4613-hifi",
--- 
-2.11.0
+Laurent Pinchart
