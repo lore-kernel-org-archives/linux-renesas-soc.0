@@ -1,82 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:42334 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751210AbdEIOMI (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36029 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752451AbdEJIot (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 May 2017 10:12:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Cc: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
-Date: Tue,  9 May 2017 16:11:53 +0200
-Message-Id: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+        Wed, 10 May 2017 04:44:49 -0400
+Received: by mail-io0-f194.google.com with SMTP id f102so1470726ioi.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 May 2017 01:44:49 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170510070458.21193-3-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com> <20170510070458.21193-3-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 May 2017 10:44:48 +0200
+Message-ID: <CAMuHMdWxVuD0ELRM=kkXYFSPLgwxgP6QU-97h2PoYnvmoLDqqw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] arm64: dts: r8a7796: Add display placeholders
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Hi Laurent,
 
-Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+On Wed, May 10, 2017 at 9:04 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> HDMI output and panel backlight for Salvator-X will be enabled for both
+> the H3 and M3-W boards in salvator-x.dtsi. The file will need to
+> reference SoC DT nodes that are not available for M3-W yet. Add
+> placeholders to avoid breaking compilation.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index 60a4289d0b14..60d12e418f66 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -1131,6 +1135,24 @@
+>                         /* placeholder */
+>                 };
+>
+> +               hdmi0: hdmi0@fead0000 {
+> +                       /* placeholder */
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +                       };
+> +               };
+> +
+> +               hdmi1: hdmi1@feae0000 {
+> +                       /* placeholder */
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +                       };
+> +               };
 
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
-
-pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-Apparently GPIO_PTQ7 was defined in the enum, but never used.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Hence such entries are treated as pin zero, which
-was registered before, and initialization fails.
-
-I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
-("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
-drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
-drivers/pinctrl/core.c already had the check.
-
-Some scripting revealed a few more broken drivers:
-  - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
-  - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
-    PINMUX_GPIO().
-
-Patch 1 fixes the issue on sh7722, and was tested.
-Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
-to lack of hardware.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
-  [RFC] sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix
-    pinctrl registration
-  sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-  [RFC] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
- arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
- arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
- arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
- 4 files changed, 7 insertions(+), 11 deletions(-)
-
--- 
-2.7.4
+R-Car M3-W does not have the second HDMI channel.
+Hence I think you should not add a placeholder, but instead move the
+H3-specific parts from salvator-x.dtsi to r8a7795-salvator-x.dts, like I did
+for SATA and the second USB host channel.
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
