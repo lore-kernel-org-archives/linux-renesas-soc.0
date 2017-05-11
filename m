@@ -1,86 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36184 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753765AbdEOMoT (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:33624 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755128AbdEKIDl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 May 2017 08:44:19 -0400
+        Thu, 11 May 2017 04:03:41 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 2/3] arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0
-Date: Mon, 15 May 2017 14:44:12 +0200
-Message-Id: <1494852253-8572-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1494852253-8572-1-git-send-email-geert+renesas@glider.be>
-References: <1494852253-8572-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+Date: Thu, 11 May 2017 10:03:30 +0200
+Message-Id: <1494489813-27321-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Split off support for Salvator-X boards with the ES1.x revision of the
-R-Car H3 SoC into a separate file.  The main r8a7795-salvator-x.dts file
-now corresponds to Salvator-X with R-Car H3 ES2.0 or later.
+On sh7722/Migo-R, pinctrl registration fails with:
 
+    sh-pfc pfc-sh7722: pin 0 already registered
+    sh-pfc pfc-sh7722: error during pin registration
+    sh-pfc pfc-sh7722: could not register: -22
+    sh-pfc: probe of pfc-sh7722 failed with error -22
+
+pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+As GPIO_PTQ7 is defined in the enum, but never used, pinmux_pins[]
+contains a (zero-filled) hole. Hence this entry is treated as pin zero,
+which was registered before, and pinctrl registration fails.
+
+According to the datasheet, port PTQ7 does not exist. Hence remove
+GPIO_PTQ7 from the enum to fix this.
+
+Fixes: 8d7b5b0af7e070b9 ("sh: Add sh7722 pinmux code")
+Reported-by: Magnus Damm <magnus.damm@gmail.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
-v4:
-  - Rebase on top of r8a7795 HDMI support,
-
-v3:
-  - Rebase on top of common Salvator-X board support extraction,
+Tested on sh7722/Migo-R.
 
 v2:
-  - Use a separate file for ES1.x instead of for ES2.0, so
-    r8a7795-salvator-x.dts always corresponds to the board with the
-    latest SoC revision,
-  - Add a dash between SoC part number and revision, for compatibility
-    with the BSP,
-  - Enhance the hardware description from basic support to everything
-    already supported on ES1.x.
+  - Add Reviewed-by, Tested-by.
 ---
- arch/arm64/boot/dts/renesas/Makefile                                  | 1 +
- .../renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts}    | 0
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts                    | 4 ++--
- 3 files changed, 3 insertions(+), 2 deletions(-)
- copy arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts} (100%)
+ arch/sh/include/cpu-sh4/cpu/sh7722.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 1618e0a3c81d48bd..b6c723d8f6875f2d 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+diff --git a/arch/sh/include/cpu-sh4/cpu/sh7722.h b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+index 3bb74e534d0f8ca4..78961ab78a5a9c83 100644
+--- a/arch/sh/include/cpu-sh4/cpu/sh7722.h
++++ b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+@@ -67,7 +67,7 @@ enum {
+ 	GPIO_PTN3, GPIO_PTN2, GPIO_PTN1, GPIO_PTN0,
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-similarity index 100%
-copy from arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-copy to arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 1bb1dd61ba1ca442..8bcf4c0d6c4a65fa 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -11,11 +11,11 @@
- #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
+ 	/* PTQ */
+-	GPIO_PTQ7, GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
++	GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
+ 	GPIO_PTQ3, GPIO_PTQ2, GPIO_PTQ1, GPIO_PTQ0,
  
- /dts-v1/;
--#include "r8a7795-es1.dtsi"
-+#include "r8a7795.dtsi"
- #include "salvator-x.dtsi"
- 
- / {
--	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
-+	model = "Renesas Salvator-X board based on r8a7795 ES2.0+";
- 	compatible = "renesas,salvator-x", "renesas,r8a7795";
- 
- 	memory@48000000 {
+ 	/* PTR */
 -- 
 2.7.4
