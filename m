@@ -1,91 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39956 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933844AbdEVN7R (ORCPT
+        with ESMTP id S1757186AbdEKPsk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Thu, 11 May 2017 11:48:40 -0400
+Date: Thu, 11 May 2017 17:48:31 +0200
+From: Simon Horman <horms@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/35] arm64: dts: m3ulcb: enable EthernetAVB
-Date: Mon, 22 May 2017 15:58:36 +0200
-Message-Id: <883fae315a6af7d2b7dd32e79471c787d9b29baf.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH/RFT 0/2] ARM: dts: gose: Enable UHS-I SDR-50 and SDR-104
+Message-ID: <20170511154831.GI21895@verge.net.au>
+References: <1492494939-24568-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1492494939-24568-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On Tue, Apr 18, 2017 at 02:55:37PM +0900, Simon Horman wrote:
+> Enable
+> - SDR-50 and SDR-104 for SDHI0 and;
+> - SDR-50 for SDHI1
+> 
+> Verified:
+> - SDR104 for SDHI0
+> - SDR50 for SDHI1
+> - Results comprable to those listed for other Renesas R-Car Gen2 boards on
+>   http://elinux.org/Tests:SD-SDHI-SDR104
+> Untested:
+> SDR50 for SDHI3
+> - HS C4 card present in slot on board which I access remotely
 
-This supports Ethernet AVB on M3ULCB board
+The above should read SDHI2 rather than SDHI3.
+I have now been able to test SDHI2 and have queued up this series
+with Wolfram's Acks.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 32 ++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index 02051a3236a5..75974b246dd1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -20,6 +20,7 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -115,6 +116,11 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
-+	avb_pins: avb {
-+		groups = "avb_mdc";
-+		function = "avb";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
-@@ -155,6 +161,32 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <900>;
-+		rxdv-skew-ps = <0>;
-+		rxd0-skew-ps = <0>;
-+		rxd1-skew-ps = <0>;
-+		rxd2-skew-ps = <0>;
-+		rxd3-skew-ps = <0>;
-+		txc-skew-ps = <900>;
-+		txen-skew-ps = <0>;
-+		txd0-skew-ps = <0>;
-+		txd1-skew-ps = <0>;
-+		txd2-skew-ps = <0>;
-+		txd3-skew-ps = <0>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-1 = <&sdhi0_pins_uhs>;
--- 
-2.1.4
+> Simon Horman (2):
+>   ARM: dts: r8a7793: set maximum frequency for SDHI clocks
+>   ARM: dts: gose: Enable UHS-I SDR-50 and SDR-104
+> 
+>  arch/arm/boot/dts/r8a7793-gose.dts | 34 +++++++++++++++++++++++++++++++---
+>  arch/arm/boot/dts/r8a7793.dtsi     |  3 +++
+>  2 files changed, 34 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 2.7.0.rc3.207.g0ac5344
+> 
