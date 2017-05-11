@@ -1,67 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:50724 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755131AbdEKIDl (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:35838 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932613AbdEKL7F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 04:03:41 -0400
+        Thu, 11 May 2017 07:59:05 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/4] sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
-Date: Thu, 11 May 2017 10:03:32 +0200
-Message-Id: <1494489813-27321-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
-References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 3/3] arm64: dts: r8a7795: h3ulcb: Add support for R-Car H3 ES2.0
+Date: Thu, 11 May 2017 13:58:54 +0200
+Message-Id: <1494503934-23367-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1494503934-23367-1-git-send-email-geert+renesas@glider.be>
+References: <1494503934-23367-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Such entries are treated as pin zero, which was
-registered before, thus leading to pinctrl registration failures, as
-seen on sh7722:
+Split off support for H3ULCB boards with the ES1.x revision of the R-Car
+H3 SoC into a separate file.  The main r8a7795-h3ulcb.dts file now
+corresponds to H3ULCB with R-Car H3 ES2.0 or later.
 
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
-
-Remove GPIO_PH[0-7] from the enum to fix this.
-
-Fixes: 41797f75486d8ca3 ("sh: Add pinmux for sh7264")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-Untested due to lack of hardware.
-
-v2:
-  - Replace fake error messages by reference to sh7722,
-  - Add Reviewed-by.
+v3:
+  - New.
 ---
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile                                  | 2 +-
+ .../boot/dts/renesas/{r8a7795-h3ulcb.dts => r8a7795-es1-h3ulcb.dts}   | 0
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts                        | 4 ++--
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+ copy arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb.dts => r8a7795-es1-h3ulcb.dts} (100%)
 
-diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7264.h b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-index 4d1ef6d74bd6050c..2ae0e938b657a109 100644
---- a/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-+++ b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-@@ -43,9 +43,7 @@ enum {
- 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
- 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index b6c723d8f6875f2d..d5451015950e3dfc 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,5 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+-dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
  
--	/* Port H */
--	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
--	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
-+	/* Port H - Port H does not have a Data Register */
+ always		:= $(dtb-y)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts
+similarity index 100%
+copy from arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+copy to arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 95fe207cb6a3fd2f..0426f41765f0bc68 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -12,11 +12,11 @@
+ #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
  
- 	/* Port I - not on device */
+ /dts-v1/;
+-#include "r8a7795-es1.dtsi"
++#include "r8a7795.dtsi"
+ #include "ulcb.dtsi"
  
+ / {
+-	model = "Renesas H3ULCB board based on r8a7795 ES1.x";
++	model = "Renesas H3ULCB board based on r8a7795 ES2.0+";
+ 	compatible = "renesas,h3ulcb", "renesas,r8a7795";
+ 
+ 	memory@48000000 {
 -- 
 2.7.4
