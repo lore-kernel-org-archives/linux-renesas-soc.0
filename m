@@ -1,383 +1,197 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54135 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752314AbdEJJ0C (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:50430 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751028AbdEKLiB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 05:26:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 6/6] mmc: renesas-sdhi: make renesas_sdhi_sys_dmac main module file
-Date: Wed, 10 May 2017 11:25:30 +0200
-Message-Id: <1494408330-28161-7-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
-References: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 11 May 2017 07:38:01 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: niklas.soderlund@ragnatech.se
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCHv2] ADV748x: Reconfigure all scripts to support multi-subdevs
+Date: Thu, 11 May 2017 12:37:52 +0100
+Message-Id: <1494502672-17552-1-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make renesas_sdhi_sys_dmac.c a top-level module file that makes use of
-library code supplied by renesas_sdhi_core.c
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This is in order to facilitate adding other variants of SDHI;
-in particular SDHI using different DMA controllers.
+The ADV748x used for testing now has entities to represent the HDMI,
+CVBS, TXA and TXB ports.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reconfigure all of the scripts to support propagating formats across
+these extra entities
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 ---
- drivers/mmc/host/renesas_sdhi.h          |  23 +++++-
- drivers/mmc/host/renesas_sdhi_core.c     | 132 ++-----------------------------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 109 ++++++++++++++++++++++++-
- 3 files changed, 135 insertions(+), 129 deletions(-)
+Hi Niklas,
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index f65d936cd680..eb3ea15ff92d 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -12,7 +12,28 @@
- #ifndef RENESAS_SDHI_H
- #define RENESAS_SDHI_H
+Updates to the VIN-Tests to support multiple ADV749x Subdevices
+
+v2:
+ - scripts/m3.sh was missing!
+
+ h3-compliance.sh     |  8 ++++----
+ h3-qv4l2.sh          |  6 +++---
+ m3-compliance.sh     |  8 ++++----
+ m3-qv4l2.sh          |  6 +++---
+ scripts/h3.sh        |  7 +++++--
+ scripts/m3.sh        |  7 +++++--
+ scripts/vin-tests.sh | 20 ++++++++++++++++++--
+ 7 files changed, 42 insertions(+), 20 deletions(-)
+
+diff --git a/h3-compliance.sh b/h3-compliance.sh
+index 5a1fddfc01ce..a60f928291b0 100755
+--- a/h3-compliance.sh
++++ b/h3-compliance.sh
+@@ -12,16 +12,16 @@ test_compliance_begin
+ mc_reset
+ mc_set_link "$csi40name" 1 "$vinname0" 1
+ mc_set_link "$csi20name" 1 "$vinname1" 1
+-mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
++mc_propagate_hdmi "$vinname0"
++mc_propagate_cvbs "$vinname1"
+ test_compliance_mc $vin0
+ test_compliance_mc $vin1
  
-+#include <linux/platform_device.h>
- #include "tmio_mmc.h"
+ mc_reset
+ mc_set_link "$csi40name" 1 "$vinname2" 1
+ mc_set_link "$csi20name" 1 "$vinname4" 1
+-mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname2"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname4"
++mc_propagate_hdmi "$vinname2"
++mc_propagate_cvbs "$vinname4"
+ test_compliance_mc $vin2
+ test_compliance_mc $vin4
  
--const struct tmio_mmc_dma_ops *renesas_sdhi_get_dma_ops(void);
-+struct renesas_sdhi_scc {
-+	unsigned long clk_rate;	/* clock rate for SDR104 */
-+	u32 tap;		/* sampling clock position for SDR104 */
-+};
+diff --git a/h3-qv4l2.sh b/h3-qv4l2.sh
+index 9a23ef06c5f6..28bb31538230 100755
+--- a/h3-qv4l2.sh
++++ b/h3-qv4l2.sh
+@@ -10,9 +10,9 @@ mc_set_link "$csi40name" 1 "$vinname0" 1
+ mc_set_link "$csi20name" 1 "$vinname1" 1
+ mc_set_link "$csi20name" 1 "$vinname6" 1
+ 
+-mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname6"
++mc_propagate_hdmi "$vinname0"
++mc_propagate_cvbs "$vinname1"
++mc_propagate_cvbs "$vinname6"
+ 
+ # Test HDMI
+ test_qv4l2 $vin0
+diff --git a/m3-compliance.sh b/m3-compliance.sh
+index 28d63e06cd51..a196ce2b5074 100755
+--- a/m3-compliance.sh
++++ b/m3-compliance.sh
+@@ -12,16 +12,16 @@ test_compliance_begin
+ mc_reset
+ mc_set_link "$csi40name" 1 "$vinname0" 1
+ mc_set_link "$csi20name" 1 "$vinname1" 1
+-mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
++mc_propagate_hdmi "$vinname0"
++mc_propagate_cvbs "$vinname1"
+ test_compliance_mc $vin0
+ test_compliance_mc $vin1
+ 
+ mc_reset
+ mc_set_link "$csi40name" 1 "$vinname2" 1
+ mc_set_link "$csi20name" 1 "$vinname4" 1
+-mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname2"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname4"
++mc_propagate_hdmi "$vinname2"
++mc_propagate_cvbs "$vinname4"
+ test_compliance_mc $vin2
+ test_compliance_mc $vin4
+ 
+diff --git a/m3-qv4l2.sh b/m3-qv4l2.sh
+index 31c79864c842..816795fe2210 100755
+--- a/m3-qv4l2.sh
++++ b/m3-qv4l2.sh
+@@ -10,9 +10,9 @@ mc_set_link "$csi40name" 1 "$vinname0" 1
+ mc_set_link "$csi20name" 1 "$vinname1" 1
+ mc_set_link "$csi20name" 1 "$vinname6" 1
+ 
+-mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
+-mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname6"
++mc_propagate_hdmi "$vinname0"
++mc_propagate_cvbs "$vinname1"
++mc_propagate_cvbs "$vinname6"
+ 
+ # Test HDMI
+ test_qv4l2 $vin0
+diff --git a/scripts/h3.sh b/scripts/h3.sh
+index 440f55f82eb7..5882af1f295b 100644
+--- a/scripts/h3.sh
++++ b/scripts/h3.sh
+@@ -23,5 +23,8 @@ csi21name="rcar_csi2 fea90000.csi2"
+ csi40name="rcar_csi2 feaa0000.csi2"
+ csi41name="rcar_csi2 feab0000.csi2"
+ 
+-cvbsname="adv7482 4-0034"
+-hdminame="adv7482 4-0070"
++cvbsname="adv748x 4-0070 afe"
++hdminame="adv748x 4-0070 hdmi"
 +
-+struct renesas_sdhi_of_data {
-+	unsigned long tmio_flags;
-+	u32	      tmio_ocr_mask;
-+	unsigned long capabilities;
-+	unsigned long capabilities2;
-+	enum dma_slave_buswidth dma_buswidth;
-+	dma_addr_t dma_rx_offset;
-+	unsigned bus_shift;
-+	int scc_offset;
-+	struct renesas_sdhi_scc *taps;
-+	int taps_num;
-+};
++txaname="adv748x 4-0070 txa"
++txbname="adv748x 4-0070 txb"
+diff --git a/scripts/m3.sh b/scripts/m3.sh
+index 38362107104b..20320d91c9ee 100644
+--- a/scripts/m3.sh
++++ b/scripts/m3.sh
+@@ -21,5 +21,8 @@ vinname7="rcar_vin e6ef7000.video"
+ csi20name="rcar_csi2 fea80000.csi2"
+ csi40name="rcar_csi2 feaa0000.csi2"
+ 
+-cvbsname="adv7482 4-0034"
+-hdminame="adv7482 4-0070"
++cvbsname="adv748x 4-0070 afe"
++hdminame="adv748x 4-0070 hdmi"
 +
-+int renesas_sdhi_probe(struct platform_device *pdev,
-+                       const struct tmio_mmc_dma_ops *dma_ops);
-+int renesas_sdhi_remove(struct platform_device *pdev);
- #endif
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index b605b8fe9499..846ee1a8e5a6 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -1,5 +1,5 @@
- /*
-- * SuperH Mobile SDHI
-+ * Renesas SDHI
-  *
-  * Copyright (C) 2016 Sang Engineering, Wolfram Sang
-  * Copyright (C) 2015-16 Renesas Electronics Corporation
-@@ -23,8 +23,6 @@
- #include <linux/kernel.h>
- #include <linux/clk.h>
- #include <linux/slab.h>
--#include <linux/mod_devicetable.h>
--#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/mmc/host.h>
-@@ -48,100 +46,6 @@
++txaname="adv748x 4-0070 txa"
++txbname="adv748x 4-0070 txb"
+diff --git a/scripts/vin-tests.sh b/scripts/vin-tests.sh
+index 24fb83c76959..35d37321682a 100644
+--- a/scripts/vin-tests.sh
++++ b/scripts/vin-tests.sh
+@@ -171,8 +171,9 @@ mc_propagate_format() {
+     mdev=$(mc_get_mdev)
  
- #define host_to_priv(host) container_of((host)->pdata, struct renesas_sdhi, mmc_data)
+     cam="'$1':$2"
+-    csi="'$3':$4"
+-    vin="$5"
++    atx="'$3':$4"
++    csi="'$5':$6"
++    vin="$7"
  
--struct renesas_sdhi_scc {
--	unsigned long clk_rate;	/* clock rate for SDR104 */
--	u32 tap;		/* sampling clock position for SDR104 */
--};
--
--struct renesas_sdhi_of_data {
--	unsigned long tmio_flags;
--	u32	      tmio_ocr_mask;
--	unsigned long capabilities;
--	unsigned long capabilities2;
--	enum dma_slave_buswidth dma_buswidth;
--	dma_addr_t dma_rx_offset;
--	unsigned bus_shift;
--	int scc_offset;
--	struct renesas_sdhi_scc *taps;
--	int taps_num;
--};
--
--static const struct renesas_sdhi_of_data of_default_cfg = {
--	.tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
--};
--
--static const struct renesas_sdhi_of_data of_rz_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT,
--	.tmio_ocr_mask	= MMC_VDD_32_33,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
--};
--
--static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
--};
--
--/* Definitions for sampling clocks */
--static struct renesas_sdhi_scc rcar_gen2_scc_taps[] = {
--	{
--		.clk_rate = 156000000,
--		.tap = 0x00000703,
--	},
--	{
--		.clk_rate = 0,
--		.tap = 0x00000300,
--	},
--};
--
--static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
--	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
--	.dma_rx_offset	= 0x2000,
--	.scc_offset	= 0x0300,
--	.taps		= rcar_gen2_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
--};
--
--/* Definitions for sampling clocks */
--static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
--	{
--		.clk_rate = 0,
--		.tap = 0x00000300,
--	},
--};
--
--static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--};
--
--static const struct of_device_id renesas_sdhi_of_match[] = {
--	{ .compatible = "renesas,sdhi-shmobile" },
--	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
--	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
--	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
--	{ .compatible = "renesas,sdhi-r7s72100", .data = &of_rz_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7791", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
--	{},
--};
--MODULE_DEVICE_TABLE(of, renesas_sdhi_of_match);
--
- struct renesas_sdhi {
- 	struct clk *clk;
- 	struct clk *clk_cd;
-@@ -552,9 +456,10 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
- 	renesas_sdhi_sdbuf_width(host, enable ? 32 : 16);
- }
+     format=$($mediactl -d $mdev --get-v4l2 "$cam" | sed 's|.*fmt:\([^/]*\).*|\1|')
+     size=$($mediactl -d $mdev --get-v4l2 "$cam" | sed 's|.*fmt:[^/]*/\([^ ]*\).*|\1|')
+@@ -182,6 +183,21 @@ mc_propagate_format() {
+     echo "format: $format size: $size field: $field vdev: $vdev"
  
--static int renesas_sdhi_probe(struct platform_device *pdev)
-+int renesas_sdhi_probe(struct platform_device *pdev,
-+		       const struct tmio_mmc_dma_ops *dma_ops)
- {
--	const struct renesas_sdhi_of_data *of_data = of_device_get_match_data(&pdev->dev);
-+	const struct renesas_sdhi_of_data *of_data = of_device_get_match_data( &pdev->dev);
- 	struct renesas_sdhi *priv;
- 	struct tmio_mmc_data *mmc_data;
- 	struct tmio_mmc_data *mmd = pdev->dev.platform_data;
-@@ -668,7 +573,7 @@ static int renesas_sdhi_probe(struct platform_device *pdev)
- 	/* All SDHI have SDIO status bits which must be 1 */
- 	mmc_data->flags |= TMIO_MMC_SDIO_STATUS_SETBITS;
- 
--	ret = tmio_mmc_host_probe(host, mmc_data, renesas_sdhi_get_dma_ops());
-+	ret = tmio_mmc_host_probe(host, mmc_data, dma_ops);
- 	if (ret < 0)
- 		goto efree;
- 
-@@ -734,7 +639,7 @@ static int renesas_sdhi_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int renesas_sdhi_remove(struct platform_device *pdev)
-+int renesas_sdhi_remove(struct platform_device *pdev)
- {
- 	struct mmc_host *mmc = platform_get_drvdata(pdev);
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
-@@ -743,28 +648,3 @@ static int renesas_sdhi_remove(struct platform_device *pdev)
- 
- 	return 0;
- }
--
--static const struct dev_pm_ops tmio_mmc_dev_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--			pm_runtime_force_resume)
--	SET_RUNTIME_PM_OPS(tmio_mmc_host_runtime_suspend,
--			tmio_mmc_host_runtime_resume,
--			NULL)
--};
--
--static struct platform_driver renesas_sdhi_driver = {
--	.driver		= {
--		.name	= "sh_mobile_sdhi",
--		.pm	= &tmio_mmc_dev_pm_ops,
--		.of_match_table = renesas_sdhi_of_match,
--	},
--	.probe		= renesas_sdhi_probe,
--	.remove		= renesas_sdhi_remove,
--};
--
--module_platform_driver(renesas_sdhi_driver);
--
--MODULE_DESCRIPTION("Renesas SDHI driver");
--MODULE_AUTHOR("Magnus Damm");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:sh_mobile_sdhi");
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 94f453c2da6d..acc42e0a3411 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -13,13 +13,93 @@
- #include <linux/dmaengine.h>
- #include <linux/mfd/tmio.h>
- #include <linux/mmc/host.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
- #include <linux/pagemap.h>
- #include <linux/scatterlist.h>
- 
-+#include "renesas_sdhi.h"
- #include "tmio_mmc.h"
- 
- #define TMIO_MMC_MIN_DMA_LEN 8
- 
-+static const struct renesas_sdhi_of_data of_default_cfg = {
-+	.tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
-+};
-+
-+static const struct renesas_sdhi_of_data of_rz_compatible = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT,
-+	.tmio_ocr_mask	= MMC_VDD_32_33,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+};
-+
-+static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
-+			  TMIO_MMC_CLK_ACTUAL,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+};
-+
-+/* Definitions for sampling clocks */
-+static struct renesas_sdhi_scc rcar_gen2_scc_taps[] = {
-+	{
-+		.clk_rate = 156000000,
-+		.tap = 0x00000703,
-+	},
-+	{
-+		.clk_rate = 0,
-+		.tap = 0x00000300,
-+	},
-+};
-+
-+static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
-+			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-+	.dma_rx_offset	= 0x2000,
-+	.scc_offset	= 0x0300,
-+	.taps		= rcar_gen2_scc_taps,
-+	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
-+};
-+
-+/* Definitions for sampling clocks */
-+static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
-+	{
-+		.clk_rate = 0,
-+		.tap = 0x00000300,
-+	},
-+};
-+
-+static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
-+			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+	.bus_shift	= 2,
-+	.scc_offset	= 0x1000,
-+	.taps		= rcar_gen3_scc_taps,
-+	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
-+};
-+
-+static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
-+	{ .compatible = "renesas,sdhi-shmobile" },
-+	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
-+	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
-+	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
-+	{ .compatible = "renesas,sdhi-r7s72100", .data = &of_rz_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7791", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
-+
-+
- static void renesas_sdhi_sys_dmac_enable_dma(struct tmio_mmc_host *host,
- 					     bool enable)
- {
-@@ -365,7 +445,32 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_sys_dmac_dma_ops = {
- 	.abort = renesas_sdhi_sys_dmac_abort_dma,
- };
- 
--const struct tmio_mmc_dma_ops *renesas_sdhi_get_dma_ops(void)
-+static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
- {
--	return &renesas_sdhi_sys_dmac_dma_ops;
-+	return renesas_sdhi_probe(pdev, &renesas_sdhi_sys_dmac_dma_ops);
+     $mediactl -d $mdev -V "$cam [fmt:$format/$size field:$field]"
++    $mediactl -d $mdev -V "$atx [fmt:$format/$size field:$field]"
+     $mediactl -d $mdev -V "$csi [fmt:$format/$size field:$field]"
+     yavta -f RGB565 -s $size --field $field $vdev
  }
 +
-+static const struct dev_pm_ops renesas_sdhi_sys_dmac_dev_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+			pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(tmio_mmc_host_runtime_suspend,
-+			tmio_mmc_host_runtime_resume,
-+			NULL)
-+};
++# HDMI can only output to TXA on the ADV748x
++mc_propagate_hdmi() {
++    vin="$1"
 +
-+static struct platform_driver renesas_sys_dmac_sdhi_driver = {
-+	.driver		= {
-+		.name	= "sh_mobile_sdhi",
-+		.pm	= &renesas_sdhi_sys_dmac_dev_pm_ops,
-+		.of_match_table = renesas_sdhi_sys_dmac_of_match,
-+	},
-+	.probe		= renesas_sdhi_sys_dmac_probe,
-+	.remove		= renesas_sdhi_remove,
-+};
++    mc_propagate_format "$hdminame" 1 "$txaname" 0 "$csi40name" 1 "$vin"
++}
 +
-+module_platform_driver(renesas_sys_dmac_sdhi_driver);
++# CVBS is only currently supported on TXB
++mc_propagate_cvbs() {
++    vin="$1"
 +
-+MODULE_DESCRIPTION("Renesas SDHI driver");
-+MODULE_AUTHOR("Magnus Damm");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:sh_mobile_sdhi");
++    mc_propagate_format "$cvbsname" 8 "$txbname" 0 "$csi40name" 1 "$vin"
++}
 -- 
-2.1.4
+2.7.4
