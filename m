@@ -1,81 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35836 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750765AbdEPQjC (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:55378 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754889AbdEKIDk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 May 2017 12:39:02 -0400
-Received: by mail-it0-f67.google.com with SMTP id 67so15420462itx.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 16 May 2017 09:39:02 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-References: <148999891819.20118.10698449216124481808.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 May 2017 18:39:00 +0200
-Message-ID: <CAMuHMdVdEGs5TLySBUVUhbis41rrG+AcFcVbLdzijJAEtMpvaA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/09] arm64: dts: r8a7795: IPMMU upstream integration V3
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 11 May 2017 04:03:40 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
+Date: Thu, 11 May 2017 10:03:29 +0200
+Message-Id: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+	Hi Sato-san, Rich,
 
-On Mon, Mar 20, 2017 at 9:35 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> arm64: dts: r8a7795: IPMMU upstream integration V3
->
-> [PATCH v3 01/09] arm64: dts: r8a7795: Add IPMMU device nodes
-> [PATCH v3 02/09] arm64: dts: r8a7795: Tie Audio/SYS-DMAC to IPMMU-DS0/1 and MP1
-> [PATCH v3 03/09] arm64: dts: r8a7795: Point DU/VSPD via FCPVD to IPMMU-VI
-> [PATCH v3 04/09] arm64: dts: r8a7795: Point FDP1 via FCPF to IPMMU-VP
-> [PATCH v3 05/09] arm64: dts: r8a7795: Point VSPBC/VSPBD via FCPVB to IPMMU-VP
-> [PATCH v3 06/09] arm64: dts: r8a7795: Point VSPI via FCPVI to IPMMU-VP
-> [PATCH v3 07/09] arm64: dts: r8a7795: Connect Ethernet-AVB to IPMMU-DS0
-> [PATCH v3 08/09] arm64: dts: r8a7795: Connect SATA to IPMMU-HC
-> [PATCH v3 09/09] arm64: dts: r8a7795: Enable IPMMU-VI, VP, MP1, DS0, DS1 and MM
->
-> This series adds DT nodes for IPMMU instances on r8a7795 together with
-> connections to various r8a7795 on-chip devices such as Audio-DMAC, SYS-DMAC,
-> Ethernet-AVB, SATA and a bunch of multimedia devices that make use of FCP.
->
-> With these patches applied a white list enabled IPMMU driver may be used
-> to check silicon revision and then enable IPMMU in the known working cases.
->
-> The recommended IPMMU driver patch stack consists of the following series:
->  [PATCH v7 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V7
->  [PATCH v3 00/09] iommu/ipmmu-vmsa: r8a7795 support V3
->  [PATCH v3 0/3] iommu/ipmmu-vmsa: r8a7796 support V3
->
-> The final patch in the series enable IPMMU support for all IPMMU instances
-> on r8a7795 that are used by IPMMU devices listed above with one exception.
-> The exception is the SATA device connected to IPMMU-HC which still is disabled
-> pending IPMMU USB integration support. I expect IPMMU USB integration to be
-> handled as a second step once this series is agreed on.
->
-> The DT binding for r8a7795 has since long been included in mainline
-> and this series implements support following such format:
+Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
 
-I dropped this series from today's renesas-drivers because of two reasons:
-  1. IPMMU is busted in v4.12-rc1,
-  2. The addition of support for R-Car H3 ES2.0 complicated the addition of
-      IPMMU devices nodes and links from their slaves.
+    sh-pfc pfc-sh7722: pin 0 already registered
+    sh-pfc pfc-sh7722: error during pin registration
+    sh-pfc pfc-sh7722: could not register: -22
+    sh-pfc: probe of pfc-sh7722 failed with error -22
 
-This also means I couldn't apply Morimoto-san's "[PATCH v2 --/--] arm64:
-renesas: r8a7796: add IPMMU support for AUDIO DMAC", as it depends
-on your series.
+pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+Apparently GPIO_PTQ7 was defined in the enum, but never used.
+If enum values are defined, but never used, pinmux_pins[] contains
+(zero-filled) holes.  Hence such entries are treated as pin zero, which
+was registered before, and pinctrl registration fails.
+
+I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
+("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
+drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
+drivers/pinctrl/core.c already had the check.
+
+Some scripting revealed a few more broken drivers:
+  - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
+  - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
+    PINMUX_GPIO().
+
+Patch 1 fixes the issue on sh7722, and was tested.
+Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
+to lack of hardware.
+
+Changes compared to v1:
+  - Replace fake error messages by references to sh7722,
+  - Add Reviewed-by, Tested-by.
+
+Thanks for applying!
+
+Geert Uytterhoeven (4):
+  sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+  sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
+    registration
+  sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+    registration
+  sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+    registration
+
+ arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+ arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+ arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
+ arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
+ 4 files changed, 7 insertions(+), 11 deletions(-)
+
+-- 
+2.7.4
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
