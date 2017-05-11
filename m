@@ -1,49 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36227 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932245AbdEKJAf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 05:00:35 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20170426071120.GB25517@verge.net.au>
-References: <1493141638-28940-1-git-send-email-geert+renesas@glider.be> <20170426071120.GB25517@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 May 2017 11:00:33 +0200
-Message-ID: <CAMuHMdW7ZrYd8tr0iHB5p1zO_cY=kro+HVc+jNEe1b1Bz0S-Fw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: Use pm_clk_no_clocks() helper i.s.o. direct access
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <SG2PR06MB1165D80A4642F5A2F27FB6AA8AEB0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
+ <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
+ <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com> <SG2PR06MB1165D80A4642F5A2F27FB6AA8AEB0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 11 May 2017 15:48:55 +0200
+Message-ID: <CACRpkdb4-nDs2dPMgn5EBHqibeiKAcjKfiDyG3cu5y13nM3CCg@mail.gmail.com>
+Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 26, 2017 at 9:11 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Apr 25, 2017 at 07:33:58PM +0200, Geert Uytterhoeven wrote:
->> The pm_subsys_data.clock_list member exists only if CONFIG_PM_CLK=y.
->> Hence direct accesses to this field break compile-testing on platforms
->> where CONFIG_PM_CLK=n.
+On Fri, May 5, 2017 at 2:45 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Friday, May 05, 2017, Linus Walleij wrote:
+>> > This is the part of the whole "DT is for hardware description only" that
+>> doesn't really make sense to me.
 >>
->> To fix this, use the pm_clk_no_clocks() helper instead, for which a
->> dummy version is provided if CONFIG_PM_CLK=n.
+>> OK yeah we do hardware description AND configuration.
 >>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> And we never do interpreted languages.
+>>
+>> And then there is a bunch of grayzone things. For example we have a
+>> linux,input binding for connecting keypresses to certain Linux input codes.
+>> That is really grayzone, but very useful.
 >
-> Reviewed-by: Simon Horman <simon.horman@netronome.com>
+> Ah....
+>
+>         compatible = "linux,grayzone";
+>
+> Thanks for the reply. I'll stop ranting now.
+> Of course, I'll still probably screw it up again on a future patch somehow...
 
-Thanks, queued in clk-renesas-for-v4.13.
+For this driver I remarked in some other thread that we may
+end up with some
 
-Gr{oetje,eeting}s,
+"renesas,bidirectional"
 
-                        Geert
+or so. But yeah, it's kinda grayzone too.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
