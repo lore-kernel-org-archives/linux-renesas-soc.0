@@ -1,62 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58493 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753106AbdEJNZu (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:36120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932712AbdEKR1U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 09:25:50 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 09/16] rcar-vin: decrease buffers needed to capture
-Date: Wed, 10 May 2017 16:25:49 +0300
-Message-ID: <12667105.QFsJaJFvAH@avalon>
-In-Reply-To: <20170314185957.25253-10-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-10-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        Thu, 11 May 2017 13:27:20 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sakari.ailus@iki.fi
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC PATCH v2 4/4] rcar-csi2: Map to fwnode endpoints rather than port parents
+Date: Thu, 11 May 2017 18:21:23 +0100
+Message-Id: <186d73c1b32bd8648dfc22f42154c083f6a4dd83.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Thank you for the patch.
+To support multiple async subdevices on a single device, we need to
+identify which subdevice maps directly for each connection.
 
-On Tuesday 14 Mar 2017 19:59:50 Niklas S=F6derlund wrote:
-> It's possible to grab frames using only one buffer, this should never=
+Instead of mapping the port parent to the async notifier, use the fwnode
+of the direct endpoint node. This will use a DT path which includes the
+port, and allow correct matching of the correct subdevice.
 
-> have been set to anything else then 1.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-dma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
-> b/drivers/media/platform/rcar-vin/rcar-dma.c index
-> 9ccd5ff55e192514..c37f7a2993fb5565 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-> @@ -1183,7 +1183,7 @@ int rvin_dma_probe(struct rvin_dev *vin, int ir=
-q)
->  =09q->ops =3D &rvin_qops;
->  =09q->mem_ops =3D &vb2_dma_contig_memops;
->  =09q->timestamp_flags =3D V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-> -=09q->min_buffers_needed =3D 2;
-> +=09q->min_buffers_needed =3D 1;
->  =09q->dev =3D vin->dev;
->=20
->  =09ret =3D vb2_queue_init(q);
-
---=20
-Regards,
-
-Laurent Pinchart
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index 3400c0783c8e..0ddb25cb661b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -648,7 +648,7 @@ static const struct v4l2_subdev_internal_ops rcar_csi2_internal_ops = {
+ 
+ static int rcar_csi2_parse_dt_subdevice(struct rcar_csi2 *priv)
+ {
+-	struct device_node *remote, *ep, *rp;
++	struct device_node *ep, *rp;
+ 	struct v4l2_fwnode_endpoint v4l2_ep;
+ 	int ret;
+ 
+@@ -675,18 +675,10 @@ static int rcar_csi2_parse_dt_subdevice(struct rcar_csi2 *priv)
+ 	rp = of_parse_phandle(ep, "remote-endpoint", 0);
+ 	of_graph_parse_endpoint(rp, &priv->remote.endpoint);
+ 
+-	remote = of_graph_get_remote_port_parent(ep);
+-	of_node_put(ep);
+-	if (!remote) {
+-		dev_err(priv->dev, "No subdevice found for endpoint '%s'\n",
+-			of_node_full_name(ep));
+-		return -EINVAL;
+-	}
+-
+-	priv->remote.asd.match.fwnode.fwnode = of_fwnode_handle(remote);
++	priv->remote.asd.match.fwnode.fwnode = of_fwnode_handle(rp);
+ 	priv->remote.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
+ 
+-	dev_dbg(priv->dev, "Found '%s'\n", of_node_full_name(remote));
++	dev_dbg(priv->dev, "Found '%s'\n", of_node_full_name(rp));
+ 
+ 	return 0;
+ }
+-- 
+git-series 0.9.1
