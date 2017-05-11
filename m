@@ -1,105 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:43874 "EHLO pokefinder.org"
+Received: from www.zeus03.de ([194.117.254.33]:49356 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752916AbdERUOj (ORCPT
+        id S1756649AbdEKPTd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 16:14:39 -0400
-Date: Thu, 18 May 2017 22:14:36 +0200
+        Thu, 11 May 2017 11:19:33 -0400
+Date: Thu, 11 May 2017 17:19:30 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+To: Simon Horman <horms@verge.net.au>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH v2 0/6] mmc: renesas-sdhi: refactor DMA support
-Message-ID: <20170518201436.umh3d22rf25cqh2b@ninjato>
+Message-ID: <20170511151930.GB5484@katana>
 References: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
+ <CAK8P3a3b0cLAB_+52uXQU8NsSJ4PjAXo7JPAKKoYWiUqiP3Rjw@mail.gmail.com>
+ <20170511145451.GE21895@verge.net.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="icrln2wct4gezue2"
+        protocol="application/pgp-signature"; boundary="mojUlQ0s9EVzWg2t"
 Content-Disposition: inline
-In-Reply-To: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <20170511145451.GE21895@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---icrln2wct4gezue2
+--mojUlQ0s9EVzWg2t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 10, 2017 at 11:25:24AM +0200, Simon Horman wrote:
-> Hi Wolfram, Hi Ulf, Hi Arnd, Hi all,
->=20
-> the intention of this patch-set is to refactor the DMA support in
-> the Renesas SDHI driver in order to make it easier to add support
-> for using the SDHI hardware with different DMA implementations.
->=20
-> This is based on earlier work, posted as "[PATCH/RFC v3 0/6] mmc:
-> renesas_sdhi: add R-Car Gen-3 DMA support". It attempts to implement
-> the reworking of the driver proposed by Arnd[1] in his review of that
-> patch-set.
->=20
-> [1] http://www.spinics.net/lists/linux-mmc/msg38004.html
->=20
-> Unlike that patch-set this patch-set does not add support for
-> R-Car Gen-3 DMA. Rather it focuses on refactoring the code.
->=20
-> Changes between RFC and v2:
->=20
-> * Drop filenames from comment at top of source
-> * Consistently check for if (host->dma_ops) before using dma_ops.
->=20
->=20
-> Simon Horman (6):
->   mmc: tmio: drop filenames from comment at top of source
->   mmc: renesas-sdhi, tmio: make dma more modular
->   mmc: tmio: rename tmio_mmc_{pio =3D> core}.c
->   mmc: renesas-sdhi: rename tmio_mmc_dma.c =3D> renesas_sdhi_sys_dmac.c
->   mmc: renesas-sdhi: rename sh_mobile_sdhi.c =3D> renesas_sdhi_core.c
->   mmc: renesas-sdhi: make renesas_sdhi_sys_dmac main module file
+> Wolfram, Ulf, could this series be considered for v4.13?
 
-Thanks Simon for this series! The file layout looks in deed much better
-now. And some light testing on my Lager didn't show any regressions. I
-have only minor comments which do not have anything to do with the code,
-so already here:
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-The comments:
-
-* MAINTAINERS file needs updating because of the new filenames
-* I'd prefer the _GPL variant of EXPORT_SYMBOL unless we have a reason
-  to not use it?
-* maybe this is also a good time to update the Renesas copyrights in
-  file headers?
-* checkpatch reports some whitespace errors on patch 6. I assume they
-  were already there in the code you moved around. Still, it might be
-  a nice occasion to fix those?
-
-Thanks again, nice work!
-
-   Wolfram
+I'd really hope so, because I'd like to have this first before other
+SDHI stuff we are currently working on. I plan to review this series
+next week.
 
 
---icrln2wct4gezue2
+--mojUlQ0s9EVzWg2t
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkeAKcACgkQFA3kzBSg
-KbZHzg//e7NN3rmB3CJlBXswtI+6tXwbtzJlKoJGDZiVEqrfhMarEnUcOGWwwcvi
-Yy2lV+ffLsC5cSjLc33/8b8C9J5DttPI6PFuNR+eJ6E4EM4PS1gfIym+ym3zJcKJ
-Pn3aft3cO/4KeBTJq2lZcMoJidNy4Ma0u3lRdovGZ70fqHybmJKcyk6QJOesFE5Z
-f5IFw7dbkn4ovxgvVuc/UOtyw6G6sXOT7fuLPEbEjI8pyGGEiNHSaI6H/fqmQ8KK
-wq13ZH3fUIrljLnBtEdEIufFDOiZbj+lFL2nvjz/95K05fdfip5235qZ6/QKLFKm
-pCTb60shCzEm4aXAAlIwOo12C/SoDdzX1yqGq8aRgzqlAnsRGjtJ8RmYJWFY1pDf
-Nz5ADaW64tErsjRZG7uM3YU/HnU4YAtm1KHTEDBaUhP5Bh6e+g5OGbKW+dWyM2HN
-UjycjtchbGK4Erbbt6bzMKSWnQckPsS6U7NFIKUZZgoUpGOMvHrsGT+aVf6/f6Ai
-Sg9AuTK5ZGeEJKWXC5rtJZOe+emfbNsFM+E3h7PRslfLmrJti0W4ssP7/2mZlSOp
-PkzCVa3Ppr3nf6uhoqndSv7s2Hp7P2dWdmD31qrABXYPGAq+Gnja1jbeQSBBMJaa
-rT9X+nNBYzsWFq5XwHUw21SXgVqxTCLOfNT+Nh7fQwOAzXERxbg=
-=OBDc
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkUgP0ACgkQFA3kzBSg
+KbY7gxAAruASkSM3inIAIaKGITnOUM/K4tIBy07KrP/gFBfY1J3n8mFZk98srsPy
+Hn/nM97NAJgBlbhhWcs1eH32eIs9kBVoUQwzPuqPmd04ThV4idB5KL/4RaJEd/XF
+z5rpkFpzk9Wcl05HHC4cJXSo4BPMnBjcuJbkb1B2iWksh5mQqUVnf27sBtLQtwLw
+T/30D3DCcJdiowfDxy6DO7lbUTj+vjwp1zjmVRovy8L+NtkzJMg83JwOJ9vLTYPb
+8UCFbMUxkeqKRn7lgnlvJdzkh9n4aN6qMSx7HUIg1XfFbohNJmHSR9USy7Cx4dfA
+XIaH66ImqqQzWjl3izt69RQfUnZOxe6BN6TvjpgUNhIenifgixV4lN6aq9MRUXy3
+4nUSdjW9grl848tNYTzYwrAmd9R5SDmPcitBb5e0UL0zm4/+nXe3gfze1q4AsVoc
+EBXOfW7/K0WtWnPdO68nlwcrpPgE/vFVs/faYx7BR7CbG6zCAz3YpcsmmgQOPwzF
+WNI/c55YnX45Pg1P5rway6cD61//5sbgkP35Dws6k/JwSx/OL+VFGHvvXLUFKbnM
++LNllmP5EzmY1MFW+1UWPHeEXit7ThKfBk5a/8lN5l2JPhdRvAP9PTC4FXZOEkR8
+6CB3MXQL52q173RkxPugBQzzgCCpnHRuzQnGyMr66GNGNxD4hR8=
+=wr4c
 -----END PGP SIGNATURE-----
 
---icrln2wct4gezue2--
+--mojUlQ0s9EVzWg2t--
