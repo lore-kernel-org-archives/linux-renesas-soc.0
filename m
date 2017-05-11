@@ -1,108 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58106 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754486AbdEKJvX (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:50724 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755131AbdEKIDl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 05:51:23 -0400
+        Thu, 11 May 2017 04:03:41 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent clocks on ES2.0
-Date: Thu, 11 May 2017 11:51:15 +0200
-Message-Id: <1494496275-2433-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 3/4] sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
+Date: Thu, 11 May 2017 10:03:32 +0200
+Message-Id: <1494489813-27321-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Cfr. the errata of April 14, 2017, for the R-Car Gen3 Hardware Manual
-Rev. 0.53E.
+Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+If enum values are defined, but never used, pinmux_pins[] contains
+(zero-filled) holes.  Such entries are treated as pin zero, which was
+registered before, thus leading to pinctrl registration failures, as
+seen on sh7722:
 
-These have no user-visible effect, as the clock frequencies stay the
-same.
+    sh-pfc pfc-sh7722: pin 0 already registered
+    sh-pfc pfc-sh7722: error during pin registration
+    sh-pfc pfc-sh7722: could not register: -22
+    sh-pfc: probe of pfc-sh7722 failed with error -22
 
-Fixes: 5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
+Remove GPIO_PH[0-7] from the enum to fix this.
+
+Fixes: 41797f75486d8ca3 ("sh: Add pinmux for sh7264")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-To be queued in clk-renesas-for-v4.13.
+Untested due to lack of hardware.
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 39 ++++++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+v2:
+  - Replace fake error messages by reference to sh7722,
+  - Add Reviewed-by.
+---
+ arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 5808803cec487774..c091a8e024b88d32 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -166,7 +166,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
- 	DEF_MOD("hscif1",		 519,	R8A7795_CLK_S3D1),
- 	DEF_MOD("hscif0",		 520,	R8A7795_CLK_S3D1),
- 	DEF_MOD("thermal",		 522,	R8A7795_CLK_CP),
--	DEF_MOD("pwm",			 523,	R8A7795_CLK_S3D4),
-+	DEF_MOD("pwm",			 523,	R8A7795_CLK_S0D12),
- 	DEF_MOD("fcpvd3",		 600,	R8A7795_CLK_S2D1), /* ES1.x */
- 	DEF_MOD("fcpvd2",		 601,	R8A7795_CLK_S0D2),
- 	DEF_MOD("fcpvd1",		 602,	R8A7795_CLK_S0D2),
-@@ -222,22 +222,22 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
- 	DEF_MOD("imr2",			 821,	R8A7795_CLK_S0D2),
- 	DEF_MOD("imr1",			 822,	R8A7795_CLK_S0D2),
- 	DEF_MOD("imr0",			 823,	R8A7795_CLK_S0D2),
--	DEF_MOD("gpio7",		 905,	R8A7795_CLK_CP),
--	DEF_MOD("gpio6",		 906,	R8A7795_CLK_CP),
--	DEF_MOD("gpio5",		 907,	R8A7795_CLK_CP),
--	DEF_MOD("gpio4",		 908,	R8A7795_CLK_CP),
--	DEF_MOD("gpio3",		 909,	R8A7795_CLK_CP),
--	DEF_MOD("gpio2",		 910,	R8A7795_CLK_CP),
--	DEF_MOD("gpio1",		 911,	R8A7795_CLK_CP),
--	DEF_MOD("gpio0",		 912,	R8A7795_CLK_CP),
-+	DEF_MOD("gpio7",		 905,	R8A7795_CLK_S3D4),
-+	DEF_MOD("gpio6",		 906,	R8A7795_CLK_S3D4),
-+	DEF_MOD("gpio5",		 907,	R8A7795_CLK_S3D4),
-+	DEF_MOD("gpio4",		 908,	R8A7795_CLK_S3D4),
-+	DEF_MOD("gpio3",		 909,	R8A7795_CLK_S3D4),
-+	DEF_MOD("gpio2",		 910,	R8A7795_CLK_S3D4),
-+	DEF_MOD("gpio1",		 911,	R8A7795_CLK_S3D4),
-+	DEF_MOD("gpio0",		 912,	R8A7795_CLK_S3D4),
- 	DEF_MOD("can-fd",		 914,	R8A7795_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A7795_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A7795_CLK_S3D4),
--	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S3D2),
--	DEF_MOD("i2c5",			 919,	R8A7795_CLK_S3D2),
-+	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S0D6),
-+	DEF_MOD("i2c5",			 919,	R8A7795_CLK_S0D6),
- 	DEF_MOD("i2c-dvfs",		 926,	R8A7795_CLK_CP),
--	DEF_MOD("i2c4",			 927,	R8A7795_CLK_S3D2),
--	DEF_MOD("i2c3",			 928,	R8A7795_CLK_S3D2),
-+	DEF_MOD("i2c4",			 927,	R8A7795_CLK_S0D6),
-+	DEF_MOD("i2c3",			 928,	R8A7795_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A7795_CLK_S3D2),
- 	DEF_MOD("i2c1",			 930,	R8A7795_CLK_S3D2),
- 	DEF_MOD("i2c0",			 931,	R8A7795_CLK_S3D2),
-@@ -350,6 +350,7 @@ static const struct mssr_mod_reparent r8a7795es1_mod_reparent[] __initconst = {
- 	{ MOD_CLK_ID(219), R8A7795_CLK_S3D1 },	/* SYS-DMAC0 */
- 	{ MOD_CLK_ID(501), R8A7795_CLK_S3D1 },	/* AUDMAC1 */
- 	{ MOD_CLK_ID(502), R8A7795_CLK_S3D1 },	/* AUDMAC0 */
-+	{ MOD_CLK_ID(523), R8A7795_CLK_S3D4 },	/* PWM */
- 	{ MOD_CLK_ID(601), R8A7795_CLK_S2D1 },	/* FCPVD2 */
- 	{ MOD_CLK_ID(602), R8A7795_CLK_S2D1 },	/* FCPVD1 */
- 	{ MOD_CLK_ID(603), R8A7795_CLK_S2D1 },	/* FCPVD0 */
-@@ -380,6 +381,18 @@ static const struct mssr_mod_reparent r8a7795es1_mod_reparent[] __initconst = {
- 	{ MOD_CLK_ID(821), R8A7795_CLK_S2D1 },	/* IMR2 */
- 	{ MOD_CLK_ID(822), R8A7795_CLK_S2D1 },	/* IMR1 */
- 	{ MOD_CLK_ID(823), R8A7795_CLK_S2D1 },	/* IMR0 */
-+	{ MOD_CLK_ID(905), R8A7795_CLK_CP },	/* GPIO7 */
-+	{ MOD_CLK_ID(906), R8A7795_CLK_CP },	/* GPIO6 */
-+	{ MOD_CLK_ID(907), R8A7795_CLK_CP },	/* GPIO5 */
-+	{ MOD_CLK_ID(908), R8A7795_CLK_CP },	/* GPIO4 */
-+	{ MOD_CLK_ID(909), R8A7795_CLK_CP },	/* GPIO3 */
-+	{ MOD_CLK_ID(910), R8A7795_CLK_CP },	/* GPIO2 */
-+	{ MOD_CLK_ID(911), R8A7795_CLK_CP },	/* GPIO1 */
-+	{ MOD_CLK_ID(912), R8A7795_CLK_CP },	/* GPIO0 */
-+	{ MOD_CLK_ID(918), R8A7795_CLK_S3D2 },	/* I2C6 */
-+	{ MOD_CLK_ID(919), R8A7795_CLK_S3D2 },	/* I2C5 */
-+	{ MOD_CLK_ID(927), R8A7795_CLK_S3D2 },	/* I2C4 */
-+	{ MOD_CLK_ID(928), R8A7795_CLK_S3D2 },	/* I2C3 */
- };
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7264.h b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
+index 4d1ef6d74bd6050c..2ae0e938b657a109 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7264.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
+@@ -43,9 +43,7 @@ enum {
+ 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
+ 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
  
+-	/* Port H */
+-	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
+-	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
++	/* Port H - Port H does not have a Data Register */
+ 
+ 	/* Port I - not on device */
  
 -- 
 2.7.4
