@@ -1,94 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39383 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935392AbdEKOx2 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:57532 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755244AbdEKL7D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 10:53:28 -0400
-Date: Thu, 11 May 2017 16:53:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Thu, 11 May 2017 07:59:03 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] arm64: dts: r8a7795: salvator-x: Add support for
- R-Car H3 ES2.0
-Message-ID: <20170511145324.GC21895@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/3] arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0
+Date: Thu, 11 May 2017 13:58:53 +0200
+Message-Id: <1494503934-23367-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1494503934-23367-1-git-send-email-geert+renesas@glider.be>
 References: <1494503934-23367-1-git-send-email-geert+renesas@glider.be>
- <1494503934-23367-3-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1494503934-23367-3-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 11, 2017 at 01:58:53PM +0200, Geert Uytterhoeven wrote:
-> Split off support for Salvator-X boards with the ES1.x revision of the
-> R-Car H3 SoC into a separate file.  The main r8a7795-salvator-x.dts file
-> now corresponds to Salvator-X with R-Car H3 ES2.0 or later.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - Rebase on top of common Salvator-X board support extraction,
-> 
-> v2:
->   - Use a separate file for ES1.x instead of for ES2.0, so
->     r8a7795-salvator-x.dts always corresponds to the board with the
->     latest SoC revision,
->   - Add a dash between SoC part number and revision, for compatibility
->     with the BSP,
->   - Enhance the hardware description from basic support to everything
->     already supported on ES1.x.
-> ---
->  arch/arm64/boot/dts/renesas/Makefile                                  | 1 +
->  .../renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts}    | 0
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts                    | 4 ++--
->  3 files changed, 3 insertions(+), 2 deletions(-)
->  copy arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts} (100%)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-> index 1618e0a3c81d48bd..b6c723d8f6875f2d 100644
-> --- a/arch/arm64/boot/dts/renesas/Makefile
-> +++ b/arch/arm64/boot/dts/renesas/Makefile
-> @@ -1,4 +1,5 @@
->  dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-> +dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
+Split off support for Salvator-X boards with the ES1.x revision of the
+R-Car H3 SoC into a separate file.  The main r8a7795-salvator-x.dts file
+now corresponds to Salvator-X with R-Car H3 ES2.0 or later.
 
-Probably this was already discussed but I wonder if there is any value
-in a CONFIG_ARCH_R8A7795_ES1 Kconfig symbol to allow more fine grained
-control over what is compiled into the kernel.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Rebase on top of common Salvator-X board support extraction,
 
->  dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
->  
->  always		:= $(dtb-y)
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-> similarity index 100%
-> copy from arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> copy to arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> index be5b2e966ea1700e..fc26909dfa47b61f 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> @@ -11,11 +11,11 @@
->  #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
->  
->  /dts-v1/;
-> -#include "r8a7795-es1.dtsi"
-> +#include "r8a7795.dtsi"
->  #include "salvator-x.dtsi"
->  
->  / {
-> -	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
-> +	model = "Renesas Salvator-X board based on r8a7795 ES2.0+";
->  	compatible = "renesas,salvator-x", "renesas,r8a7795";
->  
->  	memory@48000000 {
-> -- 
-> 2.7.4
-> 
+v2:
+  - Use a separate file for ES1.x instead of for ES2.0, so
+    r8a7795-salvator-x.dts always corresponds to the board with the
+    latest SoC revision,
+  - Add a dash between SoC part number and revision, for compatibility
+    with the BSP,
+  - Enhance the hardware description from basic support to everything
+    already supported on ES1.x.
+---
+ arch/arm64/boot/dts/renesas/Makefile                                  | 1 +
+ .../renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts}    | 0
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts                    | 4 ++--
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+ copy arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts} (100%)
+
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 1618e0a3c81d48bd..b6c723d8f6875f2d 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ 
+ always		:= $(dtb-y)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+similarity index 100%
+copy from arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+copy to arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index be5b2e966ea1700e..fc26909dfa47b61f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -11,11 +11,11 @@
+ #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
+ 
+ /dts-v1/;
+-#include "r8a7795-es1.dtsi"
++#include "r8a7795.dtsi"
+ #include "salvator-x.dtsi"
+ 
+ / {
+-	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
++	model = "Renesas Salvator-X board based on r8a7795 ES2.0+";
+ 	compatible = "renesas,salvator-x", "renesas,r8a7795";
+ 
+ 	memory@48000000 {
+-- 
+2.7.4
