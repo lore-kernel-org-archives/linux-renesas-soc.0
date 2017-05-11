@@ -1,16 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:50430 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:49820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751028AbdEKLiB (ORCPT
+        id S1751975AbdEKLdR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 07:38:01 -0400
+        Thu, 11 May 2017 07:33:17 -0400
 From: Kieran Bingham <kbingham@kernel.org>
 To: niklas.soderlund@ragnatech.se
 Cc: linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCHv2] ADV748x: Reconfigure all scripts to support multi-subdevs
-Date: Thu, 11 May 2017 12:37:52 +0100
-Message-Id: <1494502672-17552-1-git-send-email-kbingham@kernel.org>
+Subject: [PATCH] ADV748x: Reconfigure all scripts to support multi-subdevs
+Date: Thu, 11 May 2017 12:33:10 +0100
+Message-Id: <1494502390-17168-1-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -23,23 +23,14 @@ Reconfigure all of the scripts to support propagating formats across
 these extra entities
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
 ---
-Hi Niklas,
-
-Updates to the VIN-Tests to support multiple ADV749x Subdevices
-
-v2:
- - scripts/m3.sh was missing!
-
  h3-compliance.sh     |  8 ++++----
  h3-qv4l2.sh          |  6 +++---
  m3-compliance.sh     |  8 ++++----
  m3-qv4l2.sh          |  6 +++---
  scripts/h3.sh        |  7 +++++--
- scripts/m3.sh        |  7 +++++--
  scripts/vin-tests.sh | 20 ++++++++++++++++++--
- 7 files changed, 42 insertions(+), 20 deletions(-)
+ 6 files changed, 37 insertions(+), 18 deletions(-)
 
 diff --git a/h3-compliance.sh b/h3-compliance.sh
 index 5a1fddfc01ce..a60f928291b0 100755
@@ -132,21 +123,6 @@ index 440f55f82eb7..5882af1f295b 100644
 @@ -23,5 +23,8 @@ csi21name="rcar_csi2 fea90000.csi2"
  csi40name="rcar_csi2 feaa0000.csi2"
  csi41name="rcar_csi2 feab0000.csi2"
- 
--cvbsname="adv7482 4-0034"
--hdminame="adv7482 4-0070"
-+cvbsname="adv748x 4-0070 afe"
-+hdminame="adv748x 4-0070 hdmi"
-+
-+txaname="adv748x 4-0070 txa"
-+txbname="adv748x 4-0070 txb"
-diff --git a/scripts/m3.sh b/scripts/m3.sh
-index 38362107104b..20320d91c9ee 100644
---- a/scripts/m3.sh
-+++ b/scripts/m3.sh
-@@ -21,5 +21,8 @@ vinname7="rcar_vin e6ef7000.video"
- csi20name="rcar_csi2 fea80000.csi2"
- csi40name="rcar_csi2 feaa0000.csi2"
  
 -cvbsname="adv7482 4-0034"
 -hdminame="adv7482 4-0070"
