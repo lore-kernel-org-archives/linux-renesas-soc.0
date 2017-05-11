@@ -1,224 +1,141 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v4 6/7] dt-bindings: media: Add Renesas R-Car DRIF binding
-Date: Tue,  2 May 2017 14:26:14 +0100
-Message-Id: <20170502132615.42134-7-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170502132615.42134-1-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:36130 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932712AbdEKR1O (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 11 May 2017 13:27:14 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sakari.ailus@iki.fi
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC PATCH v2 0/4] RFC: ADV748x HDMI/Analog video receiver
+Date: Thu, 11 May 2017 18:21:19 +0100
+Message-Id: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add binding documentation for Renesas R-Car Digital Radio Interface
-(DRIF) controller.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v4:
- - port property description modified as suggested by Laurent.
- - removed renesas vendor tag from sync-active end-point property (Rob)
----
- .../devicetree/bindings/media/renesas,drif.txt     | 187 +++++++++++++++++++++
- 1 file changed, 187 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
+This is an RFC for the Analog Devices ADV748x driver, and follows on from a
+previous posting by Niklas Söderlund [0] of an earlier incarnation of this
+driver.
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt b/Documentation/devicetree/bindings/media/renesas,drif.txt
-new file mode 100644
-index 000000000000..12428f969958
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
-@@ -0,0 +1,187 @@
-+Renesas R-Car Gen3 Digital Radio Interface controller (DRIF)
-+------------------------------------------------------------
-+
-+R-Car Gen3 DRIF is a SPI like receive only slave device. A general
-+representation of DRIF interfacing with a master device is shown below.
-+
-++---------------------+                +---------------------+
-+|                     |-----SCK------->|CLK                  |
-+|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-+|                     |-----SD0------->|D0                   |
-+|                     |-----SD1------->|D1                   |
-++---------------------+                +---------------------+
-+
-+As per datasheet, each DRIF channel (drifn) is made up of two internal
-+channels (drifn0 & drifn1). These two internal channels share the common
-+CLK & SYNC. Each internal channel has its own dedicated resources like
-+irq, dma channels, address space & clock. This internal split is not
-+visible to the external master device.
-+
-+The device tree model represents each internal channel as a separate node.
-+The internal channels sharing the CLK & SYNC are tied together by their
-+phandles using a new property called "renesas,bonding". For the rest of
-+the documentation, unless explicitly stated, the word channel implies an
-+internal channel.
-+
-+When both internal channels are enabled they need to be managed together
-+as one (i.e.) they cannot operate alone as independent devices. Out of the
-+two, one of them needs to act as a primary device that accepts common
-+properties of both the internal channels. This channel is identified by a
-+new property called "renesas,primary-bond".
-+
-+To summarize,
-+   - When both the internal channels that are bonded together are enabled,
-+     the zeroth channel is selected as primary-bond. This channels accepts
-+     properties common to all the members of the bond.
-+   - When only one of the bonded channels need to be enabled, the property
-+     "renesas,bonding" or "renesas,primary-bond" will have no effect. That
-+     enabled channel can act alone as any other independent device.
-+
-+Required properties of an internal channel:
-+-------------------------------------------
-+- compatible: "renesas,r8a7795-drif" if DRIF controller is a part of R8A7795 SoC.
-+	      "renesas,rcar-gen3-drif" for a generic R-Car Gen3 compatible device.
-+	      When compatible with the generic version, nodes must list the
-+	      SoC-specific version corresponding to the platform first
-+	      followed by the generic version.
-+- reg: offset and length of that channel.
-+- interrupts: associated with that channel.
-+- clocks: phandle and clock specifier of that channel.
-+- clock-names: clock input name string: "fck".
-+- dmas: phandles to the DMA channels.
-+- dma-names: names of the DMA channel: "rx".
-+- renesas,bonding: phandle to the other channel.
-+
-+Optional properties of an internal channel:
-+-------------------------------------------
-+- power-domains: phandle to the respective power domain.
-+
-+Required properties of an internal channel when:
-+	- It is the only enabled channel of the bond (or)
-+	- If it acts as primary among enabled bonds
-+--------------------------------------------------------
-+- pinctrl-0: pin control group to be used for this channel.
-+- pinctrl-names: must be "default".
-+- renesas,primary-bond: empty property indicating the channel acts as primary
-+			among the bonded channels.
-+- port: child port node corresponding to the data input, in accordance with
-+	the video interface bindings defined in
-+	Documentation/devicetree/bindings/media/video-interfaces.txt. The port
-+	node must contain at least one endpoint.
-+
-+Optional endpoint property:
-+---------------------------
-+- sync-active: Indicates sync signal polarity, 0/1 for low/high respectively.
-+	       This property maps to SYNCAC bit in the hardware manual. The
-+	       default is 1 (active high).
-+
-+Example
-+--------
-+
-+SoC common dtsi file
-+
-+		drif00: rif@e6f40000 {
-+			compatible = "renesas,r8a7795-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f40000 0 0x64>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 515>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x20>, <&dmac2 0x20>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			renesas,bonding = <&drif01>;
-+			status = "disabled";
-+		};
-+
-+		drif01: rif@e6f50000 {
-+			compatible = "renesas,r8a7795-drif",
-+				     "renesas,rcar-gen3-drif";
-+			reg = <0 0xe6f50000 0 0x64>;
-+			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 514>;
-+			clock-names = "fck";
-+			dmas = <&dmac1 0x22>, <&dmac2 0x22>;
-+			dma-names = "rx", "rx";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			renesas,bonding = <&drif00>;
-+			status = "disabled";
-+		};
-+
-+
-+Board specific dts file
-+
-+(1) Both internal channels enabled:
-+-----------------------------------
-+
-+When interfacing with a third party tuner device with two data pins as shown
-+below.
-+
-++---------------------+                +---------------------+
-+|                     |-----SCK------->|CLK                  |
-+|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-+|                     |-----SD0------->|D0                   |
-+|                     |-----SD1------->|D1                   |
-++---------------------+                +---------------------+
-+
-+pfc {
-+	...
-+
-+	drif0_pins: drif0 {
-+		groups = "drif0_ctrl_a", "drif0_data0_a",
-+				 "drif0_data1_a";
-+		function = "drif0";
-+	};
-+	...
-+}
-+
-+&drif00 {
-+	pinctrl-0 = <&drif0_pins>;
-+	pinctrl-names = "default";
-+	renesas,primary-bond;
-+	status = "okay";
-+	port {
-+		drif0_ep: endpoint {
-+		     remote-endpoint = <&tuner_ep>;
-+		};
-+	};
-+};
-+
-+&drif01 {
-+	status = "okay";
-+};
-+
-+(2) Internal channel 1 alone is enabled:
-+----------------------------------------
-+
-+When interfacing with a third party tuner device with one data pin as shown
-+below.
-+
-++---------------------+                +---------------------+
-+|                     |-----SCK------->|CLK                  |
-+|       Master        |-----SS-------->|SYNC  DRIFn (slave)  |
-+|                     |                |D0 (unused)          |
-+|                     |-----SD-------->|D1                   |
-++---------------------+                +---------------------+
-+
-+pfc {
-+	...
-+
-+	drif0_pins: drif0 {
-+		groups = "drif0_ctrl_a", "drif0_data1_a";
-+		function = "drif0";
-+	};
-+	...
-+}
-+
-+&drif01 {
-+	pinctrl-0 = <&drif0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	port {
-+		drif0_ep: endpoint {
-+		     remote-endpoint = <&tuner_ep>;
-+		     sync-active = <0>;
-+		};
-+	};
-+};
+Aside from a few bug fixes, and considerable refactoring this driver:
+ - is refactored to multiple object files
+ - defines multiple sub devices for the output paths.
+ - has independent controls for both HDMI and Analog video paths
+
+ - Specifies 'endpoint' matching instead of 'device' in async framework
+
+These patches are based up on Niklas' pending RVin work [1] and Sakari's fwnode
+series [2]
+
+TLDR:
+ This series uses the fwnode for the 'endpoint' as a matching for the async
+ notifier framework.  If accepted, I propose changing all async notifier users
+ to use this method of matching, rather than the fwnode of the root device node
+
+ADV748x
+=======
+The ADV7481 and ADV7482 support two video pipelines which can run independently
+of each other, with each pipeline terminating in a CSI-2 output: TXA (4-Lane)
+and TXB (1-Lane)
+
+The ADV7480 (Not yet included here), ADV7481, and ADV7482 are all derivatives,
+with the following features
+
+            Analog   HDMI  MHL  4-Lane  1-Lane
+              In      In         CSI     CSI
+ ADV7480               X    X     X
+ ADV7481      X        X    X     X       X
+ ADV7482      X        X          X       X
+
+Implementation
+==============
+
+This RFC creates 4 entities. AFE (CVBS/Analog In), HDMI, TXA and TXB.  At probe
+time, the DT is parsed to identify the endpoints for each of these nodes, and
+those are used for async matching of the CSI2 (TXA/TXB) entities in the master
+driver. The HDMI and AFE entities are then registered after a successful
+registration of both the CSI2 entities.
+
+(Known) Todo's
+==============
+
+Further potential development areas include:
+ - ADV7480 Support (No AFE)
+ - MHL support (Not present on ADV7482)
+ - EDID support
+ - CEC Support
+ - Configurable I2C addressing
+ - Interrupt handling for format changes and hotplug detect.
+ - Entity locking, rather than global state locking
+   - Including making sure the I2C paths are serialised correctly!
+
+However, this driver and series is functional without the above, though if
+there are mandatory areas which block mainline integration please let me know
+and I will prioritise that in development.
+
+I appreciate that there are still some 'rough edges' in the driver, which is
+still under development, but all comments are welcome.
+
+Discussion Topics
+=================
+
+Async Subdev endpoint matching
+
+   This series sets the subdevice fwnode in adv748x_csi2_probe() as the handle
+   to the endpoint for the specific port used to map the phandles.
+
+   This differs to the standard/default use of the device fwnode.
+
+   This change is required as we have 2 CSI entities which must be matched
+   based on their endpoint and port from the same device-tree device.
+
+   The RVin driver is thus modified not to register it's notifier to look for
+   phandle endpoint, rather than the endpoints port parent.
+
+   This is a critical change, and if deemed the 'correct' way forward, I would
+   propose changing all users of the async framework to use this matching.
+
+References
+==========
+[0] http://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg05196.html
+[1] https://git.ragnatech.se/linux rcar-vin-elinux-v7
+[2] https://www.mail-archive.com/linux-media@vger.kernel.org/msg111332.html
+
+Kieran Bingham (4):
+  media: i2c: adv748x: add adv748x driver
+  arm64: dts: r8a7795: salvator-x: enable VIN, CSI and ADV7482
+  arm64: dts: r8a7796: salvator-x: enable VIN, CSI and ADV7482
+  rcar-csi2: Map to fwnode endpoints rather than port parents
+
+ Documentation/devicetree/bindings/media/i2c/adv748x.txt |  63 +-
+ MAINTAINERS                                             |   6 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts      | 147 ++-
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts      | 147 ++-
+ drivers/media/i2c/Kconfig                               |  10 +-
+ drivers/media/i2c/Makefile                              |   1 +-
+ drivers/media/i2c/adv748x/Makefile                      |   7 +-
+ drivers/media/i2c/adv748x/adv748x-afe.c                 | 599 ++++++++-
+ drivers/media/i2c/adv748x/adv748x-core.c                | 698 +++++++++-
+ drivers/media/i2c/adv748x/adv748x-csi2.c                | 373 +++++-
+ drivers/media/i2c/adv748x/adv748x-hdmi.c                | 671 +++++++++-
+ drivers/media/i2c/adv748x/adv748x.h                     | 201 +++-
+ drivers/media/platform/rcar-vin/rcar-csi2.c             |  14 +-
+ 13 files changed, 2926 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
+ create mode 100644 drivers/media/i2c/adv748x/Makefile
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x.h
+
+base-commit: 00b01d855fcd0c40279ddc0f91488a02b14d633e
 -- 
-2.12.2
+git-series 0.9.1
