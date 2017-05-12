@@ -1,173 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49820 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751975AbdEKLdR (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33929 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752459AbdELMNh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 07:33:17 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: niklas.soderlund@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] ADV748x: Reconfigure all scripts to support multi-subdevs
-Date: Thu, 11 May 2017 12:33:10 +0100
-Message-Id: <1494502390-17168-1-git-send-email-kbingham@kernel.org>
+        Fri, 12 May 2017 08:13:37 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170511144534.GB21895@verge.net.au>
+References: <1494496275-2433-1-git-send-email-geert+renesas@glider.be> <20170511144534.GB21895@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 May 2017 14:13:35 +0200
+Message-ID: <CAMuHMdV4HFCG37U7ZYnM9Dq4Sfj-EfHPMTR=GAUxH8mhZ4zutQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent
+ clocks on ES2.0
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Thu, May 11, 2017 at 4:45 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, May 11, 2017 at 11:51:15AM +0200, Geert Uytterhoeven wrote:
+>> Cfr. the errata of April 14, 2017, for the R-Car Gen3 Hardware Manual
+>> Rev. 0.53E.
+>>
+>> These have no user-visible effect, as the clock frequencies stay the
+>> same.
+>>
+>> Fixes: 5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> To be queued in clk-renesas-for-v4.13.
+>
+> This matches the documentation I have.
+>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-The ADV748x used for testing now has entities to represent the HDMI,
-CVBS, TXA and TXB ports.
+Thanks, queued in clk-renesas-for-v4.13.
 
-Reconfigure all of the scripts to support propagating formats across
-these extra entities
+Gr{oetje,eeting}s,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- h3-compliance.sh     |  8 ++++----
- h3-qv4l2.sh          |  6 +++---
- m3-compliance.sh     |  8 ++++----
- m3-qv4l2.sh          |  6 +++---
- scripts/h3.sh        |  7 +++++--
- scripts/vin-tests.sh | 20 ++++++++++++++++++--
- 6 files changed, 37 insertions(+), 18 deletions(-)
+                        Geert
 
-diff --git a/h3-compliance.sh b/h3-compliance.sh
-index 5a1fddfc01ce..a60f928291b0 100755
---- a/h3-compliance.sh
-+++ b/h3-compliance.sh
-@@ -12,16 +12,16 @@ test_compliance_begin
- mc_reset
- mc_set_link "$csi40name" 1 "$vinname0" 1
- mc_set_link "$csi20name" 1 "$vinname1" 1
--mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
-+mc_propagate_hdmi "$vinname0"
-+mc_propagate_cvbs "$vinname1"
- test_compliance_mc $vin0
- test_compliance_mc $vin1
- 
- mc_reset
- mc_set_link "$csi40name" 1 "$vinname2" 1
- mc_set_link "$csi20name" 1 "$vinname4" 1
--mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname2"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname4"
-+mc_propagate_hdmi "$vinname2"
-+mc_propagate_cvbs "$vinname4"
- test_compliance_mc $vin2
- test_compliance_mc $vin4
- 
-diff --git a/h3-qv4l2.sh b/h3-qv4l2.sh
-index 9a23ef06c5f6..28bb31538230 100755
---- a/h3-qv4l2.sh
-+++ b/h3-qv4l2.sh
-@@ -10,9 +10,9 @@ mc_set_link "$csi40name" 1 "$vinname0" 1
- mc_set_link "$csi20name" 1 "$vinname1" 1
- mc_set_link "$csi20name" 1 "$vinname6" 1
- 
--mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname6"
-+mc_propagate_hdmi "$vinname0"
-+mc_propagate_cvbs "$vinname1"
-+mc_propagate_cvbs "$vinname6"
- 
- # Test HDMI
- test_qv4l2 $vin0
-diff --git a/m3-compliance.sh b/m3-compliance.sh
-index 28d63e06cd51..a196ce2b5074 100755
---- a/m3-compliance.sh
-+++ b/m3-compliance.sh
-@@ -12,16 +12,16 @@ test_compliance_begin
- mc_reset
- mc_set_link "$csi40name" 1 "$vinname0" 1
- mc_set_link "$csi20name" 1 "$vinname1" 1
--mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
-+mc_propagate_hdmi "$vinname0"
-+mc_propagate_cvbs "$vinname1"
- test_compliance_mc $vin0
- test_compliance_mc $vin1
- 
- mc_reset
- mc_set_link "$csi40name" 1 "$vinname2" 1
- mc_set_link "$csi20name" 1 "$vinname4" 1
--mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname2"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname4"
-+mc_propagate_hdmi "$vinname2"
-+mc_propagate_cvbs "$vinname4"
- test_compliance_mc $vin2
- test_compliance_mc $vin4
- 
-diff --git a/m3-qv4l2.sh b/m3-qv4l2.sh
-index 31c79864c842..816795fe2210 100755
---- a/m3-qv4l2.sh
-+++ b/m3-qv4l2.sh
-@@ -10,9 +10,9 @@ mc_set_link "$csi40name" 1 "$vinname0" 1
- mc_set_link "$csi20name" 1 "$vinname1" 1
- mc_set_link "$csi20name" 1 "$vinname6" 1
- 
--mc_propagate_format "$hdminame" 10 "$csi40name" 1 "$vinname0"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname1"
--mc_propagate_format "$cvbsname" 11 "$csi20name" 1 "$vinname6"
-+mc_propagate_hdmi "$vinname0"
-+mc_propagate_cvbs "$vinname1"
-+mc_propagate_cvbs "$vinname6"
- 
- # Test HDMI
- test_qv4l2 $vin0
-diff --git a/scripts/h3.sh b/scripts/h3.sh
-index 440f55f82eb7..5882af1f295b 100644
---- a/scripts/h3.sh
-+++ b/scripts/h3.sh
-@@ -23,5 +23,8 @@ csi21name="rcar_csi2 fea90000.csi2"
- csi40name="rcar_csi2 feaa0000.csi2"
- csi41name="rcar_csi2 feab0000.csi2"
- 
--cvbsname="adv7482 4-0034"
--hdminame="adv7482 4-0070"
-+cvbsname="adv748x 4-0070 afe"
-+hdminame="adv748x 4-0070 hdmi"
-+
-+txaname="adv748x 4-0070 txa"
-+txbname="adv748x 4-0070 txb"
-diff --git a/scripts/vin-tests.sh b/scripts/vin-tests.sh
-index 24fb83c76959..35d37321682a 100644
---- a/scripts/vin-tests.sh
-+++ b/scripts/vin-tests.sh
-@@ -171,8 +171,9 @@ mc_propagate_format() {
-     mdev=$(mc_get_mdev)
- 
-     cam="'$1':$2"
--    csi="'$3':$4"
--    vin="$5"
-+    atx="'$3':$4"
-+    csi="'$5':$6"
-+    vin="$7"
- 
-     format=$($mediactl -d $mdev --get-v4l2 "$cam" | sed 's|.*fmt:\([^/]*\).*|\1|')
-     size=$($mediactl -d $mdev --get-v4l2 "$cam" | sed 's|.*fmt:[^/]*/\([^ ]*\).*|\1|')
-@@ -182,6 +183,21 @@ mc_propagate_format() {
-     echo "format: $format size: $size field: $field vdev: $vdev"
- 
-     $mediactl -d $mdev -V "$cam [fmt:$format/$size field:$field]"
-+    $mediactl -d $mdev -V "$atx [fmt:$format/$size field:$field]"
-     $mediactl -d $mdev -V "$csi [fmt:$format/$size field:$field]"
-     yavta -f RGB565 -s $size --field $field $vdev
- }
-+
-+# HDMI can only output to TXA on the ADV748x
-+mc_propagate_hdmi() {
-+    vin="$1"
-+
-+    mc_propagate_format "$hdminame" 1 "$txaname" 0 "$csi40name" 1 "$vin"
-+}
-+
-+# CVBS is only currently supported on TXB
-+mc_propagate_cvbs() {
-+    vin="$1"
-+
-+    mc_propagate_format "$cvbsname" 8 "$txbname" 0 "$csi40name" 1 "$vin"
-+}
--- 
-2.7.4
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
