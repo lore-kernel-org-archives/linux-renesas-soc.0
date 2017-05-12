@@ -1,79 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46482 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752050AbdESMa4 (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36355 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756782AbdELMGG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 08:30:56 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Yasushi SHOJI <yashi@atmark-techno.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFT PATCH] mmc: tmio: make sure SDIO gets reinitialized after resume
-Date: Fri, 19 May 2017 14:30:52 +0200
-Message-Id: <20170519123052.26565-1-wsa+renesas@sang-engineering.com>
+        Fri, 12 May 2017 08:06:06 -0400
+Received: by mail-io0-f193.google.com with SMTP id f102so5533899ioi.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 May 2017 05:06:06 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <87k25n9bsd.wl%kuninori.morimoto.gx@renesas.com>
+References: <87o9uz9bv5.wl%kuninori.morimoto.gx@renesas.com> <87k25n9bsd.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 May 2017 14:06:05 +0200
+Message-ID: <CAMuHMdXU5gV8HP+4N_Qky4dCVupBrw52yhgkziViUVFh2p3Ktg@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] pinctrl: sh-pfc: r8a7796: add Audio clock pin support
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To achieve that, we set the registers in the generic HW reset routine
-which gets called at both, init and resume. We also make sure to move
-SDIO initialization before reset gets called in probe().
+On Fri, May 12, 2017 at 2:13 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch addresses a report I got from Shimoda-san. I can't really test it
-because the SDIO cards I have all require MMC_PM_KEEP_POWER to suspend and
-that we don't support. So, I send this out to ask for testing. At least it
-didn't cause regressions for the setup I used. To make testing easier, this
-is *not* put on top of Simon's SDHI DMA rework patches, so it should apply
-on current upstream and development branches.
+I.e. will queue in sh-pfc-for-v4.13.
 
- drivers/mmc/host/tmio_mmc_pio.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index a2d92f10501bdd..5e87fcaa99d430 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -229,6 +229,12 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
- 		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
- 	msleep(10);
-+
-+	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
-+		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
-+		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
-+	}
-+
- }
- 
- static void tmio_mmc_reset_work(struct work_struct *work)
-@@ -1221,6 +1227,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (_host->native_hotplug)
- 		pm_runtime_get_noresume(&pdev->dev);
- 
-+	_host->sdio_irq_enabled = false;
-+	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
-+		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
-+
- 	tmio_mmc_clk_stop(_host);
- 	tmio_mmc_reset(_host);
- 
-@@ -1237,13 +1247,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 
- 	_host->sdcard_irq_mask &= ~irq_mask;
- 
--	_host->sdio_irq_enabled = false;
--	if (pdata->flags & TMIO_MMC_SDIO_IRQ) {
--		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
--		sd_ctrl_write16(_host, CTL_SDIO_IRQ_MASK, _host->sdio_irq_mask);
--		sd_ctrl_write16(_host, CTL_TRANSACTION_CTL, 0x0001);
--	}
--
- 	spin_lock_init(&_host->lock);
- 	mutex_init(&_host->ios_lock);
- 
--- 
-2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
