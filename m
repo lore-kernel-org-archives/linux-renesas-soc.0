@@ -1,52 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48314 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751197AbdEBIfz (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34577 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756373AbdELG53 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 04:35:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Fixes for v4.12
-Date: Tue,  2 May 2017 10:35:44 +0200
-Message-Id: <cover.1493713942.git.horms+renesas@verge.net.au>
+        Fri, 12 May 2017 02:57:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <f6f888b797402e75ad542742ddc63d4829622489.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <f6f888b797402e75ad542742ddc63d4829622489.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 May 2017 08:57:27 +0200
+Message-ID: <CAMuHMdXVGPjgujkSXdVR5YVvZu-Bm+-u6rVNGrbeOZpCHE1cBQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/4] arm64: dts: r8a7796: salvator-x: enable VIN,
+ CSI and ADV7482
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Kieran,
 
-Please consider these Renesas ARM based SoC fixes for v4.12.
+On Thu, May 11, 2017 at 7:21 PM, Kieran Bingham <kbingham@kernel.org> wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>
+> Provide bindings between the VIN, CSI and the ADV7482 on the r8a7796.
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 147 ++++++++++++++-
 
-* Fix from Geert Uytterhoeven to avoid an undefined reference
-  to `rcar_rst_read_mode_pins' in the case where the R-Car RST driver
-  is not included.
+You have to do this only once, in salvator-x.dtsi ;-)
 
+Gr{oetje,eeting}s,
 
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+                        Geert
 
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v4.12
-
-for you to fetch changes up to 7b4ccb3c466f62bbf2f4dd5d6a143d945a6f3051:
-
-  soc: renesas: Provide dummy rcar_rst_read_mode_pins() for compile-testing (2017-04-28 10:07:36 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Fixes for v4.12
-
-* Provide dummy rcar_rst_read_mode_pins() for compile-testing
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      soc: renesas: Provide dummy rcar_rst_read_mode_pins() for compile-testing
-
- include/linux/soc/renesas/rcar-rst.h | 5 +++++
- 1 file changed, 5 insertions(+)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
