@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41167 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37528 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758000AbdEOMcr (ORCPT
+        with ESMTP id S1751323AbdELRDU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 May 2017 08:32:47 -0400
+        Fri, 12 May 2017 13:03:20 -0400
 Reply-To: kieran.bingham@ideasonboard.com
 Subject: Re: [RFC PATCH v2 1/4] media: i2c: adv748x: add adv748x driver
 References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
@@ -14,8 +14,8 @@ To: Sakari Ailus <sakari.ailus@iki.fi>,
 Cc: laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <399f5310-1270-40a0-843a-3a07ebf47f38@ideasonboard.com>
-Date: Mon, 15 May 2017 13:32:41 +0100
+Message-ID: <379a5f79-69bc-88a8-ea7f-2625e2f4d16e@ideasonboard.com>
+Date: Fri, 12 May 2017 18:03:15 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170512164633.GL3227@valkosipuli.retiisi.org.uk>
 Content-Type: text/plain; charset=windows-1252
@@ -23,32 +23,30 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sakari
+Hi Sakari,
 
 On 12/05/17 17:46, Sakari Ailus wrote:
 > Hi Kieran,
 > 
 > Thanks for the patches!
-
-Thankyou for the review!
-
+> 
 > Would you have a media-ctl -p && media-ctl --print-dot (or the PS file) to
 > see how this looks like in practice?
 
-The file I linked to on Friday showed the immutable links version (I have that
-in as a temporary workaround until the links are correctly ignored by rvin /
-handled by core correctly)
+Replying quickly to only this question for the moment :)
 
-So again, here is the posted 'immutable' version, which represents this patch
-version:
+Please see:
+  http://janet.linuxembedded.co.uk/board-salvator-mc.png
 
-    http://janet.linuxembedded.co.uk/adv748x-immutable.png
+Thanks for the review - I'll go through on Monday. The weekend begins :)
 
-But the end goal of this patchset will be the following configuration:
+--
+Regards
 
-    http://janet.linuxembedded.co.uk/adv748x-non-immutable.png
+Kieran
 
 
+> 
 > Please see my comments below.
 > 
 > On Thu, May 11, 2017 at 06:21:20PM +0100, Kieran Bingham wrote:
@@ -200,9 +198,6 @@ But the end goal of this patchset will be the following configuration:
 >> +	depends on VIDEO_V4L2 && I2C
 > 
 > VIDEO_V4L2_SUBDEV_API && 
-
-Added.
-
 > 
 >> +	---help---
 >> +	  V4l2 subdevice driver for the Analog Devices
@@ -332,9 +327,6 @@ Added.
 > And you can unindent the rest by one tab stop. I think it'd look nicer that
 > way.
 > 
-
-I agree.
-
 >> +		*std = V4L2_STD_UNKNOWN;
 >> +
 >> +		/* Standard not valid if there is no signal */
@@ -387,9 +379,6 @@ I agree.
 > with that in any way and I'd say it's for historical reasons.
 > 
 > But please keep this for now...
-
-Ok.
-
 > 
 >> +
 >> +	fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
@@ -548,17 +537,7 @@ Ok.
 > 
 > I wonder if this is necessary. Do you expect the mutex to be taken for
 > extended periods of time?
-
-It looks like the only other adv* driver to take a lock here is the 7180.
-Perhaps that is where the heritage of this code derived from.
-
-I don't think the locking should be held for a long time anywhere, but I will
-try to go through and consider all the locking throughout the code base.
-
-At the moment I think anything that calls adv748x_afe_status() should be locked
-to ensure serialisation through adv748x_afe_read_ro_map().
-
-
+> 
 >> +	if (ret)
 >> +		return ret;
 >> +
@@ -619,10 +598,7 @@ to ensure serialisation through adv748x_afe_read_ro_map().
 >> +		return -EINVAL;
 > 
 > That check exists in v4l2-subdev.c.
-
-Excellent :)
-Done (all of them)
-
+> 
 >> +
 >> +	code->code = MEDIA_BUS_FMT_UYVY8_2X8;
 >> +
@@ -799,24 +775,10 @@ Done (all of them)
 >> +	switch (ctrl->id) {
 >> +	case V4L2_CID_PIXEL_RATE:
 > 
-> I presume you will know when PIXEL_RATE changes? 
-
-No interrupt handling in here yet to handle input changes - but I'm working on
-that. At the least it could be set on format configurations.
-
-
-> You can use
+> I presume you will know when PIXEL_RATE changes? You can use
 > v4l2_ctrl_s_ctrl_int64() to change it. That way control events will be
 > emitted correctly, too.
-
-Thanks - I didn't know about those helpers. I'll try to add where applicable.
-
-These controls are indirectly read through the CSI2 'pass-through' entity.
-
-Do I need to add some event handling in there to update it's control value to
-propagate the events?
-
-
+> 
 > PIXEL_RATE is set READONLY (control flag) by the framework already.
 > 
 >> +		width = 720;
@@ -896,17 +858,7 @@ propagate the events?
 > return async->fwnode == fwnode ||
 > 	port_parent(parent(async->fwnode)) == fwnode ||
 > 	async->fwnode == port_parent(parent(fwnode));
-
-
-If we adapt the core to match against endpoint comparisons and device node
-comparisons then yes we wouldn't have to adapt everything, I.e. we wouldn't have
-to change all the async devices - but we would have to adapt all the bus/bridge
-drivers (those who perform the v4l2_async_notifier_register() call) as they must
-register their notifier against an endpoint if they are to ever be able to
-connect to an ADV748x or other device which will rely upon multiple endpoints.
-
-
-
+> 
 >> +
 >> +	for (i = ADV748X_AFE_SINK_AIN0; i <= ADV748X_AFE_SINK_AIN7; i++)
 >> +		state->afe.pads[i].flags = MEDIA_PAD_FL_SINK;
@@ -924,12 +876,6 @@ connect to an ADV748x or other device which will rely upon multiple endpoints.
 > 
 > If v4l2_async_register_subdev() fails, you should release the control
 > handler, shouldn't you?
-
-Good spot.
-Looks like I should call media_entity_cleanup() if the controls fail too :)
-
-Done for both AFE/HDMI.
-
 > 
 >> +	if (ret)
 >> +		return ret;
@@ -1431,14 +1377,6 @@ Done for both AFE/HDMI.
 > relinquish your use of v4l2_set_subdevdata() --- it always points to the I�C
 > client in that case. You'll just need to dig your device state in a bit
 > different manner in that case.
-
-I don't believe I can use v4l2_i2c_subdev_init, as it tries to unregister the
-i2c clients automatically.
-
-My use case here breaks the one subdevice -> one i2c client assumption held by
-the v4l2_i2c_subdev_init() and v4l2_device_unregister() code paths.
-
-
 > 
 >> +
 >> +	/* initialize name */
@@ -1461,36 +1399,7 @@ the v4l2_i2c_subdev_init() and v4l2_device_unregister() code paths.
 > 
 > Would of_graph_get_remote_node() do this more simple? Not necessarily, just
 > wondering.
-
-I'm not certain I understand, but I don't think so.
-
-Up to 12 ports could potentially be mapped in the DT. I want to enumerate all of
-them:
-
-enum adv748x_ports {
-	ADV748X_PORT_HDMI = 0,
-	ADV748X_PORT_AIN1 = 1,
-	ADV748X_PORT_AIN2 = 2,
-	ADV748X_PORT_AIN3 = 3,
-	ADV748X_PORT_AIN4 = 4,
-	ADV748X_PORT_AIN5 = 5,
-	ADV748X_PORT_AIN6 = 6,
-	ADV748X_PORT_AIN7 = 7,
-	ADV748X_PORT_AIN8 = 8,
-	ADV748X_PORT_TTL = 9,
-	ADV748X_PORT_TXA = 10,
-	ADV748X_PORT_TXB = 11,
-	ADV748X_PORT_MAX = 12,
-};
-
-Whilst currently we are hardwired to input from AIN8 on the AFE (a Todo to
-adapt), I would envisage that there might be entities described in the DT to
-state which ports have connections on them.
-
-I'd almost like to see the end video node being able to select from those
-(available) inputs as well - but that's out of scope for now - and we don't have
-a way to forward the 'inputs' through to the master driver.
-
+> 
 >> +	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
 >> +		ret = of_graph_parse_endpoint(ep_np, &ep);
 >> +		if (!ret) {
@@ -1590,9 +1499,6 @@ a way to forward the 'inputs' through to the master driver.
 >> +		return ret;
 > 
 > Remember mutex_destroy(&state->mutex); . Perhaps worth using goto?
-
-Yes, looks like it in this case :)
-
 > 
 >> +	}
 >> +
@@ -1651,11 +1557,6 @@ Yes, looks like it in this case :)
 >> +	ret = adv748x_csi2_probe(state, &state->txb);
 > 
 > Don't forget to clean up state->txa if this fails.
-
-And all the others.
-
-Certainly going to be a goto-chain here....
-
 > 
 >> +	if (ret) {
 >> +		adv_err(state, "Failed to probe TXB");
@@ -1740,10 +1641,6 @@ Certainly going to be a goto-chain here....
 > 
 > The parentheses are extra.
 > 
-
-I got them as a "buy one get one free" :)
-(Removed)
-
 >> +}
 >> +
 >> +static struct v4l2_subdev *adv748x_csi2_get_remote_sd(struct media_pad *local)
@@ -1764,9 +1661,6 @@ I got them as a "buy one get one free" :)
 > Or:
 > 
 > return pad ? media...(pad->entity) : NULL;
-
-Less lines - I like this better :)
-
 > 
 >> +}
 >> +
@@ -1799,12 +1693,6 @@ Less lines - I like this better :)
 > Could you set up links first? It'd be really annoying to clean up the mess
 > after the sub-device nodes have been registered. Actually --- it's not even
 > doable at the moment.
-
-No - I don't think I can set up links until the devices are registered so that I
-have access to the media-dev.
-
-I think I've already tried that :)
-
 > 
 >> +	if (ret) {
 >> +		adv_err(state, "Failed to setup entity links");
@@ -1873,12 +1761,6 @@ I think I've already tried that :)
 >> +	ret = v4l2_async_subnotifier_register(&tx->sd, &tx->notifier);
 > 
 > How do things work out if there's a failure here? Any idea?
-
-It would invoke the error path in v4l2_device_register_subdev() and start
-calling media_device_unregister_entity()
-
-Do you envisage that we will need to handle something extra here?
-
 > 
 >> +	if (ret < 0) {
 >> +		adv_err(state, "Notifier registration failed\n");
@@ -1917,9 +1799,6 @@ Do you envisage that we will need to handle something extra here?
 >> +	ret = v4l2_subdev_call(src, video, s_stream, enable);
 > 
 > return v4l2_subdev_call();
-
-Ack.
-
 > 
 >> +
 >> +	return ret;
@@ -1952,12 +1831,6 @@ Ack.
 > 
 > This won't happen. I think a lot of drivers assume that.
 > 
-
-Do you mean just remove the default case ? Won't this cause false positives on
-static analysers etc?
-
-
-
 >> +		return NULL;
 >> +	}
 >> +}
@@ -2056,11 +1929,6 @@ static analysers etc?
 >> +		ctrls.controls = &ectrl;
 > 
 > Can you use v4l2_ctrl_g_ctrl_int64()?
-
-Ah yes, cal_get_external_info() from ti-vpe gives a good example.
-
-That's a much cleaner ctrl passthrough :)
-
 > 
 >> +
 >> +		ret = v4l2_g_ext_ctrls(src->ctrl_handler, &ctrls);
@@ -2139,9 +2007,6 @@ That's a much cleaner ctrl passthrough :)
 >> +	ret = v4l2_async_register_subdev(&tx->sd);
 > 
 > Clean up the control handler on error?
-
-Done as per HDMI/AFE :)
-
 > 
 >> +	if (ret)
 >> +		return ret;
@@ -2177,11 +2042,7 @@ Done as per HDMI/AFE :)
 >> +#include <linux/v4l2-dv-timings.h>
 > 
 > Why is that header here...? Is it a uAPI header? Then add uapi/.
-
-Hmmm yes it looks like it is the uapi header.... but it finds it without...
-Updated.
-
-
+> 
 >> +
 >> +#include <media/v4l2-ctrls.h>
 >> +#include <media/v4l2-device.h>
@@ -2209,11 +2070,6 @@ Updated.
 > Is this necessary? Aren't the uninitialised fields zeroed if any field in a
 > struct is initialised, also on those versions of GCC? (Of course there have
 > been bugs, but nothing rings a bell.)
-
-Looks like it is necessary:
- https://patchwork.kernel.org/patch/2851851/
-
-
 > 
 >> +	/* Min pixelclock value is unknown */
 >> +	V4L2_INIT_BT_TIMINGS(ADV748X_HDMI_MIN_WIDTH, ADV748X_HDMI_MAX_WIDTH,
@@ -2304,9 +2160,6 @@ Looks like it is necessary:
 >> +	return !!((val & BIT(7)) && (val & BIT(5)));
 > 
 > No need for !!; casting non-zero value to bool will be true.
-
-Removed!!
-
 > 
 >> +}
 >> +
@@ -2321,11 +2174,6 @@ Removed!!
 > 
 > I think I'd have explicit error handling. A lot of users of the control
 > value would be upset if they'd get 0.
-
-
-Error check added to : adv748x_hdmi_query_dv_timings()
-
-
 > 
 >> +	return ((a << 1) | (b >> 7)) * 1000000 + (b & 0x7f) * 1000000 / 128;
 >> +}
@@ -2414,10 +2262,6 @@ Error check added to : adv748x_hdmi_query_dv_timings()
 >> +	cp_clrset(state, 0x91, 0x40, bt->interlaced ? 0x40 : 0x00);
 > 
 > timings->bt.interlaced ?
-
-Sure
-
-
 > 
 >> +
 >> +	return 0;
@@ -2616,9 +2460,6 @@ Sure
 >> +		return -EINVAL;
 > 
 > Ditto.
-
-Removed all of those.
-
 > 
 >> +
 >> +	adv748x_hdmi_fill_format(state, &format->format);
@@ -2774,21 +2615,6 @@ Removed all of those.
 > 
 > Could you use the same mutex for the control handler? It'd make things
 > simpler...
-
-I believe the lock is about keeping the i2c accesses to the hardware serialised.
-
-Isn't the lock for the control handler already taken by core? Or are you
-implying that I can register state->mutex as the lock for cotnrol handler ...
-
-Interesting - I see in v4l2-ctrls.h that I can indeed do that!
-
- * @lock:	Lock to control access to this handler and its controls.
- *		May be replaced by the user right after init.
-
-I'll think this over... as I review all the locking.
-
-Maybe it's not so bad keeping a single lock for the whole of the ADV748x
-
 > 
 >> +	if (ret)
 >> +		return ret;
