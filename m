@@ -1,87 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48331 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932925AbdELJQp (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36569 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756111AbdELG4d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 May 2017 05:16:45 -0400
-Date: Fri, 12 May 2017 11:16:39 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: geert@glider.be, linux-pwm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com
-Subject: Re: [PATCH v2 0/8] r8a7795/6 Salvator-X PWM enablement
-Message-ID: <20170512091636.GG27979@verge.net.au>
-References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 12 May 2017 02:56:33 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <b7f89ec984dcb1cd14c61de72b43c6e55fd80b88.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.5d2526b759f71c06d51df279c3d5885aca476fb6.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <b7f89ec984dcb1cd14c61de72b43c6e55fd80b88.1494523203.git-series.kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 May 2017 08:56:32 +0200
+Message-ID: <CAMuHMdWXUkqSz6XUtsBjJH1U=fS8w7PAw0Av8WM+Uzi3N+w0Zw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/4] arm64: dts: r8a7795: salvator-x: enable VIN,
+ CSI and ADV7482
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 27, 2017 at 04:37:35PM +0200, Ulrich Hecht wrote:
-> Hi!
-> 
-> Here's the revised series enabling PWMs on r8a7795 and r8a7796 Salvator-X
-> boards.
-> 
-> This revision addresses the issues found by Geert and adds Laurent's
-> backlight support patch, including a version for r8a7796.
-> 
-> CU
-> Uli
-> 
-> Changes since v1:
-> - PWM clock is S0D12, not S3D4
-> - dts: fix register lengths, add resets
-> - only enable one set of pins for each PWM
-> - add backlight support
-> 
-> 
-> Laurent Pinchart (1):
->   arm64: dts: r8a7795: salvator-x: Add panel backlight support
-> 
-> Ryo Kodama (2):
->   clk: renesas: r8a7796: add PWM clock
->   arm64: dts: r8a7796-salvator-x: Add PWM device support
-> 
-> Takeshi Kihara (3):
->   pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
->   arm64: dts: r8a7796: Add PWM device nodes
->   arm64: dts: r8a7795-salvator-x: Enable PWM2
+Hi Kieran,
 
-I did not notice any regressions on salvator-x/r8a7796 after applying up
-the dts patches without the clk and pinctrl patches. So I have queued up
-the dts patches as follows:
+On Thu, May 11, 2017 at 7:21 PM, Kieran Bingham <kbingham@kernel.org> wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>
+> Provide bindings between the VIN, CSI and the ADV7482 on the r8a7795.
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-* arm64: dts: r8a7796: Add PWM device nodes
-  -> applied
+> index 7a8986edcdc0..e295f041b36a 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
 
-* arm64: dts: r8a7795: salvator-x: Add panel backlight support
-* arm64: dts: r8a7795-salvator-x: Enable PWM2
-  -> applied to salvator-x.dtsi instead of r8a7796-salvator-x.dts
+I think this should be added to salvator-x.dtsi instead.
 
-* arm64: dts: r8a7796: salvator-x: Add panel backlight support
-* arm64: dts: r8a7796-salvator-x: Add PWM device support
-  -> not applied as they would be the same changes as those above
-     applied to salvator-x.dtsi
+> @@ -387,6 +403,68 @@
+>         };
+>  };
+>
+> +&i2c4 {
+> +       status = "okay";
 
-> Ulrich Hecht (2):
->   arm64: dts: r8a7796: salvator-x: Add panel backlight support
->   dt-bindings: pwm: Add R-Car M3-W device tree bindings
+Please extend the existing "&i2c4 { ... }" section.
 
-I took the liberty of reposting the dt-bindings patch with an updated To/Cc
-list.
+Gr{oetje,eeting}s,
 
->  .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |   1 +
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  34 +++++
->  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  35 +++++
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  70 ++++++++++
->  drivers/clk/renesas/r8a7796-cpg-mssr.c             |   1 +
->  drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 153 +++++++++++++++++++++
->  6 files changed, 294 insertions(+)
-> 
-> -- 
-> 2.7.4
-> 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
