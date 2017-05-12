@@ -1,7 +1,28 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:62181 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755171AbdELM5c (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 12 May 2017 08:57:32 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        jmondi <jacopo@jmondi.org>,
+        "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Russell King - ARM Linux" <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Fri, 12 May 2017 12:57:27 +0000
+Message-ID: <SG2PR06MB1165C25E20836CB0B3423AF28AE20@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
  <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
  <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
@@ -10,126 +31,45 @@ References: <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
  <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
  <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
- <20170508160120.GB25206@w540> <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
- <20170508172516.GC25206@w540> <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
-From: Dong Aisheng <dongas86@gmail.com>
-Date: Tue, 23 May 2017 18:08:31 +0800
-Message-ID: <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: jmondi <jacopo@jmondi.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+ <20170508160120.GB25206@w540>
+ <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
+ <20170508172516.GC25206@w540>
+ <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+ <CAMuHMdXK9VmghZy1RounHWn-HDqgeT_12V_9RVihiuiajn+RDg@mail.gmail.com>
+ <CACRpkdYsE1oeDp1HnYAFMKG2iPTg06cAtD41vxrmZPP70MJQdA@mail.gmail.com>
+ <CAMuHMdXK7YB2zN4fz9XiqTuydxp7VvVV+wSgXWUYBB0evkp8dw@mail.gmail.com>
+ <SG2PR06MB1165FF6C0F4DBD8987BC396A8AE20@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdWVsuq9eucz9hz47oBtEvBGW2sJ8-G7L4hDk53CNnxd2A@mail.gmail.com>
+In-Reply-To: <CAMuHMdWVsuq9eucz9hz47oBtEvBGW2sJ8-G7L4hDk53CNnxd2A@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 9, 2017 at 5:19 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, May 8, 2017 at 7:25 PM, jmondi <jacopo@jmondi.org> wrote:
->
->> From my perspective these flags are configurations internal to the pin
->> controller hardware used to enable/disable input buffers when a pin needs to
->> perform in both direction.
->> The level of detail I can provide on this is the logical diagram we have pointed
->> you to already.
->>
->> As I assume you are trying to get this answer from us in order to
->> avoid duplicating things in pin controller sub-system, and I
->> understand this, but my question here was "can we have those flags as part
->> of the pinmux property argument list, as that property description
->> seems to allow us to do that, instead of making them generic pin
->> configuration properties and upset other developers?"
->
-> Pinmux with all it's magic flags baked into one is not any better
-> or any more readable. The solution is already very pretty except
-> for these two flags which I am sure we can agree on a way forward
-> for.
->
-> What we choose between is not this or another less transparent
-> pin configuration mechanism, the mechanism (whether magic bits
-> to pinmux or reasonable properties) does not matter.
->
-> There is a strong preference to use the generic bindings.
->
-> So the discussion is whether to use:
->
-> bi-directional;
-> output-enable;
->
-> Or some already defined config flags.
->
-> If these are too idiomatic to be used by others, they should anyways
-> look similar, like:
->
-> renesas,bi-directional;
-> renesas,output-enable;
->
-> Like the Qualcomm weirdness found in drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->
-> qcom,pull-up-strength = <..>;
->
-> Check how they use
-> #define PMIC_GPIO_CONF_PULL_UP                 (PIN_CONFIG_END + 1)
->
-> Etc.
->
->> Anyway, I still fail to see why those configuration flags, only
->> affecting the way the pin controller hardware enables/disables
->> its internal buffers and its internal operations have to be
->> described in term of their externally visible electrically characteristics.
->
-> To me internal vs external is not what matters. What matters is
-> if this is likely to pop up in more platforms, and then the property
-> should be generic.
->
-> The generic pin config definitions are likely to be picked up by other
-> standards and even be inspiration to hardware engineers so that
-> is why it matters so much.
->
->> To me, what already exists are pin configuration properties generic to
->> the whole pin controller subsystem, and I understand you don't want to
->> see duplication there.
->>
->> At the same time, to me, those flags are settings the pin controller
->> wants to have specified by software to overcome its hw design flaws,
->> and are intended to configure its internal buffers in a way it cannot
->> do by itself for some very specific operation modes (they are listed
->> in the hw reference manual, it's not something you can chose to
->> configure or not, if you want a pin working in i2c mode, you HAVE to
->> pass those flags to pin controller).
->
-> Sounds like a case for
->
-> renesas,bi-directional;
-> renesas,output-enable;
->
-> following the Qualcomm pattern in that case.
->
-> But let's see if something else comes out of this discussion.
->
-
-I did not follow too much.
-But it seems IMX7ULP/Vybrid to be also a fan of generic
-output-enable/input-enable
-property.
-
-See:
-Figure 5-2. GPIO PAD in Page 241
-http://www.nxp.com/assets/documents/data/en/reference-manuals/VFXXXRM.pdf
-
-It has separate register bits to control input buffer enable and
-output buffer enable
-and we need set it property for GPIO function.
-
-Regards
-Dong Aisheng
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgTWF5IDEyLCAyMDE3LCBHZWVydCBVeXR0ZXJob2V2ZW4g
+d3JvdGU6DQo+IDEyIHggMTYgPSAxOTIsIG5vdCAzODQuDQoNCk9wcHMsIG15IG1hdGggd2FzIG9m
+ZiENCg0KICAoSSB0aGluayBJIG5lZWQgYW5vdGhlciBjdXAgb2YgY29mZmVlIHRoaXMgbW9ybmlu
+ZykNCg0KDQo+IERvIHlvdSBuZWVkIGFsbCBwb3NzaWJsZSBjb21iaW5hdGlvbnMgb2YgaW5wdXQs
+IG91dHB1dCwgYW5kIGJpLWRpcj8NCj4gSSBhc3N1bWVkIHRoZXkncmUgbXV0dWFsbHkgZXhjbHVz
+aXZlLiBJZiBub3QsIHlvdSBuZWVkIDMgYml0cy9waW4vZnVuY3Rpb24NCg0KWW91J3JlIHJpZ2h0
+LCB0aGV5IGFyZSBtdXR1YWxseSBleGNsdXNpdmUsIHNvIDIgYml0cyBhcmUgZmluZS4NCg0KQWxz
+bywgdGhlIG90aGVyIHBpbm91dCB2YXJpYXRpb25zIGNoaXBzIChSWi9BMUwsQTFMVSxBMUxDKSBv
+bmx5IGhhdmUgMTAgcG9ydHM6DQoNCiAxMiBwb3J0cyB4IDE2IHBpbnMgeCAyYml0cy1wZXItYml0
+ID0+IDM4NCBieXRlcw0KIDEwIHBvcnRzIHggMTYgcGlucyB4IDJiaXRzLXBlci1iaXQgPT4gMzIw
+IGJ5dGVzDQoNCiAzODQgKyAzMjAgPSA3MDQgYnl0ZXMgKG9mIGNvbnN0IGRhdGEpDQoNCg0KPiBX
+aXRoIHBhY2thZ2VzLCBkbyB5b3UgbWVhbiBlLmcuIFJaL0ExSCB2cy4gUlovQTFMPw0KDQpZZXMu
+DQoNCg0KPiBUaGVzZSBpbmRlZWQgZGlmZmVyLA0KPiBidXQNCj4gc2hvdWxkIHVzZSBkaWZmZXJl
+bnQgY29tcGF0aWJsZSB2YWx1ZXMuDQoNCk9LLiBTaW5jZSByN3M3MjEwMC5kdHNpIGhhcw0KICAg
+IGNvbXBhdGlibGUgPSAicmVuZXNhcyxyN3M3MjEwMC1wb3J0cyI7DQoNCldlJ2xsIGp1c3Qgb3Zl
+cnJpZGUgdGhhdCBpbiBzYXkgbXktcnphMWwtYm9hcmQuZHRzDQoNCiZwaW5jdHJsIHsNCgljb21w
+YXRpYmxlID0gInJlbmVzYXMscjdzNzIxMDItcG9ydHMiOw0KfTsNCgkNCiAgYW5kIHRoZW4gbG9v
+ayBmb3IgdGhhdCBpbiB0aGUgZHJpdmVyLg0KCQ0KDQo+IE9yIGRvIHlvdSBtZWFuIFFGUC9CR0Ey
+NTYgdnMuIEJHQTMyND8gSXNuJ3QgdGhlIGZvcm1lciBhIHN1YnNldCBvZiB0aGUNCj4gbGF0dGVy
+Pw0KDQpUaGUgInBhY2thZ2UiIGRvZXNuJ3QgbWF0dGVyLCBpdCdzIHRoZSBwaW4gYXNzaWdubWVu
+dHMgb24gdGhlIGRpZToNCiAgUlovQTFIID0gUlovQTFNID0gcGluIGFzc2lnbm1lbnRzICMxDQog
+IFJaL0ExTCA9IFJaL0ExTFUgPSBSWi9BMUxDID0gcGluIGFzc2lnbm1lbnRzICMyDQoNClRoZW4g
+ZWFjaCBvZiB0aG9zZSBwYXJ0cyBhYm92ZSBoYXZlIG11bHRpcGxlICdwYWNrYWdlIG9wdGlvbnMn
+LCBidXQgb2YNCmNvdXJzZSBkb2Vzbid0IGNoYW5nZSB0aGUgYWN0dWFsIHBpbi9mdW5jdGlvbiBh
+c3NpZ25tZW50cyAodGhhdCdzIHBhcnQNCm9mIHRoZSBzaWxpY29uIGRpZSkNCg0KQ2hyaXMNCg0K
