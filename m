@@ -1,40 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36159 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbdENJ7o (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37491 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758755AbdEMXQ1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 14 May 2017 05:59:44 -0400
-Received: by mail-it0-f65.google.com with SMTP id z15so8059527ite.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 14 May 2017 02:59:44 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20170513231618.1715-4-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170513231618.1715-1-laurent.pinchart+renesas@ideasonboard.com> <20170513231618.1715-4-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 14 May 2017 11:59:42 +0200
-Message-ID: <CAMuHMdVst_7hYPtZ-eLRf4f4ptqSyeO5-7Nk5+hcoX7B53=a2g@mail.gmail.com>
-Subject: Re: [PATCH v5 3/6] arm64: dts: renesas: salvator-x: Add HDMI output connectors
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 13 May 2017 19:16:27 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id A2109204C1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 14 May 2017 01:16:21 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 3/6] arm64: dts: renesas: salvator-x: Add HDMI output connectors
+Date: Sun, 14 May 2017 02:16:15 +0300
+Message-Id: <20170513231618.1715-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20170513231618.1715-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170513231618.1715-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, May 14, 2017 at 1:16 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> The Salvator-X board has two HDMI output connectors. Add them to the
-> common salvator-x.dtsi.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The Salvator-X board has two HDMI output connectors. Add them to the
+common salvator-x.dtsi.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v4:
 
-Gr{oetje,eeting}s,
+- Split connectors to a new patch
+---
+ arch/arm64/boot/dts/renesas/salvator-x.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-                        Geert
+diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+index 3fc60ba41229..3434c7552fcc 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+@@ -151,6 +151,28 @@
+ 			  1800000 0>;
+ 	};
+ 
++	hdmi0-out {
++		compatible = "hdmi-connector";
++		label = "HDMI0 OUT";
++		type = "a";
++
++		port {
++			hdmi0_con: endpoint {
++			};
++		};
++	};
++
++	hdmi1-out {
++		compatible = "hdmi-connector";
++		label = "HDMI1 OUT";
++		type = "a";
++
++		port {
++			hdmi1_con: endpoint {
++			};
++		};
++	};
++
+ 	vga {
+ 		compatible = "vga-connector";
+ 
+-- 
+Regards,
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
