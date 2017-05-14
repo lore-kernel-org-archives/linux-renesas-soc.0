@@ -1,64 +1,41 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 02/16] rcar-vin: use rvin_reset_format() in S_DV_TIMINGS
-Date: Wed, 10 May 2017 16:22:16 +0300
-Message-ID: <5932754.eWeQtlWCiC@avalon>
-In-Reply-To: <20170314185957.25253-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-3-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34884 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbdENKDk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 14 May 2017 06:03:40 -0400
+Received: by mail-io0-f195.google.com with SMTP id o12so9330048iod.2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 14 May 2017 03:03:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <20170513231618.1715-7-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170513231618.1715-1-laurent.pinchart+renesas@ideasonboard.com> <20170513231618.1715-7-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 14 May 2017 12:03:38 +0200
+Message-ID: <CAMuHMdX2Bk0_pmOP7ZeLaGuEBiBZwfqY6A-65=ROgSPCz7TMdw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] ARM: shmobile: dts: Switch to panel-lvds bindings
+ for Mitsubishi panels
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+On Sun, May 14, 2017 at 1:16 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
+> Use the correct DT bindings.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Thank you for the patch.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tuesday 14 Mar 2017 19:59:43 Niklas S=F6derlund wrote:
-> Use rvin_reset_format() in rvin_s_dv_timings() instead of just resett=
-ing
-> a few fields. This fixes an issue where the field format was not
-> properly set after S_DV_TIMINGS.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
-> 69bc4cfea6a8aeb5..7ca27599b9982ffc 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -573,12 +573,8 @@ static int rvin_s_dv_timings(struct file *file, =
-void
-> *priv_fh, if (ret)
->  =09=09return ret;
->=20
-> -=09vin->source.width =3D timings->bt.width;
-> -=09vin->source.height =3D timings->bt.height;
-> -=09vin->format.width =3D timings->bt.width;
-> -=09vin->format.height =3D timings->bt.height;
-> -
-> -=09return 0;
-> +=09/* Changing the timings will change the width/height */
-> +=09return rvin_reset_format(vin);
+Gr{oetje,eeting}s,
 
-vin->source won't be updated anymore. Is this intentional ?
+                        Geert
 
->  }
->=20
->  static int rvin_g_dv_timings(struct file *file, void *priv_fh,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Regards,
-
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
