@@ -1,14 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42394 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932781AbdEOUhM (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:53804 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964896AbdEOOWq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 May 2017 16:37:12 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Mon, 15 May 2017 10:22:46 -0400
+Date: Mon, 15 May 2017 15:22:39 +0100
+From: Will Deacon <will.deacon@arm.com>
 To: Sricharan R <sricharan@codeaurora.org>
 Cc: Robin Murphy <robin.murphy@arm.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will Deacon <will.deacon@arm.com>,
         Joerg Roedel <joro@8bytes.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         iommu@lists.linux-foundation.org,
@@ -22,52 +22,55 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
         tn@semihalf.com, Hanjun Guo <hanjun.guo@linaro.org>,
         okaya@codeaurora.org, Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH V8 07/11] iommu: of: Handle IOMMU lookup failure with deferred probing or error
-Date: Mon, 15 May 2017 23:37:16 +0300
-Message-ID: <1900421.tkAiezvoW8@avalon>
-In-Reply-To: <26defadf-6380-4af4-6323-b51198376bc1@codeaurora.org>
-References: <1486136933-20328-1-git-send-email-sricharan@codeaurora.org> <2bfd11dc-9f94-2b69-7b03-c640e53155e1@arm.com> <26defadf-6380-4af4-6323-b51198376bc1@codeaurora.org>
+Subject: Re: [PATCH V8 07/11] iommu: of: Handle IOMMU lookup failure with
+ deferred probing or error
+Message-ID: <20170515142238.GD3605@arm.com>
+References: <1486136933-20328-1-git-send-email-sricharan@codeaurora.org>
+ <1486136933-20328-8-git-send-email-sricharan@codeaurora.org>
+ <CAMuHMdV05uCcVss+V1E+_OQYosJO6P95rU1WynV-G08-iHJnyg@mail.gmail.com>
+ <2bfd11dc-9f94-2b69-7b03-c640e53155e1@arm.com>
+ <26defadf-6380-4af4-6323-b51198376bc1@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26defadf-6380-4af4-6323-b51198376bc1@codeaurora.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Sricharan,
 
-On Wednesday 03 May 2017 15:54:59 Sricharan R wrote:
+On Wed, May 03, 2017 at 03:54:59PM +0530, Sricharan R wrote:
 > On 5/3/2017 3:24 PM, Robin Murphy wrote:
 > > On 02/05/17 19:35, Geert Uytterhoeven wrote:
-> >> On Fri, Feb 3, 2017 at 4:48 PM, Sricharan R wrote:
+> >> On Fri, Feb 3, 2017 at 4:48 PM, Sricharan R <sricharan@codeaurora.org> wrote:
 > >>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >>> 
+> >>>
 > >>> Failures to look up an IOMMU when parsing the DT iommus property need to
 > >>> be handled separately from the .of_xlate() failures to support deferred
 > >>> probing.
-> >>> 
+> >>>
 > >>> The lack of a registered IOMMU can be caused by the lack of a driver for
 > >>> the IOMMU, the IOMMU device probe not having been performed yet, having
 > >>> been deferred, or having failed.
-> >>> 
+> >>>
 > >>> The first case occurs when the device tree describes the bus master and
 > >>> IOMMU topology correctly but no device driver exists for the IOMMU yet
 > >>> or the device driver has not been compiled in. Return NULL, the caller
 > >>> will configure the device without an IOMMU.
-> >>> 
+> >>>
 > >>> The second and third cases are handled by deferring the probe of the bus
 > >>> master device which will eventually get reprobed after the IOMMU.
-> >>> 
+> >>>
 > >>> The last case is currently handled by deferring the probe of the bus
 > >>> master device as well. A mechanism to either configure the bus master
 > >>> device without an IOMMU or to fail the bus master device probe depending
 > >>> on whether the IOMMU is optional or mandatory would be a good
 > >>> enhancement.
-> >>> 
+> >>>
 > >>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> Signed-off-by: Laurent Pichart
-> >>> <laurent.pinchart+renesas@ideasonboard.com>
+> >>> Signed-off-by: Laurent Pichart <laurent.pinchart+renesas@ideasonboard.com>
 > >>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> >> 
+> >>
 > >> This patch broke Renesas R-Car Gen3 platforms in renesas-drivers.
 > >> As the IOMMU nodes in DT are not yet enabled, all devices having iommus
 > >> properties in DT now fail to probe.
@@ -84,6 +87,7 @@ On Wednesday 03 May 2017 15:54:59 Sricharan R wrote:
 > > mechanism itself (I've seen the same thing happen with some of the
 > > CoreSight stuff on Juno due to the number of inter-component
 > > dependencies) rather than any specific fault of this series.
+> > 
 > 
 > I was thinking of an additional check like below to avoid the
 > situation ?
@@ -108,8 +112,7 @@ On Wednesday 03 May 2017 15:54:59 Sricharan R wrote:
 > index 9f44ee8..e6e9bec 100644
 > --- a/drivers/iommu/of_iommu.c
 > +++ b/drivers/iommu/of_iommu.c
-> @@ -118,6 +118,7 @@ static bool of_iommu_driver_present(struct device_node
-> *np)
+> @@ -118,6 +118,7 @@ static bool of_iommu_driver_present(struct device_node *np)
 > 
 >         ops = iommu_ops_from_fwnode(fwnode);
 >         if ((ops && !ops->of_xlate) ||
@@ -117,22 +120,18 @@ On Wednesday 03 May 2017 15:54:59 Sricharan R wrote:
 >             (!ops && !of_iommu_driver_present(iommu_spec->np)))
 >                 return NULL;
 
-This looks good to me, but won't be enough. The ipmmu-vmsa driver in v4.12-rc1 
-doesn't call iommu_device_register() and thus won't be found by 
-iommu_ops_from_fwnode(). Furthermore, it doesn't IOMMU_OF_DECLARE(), and thus 
-will always be considered as absent.
+Without this patch, v4.12-rc1 hangs on my Juno waiting to mount the root
+filesystem. The problem is that the USB controller is behind an SMMU which
+is marked as 'status = "disabled"' in the devicetree. Whilst there was a
+separate thread with Ard about exactly what this means in terms of the DMA
+ops used by upstream devices, your patch above fixes the regression and
+I think should go in regardless. The DMA ops issue will likely require
+an additional DT binding anyway, to advertise the behaviour of the
+IOMMU when it is disabled.
 
-I agree that the ipmmu-vmsa driver needs to be fixed, but it would have been 
-nice to check existing IOMMU drivers before merging this patch series...
+Tested-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
 
-> >> This can be fixed by either:
-> >>   - Disabling CONFIG_IPMMU_VMSA, or
-> >>   - Reverting commit 7b07cbefb68d486f (but keeping "int ret = 0;").
-> >> 
-> >> Note that this was a bit hard to investigate, as R-Car Gen3 support
-> >> wasn't upstreamed yet, so bisection pointed to a merge commit.
+Could you resend it as a proper patch, please?
 
--- 
-Regards,
-
-Laurent Pinchart
+Will
