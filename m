@@ -1,49 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33848 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759476AbdEOJF4 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:18525 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758946AbdEOIwb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 May 2017 05:05:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <1494838192-17062-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1494838192-17062-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 15 May 2017 11:05:55 +0200
-Message-ID: <CAMuHMdVCQ8mu047cZ7BiMCsDe20VexdF7GEL9nBmyJrgq+DAHQ@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: usb-dmac: Fix DMAOR AE bit definition
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mon, 15 May 2017 04:52:31 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <vinod.koul@intel.com>
+CC: <dmaengine@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
         Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <stable@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] dmaengine: usb-dmac: Fix DMAOR AE bit definition
+Date: Mon, 15 May 2017 17:49:52 +0900
+Message-ID: <1494838192-17062-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 15, 2017 at 10:49 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
->
-> This patch fixes the register definition of AE (Address Error flag) bit.
->
-> Fixes: 0c1c8ff32fa2 ("dmaengine: usb-dmac: Add Renesas USB DMA Controller (USB-DMAC) driver")
-> Cc: <stable@vger.kernel.org> # v4.1+
-> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-> [Shimoda: add Fixes and Cc tags in the commit log]
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 
-This matches my documentation, where the AE bit in the DMAOR register
-is indeed different for USB-DMAC, compared to SYS-DMAC and AUDIO-DMAC.
+This patch fixes the register definition of AE (Address Error flag) bit.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 0c1c8ff32fa2 ("dmaengine: usb-dmac: Add Renesas USB DMA Controller (USB-DMAC) driver")
+Cc: <stable@vger.kernel.org> # v4.1+
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+[Shimoda: add Fixes and Cc tags in the commit log]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/dma/sh/usb-dmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
+index 72c6497..31a1451 100644
+--- a/drivers/dma/sh/usb-dmac.c
++++ b/drivers/dma/sh/usb-dmac.c
+@@ -117,7 +117,7 @@ struct usb_dmac {
+ #define USB_DMASWR			0x0008
+ #define USB_DMASWR_SWR			(1 << 0)
+ #define USB_DMAOR			0x0060
+-#define USB_DMAOR_AE			(1 << 2)
++#define USB_DMAOR_AE			(1 << 1)
+ #define USB_DMAOR_DME			(1 << 0)
+ 
+ #define USB_DMASAR			0x0000
+-- 
+1.9.1
