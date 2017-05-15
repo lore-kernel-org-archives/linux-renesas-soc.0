@@ -1,67 +1,103 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh@kernel.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 10/20] ARM: dts: koelsch: Add generic compatible string for I2C EEPROM
-Date: Tue, 23 May 2017 15:34:38 +0200
-Message-Id: <20170523133448.4794-11-javier@dowhile0.org>
-In-Reply-To: <20170523133448.4794-1-javier@dowhile0.org>
-References: <20170523133448.4794-1-javier@dowhile0.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:48744 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758532AbdEOFma (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 15 May 2017 01:42:30 -0400
+Date: Mon, 15 May 2017 07:42:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, geert@glider.be,
+        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com
+Subject: Re: [PATCH v2 0/8] r8a7795/6 Salvator-X PWM enablement
+Message-ID: <20170515054225.GB16545@verge.net.au>
+References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20170512091636.GG27979@verge.net.au>
+ <4398514.qBghdda7X5@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4398514.qBghdda7X5@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The at24 driver allows to register I2C EEPROM chips using different vendor
-and devices, but the I2C subsystem does not take the vendor into account
-when matching using the I2C table since it only has device entries.
+On Fri, May 12, 2017 at 01:00:34PM +0300, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Friday 12 May 2017 11:16:39 Simon Horman wrote:
+> > On Thu, Apr 27, 2017 at 04:37:35PM +0200, Ulrich Hecht wrote:
+> > > Hi!
+> > > 
+> > > Here's the revised series enabling PWMs on r8a7795 and r8a7796 Salvator-X
+> > > boards.
+> > > 
+> > > This revision addresses the issues found by Geert and adds Laurent's
+> > > backlight support patch, including a version for r8a7796.
+> > > 
+> > > CU
+> > > Uli
+> > > 
+> > > Changes since v1:
+> > > - PWM clock is S0D12, not S3D4
+> > > - dts: fix register lengths, add resets
+> > > - only enable one set of pins for each PWM
+> > > - add backlight support
+> > > 
+> > > Laurent Pinchart (1):
+> > >   arm64: dts: r8a7795: salvator-x: Add panel backlight support
+> > > 
+> > > Ryo Kodama (2):
+> > >   clk: renesas: r8a7796: add PWM clock
+> > >   arm64: dts: r8a7796-salvator-x: Add PWM device support
+> > > 
+> > > Takeshi Kihara (3):
+> > >   pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
+> > >   arm64: dts: r8a7796: Add PWM device nodes
+> > >   arm64: dts: r8a7795-salvator-x: Enable PWM2
+> > 
+> > I did not notice any regressions on salvator-x/r8a7796 after applying up
+> > the dts patches without the clk and pinctrl patches. So I have queued up
+> > the dts patches as follows:
+> > 
+> > * arm64: dts: r8a7796: Add PWM device nodes
+> >   -> applied
+> > 
+> > * arm64: dts: r8a7795: salvator-x: Add panel backlight support
+> > * arm64: dts: r8a7795-salvator-x: Enable PWM2
+> 
+> I've asked Ulrich for a clarification on this patch as I'm not sure it's 
+> needed, but he hasn't answered yet. Could we delay merging it until the 
+> situation is clarified ?
 
-But when matching using an OF table, both the vendor and device has to be
-taken into account so the driver defines only a set of compatible strings
-using the "atmel" vendor as a generic fallback for compatible I2C devices.
+Sure, I will drop the "Enable PWM2" patch.
 
-So add this generic fallback to the device node compatible string to make
-the device to match the driver using the OF device ID table.
-
-Signed-off-by: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
----
-
-Changes in v5:
-- Only replace atmel variant but keep other EEPROM vendors (Geert Uytterhoeven).
-
-Changes in v4:
-- Only use the atmel manufacturer in the compatible string instead of
-  keeping the deprecated ones (Rob Herring).
-
-Changes in v3:
-- Add Geert Uytterhoeven reviewed-by tag.
-
-Changes in v2: None
-
- arch/arm/boot/dts/r8a7791-koelsch.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 001e6116c47c..dc8ed02de707 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -702,7 +702,7 @@
- 	};
- 
- 	eeprom@50 {
--		compatible = "renesas,24c02";
-+		compatible = "renesas,24c02", "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
--- 
-2.9.3
+> All other patches in this series should be fine.
+> 
+> >   -> applied to salvator-x.dtsi instead of r8a7796-salvator-x.dts
+> > 
+> > * arm64: dts: r8a7796: salvator-x: Add panel backlight support
+> > * arm64: dts: r8a7796-salvator-x: Add PWM device support
+> >   -> not applied as they would be the same changes as those above
+> >      applied to salvator-x.dtsi
+> > 
+> > > Ulrich Hecht (2):
+> > >   arm64: dts: r8a7796: salvator-x: Add panel backlight support
+> > >   dt-bindings: pwm: Add R-Car M3-W device tree bindings
+> > 
+> > I took the liberty of reposting the dt-bindings patch with an updated To/Cc
+> > list.
+> > 
+> > >  .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |   1 +
+> > >  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  34 +++++
+> > >  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  35 +++++
+> > >  arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  70 ++++++++++
+> > >  drivers/clk/renesas/r8a7796-cpg-mssr.c             |   1 +
+> > >  drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 153 ++++++++++++++++
+> > >  6 files changed, 294 insertions(+)
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
