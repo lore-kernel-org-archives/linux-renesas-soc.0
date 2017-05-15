@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37658 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49142 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753492AbdEQJw2 (ORCPT
+        with ESMTP id S932386AbdEOIDv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:52:28 -0400
+        Mon, 15 May 2017 04:03:51 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
         Linux-ALSA <alsa-devel@alsa-project.org>,
         Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87r2zqj35o.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAvct-0006pp-Ik@debutante>
-Date: Wed, 17 May 2017 10:52:15 +0100
-Subject: Applied "ASoC: rsnd: clkout-lr-asynchronous is AUDIO_CLKOUT related property" to the asoc tree
+In-Reply-To: <87o9v4ccid.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dAAyl-0002Vo-06@finisterre>
+Date: Mon, 15 May 2017 17:03:42 +0900
+Subject: Applied "ASoC: ak4613: disable asymmetric audio interface format" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: rsnd: clkout-lr-asynchronous is AUDIO_CLKOUT related property
+   ASoC: ak4613: disable asymmetric audio interface format
 
 has been applied to the asoc tree at
 
@@ -44,52 +44,83 @@ to this mail.
 Thanks,
 Mark
 
->From 9654f5eba994c8732bfdb4c3b81bc5e18d25e970 Mon Sep 17 00:00:00 2001
+>From ec185f95401e36f398b39706705f10d7fe7ff058 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 15 May 2017 01:58:56 +0000
-Subject: [PATCH] ASoC: rsnd: clkout-lr-asynchronous is AUDIO_CLKOUT related
- property
+Date: Mon, 8 May 2017 02:28:13 +0000
+Subject: [PATCH] ASoC: ak4613: disable asymmetric audio interface format
 
-clkout-lr-asynchronous is AUDIO_CLKOUT related property, thus, it
-should be handled by rsnd_adg_get_clkout().
+Asymmetric audio interface formats exist in ak4613 by same
+register settings.
+
+	Capture		Playback
+	24bit LEFT_J	16bit RIGHT_J
+	24bit LEFT_J	20bit RIGHT_J
+	24bit LEFT_J	24bit RIGHT_J
+	24bit LEFT_J	24bit LEFT_J
+	24bit I2S	24bit I2S
+
+These asymmetric formats makes driver / behavior difficult.
+It is not HW limitation, but SW limitation. To makes code reading
+easy, this patch removes asymmetric format support.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sh/rcar/adg.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ sound/soc/codecs/ak4613.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 66203d107a11..cb4eab0e24ce 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -480,6 +480,9 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
- 	if (req_rate[0] % 48000 == 0)
- 		adg->flags = AUDIO_OUT_48;
+diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
+index b2dfddead227..557ac16d43e2 100644
+--- a/sound/soc/codecs/ak4613.c
++++ b/sound/soc/codecs/ak4613.c
+@@ -139,9 +139,7 @@ static const struct reg_default ak4613_reg[] = {
+ #define AUDIO_IFACE(b, fmt) { b, SND_SOC_DAIFMT_##fmt }
+ static const struct ak4613_interface ak4613_iface[] = {
+ 	/* capture */				/* playback */
+-	[0] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(16, RIGHT_J) },
+-	[1] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(20, RIGHT_J) },
+-	[2] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(24, RIGHT_J) },
++	/* [0] - [2] are not supported */
+ 	[3] = {	AUDIO_IFACE(24, LEFT_J),	AUDIO_IFACE(24, LEFT_J) },
+ 	[4] = {	AUDIO_IFACE(24, I2S),		AUDIO_IFACE(24, I2S) },
+ };
+@@ -262,11 +260,9 @@ static int ak4613_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	fmt &= SND_SOC_DAIFMT_FORMAT_MASK;
  
-+	if (of_get_property(np, "clkout-lr-asynchronous", NULL))
-+		adg->flags = LRCLK_ASYNC;
-+
- 	/*
- 	 * This driver is assuming that AUDIO_CLKA/AUDIO_CLKB/AUDIO_CLKC
- 	 * have 44.1kHz or 48kHz base clocks for now.
-@@ -578,7 +581,6 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- {
- 	struct rsnd_adg *adg;
- 	struct device *dev = rsnd_priv_to_dev(priv);
--	struct device_node *np = dev->of_node;
- 	int ret;
- 
- 	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
-@@ -595,9 +597,6 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 	rsnd_adg_get_clkin(priv, adg);
- 	rsnd_adg_get_clkout(priv, adg);
- 
--	if (of_get_property(np, "clkout-lr-asynchronous", NULL))
--		adg->flags = LRCLK_ASYNC;
+ 	switch (fmt) {
+-	case SND_SOC_DAIFMT_RIGHT_J:
+ 	case SND_SOC_DAIFMT_LEFT_J:
+ 	case SND_SOC_DAIFMT_I2S:
+ 		priv->fmt = fmt;
 -
- 	priv->adg = adg;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -286,13 +282,8 @@ static bool ak4613_dai_fmt_matching(const struct ak4613_interface *iface,
+ 	if (fmts->fmt != fmt)
+ 		return false;
  
- 	rsnd_adg_clk_enable(priv);
+-	if (fmt == SND_SOC_DAIFMT_RIGHT_J) {
+-		if (fmts->width != width)
+-			return false;
+-	} else {
+-		if (fmts->width < width)
+-			return false;
+-	}
++	if (fmts->width != width)
++		return false;
+ 
+ 	return true;
+ }
+@@ -420,8 +411,7 @@ static const struct snd_soc_dai_ops ak4613_dai_ops = {
+ 				 SNDRV_PCM_RATE_96000  |\
+ 				 SNDRV_PCM_RATE_176400 |\
+ 				 SNDRV_PCM_RATE_192000)
+-#define AK4613_PCM_FMTBIT	(SNDRV_PCM_FMTBIT_S16_LE |\
+-				 SNDRV_PCM_FMTBIT_S24_LE)
++#define AK4613_PCM_FMTBIT	(SNDRV_PCM_FMTBIT_S24_LE)
+ 
+ static struct snd_soc_dai_driver ak4613_dai = {
+ 	.name = "ak4613-hifi",
 -- 
 2.11.0
