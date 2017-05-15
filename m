@@ -1,193 +1,178 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58426 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbdEJNWO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48835 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758945AbdEOFxV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 09:22:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 05/16] rcar-vin: move subdev source and sink pad index to rvin_graph_entity
-Date: Wed, 10 May 2017 16:22:13 +0300
-Message-ID: <2412864.T3pvZBx668@avalon>
-In-Reply-To: <20170314185957.25253-6-niklas.soderlund+renesas@ragnatech.se>
-References: <20170314185957.25253-1-niklas.soderlund+renesas@ragnatech.se> <20170314185957.25253-6-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 15 May 2017 01:53:21 -0400
+Date: Mon, 15 May 2017 07:53:16 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 05/10] arm64: renesas: r8a7796: add Sound SSI PIO
+ support
+Message-ID: <20170515055316.GD16545@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871srrj5tl.wl%kuninori.morimoto.gx@renesas.com>
+ <CAMuHMdViYgnsGk=_YKFbTeOcncNiSF=v9jrzRgODqNvzsE+FLA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+On Fri, May 12, 2017 at 11:43:39AM +0200, Geert Uytterhoeven wrote:
+> Hi Morimoto-san, Simon,
+> 
+> On Fri, May 12, 2017 at 2:14 AM, Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com> wrote:
+> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > @@ -1259,7 +1259,42 @@
+> >                 };
+> >
+> >                 rcar_sound: sound@ec500000 {
+> 
+> [...]
+> 
+> > +                       power-domains = <&cpg>;
+> 
+> power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> 
+> (by comparing r8a779[66].dtsi).
+> 
+> Simon: As you have already applied this, can you please fix it up in your tree?
 
-Thank you for the patch.
+Sure, I have squashed the batch below into the relevant patch in my local
+tree which I plan to push later today.
 
-On Tuesday 14 Mar 2017 19:59:46 Niklas S=F6derlund wrote:
-> It makes more sens to store the sink and source pads in struct
-> rvin_graph_entity since that contains other subdevice related
-> information.
->=20
-> The data type to store pad information in is unsigned int and not int=
-,
-> change this. While we are at it drop the _idx suffix from the names,
-> this never made sens.
+Morimoto-san,
 
-s/sens/sense/
+FYI, I did a s/renesas/dts/ in the subject of the patches in this series.
 
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
-
-With the typo fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+On Mon, May 15, 2017 at 01:01:23AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> commit a32681b13157f("arm64: dts: r8a7796: add Sound SSI PIO support")
+> added R-Car sound, but it used old style power-domains.
+> This patch tidyup it.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 20 ++++++++++---------=
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index f815532..f21c5ce 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -1323,7 +1323,7 @@
+>  				      "ctu.1", "ctu.0",
+>  				      "dvc.0", "dvc.1",
+>  				      "clk_a", "clk_b", "clk_c", "clk_i";
+> -			power-domains = <&cpg>;
+> +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+>  			status = "disabled";
+>  
+>  			rcar_sound,dvc {
+
+
+The patch I now have queued-up is as follows:
+
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+arm64: dts: r8a7796: add Sound SSI PIO support
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 64 +++++++++++++++++++++++++++++++-
+ 1 file changed, 62 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 0a76a1c53082..5c6e54a1e27a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1165,7 +1165,42 @@
+ 		};
+ 
+ 		rcar_sound: sound@ec500000 {
+-			/* placeholder */
++			/*
++			 * #sound-dai-cells is required
++			 *
++			 * Single DAI : #sound-dai-cells = <0>;	<&rcar_sound>;
++			 * Multi  DAI : #sound-dai-cells = <1>;	<&rcar_sound N>;
++			 */
++			/*
++			 * #clock-cells is required for audio_clkout0/1/2/3
++			 *
++			 * clkout	: #clock-cells = <0>;	<&rcar_sound>;
++			 * clkout0/1/2/3: #clock-cells = <1>;	<&rcar_sound N>;
++			 */
++			compatible =  "renesas,rcar_sound-r8a7796", "renesas,rcar_sound-gen3";
++			reg =	<0 0xec500000 0 0x1000>, /* SCU */
++				<0 0xec5a0000 0 0x100>,  /* ADG */
++				<0 0xec540000 0 0x1000>, /* SSIU */
++				<0 0xec541000 0 0x280>,  /* SSI */
++				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
++
++			clocks = <&cpg CPG_MOD 1005>,
++				 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++				 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++				 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++				 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++				 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++				 <&audio_clk_a>, <&audio_clk_b>,
++				 <&audio_clk_c>,
++				 <&cpg CPG_CORE R8A7796_CLK_S0D4>;
++			clock-names = "ssi-all",
++				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
++				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
++				      "ssi.1", "ssi.0",
++				      "clk_a", "clk_b", "clk_c", "clk_i";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
+ 
+ 			rcar_sound,dvc {
+ 				dvc0: dvc-0 {
+@@ -1184,9 +1219,34 @@
+ 
+ 			rcar_sound,ssi {
+ 				ssi0: ssi-0 {
++					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+ 				};
 -
->  drivers/media/platform/rcar-vin/rcar-vin.h  |  9 +++++----
->  2 files changed, 15 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
-> 7be52c2036bb35fc..1a75191539b0e7d7 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -111,7 +111,7 @@ static int rvin_reset_format(struct rvin_dev *vin=
-)
->  =09struct v4l2_mbus_framefmt *mf =3D &fmt.format;
->  =09int ret;
->=20
-> -=09fmt.pad =3D vin->src_pad_idx;
-> +=09fmt.pad =3D vin->digital.source_pad;
->=20
->  =09ret =3D v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, =
-&fmt);
->  =09if (ret)
-> @@ -178,7 +178,7 @@ static int __rvin_try_format_source(struct rvin_d=
-ev
-> *vin, if (pad_cfg =3D=3D NULL)
->  =09=09return -ENOMEM;
->=20
-> -=09format.pad =3D vin->src_pad_idx;
-> +=09format.pad =3D vin->digital.source_pad;
->=20
->  =09field =3D pix->field;
->=20
-> @@ -559,7 +559,7 @@ static int rvin_enum_dv_timings(struct file *file=
-, void
-> *priv_fh, if (timings->pad)
->  =09=09return -EINVAL;
->=20
-> -=09timings->pad =3D vin->sink_pad_idx;
-> +=09timings->pad =3D vin->digital.sink_pad;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
->=20
-> @@ -611,7 +611,7 @@ static int rvin_dv_timings_cap(struct file *file,=
- void
-> *priv_fh, if (cap->pad)
->  =09=09return -EINVAL;
->=20
-> -=09cap->pad =3D vin->sink_pad_idx;
-> +=09cap->pad =3D vin->digital.sink_pad;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
->=20
-> @@ -629,7 +629,7 @@ static int rvin_g_edid(struct file *file, void *f=
-h,
-> struct v4l2_edid *edid) if (edid->pad)
->  =09=09return -EINVAL;
->=20
-> -=09edid->pad =3D vin->sink_pad_idx;
-> +=09edid->pad =3D vin->digital.sink_pad;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, get_edid, edid);
->=20
-> @@ -647,7 +647,7 @@ static int rvin_s_edid(struct file *file, void *f=
-h,
-> struct v4l2_edid *edid) if (edid->pad)
->  =09=09return -EINVAL;
->=20
-> -=09edid->pad =3D vin->sink_pad_idx;
-> +=09edid->pad =3D vin->digital.sink_pad;
->=20
->  =09ret =3D v4l2_subdev_call(sd, pad, set_edid, edid);
->=20
-> @@ -920,19 +920,19 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
->  =09vdev->device_caps =3D V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING=
- |
->  =09=09V4L2_CAP_READWRITE;
->=20
-> -=09vin->src_pad_idx =3D 0;
-> +=09vin->digital.source_pad =3D 0;
->  =09for (pad_idx =3D 0; pad_idx < sd->entity.num_pads; pad_idx++)
->  =09=09if (sd->entity.pads[pad_idx].flags =3D=3D MEDIA_PAD_FL_SOURCE)=
-
->  =09=09=09break;
->  =09if (pad_idx >=3D sd->entity.num_pads)
->  =09=09return -EINVAL;
->=20
-> -=09vin->src_pad_idx =3D pad_idx;
-> +=09vin->digital.source_pad =3D pad_idx;
->=20
-> -=09vin->sink_pad_idx =3D 0;
-> +=09vin->digital.sink_pad =3D 0;
->  =09for (pad_idx =3D 0; pad_idx < sd->entity.num_pads; pad_idx++)
->  =09=09if (sd->entity.pads[pad_idx].flags =3D=3D MEDIA_PAD_FL_SINK) {=
-
-> -=09=09=09vin->sink_pad_idx =3D pad_idx;
-> +=09=09=09vin->digital.sink_pad =3D pad_idx;
->  =09=09=09break;
->  =09=09}
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
-> b/drivers/media/platform/rcar-vin/rcar-vin.h index
-> 727e215c08718eb9..9bfb5a7c4dc4f215 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-> @@ -74,6 +74,8 @@ struct rvin_video_format {
->   * @subdev:=09subdevice matched using async framework
->   * @code:=09Media bus format from source
->   * @mbus_cfg:=09Media bus format from DT
-> + * @source_pad:=09source pad of remote subdevice
-> + * @sink_pad:=09sink pad of remote subdevice
->   */
->  struct rvin_graph_entity {
->  =09struct v4l2_async_subdev asd;
-> @@ -81,6 +83,9 @@ struct rvin_graph_entity {
->=20
->  =09u32 code;
->  =09struct v4l2_mbus_config mbus_cfg;
-> +
-> +=09unsigned int source_pad;
-> +=09unsigned int sink_pad;
->  };
->=20
->  /**
-> @@ -91,8 +96,6 @@ struct rvin_graph_entity {
->   *
->   * @vdev:=09=09V4L2 video device associated with VIN
->   * @v4l2_dev:=09=09V4L2 device
-> - * @src_pad_idx:=09source pad index for media controller drivers
-> - * @sink_pad_idx:=09sink pad index for media controller drivers
->   * @ctrl_handler:=09V4L2 control handler
->   * @notifier:=09=09V4L2 asynchronous subdevs notifier
->   * @digital:=09=09entity in the DT for local digital subdevice
-> @@ -121,8 +124,6 @@ struct rvin_dev {
->=20
->  =09struct video_device vdev;
->  =09struct v4l2_device v4l2_dev;
-> -=09int src_pad_idx;
-> -=09int sink_pad_idx;
->  =09struct v4l2_ctrl_handler ctrl_handler;
->  =09struct v4l2_async_notifier notifier;
->  =09struct rvin_graph_entity digital;
-
---=20
-Regards,
-
-Laurent Pinchart
+ 				ssi1: ssi-1 {
++					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi2: ssi-2 {
++					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi3: ssi-3 {
++					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi4: ssi-4 {
++					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi5: ssi-5 {
++					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi6: ssi-6 {
++					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi7: ssi-7 {
++					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi8: ssi-8 {
++					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
++				};
++				ssi9: ssi-9 {
++					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
+ 				};
+ 			};
+ 		};
+-- 
+2.1.4
