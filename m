@@ -1,71 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:43748 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753451AbdEINua (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48684 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758433AbdEOFhY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 May 2017 09:50:30 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert+renesas@glider.be, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 4/7] media: Add new SDR formats PC16, PC18 & PC20
-Date: Tue,  9 May 2017 14:37:35 +0100
-Message-Id: <20170509133738.16414-5-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <20170509133738.16414-1-ramesh.shanmugasundaram@bp.renesas.com>
-References: <20170509133738.16414-1-ramesh.shanmugasundaram@bp.renesas.com>
+        Mon, 15 May 2017 01:37:24 -0400
+Date: Mon, 15 May 2017 07:37:19 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/3] arm64: dts: r8a7795: Add support for R-Car H3
+ ES2.0
+Message-ID: <20170515053718.GA16545@verge.net.au>
+References: <1494503934-23367-1-git-send-email-geert+renesas@glider.be>
+ <1494503934-23367-2-git-send-email-geert+renesas@glider.be>
+ <20170511145329.GD21895@verge.net.au>
+ <CAMuHMdU0NUFtqDOKnRHQuSXurP6NKy7bNVhBQB-_MOoSrnNpYQ@mail.gmail.com>
+ <20170512073229.GC27979@verge.net.au>
+ <CAMuHMdXanb4R9NodxvEoKXXcw8kJP+YdoqTQLsa9UST14cMaBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXanb4R9NodxvEoKXXcw8kJP+YdoqTQLsa9UST14cMaBg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for the three new SDR formats. These formats
-were prefixed with "planar" indicating I & Q data are not interleaved
-as in other formats. Here, I & Q data constitutes the top half and bottom
-half of the received buffer respectively.
+On Fri, May 12, 2017 at 11:49:24AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, May 12, 2017 at 9:32 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, May 11, 2017 at 05:42:27PM +0200, Geert Uytterhoeven wrote:
+> >> On Thu, May 11, 2017 at 4:53 PM, Simon Horman <horms@verge.net.au> wrote:
+> >> > On Thu, May 11, 2017 at 01:58:52PM +0200, Geert Uytterhoeven wrote:
+> >> >> Update r8a7795.dtsi so it corresponds to R-Car H3 ES2.0 or later:
+> >> >>   - The following devices no longer exist on ES2.0, and are thus removed:
+> >> >>     fcpf2, fcpvd3, fcpvi2, fdp1-2, usb3-if1, vspd3, vspi2.
+> >> >>   - The DU <-> VSPD topology is different on ES2.0, hence remove the
+> >> >>     "compatible" and "vsps" properties from the DU node until the driver
+> >> >>     can handle this.
+> >> >>
+> >> >> Move support for the ES1.x revision of the R-Car H3 SoC into a
+> >> >> separate file.  To avoid duplication, r8a7795-es1.dtsi includes
+> >> >> r8a7795.dtsi, add adds/removes/overrides device nodes and properties
+> >> >> where needed.
+> >> >
+> >> > I think the above should be re-worded given your explanation below the
+> >> > scissors that no deletion or overriding occurs.
+> >>
+> >> I wanted to document clearly what needs to be done in the generic case...
+> >> I agree no removal or override is done right now.
+> >>
+> >> If you prefer it that way, I can reword it.
+> >
+> > I think I would prefer that.
+> >
+> >> >> Switch r8a7795-salvator-x.dts and r8a7795-h3ulcb.dts from r8a7795.dtsi
+> >> >> to r8a7795-es1.dtsi to preserve compatibility.
+> >> >>
+> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >> ---
+> >> >> While currently r8a7795-es1.dtsi only adds device nodes, removal of
+> >> >> devices nodes and properties can be implemented using the /delete-node/
+> >> >> and /delete-property/ keywords, as shown below:
+> >> >>
+> >> >>       &soc {
+> >> >>               /delete-node/ <name>@<addr>;
+> >> >>       };
+> >> >>
+> >> >>       &<label> {
+> >> >>               /delete-property/ <prop>;
+> >> >>       };
+> >> >
+> >> > I would be interested to also see an example of an override and
+> >> > for the examples to be included in the changelog itself.
+> >>
+> >> You mean above the scissors? ;-)
+> >
+> > Yes, that is what I meant.
+> >
+> >> Currently we don't have any devices or properties in DT that need removals
+> >> or overrides. Note that I did test those.
+> >>
+> >> If we add the "vsps" property to the DU node for ES2.0, we can have an
+> >> override for it now.  But we've plenty of experience with letting .dts
+> >> override properties in .dtsi.
+> >
+> > Ok, point taken.
+> >
+> >> For node deletion, we'll have to wait until someone enables the extra USB
+> >> channels on ES2.0.
+> >>
+> >> For property deletion, I don't have an actual example in mind, but I wanted
+> >> to be sure that worked in case we ever need it.
+> >
+> > I appreciate you taking the time to test deletion.
+> > I think its worth documenting above the scissors.
+> 
+> Will update in v4. I''l have to rebase anyway.
 
-V4L2_SDR_FMT_PCU16BE - 14-bit complex (I & Q) unsigned big-endian sample
-inside 16-bit. V4L2 FourCC: PC16
-
-V4L2_SDR_FMT_PCU18BE - 16-bit complex (I & Q) unsigned big-endian sample
-inside 18-bit. V4L2 FourCC: PC18
-
-V4L2_SDR_FMT_PCU20BE - 18-bit complex (I & Q) unsigned big-endian sample
-inside 20-bit. V4L2 FourCC: PC20
-
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/media/v4l2-core/v4l2-ioctl.c | 3 +++
- include/uapi/linux/videodev2.h       | 3 +++
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index e5a2187381db..ca1e920d3e7c 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1229,6 +1229,9 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_SDR_FMT_CS8:		descr = "Complex S8"; break;
- 	case V4L2_SDR_FMT_CS14LE:	descr = "Complex S14LE"; break;
- 	case V4L2_SDR_FMT_RU12LE:	descr = "Real U12LE"; break;
-+	case V4L2_SDR_FMT_PCU16BE:	descr = "Planar Complex U16BE"; break;
-+	case V4L2_SDR_FMT_PCU18BE:	descr = "Planar Complex U18BE"; break;
-+	case V4L2_SDR_FMT_PCU20BE:	descr = "Planar Complex U20BE"; break;
- 	case V4L2_TCH_FMT_DELTA_TD16:	descr = "16-bit signed deltas"; break;
- 	case V4L2_TCH_FMT_DELTA_TD08:	descr = "8-bit signed deltas"; break;
- 	case V4L2_TCH_FMT_TU16:		descr = "16-bit unsigned touch data"; break;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 2b8feb86d09e..45cf7359822c 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -669,6 +669,9 @@ struct v4l2_pix_format {
- #define V4L2_SDR_FMT_CS8          v4l2_fourcc('C', 'S', '0', '8') /* complex s8 */
- #define V4L2_SDR_FMT_CS14LE       v4l2_fourcc('C', 'S', '1', '4') /* complex s14le */
- #define V4L2_SDR_FMT_RU12LE       v4l2_fourcc('R', 'U', '1', '2') /* real u12le */
-+#define V4L2_SDR_FMT_PCU16BE	  v4l2_fourcc('P', 'C', '1', '6') /* planar complex u16be */
-+#define V4L2_SDR_FMT_PCU18BE	  v4l2_fourcc('P', 'C', '1', '8') /* planar complex u18be */
-+#define V4L2_SDR_FMT_PCU20BE	  v4l2_fourcc('P', 'C', '2', '0') /* planar complex u20be */
- 
- /* Touch formats - used for Touch devices */
- #define V4L2_TCH_FMT_DELTA_TD16	v4l2_fourcc('T', 'D', '1', '6') /* 16-bit signed deltas */
--- 
-2.12.2
+Great, thanks!
