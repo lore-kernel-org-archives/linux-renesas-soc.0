@@ -1,99 +1,337 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56711 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964831AbdEOSkt (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36182 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751908AbdEOMoT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 May 2017 14:40:49 -0400
-Date: Mon, 15 May 2017 20:40:44 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mon, 15 May 2017 08:44:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/3] arm64: dts: r8a7795: Add support for R-Car H3
- ES2.0
-Message-ID: <20170515184041.GA23926@verge.net.au>
-References: <1494852253-8572-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 1/3] arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
+Date: Mon, 15 May 2017 14:44:11 +0200
+Message-Id: <1494852253-8572-2-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1494852253-8572-1-git-send-email-geert+renesas@glider.be>
+References: <1494852253-8572-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 15, 2017 at 02:44:10PM +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> This patch series adds support for Renesas Salvator-X and H3ULCB
-> development boards equipped with revision ES2.0 of the R-Car H3 SoC.
-> 
-> Our goal is to have a single kernel image supporting both ES1. and ES2.0
-> revisions of the R-Car H3 SoC, and let r8a7795-salvator-x.dtb and
-> r8a7795-h3ulcb.dtb represent the latest production hardware.
-> As R-Car H3 ES1.x SoCs are pre-production revisions, the DTB files for
-> these revisions are renamed to r8a7795-es1-salvator-x.dtb resp.
-> r8a7795-es1-h3ulcb.dtb.
-> 
-> While this will cause a slight inconvenience for developers using
-> pre-production hardware, it will make it easier to deploy production
-> hardware, and phase out support for pre-production hardware later.
-> Note that unless you need access to new features not yet described in
-> DT, you can keep on using the existing DTBs on pre-production hardware.
-> 
->   - Patch 1 adds support for the R-Car H3 ES2.0 Soc, by providing 2
->     .dtsi files: r8a7795.dtsi (ES2.0), and r8a7795-es1.dtsi (ES1.x).
->   - Patch 2 adds support for Salvator-X with R-Car H3 ES2.0 by providing
->     2 .dts files: r8a7795-salvator-x.dts (ES2.0), and
->     r8a7795-es1-salvator-x.dts(ES1.x),
->   - Patch 3 adds support for ator-X with R-Car H3 ES2.0 by providing 2
->     .dts files: r8a7795-salvator-x.dts (ES2.0), and
->     r8a7795-es1-salvator-x.dts(ES1.x).
-> 
-> While patch 1 has no user-visible impact, patches 2 and 3 do.
-> 
-> Changes compared to v3:
->   - Remove "/remove/overrides", as r8a7795-es1.dtsi does additions only,
->   - Move node and property deletion guidelines above the scissors,
->   - Rebase on top of r8a7795 HDMI support (but most of that is "hidden"
->     thanks to git's smart copy from/to patch format),
-> 
-> Changes compared to v2:
->   - Rebase on top of common Salvator-X board support extraction,
->   - Remove the "compatible" property from the DU node in r8a7795.dtsi,
->     in addition to the "vsps" property,
->   - Add support for ES2.0-based H3ULCB.
-> 
-> For changes compared to v1 (which was not posted), please refer to the
-> individual patches.
-> 
-> Dependencies:
->   - This patch series is against renesas-devel-20170515-v4.12-rc1,
->   - Thanks to git's smart copy from/to patch format, it should be
->     applicable with and without "[PATCH 0/2] arm64: dts: salvator-x: Move
->     HDMI0 to common Salvator-X board support".
-> 
-> This series is available in the topic/r8a7795es2-dt-v4 branch of my
-> renesas-drivers git repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> An integration branch (incl. all dependencies) for testing is provided
-> as topic/r8a7795es2-integration.  I plan to update this branch when any
-> of the dependencies are updated.
-> 
-> This has been tested on Salvator-X (H3 ES1.0 and ES2.0), and H3ULCB with
-> H3 ES1.1.
-> 
-> This has not been tested on H3ULCB with H3 ES2.0 due to lack of
-> hardware, so perhaps you want to defer patch 3. However, adding ES2.0
-> support to both boards at the same time has its advantages (e.g. to answer
-> the question "in which kernel version do I need a DTB with 'es1' in its
-> name?").
-> 
-> Thanks for applying (at least) the first two patches!
+Update r8a7795.dtsi so it corresponds to R-Car H3 ES2.0 or later:
+  - The following devices no longer exist on ES2.0, and are thus removed:
+    fcpf2, fcpvd3, fcpvi2, fdp1-2, usb3-if1, vspd3, vspi2.
+  - The DU <-> VSPD topology is different on ES2.0, hence remove the
+    "compatible" and "vsps" properties from the DU node until the driver
+    can handle this.
 
-Thanks, patches 1 and 2 queued up.
-I'd rather not take 3 until it can be tested somehow.
+Move support for the ES1.x revision of the R-Car H3 SoC into a
+separate file.  To avoid duplication, r8a7795-es1.dtsi includes
+r8a7795.dtsi, and adds device nodes and properties where needed.
+Note that while currently r8a7795-es1.dtsi only adds device nodes,
+removal of devices nodes and properties can be implemented using the
+/delete-node/ and /delete-property/ keywords, as shown below:
+
+	&soc {
+		/delete-node/ <name>@<addr>;
+	};
+
+	&<label> {
+		/delete-property/ <prop>;
+	};
+
+Switch r8a7795-salvator-x.dts and r8a7795-h3ulcb.dts from r8a7795.dtsi
+to r8a7795-es1.dtsi to preserve compatibility.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+  - Remove "/remove/overrides", as r8a7795-es1.dtsi does additions only,
+  - Move node and property deletion guidelines above the scissors,
+  - Rebase on top of r8a7795 HDMI support,
+
+v3:
+  - Rebase on top of common Salvator-X board support extraction,
+  - Remove the "compatible" property from the DU node in r8a7795.dtsi,
+    in addition to the "vsps" property,
+
+v2:
+  - Use a separate file for ES1.x instead of for ES2.0, so r8a7795.dtsi
+    always corresponds to the latest SoC revision,
+  - Add a dash between SoC part number and revision, for compatibility
+    with the BSP,
+  - Enhance the hardware description from basic support to everything
+    already supported on ES1.x (except for DU due VSP),
+  - Let r8a7795-es1.dtsi include r8a7795.dtsi.
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi       | 84 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  4 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  4 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 71 +-----------------
+ 4 files changed, 89 insertions(+), 74 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+new file mode 100644
+index 0000000000000000..a0ba7bd21ea3aa18
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -0,0 +1,84 @@
++/*
++ * Device Tree Source for the r8a7795 ES1.x SoC
++ *
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7795.dtsi"
++
++&soc {
++	xhci1: usb@ee0400000 {
++		compatible = "renesas,xhci-r8a7795", "renesas,rcar-gen3-xhci";
++		reg = <0 0xee040000 0 0xc00>;
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 327>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		resets = <&cpg 327>;
++		status = "disabled";
++	};
++
++	fcpf2: fcp@fe952000 {
++		compatible = "renesas,fcpf";
++		reg = <0 0xfe952000 0 0x200>;
++		clocks = <&cpg CPG_MOD 613>;
++		power-domains = <&sysc R8A7795_PD_A3VP>;
++		resets = <&cpg 613>;
++	};
++
++	vspi2: vsp@fe9c0000 {
++		compatible = "renesas,vsp2";
++		reg = <0 0xfe9c0000 0 0x8000>;
++		interrupts = <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 629>;
++		power-domains = <&sysc R8A7795_PD_A3VP>;
++		resets = <&cpg 629>;
++
++		renesas,fcp = <&fcpvi2>;
++	};
++
++	fcpvi2: fcp@fe9cf000 {
++		compatible = "renesas,fcpv";
++		reg = <0 0xfe9cf000 0 0x200>;
++		clocks = <&cpg CPG_MOD 609>;
++		power-domains = <&sysc R8A7795_PD_A3VP>;
++		resets = <&cpg 609>;
++	};
++
++	vspd3: vsp@fea38000 {
++		compatible = "renesas,vsp2";
++		reg = <0 0xfea38000 0 0x4000>;
++		interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 620>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		resets = <&cpg 620>;
++
++		renesas,fcp = <&fcpvd3>;
++	};
++
++	fcpvd3: fcp@fea3f000 {
++		compatible = "renesas,fcpv";
++		reg = <0 0xfea3f000 0 0x200>;
++		clocks = <&cpg CPG_MOD 600>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		resets = <&cpg 600>;
++	};
++
++	fdp1@fe948000 {
++		compatible = "renesas,fdp1";
++		reg = <0 0xfe948000 0 0x2400>;
++		interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 117>;
++		power-domains = <&sysc R8A7795_PD_A3VP>;
++		resets = <&cpg 117>;
++		renesas,fcp = <&fcpf2>;
++	};
++};
++
++&du {
++	compatible = "renesas,du-r8a7795";
++	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index a1fbf0ab8ad8e425..95fe207cb6a3fd2f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -12,11 +12,11 @@
+ #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
+ 
+ /dts-v1/;
+-#include "r8a7795.dtsi"
++#include "r8a7795-es1.dtsi"
+ #include "ulcb.dtsi"
+ 
+ / {
+-	model = "Renesas H3ULCB board based on r8a7795";
++	model = "Renesas H3ULCB board based on r8a7795 ES1.x";
+ 	compatible = "renesas,h3ulcb", "renesas,r8a7795";
+ 
+ 	memory@48000000 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 22e5324e7ada0eea..1bb1dd61ba1ca442 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -11,11 +11,11 @@
+ #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
+ 
+ /dts-v1/;
+-#include "r8a7795.dtsi"
++#include "r8a7795-es1.dtsi"
+ #include "salvator-x.dtsi"
+ 
+ / {
+-	model = "Renesas Salvator-X board based on r8a7795";
++	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
+ 	compatible = "renesas,salvator-x", "renesas,r8a7795";
+ 
+ 	memory@48000000 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 1aad7433b4606ae6..87df66b56f593027 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -182,7 +182,7 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	soc {
++	soc: soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+ 
+@@ -1274,16 +1274,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		xhci1: usb@ee0400000 {
+-			compatible = "renesas,xhci-r8a7795", "renesas,rcar-gen3-xhci";
+-			reg = <0 0xee040000 0 0xc00>;
+-			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 327>;
+-			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-			resets = <&cpg 327>;
+-			status = "disabled";
+-		};
+-
+ 		usb_dmac0: dma-controller@e65a0000 {
+ 			compatible = "renesas,r8a7795-usb-dmac",
+ 				     "renesas,usb-dmac";
+@@ -1568,14 +1558,6 @@
+ 			resets = <&cpg 614>;
+ 		};
+ 
+-		fcpf2: fcp@fe952000 {
+-			compatible = "renesas,fcpf";
+-			reg = <0 0xfe952000 0 0x200>;
+-			clocks = <&cpg CPG_MOD 613>;
+-			power-domains = <&sysc R8A7795_PD_A3VP>;
+-			resets = <&cpg 613>;
+-		};
+-
+ 		vspbd: vsp@fe960000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfe960000 0 0x8000>;
+@@ -1633,25 +1615,6 @@
+ 			resets = <&cpg 610>;
+ 		};
+ 
+-		vspi2: vsp@fe9c0000 {
+-			compatible = "renesas,vsp2";
+-			reg = <0 0xfe9c0000 0 0x8000>;
+-			interrupts = <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 629>;
+-			power-domains = <&sysc R8A7795_PD_A3VP>;
+-			resets = <&cpg 629>;
+-
+-			renesas,fcp = <&fcpvi2>;
+-		};
+-
+-		fcpvi2: fcp@fe9cf000 {
+-			compatible = "renesas,fcpv";
+-			reg = <0 0xfe9cf000 0 0x200>;
+-			clocks = <&cpg CPG_MOD 609>;
+-			power-domains = <&sysc R8A7795_PD_A3VP>;
+-			resets = <&cpg 609>;
+-		};
+-
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfea20000 0 0x4000>;
+@@ -1709,25 +1672,6 @@
+ 			resets = <&cpg 601>;
+ 		};
+ 
+-		vspd3: vsp@fea38000 {
+-			compatible = "renesas,vsp2";
+-			reg = <0 0xfea38000 0 0x4000>;
+-			interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 620>;
+-			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-			resets = <&cpg 620>;
+-
+-			renesas,fcp = <&fcpvd3>;
+-		};
+-
+-		fcpvd3: fcp@fea3f000 {
+-			compatible = "renesas,fcpv";
+-			reg = <0 0xfea3f000 0 0x200>;
+-			clocks = <&cpg CPG_MOD 600>;
+-			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-			resets = <&cpg 600>;
+-		};
+-
+ 		fdp1@fe940000 {
+ 			compatible = "renesas,fdp1";
+ 			reg = <0 0xfe940000 0 0x2400>;
+@@ -1748,16 +1692,6 @@
+ 			renesas,fcp = <&fcpf1>;
+ 		};
+ 
+-		fdp1@fe948000 {
+-			compatible = "renesas,fdp1";
+-			reg = <0 0xfe948000 0 0x2400>;
+-			interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 117>;
+-			power-domains = <&sysc R8A7795_PD_A3VP>;
+-			resets = <&cpg 117>;
+-			renesas,fcp = <&fcpf2>;
+-		};
+-
+ 		hdmi0: hdmi0@fead0000 {
+ 			compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
+ 			reg = <0 0xfead0000 0 0x10000>;
+@@ -1809,7 +1743,6 @@
+ 		};
+ 
+ 		du: display@feb00000 {
+-			compatible = "renesas,du-r8a7795";
+ 			reg = <0 0xfeb00000 0 0x80000>,
+ 			      <0 0xfeb90000 0 0x14>;
+ 			reg-names = "du", "lvds.0";
+@@ -1825,8 +1758,6 @@
+ 			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
+ 			status = "disabled";
+ 
+-			vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
+-
+ 			ports {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-- 
+2.7.4
