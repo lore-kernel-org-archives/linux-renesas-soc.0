@@ -1,43 +1,65 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: joro@8bytes.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        sricharan@codeaurora.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Wed, 17 May 2017 19:07:41 +0900
-Message-Id: <149501566125.21593.3631162285769723783.sendpatchset@little-apple>
-In-Reply-To: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
-References: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
-Subject: [PATCH v8 08/08] iommu/ipmmu-vmsa: Fix pgsize_bitmap semicolon typo
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:49370 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbdEOG5s (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 15 May 2017 02:57:48 -0400
+Date: Mon, 15 May 2017 08:57:44 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH/RFT renesas-devel] arm64: dts: ulcb: Set drive-strength
+ for ravb pins
+Message-ID: <20170515065743.GG16545@verge.net.au>
+References: <1493721024-15042-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdWeLAq7nZ7zu2xJ7vG-oM+-TSZm0eY68Cm-9eUREMjhXg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWeLAq7nZ7zu2xJ7vG-oM+-TSZm0eY68Cm-9eUREMjhXg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, May 12, 2017 at 04:39:03PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Tue, May 2, 2017 at 12:30 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > The EthernetAVB should not depend on the bootloader to setup correct
+> > drive-strength values.  Values for drive-strength where found by
+> > examining the registers after the bootloader has configured the
+> > registers and successfully used the EthernetAVB.
+> >
+> > Based on:
+> > * commit 7d73a4da2681 ("arm64: dts: r8a7795: salvator-x: Set drive-strength
+> >   for ravb pins")
+> > * commit 4903987033be ("arm64: dts: r8a7796: salvator-x: Set drive-strength
+> >   for ravb pins")
+> >
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > * Compile tested only due to lack of hardware access
+> 
+> So how did you examine the registers? ;-)
 
-Fix comma-instead-of-semicolon typo error present
-in the latest version of the IPMMU driver.
+You got me there: copy-paste gone wrong.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> Hence I examined the registers myself:
+>   - H3ULCB has the same register settings as Salvator-X with H3 ES1.0
+>   - M3ULCB has the same register settings as Salvator-X with M3-W ES1.0
+>     or H3 ES2.0.
 
- Earlier posted as:
- [PATCH] iommu/ipmmu-vmsa: Fix pgsize_bitmap semicolon typo
-
- drivers/iommu/ipmmu-vmsa.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 0014/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2017-05-17 16:50:02.850607110 +0900
-@@ -358,7 +358,7 @@ static int ipmmu_domain_init_context(str
- 	 * non-secure mode.
- 	 */
- 	domain->cfg.quirks = IO_PGTABLE_QUIRK_ARM_NS;
--	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
-+	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
- 	domain->cfg.ias = 32;
- 	domain->cfg.oas = 40;
- 	domain->cfg.tlb = &ipmmu_gather_ops;
+That was my assumption, which is what I should have written.
+But as you have checked - thanks for that - I will leave the changelog
+as-is and queue up the patch.
