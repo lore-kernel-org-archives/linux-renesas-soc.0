@@ -1,94 +1,152 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 02/10] clk: renesas: Add r8a7790 CPG Core Clock Definitions
-Date: Fri, 19 May 2017 10:45:57 +0200
-Message-Id: <1495183565-21679-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:35161 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752516AbdEOXMk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 15 May 2017 19:12:40 -0400
+Received: by mail-wm0-f42.google.com with SMTP id b84so106232690wmh.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 May 2017 16:12:34 -0700 (PDT)
+Date: Tue, 16 May 2017 01:12:32 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        dmaengine@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Subject: Re: [PATCH 3/3] dmaengine: rcar-dmac: wait for ISR to finish before
+ freeing resources
+Message-ID: <20170515231232.GA15597@bigcity.dyn.berto.se>
+References: <20170328224035.8040-1-niklas.soderlund+renesas@ragnatech.se>
+ <20170405091407.GG18945@bigcity.dyn.berto.se>
+ <CAMuHMdVW44NEYeL-AtP8Qywhy1KuqgLdaYPVEiUJ01dMABmT4g@mail.gmail.com>
+ <2060101.WvtNsFihc1@avalon>
+ <20170512124938.GG31437@bigcity.dyn.berto.se>
+ <20170514120136.GE6263@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170514120136.GE6263@localhost>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car H2 Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2a ("List of Clocks [R-Car H2]") of the R-Car Gen2 Hardware
-User's Manual rev. 2.00.
+Hi Vinod,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2:
-  - Add Reviewed-by.
----
- include/dt-bindings/clock/r8a7790-cpg-mssr.h | 52 ++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
+On 2017-05-14 17:31:36 +0530, Vinod Koul wrote:
+> On Fri, May 12, 2017 at 02:49:38PM +0200, Niklas S�derlund wrote:
+> > On 2017-04-07 14:33:47 +0300, Laurent Pinchart wrote:
+> > > Hi Geert,
+> > > 
+> > > On Wednesday 05 Apr 2017 12:40:11 Geert Uytterhoeven wrote:
+> > > > On Wed, Apr 5, 2017 at 11:14 AM, Niklas S�derlund wrote:
+> > > > > On 2017-04-05 08:55:31 +0530, Vinod Koul wrote:
+> > > > >> On Thu, Mar 30, 2017 at 09:38:39AM +0200, Niklas S�derlund wrote:
+> > > > >>> On 2017-03-29 15:30:42 +0200, Niklas S�derlund wrote:
+> > > > >>>> On 2017-03-29 14:31:33 +0200, Geert Uytterhoeven wrote:
+> > > > >>>>> On Wed, Mar 29, 2017 at 12:40 AM, Niklas S�derlund wrote:
+> > > > >>>>>> This fixes a race condition where the channel resources could be
+> > > > >>>>>> freed before the ISR had finished running resulting in a NULL
+> > > > >>>>>> pointer reference from the ISR.
+> > > > >>>>>> 
+> > > > >>>>>> [  167.148934] Unable to handle kernel NULL pointer dereference
+> > > > >>>>>> at virtual address 00000000
+> > > > >>>>>> [  167.157051] pgd = ffff80003c641000
+> > > > >>>>>> [  167.160449] [00000000] *pgd=000000007c507003,
+> > > > >>>>>> *pud=000000007c4ff003, *pmd=0000000000000000
+> > > > >>>>>> [  167.168719] Internal error: Oops: 96000046 [#1] PREEMPT SMP
+> > > > >>>>>> [  167.174289] Modules linked in:
+> > > > >>>>>> [  167.177348] CPU: 3 PID: 10547 Comm: dma_ioctl Not tainted
+> > > > >>>>>> 4.11.0-rc1-00001-g8d92afddc2f6633a #73
+> > > > >>>>>> [  167.186131] Hardware name: Renesas Salvator-X board based on
+> > > > >>>>>> r8a7795 (DT)
+> > > > >>>>>> [  167.192917] task: ffff80003a411a00 task.stack: ffff80003bcd4000
+> > > > >>>>>> [  167.198850] PC is at rcar_dmac_chan_prep_sg+0xe0/0x400
+> > > > >>>>>> [  167.203985] LR is at rcar_dmac_chan_prep_sg+0x48/0x400
+> > > > >>>>> 
+> > > > >>>>> Do you have a test case to trigger this?
+> > > > >>>> 
+> > > > >>>> Yes I have a testcase, it's rather complex and involves both a kernel
+> > > > >>>> module and a userspaces application to stress the rcar-dmac. I'm
+> > > > >>>> checking if I can share this publicly or not, please hold :-)
+> > > > >>> 
+> > > > >>> I have now received feedback that I'm unfortunately not allowed to
+> > > > >>> share the test case :-(
+> > > > >>> 
+> > > > >>> The big picture in how to trigger this problem is that you start a DMA
+> > > > >>> transfer like this:
+> > > > >>> 
+> > > > >>> struct dma_async_tx_descriptor *tx = ...;
+> > > > >>> 
+> > > > >>> ...
+> > > > >>> 
+> > > > >>> tx->tx_submit(tx);
+> > > > >>> 
+> > > > >>> And then you directly call dma_release_channel() on this channel
+> > > > >>> without making sure the completion callback ran or anything. Now if you
+> > > > >>> are unlucky the ISR have not finished running for the DMA when
+> > > > >>> dma_release_channel() starts to clean up resources. The synchronisation
+> > > > >>> point in the dma_release_channel() call path fixes this.
+> > > > >> 
+> > > > >> Well the API expectation would be you abort the txn before calling
+> > > > >> release. So the expected order should be:
+> > > > >> 
+> > > > >> dmaengine_terminate_all();
+> > > > >> dma_release_channel();
+> > > > > 
+> > > > > Agree this is the correct way and in this case patch 3/3 in this series
+> > > > > could be dropped. Then device_synchronize() would added to rcar-dmac,
+> > > > > dmaengine_terminate_all() would turn of the IRQ and
+> > > > > dma_release_channel() would ensure that device_synchronize() is called
+> > > > > prior to calling rcar-dmac device_free_chan_resources().
+> > > > > 
+> > > > >> Terminate should then stop the channel, ie abort the pending
+> > > > >> descriptors..
+> > > > > 
+> > > > > However for reasons unknown to me the rcar-dmac
+> > > > > device_free_chan_resources() implementation implements logic to turn of
+> > > > > IRQs before it frees the resources. And it's because of this patch 3/3
+> > > > > is needed so that it can be sure no ISR is running before it frees
+> > > > > resources.
+> > > > > 
+> > > > > I don't know how to best proceed here. I agree it feels a bit odd that
+> > > > > device_free_chan_resources() is dealing with the IRQs as such things
+> > > > > should be done before it's called. But on the other hand that code has
+> > > > > been part of the driver since it was added upstream. I feel a bit
+> > > > > uncomfortable just removing that part from the
+> > > > > device_free_chan_resources() since the driver have been in use with it
+> > > > > for such a long time.
+> > > > > 
+> > > > > How would you prefer I try and resolve this?
+> > > > 
+> > > > Perhaps Laurent knows why it was implemented this way?
+> > > 
+> > > That was nearly 3 years ago, and I can hardly remember reasons related to code 
+> > > I wrote 3 months ago :-)
+> > > 
+> > > I might just have been overcautious, guarding against conditions that should 
+> > > not happen if the caller behaves correctly. The situation might have changed 
+> > > since the driver was written. It might also be just a case of cargo-cult 
+> > > programming, as the shdma_free_chan_resources() has very similar code.
+> > 
+> > Since the driver today have this behavior would it not be best to first 
+> > make sure it functions as expected and then as a second step see if we 
+> > can remove it all together?
+> > 
+> > Vinod would you be strongly opposed to picking up this series as is?
+> 
+> If there are no objections then I don't mind picking, please do rebase on
+> -rc1 and resend
 
-diff --git a/include/dt-bindings/clock/r8a7790-cpg-mssr.h b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..1625b8bf34822b6e
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
-@@ -0,0 +1,52 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7790 CPG Core Clocks */
-+#define R8A7790_CLK_Z			0
-+#define R8A7790_CLK_Z2			1
-+#define R8A7790_CLK_ZG			2
-+#define R8A7790_CLK_ZTR			3
-+#define R8A7790_CLK_ZTRD2		4
-+#define R8A7790_CLK_ZT			5
-+#define R8A7790_CLK_ZX			6
-+#define R8A7790_CLK_ZS			7
-+#define R8A7790_CLK_HP			8
-+#define R8A7790_CLK_I			9
-+#define R8A7790_CLK_B			10
-+#define R8A7790_CLK_LB			11
-+#define R8A7790_CLK_P			12
-+#define R8A7790_CLK_CL			13
-+#define R8A7790_CLK_M2			14
-+#define R8A7790_CLK_ADSP		15
-+#define R8A7790_CLK_IMP			16
-+#define R8A7790_CLK_ZB3			17
-+#define R8A7790_CLK_ZB3D2		18
-+#define R8A7790_CLK_DDR			19
-+#define R8A7790_CLK_SDH			20
-+#define R8A7790_CLK_SD0			21
-+#define R8A7790_CLK_SD1			22
-+#define R8A7790_CLK_SD2			23
-+#define R8A7790_CLK_SD3			24
-+#define R8A7790_CLK_MMC0		25
-+#define R8A7790_CLK_MMC1		26
-+#define R8A7790_CLK_MP			27
-+#define R8A7790_CLK_SSP			28
-+#define R8A7790_CLK_SSPRS		29
-+#define R8A7790_CLK_QSPI		30
-+#define R8A7790_CLK_CP			31
-+#define R8A7790_CLK_RCAN		32
-+#define R8A7790_CLK_R			33
-+#define R8A7790_CLK_OSC			34
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__ */
+Thanks I have sent out a rebased v2.
+
+> 
+> -- 
+> ~Vinod
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
