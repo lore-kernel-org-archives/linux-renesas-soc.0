@@ -1,62 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:57753 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753855AbdERH6q (ORCPT
+Received: from sauhun.de ([88.99.104.3]:34594 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750753AbdEPLV2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 03:58:46 -0400
-Date: Thu, 18 May 2017 09:58:42 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: stub: move module_init/exit annotations to the
- proper place
-Message-ID: <20170518095842.7f3b612a@endymion>
-In-Reply-To: <20170516112105.2793-1-wsa+renesas@sang-engineering.com>
-References: <20170516112105.2793-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 16 May 2017 07:21:28 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/2] i2c: stub: move module_init/exit annotations to the proper place
+Date: Tue, 16 May 2017 13:21:04 +0200
+Message-Id: <20170516112105.2793-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/i2c-stub.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On Tue, 16 May 2017 13:21:04 +0200, Wolfram Sang wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/i2c/i2c-stub.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/i2c-stub.c b/drivers/i2c/i2c-stub.c
-> index 06af583d510150..0aa4d646f8fb26 100644
-> --- a/drivers/i2c/i2c-stub.c
-> +++ b/drivers/i2c/i2c-stub.c
-> @@ -406,16 +406,15 @@ static int __init i2c_stub_init(void)
->  	i2c_stub_free();
->  	return ret;
->  }
-> +module_init(i2c_stub_init);
->  
->  static void __exit i2c_stub_exit(void)
->  {
->  	i2c_del_adapter(&stub_adapter);
->  	i2c_stub_free();
->  }
-> +module_exit(i2c_stub_exit);
->  
->  MODULE_AUTHOR("Mark M. Hoffman <mhoffman@lightlink.com>");
->  MODULE_DESCRIPTION("I2C stub driver");
->  MODULE_LICENSE("GPL");
-> -
-> -module_init(i2c_stub_init);
-> -module_exit(i2c_stub_exit);
-
-I'm not sure on what you base your claim that this is the "proper
-place". checkpatch doesn't complain about either, and if anything, the
-original style (module_init/exit) at end of file seems a lot more
-popular through the kernel tree.
-
+diff --git a/drivers/i2c/i2c-stub.c b/drivers/i2c/i2c-stub.c
+index 06af583d510150..0aa4d646f8fb26 100644
+--- a/drivers/i2c/i2c-stub.c
++++ b/drivers/i2c/i2c-stub.c
+@@ -406,16 +406,15 @@ static int __init i2c_stub_init(void)
+ 	i2c_stub_free();
+ 	return ret;
+ }
++module_init(i2c_stub_init);
+ 
+ static void __exit i2c_stub_exit(void)
+ {
+ 	i2c_del_adapter(&stub_adapter);
+ 	i2c_stub_free();
+ }
++module_exit(i2c_stub_exit);
+ 
+ MODULE_AUTHOR("Mark M. Hoffman <mhoffman@lightlink.com>");
+ MODULE_DESCRIPTION("I2C stub driver");
+ MODULE_LICENSE("GPL");
+-
+-module_init(i2c_stub_init);
+-module_exit(i2c_stub_exit);
 -- 
-Jean Delvare
-SUSE L3 Support
+2.11.0
