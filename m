@@ -1,89 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:49254 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752721AbdEDPAe (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:39084 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753107AbdEPPv1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 May 2017 11:00:34 -0400
-Date: Thu, 4 May 2017 18:00:32 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v4 20/27] rcar-vin: register a media pad if running in
- media controller mode
-Message-ID: <20170504150031.GA7456@valkosipuli.retiisi.org.uk>
-References: <20170427224203.14611-1-niklas.soderlund+renesas@ragnatech.se>
- <20170427224203.14611-21-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20170427224203.14611-21-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 16 May 2017 11:51:27 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1dAekv-000501-J6
+        for linux-renesas-soc@vger.kernel.org; Tue, 16 May 2017 17:51:25 +0200
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1dAekv-0007yr-GB
+        for linux-renesas-soc@vger.kernel.org; Tue, 16 May 2017 17:51:25 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2017-05-16-v4.12-rc1
+Date: Tue, 16 May 2017 17:51:25 +0200
+Message-Id: <1494949885-30638-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 12:41:56AM +0200, Niklas S�derlund wrote:
-> When running in media controller mode a media pad is needed, register
-> one.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 9 +++++++++
->  drivers/media/platform/rcar-vin/rcar-vin.h  | 4 ++++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index 7aaa01dee014d64b..f560d27449b84882 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -267,7 +267,16 @@ static int rvin_group_init(struct rvin_dev *vin)
->  	if (ret)
->  		return ret;
->  
-> +	vin->pad.flags = MEDIA_PAD_FL_SINK;
-> +	ret = media_entity_pads_init(&vin->vdev->entity, 1, &vin->pad);
-> +	if (ret)
-> +		goto error_v4l2;
-> +
->  	return 0;
+I have pushed renesas-drivers-2017-05-16-v4.12-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This would benefit from an extra newline.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-> +error_v4l2:
-> +	rvin_v4l2_mc_remove(vin);
-> +
-> +	return ret;
->  }
->  
->  /* -----------------------------------------------------------------------------
-> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-> index 6f2b1e28381678a9..06934313950253f4 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-> @@ -103,6 +103,8 @@ struct rvin_info {
->   * @notifier:		V4L2 asynchronous subdevs notifier
->   * @digital:		entity in the DT for local digital subdevice
->   *
-> + * @pad:		pad for media controller
-> + *
->   * @lock:		protects @queue
->   * @queue:		vb2 buffers queue
->   *
-> @@ -132,6 +134,8 @@ struct rvin_dev {
->  	struct v4l2_async_notifier notifier;
->  	struct rvin_graph_entity digital;
->  
-> +	struct media_pad pad;
-> +
->  	struct mutex lock;
->  	struct vb2_queue queue;
->  
+Today's version is based on renesas-devel-20170515v3-v4.12-rc1.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Included branches with driver code:
+  - clk-renesas-for-v4.13
+  - sh-pfc-for-v4.13
+  - topic/rza1-pfc-gpio-v5
+  - topic/ipmmu-multi-arch-v7
+  - topic/r8a7795-ipmmu-v3
+  - topic/r8a7796-ipmmu-v3
+  - topic/r8a7795es2-dt-v4
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/sdhi-cmd23
+  - topic/suspend-to-idle-v1
+  - git://linuxtv.org/pinchartl/media.git#drm/next/du-vsp
+  - topic/spi-slave-v3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/submissions/vsp-drm-race/v4
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/submissions/vsp1/suspend-resume/v5
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/submissions/vsp1/writeback/v3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdhi-refactor-v2
+
+Included fixes:
+  - iommu/ipmmu-vmsa: Fix pgsize_bitmap semicolon typo
+  - serial: sh-sci: Fix race condition causing garbage during shutdown
+  - iio: adc: max9611: Fix attribute measure unit
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
