@@ -1,71 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:34783 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753168AbdERIw4 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:34635 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750853AbdEPL2E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 04:52:56 -0400
-Date: Thu, 18 May 2017 10:52:53 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC] i2c-stub: make it usable with DT when booting
-Message-ID: <20170518105253.058a90a6@endymion>
-In-Reply-To: <20170516112758.2842-1-wsa+renesas@sang-engineering.com>
-References: <20170516112758.2842-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 16 May 2017 07:28:04 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC] i2c-stub: make it usable with DT when booting
+Date: Tue, 16 May 2017 13:27:58 +0200
+Message-Id: <20170516112758.2842-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+This patch makes the stub driver parse the device tree when booting and
+create a virtual bus with the desired devices attached. Here is an
+example DTS snipplet making use of it. It is for simulating a more
+complex camera device which has dependencies which needs to be sorted
+out at boot time:
 
-On Tue, 16 May 2017 13:27:58 +0200, Wolfram Sang wrote:
-> This patch makes the stub driver parse the device tree when booting and
-> create a virtual bus with the desired devices attached. Here is an
-> example DTS snipplet making use of it. It is for simulating a more
-> complex camera device which has dependencies which needs to be sorted
-> out at boot time:
-> 
-> i2c@42 {
-> 	compatible = "i2c-stub";
-> 
-> 	#address-cells = <1>;
-> 	#size-cells = <0>;
-> 
-> 	des@4c {
-> 		compatible = "maxim,max9268";
-> 		reg = <0x4c>;
-> 	};
-> 
-> 	eeprom@57 {
-> 		compatible = "atmel,24c02";
-> 		reg = <0x57>;
-> 	};
-> };
+i2c@42 {
+	compatible = "i2c-stub";
 
-I get the idea and I understand the need to emulate the devices early
-in the boot process. However, how do you deal with the I2C devices
-pre-initialization (setting initial register values)? This is typically
-done in user-space with the i2c-stub-from-dump script, or manual calls
-to i2cset, but that would be too late in your case, wouldn't it?
+	#address-cells = <1>;
+	#size-cells = <0>;
 
-> 
-> FIXME: can fw_* calls be used instead of of_*?
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> It was really useful when developing. When using fw_* calls, we probably could
-> make use of it with ACPI as well. Still, calling for opinions if we want this
-> upstream or if we want to stay module-only? Also, the binding should really
-> be marked as "development only". Or is it better to keep it as a separate
-> patch to keep the binding un-official?
+	des@4c {
+		compatible = "maxim,max9268";
+		reg = <0x4c>;
+	};
 
-Code looks sane, but I can't comment on the bindings side of things as
-this isn't my area.
+	eeprom@57 {
+		compatible = "atmel,24c02";
+		reg = <0x57>;
+	};
+};
 
+FIXME: can fw_* calls be used instead of of_*?
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+It was really useful when developing. When using fw_* calls, we probably could
+make use of it with ACPI as well. Still, calling for opinions if we want this
+upstream or if we want to stay module-only? Also, the binding should really
+be marked as "development only". Or is it better to keep it as a separate
+patch to keep the binding un-official?
+
+ drivers/i2c/Kconfig    |  2 +-
+ drivers/i2c/i2c-stub.c | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
+index efc3354d60ae89..6d38b38632f44c 100644
+--- a/drivers/i2c/Kconfig
++++ b/drivers/i2c/Kconfig
+@@ -99,7 +99,7 @@ source drivers/i2c/busses/Kconfig
+ 
+ config I2C_STUB
+ 	tristate "I2C/SMBus Test Stub"
+-	depends on m
++	depends on m || OF
+ 	default 'n'
+ 	help
+ 	  This module may be useful to developers of SMBus client drivers,
+diff --git a/drivers/i2c/i2c-stub.c b/drivers/i2c/i2c-stub.c
+index 5627b1df391c7e..ce30bc4ac15a28 100644
+--- a/drivers/i2c/i2c-stub.c
++++ b/drivers/i2c/i2c-stub.c
+@@ -359,10 +359,44 @@ static void i2c_stub_free(void)
+ 	kfree(stub_chips);
+ }
+ 
++#ifdef CONFIG_OF
++void i2c_stub_parse_of(void)
++{
++	struct device_node *np, *child;
++	u32 reg, i = 0;
++
++	np = of_find_compatible_node(NULL, NULL, "i2c-stub");
++	if (!np)
++		return;
++
++	for_each_available_child_of_node(np, child) {
++		if (of_property_read_u32(child, "reg", &reg) == 0) {
++			chip_addr[i++] = reg;
++			if (i == MAX_CHIPS) {
++				pr_warn("Maximum number of chips reached!\n");
++				break;
++			}
++		}
++	}
++
++	stub_adapter.dev.of_node = np;
++
++	np = of_find_compatible_node(np, NULL, "i2c-stub");
++	if (np) {
++		pr_warn("Driver can currently do only one stub from DT!\n");
++		of_node_put(np);
++	}
++}
++#else
++void i2c_stub_parse_of(void) { }
++#endif
++
+ static int __init i2c_stub_init(void)
+ {
+ 	int i, ret;
+ 
++	i2c_stub_parse_of();
++
+ 	if (!chip_addr[0]) {
+ 		pr_err("Please specify a chip address\n");
+ 		return -ENODEV;
 -- 
-Jean Delvare
-SUSE L3 Support
+2.11.0
