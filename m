@@ -1,216 +1,152 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34188 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753408AbdEQJW1 (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:37140 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752596AbdEPOxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:22:27 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUoLp1oVT_=NG8HS-jgG6AhOeVUsGgu7fLbGY+7A+0cOg@mail.gmail.com>
-References: <1486136933-20328-1-git-send-email-sricharan@codeaurora.org>
- <1486136933-20328-8-git-send-email-sricharan@codeaurora.org>
- <CAMuHMdV05uCcVss+V1E+_OQYosJO6P95rU1WynV-G08-iHJnyg@mail.gmail.com>
- <2bfd11dc-9f94-2b69-7b03-c640e53155e1@arm.com> <26defadf-6380-4af4-6323-b51198376bc1@codeaurora.org>
- <CAMuHMdUoLp1oVT_=NG8HS-jgG6AhOeVUsGgu7fLbGY+7A+0cOg@mail.gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 17 May 2017 18:22:24 +0900
-Message-ID: <CANqRtoSEwdoufUxP-Rm=qZJ7G8V3ow5F0ggV3tALrfiRad+j4Q@mail.gmail.com>
+        Tue, 16 May 2017 10:53:04 -0400
 Subject: Re: [PATCH V8 07/11] iommu: of: Handle IOMMU lookup failure with
  deferred probing or error
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sricharan R <sricharan@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <1486136933-20328-1-git-send-email-sricharan@codeaurora.org>
+ <1924197.MWBQ7kvoOo@avalon> <5724f819-40db-e830-1ec1-62c887ba39ee@arm.com>
+ <1825810.fLbCv8umR7@avalon>
+Cc: sricharan@codeaurora.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Will Deacon <will.deacon@arm.com>,
         Joerg Roedel <joro@8bytes.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         iommu@lists.linux-foundation.org,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         linux-pci <linux-pci@vger.kernel.org>,
         ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         tn@semihalf.com, Hanjun Guo <hanjun.guo@linaro.org>,
-        okaya@codeaurora.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        okaya@codeaurora.org, Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-msm-owner@vger.kernel.org
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <6d9fa319-4401-c47a-7985-9a349838bcaf@arm.com>
+Date: Tue, 16 May 2017 15:52:52 +0100
+MIME-Version: 1.0
+In-Reply-To: <1825810.fLbCv8umR7@avalon>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert, everyone,
-
-On Fri, May 5, 2017 at 10:23 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Sricharan, Robin,
->
-> On Wed, May 3, 2017 at 12:24 PM, Sricharan R <sricharan@codeaurora.org> wrote:
->> On 5/3/2017 3:24 PM, Robin Murphy wrote:
->>> On 02/05/17 19:35, Geert Uytterhoeven wrote:
->>>> On Fri, Feb 3, 2017 at 4:48 PM, Sricharan R <sricharan@codeaurora.org> wrote:
->>>>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>>>
->>>>> Failures to look up an IOMMU when parsing the DT iommus property need to
->>>>> be handled separately from the .of_xlate() failures to support deferred
->>>>> probing.
->>>>>
->>>>> The lack of a registered IOMMU can be caused by the lack of a driver for
->>>>> the IOMMU, the IOMMU device probe not having been performed yet, having
->>>>> been deferred, or having failed.
->>>>>
->>>>> The first case occurs when the device tree describes the bus master and
->>>>> IOMMU topology correctly but no device driver exists for the IOMMU yet
->>>>> or the device driver has not been compiled in. Return NULL, the caller
->>>>> will configure the device without an IOMMU.
->>>>>
->>>>> The second and third cases are handled by deferring the probe of the bus
->>>>> master device which will eventually get reprobed after the IOMMU.
->>>>>
->>>>> The last case is currently handled by deferring the probe of the bus
->>>>> master device as well. A mechanism to either configure the bus master
->>>>> device without an IOMMU or to fail the bus master device probe depending
->>>>> on whether the IOMMU is optional or mandatory would be a good
->>>>> enhancement.
->>>>>
->>>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>> Signed-off-by: Laurent Pichart <laurent.pinchart+renesas@ideasonboard.com>
->>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+On 16/05/17 15:10, Laurent Pinchart wrote:
+> Hi Robin,
+> 
+> On Tuesday 16 May 2017 15:04:55 Robin Murphy wrote:
+>> On 16/05/17 08:17, Laurent Pinchart wrote:
+>>> On Tuesday 16 May 2017 07:53:57 sricharan@codeaurora.org wrote:
+> 
+> [snip]
+> 
+>>>> arch_teardown_dma_ops() being the inverse of arch_setup_dma_ops()
+>>>> ,dma_ops should be cleared in the teardown path. Otherwise
+>>>> this causes problem when the probe of device is retried after
+>>>> being deferred. The device's iommu structures are cleared
+>>>> after EPROBEDEFER error, but on the next try dma_ops will still
+>>>> be set to old value, which is not right.
 >>>>
->>>> This patch broke Renesas R-Car Gen3 platforms in renesas-drivers.
->>>> As the IOMMU nodes in DT are not yet enabled, all devices having iommus
->>>> properties in DT now fail to probe.
+>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+>>>> ---
+>>>>
+>>>>   arch/arm/mm/dma-mapping.c | 1 +
+>>>>   1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+>>>> index ab4f745..a40f03e 100644
+>>>> --- a/arch/arm/mm/dma-mapping.c
+>>>> +++ b/arch/arm/mm/dma-mapping.c
+>>>> @@ -2358,6 +2358,7 @@ static void arm_teardown_iommu_dma_ops(struct
+>>>> device *dev)
 >>>
->>> How exactly do they fail to probe? Per d7b0558230e4, if there are no ops
->>> registered then they should merely defer until we reach the point of
->>> giving up and ignoring the IOMMU. Is it just that you have no other
->>> late-probing drivers or post-init module loads to kick the deferred
->>> queue after that point? I did try to find a way to explicitly kick it
->>> from a suitably late initcall, but there didn't seem to be any obvious
->>> public interface - anyone have any suggestions?
+>>>>   	__arm_iommu_detach_device(dev);
+>>>>   	arm_iommu_release_mapping(mapping);
+>>>> +	set_dma_ops(dev, NULL);
+>>>>   }
+>>>>   #else
 >>>
->>> I think that's more of a general problem with the probe deferral
->>> mechanism itself (I've seen the same thing happen with some of the
->>> CoreSight stuff on Juno due to the number of inter-component
->>> dependencies) rather than any specific fault of this series.
->
-> I had a deeper look into the issue.
->
-> What changed, is that of_dma_configure() now returns an error code,
-> and dma_configure() looks at it.
->
-> Actually there are two failure modes:
->   1. Devices with an iommus property pointing to a disabled IOMMU node.
->      These return -EPROBE_DEFER, and are now retried forever.
->   2. Devices that are blacklisted in the IPMMU driver, as we don't want to
->      use them with an IOMMU yet.
->      These return -ENODEV, due to ipmmu_of_xlate_dma().
->
->> I was thinking of an additional check like below to avoid the
->> situation ?
+>>> The subject mentions arch_teardown_dma_ops(), which I think is correct,
+>>> but the patch adds the set_dma_ops() call to arm_teardown_iommu_dma_ops().
+>>>
+>>> However, the situation is perhaps more complex. Note the check at the
+>>> beginning of arch_setup_dma_ops():
+>>> 	/*
+>>> 	 * Don't override the dma_ops if they have already been set. Ideally
+>>> 	 * this should be the only location where dma_ops are set, remove this
+>>> 	 * check when all other callers of set_dma_ops will have disappeared.
+>>> 	 */
+>>> 	if (dev->dma_ops)
+>>> 		return;
+>>>
+>>> If you set the dma_ops to NULL in arm_teardown_iommu_dma_ops() or
+>>> arch_teardown_dma_ops(), the next call to arch_setup_dma_ops() will
+>>> override them. To be safe you should only set them to NULL if they have
+>>> been set by arch_setup_dma_ops(). More than that, arch_teardown_dma_ops()
+>>> should probably not call arm_teardown_iommu_dma_ops() at all if the
+>>> dma_ops were set by arm_iommu_attach_device() and not
+>>> arch_teardown_dma_ops().
 >>
->> From 499b6e662f60f23740b8880882b0a16f16434501 Mon Sep 17 00:00:00 2001
->> From: Sricharan R <sricharan@codeaurora.org>
->> Date: Wed, 3 May 2017 13:16:59 +0530
->> Subject: [PATCH] iommu: of: Fix check for returning EPROBE_DEFER
->>
->> While returning EPROBE_DEFER for iommu masters
->> take in to account of iommu nodes that could be
->> marked in DT as 'status=disabled', in which case
->> simply return NULL and let the master's probe
->> continue rather than deferring.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  drivers/iommu/of_iommu.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
->> index 9f44ee8..e6e9bec 100644
->> --- a/drivers/iommu/of_iommu.c
->> +++ b/drivers/iommu/of_iommu.c
->> @@ -118,6 +118,7 @@ static bool of_iommu_driver_present(struct device_node *np)
->>
->>         ops = iommu_ops_from_fwnode(fwnode);
->>         if ((ops && !ops->of_xlate) ||
->> +           !of_device_is_available(iommu_spec->np) ||
->>             (!ops && !of_iommu_driver_present(iommu_spec->np)))
->>                 return NULL;
->
-> Thanks, this fixes the first class of failures.
->
-> The second class can be worked around using:
->
-> --- a/drivers/iommu/of_iommu.c
-> +++ b/drivers/iommu/of_iommu.c
-> @@ -196,6 +196,11 @@ static const struct iommu_ops
->                 ops = of_iommu_xlate(dev, &iommu_spec);
->                 of_node_put(iommu_spec.np);
->                 idx++;
-> +               if (PTR_ERR(ops) == -ENODEV) {
-> +                       dev_info(dev, "%s: Ignoring -ENODEV => NULL\n",
-> +                                __func__);
-> +                       return NULL;
-> +               }
->                 if (IS_ERR_OR_NULL(ops))
->                         break;
->         }
->
-> but obviously that's too hackish to apply...
-> Magnus, do you have a suggestion?
+>> Under what circumstances is that an issue? We'll only be tearing down
+>> the DMA ops when unbinding the driver,
+> 
+> Or when deferring probe.
+> 
+>> and I think it would be erroneous to expect the device to retain much state
+>> after that. Everything else would be set up from scratch again if it get
+>> reprobed later, so why not the DMA ops?
+> 
+> Because the DMA ops might have been set elsewhere than arch_setup_dma_ops(). 
+> If you look at the patch that added the above warning, its commit message 
+> states
+> 
+> commit 26b37b946a5c2658dbc37dd5d6df40aaa9685d70 (iommu-joerg/arm/core)
+> Author: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Date:   Fri May 15 02:00:02 2015 +0300
+> 
+>     arm: dma-mapping: Don't override dma_ops in arch_setup_dma_ops()
+>     
+>     The arch_setup_dma_ops() function is in charge of setting dma_ops with a
+>     call to set_dma_ops(). set_dma_ops() is also called from
+>     
+>     - highbank and mvebu bus notifiers
+>     - dmabounce (to be replaced with swiotlb)
+>     - arm_iommu_attach_device
+>     
+>     (arm_iommu_attach_device is itself called from IOMMU and bus master
+>     device drivers)
+>     
+>     To allow the arch_setup_dma_ops() call to be moved from device add time
+>     to device probe time we must ensure that dma_ops already setup by any of
+>     the above callers will not be overriden.
+>     
+>     Aftering replacing dmabounce with swiotlb, converting IOMMU drivers to
+>     of_xlate and taking care of highbank and mvebu, the workaround should be
+>     removed.
+> 
+> I'm concerned about potentially breaking these if we unconditionally remove 
+> the DMA ops and mapping.
 
-Thanks for your efforts guys!
+Ah, sorry, I see now - it was taking a long time to page the 32-bit code
+back in, and I'd forgotten the specifics of the mess of competing
+"default domain" notions. Indeed, it's not the device's driver expecting
+any state to be preserved as I got stuck on, it's the IOMMU driver,
+which does "know better" to an extent, expecting its changes to the
+struct device to stick for the lifetime of that structure.
 
-I've recently been working on up-porting the IPMMU patches and
-addressing review comments. Now with my local driver stack on top of
-v4.12-rc (a95cfad) I did not notice these issues initially since I
-only tested devices with IPMMU enabled. Once these issues were pointed
-out to me by Geert I have now reproduced the 64-bit ARM specific ones
-on r8a7796 Salvator-X.
+I agree there shouldn't be a disparity - arch_setup_dma_ops() only does
+things given certain circumstances, so arch_teardown_dma_ops() should
+only undo them under the same. With probe-deferral in place I'll be
+reviving my work to convert this path over to IOMMU API default domains,
+which will make some of these issues go away again, but in the meantime
+I also agree that the most expedient fix is indeed to add a flag to say
+whether the dma ops were automatically set or not (this is implicitly
+true on arm64, which was partly what was tripping me up).
 
-On my r8a7796 platform I'm using the following IOMMU and DMA Engine devices:
-
-IOMMU device IPMMU-DS0 - Connected to SYS-DMAC0
-IOMMU device IPMMU-DS1 - Connected to SYS-DMAC1 and SYS-DMAC2
-IOMMU device IPMMU-MM - Root device serving IPMMU-DS0 and IPMMU-DS1
-
-For testing the serial port SCIF1 is used with DMA Engine devices
-SYS-DMAC1 or SYS-DMAC2.
-
-The software environment is configured as follows:
-- The DTS comes with all devices above enabled except IPMMU-DS0 which
-comes with status = "disabled".
-- The IPMMU driver is during run time only allowing use of SYS-DMAC2.
-For other devices ->of_xlate() returns -ENODEV.
-
-The above used to work just fine with v4.11 or earlier.
-
-My observations for v4.12-rc:
-
-1) Default state for a95cfad
-
-The devices SYS-DMAC0 and SYS-DMAC1 will never probe. However SYS-DMAC2 is fine.
-
-2) After applying "[PATCH] iommu: of: Fix check for returning EPROBE_DEFER" [1]
-
-This fixes SYS-DMAC0 that now probes and operates without IPMMU-DS0 as
-expected. Same as v4.11 or earlier.
-
-3) After also applying "[PATCH] of: iommu: Ignore all errors except
-EPROBE_DEFER" [2]
-
-This fixes SYS-DMAC1 that now probes and operates without IPMMU-DS1 as
-expected. Same as v4.11 or earlier.
-
-With fix [1] and [2] things seem back to normal. Unless I'm mistaken
-it also seems that [1] allows me to drop the similar patch "[PATCH/RFC
-v2 1/4] iommu/of: Skip IOMMU devices disabled in DT".
-
-Thanks for your help.
-
-Cheers,
-
-/ magnus
-
-
-[1] https://lkml.org/lkml/2017/5/16/25
-[2] https://www.spinics.net/lists/arm-kernel/msg581485.html
-[3] https://patchwork.kernel.org/patch/9540605/
+Robin.
