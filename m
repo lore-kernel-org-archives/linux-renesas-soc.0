@@ -1,65 +1,142 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:37742 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751272AbdEPJHf (ORCPT
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:36019 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752000AbdEPJCR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 May 2017 05:07:35 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170516090214.GA30768@bigcity.dyn.berto.se>
-References: <20170511222735.10706-1-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdUXqWJMh7syd3muMs8v9wx5bJNRj_3+xEAXTQTfAv0BFA@mail.gmail.com>
- <20170512125853.GH31437@bigcity.dyn.berto.se> <20170512143242.GA13939@bigcity.dyn.berto.se>
- <CAMuHMdU+uiiZfh5u+tL_bVJinhP-c0_iF4ZQh8=9NHN+aqUs=Q@mail.gmail.com>
- <20170512211222.GI31437@bigcity.dyn.berto.se> <CAMuHMdWZ8XLX0Zu0D54Ex+3RaFNm_fJyFQvyo+qz10HpB2nGqQ@mail.gmail.com>
- <20170516090214.GA30768@bigcity.dyn.berto.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 May 2017 11:07:34 +0200
-Message-ID: <CAMuHMdVkitTgVmUrPu5+z2JwnwHop4bJ5anMq1SmCeFfV=OxQg@mail.gmail.com>
-Subject: Re: [PATCH] ravb: add wake-on-lan support via magic packet
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+        Tue, 16 May 2017 05:02:17 -0400
+Received: by mail-qt0-f176.google.com with SMTP id f55so70009372qta.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 16 May 2017 02:02:16 -0700 (PDT)
+Date: Tue, 16 May 2017 11:02:14 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] ravb: add wake-on-lan support via magic packet
+Message-ID: <20170516090214.GA30768@bigcity.dyn.berto.se>
+References: <20170511222735.10706-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdUXqWJMh7syd3muMs8v9wx5bJNRj_3+xEAXTQTfAv0BFA@mail.gmail.com>
+ <20170512125853.GH31437@bigcity.dyn.berto.se>
+ <20170512143242.GA13939@bigcity.dyn.berto.se>
+ <CAMuHMdU+uiiZfh5u+tL_bVJinhP-c0_iF4ZQh8=9NHN+aqUs=Q@mail.gmail.com>
+ <20170512211222.GI31437@bigcity.dyn.berto.se>
+ <CAMuHMdWZ8XLX0Zu0D54Ex+3RaFNm_fJyFQvyo+qz10HpB2nGqQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWZ8XLX0Zu0D54Ex+3RaFNm_fJyFQvyo+qz10HpB2nGqQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Hi Geert,
 
-On Tue, May 16, 2017 at 11:02 AM, Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
->> > Whit all this being said I still like to withdraw this patch as I foun=
-d
->> > another fault with it, ravb_wol_restore() will unconditionally be call=
-ed
->> > while ravb_wol_setup() will only be called if netif_running(ndev). Thi=
-s
->> > is en easy fix and I will send out a v2 once we figure out what to do
->> > about the clock.
->>
->> The clock issue is external to the ravb driver. If it works with
->> s2idle, it should
->> be OK.
->
-> Do you think it's a good idea to move ahead with a v2 of the ravb WoL
-> patch to fix the unrelated issue and aim for it to be picked up prior to
-> suspend/resume support is added to the CPG/MSSR?
+Thanks for your feedback.
 
-Sure.
+On 2017-05-16 09:48:51 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Fri, May 12, 2017 at 11:12 PM, Niklas S�derlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > On 2017-05-12 16:43:55 +0200, Geert Uytterhoeven wrote:
+> >> On Fri, May 12, 2017 at 4:32 PM, Niklas S�derlund
+> >> <niklas.soderlund@ragnatech.se> wrote:
+> >> > On 2017-05-12 14:58:53 +0200, Niklas S�derlund wrote:
+> >> >> On 2017-05-12 14:47:53 +0200, Geert Uytterhoeven wrote:
+> >> >> > On Fri, May 12, 2017 at 12:27 AM, Niklas S�derlund
+> >> >> > <niklas.soderlund+renesas@ragnatech.se> wrote:
+> >> >> > When using PSCI suspend/resume, and Wake-on-LAN cannot work due to
+> >> >> > PSCI firmware issues, Ethernet fails to come up afterwards:
+> >> >> >
+> >> >> >     ravb e6800000.ethernet eth0: failed to switch device to config mode
+> >> >> >     ravb e6800000.ethernet eth0: device will be stopped after h/w
+> >> >> > processes are done.
+> >> >> >     ravb e6800000.ethernet eth0: failed to switch device to config mode
+> >> >> >     dpm_run_callback(): ravb_resume+0x0/0x148 returns -110
+> >> >> >     PM: Device e6800000.ethernet failed to resume: error -110
+> >> >> >
+> >> >> > Your resume routine cannot assume RAVB is in a sane mode, as it will
+> >> >> > have been reset if PSCI suspend was used.
+> >> >>
+> >> >> Ouch, yes this is true thanks for reporting will look in to it.
+> >> >>
+> >> >> The problem is that in the resume handler if WoL is enabled it will try
+> >> >> to close the device before reinitializing it from reset state. If WoL is
+> >> >> not enabled the device will be closed at suspend time so no need to
+> >> >> close it before restoring operation from reset in the resume handler.
+> 
+> >> With renesas-drivers, it will refuse to use PSCI suspend if any other wake-up
+> >> sources are configured, i.e. try
+> >>
+> >>     echo disabled > /sys/devices/platform/soc/e6800000.ethernet/power/wakeup
+> >>
+> >> Good luck, and have a nice weekend!
+> >
+> > Thanks this allowed me to reproduce the same error as you. And after
+> > future digging I don't believe the problem being in the logic of the
+> > ravb suspend/resume functions. The problem is that the module clock is
+> > never turned on after PCSI system suspend if its usage count is above 0
+> > at suspend time, so the errors we both now observe are due to the module
+> > clock being disabled.
+> >
+> > If I set DEBUG in renesas-cpg-mssr.c and observe when each module clock
+> > is turned OFF and ON, the fault is clear. If WoL is enabled the clock is
+> > never turned on when the system is resuming, while if WoL is disabled it
+> > is. I verified this by removing the calls to clk_enable() and
+> > clk_disable() from this patch, and by doing so the PCSI system suspend
+> > works perfect with WoL enabled and the ravb comes up fine after toggling
+> > SW23 (while ofc WoL no longer works in s2idle due to the module clock is
+> > switched off at suspend time).
+> >
+> > I checked drivers/clk/renesas and I can't find a suspend/resume handler
+> > for the clock driver, how is this intended to work? If a clock have a
+> > usage count higher then 0 when the system is PSCI System Suspended it
+> > seems like it won't be turned back on when the system is resumed from
+> > this sleep stage. I might have misunderstood something and I need to
+> > alter the logic in the ravb driver to let the clock driver know it
+> > should turn on the clock at resume time?
+> 
+> Ah, you found a real use case for suspend/resume support in the clock
+> drivers ;-)
 
-It can still be used on R-Car Gen2, where we're not s*d by mandatory PSCI.
+Happy to be of service ;-)
 
-Gr{oetje,eeting}s,
+> 
+> Due to PSCI system suspend powering down the whole SoC, all clock
+> settings are lost.
+> 
+> Thanks, I will look into this...
 
-                        Geert
+Thanks!
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> 
+> > Whit all this being said I still like to withdraw this patch as I found
+> > another fault with it, ravb_wol_restore() will unconditionally be called
+> > while ravb_wol_setup() will only be called if netif_running(ndev). This
+> > is en easy fix and I will send out a v2 once we figure out what to do
+> > about the clock.
+> 
+> The clock issue is external to the ravb driver. If it works with
+> s2idle, it should
+> be OK.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Do you think it's a good idea to move ahead with a v2 of the ravb WoL 
+patch to fix the unrelated issue and aim for it to be picked up prior to
+suspend/resume support is added to the CPG/MSSR?
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+-- 
+Regards,
+Niklas S�derlund
