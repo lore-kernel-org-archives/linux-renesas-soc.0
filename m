@@ -1,50 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:50962 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755551AbdERNBo (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35988 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751221AbdEPLwn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 09:01:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] sh_eth: Do not print an error message for probe deferral
-Date: Thu, 18 May 2017 15:01:35 +0200
-Message-Id: <1495112495-25086-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495112495-25086-1-git-send-email-geert+renesas@glider.be>
-References: <1495112495-25086-1-git-send-email-geert+renesas@glider.be>
+        Tue, 16 May 2017 07:52:43 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170420184615.615357989@cogentembedded.com>
+References: <20170420184615.615357989@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 May 2017 13:52:41 +0200
+Message-ID: <CAMuHMdXFT9TUfKJH9+d22r9iEf2SYrKrK8jBqGYP4x4Zd8Wzdw@mail.gmail.com>
+Subject: Re: [PATCH v4] pinctrl: sh-pfc: r8a7791: add R8A7743 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-EPROBE_DEFER is not an error, hence printing an error message like
+Hi Sergei,
 
-    sh-eth ee700000.ethernet: failed to initialise MDIO
+On Thu, Apr 20, 2017 at 8:46 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Renesas RZ/G1M (R8A7743) is pin compatible with R-Car M2-W/N (R8A7791/3),
+> however it doesn't have several automotive specific peripherals. Annotate
+> all the items that only exist on the R-Car SoCs and only supply  the pin
+> groups/functions existing on a given SoC...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-may confuse the user.
+Thank you!
 
-To fix this, suppress the error message in case of probe deferral.
-While at it, shorten the message, and add the actual error code.
+Queuing in sh-pfc-for-v4.13 after dropping the annotations, as they are
+implied by pin groups/functions
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/net/ethernet/renesas/sh_eth.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index c85222b02754f5a7..2d686ccf971b1b65 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3220,7 +3220,8 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
- 	/* MDIO bus init */
- 	ret = sh_mdio_init(mdp, pd);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to initialise MDIO\n");
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "MDIO init failed: %d\n", ret);
- 		goto out_release;
- 	}
- 
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
