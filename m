@@ -1,58 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:52532 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753938AbdESBR6 (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34541 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751777AbdEPIt5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 21:17:58 -0400
-Date: Thu, 18 May 2017 18:17:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFC 1/2] clk: renesas: Rework Kconfig and Makefile logic
-Message-ID: <20170519011755.GB20170@codeaurora.org>
-References: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
- <1493137626-21404-2-git-send-email-geert+renesas@glider.be>
+        Tue, 16 May 2017 04:49:57 -0400
+Received: by mail-io0-f194.google.com with SMTP id 12so13800239iol.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 16 May 2017 01:49:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1493137626-21404-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <87fug5w62r.wl%kuninori.morimoto.gx@renesas.com>
+References: <87fug5w62r.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 May 2017 10:49:55 +0200
+Message-ID: <CAMuHMdVb49h5RFLxu9uAk8Qaqpw1=JMo+oE-2fZmgxvfXvhugw@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7795-es1: SSI_{WS/SCK}34 -> SSI_{WS/SCK}349
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/25, Geert Uytterhoeven wrote:
-> The goals are to:
->   - Allow precise control over and automatic selection of which
->     (sub)drivers are used for which SoC (which may change in the
->     future),
->   - Allow adding support for new SoCs easily,
->   - Allow compile-testing of all (sub)drivers,
->   - Keep driver selection logic in the subsystem-specific Kconfig
->     independent from the architecture-specific Kconfig (i.e. no "select"
->     from arch/arm64/Kconfig.platforms), to avoid dependencies.
-> 
-> This is implemented by:
->   - Introducing Kconfig symbols for all drivers and sub-drivers,
->   - Introducing the Kconfig symbol CLK_RENESAS, which is enabled
->     automatically when building for a Renesas ARM platform, and which
->     enables all required drivers without interaction of the user, based
->     on SoC-specific ARCH_* symbols,
->   - Allowing the user to enable any Kconfig symbol manually if
->     COMPILE_TEST is enabled,
->   - Using the new Kconfig symbols instead of the ARCH_* symbols to
->     control compilation in the Makefile,
->   - Always entering drivers/clk/renesas/ during the build.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, May 16, 2017 at 10:42 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> R-Car Gen3 is using SSI_{WS/SCK}349 instead of SSI_{WS/SCK}34.
+> But, current code is based on old datasheet which had typo.
+> This patch fixes this typo.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > ---
+> v1 -> v2
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.13.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
