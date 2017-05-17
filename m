@@ -1,82 +1,76 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 1 May 2017 10:32:48 +0200
-From: Simon Horman <horms@verge.net.au>
-To: kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kbingham@kernel.org>,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sakari.ailus@iki.fi, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] RFC: ADV748x HDMI/Analog video receiver
-Message-ID: <20170501083248.GG18349@verge.net.au>
-References: <1493317564-18026-1-git-send-email-kbingham@kernel.org>
- <20170428070935.GC10196@verge.net.au>
- <b0497e51-78f1-40e2-b97d-7c1ce7939b1d@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b0497e51-78f1-40e2-b97d-7c1ce7939b1d@ideasonboard.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37744 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753855AbdEQJwm (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 17 May 2017 05:52:42 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <8737cvsyah.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dAvdC-0006u0-Js@debutante>
+Date: Wed, 17 May 2017 10:52:34 +0100
+Subject: Applied "ASoC: rsnd: add missing clocks/clock-names on Document" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 09:47:05AM +0100, Kieran Bingham wrote:
-> Hi Simon,
-> 
-> On 28/04/17 08:09, Simon Horman wrote:
-> > On Thu, Apr 27, 2017 at 07:25:59PM +0100, Kieran Bingham wrote:
-> >> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>
-> >> This is an RFC for the Analog Devices ADV748x driver, and follows on from a
-> >> previous posting by Niklas Söderlund [0] of an earlier incarnation of this
-> >> driver.
-> > 
-> > ...
-> > 
-> >> This series presents the following patches:
-> >>
-> >>  [PATCH 1/5] v4l2-subdev: Provide a port mapping for asynchronous
-> >>  [PATCH 2/5] rcar-vin: Match sources against ports if specified.
-> >>  [PATCH 3/5] media: i2c: adv748x: add adv748x driver
-> >>  [PATCH 4/5] arm64: dts: r8a7795: salvator-x: enable VIN, CSI and ADV7482
-> >>  [PATCH 5/5] arm64: dts: r8a7796: salvator-x: enable VIN, CSI and ADV7482
-> > 
-> > I am marking the above dts patches as "RFC" and do not plan to apply them
-> > unless you ping me or repost them.
-> 
-> Yes, sorry - the whole series was supposed to be marked as RFC, but I didn't
-> think about it - and apparently only applied the tag to the cover letter.
-> 
-> Apologies for any confusion.
+The patch
 
-It was clear enough, though an tag RFC in every patch would be better.
-In any case I was referring to how I have handled these patches in
-patchwork.
+   ASoC: rsnd: add missing clocks/clock-names on Document
 
-Apologies for any confusion.
+has been applied to the asoc tree at
 
-> > Assuming they don't cause any
-> > regressions I would be happy to consider applying them as soon as their
-> > dependencies are accepted.
-> 
-> Does that mean you've done a cursory glance over the content ? :-)
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Yes, I did take a quick glance.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> In this instance, the port numbers need to revert back to a zero-base,
-> but I would appreciate an eye on how and where I've put the
-> representation of the physical hdmi/cvbs connectors. Having modified
-> plenty of DT, but not actually submitted much - I still feel 'new' at it
-> - so I'm sure I may not have followed the standards quite right yet.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Assuming you are talking about where in the DT file the hdmi and cvbs nodes
-should go, I think this is somewhat arbitrary so long as they are within
-the top-level node - what you have looks good to me.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> The dts patches are based heavily on the previous posting by Niklas, but I have
-> extended to put the extra hdmi and cvbs links in.
-> 
-> Regards
-> --
-> Kieran
-> 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 5b3889f80a79d9b73f73e19ba9a001c2d47ab47f Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 26 Apr 2017 02:26:48 +0000
+Subject: [PATCH] ASoC: rsnd: add missing clocks/clock-names on Document
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 3332910a9a11..13cb21d53b8b 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -368,6 +368,10 @@ Required properties:
+ 				  see below for detail.
+ - #sound-dai-cells		: it must be 0 if your system is using single DAI
+ 				  it must be 1 if your system is using multi  DAI
++- clocks			: References to SSI/SRC/MIX/CTU/DVC/AUDIO_CLK clocks.
++- clock-names			: List of necessary clock names.
++				  "ssi-all", "ssi.X", "src.X", "mix.X", "ctu.X",
++				  "dvc.X", "clk_a", "clk_b", "clk_c", "clk_i"
+ 
+ Optional properties:
+ - #clock-cells			: it must be 0 if your system has audio_clkout
+-- 
+2.11.0
