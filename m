@@ -1,48 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54135 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752294AbdEJJZ7 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37610 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752262AbdEQJwO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 05:25:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/6] mmc: tmio: rename tmio_mmc_{pio => core}.c
-Date: Wed, 10 May 2017 11:25:27 +0200
-Message-Id: <1494408330-28161-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
-References: <1494408330-28161-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 17 May 2017 05:52:14 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <878tlv535x.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dAvck-0006le-36@debutante>
+Date: Wed, 17 May 2017 10:52:06 +0100
+Subject: Applied "ASoC: rsnd: need to call nolock_stop if nolock_start was failed" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Rename tmio_mmc_pio.c to tmio_mmc_core.c to more accurately reflect its
-function: to provide core code for the tmio-mmc and sh-mobole-sdhi drivers.
+The patch
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+   ASoC: rsnd: need to call nolock_stop if nolock_start was failed
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2adcea7e22d382e2becf5671e92296f79672b957 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 17 May 2017 07:59:20 +0000
+Subject: [PATCH] ASoC: rsnd: need to call nolock_stop if nolock_start was
+ failed
+
+rsnd_dai_call() is counting the called number of start/stop functions.
+nolock_stop should be called if nolock_start was failed.
+Otherwise, nolock_start doesn't called in 2nd play.
+This patch solved this issue.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/mmc/host/Makefile                            | 1 -
- drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} | 0
- 2 files changed, 1 deletion(-)
- rename drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} (100%)
+ sound/soc/sh/rcar/core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index f11b3d4b121d..f9baa943b470 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -36,7 +36,6 @@ obj-$(CONFIG_MMC_S3C)   	+= s3cmci.o
- obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
- obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
- obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
--tmio_mmc_core-y			:= tmio_mmc_pio.o
- obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o tmio_mmc_dma.o
- obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
- obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_core.c
-similarity index 100%
-rename from drivers/mmc/host/tmio_mmc_pio.c
-rename to drivers/mmc/host/tmio_mmc_core.c
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 1744015408c3..3c47af1990cb 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -715,11 +715,16 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
+ {
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+ 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
++	int ret;
+ 
+ 	/*
+ 	 * call rsnd_dai_call without spinlock
+ 	 */
+-	return rsnd_dai_call(nolock_start, io, priv);
++	ret = rsnd_dai_call(nolock_start, io, priv);
++	if (ret < 0)
++		rsnd_dai_call(nolock_stop, io, priv);
++
++	return ret;
+ }
+ 
+ static void rsnd_soc_dai_shutdown(struct snd_pcm_substream *substream,
 -- 
-2.1.4
+2.11.0
