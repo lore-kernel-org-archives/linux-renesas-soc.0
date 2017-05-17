@@ -1,102 +1,143 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        sakari.ailus@iki.fi, niklas.soderlund@ragnatech.se,
-        laurent.pinchart@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 1/3] of: base: Provide of_graph_get_port_parent()
-Date: Wed, 17 May 2017 16:03:37 +0100
-Message-Id: <56c9c74fa9e2879aea9e008d54d8b8d7b450b8ae.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH v5 3/3] phy: Group vendor specific phy drivers
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org
+References: <1494485262-18995-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1494485262-18995-3-git-send-email-vivek.gautam@codeaurora.org>
+ <16fc3965-d250-6c3d-7a62-ab8da1f034fc@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <8c6d715f-6ccf-7894-9b2f-6897597c7f32@codeaurora.org>
+Date: Wed, 17 May 2017 09:13:33 +0530
+MIME-Version: 1.0
+In-Reply-To: <16fc3965-d250-6c3d-7a62-ab8da1f034fc@ti.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-When handling endpoints, the v4l2 async framework needs to identify the
-parent device of a port endpoint.
 
-Adapt the existing of_graph_get_remote_port_parent() such that a caller
-can obtain the parent of a port without parsing the remote-endpoint
-first.
+On 05/16/2017 03:40 PM, Kishon Vijay Abraham I wrote:
+> Hi Vivek,
+>
+> On Thursday 11 May 2017 12:17 PM, Vivek Gautam wrote:
+>> Adding vendor specific directories in phy to group
+>> phy drivers under their respective vendor umbrella.
+>>
+>> Also updated the MAINTAINERS file to reflect the correct
+>> directory structure for phy drivers.
+>>
+>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>> Cc: David S. Miller <davem@davemloft.net>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> Cc: Guenter Roeck <linux@roeck-us.net>
+>> Cc: Heiko Stuebner <heiko@sntech.de>
+>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> Cc: Chen-Yu Tsai <wens@csie.org>
+>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+>> Cc: Jaehoon Chung <jh80.chung@samsung.com>
+>> Cc: Stephen Boyd <stephen.boyd@linaro.org>
+>> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-arm-msm@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-omap@vger.kernel.org
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> Cc: linux-rockchip@lists.infradead.org
+>> Cc: linux-samsung-soc@vger.kernel.org
+>> Cc: linux-usb@vger.kernel.org
+>> ---
+>>
+>> Changes since v4:
+>>   - Reprepared the patch based on latest torvalds/master.
+>>   - Added new directory for amlogic, since there's a new patch [1]
+>>     coming in for amlogic platforms.
+>>
+>> Changes since v3:
+>>   - Added 'Acked-by' and 'Reviewed by' tags received for this patch.
+>>   - No functional change.
+>>
+>> Changes since v2:
+>>   - Rebased on linux-phy/next.
+>>   - Took care of drivers added/removed for each vendors since v2.
+>>   - Updated the 'Signed-off-by' tag with my current email id.
+>>
+>> Changes from v1:
+>>   - Updated the MAINTAINERS file to reflect the same change
+>>     in directory structure.
+>>   - Removed PHY_PLAT config as pointed out by Kishon.
+>>     So we don't require the second patch in the v1 of this series:
+>>     [PATCH 2/2] arm: mach-spear: Enable PHY_PLAT to meet dependency
+>>   - Renamed sunxi --> allwinner; rcar --> renesas.
+>>   - Fixed error coming with qcom Makefile.
+>>
+>> * Build tested multi_v7_defconfig.
+>> * Build tested arm64 defconfig with all the involved configs enabled.
+>>
+>> [1] https://patchwork.kernel.org/patch/9684303/
+>>
+> .
+> .
+> <snip>
+> .
+> .
+>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+>> index afaf7b643eeb..b353ac603ea0 100644
+>> --- a/drivers/phy/Kconfig
+>> +++ b/drivers/phy/Kconfig
+>> @@ -15,73 +15,6 @@ config GENERIC_PHY
+>>   	  phy users can obtain reference to the PHY. All the users of this
+> .
+> .
+> <snip>
+> .
+> .
+>> -
+>> +menu "Platform Phy drivers"
+> I don't think creating a new menu is required. I removed it and merged into
+> linux-phy.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/of/base.c        | 30 ++++++++++++++++++++++--------
- include/linux/of_graph.h |  1 +
- 2 files changed, 23 insertions(+), 8 deletions(-)
+Right. No need for a new menu. Thank you for fixing it and pushing out.
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index d7c4629a3a2d..f81100500999 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -2455,6 +2455,27 @@ struct device_node *of_graph_get_endpoint_by_regs(
- EXPORT_SYMBOL(of_graph_get_endpoint_by_regs);
- 
- /**
-+ * of_graph_get_port_parent() - get port's parent node
-+ * @node: pointer to a local endpoint device_node
-+ *
-+ * Return: device node associated with endpoint @node.
-+ *	   Use of_node_put() on it when done.
-+ */
-+struct device_node *of_graph_get_port_parent(struct device_node *node)
-+{
-+	unsigned int depth;
-+
-+	/* Walk 3 levels up only if there is 'ports' node. */
-+	for (depth = 3; depth && node; depth--) {
-+		node = of_get_next_parent(node);
-+		if (depth == 2 && of_node_cmp(node->name, "ports"))
-+			break;
-+	}
-+	return node;
-+}
-+EXPORT_SYMBOL(of_graph_get_port_parent);
-+
-+/**
-  * of_graph_get_remote_port_parent() - get remote port's parent node
-  * @node: pointer to a local endpoint device_node
-  *
-@@ -2465,18 +2486,11 @@ struct device_node *of_graph_get_remote_port_parent(
- 			       const struct device_node *node)
- {
- 	struct device_node *np;
--	unsigned int depth;
- 
- 	/* Get remote endpoint node. */
- 	np = of_parse_phandle(node, "remote-endpoint", 0);
- 
--	/* Walk 3 levels up only if there is 'ports' node. */
--	for (depth = 3; depth && np; depth--) {
--		np = of_get_next_parent(np);
--		if (depth == 2 && of_node_cmp(np->name, "ports"))
--			break;
--	}
--	return np;
-+	return of_graph_get_port_parent(np);
- }
- EXPORT_SYMBOL(of_graph_get_remote_port_parent);
- 
-diff --git a/include/linux/of_graph.h b/include/linux/of_graph.h
-index abdb02eaef06..49bf34880ebc 100644
---- a/include/linux/of_graph.h
-+++ b/include/linux/of_graph.h
-@@ -48,6 +48,7 @@ struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
- 					struct device_node *previous);
- struct device_node *of_graph_get_endpoint_by_regs(
- 		const struct device_node *parent, int port_reg, int reg);
-+struct device_node *of_graph_get_port_parent(struct device_node *node);
- struct device_node *of_graph_get_remote_port_parent(
- 					const struct device_node *node);
- struct device_node *of_graph_get_remote_port(const struct device_node *node);
+Best Regards
+Vivek
+
+>
+> Thanks
+> Kishon
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 -- 
-git-series 0.9.1
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
