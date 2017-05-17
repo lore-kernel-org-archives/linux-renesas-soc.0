@@ -1,54 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:54216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760367AbdEVRgo (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37636 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752232AbdEQJwT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 13:36:44 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: sakari.ailus@iki.fi, laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        niklas.soderlund@ragnatech.se, kieran.bingham@ideasonboard.com,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 0/2] v4l: async: Match parent devices
-Date: Mon, 22 May 2017 18:36:36 +0100
-Message-Id: <cover.33d4457de9c9f4e5285e7b1d18a8a92345c438d3.1495473356.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 17 May 2017 05:52:19 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87pofaj34y.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dAvco-0006og-N0@debutante>
+Date: Wed, 17 May 2017 10:52:10 +0100
+Subject: Applied "ASoC: rsnd: remove error pointer for adg->clkout[i]" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The patch
 
-As devices become more complicated, it becomes necessary (and more
-accurate) to match devices based on their endpoint, as devices may
-have multiple subdevices.
+   ASoC: rsnd: remove error pointer for adg->clkout[i]
 
-To support using endpoints in the V4L2 async subdev framework, while
-some devices still use their device fwnode, we need to be able to parse
-a fwnode for the device from the endpoint.
+has been applied to the asoc tree at
 
-By providing a helper fwnode_graph_get_port_parent(), we can use it in
-the match_fwnode to support matches during the transition to endpoint
-matching.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-This series is dependant upon Sakari's v4l2-acpi and acpi-graph-cleaned
-branch
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-v2:
- - Rebased on top of git.linuxtv.org/sailus/media_tree.git #acpi-graph-cleaned
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-v3:
- - Fixed uninitialised asd_parent
- - Improved kerneldocs
- - Get the 'port' of the endpoint in fwnode_graph_get_port_parent
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Kieran Bingham (2):
-  device property: Add fwnode_graph_get_port_parent
-  v4l: async: Match parent devices
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
- drivers/base/property.c              | 15 ++++++++++++-
- drivers/media/v4l2-core/v4l2-async.c | 36 ++++++++++++++++++++++++-----
- include/linux/property.h             |  2 ++-
- 3 files changed, 48 insertions(+), 5 deletions(-)
+Thanks,
+Mark
 
-base-commit: d043978c7c919c727fb76b6593c71d0e697a5d66
+>From 1f6bbe64abd7dc1997fa31a9e550eadf170961d5 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 15 May 2017 01:59:22 +0000
+Subject: [PATCH] ASoC: rsnd: remove error pointer for adg->clkout[i]
+
+commit d7f298197a22f11b38059f257842dac7c30a564c
+("ASoC: rcar: fixup of_clk_add_provider() usage for multi clkout")
+added adg->clkout[i] = ERR_PTR(-ENOENT),
+but, adg->clkout[i] are assumed NULL or clk pointer.
+This patch fix it.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/adg.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index cb4eab0e24ce..36bece8621b7 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -556,7 +556,6 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+ 			clk = clk_register_fixed_rate(dev, clkout_name[i],
+ 						      parent_clk_name, 0,
+ 						      req_rate[0]);
+-			adg->clkout[i] = ERR_PTR(-ENOENT);
+ 			if (!IS_ERR(clk))
+ 				adg->clkout[i] = clk;
+ 		}
 -- 
-git-series 0.9.1
+2.11.0
