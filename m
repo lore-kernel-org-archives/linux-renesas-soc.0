@@ -1,36 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47912 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751343AbdEBI0Z (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37772 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753964AbdEQJwq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 May 2017 04:26:25 -0400
-Date: Tue, 2 May 2017 10:26:20 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH V3] ARM: dts: r8a7791: Add GyroADC clock and device node
-Message-ID: <20170502082620.GA32059@verge.net.au>
-References: <20170424152632.3478-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170424152632.3478-1-marek.vasut+renesas@gmail.com>
+        Wed, 17 May 2017 05:52:46 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <874lxbsyaz.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dAvdG-0006ut-Tt@debutante>
+Date: Wed, 17 May 2017 10:52:38 +0100
+Subject: Applied "ASoC: rsnd: move "renesas,rsrc-card" to "simple-scu-audio-card" on Document" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek, Hi Geert,
+The patch
 
-On Mon, Apr 24, 2017 at 05:26:32PM +0200, Marek Vasut wrote:
-> Add node for the GyroADC block and it's associated clock.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> To: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Drop the whole ad-hoc ADC clock block
-> V3: - Add gyroadc p_clk phandle into the mstp9 clocks node
+   ASoC: rsnd: move "renesas,rsrc-card" to "simple-scu-audio-card" on Document
 
-What is the status of the review of this patch?
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 0378bb966765e06fdb0e00d592a6fcfbb71afa3c Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 26 Apr 2017 02:26:30 +0000
+Subject: [PATCH] ASoC: rsnd: move "renesas,rsrc-card" to
+ "simple-scu-audio-card" on Document
+
+"renesas,rsrc-card" is exchanged to "simple-scu-card".
+Let's update Document
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../devicetree/bindings/sound/renesas,rsnd.txt     | 30 +++++++++++-----------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 15a7316e4c91..3332910a9a11 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -83,11 +83,11 @@ SRC can convert [xx]Hz to [yy]Hz. Then, it has below 2 modes
+ **     Asynchronous mode
+ ------------------
+ 
+-You need to use "renesas,rsrc-card" sound card for it.
++You need to use "simple-scu-audio-card" sound card for it.
+ example)
+ 
+ 	sound {
+-		compatible = "renesas,rsrc-card";
++		compatible = "simple-scu-audio-card";
+ 		...
+ 		/*
+ 		 * SRC Asynchronous mode setting
+@@ -97,12 +97,12 @@ example)
+ 		 * Inputed 48kHz data will be converted to
+ 		 * system specified Hz
+ 		 */
+-		convert-rate = <48000>;
++		simple-audio-card,convert-rate = <48000>;
+ 		...
+-		cpu {
++		simple-audio-card,cpu {
+ 			sound-dai = <&rcar_sound>;
+ 		};
+-		codec {
++		simple-audio-card,codec {
+ 			...
+ 		};
+ 	};
+@@ -141,23 +141,23 @@ For more detail information, see below
+ 	${LINUX}/sound/soc/sh/rcar/ctu.c
+ 	 - comment of header
+ 
+-You need to use "renesas,rsrc-card" sound card for it.
++You need to use "simple-scu-audio-card" sound card for it.
+ example)
+ 
+ 	sound {
+-		compatible = "renesas,rsrc-card";
++		compatible = "simple-scu-audio-card";
+ 		...
+ 		/*
+ 		 * CTU setting
+ 		 * All input data will be converted to 2ch
+ 		 * as output data
+ 		 */
+-		convert-channels = <2>;
++		simple-audio-card,convert-channels = <2>;
+ 		...
+-		cpu {
++		simple-audio-card,cpu {
+ 			sound-dai = <&rcar_sound>;
+ 		};
+-		codec {
++		simple-audio-card,codec {
+ 			...
+ 		};
+ 	};
+@@ -190,22 +190,22 @@ and these sounds will be merged by MIX.
+ 	aplay -D plughw:0,0 xxxx.wav &
+ 	aplay -D plughw:0,1 yyyy.wav
+ 
+-You need to use "renesas,rsrc-card" sound card for it.
++You need to use "simple-scu-audio-card" sound card for it.
+ Ex)
+ 	[MEM] -> [SRC1] -> [CTU02] -+-> [MIX0] -> [DVC0] -> [SSI0]
+ 	                            |
+ 	[MEM] -> [SRC2] -> [CTU03] -+
+ 
+ 	sound {
+-		compatible = "renesas,rsrc-card";
++		compatible = "simple-scu-audio-card";
+ 		...
+-		cpu@0 {
++		simple-audio-card,cpu@0 {
+ 			sound-dai = <&rcar_sound 0>;
+ 		};
+-		cpu@1 {
++		simple-audio-card,cpu@1 {
+ 			sound-dai = <&rcar_sound 1>;
+ 		};
+-		codec {
++		simple-audio-card,codec {
+ 			...
+ 		};
+ 	};
+-- 
+2.11.0
