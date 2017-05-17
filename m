@@ -1,79 +1,154 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54714 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938686AbdEAIV2 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51290 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753846AbdEQVdj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 May 2017 04:21:28 -0400
-Date: Mon, 1 May 2017 10:21:22 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, hans.verkuil@cisco.com,
-        niklas.soderlund@ragnatech.se, geert@linux-m68k.org,
-        sergei.shtylyov@cogentembedded.com
-Subject: Re: [PATCH v2 0/3] r8a7793 Gose video input support
-Message-ID: <20170501082121.GF18349@verge.net.au>
-References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1702484.RNuXBAXB1F@avalon>
- <20170428051624.GC18349@verge.net.au>
- <1636596.a9JMt0l4X4@avalon>
+        Wed, 17 May 2017 17:33:39 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v3 2/2] v4l: vsp1: Provide a writeback video device
+References: <cover.ebf0f0df2d74f2a209e8b628269e3cac27d4a2ab.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <5debeb08338b520f52577ca6cf9be815a54c07ea.1494347923.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <CAMuHMdUuoAy2kQ3D=GWScgt2GZZbgyiNvvvOaJkTNFH1CbBdew@mail.gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <9b6568ec-1a01-96a3-de4f-9ca230cec1aa@ideasonboard.com>
+Date: Wed, 17 May 2017 22:33:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1636596.a9JMt0l4X4@avalon>
+In-Reply-To: <CAMuHMdUuoAy2kQ3D=GWScgt2GZZbgyiNvvvOaJkTNFH1CbBdew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 11:40:20AM +0300, Laurent Pinchart wrote:
-> Hi Simon,
-> 
-> On Friday 28 Apr 2017 07:16:24 Simon Horman wrote:
-> > On Wed, Apr 26, 2017 at 06:56:06PM +0300, Laurent Pinchart wrote:
-> > > On Tuesday 21 Feb 2017 01:42:15 Laurent Pinchart wrote:
-> > >> On Thursday 20 Oct 2016 10:49:11 Simon Horman wrote:
-> > >>> On Tue, Oct 18, 2016 at 05:02:20PM +0200, Ulrich Hecht wrote:
-> > >>>> Hi!
-> > >>>> 
-> > >>>> This is a by-the-datasheet implementation of analog and digital video
-> > >>>> input on the Gose board.
-> > >>>> 
-> > >>>> I have tried to address all concerns raised by reviewers, with the
-> > >>>> exception of the composite input patch, which has been left as is for
-> > >>>> now.
-> > >>>> 
-> > >>>> CU
-> > >>>> Uli
-> > >>>> 
-> > >>>> 
-> > >>>> Changes since v1:
-> > >>>> - r8a7793.dtsi: added VIN2
-> > >>>> - modeled HDMI decoder input/output and connector
-> > >>>> - added "renesas,rcar-gen2-vin" compat strings
-> > >>>> - removed unnecessary "remote" node and aliases
-> > >>>> - set ADV7612 interrupt to GP4_2
-> > >>>> 
-> > >>>> Ulrich Hecht (3):
-> > >>>>   ARM: dts: r8a7793: Enable VIN0-VIN2
-> > >>> 
-> > >>> I have queued up the above patch with Laurent and Geert's tags.
-> > >>> 
-> > >>>>   ARM: dts: gose: add HDMI input
-> > >>>>   ARM: dts: gose: add composite video input
-> > >>> 
-> > >>> Please address the review of the above two patches and repost.
-> > >> 
-> > >> Could you please do so ? Feedback on 2/3 should be easy to handle. For
-> > >> 3/3, you might need to ping the DT maintainers.
-> > > 
-> > > Ping. These are the only two patches that block
-> > > 
-> > > VIN,v4.12,public,ulrich,Gen2 VIN integration
-> > 
-> > Sorry, I'm unsure how these slipped through the cracks.
-> > I now have them queued up locally for v4.13 and I plan to push this morning.
-> 
-> Please don't, the ping was for Ulrich, he needs to address review comments on 
-> patches 2/3 and 3/3.
+Hi Geert,
 
-Oh, sorry. I will dequeue them.
+On 16/05/17 16:30, Geert Uytterhoeven wrote:
+> Hi Kieran,
+> 
+> On Tue, May 9, 2017 at 6:39 PM, Kieran Bingham
+> <kieran.bingham+renesas@ideasonboard.com> wrote:
+>> When the VSP1 is used in an active display pipeline, the output of the
+>> WPF can supply the LIF entity directly and simultaneously write to
+>> memory.
+>>
+>> Support this functionality in the VSP1 driver, by extending the WPF
+>> source pads, and establishing a V4L2 video device node connected to the
+>> new source.
+>>
+>> The source will be able to perform pixel format conversion, but not
+>> rescaling, and as such the output from the memory node will always be
+>> of the same dimensions as the display output.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+>> --- a/drivers/media/platform/vsp1/vsp1_video.c
+>> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> 
+>> @@ -900,6 +901,147 @@ static const struct vb2_ops vsp1_video_queue_qops = {
+>>         .stop_streaming = vsp1_video_stop_streaming,
+>>  };
+>>
+>> +
+>> +/* -----------------------------------------------------------------------------
+>> + * videobuf2 queue operations for writeback nodes
+>> + */
+>> +
+>> +static void vsp1_video_wb_process_buffer(struct vsp1_video *video)
+>> +{
+>> +       struct vsp1_vb2_buffer *buf;
+>> +       unsigned long flags;
+>> +
+>> +       /*
+>> +        * Writeback uses a running stream, unlike the M2M interface which
+>> +        * controls a pipeline process manually though the use of
+>> +        * vsp1_pipeline_run().
+>> +        *
+>> +        * Instead writeback will commence at the next frame interval, and can
+>> +        * be marked complete at the interval following that. To handle this we
+>> +        * store the configured buffer as pending until the next callback.
+>> +        *
+>> +        * |    |    |    |    |
+>> +        *  A   |<-->|
+>> +        *       B   |<-->|
+>> +        *            C   |<-->| : Only at interrupt C can A be marked done
+>> +        */
+>> +
+>> +       spin_lock_irqsave(&video->irqlock, flags);
+>> +
+>> +       /* Move the pending image to the active hw queue */
+>> +       if (video->pending) {
+>> +               list_add_tail(&video->pending->queue, &video->irqqueue);
+>> +               video->pending = NULL;
+>> +       }
+>> +
+>> +       buf = list_first_entry_or_null(&video->wbqueue, struct vsp1_vb2_buffer,
+>> +                                       queue);
+>> +
+>> +       if (buf) {
+>> +               video->rwpf->mem = buf->mem;
+>> +
+>> +               /*
+>> +                * Store this buffer as pending. It will commence at the next
+>> +                * frame start interrupt
+>> +                */
+>> +               video->pending = buf;
+>> +               list_del(&buf->queue);
+>> +       } else {
+>> +               /* Disable writeback with no buffer */
+>> +               video->rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+> 
+> With gcc 4.9.0:
+> 
+>     drivers/media/platform/vsp1/vsp1_video.c: In function
+> 'vsp1_video_wb_process_buffer':
+>     drivers/media/platform/vsp1/vsp1_video.c:942:30: warning: missing
+> braces around initializer [-Wmissing-braces]
+>        video->rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+> 
+> -               video->rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+> +               video->rwpf->mem = (struct vsp1_rwpf_memory) { { 0, } };
+> 
+
+I've updated these to use a memset(&mem, 0, sizeof(mem)) instead.
+
+
+
+>> +static void vsp1_video_wb_stop_streaming(struct vb2_queue *vq)
+>> +{
+>> +       struct vsp1_video *video = vb2_get_drv_priv(vq);
+>> +       struct vsp1_rwpf *rwpf = video->rwpf;
+>> +       struct vsp1_pipeline *pipe = rwpf->pipe;
+>> +       struct vsp1_vb2_buffer *buffer;
+>> +       unsigned long flags;
+>> +
+>> +       /*
+>> +        * Disable the completion interrupts, and clear the WPF memory to
+>> +        * prevent writing out frames
+>> +        */
+>> +       spin_lock_irqsave(&video->irqlock, flags);
+>> +       video->frame_end = NULL;
+>> +       rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+> 
+> Likewise:
+> 
+> -       rwpf->mem = (struct vsp1_rwpf_memory) { 0 };
+> +       rwpf->mem = (struct vsp1_rwpf_memory) { { 0, } };
+> 
+
+Now memset...
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
