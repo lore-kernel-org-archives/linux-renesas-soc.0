@@ -1,50 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35833 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752548AbdEQOZ6 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754425AbdEQONz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 10:25:58 -0400
-MIME-Version: 1.0
-In-Reply-To: <2a3a6d999502db1b6a47706b4da92d396075b22b.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
- <2a3a6d999502db1b6a47706b4da92d396075b22b.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 17 May 2017 16:25:56 +0200
-Message-ID: <CAMuHMdU8Pz=pApw4x0j+iVc0jHagQbv02UCphidmLMNb5tAGFg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] v4l: subdev: tolerate null in media_entity_to_v4l2_subdev
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 17 May 2017 10:13:55 -0400
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com, sakari.ailus@iki.fi,
+        niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v3 1/2] v4l: subdev: tolerate null in media_entity_to_v4l2_subdev
+Date: Wed, 17 May 2017 15:13:17 +0100
+Message-Id: <2a3a6d999502db1b6a47706b4da92d396075b22b.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-On Wed, May 17, 2017 at 4:13 PM, Kieran Bingham <kbingham@kernel.org> wrote:
-> --- a/include/media/v4l2-subdev.h
-> +++ b/include/media/v4l2-subdev.h
-> @@ -829,7 +829,7 @@ struct v4l2_subdev {
->  };
->
->  #define media_entity_to_v4l2_subdev(ent) \
-> -       container_of(ent, struct v4l2_subdev, entity)
-> +       ent ? container_of(ent, struct v4l2_subdev, entity) : NULL
+Return NULL, if a null entity is parsed for it's v4l2_subdev
 
-Due to the low precedence level of the ternary operator, you want
-to enclose this in parentheses.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ include/media/v4l2-subdev.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+index 5f1669c45642..d43fa7ca3a92 100644
+--- a/include/media/v4l2-subdev.h
++++ b/include/media/v4l2-subdev.h
+@@ -829,7 +829,7 @@ struct v4l2_subdev {
+ };
+ 
+ #define media_entity_to_v4l2_subdev(ent) \
+-	container_of(ent, struct v4l2_subdev, entity)
++	ent ? container_of(ent, struct v4l2_subdev, entity) : NULL
+ #define vdev_to_v4l2_subdev(vdev) \
+ 	((struct v4l2_subdev *)video_get_drvdata(vdev))
+ 
+-- 
+git-series 0.9.1
