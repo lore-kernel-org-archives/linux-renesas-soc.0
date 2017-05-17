@@ -1,175 +1,228 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:42414 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933973AbdEXAOL (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:42144 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753757AbdEQMzO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 20:14:11 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v7 1/2] media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-Date: Wed, 24 May 2017 02:13:52 +0200
-Message-Id: <20170524001353.13482-2-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20170524001353.13482-1-niklas.soderlund@ragnatech.se>
-References: <20170524001353.13482-1-niklas.soderlund@ragnatech.se>
+        Wed, 17 May 2017 08:55:14 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 0/6] spi: Add slave mode support
+Date: Wed, 17 May 2017 14:54:59 +0200
+Message-Id: <1495025699-24711-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495025272-23930-1-git-send-email-geert+renesas@glider.be>
+References: <1495025272-23930-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+	Hi all,
 
-Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
-are located between the video sources (CSI-2 transmitters) and the video
-grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+This patch series adds support for SPI slave controllers to the Linux
+SPI subsystem, including:
+  - DT binding updates for SPI slave support,
+  - Core support for SPI slave controllers,
+  - SPI slave support for the Renesas MSIOF device driver (thanks to
+    Nakamura-san for the initial implementation in the R-Car BSP!),
+  - Sample SPI slave handlers.
 
-Each CSI-2 device is connected to more then one VIN device which
-simultaneously can receive video from the same CSI-2 device. Each VIN
-device can also be connected to more then one CSI-2 device. The routing
-of which link are used are controlled by the VIN devices. There are only
-a few possible routes which are set by hardware limitations, which are
-different for each SoC in the Gen3 family.
+Due to the nature of SPI slave (simultaneous transmit and receive, while
+everything runs at the pace of the master), it has hard real-time
+requirements: once an SPI transfer is started by the SPI master, a
+software SPI slave must have prepared all data to be sent back to the
+SPI master.  Hence without additional hardware support, an SPI slave
+response can never be a reply to a command being simultaneously
+transmitted, and SPI slave replies must be received by the SPI master in
+a subsequent SPI transfer.
 
-To work with the limitations of routing possibilities it is necessary
-for the DT bindings to describe which VIN device is connected to which
-CSI-2 device. This is why port 1 needs to to assign reg numbers for each
-VIN device that be connected to it. To setup and to know which links are
-valid for each SoC is the responsibility of the VIN driver since the
-register to configure it belongs to the VIN hardware.
+Examples of possible use cases:
+  - Receiving streams of data in fixed-size messages (e.g. from a
+    tuner),
+  - Receiving and transmitting fixed-size messages of data (e.g. network
+    frames),
+  - Sending commands, and querying for responses,
+  - ...
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- .../devicetree/bindings/media/rcar-csi2.txt        | 116 +++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rcar-csi2.txt
+Binding an SPI slave handler to the SPI slave device represented by an
+SPI slave controller can either be done from DT, or through sysfs.
+The latter, which also allows unregistering, is done through a sysfs
+virtual file named "slave", cfr. Documentation/spi/spi-summary.
 
-diff --git a/Documentation/devicetree/bindings/media/rcar-csi2.txt b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-new file mode 100644
-index 0000000000000000..f6e2027ee92b171a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
-@@ -0,0 +1,116 @@
-+Renesas R-Car MIPI CSI-2
-+------------------------
-+
-+The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
-+family of devices. It is to be used in conjunction with the R-Car VIN module,
-+which provides the video capture capabilities.
-+
-+ - compatible: Must be one or more of the following
-+   - "renesas,r8a7795-csi2" for the R8A7795 device.
-+   - "renesas,r8a7796-csi2" for the R8A7796 device.
-+   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
-+
-+   When compatible with a generic version nodes must list the
-+   SoC-specific version corresponding to the platform first
-+   followed by the generic version.
-+
-+ - reg: the register base and size for the device registers
-+ - interrupts: the interrupt for the device
-+ - clocks: Reference to the parent clock
-+
-+The device node should contain two 'port' child nodes according to the
-+bindings defined in Documentation/devicetree/bindings/media/
-+video-interfaces.txt. Port 0 should connect the node that is the video
-+source for to the CSI-2. Port 1 should connect all the R-Car VIN
-+modules, which can make use of the CSI-2 module.
-+
-+- Port 0 - Video source
-+	- Reg 0 - sub-node describing the endpoint that is the video source
-+
-+- Port 1 - VIN instances
-+	- Reg 0 - sub-node describing the endpoint that is VIN0
-+	- Reg 1 - sub-node describing the endpoint that is VIN1
-+	- Reg 2 - sub-node describing the endpoint that is VIN2
-+	- Reg 3 - sub-node describing the endpoint that is VIN3
-+	- Reg 4 - sub-node describing the endpoint that is VIN4
-+	- Reg 5 - sub-node describing the endpoint that is VIN5
-+	- Reg 6 - sub-node describing the endpoint that is VIN6
-+	- Reg 7 - sub-node describing the endpoint that is VIN7
-+
-+Example:
-+
-+/* SoC properties */
-+
-+	 csi20: csi2@fea80000 {
-+		 compatible = "renesas,r8a7796-csi2";
-+		 reg = <0 0xfea80000 0 0x10000>;
-+		 interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
-+		 clocks = <&cpg CPG_MOD 714>;
-+		 power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		 status = "disabled";
-+
-+		 ports {
-+			 #address-cells = <1>;
-+			 #size-cells = <0>;
-+
-+			 port@1 {
-+				 #address-cells = <1>;
-+				 #size-cells = <0>;
-+
-+				 reg = <1>;
-+
-+				 csi20vin0: endpoint@0 {
-+					 reg = <0>;
-+					 remote-endpoint = <&vin0csi20>;
-+				 };
-+				 csi20vin1: endpoint@1 {
-+					 reg = <1>;
-+					 remote-endpoint = <&vin1csi20>;
-+				 };
-+				 csi20vin2: endpoint@2 {
-+					 reg = <2>;
-+					 remote-endpoint = <&vin2csi20>;
-+				 };
-+				 csi20vin3: endpoint@3 {
-+					 reg = <3>;
-+					 remote-endpoint = <&vin3csi20>;
-+				 };
-+				 csi20vin4: endpoint@4 {
-+					 reg = <4>;
-+					 remote-endpoint = <&vin4csi20>;
-+				 };
-+				 csi20vin5: endpoint@5 {
-+					 reg = <5>;
-+					 remote-endpoint = <&vin5csi20>;
-+				 };
-+				 csi20vin6: endpoint@6 {
-+					 reg = <6>;
-+					 remote-endpoint = <&vin6csi20>;
-+				 };
-+				 csi20vin7: endpoint@7 {
-+					 reg = <7>;
-+					 remote-endpoint = <&vin7csi20>;
-+				 };
-+			 };
-+		 };
-+	 };
-+
-+/* Board properties */
-+
-+	&csi20 {
-+		status = "okay";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				csi20_in: endpoint@0 {
-+					clock-lanes = <0>;
-+					data-lanes = <1>;
-+					remote-endpoint = <&adv7482_txb>;
-+				};
-+			};
-+		};
-+	};
+Originally I wanted to implement a simple SPI slave handler that could
+interface with an existing Linux SPI slave driver, cfr. Wolfram Sang's
+I2C slave mode EEPROM simulator for the i2c subsystem.
+Unfortunately I couldn't find any existing driver using an SPI slave
+protocol that fulfills the above requirements. The Nordic Semiconductor
+nRF8001 BLE controller seems to use a suitable protocol, but I couldn't
+find a Linux driver for it.  Hence I created two sample SPI slave
+protocols and drivers myself:
+  1. "spi-slave-time" responds with the system uptime at the time of
+     reception of the last SPI message, which can be used by an external
+     microcontroller as a dead man's switch.
+  2. "spi-slave-system-control" allows remote control of system reboot,
+     power off, halt, and suspend.
+
+For some use cases, using spidev from user space may be a more appropriate
+solution than an in-kernel SPI protocol handler, and this is fully
+supported.
+
+>From the point of view of an SPI slave protocol handler, an SPI slave
+controller looks almost like an ordinary SPI master controller. The only
+exception is that a transfer request will block on the remote SPI
+master, and may be cancelled using spi_slave_abort().
+Hence "struct spi_master" has become a misnomer.  I'll send an RFC
+follow-up patch to fix that.
+
+For now, the MSIOF SPI slave driver only supports the transmission of
+messages with a size that is known in advance (the hardware can provide
+an interrupt when CS is deasserted before, though).
+I.e. when the SPI master sends a shorter message, the slave won't
+receive it.  When the SPI master sends a longer message, the slave will
+receive the first part, and the rest will remain in the FIFO.
+
+Handshaking (5-pin SPI, RDY-signal) is optional, and not yet
+implemented.  An RDY-signal may be used for one or both of:
+  1. The SPI slave asserts RDY when it has data available, and wants to
+     be queried by the SPI master.
+       -> This can be handled on top, in the SPI slave protocol handler,
+	  using a GPIO.
+  2. After the SPI master has asserted CS, the SPI slave asserts RDY
+     when it is ready to accept the transfer.
+       -> This may need hardware support in the SPI slave controller,
+	  or dynamic GPIO vs. CS pinmuxing.
+
+Changes compared to v3:
+  - Add Reviewed-by, Acked-by,
+  - Add missing kerneldoc for spi_master.slave,
+  - Use slave_aborted flag and complete() instead of messing with
+    internal completion and thread state,
+
+Changes compared to v2 (highlights only, see individual patches for
+more details):
+  - In SPI slave mode, represent the (single) slave device again as a
+    child of the controller node, which is now optional, and must be
+    named "slave" if present,
+  - Introduce a separate spi_alloc_slave() function,
+  - Replace the SPI_CONTROLLER_IS_SLAVE flag in spi_master.flags by a
+    bool in spi_master,
+  - Fix cancellation in the spi-sh-msiof driver,
+  - Drop "spi: core: Extract of_spi_parse_dt()", which was applied,
+
+Changes compared to v1 (highlights only, see individual patches for
+more details):
+  - Do not create a child node in SPI slave mode. Instead, add an
+    "spi-slave" property, and put the mode properties in the controller
+    node.
+  - Attach SPI slave controllers to a new "spi_slave" device class,
+  - Use a "slave" virtual file in sysfs to (un)register the (single)
+    slave device for an SPI slave controller, incl. specifying the slave
+    protocol handler,
+  - Add cancellation support using spi_master.slave_abort() and
+    spi_slave_abort(),
+  - Please see the individual patches for more detailed changelog
+    information.
+
+Dependencies:
+  - Today's spi/for-next,
+
+For your convenience, I've pushed this series and its dependencies to
+the topic/spi-slave-v4 branch of the git repository at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+
+Full test information is also available on the eLinux wiki
+(http://elinux.org/Tests:MSIOF-SPI-Slave).
+
+For testing, device tree overlays enabling SPI master and slave
+controllers on an expansion I/O connector on r8a7791/koelsch are
+available in the topic/renesas-overlays branch of my renesas-drivers git
+repository.  Please see http://elinux.org/R-Car/DT-Overlays for more
+information about using these overlays.
+
+Test wiring on r8a7791/koelsch, between MSIOF1 and MSIOF2 on EXIO
+connector A:
+   - Connect pin 48 (MSIOF1 CS#) to pin 63 (MSIOF2 CS#),
+   - Connect pin 46 (MSIOF1 SCK) to pin 61 (MSIOF2 SCK),
+   - Connect pin 54 (MSIOF1 TX/MOSI) to pin 70 (MSIOF2 RX/MOSI),
+   - Connect pin 56 (MSIOF1 RX/MISO) to pin 68 (MSIOF2 TX/MISO).
+
+Preparation for all examples below:
+    # overlay add a-msiof1-spidev # buggy DT: spidev listed directly in DT
+    # overlay add a-msiof2-slave
+
+Example 1:
+
+    # echo spi-slave-time > /sys/class/spi_slave/spi3/slave 
+    # spidev_test -D /dev/spidev2.0 -p dummy-8B
+    spi mode: 0x0
+    bits per word: 8
+    max speed: 500000 Hz (500 KHz)
+    RX | 00 00 04 6D 00 09 5B BB __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __  | ...m..[�
+               ^^^^^    ^^^^^^^^
+	       seconds  microseconds
+
+Example 2:
+
+    # echo spi-slave-system-control > /sys/class/spi_slave/spi3/slave 
+    # reboot='\x7c\x50'
+    # poweroff='\x71\x3f'
+    # halt='\x38\x76'
+    # suspend='\x1b\x1b'
+    # spidev_test -D /dev/spidev2.0 -p $suspend # or $reboot, $poweroff, $halt
+
+Example 3:
+
+    # echo spidev > /sys/class/spi_slave/spi3/slave 
+    # spidev_test -D /dev/spidev3.0 -p slave-hello-to-master &
+    # spidev_test -D /dev/spidev2.0 -p master-hello-to-slave
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  spi: Document DT bindings for SPI controllers in slave mode
+  spi: core: Add support for registering SPI slave controllers
+  spi: Document SPI slave controller support
+  spi: slave: Add SPI slave handler reporting uptime at previous message
+  spi: slave: Add SPI slave handler controlling system state
+
+Hisashi Nakamura (1):
+  spi: sh-msiof: Add slave mode support
+
+ Documentation/devicetree/bindings/spi/sh-msiof.txt |   2 +
+ Documentation/devicetree/bindings/spi/spi-bus.txt  |  76 +++++----
+ Documentation/spi/spi-summary                      |  27 +++-
+ drivers/spi/Kconfig                                |  26 ++-
+ drivers/spi/Makefile                               |   4 +
+ drivers/spi/spi-sh-msiof.c                         | 111 +++++++++----
+ drivers/spi/spi-slave-system-control.c             | 154 ++++++++++++++++++
+ drivers/spi/spi-slave-time.c                       | 127 +++++++++++++++
+ drivers/spi/spi.c                                  | 179 ++++++++++++++++++---
+ include/linux/spi/sh_msiof.h                       |   6 +
+ include/linux/spi/spi.h                            |  35 +++-
+ 11 files changed, 647 insertions(+), 100 deletions(-)
+ create mode 100644 drivers/spi/spi-slave-system-control.c
+ create mode 100644 drivers/spi/spi-slave-time.c
+
 -- 
-2.13.0
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
