@@ -1,72 +1,33 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933910AbdEVN7v (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 33/35] arm64: dts: ulcb: Set drive-strength for ravb pins
-Date: Mon, 22 May 2017 15:59:06 +0200
-Message-Id: <133ace3f38045968b971b3ac62da495c54de49a6.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 17 May 2017 15:29:41 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        sricharan@codeaurora.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        robin.murphy@arm.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH v8 00/08] iommu/ipmmu-vmsa: IPMMU multi-arch update V8
+Message-ID: <20170517132940.GF11068@8bytes.org>
+References: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The EthernetAVB should not depend on the bootloader to setup correct
-drive-strength values.  Values for drive-strength where found by
-examining the registers after the bootloader has configured the
-registers and successfully used the EthernetAVB.
+On Wed, May 17, 2017 at 07:06:16PM +0900, Magnus Damm wrote:
+> iommu/ipmmu-vmsa: IPMMU multi-arch update V8
+> 
+> [PATCH v8 01/08] iommu/ipmmu-vmsa: Remove platform data handling
+> [PATCH v8 02/08] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+> [PATCH v8 03/08] iommu/ipmmu-vmsa: Break out utlb parsing code
+> [PATCH v8 04/08] iommu/ipmmu-vmsa: Break out domain allocation code
+> [PATCH v8 05/08] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+> [PATCH v8 06/08] iommu/ipmmu-vmsa: Use fwspec iommu_priv on ARM64
+> [PATCH v8 07/08] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+> [PATCH v8 08/08] iommu/ipmmu-vmsa: Fix pgsize_bitmap semicolon typo
 
-Based on:
-* commit 7d73a4da2681 ("arm64: dts: r8a7795: salvator-x: Set drive-strength
-  for ravb pins")
-* commit 4903987033be ("arm64: dts: r8a7796: salvator-x: Set drive-strength
-  for ravb pins")
-
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 2bc7ceb2efa4..41e83c8530f7 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -198,8 +198,22 @@
- 	pinctrl-names = "default";
- 
- 	avb_pins: avb {
--		groups = "avb_mdc";
--		function = "avb";
-+		mux {
-+			groups = "avb_link", "avb_phy_int", "avb_mdc",
-+				 "avb_mii";
-+			function = "avb";
-+		};
-+
-+		pins_mdc {
-+			groups = "avb_mdc";
-+			drive-strength = <24>;
-+		};
-+
-+		pins_mii_tx {
-+			pins = "PIN_AVB_TX_CTL", "PIN_AVB_TXC", "PIN_AVB_TD0",
-+			       "PIN_AVB_TD1", "PIN_AVB_TD2", "PIN_AVB_TD3";
-+			drive-strength = <12>;
-+		};
- 	};
- 
- 	i2c2_pins: i2c2 {
--- 
-2.1.4
+Applied, thanks.
