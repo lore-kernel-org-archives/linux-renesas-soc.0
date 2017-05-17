@@ -1,132 +1,277 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33837 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753403AbdEPPGU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 May 2017 11:06:20 -0400
-Received: by mail-it0-f67.google.com with SMTP id d68so4703997ita.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 16 May 2017 08:06:19 -0700 (PDT)
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 May 2017 17:06:08 +0200
-Message-ID: <CAMuHMdXyc0Kt2Ec-k5xeJYTCpzoFfhEO_bbF1w2tUbyiRikR0w@mail.gmail.com>
-Subject: Re: ASoC: rsnd: fix sound route path when using SRC6/SRC9
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        robin.murphy@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, sricharan@codeaurora.org,
+        m.szyprowski@samsung.com
+Date: Wed, 17 May 2017 19:07:10 +0900
+Message-Id: <149501563010.21593.2577334360194191792.sendpatchset@little-apple>
+In-Reply-To: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
+References: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
+Subject: [PATCH v8 05/08] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Morimoto-san,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-On Fri, Mar 31, 2017 at 9:32 PM, Linux Kernel Mailing List
-<linux-kernel@vger.kernel.org> wrote:
-> Web:        https://git.kernel.org/torvalds/c/a1c2ff53726907aff5feb37e4cfd45c1ff626431
-> Commit:     a1c2ff53726907aff5feb37e4cfd45c1ff626431
-> Parent:     4b30eebfc35c67771b5f58d9274d3e321b72d7a8
-> Refname:    refs/heads/master
-> Author:     Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-> AuthorDate: Wed Mar 1 03:51:00 2017 +0000
-> Committer:  Mark Brown <broonie@kernel.org>
-> CommitDate: Mon Mar 13 12:58:07 2017 +0000
->
->     ASoC: rsnd: fix sound route path when using SRC6/SRC9
->
->     This patch fixes the problem that the missing value of the route path
->     setting table and incorrect values are set in the CMD_ROUTE_SELECT
->     register.
->
->     Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
->     [Kuninori: shared data on MIX and non-MIX case]
->     Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->     Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  sound/soc/sh/rcar/cmd.c | 36 ++++++++++++++++++++----------------
->  1 file changed, 20 insertions(+), 16 deletions(-)
->
-> diff --git a/sound/soc/sh/rcar/cmd.c b/sound/soc/sh/rcar/cmd.c
-> index abb5eaac854a..7d92a24b7cfa 100644
-> --- a/sound/soc/sh/rcar/cmd.c
-> +++ b/sound/soc/sh/rcar/cmd.c
-> @@ -31,23 +31,24 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
->         struct rsnd_mod *mix = rsnd_io_to_mod_mix(io);
->         struct device *dev = rsnd_priv_to_dev(priv);
->         u32 data;
-> +       u32 path[] = {
-> +               [1] = 1 << 0,
-> +               [5] = 1 << 8,
-> +               [6] = 1 << 12,
-> +               [9] = 1 << 15,
-> +       };
->
->         if (!mix && !dvc)
->                 return 0;
->
-> +       if (ARRAY_SIZE(path) < rsnd_mod_id(mod) + 1)
-> +               return -ENXIO;
-> +
->         if (mix) {
->                 struct rsnd_dai *rdai;
->                 struct rsnd_mod *src;
->                 struct rsnd_dai_stream *tio;
->                 int i;
-> -               u32 path[] = {
-> -                       [0] = 0,
-> -                       [1] = 1 << 0,
-> -                       [2] = 0,
-> -                       [3] = 0,
-> -                       [4] = 0,
-> -                       [5] = 1 << 8
-> -               };
->
->                 /*
->                  * it is assuming that integrater is well understanding about
-> @@ -70,16 +71,19 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
->         } else {
->                 struct rsnd_mod *src = rsnd_io_to_mod_src(io);
->
-> -               u32 path[] = {
-> -                       [0] = 0x30000,
-> -                       [1] = 0x30001,
-> -                       [2] = 0x40000,
-> -                       [3] = 0x10000,
-> -                       [4] = 0x20000,
-> -                       [5] = 0x40100
-> +               u8 cmd_case[] = {
-> +                       [0] = 0x3,
-> +                       [1] = 0x3,
-> +                       [2] = 0x4,
-> +                       [3] = 0x1,
-> +                       [4] = 0x2,
-> +                       [5] = 0x4,
-> +                       [6] = 0x1,
-> +                       [9] = 0x2,
->                 };
->
-> -               data = path[rsnd_mod_id(src)];
-> +               data = path[rsnd_mod_id(src)] |
+Introduce an alternative set of iommu_ops suitable for 64-bit ARM
+as well as 32-bit ARM when CONFIG_IOMMU_DMA=y. Also adjust the
+Kconfig to depend on ARM or IOMMU_DMA. Initialize the device
+from ->xlate() when CONFIG_IOMMU_DMA=y.
 
-With gcc 4.9.0:
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-    sound/soc/sh/rcar/cmd.c: In function 'rsnd_cmd_init':
-    sound/soc/sh/rcar/cmd.c:85:14: warning: array subscript is below
-array bounds [-Warray-bounds]
-       data = path[rsnd_mod_id(src)] |
+ Changes since V7:
+ - None
 
-> +                       cmd_case[rsnd_mod_id(src)] << 16;
->         }
->
->         dev_dbg(dev, "ctu/mix path = 0x%08x", data);
+ drivers/iommu/Kconfig      |    1 
+ drivers/iommu/ipmmu-vmsa.c |  164 +++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 156 insertions(+), 9 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0001/drivers/iommu/Kconfig
++++ work/drivers/iommu/Kconfig	2017-05-17 16:41:43.030607110 +0900
+@@ -274,6 +274,7 @@ config EXYNOS_IOMMU_DEBUG
+ 
+ config IPMMU_VMSA
+ 	bool "Renesas VMSA-compatible IPMMU"
++	depends on ARM || IOMMU_DMA
+ 	depends on ARM_LPAE
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select IOMMU_API
+--- 0009/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-05-17 16:42:02.730607110 +0900
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/bitmap.h>
+ #include <linux/delay.h>
++#include <linux/dma-iommu.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+ #include <linux/export.h>
+@@ -22,8 +23,10 @@
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ 
++#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ #include <asm/dma-iommu.h>
+ #include <asm/pgalloc.h>
++#endif
+ 
+ #include "io-pgtable.h"
+ 
+@@ -57,6 +60,8 @@ struct ipmmu_vmsa_archdata {
+ 	struct ipmmu_vmsa_device *mmu;
+ 	unsigned int *utlbs;
+ 	unsigned int num_utlbs;
++	struct device *dev;
++	struct list_head list;
+ };
+ 
+ static DEFINE_SPINLOCK(ipmmu_devices_lock);
+@@ -522,14 +527,6 @@ static struct iommu_domain *__ipmmu_doma
+ 	return &domain->io_domain;
+ }
+ 
+-static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+-{
+-	if (type != IOMMU_DOMAIN_UNMANAGED)
+-		return NULL;
+-
+-	return __ipmmu_domain_alloc(type);
+-}
+-
+ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ {
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+@@ -572,7 +569,8 @@ static int ipmmu_attach_device(struct io
+ 		dev_err(dev, "Can't attach IPMMU %s to domain on IPMMU %s\n",
+ 			dev_name(mmu->dev), dev_name(domain->mmu->dev));
+ 		ret = -EINVAL;
+-	}
++	} else
++		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
+ 
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+ 
+@@ -708,6 +706,7 @@ static int ipmmu_init_platform_device(st
+ 	archdata->mmu = mmu;
+ 	archdata->utlbs = utlbs;
+ 	archdata->num_utlbs = num_utlbs;
++	archdata->dev = dev;
+ 	dev->archdata.iommu = archdata;
+ 	return 0;
+ 
+@@ -716,6 +715,16 @@ error:
+ 	return ret;
+ }
+ 
++#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
++
++static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
++{
++	if (type != IOMMU_DOMAIN_UNMANAGED)
++		return NULL;
++
++	return __ipmmu_domain_alloc(type);
++}
++
+ static int ipmmu_add_device(struct device *dev)
+ {
+ 	struct ipmmu_vmsa_archdata *archdata;
+@@ -825,6 +834,141 @@ static const struct iommu_ops ipmmu_ops
+ 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
+ };
+ 
++#endif /* !CONFIG_ARM && CONFIG_IOMMU_DMA */
++
++#ifdef CONFIG_IOMMU_DMA
++
++static DEFINE_SPINLOCK(ipmmu_slave_devices_lock);
++static LIST_HEAD(ipmmu_slave_devices);
++
++static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
++{
++	struct iommu_domain *io_domain = NULL;
++
++	switch (type) {
++	case IOMMU_DOMAIN_UNMANAGED:
++		io_domain = __ipmmu_domain_alloc(type);
++		break;
++
++	case IOMMU_DOMAIN_DMA:
++		io_domain = __ipmmu_domain_alloc(type);
++		if (io_domain)
++			iommu_get_dma_cookie(io_domain);
++		break;
++	}
++
++	return io_domain;
++}
++
++static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
++{
++	switch (io_domain->type) {
++	case IOMMU_DOMAIN_DMA:
++		iommu_put_dma_cookie(io_domain);
++		/* fall-through */
++	default:
++		ipmmu_domain_free(io_domain);
++		break;
++	}
++}
++
++static int ipmmu_add_device_dma(struct device *dev)
++{
++	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct iommu_group *group;
++
++	/* The device has been verified in xlate() */
++	if (!archdata)
++		return -ENODEV;
++
++	group = iommu_group_get_for_dev(dev);
++	if (IS_ERR(group))
++		return PTR_ERR(group);
++
++	spin_lock(&ipmmu_slave_devices_lock);
++	list_add(&archdata->list, &ipmmu_slave_devices);
++	spin_unlock(&ipmmu_slave_devices_lock);
++	return 0;
++}
++
++static void ipmmu_remove_device_dma(struct device *dev)
++{
++	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++
++	spin_lock(&ipmmu_slave_devices_lock);
++	list_del(&archdata->list);
++	spin_unlock(&ipmmu_slave_devices_lock);
++
++	iommu_group_remove_device(dev);
++}
++
++static struct device *ipmmu_find_sibling_device(struct device *dev)
++{
++	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *sibling_archdata = NULL;
++	bool found = false;
++
++	spin_lock(&ipmmu_slave_devices_lock);
++
++	list_for_each_entry(sibling_archdata, &ipmmu_slave_devices, list) {
++		if (archdata == sibling_archdata)
++			continue;
++		if (sibling_archdata->mmu == archdata->mmu) {
++			found = true;
++			break;
++		}
++	}
++
++	spin_unlock(&ipmmu_slave_devices_lock);
++
++	return found ? sibling_archdata->dev : NULL;
++}
++
++static struct iommu_group *ipmmu_find_group_dma(struct device *dev)
++{
++	struct iommu_group *group;
++	struct device *sibling;
++
++	sibling = ipmmu_find_sibling_device(dev);
++	if (sibling)
++		group = iommu_group_get(sibling);
++	if (!sibling || IS_ERR(group))
++		group = generic_device_group(dev);
++
++	return group;
++}
++
++static int ipmmu_of_xlate_dma(struct device *dev,
++			      struct of_phandle_args *spec)
++{
++	/* If the IPMMU device is disabled in DT then return error
++	 * to make sure the of_iommu code does not install ops
++	 * even though the iommu device is disabled
++	 */
++	if (!of_device_is_available(spec->np))
++		return -ENODEV;
++
++	return ipmmu_init_platform_device(dev);
++}
++
++static const struct iommu_ops ipmmu_ops = {
++	.domain_alloc = ipmmu_domain_alloc_dma,
++	.domain_free = ipmmu_domain_free_dma,
++	.attach_dev = ipmmu_attach_device,
++	.detach_dev = ipmmu_detach_device,
++	.map = ipmmu_map,
++	.unmap = ipmmu_unmap,
++	.map_sg = default_iommu_map_sg,
++	.iova_to_phys = ipmmu_iova_to_phys,
++	.add_device = ipmmu_add_device_dma,
++	.remove_device = ipmmu_remove_device_dma,
++	.device_group = ipmmu_find_group_dma,
++	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
++	.of_xlate = ipmmu_of_xlate_dma,
++};
++
++#endif /* CONFIG_IOMMU_DMA */
++
+ /* -----------------------------------------------------------------------------
+  * Probe/remove and init
+  */
+@@ -914,7 +1058,9 @@ static int ipmmu_remove(struct platform_
+ 	list_del(&mmu->list);
+ 	spin_unlock(&ipmmu_devices_lock);
+ 
++#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ 	arm_iommu_release_mapping(mmu->mapping);
++#endif
+ 
+ 	ipmmu_device_reset(mmu);
+ 
