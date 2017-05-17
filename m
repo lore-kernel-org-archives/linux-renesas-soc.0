@@ -1,88 +1,109 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/6] spi: Document SPI slave controller support
-Date: Wed, 17 May 2017 14:47:49 +0200
-Message-Id: <1495025272-23930-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495025272-23930-1-git-send-email-geert+renesas@glider.be>
-References: <1495025272-23930-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kbingham@kernel.org>
+To: laurent.pinchart@ideasonboard.com, sakari.ailus@iki.fi,
+        niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 0/2] ADV748x HDMI/Analog video receiver
+Date: Wed, 17 May 2017 15:13:16 +0100
+Message-Id: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3, v4:
-  - No changes,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-v2:
-  - New.
----
- Documentation/spi/spi-summary | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+This is a driver for the Analog Devices ADV748x device, and follows on from a
+previous posting by Niklas Söderlund [0] of an earlier incarnation of this
+driver.
 
-diff --git a/Documentation/spi/spi-summary b/Documentation/spi/spi-summary
-index d1824b399b2d1d79..1721c1b570c32466 100644
---- a/Documentation/spi/spi-summary
-+++ b/Documentation/spi/spi-summary
-@@ -62,8 +62,8 @@ chips described as using "three wire" signaling: SCK, data, nCSx.
- (That data line is sometimes called MOMI or SISO.)
- 
- Microcontrollers often support both master and slave sides of the SPI
--protocol.  This document (and Linux) currently only supports the master
--side of SPI interactions.
-+protocol.  This document (and Linux) supports both the master and slave
-+sides of SPI interactions.
- 
- 
- Who uses it?  On what kinds of systems?
-@@ -154,9 +154,8 @@ control audio interfaces, present touchscreen sensors as input interfaces,
- or monitor temperature and voltage levels during industrial processing.
- And those might all be sharing the same controller driver.
- 
--A "struct spi_device" encapsulates the master-side interface between
--those two types of driver.  At this writing, Linux has no slave side
--programming interface.
-+A "struct spi_device" encapsulates the controller-side interface between
-+those two types of drivers.
- 
- There is a minimal core of SPI programming interfaces, focussing on
- using the driver model to connect controller and protocol drivers using
-@@ -177,10 +176,24 @@ shows up in sysfs in several locations:
-    /sys/bus/spi/drivers/D ... driver for one or more spi*.* devices
- 
-    /sys/class/spi_master/spiB ... symlink (or actual device node) to
--	a logical node which could hold class related state for the
--	controller managing bus "B".  All spiB.* devices share one
-+	a logical node which could hold class related state for the SPI
-+	master controller managing bus "B".  All spiB.* devices share one
- 	physical SPI bus segment, with SCLK, MOSI, and MISO.
- 
-+   /sys/devices/.../CTLR/slave ... virtual file for (un)registering the
-+	slave device for an SPI slave controller.
-+	Writing the driver name of an SPI slave handler to this file
-+	registers the slave device; writing "(null)" unregisters the slave
-+	device.
-+	Reading from this file shows the name of the slave device ("(null)"
-+	if not registered).
-+
-+   /sys/class/spi_slave/spiB ... symlink (or actual device node) to
-+	a logical node which could hold class related state for the SPI
-+	slave controller on bus "B".  When registered, a single spiB.*
-+	device is present here, possible sharing the physical SPI bus
-+	segment with other SPI slave devices.
-+
- Note that the actual location of the controller's class state depends
- on whether you enabled CONFIG_SYSFS_DEPRECATED or not.  At this time,
- the only class-specific state is the bus number ("B" in "spiB"), so
+Aside from a few bug fixes, and considerable refactoring this driver:
+ - is refactored to multiple object files
+ - defines multiple sub devices for the output paths.
+ - has independent controls for both HDMI and Analog video paths
+
+ - Specifies 'endpoint' matching instead of 'device' in async framework
+
+These patches are based up on Niklas' pending RVin work [1] and Sakari's fwnode
+series [2]
+
+This version sees lots of review comments addressed from previous reviews, and
+the removal of the async notifiers to register the AFE/HDMI entities (which was
+functional - but overkill)
+
+Updates to the core to support matching will be provided in a separate series
+
+ADV748x
+=======
+The ADV7481 and ADV7482 support two video pipelines which can run independently
+of each other, with each pipeline terminating in a CSI-2 output: TXA (4-Lane)
+and TXB (1-Lane)
+
+The ADV7480 (Not yet included here), ADV7481, and ADV7482 are all derivatives,
+with the following features
+
+            Analog   HDMI  MHL  4-Lane  1-Lane
+              In      In         CSI     CSI
+ ADV7480               X    X     X
+ ADV7481      X        X    X     X       X
+ ADV7482      X        X          X       X
+
+Implementation
+==============
+
+This RFC creates 4 entities. AFE (CVBS/Analog In), HDMI, TXA and TXB.  At probe
+time, the DT is parsed to identify the endpoints for each of these nodes, and
+those are used for async matching of the CSI2 (TXA/TXB) entities in the master
+driver. The HDMI and AFE entities are then registered after a successful
+registration of both the CSI2 entities.
+
+(Known) Future Todo's
+=====================
+
+Further potential development areas include:
+ - ADV7480 Support (No AFE)
+ - MHL support (Not present on ADV7482)
+ - EDID support
+ - CEC Support
+ - Configurable I2C addressing
+ - Interrupt handling for format changes and hotplug detect.
+
+However, this driver and series is functional without the above, though if
+there are mandatory areas which block mainline integration please let me know
+and I will prioritise that in development.
+
+References
+==========
+[0] http://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg05196.html
+[1] https://git.ragnatech.se/linux rcar-vin-elinux-v7
+[2] https://www.mail-archive.com/linux-media@vger.kernel.org/msg111332.html
+
+Kieran Bingham (2):
+  v4l: subdev: tolerate null in media_entity_to_v4l2_subdev
+  media: i2c: adv748x: add adv748x driver
+
+ Documentation/devicetree/bindings/media/i2c/adv748x.txt |  72 +-
+ MAINTAINERS                                             |   6 +-
+ drivers/media/i2c/Kconfig                               |  10 +-
+ drivers/media/i2c/Makefile                              |   1 +-
+ drivers/media/i2c/adv748x/Makefile                      |   7 +-
+ drivers/media/i2c/adv748x/adv748x-afe.c                 | 575 +++++++-
+ drivers/media/i2c/adv748x/adv748x-core.c                | 711 +++++++++-
+ drivers/media/i2c/adv748x/adv748x-csi2.c                | 283 ++++-
+ drivers/media/i2c/adv748x/adv748x-hdmi.c                | 647 ++++++++-
+ drivers/media/i2c/adv748x/adv748x.h                     | 218 +++-
+ include/media/v4l2-subdev.h                             |   2 +-
+ 11 files changed, 2531 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
+ create mode 100644 drivers/media/i2c/adv748x/Makefile
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
+ create mode 100644 drivers/media/i2c/adv748x/adv748x.h
+
+base-commit: 4db2a777a71b51a864caae16385b60b4b7e9f992
 -- 
-2.7.4
+git-series 0.9.1
