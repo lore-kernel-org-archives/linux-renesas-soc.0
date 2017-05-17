@@ -1,66 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57762 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752045AbdEJHFH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 May 2017 03:05:07 -0400
-Received: from avalon.ideasonboard.com (syi-ogw1-1554.syi.inet.fi [194.89.38.18])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id E0D51203A2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 May 2017 09:04:00 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 7/7] ARM: shmobile: dts: Switch to panel-lvds bindings for Mitsubishi panels
-Date: Wed, 10 May 2017 10:04:58 +0300
-Message-Id: <20170510070458.21193-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20170510070458.21193-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: joro@8bytes.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        sricharan@codeaurora.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Wed, 17 May 2017 19:06:59 +0900
+Message-Id: <149501561966.21593.14282344872401796559.sendpatchset@little-apple>
+In-Reply-To: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
+References: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
+Subject: [PATCH v8 04/08] iommu/ipmmu-vmsa: Break out domain allocation code
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The aa104xd12 and aa121td01 panels are LVDS panels, not DPI panels.
-Use the correct DT bindings.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Break out the domain allocation code into a separate function.
+
+This is preparation for future code sharing.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi | 3 ++-
- arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-index 65cb50f0c29f..238d14bb0ebe 100644
---- a/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa104xd12", "panel-dpi";
-+		compatible = "mitsubishi,aa104xd12", "panel-lvds";
- 
- 		width-mm = <210>;
- 		height-mm = <158>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1024x768 @65Hz */
-diff --git a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-index a07ebf8f6938..04aafd479775 100644
---- a/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-+++ b/arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi
-@@ -10,10 +10,11 @@
- 
- / {
- 	panel {
--		compatible = "mitsubishi,aa121td01", "panel-dpi";
-+		compatible = "mitsubishi,aa121td01", "panel-lvds";
- 
- 		width-mm = <261>;
- 		height-mm = <163>;
-+		data-mapping = "jeida-18";
- 
- 		panel-timing {
- 			/* 1280x800 @60Hz */
--- 
-Regards,
+ Changes since V7:
+ - Added Reviewed-by from Geert - Thanks!
 
-Laurent Pinchart
+ drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+--- 0006/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-05-17 16:39:05.380607110 +0900
+@@ -509,13 +509,10 @@ static irqreturn_t ipmmu_irq(int irq, vo
+  * IOMMU Operations
+  */
+ 
+-static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
++static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
+ {
+ 	struct ipmmu_vmsa_domain *domain;
+ 
+-	if (type != IOMMU_DOMAIN_UNMANAGED)
+-		return NULL;
+-
+ 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+ 	if (!domain)
+ 		return NULL;
+@@ -525,6 +522,14 @@ static struct iommu_domain *ipmmu_domain
+ 	return &domain->io_domain;
+ }
+ 
++static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
++{
++	if (type != IOMMU_DOMAIN_UNMANAGED)
++		return NULL;
++
++	return __ipmmu_domain_alloc(type);
++}
++
+ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ {
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
