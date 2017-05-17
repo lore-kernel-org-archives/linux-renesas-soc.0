@@ -1,75 +1,148 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:35838 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932613AbdEKL7F (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 May 2017 07:59:05 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/3] arm64: dts: r8a7795: h3ulcb: Add support for R-Car H3 ES2.0
-Date: Thu, 11 May 2017 13:58:54 +0200
-Message-Id: <1494503934-23367-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1494503934-23367-1-git-send-email-geert+renesas@glider.be>
-References: <1494503934-23367-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Matt Porter <mporter@konsulko.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/6] spi: Document DT bindings for SPI controllers in slave mode
+Date: Wed, 17 May 2017 14:47:47 +0200
+Message-Id: <1495025272-23930-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495025272-23930-1-git-send-email-geert+renesas@glider.be>
+References: <1495025272-23930-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Split off support for H3ULCB boards with the ES1.x revision of the R-Car
-H3 SoC into a separate file.  The main r8a7795-h3ulcb.dts file now
-corresponds to H3ULCB with R-Car H3 ES2.0 or later.
-
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-v3:
-  - New.
----
- arch/arm64/boot/dts/renesas/Makefile                                  | 2 +-
- .../boot/dts/renesas/{r8a7795-h3ulcb.dts => r8a7795-es1-h3ulcb.dts}   | 0
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts                        | 4 ++--
- 3 files changed, 3 insertions(+), 3 deletions(-)
- copy arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb.dts => r8a7795-es1-h3ulcb.dts} (100%)
+v4:
+  - Add Reviewed-by,
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index b6c723d8f6875f2d..d5451015950e3dfc 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,5 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
--dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+v3:
+  - In SPI slave mode, represent the (single) slave device again as a
+    child of the controller node, which is now optional, and must be
+    named "slave" if present,
+  - Split slave node properties in master mode, slave mode, and common
+    properties,
+
+v2:
+  - Do not create a child node in SPI slave mode. Instead, add an
+    "spi-slave" property, and put the mode properties in the controller
+    node.
+---
+ Documentation/devicetree/bindings/spi/spi-bus.txt | 76 ++++++++++++++---------
+ 1 file changed, 45 insertions(+), 31 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-bus.txt b/Documentation/devicetree/bindings/spi/spi-bus.txt
+index 4b1d6e74c744fe96..1f6e86f787efd229 100644
+--- a/Documentation/devicetree/bindings/spi/spi-bus.txt
++++ b/Documentation/devicetree/bindings/spi/spi-bus.txt
+@@ -1,17 +1,23 @@
+ SPI (Serial Peripheral Interface) busses
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts
-similarity index 100%
-copy from arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-copy to arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 95fe207cb6a3fd2f..0426f41765f0bc68 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -12,11 +12,11 @@
- #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
+-SPI busses can be described with a node for the SPI master device
+-and a set of child nodes for each SPI slave on the bus.  For this
+-discussion, it is assumed that the system's SPI controller is in
+-SPI master mode.  This binding does not describe SPI controllers
+-in slave mode.
++SPI busses can be described with a node for the SPI controller device
++and a set of child nodes for each SPI slave on the bus.  The system's SPI
++controller may be described for use in SPI master mode or in SPI slave mode,
++but not for both at the same time.
  
- /dts-v1/;
--#include "r8a7795-es1.dtsi"
-+#include "r8a7795.dtsi"
- #include "ulcb.dtsi"
+-The SPI master node requires the following properties:
++The SPI controller node requires the following properties:
++- compatible      - Name of SPI bus controller following generic names
++		    recommended practice.
++
++In master mode, the SPI controller node requires the following additional
++properties:
+ - #address-cells  - number of cells required to define a chip select
+ 		address on the SPI bus.
+ - #size-cells     - should be zero.
+-- compatible      - name of SPI bus controller following generic names
+-		recommended practice.
++
++In slave mode, the SPI controller node requires one additional property:
++- spi-slave       - Empty property.
++
+ No other properties are required in the SPI bus node.  It is assumed
+ that a driver for an SPI bus device will understand that it is an SPI bus.
+ However, the binding does not attempt to define the specific method for
+@@ -21,7 +27,7 @@ assumption that board specific platform code will be used to manage
+ chip selects.  Individual drivers can define additional properties to
+ support describing the chip select layout.
  
- / {
--	model = "Renesas H3ULCB board based on r8a7795 ES1.x";
-+	model = "Renesas H3ULCB board based on r8a7795 ES2.0+";
- 	compatible = "renesas,h3ulcb", "renesas,r8a7795";
+-Optional properties:
++Optional properties (master mode only):
+ - cs-gpios	  - gpios chip select.
+ - num-cs	  - total number of chipselects.
  
- 	memory@48000000 {
+@@ -41,28 +47,36 @@ cs1 : native
+ cs2 : &gpio1 1 0
+ cs3 : &gpio1 2 0
+ 
+-SPI slave nodes must be children of the SPI master node and can
+-contain the following properties.
+-- reg             - (required) chip select address of device.
+-- compatible      - (required) name of SPI device following generic names
+-		recommended practice.
+-- spi-max-frequency - (required) Maximum SPI clocking speed of device in Hz.
+-- spi-cpol        - (optional) Empty property indicating device requires
+-		inverse clock polarity (CPOL) mode.
+-- spi-cpha        - (optional) Empty property indicating device requires
+-		shifted clock phase (CPHA) mode.
+-- spi-cs-high     - (optional) Empty property indicating device requires
+-		chip select active high.
+-- spi-3wire       - (optional) Empty property indicating device requires
+-		3-wire mode.
+-- spi-lsb-first   - (optional) Empty property indicating device requires
+-		LSB first mode.
+-- spi-tx-bus-width - (optional) The bus width (number of data wires) that is
+-                      used for MOSI. Defaults to 1 if not present.
+-- spi-rx-bus-width - (optional) The bus width (number of data wires) that is
+-                      used for MISO. Defaults to 1 if not present.
+-- spi-rx-delay-us  - (optional) Microsecond delay after a read transfer.
+-- spi-tx-delay-us  - (optional) Microsecond delay after a write transfer.
++
++SPI slave nodes must be children of the SPI controller node.
++
++In master mode, one or more slave nodes (up to the number of chip selects) can
++be present.  Required properties are:
++- compatible      - Name of SPI device following generic names recommended
++		    practice.
++- reg             - Chip select address of device.
++- spi-max-frequency - Maximum SPI clocking speed of device in Hz.
++
++In slave mode, the (single) slave node is optional.
++If present, it must be called "slave".  Required properties are:
++- compatible      - Name of SPI device following generic names recommended
++		    practice.
++
++All slave nodes can contain the following optional properties:
++- spi-cpol        - Empty property indicating device requires inverse clock
++		    polarity (CPOL) mode.
++- spi-cpha        - Empty property indicating device requires shifted clock
++		    phase (CPHA) mode.
++- spi-cs-high     - Empty property indicating device requires chip select
++		    active high.
++- spi-3wire       - Empty property indicating device requires 3-wire mode.
++- spi-lsb-first   - Empty property indicating device requires LSB first mode.
++- spi-tx-bus-width - The bus width (number of data wires) that is used for MOSI.
++		    Defaults to 1 if not present.
++- spi-rx-bus-width - The bus width (number of data wires) that is used for MISO.
++		    Defaults to 1 if not present.
++- spi-rx-delay-us - Microsecond delay after a read transfer.
++- spi-tx-delay-us - Microsecond delay after a write transfer.
+ 
+ Some SPI controllers and devices support Dual and Quad SPI transfer mode.
+ It allows data in the SPI system to be transferred using 2 wires (DUAL) or 4
 -- 
 2.7.4
