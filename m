@@ -1,89 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33863 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752816AbdESNID (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:39092 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752038AbdEQK2V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 09:08:03 -0400
-Received: by mail-wr0-f194.google.com with SMTP id 6so2953249wrb.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 May 2017 06:08:02 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: geert@linux-m68k.org, magnus.damm@gmail.com, horms@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: Add SCIF1 pin groups
-Date: Fri, 19 May 2017 15:07:58 +0200
-Message-Id: <1495199278-16432-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 17 May 2017 06:28:21 -0400
+Subject: Re: [PATCH V8 07/11] iommu: of: Handle IOMMU lookup failure with
+ deferred probing or error
+To: Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        iommu@lists.linux-foundation.org,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        tn@semihalf.com, Hanjun Guo <hanjun.guo@linaro.org>,
+        okaya@codeaurora.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <1486136933-20328-1-git-send-email-sricharan@codeaurora.org>
+ <1486136933-20328-8-git-send-email-sricharan@codeaurora.org>
+ <CAMuHMdV05uCcVss+V1E+_OQYosJO6P95rU1WynV-G08-iHJnyg@mail.gmail.com>
+ <2bfd11dc-9f94-2b69-7b03-c640e53155e1@arm.com>
+ <26defadf-6380-4af4-6323-b51198376bc1@codeaurora.org>
+ <CAMuHMdUoLp1oVT_=NG8HS-jgG6AhOeVUsGgu7fLbGY+7A+0cOg@mail.gmail.com>
+ <CANqRtoSEwdoufUxP-Rm=qZJ7G8V3ow5F0ggV3tALrfiRad+j4Q@mail.gmail.com>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <3b154db4-6ebb-c05c-91f0-beefa75fae00@codeaurora.org>
+Date: Wed, 17 May 2017 15:58:12 +0530
+MIME-Version: 1.0
+In-Reply-To: <CANqRtoSEwdoufUxP-Rm=qZJ7G8V3ow5F0ggV3tALrfiRad+j4Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SCIF1 pin groups to the R8A7792 PFC driver.
+Hi Magnus,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
+<snip..>
 
-These are the pins the MAX9260 deserializers are connected to on Blanche.
+>> Magnus, do you have a suggestion?
+> 
+> Thanks for your efforts guys!
+> 
+> I've recently been working on up-porting the IPMMU patches and
+> addressing review comments. Now with my local driver stack on top of
+> v4.12-rc (a95cfad) I did not notice these issues initially since I
+> only tested devices with IPMMU enabled. Once these issues were pointed
+> out to me by Geert I have now reproduced the 64-bit ARM specific ones
+> on r8a7796 Salvator-X.
+> 
+> On my r8a7796 platform I'm using the following IOMMU and DMA Engine devices:
+> 
+> IOMMU device IPMMU-DS0 - Connected to SYS-DMAC0
+> IOMMU device IPMMU-DS1 - Connected to SYS-DMAC1 and SYS-DMAC2
+> IOMMU device IPMMU-MM - Root device serving IPMMU-DS0 and IPMMU-DS1
+> 
+> For testing the serial port SCIF1 is used with DMA Engine devices
+> SYS-DMAC1 or SYS-DMAC2.
+> 
+> The software environment is configured as follows:
+> - The DTS comes with all devices above enabled except IPMMU-DS0 which
+> comes with status = "disabled".
+> - The IPMMU driver is during run time only allowing use of SYS-DMAC2.
+> For other devices ->of_xlate() returns -ENODEV.
+> 
+> The above used to work just fine with v4.11 or earlier.
+> 
+> My observations for v4.12-rc:
+> 
+> 1) Default state for a95cfad
+> 
+> The devices SYS-DMAC0 and SYS-DMAC1 will never probe. However SYS-DMAC2 is fine.
+> 
+> 2) After applying "[PATCH] iommu: of: Fix check for returning EPROBE_DEFER" [1]
+> 
+> This fixes SYS-DMAC0 that now probes and operates without IPMMU-DS0 as
+> expected. Same as v4.11 or earlier.
+> 
+> 3) After also applying "[PATCH] of: iommu: Ignore all errors except
+> EPROBE_DEFER" [2]
+> 
+> This fixes SYS-DMAC1 that now probes and operates without IPMMU-DS1 as
+> expected. Same as v4.11 or earlier.
+> 
+> With fix [1] and [2] things seem back to normal. Unless I'm mistaken
 
-CU
-Uli
+Thanks, will use this as your Tested-by.
 
+Regards,
+ Sricharan
 
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> it also seems that [1] allows me to drop the similar patch "[PATCH/RFC
+> v2 1/4] iommu/of: Skip IOMMU devices disabled in DT".
+> 
+> Thanks for your help.
+> 
+> Cheers,
+> 
+> / magnus
+> 
+> 
+> [1] https://lkml.org/lkml/2017/5/16/25
+> [2] https://www.spinics.net/lists/arm-kernel/msg581485.html
+> [3] https://patchwork.kernel.org/patch/9540605/
+> 
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-index 21badb6..2f9ee3f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -1137,6 +1137,21 @@ static const unsigned int scif0_ctrl_pins[] = {
- static const unsigned int scif0_ctrl_mux[] = {
- 	RTS0_N_MARK, CTS0_N_MARK,
- };
-+/* - SCIF1 ------------------------------------------------------------------ */
-+static const unsigned int scif1_data_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(10, 19), RCAR_GP_PIN(10, 18),
-+};
-+static const unsigned int scif1_data_mux[] = {
-+	RX1_MARK, TX1_MARK,
-+};
-+static const unsigned int scif1_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(10, 15),
-+};
-+static const unsigned int scif1_clk_mux[] = {
-+	SCK1_MARK,
-+};
- /* - SCIF3 ------------------------------------------------------------------ */
- static const unsigned int scif3_data_pins[] = {
- 	/* RX, TX */
-@@ -1680,6 +1695,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data),
-+	SH_PFC_PIN_GROUP(scif1_clk),
- 	SH_PFC_PIN_GROUP(scif3_data),
- 	SH_PFC_PIN_GROUP(scif3_clk),
- 	SH_PFC_PIN_GROUP(sdhi0_data1),
-@@ -1826,6 +1843,11 @@ static const char * const scif0_groups[] = {
- 	"scif0_ctrl",
- };
- 
-+static const char * const scif1_groups[] = {
-+	"scif1_data",
-+	"scif1_clk",
-+};
-+
- static const char * const scif3_groups[] = {
- 	"scif3_data",
- 	"scif3_clk",
-@@ -1924,6 +1946,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(qspi),
- 	SH_PFC_FUNCTION(scif0),
-+	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(sdhi0),
- 	SH_PFC_FUNCTION(vin0),
 -- 
-2.7.4
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
