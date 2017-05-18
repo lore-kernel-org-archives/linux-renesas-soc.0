@@ -1,49 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752591AbdEVMae (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 08:30:34 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/14] ARM: dts: r8a7740: update PFC node name to pin-controller
-Date: Mon, 22 May 2017 14:30:13 +0200
-Message-Id: <9d65683f6e228df6b3b0e6b74de4729a782b1e65.1495455272.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
-References: <cover.1495455272.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham@ideasonboard.com
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/3] of: base: Provide of_graph_get_port_parent()
+Date: Thu, 18 May 2017 16:18:39 +0300
+Message-ID: <2172554.nJqIiczhoI@avalon>
+In-Reply-To: <61138419-5781-bbec-7ac5-44524ad501ce@ideasonboard.com>
+References: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com> <CAL_JsqLvXH3kKV-DxWuNrAYGh8=L8Mdg5zcm2RsHZTpmi_8g-g@mail.gmail.com> <61138419-5781-bbec-7ac5-44524ad501ce@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
+Hi Kieran,
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from e6050000.pfc and pfc@e6050000 to
-e6050000.pin-controller and pin-controller@e6050000.
+On Wednesday 17 May 2017 21:02:42 Kieran Bingham wrote:
+> On 17/05/17 17:36, Rob Herring wrote:
+> > On Wed, May 17, 2017 at 10:03 AM, Kieran Bingham wrote:
+> >> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> 
+> >> When handling endpoints, the v4l2 async framework needs to identify the
+> >> parent device of a port endpoint.
+> >> 
+> >> Adapt the existing of_graph_get_remote_port_parent() such that a caller
+> >> can obtain the parent of a port without parsing the remote-endpoint
+> >> first.
+> > 
+> > A similar patch is already applied as part of the ASoC graph card support.
+> > 
+> > Rob
+> 
+> Ah yes, a quick google finds it...
+> 
+> :  https://patchwork.kernel.org/patch/9658907/
+> 
+> Surprisingly similar patch ... and a familiar name.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7740.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Very similar indeed, down to identical problems ;-) Quoting your patch,
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 34159a8349de..d37d22682a63 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -299,7 +299,7 @@
- 		status = "disabled";
- 	};
- 
--	pfc: pfc@e6050000 {
-+	pfc: pin-controller@e6050000 {
- 		compatible = "renesas,pfc-r8a7740";
- 		reg = <0xe6050000 0x8000>,
- 		      <0xe605800c 0x20>;
+>  /**
+> + * of_graph_get_port_parent() - get port's parent node
+> + * @node: pointer to a local endpoint device_node
+> + *
+> + * Return: device node associated with endpoint @node.
+> + *	   Use of_node_put() on it when done.
+> + */
+
+The documentation of the return value is a bit confusing to me. I assume that, 
+by device node, you meant the DT node corresponding to the device of the 
+endpoint which is passed as an argument. However, device node cal also refer 
+to struct device_node. Should this be clarified ?
+
+> Morimoto-san - you beat me to it :D !
+> 
+> Thanks Rob, (And Morimoto!)
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
