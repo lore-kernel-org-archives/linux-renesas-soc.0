@@ -1,15 +1,8 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170518193453.GB13759@lunn.ch>
-References: <1495112345-24795-1-git-send-email-geert+renesas@glider.be>
- <f0ed61c3-062b-cec6-fe19-7412231e8ef1@gmail.com> <CAMuHMdWYeSzofU57LmT_M3KkcHhvjfJy7nkHvcXkKzOYmvhqqA@mail.gmail.com>
- <20170518193453.GB13759@lunn.ch>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 18 May 2017 22:36:13 +0200
-Message-ID: <CAMuHMdV+jfh=EGt3SvjtrtVfWQ6P8ofp_JxeQZjRrSEfDWs5hA@mail.gmail.com>
-Subject: Re: [PATCH] of_mdio: Fix broken PHY IRQ in case of probe deferral
-To: Andrew Lunn <andrew@lunn.ch>
+Date: Thu, 18 May 2017 21:34:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Florian Fainelli <f.fainelli@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
@@ -20,52 +13,40 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] of_mdio: Fix broken PHY IRQ in case of probe deferral
+Message-ID: <20170518193453.GB13759@lunn.ch>
+References: <1495112345-24795-1-git-send-email-geert+renesas@glider.be>
+ <f0ed61c3-062b-cec6-fe19-7412231e8ef1@gmail.com>
+ <CAMuHMdWYeSzofU57LmT_M3KkcHhvjfJy7nkHvcXkKzOYmvhqqA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWYeSzofU57LmT_M3KkcHhvjfJy7nkHvcXkKzOYmvhqqA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Andrew,
+> > This most certainly works fine in the simple case where you have one PHY
+> > hanging off the MDIO bus, now what happens if you have several?
+> >
+> > Presumably, the first PHY that returns EPROBE_DEFER will make the entire
+> > bus registration return EPROB_DEFER as well, and so on, and so forth,
+> > but I am not sure if we will be properly unwinding the successful
+> > registration of PHYs that either don't have an interrupt, or did not
+> > return EPROBE_DEFER.
+> >
+> > It should be possible to mimic this behavior by using the fixed PHY, and
+> > possibly the dsa_loop.c driver which would create 4 ports, expecting 4
+> > fixed PHYs to be present.
+> 
+> mdiobus_unregister(), called from of_mdiobus_register() on failure,
+> should do the unwinding, right?
+> 
+> And when the driver is reprobed, all PHYs are reprobed, until they all
+> succeed.
 
-On Thu, May 18, 2017 at 9:34 PM, Andrew Lunn <andrew@lunn.ch> wrote:
->> > This most certainly works fine in the simple case where you have one PHY
->> > hanging off the MDIO bus, now what happens if you have several?
->> >
->> > Presumably, the first PHY that returns EPROBE_DEFER will make the entire
->> > bus registration return EPROB_DEFER as well, and so on, and so forth,
->> > but I am not sure if we will be properly unwinding the successful
->> > registration of PHYs that either don't have an interrupt, or did not
->> > return EPROBE_DEFER.
->> >
->> > It should be possible to mimic this behavior by using the fixed PHY, and
->> > possibly the dsa_loop.c driver which would create 4 ports, expecting 4
->> > fixed PHYs to be present.
->>
->> mdiobus_unregister(), called from of_mdiobus_register() on failure,
->> should do the unwinding, right?
->>
->> And when the driver is reprobed, all PHYs are reprobed, until they all
->> succeed.
->
-> That is the theory. I looked at that while reviewing the patch. But
-> this has probably not been tested in anger. It would be good to test
-> this properly, with not just the first PHY returning -EPROBE_DEFER, to
-> really test the unwind.
+That is the theory. I looked at that while reviewing the patch. But
+this has probably not been tested in anger. It would be good to test
+this properly, with not just the first PHY returning -EPROBE_DEFER, to
+really test the unwind.
 
-Unfortunately I don't have a board with multiple PHYs, so I cannot test
-that case.
-
-Does unbinding/rebinding a network driver with multiple PHYs currently
-work? Or module unload/reload?
-
-That should exercise a similar code path.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+    Andrew
