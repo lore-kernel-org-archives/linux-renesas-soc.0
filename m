@@ -1,75 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:54179 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934396AbdERLNl (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34285 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752916AbdERIqJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 May 2017 07:13:41 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Petre Pircalabu <petre.pircalabu@gmail.com>,
+        Thu, 18 May 2017 04:46:09 -0400
+Received: by mail-it0-f65.google.com with SMTP id d68so4014493ita.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 May 2017 01:46:08 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB09928E2327894F8E9E7738D4D8E40@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1495043888-20934-1-git-send-email-Petre_Pircalabu@mentor.com> <TY1PR06MB09928E2327894F8E9E7738D4D8E40@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 18 May 2017 10:46:07 +0200
+Message-ID: <CAMuHMdV4z8TBdBAsWCLNZ4r8vE7Qa-6_X711A2RtBwEa_RNrgg@mail.gmail.com>
+Subject: Re: [PATCH] phy: rcar-gen3-usb3: Initial support for xhci phy
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Petre Pircalabu <petre.pircalabu@gmail.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "horms@verge.net.au" <horms@verge.net.au>,
         "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
         "mirea_bogdan@mentor.com" <mirea_bogdan@mentor.com>,
         Petre Pircalabu <Petre_Pircalabu@mentor.com>
-Subject: RE: [PATCH] phy: rcar-gen3-usb3: Initial support for xhci phy
-Date: Thu, 18 May 2017 11:13:32 +0000
-Message-ID: <TY1PR06MB0992B8DC97323FF06A0B7BA3D8E40@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1495043888-20934-1-git-send-email-Petre_Pircalabu@mentor.com>
- <TY1PR06MB09928E2327894F8E9E7738D4D8E40@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAMuHMdV4z8TBdBAsWCLNZ4r8vE7Qa-6_X711A2RtBwEa_RNrgg@mail.gmail.com>
-In-Reply-To: <CAMuHMdV4z8TBdBAsWCLNZ4r8vE7Qa-6_X711A2RtBwEa_RNrgg@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEdl
-ZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBUaHVyc2RheSwgTWF5IDE4LCAyMDE3IDU6NDYgUE0N
-Cj4gDQo+IE9uIFRodSwgTWF5IDE4LCAyMDE3IGF0IDQ6NTMgQU0sIFlvc2hpaGlybyBTaGltb2Rh
-DQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4+IEZyb206
-IFBldHJlIFBpcmNhbGFidQ0KPiA+PiBUaGUgVVNCMzBQSFkgb2YgYSBSQ0FSLUdlbjMgWEhDSSBk
-ZXZpY2UgY2FuIHNlbGVjdCB0aGUgcmVmZXJlbmNlIGNsb2NrDQo+ID4+IHNvdXJjZS4gVGhlIDIg
-YXZhaWxhYmxlIG9wdGlvbnMgYXJlIHRoZSBkaWZmZXJlbnRpYWwgaW5wdXQgY2xvY2sgcGFpcg0K
-PiA+PiBzdXBwbGllZCBvbiBwaW5zIFVTQjNTMF9DTEtfUCAvIFVTQjNTMF9DTEtfTSAoZGVmYXVs
-dCkgYW5kIHRoZSBvbi1jaGlwDQo+ID4+IGNsb2NrIHNvdXJjZSBzdXBwbGllZCB0aHJvdWdoIFVT
-Ql9YVEFML1VTQl9FWFRBTC4NCj4gPj4NCj4gPj4gVGhlIGRldmljZSBjYW4gYmUgY29uZmlndXJl
-ZCB0byB1c2UgdGhlIG9uLWNoaXAgc291cmNlIGJ5IGFkZGluZyB0aGUNCj4gPj4gInJlbmVzYXMs
-dXNlLW9uLWNoaXAtY2xrIiBvcHRpb24gaW4gdGhlIGNvcnJlc3BvbmRpbmcgZGV2aWNlIHRyZWUg
-bm9kZS4NCj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogUGV0cmUgUGlyY2FsYWJ1IDxQZXRyZV9Q
-aXJjYWxhYnVAbWVudG9yLmNvbT4NCj4gDQo+ID4+IC0tLSAvZGV2L251bGwNCj4gPj4gKysrIGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjMu
-dHh0DQo+ID4+IEBAIC0wLDAgKzEsMjIgQEANCj4gPj4gKyogUmVuZXNhcyBSLUNhciBnZW5lcmF0
-aW9uIDMgVVNCIDMuMCBQSFkNCj4gPj4gKw0KPiA+PiArVGhpcyBmaWxlIHByb3ZpZGVzIGluZm9y
-bWF0aW9uIG9uIHdoYXQgdGhlIGRldmljZSBub2RlIGZvciB0aGUgUi1DYXIgZ2VuZXJhdGlvbg0K
-PiA+PiArMyBVU0IgMy4wIFBIWSBjb250YWlucy4NCj4gPj4gKw0KPiA+PiArUmVxdWlyZWQgcHJv
-cGVydGllczoNCj4gPj4gKy0gY29tcGF0aWJsZTogInJlbmVzYXMscmNhci1nZW4zLXVzYjMtcGh5
-IiBmb3IgYSBnZW5lcmljIFItQ2FyIEdlbjMgY29tcGF0aWJsZSBkZXZpY2UuDQo+ID4NCj4gPiBJ
-IHdvdWxkIGxpa2UgdG8gYWRkICJyZW5lc2FzLHVzYjMtcGh5LXI4YTc3OTUiIGFuZCAicmVuZXNh
-cyx1c2IzLXBoeS1yOGE3Nzk2Ii4NCj4gDQo+ICJyZW5lc2FzLHI4YTc3OTUtdXNiMy1waHkiIGV0
-Yy4/DQo+IA0KPiAoSSBrbm93IGFsbCBvdGhlciBSZW5lc2FzIFBIWSBkcml2ZXJzIHVzZSB0aGUg
-b2xkIHNjaGVtZSkNCg0KT29wcyEgWWVzLCB3ZSBzaG91bGQgYmUgInJlbmVzYXMsPHNvYz4tPGRy
-aXZlciBuYW1lPiIuDQooSG93ZXZlciwgInJlbmVzYXMscmNhci1nZW4zLXVzYjMtcGh5IiBpcyBP
-Sy4pDQoNCj4gPj4gKy0gcmVnOiBvZmZzZXQgYW5kIGxlbmd0aCBvZiB0aGUgcGFydGlhbCBVU0Ig
-My4wIEhvc3QgUEhZIHJlZ2lzdGVyIGJsb2NrLg0KPiA+PiArLSAjcGh5LWNlbGxzOiBzZWUgcGh5
-LWJpbmRpbmdzLnR4dCBpbiB0aGUgc2FtZSBkaXJlY3RvcnksIG11c3QgYmUgPDA+Lg0KPiA+DQo+
-ID4gSSB0aGluayB3ZSBzaG91bGQgYWRkICJjbG9ja3MiIHByb3BlcnR5IGFzIHJlcXVpcmVkLg0K
-PiA+DQo+ID4+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+DQo+ID4gWW91IHNob3VsZCBhZGQg
-InJlbmVzYXMsdXNlLW9uLWNoaXAtY2xrIiBoZXJlLg0KPiA+IEFuZCwgdGhlIG5hbWUgb2YgInVz
-ZS1vbi1jaGlwLWNsayIgaXMgbm90IGdvb2QgdG8gbWUuDQo+ID4gRllJLCBteSBkZXZlbG9waW5n
-IHBhdGNoIG5hbWVzICJyZW5lc2FzLHVzYi1leHRhbCIuDQo+IA0KPiBDYW4gdGhpcyBiZSBkZWNp
-ZGVkIGF0IHJ1bnRpbWUsIGUuZy4gYnkgbG9va2luZyBhdCB0aGUgcmF0ZXMgb2YgdGhlIGNsb2Nr
-cw0KPiB0byBzZWUgd2hpY2ggb25lIGlzIGF2YWlsYWJsZS9iZXN0IHN1aXRlZD8NCg0KQWNjb3Jk
-aW5nIHRvIHRoZSBIVyBtYW51YWwsIHRoaXMgbW9kdWxlIGNhbm5vdCBzZWUgd2hpY2ggb25lIGlz
-IGF2YWlsYWJsZS9iZXN0IHN1aXRlZC4NClNvLCBJIGRvbid0IHRoaW5rIHRoaXMgY2FuIGJlIGRl
-Y2lkZWQgYXQgcnVudGltZS4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
-PiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0
-DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4
-IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBj
-b252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tl
-ci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJv
-Z3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+On Thu, May 18, 2017 at 4:53 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: Petre Pircalabu
+>> The USB30PHY of a RCAR-Gen3 XHCI device can select the reference clock
+>> source. The 2 available options are the differential input clock pair
+>> supplied on pins USB3S0_CLK_P / USB3S0_CLK_M (default) and the on-chip
+>> clock source supplied through USB_XTAL/USB_EXTAL.
+>>
+>> The device can be configured to use the on-chip source by adding the
+>> "renesas,use-on-chip-clk" option in the corresponding device tree node.
+>>
+>> Signed-off-by: Petre Pircalabu <Petre_Pircalabu@mentor.com>
+
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+>> @@ -0,0 +1,22 @@
+>> +* Renesas R-Car generation 3 USB 3.0 PHY
+>> +
+>> +This file provides information on what the device node for the R-Car generation
+>> +3 USB 3.0 PHY contains.
+>> +
+>> +Required properties:
+>> +- compatible: "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible device.
+>
+> I would like to add "renesas,usb3-phy-r8a7795" and "renesas,usb3-phy-r8a7796".
+
+"renesas,r8a7795-usb3-phy" etc.?
+
+(I know all other Renesas PHY drivers use the old scheme)
+
+>> +- reg: offset and length of the partial USB 3.0 Host PHY register block.
+>> +- #phy-cells: see phy-bindings.txt in the same directory, must be <0>.
+>
+> I think we should add "clocks" property as required.
+>
+>> +Optional properties:
+>
+> You should add "renesas,use-on-chip-clk" here.
+> And, the name of "use-on-chip-clk" is not good to me.
+> FYI, my developing patch names "renesas,usb-extal".
+
+Can this be decided at runtime, e.g. by looking at the rates of the clocks
+to see which one is available/best suited?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
