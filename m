@@ -1,90 +1,87 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        sakari.ailus@iki.fi, niklas.soderlund@ragnatech.se,
-        laurent.pinchart@ideasonboard.com
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        John Youn <johnyoun@synopsys.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 2/3] device property: Add fwnode_graph_get_port_parent
-Date: Wed, 17 May 2017 16:03:38 +0100
-Message-Id: <e81284b2bb29552ab7cf02c07367a6a542f06d49.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6800d0e1b9b578b82f68dec1b99b3a601d6e54ca.1495032810.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+In-Reply-To: <2c64bcfc-e93b-703a-0326-54b6eef73766@arm.com>
+References: <149501557669.21593.1017116915706613060.sendpatchset@little-apple>
+ <149501564036.21593.16964345443958773870.sendpatchset@little-apple> <2c64bcfc-e93b-703a-0326-54b6eef73766@arm.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 18 May 2017 14:23:29 +0900
+Message-ID: <CANqRtoQRCZsU9873=M+ac1qDBE5jtFOpDeZJZUgvvuoz+7YwEg@mail.gmail.com>
+Subject: Re: [PATCH v8 06/08] iommu/ipmmu-vmsa: Use fwspec iommu_priv on ARM64
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: joro <joro@8bytes.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Robin,
 
-V4L2 async notifiers can pass the endpoint fwnode rather than the device
-fwnode.
+On Wed, May 17, 2017 at 11:29 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> Hi Magnus,
+>
+> On 17/05/17 11:07, Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Convert from archdata to iommu_priv via iommu_fwspec on ARM64 but
+>> let 32-bit ARM keep on using archdata for now.
+>>
+>> Once the 32-bit ARM code and the IPMMU driver is able to move over
+>> to CONFIG_IOMMU_DMA=y then coverting to fwspec via ->of_xlate() will
+>> be easy.
+>>
+>> For now fwspec ids and num_ids are not used to allow code sharing between
+>> 32-bit and 64-bit ARM code inside the driver.
+>
+> That's not what I meant at all - this just looks like a crazy
+> unmaintainable mess that's making things that much harder to unpick in
+> future.
+>
+> Leaving the existing code fossilised and building up half of a second
+> separate driver around it wrapped in ifdefs is not only hideous, it's
+> more work in the end than simply pulling things into the right shape to
+> begin with. What I meant was to start with the below (compile-tested
+> only), and add the of_xlate support on top. AFAICS the arm/arm64
+> differences overall should only come down to a bit of special-casing in
+> add_device(), and (optionally) whether you outright reject
+> IOMMU_DOMAIN_DMA or not.
+>
+> Sorry, but I just can't agree with the two-drivers-in-one approach.
 
-Provide a helper to obtain the parent device fwnode without first
-parsing the remote-endpoint as per fwnode_graph_get_remote_port_parent.
+Thanks for checking the code and sorry to disappoint you by not using
+->ids[] and ->num_ids right away. The two-drivers-on-one approach
+comes from wanting to use the same IOMMU driver on both 32-bit and
+64-bit ARM architectures but the former is lacking IOMMU_DMA support
+upstream.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/base/property.c  | 25 +++++++++++++++++++++++++
- include/linux/property.h |  2 ++
- 2 files changed, 27 insertions(+)
+Obviously using ->ids[] and ->num_ids is the right forward, and in my
+mind it is only a question of time and merge order. I'm more than
+happy to make use of your patch but I'm wondering if it will work on
+32-bit ARM and R-Car Gen2 that currently does not use ->of_xlate(). I
+can see that you're using iommu_fwspec_init() so it might work right
+out of the box. Thanks for your help cooking up the patch by the way.
 
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 627ebc9b570d..caf4316fe565 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -1245,6 +1245,31 @@ fwnode_graph_get_next_endpoint(struct fwnode_handle *fwnode,
- EXPORT_SYMBOL_GPL(fwnode_graph_get_next_endpoint);
- 
- /**
-+ * fwnode_graph_get_port_parent - Return device node of a port endpoint
-+ * @fwnode: Endpoint firmware node pointing of the port
-+ *
-+ * Extracts firmware node of the device the @fwnode belongs to.
-+ */
-+struct fwnode_handle *
-+fwnode_graph_get_port_parent(struct fwnode_handle *fwnode)
-+{
-+	struct fwnode_handle *parent = NULL;
-+
-+	if (is_of_node(fwnode)) {
-+		struct device_node *node;
-+
-+		node = of_graph_get_port_parent(to_of_node(fwnode));
-+		if (node)
-+			parent = &node->fwnode;
-+	} else if (is_acpi_node(fwnode)) {
-+		parent = acpi_node_get_parent(fwnode);
-+	}
-+
-+	return parent;
-+}
-+EXPORT_SYMBOL_GPL(fwnode_graph_get_port_parent);
-+
-+/**
-  * fwnode_graph_get_remote_port_parent - Return fwnode of a remote device
-  * @fwnode: Endpoint firmware node pointing to the remote endpoint
-  *
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 2f482616a2f2..624129b86c82 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -274,6 +274,8 @@ void *device_get_mac_address(struct device *dev, char *addr, int alen);
- 
- struct fwnode_handle *fwnode_graph_get_next_endpoint(
- 	struct fwnode_handle *fwnode, struct fwnode_handle *prev);
-+struct fwnode_handle *fwnode_graph_get_port_parent(
-+	struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_port_parent(
- 	struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_port(
--- 
-git-series 0.9.1
+>From my side I was hoping on doing one larger feature jump for 32-bit
+ARM by moving over to IOMMU_DMA=y together with ->of_xlate()and fwspec
+at the same time. Doing minor increments of the legacy code that is
+still using special mapping code instead of OMMU_DMA=y in case of
+32-bit ARM just feels like a lot of potential breakage and little gain
+to me.
+
+What's the plan for supporting IOMMU_DMA=y on 32-bit ARM? Anything I
+can do to help? Or do you prefer minor increments on 32-bit ARM over
+larger feature jumps?
+
+Let me know what you think. My plan is to revisit this topic early next week.
+
+Cheers,
+
+/ magnus
