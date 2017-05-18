@@ -1,47 +1,71 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
-References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com> <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 19 May 2017 09:46:45 +0200
-Message-ID: <CAMuHMdUWEsr9n7EkWb+Dr0M1r2_Vv=H9TqnoK0tHygnUOogmhQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] i2c: sh_mobile: drop needless check for of_node
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:44095 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754695AbdERVLx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 18 May 2017 17:11:53 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/2] i2c: sh_mobile: drop needless check for of_node
+Date: Thu, 18 May 2017 23:11:40 +0200
+Message-Id: <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170518211140.12023-1-wsa+renesas@sang-engineering.com>
+References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 18, 2017 at 11:11 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> After removal of platform_data support, we can simplify OF handling.
-> of_match_device() evaluates to NULL if !CONFIG_OF or if there is no node
-> pointer for that device, so we can remove the check for the node ptr.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+After removal of platform_data support, we can simplify OF handling.
+of_match_device() evaluates to NULL if !CONFIG_OF or if there is no node
+pointer for that device, so we can remove the check for the node ptr.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-sh_mobile.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-> --- a/drivers/i2c/busses/i2c-sh_mobile.c
-> +++ b/drivers/i2c/busses/i2c-sh_mobile.c
-
-> +       if (match) {
-> +               const struct sh_mobile_dt_config *config;
->
-> -                       config = match->data;
-> -                       pd->clks_per_count = config->clks_per_count;
-> +               config = match->data;
-
-You could have combined the assignment with the variable declaration.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index d5e39eccae9b97..92c002c5bb0abe 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -881,6 +881,7 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	struct sh_mobile_i2c_data *pd;
+ 	struct i2c_adapter *adap;
+ 	struct resource *res;
++	const struct of_device_id *match;
+ 	int ret;
+ 	u32 bus_speed;
+ 
+@@ -910,22 +911,17 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 
+ 	ret = of_property_read_u32(dev->dev.of_node, "clock-frequency", &bus_speed);
+ 	pd->bus_speed = ret ? STANDARD_MODE : bus_speed;
+-
+ 	pd->clks_per_count = 1;
+ 
+-	if (dev->dev.of_node) {
+-		const struct of_device_id *match;
+-
+-		match = of_match_device(sh_mobile_i2c_dt_ids, &dev->dev);
+-		if (match) {
+-			const struct sh_mobile_dt_config *config;
++	match = of_match_device(sh_mobile_i2c_dt_ids, &dev->dev);
++	if (match) {
++		const struct sh_mobile_dt_config *config;
+ 
+-			config = match->data;
+-			pd->clks_per_count = config->clks_per_count;
++		config = match->data;
++		pd->clks_per_count = config->clks_per_count;
+ 
+-			if (config->setup)
+-				config->setup(pd);
+-		}
++		if (config->setup)
++			config->setup(pd);
+ 	}
+ 
+ 	/* The IIC blocks on SH-Mobile ARM processors
+-- 
+2.11.0
