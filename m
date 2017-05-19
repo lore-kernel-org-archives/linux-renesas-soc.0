@@ -1,49 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46181 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbdEVMai (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 08:30:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/14] ARM: dts: r8a7793: update PFC node name to pin-controller
-Date: Mon, 22 May 2017 14:30:18 +0200
-Message-Id: <5506dc4a8ebc2258e01a536b025bad17b6828da8.1495455272.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495455272.git.horms+renesas@verge.net.au>
-References: <cover.1495455272.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 03/10] clk: renesas: Add r8a7791 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:45:58 +0200
+Message-Id: <1495183565-21679-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The device trees for Renesas SoCs use either pfc or pin-controller as the
-node name for the PFC device. This patch is intended to take a step towards
-unifying the node name used as pin-controller which appears to be the more
-generic of the two and thus more in keeping with the DT specs.
+Add all R-Car M2-W Clock Pulse Generator Core Clock Outputs, as listed
+in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+Hardware User's Manual rev. 2.00.
 
-My analysis is that this is a user-visible change to the extent that kernel
-logs, and sysfs entries change from e6060000.pfc and pfc@e6060000 to
-e6060000.pin-controller and pin-controller@e6060000.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7791-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 4de6041d61f9..728b5bca5bdb 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -529,7 +529,7 @@
- 		status = "disabled";
- 	};
- 
--	pfc: pfc@e6060000 {
-+	pfc: pin-controller@e6060000 {
- 		compatible = "renesas,pfc-r8a7793";
- 		reg = <0 0xe6060000 0 0x250>;
- 	};
+diff --git a/include/dt-bindings/clock/r8a7791-cpg-mssr.h b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..e8823410c01c5a09
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7791 CPG Core Clocks */
++#define R8A7791_CLK_Z			0
++#define R8A7791_CLK_ZG			1
++#define R8A7791_CLK_ZTR			2
++#define R8A7791_CLK_ZTRD2		3
++#define R8A7791_CLK_ZT			4
++#define R8A7791_CLK_ZX			5
++#define R8A7791_CLK_ZS			6
++#define R8A7791_CLK_HP			7
++#define R8A7791_CLK_I			8
++#define R8A7791_CLK_B			9
++#define R8A7791_CLK_LB			10
++#define R8A7791_CLK_P			11
++#define R8A7791_CLK_CL			12
++#define R8A7791_CLK_M2			13
++#define R8A7791_CLK_ADSP		14
++#define R8A7791_CLK_ZB3			15
++#define R8A7791_CLK_ZB3D2		16
++#define R8A7791_CLK_DDR			17
++#define R8A7791_CLK_SDH			18
++#define R8A7791_CLK_SD0			19
++#define R8A7791_CLK_SD2			20
++#define R8A7791_CLK_SD3			21
++#define R8A7791_CLK_MMC0		22
++#define R8A7791_CLK_MP			23
++#define R8A7791_CLK_SSP			24
++#define R8A7791_CLK_SSPRS		25
++#define R8A7791_CLK_QSPI		26
++#define R8A7791_CLK_CP			27
++#define R8A7791_CLK_RCAN		28
++#define R8A7791_CLK_R			29
++#define R8A7791_CLK_OSC			30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__ */
 -- 
-2.1.4
+2.7.4
