@@ -1,165 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:60136 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752623AbdESJOX (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46722 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755289AbdESNjQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 05:14:23 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 19 May 2017 11:14:16 +0200
-Message-Id: <1495185256-26674-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+        Fri, 19 May 2017 09:39:16 -0400
+Date: Fri, 19 May 2017 15:39:14 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/topic/sdhi-cmd23 for renesas drivers
+Message-ID: <20170519133911.dwvwxecpx52wajiu@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ytbabqdvvf2dsveb"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++++---------------------
- 1 file changed, 59 insertions(+), 65 deletions(-)
+--ytbabqdvvf2dsveb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 9d137cdeaed96638..1d0ce0b4dafba8f4 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -968,71 +968,65 @@
- 		status = "disabled";
- 	};
- 
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured  as 0 Hz fixed
--		 * frequency clocks by default.  Boards that provide audio
--		 * clocks should override them.
--		 */
--		audio_clka: audio_clka {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkb: audio_clkb {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkc: audio_clkc {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7794-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured  as 0 Hz fixed
-+	 * frequency clocks by default.  Boards that provide audio
-+	 * clocks should override them.
-+	 */
-+	audio_clka: audio_clka {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkb: audio_clkb {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkc: audio_clkc {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7794-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	rst: reset-controller@e6160000 {
--- 
-2.7.4
+Hi Geert,
+
+because Simon's DMA rework is now in mmc/next, I rebased my CMD23 topic
+on top of the rework. So, you should be able to simply keep pulling the
+below branch. Let me know if something goes wrong...
+
+Kind regards,
+
+   Wolfram
+
+
+The following changes since commit 9c11a7cb3d170468bf5d666e3acad4d570e5a677:
+
+  Merge branch 'fixes' into next (2017-05-19 10:27:22 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-cmd23
+
+for you to fetch changes up to b59ffe4f1c18b9c9b0f055838fc9fd926a3741db:
+
+  mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3 (2017-05-19 15:14:35 +0200)
+
+----------------------------------------------------------------
+Wolfram Sang (6):
+      mmc: tmio: make tmio_mmc_request function more readable
+      mmc: tmio: refactor handling mrq
+      mmc: tmio: remove outdated comment
+      mmc: tmio: move finish_request function further down
+      mmc: tmio: add CMD23 support
+      mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3
+
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c |   6 +-
+ drivers/mmc/host/tmio_mmc_core.c         | 135 ++++++++++++++++++-------------
+ 2 files changed, 82 insertions(+), 59 deletions(-)
+
+--ytbabqdvvf2dsveb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlke9XsACgkQFA3kzBSg
+KbbHjRAAl6LPXOMX1zKWHX7jjt0sDtV7XEM5plrKrZHEpClCiKFcAZunR3Jec9sS
+BLkiXeeLKN3rSauYSOjRxUBeVOSL1xEcyvkIY1w1DiBCDaukl8ABFrWnv2QoJcaE
+Q6gfZJG/r0rB/08GGe83b9+QHPA68qTnRLuBmaqPf+b0pdXBusufCb5EdZECMhyz
+YdG8HKwDq6bPIoq/Px4SJWD4N30AklOYwIM+UBr2bMHQyIl9v3HvSWYXrwqcejmM
+Wh43EGtNJ2g8zYoFNuPOl3CgXkpjTtMLdin45GLkGdee2ZLS4SArKzige0yxrP3z
+r9omW4A/ClsUL30KyrMHFBDHoM8lZj6SfgAeg0FguBk8juv2r9BBk/EbiikxM1c1
+E3/z1fRGsiwyedn1yPnB54m4xHOI+BG9NVbNKnSeAmbE2ljnmhTmDnFi1AwVxNCw
+iBJsGp6jar1hQNi4pu7BO6jTHyQoWt0sIUaHG3AmsKIWAM8le5P23IltaeNZ/sOa
+D4kWHYtkjWbe+Hiq2Z9JxZb2aMamGcDenyXeHMxI66/CVlCUcU0y/UQQDzq2kxxQ
+U03Y5u2MEWd5guA6DB9D200QvgUSvO10qkTDPtv7GbcA3Hua/iTSY/DZ6XROpnkM
+n8KhJ8OxztLcRuTHdYU894hynq29SUAxiD26sO+SqDRc6KC1QLk=
+=qRi6
+-----END PGP SIGNATURE-----
+
+--ytbabqdvvf2dsveb--
