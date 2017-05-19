@@ -1,36 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33116 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760007AbdEWPIw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 May 2017 11:08:52 -0400
-Date: Tue, 23 May 2017 10:08:50 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com, horms@verge.net.au,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] media: adv7180: Add adv7180cp, adv7180st bindings
-Message-ID: <20170523150850.25x4vvswlxvb4kpg@rob-hp-laptop>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+Cc: linux-media@vger.kernel.org, geert@linux-m68k.org,
+        magnus.damm@gmail.com, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        horms@verge.net.au, devicetree@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3 3/4] media: adv7180: Add adv7180cp, adv7180st bindings
+Date: Fri, 19 May 2017 15:07:03 +0200
+Message-Id: <1495199224-16337-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1495199224-16337-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1495199224-16337-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 19, 2017 at 03:07:03PM +0200, Ulrich Hecht wrote:
-> To differentiate between two classes of chip packages that have
-> different numbers of input ports.
-> 
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
->  Documentation/devicetree/bindings/media/i2c/adv7180.txt | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+To differentiate between two classes of chip packages that have
+different numbers of input ports.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ Documentation/devicetree/bindings/media/i2c/adv7180.txt | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/media/i2c/adv7180.txt b/Documentation/devicetree/bindings/media/i2c/adv7180.txt
+index 4da486f..552b6a8 100644
+--- a/Documentation/devicetree/bindings/media/i2c/adv7180.txt
++++ b/Documentation/devicetree/bindings/media/i2c/adv7180.txt
+@@ -6,6 +6,8 @@ digital interfaces like MIPI CSI-2 or parallel video.
+ Required Properties :
+ - compatible : value must be one of
+ 		"adi,adv7180"
++		"adi,adv7180cp"
++		"adi,adv7180st"
+ 		"adi,adv7182"
+ 		"adi,adv7280"
+ 		"adi,adv7280-m"
+@@ -15,6 +17,19 @@ Required Properties :
+ 		"adi,adv7282"
+ 		"adi,adv7282-m"
+ 
++Device nodes of "adi,adv7180cp" and "adi,adv7180st" must contain one
++'port' child node per device input and output port, in accordance with the
++video interface bindings defined in
++Documentation/devicetree/bindings/media/video-interfaces.txt. The port
++nodes are numbered as follows.
++
++  Port		adv7180cp	adv7180st
++-------------------------------------------------------------------
++  Input		0-2		0-5
++  Output	3		6
++
++The digital output port node must contain at least one endpoint.
++
+ Optional Properties :
+ - powerdown-gpios: reference to the GPIO connected to the powerdown pin,
+   if any.
+-- 
+2.7.4
+
