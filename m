@@ -1,45 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-i2c-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXyWFw6YW=yruCijgzgapBZ_VAkFboTuWW=CMv+8npU4w@mail.gmail.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
- <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com> <CAMuHMdXyWFw6YW=yruCijgzgapBZ_VAkFboTuWW=CMv+8npU4w@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 7 May 2017 09:50:08 +0200
-Message-ID: <CACRpkdY5z2RZ36hEODtTnhBKF-6xZyzrW4WMGGZgTXabNSijxg@mail.gmail.com>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
+References: <20170518211140.12023-1-wsa+renesas@sang-engineering.com> <20170518211140.12023-3-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 May 2017 09:46:45 +0200
+Message-ID: <CAMuHMdUWEsr9n7EkWb+Dr0M1r2_Vv=H9TqnoK0tHygnUOogmhQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] i2c: sh_mobile: drop needless check for of_node
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 12:09 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-
->> You can certainly call it whatever the datasheet calls it
->> in your driver #defines but for the DT bindings we would
->> ideally have the physical world things.
+On Thu, May 18, 2017 at 11:11 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> After removal of platform_data support, we can simplify OF handling.
+> of_match_device() evaluates to NULL if !CONFIG_OF or if there is no node
+> pointer for that device, so we can remove the check for the node ptr.
 >
-> FWIW, you have already applied v4.
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Yeah I noticed when sending pull requests.. let's see if it stays in or
-I will have to revert it for more discussion.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Sorry for being so flimsy at times, I guess I'm overloaded.
+> --- a/drivers/i2c/busses/i2c-sh_mobile.c
+> +++ b/drivers/i2c/busses/i2c-sh_mobile.c
 
-Yours,
-Linus Walleij
+> +       if (match) {
+> +               const struct sh_mobile_dt_config *config;
+>
+> -                       config = match->data;
+> -                       pd->clks_per_count = config->clks_per_count;
+> +               config = match->data;
+
+You could have combined the assignment with the variable declaration.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
