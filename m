@@ -1,25 +1,28 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37636 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51666 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbdEQJwT (ORCPT
+        with ESMTP id S1754641AbdESREV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:52:19 -0400
+        Fri, 19 May 2017 13:04:21 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux-ALSA <alsa-devel@alsa-project.org>,
         Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87pofaj34y.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAvco-0006og-N0@debutante>
-Date: Wed, 17 May 2017 10:52:10 +0100
-Subject: Applied "ASoC: rsnd: remove error pointer for adg->clkout[i]" to the asoc tree
+In-Reply-To: <87o9up3bwn.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dBlJy-0003hl-AH@debutante>
+Date: Fri, 19 May 2017 18:04:10 +0100
+Subject: Applied "ASoC: audio-graph-card: tidyup return method from probe()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: rsnd: remove error pointer for adg->clkout[i]
+   ASoC: audio-graph-card: tidyup return method from probe()
 
 has been applied to the asoc tree at
 
@@ -44,34 +47,37 @@ to this mail.
 Thanks,
 Mark
 
->From 1f6bbe64abd7dc1997fa31a9e550eadf170961d5 Mon Sep 17 00:00:00 2001
+>From ecea931350cedae8ee24abe6a65619f46a3a9c14 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 15 May 2017 01:59:22 +0000
-Subject: [PATCH] ASoC: rsnd: remove error pointer for adg->clkout[i]
+Date: Fri, 19 May 2017 00:58:00 +0000
+Subject: [PATCH] ASoC: audio-graph-card: tidyup return method from probe()
 
-commit d7f298197a22f11b38059f257842dac7c30a564c
-("ASoC: rcar: fixup of_clk_add_provider() usage for multi clkout")
-added adg->clkout[i] = ERR_PTR(-ENOENT),
-but, adg->clkout[i] are assumed NULL or clk pointer.
-This patch fix it.
+Current return method from probe() is very confusable.
+This patch tidyup it to normal return method
 
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sh/rcar/adg.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/generic/audio-graph-card.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index cb4eab0e24ce..36bece8621b7 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -556,7 +556,6 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
- 			clk = clk_register_fixed_rate(dev, clkout_name[i],
- 						      parent_clk_name, 0,
- 						      req_rate[0]);
--			adg->clkout[i] = ERR_PTR(-ENOENT);
- 			if (!IS_ERR(clk))
- 				adg->clkout[i] = clk;
- 		}
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index 07e010d38596..f41b0393ffca 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -271,8 +271,10 @@ static int asoc_graph_card_probe(struct platform_device *pdev)
+ 	snd_soc_card_set_drvdata(card, priv);
+ 
+ 	ret = devm_snd_soc_register_card(dev, card);
+-	if (ret >= 0)
+-		return ret;
++	if (ret < 0)
++		goto err;
++
++	return 0;
+ err:
+ 	asoc_simple_card_clean_reference(card);
+ 
 -- 
 2.11.0
