@@ -1,110 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37266 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753683AbdEMS4N (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51510 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbdESRDm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 13 May 2017 14:56:13 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: horms@verge.net.au
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, geert@glider.be,
-        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com
-Subject: Re: [PATCH v2 4/8] arm64: dts: r8a7796: salvator-x: Add panel backlight support
-Date: Sat, 13 May 2017 21:56:12 +0300
-Message-ID: <1843896.Iy7IFdxQto@avalon>
-In-Reply-To: <1600524.FrhoU262MZ@avalon>
-References: <1493303863-23719-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1493303863-23719-5-git-send-email-ulrich.hecht+renesas@gmail.com> <1600524.FrhoU262MZ@avalon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 19 May 2017 13:03:42 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        alsa-devel@alsa-project.org
+In-Reply-To: <87d1b9y3sk.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dBlJN-0003b0-AZ@debutante>
+Date: Fri, 19 May 2017 18:03:33 +0100
+Subject: Applied "ASoC: rsnd: don't call free_irq() on Parent SSI" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+The patch
 
-I'm afraid you added nodes in the wrong places when applying the patch to 
-salvator-x.dtsi :-( Please see below.
+   ASoC: rsnd: don't call free_irq() on Parent SSI
 
-On Thursday 27 Apr 2017 17:43:56 Laurent Pinchart wrote:
-> Hi Ulrich,
-> 
-> Thank you for the patch.
-> 
-> On Thursday 27 Apr 2017 16:37:39 Ulrich Hecht wrote:
-> > The panel backlight is controlled through a GPIO and a PWM channel.
-> > 
-> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> > ---
-> > 
-> >  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 22 ++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-> > b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts index
-> > 14d9e51..abda84c
-> > 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-> > @@ -133,6 +133,11 @@
-> >  		function = "i2c2";
-> >  	};
-> > 
-> > +	pwm1_pins: pwm {
-> > +		groups = "pwm1_a";
-> > +		function = "pwm1";
-> > +	};
-> > +
+has been applied to the asoc tree at
 
-This is alphabetically ordered here and isn't anymore in your devel branch.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> >  	sdhi0_pins: sd0 {
-> >  		groups = "sdhi0_data4", "sdhi0_ctrl";
-> >  		function = "sdhi0";
-> > @@ -183,6 +188,16 @@
-> >  		interrupt-parent = <&gpio2>;
-> >  		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-> >  	};
-> > +
-> > +	backlight: backlight {
-> > +		compatible = "pwm-backlight";
-> > +		pwms = <&pwm1 0 50000>;
-> > +
-> > +		brightness-levels = <256 128 64 16 8 4 0>;
-> > +		default-brightness-level = <6>;
-> > +
-> > +		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
-> > +	};
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-The backlight node needs to be added as a child of the root node, while you've 
-added it to the DU node in your devel branch.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> >  };
-> >  
-> >  &extal_clk {
-> > @@ -235,6 +250,13 @@
-> >  	status = "okay";
-> >  };
-> > 
-> > +&pwm1 {
-> > +	pinctrl-0 = <&pwm1_pins>;
-> > +	pinctrl-names = "default";
-> > +
-> > +	status = "okay";
-> > +};
-> > +
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-This is alphabetically ordered here and isn't anymore in your devel branch.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Can you rebase your devel branch to fix this ?
+Thanks,
+Mark
 
-> >  &scif1 {
-> >  	pinctrl-0 = <&scif1_pins>;
-> >  	pinctrl-names = "default";
+>From 1f8754d4daea5f257370a52a30fcb22798c54516 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 16 May 2017 01:48:24 +0000
+Subject: [PATCH] ASoC: rsnd: don't call free_irq() on Parent SSI
 
+If SSI uses shared pin, some SSI will be used as parent SSI.
+Then, normal SSI's remove and Parent SSI's remove
+(these are same SSI) will be called when unbind or remove timing.
+In this case, free_irq() will be called twice.
+This patch solve this issue.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/ssi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index e43277a5068c..c224695c1484 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -709,6 +709,11 @@ static int rsnd_ssi_dma_remove(struct rsnd_mod *mod,
+ 			       struct rsnd_priv *priv)
+ {
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
++
++	/* Do nothing for SSI parent mod */
++	if (ssi_parent_mod == mod)
++		return 0;
+ 
+ 	/* PIO will request IRQ again */
+ 	free_irq(ssi->irq, mod);
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
