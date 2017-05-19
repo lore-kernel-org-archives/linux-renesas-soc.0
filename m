@@ -1,178 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40140 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751109AbdESJOX (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:50626 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753348AbdESIqt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 05:14:23 -0400
+        Fri, 19 May 2017 04:46:49 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 19 May 2017 11:14:13 +0200
-Message-Id: <1495185256-26674-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 06/10] clk: renesas: Add r8a7794 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:46:01 +0200
+Message-Id: <1495183565-21679-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+Add all R-Car E2 Clock Pulse Generator Core Clock Outputs, as listed in
+Table 7.2d ("List of Clocks [R-Car E2]") of the R-Car Gen2 Hardware
+User's Manual rev. 2.00.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
- 1 file changed, 66 insertions(+), 71 deletions(-)
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7794-cpg-mssr.h | 47 ++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 522f4f81d70601d8..e36d6dd1b086dbba 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1043,77 +1043,72 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 	};
- 
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External PCIe clock - can be overridden by the board */
--		pcie_bus_clk: pcie_bus {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
--		 * default. Boards that provide audio clocks should override them.
--		 */
--		audio_clk_a: audio_clk_a {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_b: audio_clk_b {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_c: audio_clk_c {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7790-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
+diff --git a/include/dt-bindings/clock/r8a7794-cpg-mssr.h b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..9d720311ae3a229a
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
 +
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++#ifndef __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
 +
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
++/* r8a7794 CPG Core Clocks */
++#define R8A7794_CLK_Z2			0
++#define R8A7794_CLK_ZG			1
++#define R8A7794_CLK_ZTR			2
++#define R8A7794_CLK_ZTRD2		3
++#define R8A7794_CLK_ZT			4
++#define R8A7794_CLK_ZX			5
++#define R8A7794_CLK_ZS			6
++#define R8A7794_CLK_HP			7
++#define R8A7794_CLK_I			8
++#define R8A7794_CLK_B			9
++#define R8A7794_CLK_LB			10
++#define R8A7794_CLK_P			11
++#define R8A7794_CLK_CL			12
++#define R8A7794_CLK_CP			13
++#define R8A7794_CLK_M2			14
++#define R8A7794_CLK_ADSP		15
++#define R8A7794_CLK_ZB3			16
++#define R8A7794_CLK_ZB3D2		17
++#define R8A7794_CLK_DDR			18
++#define R8A7794_CLK_SDH			19
++#define R8A7794_CLK_SD0			20
++#define R8A7794_CLK_SD2			21
++#define R8A7794_CLK_SD3			22
++#define R8A7794_CLK_MMC0		23
++#define R8A7794_CLK_MP			24
++#define R8A7794_CLK_QSPI		25
++#define R8A7794_CLK_CPEX		26
++#define R8A7794_CLK_RCAN		27
++#define R8A7794_CLK_R			28
++#define R8A7794_CLK_OSC			29
 +
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7790-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	prr: chipid@ff000044 {
++#endif /* __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__ */
 -- 
 2.7.4
