@@ -1,186 +1,256 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933902AbdEVN7y (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52030 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753974AbdESRhP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 35/35] arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0
-Date: Mon, 22 May 2017 15:59:08 +0200
-Message-Id: <0b03c32db03d63de695c1e0ab1950eb12b135fa7.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
+        Fri, 19 May 2017 13:37:15 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+In-Reply-To: <87h90jot4o.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1dBlpr-000516-Kf@debutante>
+Date: Fri, 19 May 2017 18:37:07 +0100
+Subject: Applied "ASoC: rsnd: add support graph base DT phase 2" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The patch
 
-Split off support for Salvator-X boards with the ES1.x revision of the
-R-Car H3 SoC into a separate file.  The main r8a7795-salvator-x.dts file
-now corresponds to Salvator-X with R-Car H3 ES2.0 or later.
+   ASoC: rsnd: add support graph base DT phase 2
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4d4b334bda47f1b7b57f7aca9bc19b7e317d764d Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 18 May 2017 01:28:06 +0000
+Subject: [PATCH] ASoC: rsnd: add support graph base DT phase 2
+
+To enable OF-graph base DT on rsnd driver, and to keep compatible
+previous normal sound card style, it need to support both
+"rcar_sound,dai" and "ports" (or "port") on DT.
+
+This patch parses both style.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/Makefile               |   1 +
- .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    | 115 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   4 +-
- 3 files changed, 118 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+ sound/soc/sh/rcar/core.c | 159 +++++++++++++++++++++++++----------------------
+ 1 file changed, 84 insertions(+), 75 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 1618e0a3c81d..b6c723d8f687 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 72a3139b70c3..41b2e782b0bf 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -810,33 +810,95 @@ static struct device_node *rsnd_dai_of_node(struct rsnd_priv *priv,
+ 	return ret;
+ }
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-new file mode 100644
-index 000000000000..b84c156ed696
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-@@ -0,0 +1,115 @@
-+/*
-+ * Device Tree Source for the Salvator-X board
-+ *
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
+-static int rsnd_dai_probe(struct rsnd_priv *priv)
++static void __rsnd_dai_probe(struct rsnd_priv *priv,
++			     struct device_node *dai_np,
++			     int dai_i, int is_graph)
+ {
+-	struct device_node *dai_node;
+-	struct device_node *dai_np;
+ 	struct device_node *playback, *capture;
+ 	struct rsnd_dai_stream *io_playback;
+ 	struct rsnd_dai_stream *io_capture;
+-	struct snd_soc_dai_driver *rdrv, *drv;
++	struct snd_soc_dai_driver *drv;
+ 	struct rsnd_dai *rdai;
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+-	int nr, dai_i, io_i;
++	int io_i;
 +
-+#define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
++	rdai		= rsnd_rdai_get(priv, dai_i);
++	drv		= priv->daidrv + dai_i;
++	io_playback	= &rdai->playback;
++	io_capture	= &rdai->capture;
 +
-+/dts-v1/;
-+#include "r8a7795-es1.dtsi"
-+#include "salvator-x.dtsi"
++	snprintf(rdai->name, RSND_DAI_NAME_SIZE, "rsnd-dai.%d", dai_i);
 +
-+/ {
-+	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
-+	compatible = "renesas,salvator-x", "renesas,r8a7795";
++	rdai->priv	= priv;
++	drv->name	= rdai->name;
++	drv->ops	= &rsnd_soc_dai_ops;
 +
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
++	snprintf(rdai->playback.name, RSND_DAI_NAME_SIZE,
++		 "DAI%d Playback", dai_i);
++	drv->playback.rates		= RSND_RATES;
++	drv->playback.formats		= RSND_FMTS;
++	drv->playback.channels_min	= 2;
++	drv->playback.channels_max	= 6;
++	drv->playback.stream_name	= rdai->playback.name;
 +
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x40000000>;
-+	};
++	snprintf(rdai->capture.name, RSND_DAI_NAME_SIZE,
++		 "DAI%d Capture", dai_i);
++	drv->capture.rates		= RSND_RATES;
++	drv->capture.formats		= RSND_FMTS;
++	drv->capture.channels_min	= 2;
++	drv->capture.channels_max	= 6;
++	drv->capture.stream_name	= rdai->capture.name;
 +
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
++	rdai->playback.rdai		= rdai;
++	rdai->capture.rdai		= rdai;
++	rsnd_set_slot(rdai, 2, 1); /* default */
 +
-+	memory@700000000 {
-+		device_type = "memory";
-+		reg = <0x7 0x00000000 0x0 0x40000000>;
-+	};
-+};
++	for (io_i = 0;; io_i++) {
++		playback = of_parse_phandle(dai_np, "playback", io_i);
++		capture  = of_parse_phandle(dai_np, "capture", io_i);
 +
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&versaclock5 1>,
-+		 <&x21_clk>,
-+		 <&x22_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
-+};
++		if (!playback && !capture)
++			break;
 +
-+&ehci2 {
-+	status = "okay";
-+};
++		rsnd_parse_connect_ssi(rdai, playback, capture);
++		rsnd_parse_connect_src(rdai, playback, capture);
++		rsnd_parse_connect_ctu(rdai, playback, capture);
++		rsnd_parse_connect_mix(rdai, playback, capture);
++		rsnd_parse_connect_dvc(rdai, playback, capture);
 +
-+&hdmi0 {
-+	status = "okay";
++		of_node_put(playback);
++		of_node_put(capture);
++	}
 +
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
++	dev_dbg(dev, "%s (%s/%s)\n", rdai->name,
++		rsnd_io_to_mod_ssi(io_playback) ? "play"    : " -- ",
++		rsnd_io_to_mod_ssi(io_capture) ? "capture" : "  --   ");
++}
 +
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
-+
-+&hdmi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi1_out: endpoint {
-+				remote-endpoint = <&hdmi1_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi1_con {
-+	remote-endpoint = <&rcar_dw_hdmi1_out>;
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&pfc {
-+	usb2_pins: usb2 {
-+		groups = "usb2";
-+		function = "usb2";
-+	};
-+};
-+
-+&sata {
-+	status = "okay";
-+};
-+
-+&usb2_phy2 {
-+	pinctrl-0 = <&usb2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index b84c156ed696..684fb3b9d154 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -11,11 +11,11 @@
- #define CPG_AUDIO_CLK_I		R8A7795_CLK_S0D4
++static int rsnd_dai_probe(struct rsnd_priv *priv)
++{
++	struct device_node *dai_node;
++	struct device_node *dai_np;
++	struct snd_soc_dai_driver *rdrv;
++	struct device *dev = rsnd_priv_to_dev(priv);
++	struct rsnd_dai *rdai;
++	int nr;
+ 	int is_graph;
+-	int ret;
++	int dai_i;
  
- /dts-v1/;
--#include "r8a7795-es1.dtsi"
-+#include "r8a7795.dtsi"
- #include "salvator-x.dtsi"
+ 	dai_node = rsnd_dai_of_node(priv, &is_graph);
+-	nr = of_get_child_count(dai_node);
+-	if (!nr) {
+-		ret = -EINVAL;
+-		goto rsnd_dai_probe_done;
+-	}
++	if (is_graph)
++		nr = of_graph_get_endpoint_count(dai_node);
++	else
++		nr = of_get_child_count(dai_node);
++
++	if (!nr)
++		return -EINVAL;
  
- / {
--	model = "Renesas Salvator-X board based on r8a7795 ES1.x";
-+	model = "Renesas Salvator-X board based on r8a7795 ES2.0+";
- 	compatible = "renesas,salvator-x", "renesas,r8a7795";
+ 	rdrv = devm_kzalloc(dev, sizeof(*rdrv) * nr, GFP_KERNEL);
+ 	rdai = devm_kzalloc(dev, sizeof(*rdai) * nr, GFP_KERNEL);
+-	if (!rdrv || !rdai) {
+-		ret = -ENOMEM;
+-		goto rsnd_dai_probe_done;
+-	}
++	if (!rdrv || !rdai)
++		return -ENOMEM;
  
- 	memory@48000000 {
+ 	priv->rdai_nr	= nr;
+ 	priv->daidrv	= rdrv;
+@@ -846,68 +908,15 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
+ 	 * parse all dai
+ 	 */
+ 	dai_i = 0;
+-	for_each_child_of_node(dai_node, dai_np) {
+-		rdai		= rsnd_rdai_get(priv, dai_i);
+-		drv		= rdrv + dai_i;
+-		io_playback	= &rdai->playback;
+-		io_capture	= &rdai->capture;
+-
+-		snprintf(rdai->name, RSND_DAI_NAME_SIZE, "rsnd-dai.%d", dai_i);
+-
+-		rdai->priv	= priv;
+-		drv->name	= rdai->name;
+-		drv->ops	= &rsnd_soc_dai_ops;
+-
+-		snprintf(rdai->playback.name, RSND_DAI_NAME_SIZE,
+-			 "DAI%d Playback", dai_i);
+-		drv->playback.rates		= RSND_RATES;
+-		drv->playback.formats		= RSND_FMTS;
+-		drv->playback.channels_min	= 2;
+-		drv->playback.channels_max	= 6;
+-		drv->playback.stream_name	= rdai->playback.name;
+-
+-		snprintf(rdai->capture.name, RSND_DAI_NAME_SIZE,
+-			 "DAI%d Capture", dai_i);
+-		drv->capture.rates		= RSND_RATES;
+-		drv->capture.formats		= RSND_FMTS;
+-		drv->capture.channels_min	= 2;
+-		drv->capture.channels_max	= 6;
+-		drv->capture.stream_name	= rdai->capture.name;
+-
+-		rdai->playback.rdai		= rdai;
+-		rdai->capture.rdai		= rdai;
+-		rsnd_set_slot(rdai, 2, 1); /* default */
+-
+-		for (io_i = 0;; io_i++) {
+-			playback = of_parse_phandle(dai_np, "playback", io_i);
+-			capture  = of_parse_phandle(dai_np, "capture", io_i);
+-
+-			if (!playback && !capture)
+-				break;
+-
+-			rsnd_parse_connect_ssi(rdai, playback, capture);
+-			rsnd_parse_connect_src(rdai, playback, capture);
+-			rsnd_parse_connect_ctu(rdai, playback, capture);
+-			rsnd_parse_connect_mix(rdai, playback, capture);
+-			rsnd_parse_connect_dvc(rdai, playback, capture);
+-
+-			of_node_put(playback);
+-			of_node_put(capture);
+-		}
+-
+-		dai_i++;
+-
+-		dev_dbg(dev, "%s (%s/%s)\n", rdai->name,
+-			rsnd_io_to_mod_ssi(io_playback) ? "play"    : " -- ",
+-			rsnd_io_to_mod_ssi(io_capture) ? "capture" : "  --   ");
++	if (is_graph) {
++		for_each_endpoint_of_node(dai_node, dai_np)
++			__rsnd_dai_probe(priv, dai_np, dai_i++, is_graph);
++	} else {
++		for_each_child_of_node(dai_node, dai_np)
++			__rsnd_dai_probe(priv, dai_np, dai_i++, is_graph);
+ 	}
+ 
+-	ret = 0;
+-
+-rsnd_dai_probe_done:
+-	of_node_put(dai_node);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ /*
 -- 
-2.1.4
+2.11.0
