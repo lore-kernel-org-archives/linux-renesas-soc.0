@@ -1,2697 +1,1136 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: laurent.pinchart@ideasonboard.com, sakari.ailus@iki.fi,
-        niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 2/2] media: i2c: adv748x: add adv748x driver
-Date: Wed, 17 May 2017 15:13:18 +0100
-Message-Id: <42b47ca01dd35e510dece486ea931b8fd3642dcf.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-In-Reply-To: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.29a91b9366a11bb7dbf4118ea12b84f2d48a8989.1495029016.git-series.kieran.bingham+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:39268 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755056AbdESJDf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 19 May 2017 05:03:35 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/5] ARM: dts: r8a7790: Convert to new CPG/MSSR bindings
+Date: Fri, 19 May 2017 11:03:16 +0200
+Message-Id: <1495184600-22745-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
+References: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Convert the R-Car H2 SoC from the old "Renesas R-Car Gen2 Clock Pulse
+Generator (CPG)", "Renesas CPG DIV6 Clock", and "Renesas CPG Module Stop
+(MSTP) Clocks" DT bindings to the new unified "Renesas Clock Pulse
+Generator / Module Standby and Software Reset" DT bindings.
 
-Provide basic support for the ADV7481 and ADV7482.
+This simplifies the DTS files, and allows to add support for reset
+control later.
 
-The driver is modelled with 2 subdevices to allow simultaneous streaming
-from the AFE (Analog front end) and HDMI inputs.
-
-Presently the HDMI is hardcoded to link to the TXA CSI bus, whilst the
-AFE is linked to the TXB CSI bus.
-
-The driver is based on a prototype by Koji Matsuoka in the Renesas BSP,
-and an earlier rework by Niklas Söderlund.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ arch/arm/boot/dts/r8a7790-lager.dts |   7 +-
+ arch/arm/boot/dts/r8a7790.dtsi      | 557 +++++++-----------------------------
+ 2 files changed, 99 insertions(+), 465 deletions(-)
 
-v2:
- - Implement DT parsing
- - adv748x: Add CSI2 entity
- - adv748x: Rework pad allocations and fmts
- - Give AFE 8 input pads and move pad defines
- - Use the enums to ensure pads are referenced correctly.
- - adv748x: Rename AFE/HDMI entities
-   Now they are 'just afe' and 'just hdmi'
- - Reorder the entity enum and structures
- - Added pad-format for the CSI2 entities
- - CSI2 s_stream pass through
- - CSI2 control pass through (with link following)
-
-v3:
- - dt: Extend DT documentation to specify interrupt mappings
- - simplify adv748x_parse_dt
- - core: Add banner to header file describing ADV748x variants
- - Use entity structure pointers rather than global state pointers where
-   possible
- - afe: Reduce indent on afe_status
- - hdmi: Add error checking to the bt->pixelclock values.
- - Remove all unnecessary pad checks: handled by core
- - Fix all probe cleanup paths
- - adv748x_csi2_probe() now fails if it has no endpoint
- - csi2: Fix small oneliners for is_txa and get_remote_sd()
- - csi2: Fix checkpatch warnings
- - csi2: Fix up s_stream pass-through
- - csi2: Fix up Pixel Rate passthrough
- - csi2: simplify adv748x_csi2_get_pad_format()
- - Remove 'async notifiers' from AFE/HDMI
-   Using async notifiers was overkill, when we have access to the
-   subdevices internally and can register them directly.
- - Use state lock in control handlers and clean up s_ctrls
- - remove _interruptible mutex locks
-
- Documentation/devicetree/bindings/media/i2c/adv748x.txt |  72 +-
- MAINTAINERS                                             |   6 +-
- drivers/media/i2c/Kconfig                               |  10 +-
- drivers/media/i2c/Makefile                              |   1 +-
- drivers/media/i2c/adv748x/Makefile                      |   7 +-
- drivers/media/i2c/adv748x/adv748x-afe.c                 | 575 +++++++-
- drivers/media/i2c/adv748x/adv748x-core.c                | 711 +++++++++-
- drivers/media/i2c/adv748x/adv748x-csi2.c                | 283 ++++-
- drivers/media/i2c/adv748x/adv748x-hdmi.c                | 647 ++++++++-
- drivers/media/i2c/adv748x/adv748x.h                     | 218 +++-
- 10 files changed, 2530 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
- create mode 100644 drivers/media/i2c/adv748x/Makefile
- create mode 100644 drivers/media/i2c/adv748x/adv748x-afe.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-core.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-csi2.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x-hdmi.c
- create mode 100644 drivers/media/i2c/adv748x/adv748x.h
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-new file mode 100644
-index 000000000000..98d4600b7d26
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -0,0 +1,72 @@
-+* Analog Devices ADV748X video decoder with HDMI receiver
-+
-+The ADV7481, and ADV7482 are multi format video decoders with an integrated
-+HDMI receiver. It can output CSI-2 on two independent outputs TXA and TXB from
-+three input sources HDMI, analog and TTL.
-+
-+Required Properties:
-+
-+  - compatible: Must contain one of the following
-+    - "adi,adv7481" for the ADV7481
-+    - "adi,adv7482" for the ADV7482
-+
-+  - reg: I2C slave address
-+
-+  - interrupt-names: Should specify the interrupts as "intrq1" and/or "intrq2"
-+                     "intrq3" is only available on the adv7480 and adv7481
-+  - interrupts: Specify the interrupt lines for the ADV748x
-+
-+The device node must contain one 'port' child node per device input and output
-+port, in accordance with the video interface bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt. The port nodes
-+are numbered as follows.
-+
-+  Name                  Type            Port
-+------------------------------------------------------------
-+  HDMI                  sink            0
-+  AIN1                  sink            1
-+  AIN2                  sink            2
-+  AIN3                  sink            3
-+  AIN4                  sink            4
-+  AIN5                  sink            5
-+  AIN6                  sink            6
-+  AIN7                  sink            7
-+  AIN8                  sink            8
-+  TTL                   sink            9
-+  TXA                   source          10
-+  TXB                   source          11
-+
-+The digital output port node must contain at least one source endpoint.
-+
-+Example:
-+
-+    video_receiver@70 {
-+            compatible = "adi,adv7482";
-+            reg = <0x70>;
-+
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            interrupt-parent = <&gpio6>;
-+            interrupt-names = "intrq1", "intrq2";
-+            interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
-+                         <31 IRQ_TYPE_LEVEL_LOW>;
-+
-+            port@10 {
-+                    reg = <10>;
-+                    adv7482_txa: endpoint@1 {
-+                            clock-lanes = <0>;
-+                            data-lanes = <1 2 3 4>;
-+                            remote-endpoint = <&csi40_in>;
-+                    };
-+            };
-+
-+            port@11 {
-+                    reg = <11>;
-+                    adv7482_txb: endpoint@1 {
-+                            clock-lanes = <0>;
-+                            data-lanes = <1>;
-+                            remote-endpoint = <&csi20_in>;
-+                    };
-+            };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 84f185731b3c..76356d2b8a69 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -774,6 +774,12 @@ L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	drivers/media/i2c/adv7511*
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index ba100a6f67ca554c..e3d27783b6b56b42 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -316,11 +316,8 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
  
-+ANALOG DEVICES INC ADV748X DRIVER
-+M:	Kieran Bingham <kieran.bingham@ideasonboard.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	drivers/media/i2c/adv748x/*
-+
- ANALOG DEVICES INC ADV7604 DRIVER
- M:	Hans Verkuil <hans.verkuil@cisco.com>
- L:	linux-media@vger.kernel.org
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 7c23b7a1fd05..5c6a14cdbad5 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -204,6 +204,16 @@ config VIDEO_ADV7183
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called adv7183.
+-	clocks = <&mstp7_clks R8A7790_CLK_DU0>,
+-		 <&mstp7_clks R8A7790_CLK_DU1>,
+-		 <&mstp7_clks R8A7790_CLK_DU2>,
+-		 <&mstp7_clks R8A7790_CLK_LVDS0>,
+-		 <&mstp7_clks R8A7790_CLK_LVDS1>,
++	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
+ 		 <&x13_clk>, <&x2_clk>;
+ 	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
+ 		      "dclkin.0", "dclkin.1";
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 416956a42c93452e..522f4f81d70601d8 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -10,7 +10,7 @@
+  * kind, whether express or implied.
+  */
  
-+config VIDEO_ADV748X
-+	tristate "Analog Devices ADV748x decoder"
-+	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
-+	---help---
-+	  V4l2 subdevice driver for the Analog Devices
-+	  ADV7481 and ADV7482 HDMI/Analog video decoder.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called adv748x.
-+
- config VIDEO_ADV7604
- 	tristate "Analog Devices ADV7604 decoder"
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index 62323ec66be8..e17faab108d6 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -1,6 +1,7 @@
- msp3400-objs	:=	msp3400-driver.o msp3400-kthreads.o
- obj-$(CONFIG_VIDEO_MSP3400) += msp3400.o
+-#include <dt-bindings/clock/r8a7790-clock.h>
++#include <dt-bindings/clock/r8a7790-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/power/r8a7790-sysc.h>
+@@ -52,7 +52,7 @@
+ 			reg = <0>;
+ 			clock-frequency = <1300000000>;
+ 			voltage-tolerance = <1>; /* 1% */
+-			clocks = <&cpg_clocks R8A7790_CLK_Z>;
++			clocks = <&cpg CPG_CORE R8A7790_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
+@@ -185,7 +185,7 @@
+ 			<0 0xf1004000 0 0x2000>,
+ 			<0 0xf1006000 0 0x2000>;
+ 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+-		clocks = <&mstp4_clks R8A7790_CLK_INTC_SYS>;
++		clocks = <&cpg CPG_MOD 408>;
+ 		clock-names = "clk";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+@@ -199,7 +199,7 @@
+ 		gpio-ranges = <&pfc 0 0 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7790_CLK_GPIO0>;
++		clocks = <&cpg CPG_MOD 912>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
  
-+obj-$(CONFIG_VIDEO_ADV748X) += adv748x/
- obj-$(CONFIG_VIDEO_SMIAPP)	+= smiapp/
- obj-$(CONFIG_VIDEO_ET8EK8)	+= et8ek8/
- obj-$(CONFIG_VIDEO_CX25840) += cx25840/
-diff --git a/drivers/media/i2c/adv748x/Makefile b/drivers/media/i2c/adv748x/Makefile
-new file mode 100644
-index 000000000000..c0711e076f1d
---- /dev/null
-+++ b/drivers/media/i2c/adv748x/Makefile
-@@ -0,0 +1,7 @@
-+adv748x-objs	:= \
-+		adv748x-afe.o \
-+		adv748x-core.o \
-+		adv748x-csi2.o \
-+		adv748x-hdmi.o
-+
-+obj-$(CONFIG_VIDEO_ADV748X)	+= adv748x.o
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-new file mode 100644
-index 000000000000..bac7f6e13b90
---- /dev/null
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -0,0 +1,575 @@
-+/*
-+ * Driver for Analog Devices ADV748X 8 channel analog front end (AFE) receiver
-+ * with standard definition processor (SDP)
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/v4l2-dv-timings.h>
-+
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-dv-timings.h>
-+#include <media/v4l2-ioctl.h>
-+
-+#include "adv748x.h"
-+
-+/* -----------------------------------------------------------------------------
-+ * SDP
-+ */
-+
-+#define ADV748X_AFE_INPUT_CVBS_AIN1			0x00
-+#define ADV748X_AFE_INPUT_CVBS_AIN2			0x01
-+#define ADV748X_AFE_INPUT_CVBS_AIN3			0x02
-+#define ADV748X_AFE_INPUT_CVBS_AIN4			0x03
-+#define ADV748X_AFE_INPUT_CVBS_AIN5			0x04
-+#define ADV748X_AFE_INPUT_CVBS_AIN6			0x05
-+#define ADV748X_AFE_INPUT_CVBS_AIN7			0x06
-+#define ADV748X_AFE_INPUT_CVBS_AIN8			0x07
-+
-+#define ADV748X_AFE_STD_AD_PAL_BG_NTSC_J_SECAM		0x0
-+#define ADV748X_AFE_STD_AD_PAL_BG_NTSC_J_SECAM_PED	0x1
-+#define ADV748X_AFE_STD_AD_PAL_N_NTSC_J_SECAM		0x2
-+#define ADV748X_AFE_STD_AD_PAL_N_NTSC_M_SECAM		0x3
-+#define ADV748X_AFE_STD_NTSC_J				0x4
-+#define ADV748X_AFE_STD_NTSC_M				0x5
-+#define ADV748X_AFE_STD_PAL60				0x6
-+#define ADV748X_AFE_STD_NTSC_443			0x7
-+#define ADV748X_AFE_STD_PAL_BG				0x8
-+#define ADV748X_AFE_STD_PAL_N				0x9
-+#define ADV748X_AFE_STD_PAL_M				0xa
-+#define ADV748X_AFE_STD_PAL_M_PED			0xb
-+#define ADV748X_AFE_STD_PAL_COMB_N			0xc
-+#define ADV748X_AFE_STD_PAL_COMB_N_PED			0xd
-+#define ADV748X_AFE_STD_PAL_SECAM			0xe
-+#define ADV748X_AFE_STD_PAL_SECAM_PED			0xf
-+
-+static int adv748x_afe_read_ro_map(struct adv748x_state *state, u8 reg)
-+{
-+	int ret;
-+
-+	/* Select SDP Read-Only Main Map */
-+	ret = sdp_write(state, 0x0e, 0x01);
-+	if (ret < 0)
-+		return ret;
-+
-+	return sdp_read(state, reg);
-+}
-+
-+static int adv748x_afe_status(struct adv748x_afe *afe, u32 *signal,
-+			      v4l2_std_id *std)
-+{
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int info;
-+
-+	/* Read status from reg 0x10 of SDP RO Map */
-+	info = adv748x_afe_read_ro_map(state, 0x10);
-+	if (info < 0)
-+		return info;
-+
-+	if (signal)
-+		*signal = info & BIT(0) ? 0 : V4L2_IN_ST_NO_SIGNAL;
-+
-+	if (!std)
-+		return 0;
-+
-+	*std = V4L2_STD_UNKNOWN;
-+
-+	/* Standard not valid if there is no signal */
-+	if (info & BIT(0)) {
-+		switch (info & 0x70) {
-+		case 0x00:
-+			*std = V4L2_STD_NTSC;
-+			break;
-+		case 0x10:
-+			*std = V4L2_STD_NTSC_443;
-+			break;
-+		case 0x20:
-+			*std = V4L2_STD_PAL_M;
-+			break;
-+		case 0x30:
-+			*std = V4L2_STD_PAL_60;
-+			break;
-+		case 0x40:
-+			*std = V4L2_STD_PAL;
-+			break;
-+		case 0x50:
-+			*std = V4L2_STD_SECAM;
-+			break;
-+		case 0x60:
-+			*std = V4L2_STD_PAL_Nc | V4L2_STD_PAL_N;
-+			break;
-+		case 0x70:
-+			*std = V4L2_STD_SECAM;
-+			break;
-+		default:
-+			*std = V4L2_STD_UNKNOWN;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void adv748x_afe_fill_format(struct adv748x_afe *afe,
-+				    struct v4l2_mbus_framefmt *fmt)
-+{
-+	v4l2_std_id std;
-+
-+	memset(fmt, 0, sizeof(*fmt));
-+
-+	fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
-+	fmt->colorspace = V4L2_COLORSPACE_SMPTE170M;
-+	fmt->field = V4L2_FIELD_INTERLACED;
-+
-+	fmt->width = 720;
-+
-+	if (afe->curr_norm == V4L2_STD_ALL)
-+		adv748x_afe_status(afe, NULL,  &std);
-+	else
-+		std = afe->curr_norm;
-+
-+	fmt->height = std & V4L2_STD_525_60 ? 480 : 576;
-+}
-+
-+static int adv748x_afe_std(v4l2_std_id std)
-+{
-+	if (std == V4L2_STD_ALL)
-+		return ADV748X_AFE_STD_AD_PAL_BG_NTSC_J_SECAM;
-+	if (std == V4L2_STD_PAL_60)
-+		return ADV748X_AFE_STD_PAL60;
-+	if (std == V4L2_STD_NTSC_443)
-+		return ADV748X_AFE_STD_NTSC_443;
-+	if (std == V4L2_STD_PAL_N)
-+		return ADV748X_AFE_STD_PAL_N;
-+	if (std == V4L2_STD_PAL_M)
-+		return ADV748X_AFE_STD_PAL_M;
-+	if (std == V4L2_STD_PAL_Nc)
-+		return ADV748X_AFE_STD_PAL_COMB_N;
-+	if (std & V4L2_STD_PAL)
-+		return ADV748X_AFE_STD_PAL_BG;
-+	if (std & V4L2_STD_NTSC)
-+		return ADV748X_AFE_STD_NTSC_M;
-+	if (std & V4L2_STD_SECAM)
-+		return ADV748X_AFE_STD_PAL_SECAM;
-+
-+	return -EINVAL;
-+}
-+
-+static int adv748x_afe_set_video_standard(struct adv748x_state *state,
-+					  v4l2_std_id std)
-+{
-+	int sdpstd;
-+
-+	sdpstd = adv748x_afe_std(std);
-+	if (sdpstd < 0)
-+		return sdpstd;
-+
-+	sdp_clrset(state, 0x02, 0xf0, (sdpstd & 0xf) << 4);
-+
-+	return 0;
-+}
-+
-+static int adv748x_afe_g_pixelaspect(struct v4l2_subdev *sd,
-+				     struct v4l2_fract *aspect)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+	v4l2_std_id std;
-+
-+	if (afe->curr_norm == V4L2_STD_ALL)
-+		adv748x_afe_status(afe, NULL,  &std);
-+	else
-+		std = afe->curr_norm;
-+
-+	if (std & V4L2_STD_525_60) {
-+		aspect->numerator = 11;
-+		aspect->denominator = 10;
-+	} else {
-+		aspect->numerator = 54;
-+		aspect->denominator = 59;
-+	}
-+
-+	return 0;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_video_ops
-+ */
-+
-+static int adv748x_afe_g_std(struct v4l2_subdev *sd, v4l2_std_id *norm)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+
-+	if (afe->curr_norm == V4L2_STD_ALL)
-+		adv748x_afe_status(afe, NULL,  norm);
-+	else
-+		*norm = afe->curr_norm;
-+
-+	return 0;
-+}
-+
-+
-+static int adv748x_afe_s_std(struct v4l2_subdev *sd, v4l2_std_id std)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int ret;
-+
-+	mutex_lock(&state->mutex);
-+
-+	ret = adv748x_afe_set_video_standard(state, std);
-+	if (ret ==  0)
-+		afe->curr_norm = std;
-+
-+	mutex_unlock(&state->mutex);
-+
-+	return ret;
-+}
-+
-+static int adv748x_afe_querystd(struct v4l2_subdev *sd, v4l2_std_id *std)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int ret;
-+
-+	mutex_lock(&state->mutex);
-+
-+	if (afe->streaming) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	}
-+
-+	/* Set auto detect mode */
-+	ret = adv748x_afe_set_video_standard(state, V4L2_STD_ALL);
-+	if (ret)
-+		goto unlock;
-+
-+	msleep(100);
-+
-+	/* Read detected standard */
-+	ret = adv748x_afe_status(afe, NULL, std);
-+unlock:
-+	mutex_unlock(&state->mutex);
-+
-+	return ret;
-+}
-+
-+static int adv748x_afe_g_tvnorms(struct v4l2_subdev *sd, v4l2_std_id *norm)
-+{
-+	*norm = V4L2_STD_ALL;
-+
-+	return 0;
-+}
-+
-+static int adv748x_afe_g_input_status(struct v4l2_subdev *sd, u32 *status)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int ret;
-+
-+	mutex_lock(&state->mutex);
-+
-+	ret = adv748x_afe_status(afe, status, NULL);
-+
-+	mutex_unlock(&state->mutex);
-+	return ret;
-+}
-+
-+static int adv748x_afe_s_stream(struct v4l2_subdev *sd, int enable)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int ret, signal = V4L2_IN_ST_NO_SIGNAL;
-+
-+	mutex_lock(&state->mutex);
-+
-+	ret = adv748x_txb_power(state, enable);
-+	if (ret)
-+		goto error;
-+
-+	afe->streaming = enable;
-+
-+	adv748x_afe_status(afe, &signal, NULL);
-+	if (signal != V4L2_IN_ST_NO_SIGNAL)
-+		adv_dbg(state, "Detected SDP signal\n");
-+	else
-+		adv_info(state, "Couldn't detect SDP video signal\n");
-+
-+error:
-+	mutex_unlock(&state->mutex);
-+
-+	return ret;
-+}
-+
-+static const struct v4l2_subdev_video_ops adv748x_afe_video_ops = {
-+	.g_std = adv748x_afe_g_std,
-+	.s_std = adv748x_afe_s_std,
-+	.querystd = adv748x_afe_querystd,
-+	.g_tvnorms = adv748x_afe_g_tvnorms,
-+	.g_input_status = adv748x_afe_g_input_status,
-+	.s_stream = adv748x_afe_s_stream,
-+	.g_pixelaspect = adv748x_afe_g_pixelaspect,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_pad_ops
-+ */
-+
-+static int adv748x_afe_enum_mbus_code(struct v4l2_subdev *sd,
-+				      struct v4l2_subdev_pad_config *cfg,
-+				      struct v4l2_subdev_mbus_code_enum *code)
-+{
-+	if (code->index != 0)
-+		return -EINVAL;
-+
-+	code->code = MEDIA_BUS_FMT_UYVY8_2X8;
-+
-+	return 0;
-+}
-+
-+
-+static int adv748x_afe_get_pad_format(struct v4l2_subdev *sd,
-+				      struct v4l2_subdev_pad_config *cfg,
-+				      struct v4l2_subdev_format *format)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+
-+	adv748x_afe_fill_format(afe, &format->format);
-+
-+	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		struct v4l2_mbus_framefmt *fmt;
-+
-+		fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
-+		format->format.code = fmt->code;
-+	}
-+
-+	return 0;
-+}
-+
-+static int adv748x_afe_set_pad_format(struct v4l2_subdev *sd,
-+				      struct v4l2_subdev_pad_config *cfg,
-+				      struct v4l2_subdev_format *format)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+
-+	adv748x_afe_fill_format(afe, &format->format);
-+
-+	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		struct v4l2_mbus_framefmt *fmt;
-+
-+		fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
-+		fmt->code = format->format.code;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_pad_ops adv748x_afe_pad_ops = {
-+	.enum_mbus_code = adv748x_afe_enum_mbus_code,
-+	.set_fmt = adv748x_afe_set_pad_format,
-+	.get_fmt = adv748x_afe_get_pad_format,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_ops
-+ */
-+
-+static const struct v4l2_subdev_ops adv748x_afe_ops = {
-+	.video = &adv748x_afe_video_ops,
-+	.pad = &adv748x_afe_pad_ops,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Controls
-+ */
-+
-+/* Contrast */
-+#define ADV748X_AFE_REG_CON		0x08	/*Unsigned */
-+#define ADV748X_AFE_CON_MIN		0
-+#define ADV748X_AFE_CON_DEF		128
-+#define ADV748X_AFE_CON_MAX		255
-+/* Brightness*/
-+#define ADV748X_AFE_REG_BRI		0x0a	/*Signed */
-+#define ADV748X_AFE_BRI_MIN		-128
-+#define ADV748X_AFE_BRI_DEF		0
-+#define ADV748X_AFE_BRI_MAX		127
-+/* Hue */
-+#define ADV748X_AFE_REG_HUE		0x0b	/*Signed, inverted */
-+#define ADV748X_AFE_HUE_MIN		-127
-+#define ADV748X_AFE_HUE_DEF		0
-+#define ADV748X_AFE_HUE_MAX		128
-+
-+/* Saturation */
-+#define ADV748X_AFE_REG_SD_SAT_CB	0xe3
-+#define ADV748X_AFE_REG_SD_SAT_CR	0xe4
-+#define ADV748X_AFE_SAT_MIN		0
-+#define ADV748X_AFE_SAT_DEF		128
-+#define ADV748X_AFE_SAT_MAX		255
-+
-+static int adv748x_afe_s_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct adv748x_afe *afe = adv748x_ctrl_to_afe(ctrl);
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int ret;
-+
-+	ret = sdp_write(state, 0x0e, 0x00);
-+	if (ret < 0)
-+		return ret;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_BRIGHTNESS:
-+		if (ctrl->val < ADV748X_AFE_BRI_MIN ||
-+		    ctrl->val > ADV748X_AFE_BRI_MAX)
-+			return -ERANGE;
-+
-+		ret = sdp_write(state, ADV748X_AFE_REG_BRI, ctrl->val);
-+		break;
-+	case V4L2_CID_HUE:
-+		if (ctrl->val < ADV748X_AFE_HUE_MIN ||
-+		    ctrl->val > ADV748X_AFE_HUE_MAX)
-+			return -ERANGE;
-+
-+		/* Hue is inverted according to HSL chart */
-+		ret = sdp_write(state, ADV748X_AFE_REG_HUE, -ctrl->val);
-+		break;
-+	case V4L2_CID_CONTRAST:
-+		if (ctrl->val < ADV748X_AFE_CON_MIN ||
-+		    ctrl->val > ADV748X_AFE_CON_MAX)
-+			return -ERANGE;
-+
-+		ret = sdp_write(state, ADV748X_AFE_REG_CON, ctrl->val);
-+		break;
-+	case V4L2_CID_SATURATION:
-+		if (ctrl->val < ADV748X_AFE_SAT_MIN ||
-+		    ctrl->val > ADV748X_AFE_SAT_MAX)
-+			return -ERANGE;
-+		/*
-+		 * This could be V4L2_CID_BLUE_BALANCE/V4L2_CID_RED_BALANCE
-+		 * Let's not confuse the user, everybody understands saturation
-+		 */
-+		ret = sdp_write(state, ADV748X_AFE_REG_SD_SAT_CB, ctrl->val);
-+		if (ret)
-+			break;
-+		ret = sdp_write(state, ADV748X_AFE_REG_SD_SAT_CR, ctrl->val);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int adv748x_afe_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct adv748x_afe *afe = adv748x_ctrl_to_afe(ctrl);
-+	unsigned int width, height, fps;
-+	v4l2_std_id std;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_PIXEL_RATE:
-+		width = 720;
-+		if (afe->curr_norm == V4L2_STD_ALL)
-+			adv748x_afe_status(afe, NULL,  &std);
-+		else
-+			std = afe->curr_norm;
-+
-+		height = std & V4L2_STD_525_60 ? 480 : 576;
-+		fps = std & V4L2_STD_525_60 ? 30 : 25;
-+
-+		*ctrl->p_new.p_s64 = width * height * fps;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ctrl_ops adv748x_afe_ctrl_ops = {
-+	.s_ctrl = adv748x_afe_s_ctrl,
-+	.g_volatile_ctrl = adv748x_afe_g_volatile_ctrl,
-+};
-+
-+static int adv748x_afe_init_controls(struct adv748x_afe *afe)
-+{
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	struct v4l2_ctrl *ctrl;
-+
-+	v4l2_ctrl_handler_init(&afe->ctrl_hdl, 5);
-+
-+	/* Use our mutex for the controls */
-+	afe->ctrl_hdl.lock = &state->mutex;
-+
-+	v4l2_ctrl_new_std(&afe->ctrl_hdl, &adv748x_afe_ctrl_ops,
-+			  V4L2_CID_BRIGHTNESS, ADV748X_AFE_BRI_MIN,
-+			  ADV748X_AFE_BRI_MAX, 1, ADV748X_AFE_BRI_DEF);
-+	v4l2_ctrl_new_std(&afe->ctrl_hdl, &adv748x_afe_ctrl_ops,
-+			  V4L2_CID_CONTRAST, ADV748X_AFE_CON_MIN,
-+			  ADV748X_AFE_CON_MAX, 1, ADV748X_AFE_CON_DEF);
-+	v4l2_ctrl_new_std(&afe->ctrl_hdl, &adv748x_afe_ctrl_ops,
-+			  V4L2_CID_SATURATION, ADV748X_AFE_SAT_MIN,
-+			  ADV748X_AFE_SAT_MAX, 1, ADV748X_AFE_SAT_DEF);
-+	v4l2_ctrl_new_std(&afe->ctrl_hdl, &adv748x_afe_ctrl_ops,
-+			  V4L2_CID_HUE, ADV748X_AFE_HUE_MIN,
-+			  ADV748X_AFE_HUE_MAX, 1, ADV748X_AFE_HUE_DEF);
-+	ctrl = v4l2_ctrl_new_std(&afe->ctrl_hdl, &adv748x_afe_ctrl_ops,
-+				 V4L2_CID_PIXEL_RATE, 1, INT_MAX, 1, 1);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-+
-+	afe->sd.ctrl_handler = &afe->ctrl_hdl;
-+	if (afe->ctrl_hdl.error) {
-+		v4l2_ctrl_handler_free(&afe->ctrl_hdl);
-+		return afe->ctrl_hdl.error;
-+	}
-+
-+	return v4l2_ctrl_handler_setup(&afe->ctrl_hdl);
-+}
-+
-+int adv748x_afe_probe(struct adv748x_afe *afe)
-+{
-+	struct adv748x_state *state = adv748x_afe_to_state(afe);
-+	int ret;
-+	unsigned int i;
-+
-+	afe->streaming = false;
-+	afe->curr_norm = V4L2_STD_ALL;
-+
-+	adv748x_subdev_init(&afe->sd, state, &adv748x_afe_ops, "afe");
-+
-+	for (i = ADV748X_AFE_SINK_AIN0; i <= ADV748X_AFE_SINK_AIN7; i++)
-+		afe->pads[i].flags = MEDIA_PAD_FL_SINK;
-+
-+	afe->pads[ADV748X_AFE_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
-+
-+	ret = media_entity_pads_init(&afe->sd.entity, ADV748X_AFE_NR_PADS,
-+			afe->pads);
-+	if (ret)
-+		return ret;
-+
-+	ret = adv748x_afe_init_controls(afe);
-+	if (ret)
-+		goto err_free_media;
-+
-+	return 0;
-+
-+err_free_media:
-+	media_entity_cleanup(&afe->sd.entity);
-+
-+	return ret;
-+}
-+
-+void adv748x_afe_remove(struct adv748x_afe *afe)
-+{
-+	v4l2_device_unregister_subdev(&afe->sd);
-+	media_entity_cleanup(&afe->sd.entity);
-+	v4l2_ctrl_handler_free(&afe->ctrl_hdl);
-+}
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-new file mode 100644
-index 000000000000..54937ce05f3a
---- /dev/null
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -0,0 +1,711 @@
-+/*
-+ * Driver for Analog Devices ADV748X HDMI receiver with AFE
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * Authors:
-+ *	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-+ *	Niklas Söderlund <niklas.soderlund@ragnatech.se>
-+ *	Kieran Bingham <kieran.bingham@ideasonboard.com>
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/errno.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of_graph.h>
-+#include <linux/v4l2-dv-timings.h>
-+
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-dv-timings.h>
-+#include <media/v4l2-ioctl.h>
-+
-+#include "adv748x.h"
-+
-+/* -----------------------------------------------------------------------------
-+ * Register manipulation
-+ */
-+
-+/**
-+ * struct adv748x_reg_value - Register write instruction
-+ * @addr:		I2C slave address
-+ * @reg:		I2c register
-+ * @value:		value to write to @addr at @reg
-+ */
-+struct adv748x_reg_value {
-+	u8 addr;
-+	u8 reg;
-+	u8 value;
-+};
-+
-+static int adv748x_write_regs(struct adv748x_state *state,
-+			      const struct adv748x_reg_value *regs)
-+{
-+	struct i2c_msg msg;
-+	u8 data_buf[2];
-+	int ret = -EINVAL;
-+
-+	if (!state->client->adapter) {
-+		adv_err(state, "No adapter for regs write\n");
-+		return -ENODEV;
-+	}
-+
-+	msg.flags = 0;
-+	msg.len = 2;
-+	msg.buf = &data_buf[0];
-+
-+	while (regs->addr != ADV748X_I2C_EOR) {
-+
-+		if (regs->addr == ADV748X_I2C_WAIT)
-+			msleep(regs->value);
-+		else {
-+			msg.addr = regs->addr;
-+			data_buf[0] = regs->reg;
-+			data_buf[1] = regs->value;
-+
-+			ret = i2c_transfer(state->client->adapter, &msg, 1);
-+			if (ret < 0) {
-+				adv_err(state,
-+					"Error regs addr: 0x%02x reg: 0x%02x\n",
-+					regs->addr, regs->reg);
-+				break;
-+			}
-+		}
-+		regs++;
-+	}
-+
-+	return (ret < 0) ? ret : 0;
-+}
-+
-+int adv748x_write(struct adv748x_state *state, u8 addr, u8 reg, u8 value)
-+{
-+	struct adv748x_reg_value regs[2];
-+	int ret;
-+
-+	regs[0].addr = addr;
-+	regs[0].reg = reg;
-+	regs[0].value = value;
-+	regs[1].addr = ADV748X_I2C_EOR;
-+	regs[1].reg = 0xFF;
-+	regs[1].value = 0xFF;
-+
-+	ret = adv748x_write_regs(state, regs);
-+
-+	return ret;
-+}
-+
-+int adv748x_read(struct adv748x_state *state, u8 addr, u8 reg)
-+{
-+	struct i2c_msg msg[2];
-+	u8 reg_buf, data_buf;
-+	int ret;
-+
-+	if (!state->client->adapter) {
-+		adv_err(state, "No adapter reading addr: 0x%02x reg: 0x%02x\n",
-+			addr, reg);
-+		return -ENODEV;
-+	}
-+
-+	msg[0].addr = addr;
-+	msg[0].flags = 0;
-+	msg[0].len = 1;
-+	msg[0].buf = &reg_buf;
-+	msg[1].addr = addr;
-+	msg[1].flags = I2C_M_RD;
-+	msg[1].len = 1;
-+	msg[1].buf = &data_buf;
-+
-+	reg_buf = reg;
-+
-+	ret = i2c_transfer(state->client->adapter, msg, 2);
-+	if (ret < 0) {
-+		trace_printk("Error reading addr: 0x%02x reg: 0x%02x\n",
-+			addr, reg);
-+		adv_err(state, "Error reading addr: 0x%02x reg: 0x%02x\n",
-+			addr, reg);
-+		return ret;
-+	}
-+
-+	return data_buf;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * TXA and TXB
-+ */
-+
-+static const struct adv748x_reg_value adv748x_power_up_txa_4lane[] = {
-+
-+	{ADV748X_I2C_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
-+	{ADV748X_I2C_TXA, 0x00, 0xA4},	/* Set Auto DPHY Timing */
-+
-+	{ADV748X_I2C_TXA, 0x31, 0x82},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0x1E, 0x40},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0xDA, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
-+	{ADV748X_I2C_WAIT, 0x00, 0x02},	/* delay 2 */
-+	{ADV748X_I2C_TXA, 0x00, 0x24 },	/* Power-up CSI-TX */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXA, 0xC1, 0x2B},	/* ADI Required Write */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXA, 0x31, 0x80},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+static const struct adv748x_reg_value adv748x_power_down_txa_4lane[] = {
-+
-+	{ADV748X_I2C_TXA, 0x31, 0x82},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0x1E, 0x00},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
-+	{ADV748X_I2C_TXA, 0xDA, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
-+	{ADV748X_I2C_TXA, 0xC1, 0x3B},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+static const struct adv748x_reg_value adv748x_power_up_txb_1lane[] = {
-+
-+	{ADV748X_I2C_TXB, 0x00, 0x81},	/* Enable 1-lane MIPI */
-+	{ADV748X_I2C_TXB, 0x00, 0xA1},	/* Set Auto DPHY Timing */
-+
-+	{ADV748X_I2C_TXB, 0x31, 0x82},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0x1E, 0x40},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0xDA, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
-+	{ADV748X_I2C_WAIT, 0x00, 0x02},	/* delay 2 */
-+	{ADV748X_I2C_TXB, 0x00, 0x21 },	/* Power-up CSI-TX */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXB, 0xC1, 0x2B},	/* ADI Required Write */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXB, 0x31, 0x80},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+static const struct adv748x_reg_value adv748x_power_down_txb_1lane[] = {
-+
-+	{ADV748X_I2C_TXB, 0x31, 0x82},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0x1E, 0x00},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0x00, 0x81},	/* Enable 4-lane MIPI */
-+	{ADV748X_I2C_TXB, 0xDA, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
-+	{ADV748X_I2C_TXB, 0xC1, 0x3B},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+int adv748x_txa_power(struct adv748x_state *state, bool on)
-+{
-+	int val, ret;
-+
-+	val = txa_read(state, 0x1e);
-+	if (val < 0)
-+		return val;
-+
-+	if (on && ((val & 0x40) == 0))
-+		ret = adv748x_write_regs(state, adv748x_power_up_txa_4lane);
-+	else
-+		ret = adv748x_write_regs(state, adv748x_power_down_txa_4lane);
-+
-+	return ret;
-+}
-+
-+int adv748x_txb_power(struct adv748x_state *state, bool on)
-+{
-+	int val, ret;
-+
-+	val = txb_read(state, 0x1e);
-+	if (val < 0)
-+		return val;
-+
-+	if (on && ((val & 0x40) == 0))
-+		ret = adv748x_write_regs(state, adv748x_power_up_txb_1lane);
-+	else
-+		ret = adv748x_write_regs(state, adv748x_power_down_txb_1lane);
-+
-+	return ret;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * Media Operations
-+ */
-+
-+static const struct media_entity_operations adv748x_media_ops = {
-+	.link_validate = v4l2_subdev_link_validate,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * HW setup
-+ */
-+
-+static const struct adv748x_reg_value adv748x_sw_reset[] = {
-+
-+	{ADV748X_I2C_IO, 0xFF, 0xFF},	/* SW reset */
-+	{ADV748X_I2C_WAIT, 0x00, 0x05},	/* delay 5 */
-+	{ADV748X_I2C_IO, 0x01, 0x76},	/* ADI Required Write */
-+	{ADV748X_I2C_IO, 0xF2, 0x01},	/* Enable I2C Read Auto-Increment */
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+static const struct adv748x_reg_value adv748x_set_slave_address[] = {
-+	{ADV748X_I2C_IO, 0xF3, ADV748X_I2C_DPLL << 1},	/* DPLL */
-+	{ADV748X_I2C_IO, 0xF4, ADV748X_I2C_CP << 1},	/* CP */
-+	{ADV748X_I2C_IO, 0xF5, ADV748X_I2C_HDMI << 1},	/* HDMI */
-+	{ADV748X_I2C_IO, 0xF6, ADV748X_I2C_EDID << 1},	/* EDID */
-+	{ADV748X_I2C_IO, 0xF7, ADV748X_I2C_REPEATER << 1}, /* HDMI RX Repeater */
-+	{ADV748X_I2C_IO, 0xF8, ADV748X_I2C_INFOFRAME << 1},/* HDMI RX InfoFrame*/
-+	{ADV748X_I2C_IO, 0xFA, ADV748X_I2C_CEC << 1},	/* CEC */
-+	{ADV748X_I2C_IO, 0xFB, ADV748X_I2C_SDP << 1},	/* SDP */
-+	{ADV748X_I2C_IO, 0xFC, ADV748X_I2C_TXB << 1},	/* CSI-TXB */
-+	{ADV748X_I2C_IO, 0xFD, ADV748X_I2C_TXA << 1},	/* CSI-TXA */
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+/* Supported Formats For Script Below */
-+/* - 01-29 HDMI to MIPI TxA CSI 4-Lane - RGB888: */
-+static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
-+	/* Disable chip powerdown & Enable HDMI Rx block */
-+	{ADV748X_I2C_IO, 0x00, 0x40},
-+
-+	{ADV748X_I2C_REPEATER, 0x40, 0x83}, /* Enable HDCP 1.1 */
-+
-+	{ADV748X_I2C_HDMI, 0x00, 0x08},	/* Foreground Channel = A */
-+	{ADV748X_I2C_HDMI, 0x98, 0xFF},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x99, 0xA3},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x9A, 0x00},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x9B, 0x0A},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x9D, 0x40},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0xCB, 0x09},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x3D, 0x10},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x3E, 0x7B},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x3F, 0x5E},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x4E, 0xFE},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x4F, 0x18},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x57, 0xA3},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x58, 0x04},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0x85, 0x10},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_HDMI, 0x83, 0x00},	/* Enable All Terminations */
-+	{ADV748X_I2C_HDMI, 0xA3, 0x01},	/* ADI Required Write */
-+	{ADV748X_I2C_HDMI, 0xBE, 0x00},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_HDMI, 0x6C, 0x01},	/* HPA Manual Enable */
-+	{ADV748X_I2C_HDMI, 0xF8, 0x01},	/* HPA Asserted */
-+	{ADV748X_I2C_HDMI, 0x0F, 0x00},	/* Audio Mute Speed Set to Fastest */
-+	/* (Smallest Step Size) */
-+
-+	{ADV748X_I2C_IO, 0x04, 0x02},	/* RGB Out of CP */
-+	{ADV748X_I2C_IO, 0x12, 0xF0},	/* CSC Depends on ip Packets, SDR 444 */
-+	{ADV748X_I2C_IO, 0x17, 0x80},	/* Luma & Chroma can reach 254d */
-+	{ADV748X_I2C_IO, 0x03, 0x86},	/* CP-Insert_AV_Code */
-+
-+	{ADV748X_I2C_CP, 0x7C, 0x00},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_IO, 0x0C, 0xE0},	/* Enable LLC_DLL & Double LLC Timing */
-+	{ADV748X_I2C_IO, 0x0E, 0xDD},	/* LLC/PIX/SPI PINS TRISTATED AUD */
-+	/* Outputs Enabled */
-+	{ADV748X_I2C_IO, 0x10, 0xA0},	/* Enable 4-lane CSI Tx & Pixel Port */
-+
-+	{ADV748X_I2C_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
-+	{ADV748X_I2C_TXA, 0x00, 0xA4},	/* Set Auto DPHY Timing */
-+	{ADV748X_I2C_TXA, 0xDB, 0x10},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0xD6, 0x07},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0xC4, 0x0A},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0x71, 0x33},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0x72, 0x11},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0xF0, 0x00},	/* i2c_dphy_pwdn - 1'b0 */
-+
-+	{ADV748X_I2C_TXA, 0x31, 0x82},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0x1E, 0x40},	/* ADI Required Write */
-+	{ADV748X_I2C_TXA, 0xDA, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
-+	{ADV748X_I2C_WAIT, 0x00, 0x02},	/* delay 2 */
-+	{ADV748X_I2C_TXA, 0x00, 0x24 },	/* Power-up CSI-TX */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXA, 0xC1, 0x2B},	/* ADI Required Write */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXA, 0x31, 0x80},	/* ADI Required Write */
-+
-+#ifdef REL_DGB_FORCE_TO_SEND_COLORBAR
-+	{ADV748X_I2C_CP, 0x37, 0x81},	/* Output Colorbars Pattern */
-+#endif
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+/* TODO:KPB: Need to work out how to provide AFE port select! More entities? */
-+#define ADV748X_SDP_INPUT_CVBS_AIN8 0x07
-+
-+/* 02-01 Analog CVBS to MIPI TX-B CSI 1-Lane - */
-+/* Autodetect CVBS Single Ended In Ain 1 - MIPI Out */
-+static const struct adv748x_reg_value adv748x_init_txb_1lane[] = {
-+
-+	{ADV748X_I2C_IO, 0x00, 0x30},  /* Disable chip powerdown powerdown Rx */
-+	{ADV748X_I2C_IO, 0xF2, 0x01},  /* Enable I2C Read Auto-Increment */
-+
-+	{ADV748X_I2C_IO, 0x0E, 0xFF},  /* LLC/PIX/AUD/SPI PINS TRISTATED */
-+
-+	{ADV748X_I2C_SDP, 0x0f, 0x00}, /* Exit Power Down Mode */
-+	{ADV748X_I2C_SDP, 0x52, 0xCD},/* ADI Required Write */
-+	/* TODO: do not use hard codeded INSEL */
-+	{ADV748X_I2C_SDP, 0x00, ADV748X_SDP_INPUT_CVBS_AIN8},
-+	{ADV748X_I2C_SDP, 0x0E, 0x80},	/* ADI Required Write */
-+	{ADV748X_I2C_SDP, 0x9C, 0x00},	/* ADI Required Write */
-+	{ADV748X_I2C_SDP, 0x9C, 0xFF},	/* ADI Required Write */
-+	{ADV748X_I2C_SDP, 0x0E, 0x00},	/* ADI Required Write */
-+
-+	/* ADI recommended writes for improved video quality */
-+	{ADV748X_I2C_SDP, 0x80, 0x51},	/* ADI Required Write */
-+	{ADV748X_I2C_SDP, 0x81, 0x51},	/* ADI Required Write */
-+	{ADV748X_I2C_SDP, 0x82, 0x68},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_SDP, 0x03, 0x42},  /* Tri-S Output , PwrDwn 656 pads */
-+	{ADV748X_I2C_SDP, 0x04, 0xB5},	/* ITU-R BT.656-4 compatible */
-+	{ADV748X_I2C_SDP, 0x13, 0x00},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_SDP, 0x17, 0x41},	/* Select SH1 */
-+	{ADV748X_I2C_SDP, 0x31, 0x12},	/* ADI Required Write */
-+	{ADV748X_I2C_SDP, 0xE6, 0x4F},  /* V bit end pos manually in NTSC */
-+
-+	/* TODO: Convert this to a control option */
-+#ifdef REL_DGB_FORCE_TO_SEND_COLORBAR
-+	{ADV748X_I2C_SDP, 0x0C, 0x01},	/* ColorBar */
-+	{ADV748X_I2C_SDP, 0x14, 0x01},	/* ColorBar */
-+#endif
-+	/* Enable 1-Lane MIPI Tx, */
-+	/* enable pixel output and route SD through Pixel port */
-+	{ADV748X_I2C_IO, 0x10, 0x70},
-+
-+	{ADV748X_I2C_TXB, 0x00, 0x81},	/* Enable 1-lane MIPI */
-+	{ADV748X_I2C_TXB, 0x00, 0xA1},	/* Set Auto DPHY Timing */
-+	{ADV748X_I2C_TXB, 0xD2, 0x40},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0xC4, 0x0A},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0x71, 0x33},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0x72, 0x11},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0xF0, 0x00},	/* i2c_dphy_pwdn - 1'b0 */
-+	{ADV748X_I2C_TXB, 0x31, 0x82},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0x1E, 0x40},	/* ADI Required Write */
-+	{ADV748X_I2C_TXB, 0xDA, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
-+
-+	{ADV748X_I2C_WAIT, 0x00, 0x02},	/* delay 2 */
-+	{ADV748X_I2C_TXB, 0x00, 0x21 },	/* Power-up CSI-TX */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXB, 0xC1, 0x2B},	/* ADI Required Write */
-+	{ADV748X_I2C_WAIT, 0x00, 0x01},	/* delay 1 */
-+	{ADV748X_I2C_TXB, 0x31, 0x80},	/* ADI Required Write */
-+
-+	{ADV748X_I2C_EOR, 0xFF, 0xFF}	/* End of register table */
-+};
-+
-+static int adv748x_reset(struct adv748x_state *state)
-+{
-+	int ret;
-+
-+	ret = adv748x_write_regs(state, adv748x_sw_reset);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = adv748x_write_regs(state, adv748x_set_slave_address);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Init and power down TXA */
-+	ret = adv748x_write_regs(state, adv748x_init_txa_4lane);
-+	if (ret)
-+		return ret;
-+
-+	adv748x_txa_power(state, 0);
-+	/* Set VC 0 */
-+	txa_clrset(state, 0x0d, 0xc0, 0x00);
-+
-+	/* Init and power down TXB */
-+	ret = adv748x_write_regs(state, adv748x_init_txb_1lane);
-+	if (ret)
-+		return ret;
-+
-+	adv748x_txb_power(state, 0);
-+
-+	/* Set VC 0 */
-+	txb_clrset(state, 0x0d, 0xc0, 0x00);
-+
-+	/* Disable chip powerdown & Enable HDMI Rx block */
-+	io_write(state, 0x00, 0x40);
-+
-+	/* Enable 4-lane CSI Tx & Pixel Port */
-+	io_write(state, 0x10, 0xe0);
-+
-+	/* Use vid_std and v_freq as freerun resolution for CP */
-+	cp_clrset(state, 0xc9, 0x01, 0x01);
-+
-+	return 0;
-+}
-+
-+static int adv748x_print_info(struct adv748x_state *state)
-+{
-+	int msb, lsb;
-+
-+	lsb = io_read(state, 0xdf);
-+	msb = io_read(state, 0xe0);
-+
-+	if (lsb < 0 || msb < 0) {
-+		adv_err(state, "Failed to read chip revision\n");
-+		return -EIO;
-+	}
-+
-+	adv_info(state, "chip found @ 0x%02x revision %02x%02x\n",
-+		 state->client->addr << 1, lsb, msb);
-+
-+	return 0;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * i2c driver
-+ */
-+
-+void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
-+		const struct v4l2_subdev_ops *ops, const char *ident)
-+{
-+	v4l2_subdev_init(sd, ops);
-+	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-+
-+	/* the owner is the same as the i2c_client's driver owner */
-+	sd->owner = state->dev->driver->owner;
-+	sd->dev = state->dev;
-+
-+	v4l2_set_subdevdata(sd, state);
-+
-+	/* initialize name */
-+	snprintf(sd->name, sizeof(sd->name), "%s %d-%04x %s",
-+		state->dev->driver->name,
-+		i2c_adapter_id(state->client->adapter),
-+		state->client->addr, ident);
-+
-+	sd->entity.function = MEDIA_ENT_F_ATV_DECODER;
-+	sd->entity.ops = &adv748x_media_ops;
-+}
-+
-+static int adv748x_parse_dt(struct adv748x_state *state)
-+{
-+	struct device_node *ep_np = NULL;
-+	struct of_endpoint ep;
-+	unsigned int found = 0;
-+
-+	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
-+		of_graph_parse_endpoint(ep_np, &ep);
-+		adv_info(state, "Endpoint %s on port %d",
-+				of_node_full_name(ep.local_node),
-+				ep.port);
-+
-+		if (ep.port > ADV748X_PORT_MAX) {
-+			adv_err(state, "Invalid endpoint %s on port %d",
-+				of_node_full_name(ep.local_node),
-+				ep.port);
-+
-+			continue;
-+		}
-+
-+		state->endpoints[ep.port] = ep_np;
-+		found++;
-+	}
-+
-+	return found ? 0 : -ENODEV;
-+}
-+
-+static int adv748x_setup_links(struct adv748x_state *state)
-+{
-+	int ret;
-+	int enabled = MEDIA_LNK_FL_ENABLED;
-+
-+/*
-+ * HACK/Workaround:
-+ *
-+ * Currently non-immutable link resets go through the RVin
-+ * driver, and cause the links to fail, due to not being part of RVIN.
-+ * As a temporary workaround until the RVIN driver knows better than to parse
-+ * links that do not belong to it, use static immutable links for our internal
-+ * media paths.
-+ */
-+#define ADV748x_DEV_STATIC_LINKS
-+#ifdef ADV748x_DEV_STATIC_LINKS
-+	enabled |= MEDIA_LNK_FL_IMMUTABLE;
-+#endif
-+
-+	/* TXA - Default link is with HDMI */
-+	ret = media_create_pad_link(&state->hdmi.sd.entity, 1,
-+				    &state->txa.sd.entity, 0, enabled);
-+	if (ret) {
-+		adv_err(state, "Failed to create HDMI-TXA pad links");
-+		return ret;
-+	}
-+
-+#ifndef ADV748x_DEV_STATIC_LINKS
-+	ret = media_create_pad_link(&state->afe.sd.entity, ADV748X_AFE_SOURCE,
-+				    &state->txa.sd.entity, 0, 0);
-+	if (ret) {
-+		adv_err(state, "Failed to create AFE-TXA pad links");
-+		return ret;
-+	}
-+#endif
-+
-+	/* TXB - Can only output from the AFE */
-+	ret = media_create_pad_link(&state->afe.sd.entity, ADV748X_AFE_SOURCE,
-+				    &state->txb.sd.entity, 0, enabled);
-+	if (ret) {
-+		adv_err(state, "Failed to create AFE-TXB pad links");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+int adv748x_register_subdevs(struct adv748x_state *state,
-+			     struct v4l2_device *v4l2_dev)
-+{
-+	int ret;
-+
-+	ret = v4l2_device_register_subdev(v4l2_dev, &state->hdmi.sd);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = v4l2_device_register_subdev(v4l2_dev, &state->afe.sd);
-+	if (ret < 0)
-+		goto err_unregister_hdmi;
-+
-+	ret = adv748x_setup_links(state);
-+	if (ret < 0)
-+		goto err_unregister_afe;
-+
-+	return 0;
-+
-+err_unregister_afe:
-+	v4l2_device_unregister_subdev(&state->afe.sd);
-+err_unregister_hdmi:
-+	v4l2_device_unregister_subdev(&state->hdmi.sd);
-+
-+	return ret;
-+}
-+
-+static int adv748x_probe(struct i2c_client *client,
-+			 const struct i2c_device_id *id)
-+{
-+	struct adv748x_state *state;
-+	int ret;
-+
-+	/* Check if the adapter supports the needed features */
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-+		return -EIO;
-+
-+	state = devm_kzalloc(&client->dev, sizeof(struct adv748x_state),
-+			     GFP_KERNEL);
-+	if (!state)
-+		return -ENOMEM;
-+
-+	mutex_init(&state->mutex);
-+
-+	state->dev = &client->dev;
-+	state->client = client;
-+	i2c_set_clientdata(client, state);
-+
-+	/* SW reset ADV748X to its default values */
-+	ret = adv748x_reset(state);
-+	if (ret) {
-+		adv_err(state, "Failed to reset hardware");
-+		goto err_free_mutex;
-+	}
-+
-+	ret = adv748x_print_info(state);
-+	if (ret)
-+		goto err_free_mutex;
-+
-+	/* Discover and process ports declared by the Device tree endpoints */
-+	ret = adv748x_parse_dt(state);
-+	if (ret)
-+		goto err_free_mutex;
-+
-+	/* Initialise HDMI */
-+	ret = adv748x_hdmi_probe(&state->hdmi);
-+	if (ret) {
-+		adv_err(state, "Failed to probe HDMI");
-+		goto err_free_mutex;
-+	}
-+
-+	/* Initialise AFE */
-+	ret = adv748x_afe_probe(&state->afe);
-+	if (ret) {
-+		adv_err(state, "Failed to probe AFE");
-+		goto err_free_hdmi;
-+	}
-+
-+	/* Initialise TXA */
-+	ret = adv748x_csi2_probe(state, &state->txa);
-+	if (ret) {
-+		adv_err(state, "Failed to probe TXA");
-+		goto err_free_afe;
-+	}
-+
-+	/* Initialise TXB  (Not 7480) */
-+	ret = adv748x_csi2_probe(state, &state->txb);
-+	if (ret) {
-+		adv_err(state, "Failed to probe TXB");
-+		goto err_free_txa;
-+	}
-+
-+	return 0;
-+
-+err_free_txa:
-+	adv748x_csi2_remove(&state->txa);
-+err_free_afe:
-+	adv748x_afe_remove(&state->afe);
-+err_free_hdmi:
-+	adv748x_hdmi_remove(&state->hdmi);
-+err_free_mutex:
-+	mutex_destroy(&state->mutex);
-+
-+	return ret;
-+}
-+
-+static int adv748x_remove(struct i2c_client *client)
-+{
-+	struct adv748x_state *state = i2c_get_clientdata(client);
-+
-+	adv748x_afe_remove(&state->afe);
-+	adv748x_hdmi_remove(&state->hdmi);
-+
-+	adv748x_csi2_remove(&state->txa);
-+	adv748x_csi2_remove(&state->txb);
-+
-+	mutex_destroy(&state->mutex);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id adv748x_id[] = {
-+	{ "adv7481", 0 },
-+	{ "adv7482", 0 },
-+	{ },
-+};
-+
-+static const struct of_device_id adv748x_of_table[] = {
-+	{ .compatible = "adi,adv7481", },
-+	{ .compatible = "adi,adv7482", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, adv748x_of_table);
-+
-+static struct i2c_driver adv748x_driver = {
-+	.driver = {
-+		.name = "adv748x",
-+		.of_match_table = of_match_ptr(adv748x_of_table),
-+	},
-+	.probe = adv748x_probe,
-+	.remove = adv748x_remove,
-+	.id_table = adv748x_id,
-+};
-+
-+module_i2c_driver(adv748x_driver);
-+
-+MODULE_AUTHOR("Kieran Bingham <kieran.bingham@ideasonboard.com>");
-+MODULE_DESCRIPTION("ADV748X video decoder");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-new file mode 100644
-index 000000000000..a745246e34b5
---- /dev/null
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -0,0 +1,283 @@
-+/*
-+ * Driver for Analog Devices ADV748X CSI-2 Transmitter
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-ioctl.h>
-+
-+#include "adv748x.h"
-+
-+static bool is_txa(struct adv748x_csi2 *tx)
-+{
-+	return tx == &tx->state->txa;
-+}
-+
-+static struct v4l2_subdev *adv748x_csi2_get_remote_sd(struct media_pad *local)
-+{
-+	struct media_pad *pad;
-+
-+	pad = media_entity_remote_pad(local);
-+
-+	return media_entity_to_v4l2_subdev(pad->entity);
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_internal_ops
-+ *
-+ * We use the internal registered operation to be able to ensure that our
-+ * incremental subdevices (not connected in the forward path) can be registered
-+ * against the resulting video path and media device.
-+ */
-+
-+static int adv748x_csi2_registered(struct v4l2_subdev *sd)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct adv748x_state *state = tx->state;
-+
-+	adv_info(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
-+			sd->name);
-+
-+	/*
-+	 * We can not register our sub devices until both CSI/TX entities
-+	 * are registered.
-+	 */
-+	if (is_txa(tx))
-+		return 0;
-+
-+	return adv748x_register_subdevs(state, sd->v4l2_dev);
-+}
-+
-+static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
-+	.registered = adv748x_csi2_registered,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_video_ops
-+ */
-+
-+static int adv748x_csi2_s_stream(struct v4l2_subdev *sd, int enable)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct v4l2_subdev *src;
-+
-+	src = adv748x_csi2_get_remote_sd(&tx->pads[ADV748X_CSI2_SINK]);
-+	if (!src)
-+		return -ENODEV;
-+
-+	return v4l2_subdev_call(src, video, s_stream, enable);
-+}
-+
-+static const struct v4l2_subdev_video_ops adv748x_csi2_video_ops = {
-+	.s_stream = adv748x_csi2_s_stream,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_pad_ops
-+ *
-+ * The CSI2 bus pads, are ignorant to the data sizes or formats.
-+ * But we must support setting the pad formats for format propagation.
-+ */
-+
-+static struct v4l2_mbus_framefmt *
-+adv748x_csi2_get_pad_format(struct v4l2_subdev *sd,
-+			    struct v4l2_subdev_pad_config *cfg,
-+			    unsigned int pad, u32 which)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+
-+	if (which == V4L2_SUBDEV_FORMAT_TRY)
-+		return v4l2_subdev_get_try_format(sd, cfg, pad);
-+	else
-+		return &tx->format;
-+}
-+
-+static int adv748x_csi2_get_format(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_pad_config *cfg,
-+				   struct v4l2_subdev_format *sdformat)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct adv748x_state *state = tx->state;
-+	struct v4l2_mbus_framefmt *mbusformat;
-+
-+	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
-+						 sdformat->which);
-+	if (!mbusformat)
-+		return -EINVAL;
-+
-+	mutex_lock(&state->mutex);
-+
-+	sdformat->format = *mbusformat;
-+
-+	mutex_unlock(&state->mutex);
-+
-+	return 0;
-+}
-+
-+static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_pad_config *cfg,
-+				   struct v4l2_subdev_format *sdformat)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct adv748x_state *state = tx->state;
-+	struct media_pad *pad = &tx->pads[sdformat->pad];
-+	struct v4l2_mbus_framefmt *mbusformat;
-+
-+	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
-+						 sdformat->which);
-+	if (!mbusformat)
-+		return -EINVAL;
-+
-+	mutex_lock(&state->mutex);
-+
-+	if (pad->flags & MEDIA_PAD_FL_SOURCE)
-+		sdformat->format = tx->format;
-+
-+	*mbusformat = sdformat->format;
-+
-+	mutex_unlock(&state->mutex);
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
-+	.get_fmt = adv748x_csi2_get_format,
-+	.set_fmt = adv748x_csi2_set_format,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_ops
-+ */
-+
-+static const struct v4l2_subdev_ops adv748x_csi2_ops = {
-+	.video = &adv748x_csi2_video_ops,
-+	.pad = &adv748x_csi2_pad_ops,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Subdev module and controls
-+ */
-+
-+static int adv748x_csi2_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct adv748x_csi2 *tx = container_of(ctrl->handler,
-+					struct adv748x_csi2, ctrl_hdl);
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_PIXEL_RATE:
-+	{
-+		struct v4l2_ctrl *rate;
-+		struct v4l2_subdev *src;
-+
-+		src = adv748x_csi2_get_remote_sd(&tx->pads[ADV748X_CSI2_SINK]);
-+		if (!src)
-+			return -ENODEV;
-+
-+		rate = v4l2_ctrl_find(src->ctrl_handler, V4L2_CID_PIXEL_RATE);
-+		if (!rate)
-+			return -EPIPE;
-+
-+		*ctrl->p_new.p_s64 = v4l2_ctrl_g_ctrl_int64(rate);
-+
-+		break;
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ctrl_ops adv748x_csi2_ctrl_ops = {
-+	.g_volatile_ctrl = adv748x_csi2_g_volatile_ctrl,
-+};
-+
-+static int adv748x_csi2_init_controls(struct adv748x_csi2 *tx)
-+{
-+	struct v4l2_ctrl *ctrl;
-+
-+	v4l2_ctrl_handler_init(&tx->ctrl_hdl, 1);
-+
-+	// Can lock all controls with the global state mutex.
-+	// tx->ctrl_hdl.lock = &tx->state->mutex;
-+
-+	ctrl = v4l2_ctrl_new_std(&tx->ctrl_hdl, &adv748x_csi2_ctrl_ops,
-+				 V4L2_CID_PIXEL_RATE, 1, INT_MAX, 1, 1);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-+
-+	tx->sd.ctrl_handler = &tx->ctrl_hdl;
-+	if (tx->ctrl_hdl.error) {
-+		v4l2_ctrl_handler_free(&tx->ctrl_hdl);
-+		return tx->ctrl_hdl.error;
-+	}
-+
-+	return v4l2_ctrl_handler_setup(&tx->ctrl_hdl);
-+}
-+
-+int adv748x_csi2_probe(struct adv748x_state *state, struct adv748x_csi2 *tx)
-+{
-+	struct device_node *ep;
-+	int ret;
-+
-+	/* We can not use container_of to get back to the state with two TXs */
-+	tx->state = state;
-+
-+	ep = state->endpoints[is_txa(tx) ? ADV748X_PORT_TXA : ADV748X_PORT_TXB];
-+	if (!ep) {
-+		adv_err(state, "No endpoint found for %s\n",
-+				is_txa(tx) ? "txa" : "txb");
-+		return -ENODEV;
-+	}
-+
-+	adv748x_subdev_init(&tx->sd, state, &adv748x_csi2_ops,
-+			is_txa(tx) ? "txa" : "txb");
-+
-+	/* Ensure that matching is based upon the endpoint fwnodes */
-+	tx->sd.fwnode = of_fwnode_handle(ep);
-+
-+	/* Register internal ops for incremental subdev registration */
-+	tx->sd.internal_ops = &adv748x_csi2_internal_ops;
-+
-+	tx->pads[ADV748X_CSI2_SINK].flags = MEDIA_PAD_FL_SINK;
-+	tx->pads[ADV748X_CSI2_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
-+
-+	ret = media_entity_pads_init(&tx->sd.entity, ADV748X_CSI2_NR_PADS,
-+				     tx->pads);
-+	if (ret)
-+		return ret;
-+
-+	ret = adv748x_csi2_init_controls(tx);
-+	if (ret)
-+		goto err_free_media;
-+
-+	ret = v4l2_async_register_subdev(&tx->sd);
-+	if (ret)
-+		goto err_free_ctrl;
-+
-+	return 0;
-+
-+err_free_ctrl:
-+	v4l2_ctrl_handler_free(&tx->ctrl_hdl);
-+err_free_media:
-+	media_entity_cleanup(&tx->sd.entity);
-+
-+	return ret;
-+}
-+
-+void adv748x_csi2_remove(struct adv748x_csi2 *tx)
-+{
-+	v4l2_async_unregister_subdev(&tx->sd);
-+	media_entity_cleanup(&tx->sd.entity);
-+	v4l2_ctrl_handler_free(&tx->ctrl_hdl);
-+}
-diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-new file mode 100644
-index 000000000000..b9e61e6a43fa
---- /dev/null
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-@@ -0,0 +1,647 @@
-+/*
-+ * Driver for Analog Devices ADV748X HDMI receiver and Component Processor (CP)
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-dv-timings.h>
-+#include <media/v4l2-ioctl.h>
-+
-+#include <uapi/linux/v4l2-dv-timings.h>
-+
-+#include "adv748x.h"
-+
-+/* -----------------------------------------------------------------------------
-+ * HDMI and CP
-+ */
-+
-+#define ADV748X_HDMI_MIN_WIDTH		640
-+#define ADV748X_HDMI_MAX_WIDTH		1920
-+#define ADV748X_HDMI_MIN_HEIGHT		480
-+#define ADV748X_HDMI_MAX_HEIGHT		1200
-+#define ADV748X_HDMI_MIN_PIXELCLOCK	0		/* unknown */
-+#define ADV748X_HDMI_MAX_PIXELCLOCK	162000000
-+
-+static const struct v4l2_dv_timings_cap adv748x_hdmi_timings_cap = {
-+	.type = V4L2_DV_BT_656_1120,
-+	/* keep this initialization for compatibility with GCC < 4.4.6 */
-+	.reserved = { 0 },
-+	/* Min pixelclock value is unknown */
-+	V4L2_INIT_BT_TIMINGS(ADV748X_HDMI_MIN_WIDTH, ADV748X_HDMI_MAX_WIDTH,
-+			     ADV748X_HDMI_MIN_HEIGHT, ADV748X_HDMI_MAX_HEIGHT,
-+			     ADV748X_HDMI_MIN_PIXELCLOCK,
-+			     ADV748X_HDMI_MAX_PIXELCLOCK,
-+			     V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT,
-+			     V4L2_DV_BT_CAP_INTERLACED |
-+			     V4L2_DV_BT_CAP_PROGRESSIVE)
-+};
-+
-+struct adv748x_hdmi_video_standards {
-+	struct v4l2_dv_timings timings;
-+	u8 vid_std;
-+	u8 v_freq;
-+};
-+
-+static const struct adv748x_hdmi_video_standards
-+adv748x_hdmi_video_standards[] = {
-+	{ V4L2_DV_BT_CEA_720X480I59_94, 0x40, 0x00 },
-+	{ V4L2_DV_BT_CEA_720X576I50, 0x41, 0x01 },
-+	{ V4L2_DV_BT_CEA_720X480P59_94, 0x4a, 0x00 },
-+	{ V4L2_DV_BT_CEA_720X576P50, 0x4b, 0x00 },
-+	{ V4L2_DV_BT_CEA_1280X720P60, 0x53, 0x00 },
-+	{ V4L2_DV_BT_CEA_1280X720P50, 0x53, 0x01 },
-+	{ V4L2_DV_BT_CEA_1280X720P30, 0x53, 0x02 },
-+	{ V4L2_DV_BT_CEA_1280X720P25, 0x53, 0x03 },
-+	{ V4L2_DV_BT_CEA_1280X720P24, 0x53, 0x04 },
-+	{ V4L2_DV_BT_CEA_1920X1080I60, 0x54, 0x00 },
-+	{ V4L2_DV_BT_CEA_1920X1080I50, 0x54, 0x01 },
-+	{ V4L2_DV_BT_CEA_1920X1080P60, 0x5e, 0x00 },
-+	{ V4L2_DV_BT_CEA_1920X1080P50, 0x5e, 0x01 },
-+	{ V4L2_DV_BT_CEA_1920X1080P30, 0x5e, 0x02 },
-+	{ V4L2_DV_BT_CEA_1920X1080P25, 0x5e, 0x03 },
-+	{ V4L2_DV_BT_CEA_1920X1080P24, 0x5e, 0x04 },
-+	/* SVGA */
-+	{ V4L2_DV_BT_DMT_800X600P56, 0x80, 0x00 },
-+	{ V4L2_DV_BT_DMT_800X600P60, 0x81, 0x00 },
-+	{ V4L2_DV_BT_DMT_800X600P72, 0x82, 0x00 },
-+	{ V4L2_DV_BT_DMT_800X600P75, 0x83, 0x00 },
-+	{ V4L2_DV_BT_DMT_800X600P85, 0x84, 0x00 },
-+	/* SXGA */
-+	{ V4L2_DV_BT_DMT_1280X1024P60, 0x85, 0x00 },
-+	{ V4L2_DV_BT_DMT_1280X1024P75, 0x86, 0x00 },
-+	/* VGA */
-+	{ V4L2_DV_BT_DMT_640X480P60, 0x88, 0x00 },
-+	{ V4L2_DV_BT_DMT_640X480P72, 0x89, 0x00 },
-+	{ V4L2_DV_BT_DMT_640X480P75, 0x8a, 0x00 },
-+	{ V4L2_DV_BT_DMT_640X480P85, 0x8b, 0x00 },
-+	/* XGA */
-+	{ V4L2_DV_BT_DMT_1024X768P60, 0x8c, 0x00 },
-+	{ V4L2_DV_BT_DMT_1024X768P70, 0x8d, 0x00 },
-+	{ V4L2_DV_BT_DMT_1024X768P75, 0x8e, 0x00 },
-+	{ V4L2_DV_BT_DMT_1024X768P85, 0x8f, 0x00 },
-+	/* UXGA */
-+	{ V4L2_DV_BT_DMT_1600X1200P60, 0x96, 0x00 },
-+	/* End of standards */
-+	{ },
-+};
-+
-+static void adv748x_hdmi_fill_format(struct adv748x_hdmi *hdmi,
-+				     struct v4l2_mbus_framefmt *fmt)
-+{
-+	memset(fmt, 0, sizeof(*fmt));
-+
-+	fmt->code = MEDIA_BUS_FMT_RGB888_1X24;
-+	fmt->colorspace = V4L2_COLORSPACE_SRGB;
-+	fmt->field = hdmi->timings.bt.interlaced ?
-+		V4L2_FIELD_INTERLACED : V4L2_FIELD_NONE;
-+
-+	fmt->width = hdmi->timings.bt.width;
-+	fmt->height = hdmi->timings.bt.height;
-+}
-+
-+static void adv748x_fill_optional_dv_timings(struct v4l2_dv_timings *timings)
-+{
-+	v4l2_find_dv_timings_cap(timings, &adv748x_hdmi_timings_cap,
-+				 250000, NULL, NULL);
-+}
-+
-+static bool adv748x_hdmi_have_signal(struct adv748x_state *state)
-+{
-+	int val;
-+
-+	/* Check that VERT_FILTER and DG_REGEN is locked */
-+	val = hdmi_read(state, 0x07);
-+	return (val & BIT(7)) && (val & BIT(5));
-+}
-+
-+static unsigned int adv748x_hdmi_read_pixelclock(struct adv748x_state *state)
-+{
-+	int a, b;
-+
-+	a = hdmi_read(state, 0x51);
-+	b = hdmi_read(state, 0x52);
-+	if (a < 0 || b < 0)
-+		return -ENODATA;
-+
-+	return ((a << 1) | (b >> 7)) * 1000000 + (b & 0x7f) * 1000000 / 128;
-+}
-+
-+static int adv748x_hdmi_set_video_timings(struct adv748x_state *state,
-+					  const struct v4l2_dv_timings *timings)
-+{
-+	const struct adv748x_hdmi_video_standards *stds =
-+		adv748x_hdmi_video_standards;
-+	int i;
-+
-+	for (i = 0; stds[i].timings.bt.width; i++) {
-+		if (!v4l2_match_dv_timings(timings, &stds[i].timings, 250000,
-+					   false))
-+			continue;
-+		/*
-+		 * The resolution of 720p, 1080i and 1080p is Hsync width of
-+		 * 40 pixelclock cycles. These resolutions must be shifted
-+		 * horizontally to the left in active video mode.
-+		 */
-+		switch (stds[i].vid_std) {
-+		case 0x53: /* 720p */
-+			cp_write(state, 0x8B, 0x43);
-+			cp_write(state, 0x8C, 0xD8);
-+			cp_write(state, 0x8B, 0x4F);
-+			cp_write(state, 0x8D, 0xD8);
-+			break;
-+		case 0x54: /* 1080i */
-+		case 0x5e: /* 1080p */
-+			cp_write(state, 0x8B, 0x43);
-+			cp_write(state, 0x8C, 0xD4);
-+			cp_write(state, 0x8B, 0x4F);
-+			cp_write(state, 0x8D, 0xD4);
-+			break;
-+		default:
-+			cp_write(state, 0x8B, 0x40);
-+			cp_write(state, 0x8C, 0x00);
-+			cp_write(state, 0x8B, 0x40);
-+			cp_write(state, 0x8D, 0x00);
-+			break;
-+		}
-+
-+		io_write(state, 0x05, stds[i].vid_std);
-+		io_clrset(state, 0x03, 0x70, stds[i].v_freq << 4);
-+
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_video_ops
-+ */
-+
-+static int adv748x_hdmi_s_dv_timings(struct v4l2_subdev *sd,
-+				     struct v4l2_dv_timings *timings)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+	int ret;
-+
-+	if (!timings)
-+		return -EINVAL;
-+
-+	if (v4l2_match_dv_timings(&hdmi->timings, timings, 0, false))
-+		return 0;
-+
-+	if (!v4l2_valid_dv_timings(timings, &adv748x_hdmi_timings_cap,
-+				   NULL, NULL))
-+		return -ERANGE;
-+
-+	adv748x_fill_optional_dv_timings(timings);
-+
-+	ret = adv748x_hdmi_set_video_timings(state, timings);
-+	if (ret)
-+		return ret;
-+
-+	hdmi->timings = *timings;
-+
-+	cp_clrset(state, 0x91, 0x40, timings->bt.interlaced ? 0x40 : 0x00);
-+
-+	return 0;
-+}
-+
-+static int adv748x_hdmi_g_dv_timings(struct v4l2_subdev *sd,
-+				     struct v4l2_dv_timings *timings)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+
-+	*timings = hdmi->timings;
-+
-+	return 0;
-+}
-+
-+static int adv748x_hdmi_query_dv_timings(struct v4l2_subdev *sd,
-+					 struct v4l2_dv_timings *timings)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+	struct v4l2_bt_timings *bt = &timings->bt;
-+	int tmp;
-+
-+	if (!timings)
-+		return -EINVAL;
-+
-+	memset(timings, 0, sizeof(struct v4l2_dv_timings));
-+
-+	if (!adv748x_hdmi_have_signal(state))
-+		return -ENOLINK;
-+
-+	timings->type = V4L2_DV_BT_656_1120;
-+
-+	bt->interlaced = hdmi_read(state, 0x0b) & BIT(5) ?
-+		V4L2_DV_INTERLACED : V4L2_DV_PROGRESSIVE;
-+
-+	bt->width = hdmi_read16(state, 0x07, 0x1fff);
-+	bt->height = hdmi_read16(state, 0x09, 0x1fff);
-+	bt->hfrontporch = hdmi_read16(state, 0x20, 0x1fff);
-+	bt->hsync = hdmi_read16(state, 0x22, 0x1fff);
-+	bt->hbackporch = hdmi_read16(state, 0x24, 0x1fff);
-+	bt->vfrontporch = hdmi_read16(state, 0x2a, 0x3fff) / 2;
-+	bt->vsync = hdmi_read16(state, 0x2e, 0x3fff) / 2;
-+	bt->vbackporch = hdmi_read16(state, 0x32, 0x3fff) / 2;
-+
-+	bt->pixelclock = adv748x_hdmi_read_pixelclock(state);
-+	if (bt->pixelclock < 0)
-+		return -ENODATA;
-+
-+	tmp = hdmi_read(state, 0x05);
-+	bt->polarities = (tmp & BIT(4) ? V4L2_DV_VSYNC_POS_POL : 0) |
-+		(tmp & BIT(5) ? V4L2_DV_HSYNC_POS_POL : 0);
-+
-+	if (bt->interlaced == V4L2_DV_INTERLACED) {
-+		bt->height += hdmi_read16(state, 0x0b, 0x1fff);
-+		bt->il_vfrontporch = hdmi_read16(state, 0x2c, 0x3fff) / 2;
-+		bt->il_vsync = hdmi_read16(state, 0x30, 0x3fff) / 2;
-+		bt->il_vbackporch = hdmi_read16(state, 0x34, 0x3fff) / 2;
-+	}
-+
-+	adv748x_fill_optional_dv_timings(timings);
-+
-+	if (!adv748x_hdmi_have_signal(state)) {
-+		adv_info(state, "HDMI signal lost during readout\n");
-+		return -ENOLINK;
-+	}
-+
-+	/*
-+	 * TODO: No interrupt handling is implemented yet.
-+	 * There should be an IRQ when a cable is plugged and a the new
-+	 * timings figured out and stored to state. This the next best thing
-+	 */
-+	hdmi->timings = *timings;
-+
-+	adv_dbg(state, "HDMI %dx%d%c clock: %llu Hz pol: %x "
-+		"hfront: %d hsync: %d hback: %d "
-+		"vfront: %d vsync: %d vback: %d "
-+		"il_vfron: %d il_vsync: %d il_vback: %d\n",
-+		bt->width, bt->height,
-+		bt->interlaced == V4L2_DV_INTERLACED ? 'i' : 'p',
-+		bt->pixelclock, bt->polarities,
-+		bt->hfrontporch, bt->hsync, bt->hbackporch,
-+		bt->vfrontporch, bt->vsync, bt->vbackporch,
-+		bt->il_vfrontporch, bt->il_vsync, bt->il_vbackporch);
-+
-+	return 0;
-+}
-+
-+static int adv748x_hdmi_g_input_status(struct v4l2_subdev *sd, u32 *status)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+
-+	mutex_lock(&state->mutex);
-+
-+	*status = adv748x_hdmi_have_signal(state) ? 0 : V4L2_IN_ST_NO_SIGNAL;
-+
-+	mutex_unlock(&state->mutex);
-+
-+	return 0;
-+}
-+
-+static int adv748x_hdmi_s_stream(struct v4l2_subdev *sd, int enable)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+	int ret;
-+
-+	mutex_lock(&state->mutex);
-+
-+	ret = adv748x_txa_power(state, enable);
-+	if (ret)
-+		goto error;
-+
-+	if (adv748x_hdmi_have_signal(state))
-+		adv_dbg(state, "Detected HDMI signal\n");
-+	else
-+		adv_info(state, "Couldn't detect HDMI video signal\n");
-+
-+error:
-+	mutex_unlock(&state->mutex);
-+	return ret;
-+}
-+
-+static int adv748x_hdmi_g_pixelaspect(struct v4l2_subdev *sd,
-+				      struct v4l2_fract *aspect)
-+{
-+	aspect->numerator = 1;
-+	aspect->denominator = 1;
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_video_ops adv748x_video_ops_hdmi = {
-+	.s_dv_timings = adv748x_hdmi_s_dv_timings,
-+	.g_dv_timings = adv748x_hdmi_g_dv_timings,
-+	.query_dv_timings = adv748x_hdmi_query_dv_timings,
-+	.g_input_status = adv748x_hdmi_g_input_status,
-+	.s_stream = adv748x_hdmi_s_stream,
-+	.g_pixelaspect = adv748x_hdmi_g_pixelaspect,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_pad_ops
-+ */
-+
-+static int adv748x_hdmi_enum_mbus_code(struct v4l2_subdev *sd,
-+				  struct v4l2_subdev_pad_config *cfg,
-+				  struct v4l2_subdev_mbus_code_enum *code)
-+{
-+	if (code->index != 0)
-+		return -EINVAL;
-+
-+	code->code = MEDIA_BUS_FMT_RGB888_1X24;
-+
-+	return 0;
-+}
-+
-+static int adv748x_hdmi_get_pad_format(struct v4l2_subdev *sd,
-+				  struct v4l2_subdev_pad_config *cfg,
-+				  struct v4l2_subdev_format *format)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+
-+	adv748x_hdmi_fill_format(hdmi, &format->format);
-+
-+	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		struct v4l2_mbus_framefmt *fmt;
-+
-+		fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
-+		format->format.code = fmt->code;
-+	}
-+
-+	return 0;
-+}
-+
-+static int adv748x_hdmi_set_pad_format(struct v4l2_subdev *sd,
-+				       struct v4l2_subdev_pad_config *cfg,
-+				       struct v4l2_subdev_format *format)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+
-+	adv748x_hdmi_fill_format(hdmi, &format->format);
-+
-+	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		struct v4l2_mbus_framefmt *fmt;
-+
-+		fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
-+		fmt->code = format->format.code;
-+	}
-+
-+	return 0;
-+}
-+
-+static bool adv748x_hdmi_check_dv_timings(const struct v4l2_dv_timings *timings,
-+					  void *hdl)
-+{
-+	const struct adv748x_hdmi_video_standards *stds =
-+		adv748x_hdmi_video_standards;
-+	unsigned int i;
-+
-+	for (i = 0; stds[i].timings.bt.width; i++)
-+		if (v4l2_match_dv_timings(timings, &stds[i].timings, 0, false))
-+			return true;
-+
-+	return false;
-+}
-+
-+static int adv748x_hdmi_enum_dv_timings(struct v4l2_subdev *sd,
-+					struct v4l2_enum_dv_timings *timings)
-+{
-+	return v4l2_enum_dv_timings_cap(timings, &adv748x_hdmi_timings_cap,
-+					adv748x_hdmi_check_dv_timings, NULL);
-+}
-+
-+static int adv748x_hdmi_dv_timings_cap(struct v4l2_subdev *sd,
-+				       struct v4l2_dv_timings_cap *cap)
-+{
-+	*cap = adv748x_hdmi_timings_cap;
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_pad_ops adv748x_pad_ops_hdmi = {
-+	.enum_mbus_code = adv748x_hdmi_enum_mbus_code,
-+	.set_fmt = adv748x_hdmi_set_pad_format,
-+	.get_fmt = adv748x_hdmi_get_pad_format,
-+	.dv_timings_cap = adv748x_hdmi_dv_timings_cap,
-+	.enum_dv_timings = adv748x_hdmi_enum_dv_timings,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * v4l2_subdev_ops
-+ */
-+
-+static const struct v4l2_subdev_ops adv748x_ops_hdmi = {
-+	.video = &adv748x_video_ops_hdmi,
-+	.pad = &adv748x_pad_ops_hdmi,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Controls
-+ */
-+
-+/* Contrast Control */
-+#define ADV748X_HDMI_CON_REG	0x3a	/* Contrast (unsigned) */
-+#define ADV748X_HDMI_CON_MIN	0	/* Minimum contrast */
-+#define ADV748X_HDMI_CON_DEF	128	/* Default */
-+#define ADV748X_HDMI_CON_MAX	255	/* Maximum contrast */
-+
-+/* Saturation Control */
-+#define ADV748X_HDMI_SAT_REG	0x3b	/* Saturation (unsigned) */
-+#define ADV748X_HDMI_SAT_MIN	0	/* Minimum saturation */
-+#define ADV748X_HDMI_SAT_DEF	128	/* Default */
-+#define ADV748X_HDMI_SAT_MAX	255	/* Maximum saturation */
-+
-+/* Brightness Control */
-+#define ADV748X_HDMI_BRI_REG	0x3c	/* Brightness (signed) */
-+#define ADV748X_HDMI_BRI_MIN	-128	/* Luma is -512d */
-+#define ADV748X_HDMI_BRI_DEF	0	/* Luma is 0 */
-+#define ADV748X_HDMI_BRI_MAX	127	/* Luma is 508d */
-+
-+/* Hue Control */
-+#define ADV748X_HDMI_HUE_REG	0x3d	/* Hue (unsigned) */
-+#define ADV748X_HDMI_HUE_MIN	0	/* -90 degree */
-+#define ADV748X_HDMI_HUE_DEF	0	/* -90 degree */
-+#define ADV748X_HDMI_HUE_MAX	255	/* +90 degree */
-+
-+/* Video adjustment register */
-+#define ADV748X_HDMI_VID_ADJ_REG		0x3e
-+/* Video adjustment mask */
-+#define ADV748X_HDMI_VID_ADJ_MASK		0x7F
-+/* Enable color controls */
-+#define ADV748X_HDMI_VID_ADJ_ENABLE	0x80
-+
-+static int adv748x_hdmi_s_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_ctrl_to_hdmi(ctrl);
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+	int ret;
-+
-+	/* Enable video adjustment first */
-+	ret = cp_read(state, ADV748X_HDMI_VID_ADJ_REG);
-+	if (ret < 0)
-+		return ret;
-+	ret |= ADV748X_HDMI_VID_ADJ_ENABLE;
-+
-+	ret = cp_write(state, ADV748X_HDMI_VID_ADJ_REG, ret);
-+	if (ret < 0)
-+		return ret;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_BRIGHTNESS:
-+		if (ctrl->val < ADV748X_HDMI_BRI_MIN ||
-+		    ctrl->val > ADV748X_HDMI_BRI_MAX)
-+			return -ERANGE;
-+
-+		ret = cp_write(state, ADV748X_HDMI_BRI_REG, ctrl->val);
-+		break;
-+	case V4L2_CID_HUE:
-+		if (ctrl->val < ADV748X_HDMI_HUE_MIN ||
-+		    ctrl->val > ADV748X_HDMI_HUE_MAX)
-+			return -ERANGE;
-+
-+		ret = cp_write(state, ADV748X_HDMI_HUE_REG, ctrl->val);
-+		break;
-+	case V4L2_CID_CONTRAST:
-+		if (ctrl->val < ADV748X_HDMI_CON_MIN ||
-+		    ctrl->val > ADV748X_HDMI_CON_MAX)
-+			return -ERANGE;
-+
-+		ret = cp_write(state, ADV748X_HDMI_CON_REG, ctrl->val);
-+		break;
-+	case V4L2_CID_SATURATION:
-+		if (ctrl->val < ADV748X_HDMI_SAT_MIN ||
-+		    ctrl->val > ADV748X_HDMI_SAT_MAX)
-+			return -ERANGE;
-+
-+		ret = cp_write(state, ADV748X_HDMI_SAT_REG, ctrl->val);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int adv748x_hdmi_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_ctrl_to_hdmi(ctrl);
-+	unsigned int width, height, fps;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_PIXEL_RATE:
-+	{
-+		struct v4l2_dv_timings timings;
-+		struct v4l2_bt_timings *bt = &timings.bt;
-+
-+		adv748x_hdmi_query_dv_timings(&hdmi->sd, &timings);
-+
-+		width = bt->width;
-+		height = bt->height;
-+		fps = DIV_ROUND_CLOSEST(bt->pixelclock,
-+					V4L2_DV_BT_FRAME_WIDTH(bt) *
-+					V4L2_DV_BT_FRAME_HEIGHT(bt));
-+
-+		*ctrl->p_new.p_s64 = width * height * fps;
-+		break;
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ctrl_ops adv748x_hdmi_ctrl_ops = {
-+	.s_ctrl = adv748x_hdmi_s_ctrl,
-+	.g_volatile_ctrl = adv748x_hdmi_g_volatile_ctrl,
-+};
-+
-+static int adv748x_hdmi_init_controls(struct adv748x_hdmi *hdmi)
-+{
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+	struct v4l2_ctrl *ctrl;
-+
-+	v4l2_ctrl_handler_init(&hdmi->ctrl_hdl, 5);
-+
-+	/* Use our mutex for the controls */
-+	hdmi->ctrl_hdl.lock = &state->mutex;
-+
-+	v4l2_ctrl_new_std(&hdmi->ctrl_hdl, &adv748x_hdmi_ctrl_ops,
-+			  V4L2_CID_BRIGHTNESS, ADV748X_HDMI_BRI_MIN,
-+			  ADV748X_HDMI_BRI_MAX, 1, ADV748X_HDMI_BRI_DEF);
-+	v4l2_ctrl_new_std(&hdmi->ctrl_hdl, &adv748x_hdmi_ctrl_ops,
-+			  V4L2_CID_CONTRAST, ADV748X_HDMI_CON_MIN,
-+			  ADV748X_HDMI_CON_MAX, 1, ADV748X_HDMI_CON_DEF);
-+	v4l2_ctrl_new_std(&hdmi->ctrl_hdl, &adv748x_hdmi_ctrl_ops,
-+			  V4L2_CID_SATURATION, ADV748X_HDMI_SAT_MIN,
-+			  ADV748X_HDMI_SAT_MAX, 1, ADV748X_HDMI_SAT_DEF);
-+	v4l2_ctrl_new_std(&hdmi->ctrl_hdl, &adv748x_hdmi_ctrl_ops,
-+			  V4L2_CID_HUE, ADV748X_HDMI_HUE_MIN,
-+			  ADV748X_HDMI_HUE_MAX, 1, ADV748X_HDMI_HUE_DEF);
-+	ctrl = v4l2_ctrl_new_std(&hdmi->ctrl_hdl, &adv748x_hdmi_ctrl_ops,
-+				 V4L2_CID_PIXEL_RATE, 1, INT_MAX, 1, 1);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-+
-+	hdmi->sd.ctrl_handler = &hdmi->ctrl_hdl;
-+	if (hdmi->ctrl_hdl.error) {
-+		v4l2_ctrl_handler_free(&hdmi->ctrl_hdl);
-+		return hdmi->ctrl_hdl.error;
-+	}
-+
-+	return v4l2_ctrl_handler_setup(&hdmi->ctrl_hdl);
-+}
-+
-+int adv748x_hdmi_probe(struct adv748x_hdmi *hdmi)
-+{
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+	static const struct v4l2_dv_timings cea720x480 =
-+		V4L2_DV_BT_CEA_720X480I59_94;
-+	int ret;
-+
-+	hdmi->timings = cea720x480;
-+
-+	adv748x_subdev_init(&hdmi->sd, state, &adv748x_ops_hdmi, "hdmi");
-+
-+	hdmi->pads[ADV748X_HDMI_SINK].flags = MEDIA_PAD_FL_SINK;
-+	hdmi->pads[ADV748X_HDMI_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
-+
-+	ret = media_entity_pads_init(&hdmi->sd.entity,
-+				     ADV748X_HDMI_NR_PADS, hdmi->pads);
-+	if (ret)
-+		return ret;
-+
-+	ret = adv748x_hdmi_init_controls(hdmi);
-+	if (ret)
-+		goto err_free_media;
-+
-+	return 0;
-+
-+err_free_media:
-+	media_entity_cleanup(&hdmi->sd.entity);
-+
-+	return ret;
-+}
-+
-+void adv748x_hdmi_remove(struct adv748x_hdmi *hdmi)
-+{
-+	v4l2_device_unregister_subdev(&hdmi->sd);
-+	media_entity_cleanup(&hdmi->sd.entity);
-+	v4l2_ctrl_handler_free(&hdmi->ctrl_hdl);
-+}
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-new file mode 100644
-index 000000000000..af6c2a5278f6
---- /dev/null
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -0,0 +1,218 @@
-+/*
-+ * Driver for Analog Devices ADV748X video decoder and HDMI receiver
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * Authors:
-+ *	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-+ *	Niklas Söderlund <niklas.soderlund@ragnatech.se>
-+ *	Kieran Bingham <kieran.bingham@ideasonboard.com>
-+ *
-+ * The ADV748x range of receivers have the following configurations:
-+ *
-+ *                  Analog   HDMI  MHL  4-Lane  1-Lane
-+ *                    In      In         CSI     CSI
-+ *       ADV7480               X    X     X
-+ *       ADV7481      X        X    X     X       X
-+ *       ADV7482      X        X          X       X
-+ */
-+
-+#include <linux/i2c.h>
-+
-+#ifndef _ADV748X_H_
-+#define _ADV748X_H_
-+
-+/* I2C slave addresses */
-+#define ADV748X_I2C_IO			0x70	/* IO Map */
-+#define ADV748X_I2C_DPLL		0x26	/* DPLL Map */
-+#define ADV748X_I2C_CP			0x22	/* CP Map */
-+#define ADV748X_I2C_HDMI		0x34	/* HDMI Map */
-+#define ADV748X_I2C_EDID		0x36	/* EDID Map */
-+#define ADV748X_I2C_REPEATER		0x32	/* HDMI RX Repeater Map */
-+#define ADV748X_I2C_INFOFRAME		0x31	/* HDMI RX InfoFrame Map */
-+#define ADV748X_I2C_CEC			0x41	/* CEC Map */
-+#define ADV748X_I2C_SDP			0x79	/* SDP Map */
-+#define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
-+#define ADV748X_I2C_TXA			0x4A	/* CSI-TXA Map */
-+#define ADV748X_I2C_WAIT		0xFE	/* Wait x msec */
-+#define ADV748X_I2C_EOR			0xFF	/* End Mark */
-+
-+/**
-+ * enum adv748x_ports - Device tree port number definitions
-+ *
-+ * The ADV748X ports define the mapping between subdevices
-+ * and the device tree specification
-+ */
-+enum adv748x_ports {
-+	ADV748X_PORT_HDMI = 0,
-+	ADV748X_PORT_AIN1 = 1,
-+	ADV748X_PORT_AIN2 = 2,
-+	ADV748X_PORT_AIN3 = 3,
-+	ADV748X_PORT_AIN4 = 4,
-+	ADV748X_PORT_AIN5 = 5,
-+	ADV748X_PORT_AIN6 = 6,
-+	ADV748X_PORT_AIN7 = 7,
-+	ADV748X_PORT_AIN8 = 8,
-+	ADV748X_PORT_TTL = 9,
-+	ADV748X_PORT_TXA = 10,
-+	ADV748X_PORT_TXB = 11,
-+	ADV748X_PORT_MAX = 12,
-+};
-+
-+enum adv748x_csi2_pads {
-+	ADV748X_CSI2_SINK,
-+	ADV748X_CSI2_SOURCE,
-+	ADV748X_CSI2_NR_PADS,
-+};
-+
-+/* CSI2 transmitters can have 3 internal connections, HDMI/AFE/TTL */
-+#define ADV748X_CSI2_MAX_SUBDEVS 3
-+
-+struct adv748x_csi2 {
-+	struct adv748x_state *state;
-+	struct v4l2_mbus_framefmt format;
-+
-+	struct media_pad pads[ADV748X_CSI2_NR_PADS];
-+	struct v4l2_ctrl_handler ctrl_hdl;
-+	struct v4l2_subdev sd;
-+
-+	/* Incremental async - not used now */
-+	struct v4l2_async_subdev subdevs[ADV748X_CSI2_MAX_SUBDEVS];
-+	struct v4l2_async_subdev *subdev_p[ADV748X_CSI2_MAX_SUBDEVS];
-+	struct v4l2_async_notifier notifier;
-+};
-+
-+#define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
-+#define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
-+
-+enum adv748x_hdmi_pads {
-+	ADV748X_HDMI_SINK,
-+	ADV748X_HDMI_SOURCE,
-+	ADV748X_HDMI_NR_PADS,
-+};
-+
-+struct adv748x_hdmi {
-+	struct media_pad pads[ADV748X_HDMI_NR_PADS];
-+	struct v4l2_ctrl_handler ctrl_hdl;
-+	struct v4l2_subdev sd;
-+
-+	struct v4l2_dv_timings timings;
-+};
-+
-+#define adv748x_ctrl_to_hdmi(ctrl) \
-+	container_of(ctrl->handler, struct adv748x_hdmi, ctrl_hdl)
-+#define adv748x_sd_to_hdmi(sd) container_of(sd, struct adv748x_hdmi, sd)
-+
-+enum adv748x_afe_pads {
-+	ADV748X_AFE_SINK_AIN0,
-+	ADV748X_AFE_SINK_AIN1,
-+	ADV748X_AFE_SINK_AIN2,
-+	ADV748X_AFE_SINK_AIN3,
-+	ADV748X_AFE_SINK_AIN4,
-+	ADV748X_AFE_SINK_AIN5,
-+	ADV748X_AFE_SINK_AIN6,
-+	ADV748X_AFE_SINK_AIN7,
-+	ADV748X_AFE_SOURCE,
-+	ADV748X_AFE_NR_PADS,
-+};
-+
-+struct adv748x_afe {
-+	struct media_pad pads[ADV748X_AFE_NR_PADS];
-+	struct v4l2_ctrl_handler ctrl_hdl;
-+	struct v4l2_subdev sd;
-+
-+	bool streaming;
-+	v4l2_std_id curr_norm;
-+};
-+
-+#define adv748x_ctrl_to_afe(ctrl) \
-+	container_of(ctrl->handler, struct adv748x_afe, ctrl_hdl)
-+#define adv748x_sd_to_afe(sd) container_of(sd, struct adv748x_afe, sd)
-+
-+/**
-+ * struct adv748x_state - State of ADV748X
-+ * @dev:		(OF) device
-+ * @client:		I2C client
-+ * @mutex:		protect global state
-+ *
-+ * @endpoints:		parsed device node endpoints for each port
-+ *
-+ * @hdmi:		state of HDMI receiver context
-+ * @sdp:		state of AFE receiver context
-+ * @txa:		state of TXA transmitter context
-+ * @txb:		state of TXB transmitter context
-+ */
-+struct adv748x_state {
-+	struct device *dev;
-+	struct i2c_client *client;
-+	struct mutex mutex;
-+
-+	struct device_node *endpoints[ADV748X_PORT_MAX];
-+
-+	struct adv748x_hdmi hdmi;
-+	struct adv748x_afe afe;
-+
-+	struct adv748x_csi2 txa;
-+	struct adv748x_csi2 txb;
-+};
-+
-+#define adv748x_hdmi_to_state(h) container_of(h, struct adv748x_state, hdmi)
-+#define adv748x_afe_to_state(a) container_of(a, struct adv748x_state, afe)
-+
-+#define adv_err(a, fmt, arg...)	dev_err(a->dev, fmt, ##arg)
-+#define adv_info(a, fmt, arg...) dev_info(a->dev, fmt, ##arg)
-+#define adv_dbg(a, fmt, arg...)	dev_dbg(a->dev, fmt, ##arg)
-+
-+/* Register handling */
-+int adv748x_read(struct adv748x_state *state, u8 addr, u8 reg);
-+int adv748x_write(struct adv748x_state *state, u8 addr, u8 reg, u8 value);
-+
-+#define io_read(s, r) adv748x_read(s, ADV748X_I2C_IO, r)
-+#define io_write(s, r, v) adv748x_write(s, ADV748X_I2C_IO, r, v)
-+#define io_clrset(s, r, m, v) io_write(s, r, (io_read(s, r) & ~m) | v)
-+
-+#define hdmi_read(s, r) adv748x_read(s, ADV748X_I2C_HDMI, r)
-+#define hdmi_read16(s, r, m) (((hdmi_read(s, r) << 8) | hdmi_read(s, r+1)) & m)
-+#define hdmi_write(s, r, v) adv748x_write(s, ADV748X_I2C_HDMI, r, v)
-+#define hdmi_clrset(s, r, m, v) hdmi_write(s, r, (hdmi_read(s, r) & ~m) | v)
-+
-+#define sdp_read(s, r) adv748x_read(s, ADV748X_I2C_SDP, r)
-+#define sdp_write(s, r, v) adv748x_write(s, ADV748X_I2C_SDP, r, v)
-+#define sdp_clrset(s, r, m, v) sdp_write(s, r, (sdp_read(s, r) & ~m) | v)
-+
-+#define cp_read(s, r) adv748x_read(s, ADV748X_I2C_CP, r)
-+#define cp_write(s, r, v) adv748x_write(s, ADV748X_I2C_CP, r, v)
-+#define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
-+
-+#define txa_read(s, r) adv748x_read(s, ADV748X_I2C_TXA, r)
-+#define txa_write(s, r, v) adv748x_write(s, ADV748X_I2C_TXA, r, v)
-+#define txa_clrset(s, r, m, v) txa_write(s, r, (txa_read(s, r) & ~m) | v)
-+
-+#define txb_read(s, r) adv748x_read(s, ADV748X_I2C_TXB, r)
-+#define txb_write(s, r, v) adv748x_write(s, ADV748X_I2C_TXB, r, v)
-+#define txb_clrset(s, r, m, v) txb_write(s, r, (txb_read(s, r) & ~m) | v)
-+
-+void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
-+		const struct v4l2_subdev_ops *ops, const char *ident);
-+
-+int adv748x_register_subdevs(struct adv748x_state *state,
-+			     struct v4l2_device *v4l2_dev);
-+
-+int adv748x_txa_power(struct adv748x_state *state, bool on);
-+int adv748x_txb_power(struct adv748x_state *state, bool on);
-+
-+int adv748x_afe_probe(struct adv748x_afe *afe);
-+void adv748x_afe_remove(struct adv748x_afe *afe);
-+
-+int adv748x_csi2_probe(struct adv748x_state *state, struct adv748x_csi2 *tx);
-+void adv748x_csi2_remove(struct adv748x_csi2 *tx);
-+
-+int adv748x_hdmi_probe(struct adv748x_hdmi *hdmi);
-+void adv748x_hdmi_remove(struct adv748x_hdmi *hdmi);
-+
-+#endif /* _ADV748X_H_ */
+@@ -212,7 +212,7 @@
+ 		gpio-ranges = <&pfc 0 32 30>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7790_CLK_GPIO1>;
++		clocks = <&cpg CPG_MOD 911>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -225,7 +225,7 @@
+ 		gpio-ranges = <&pfc 0 64 30>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7790_CLK_GPIO2>;
++		clocks = <&cpg CPG_MOD 910>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -238,7 +238,7 @@
+ 		gpio-ranges = <&pfc 0 96 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7790_CLK_GPIO3>;
++		clocks = <&cpg CPG_MOD 909>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -251,7 +251,7 @@
+ 		gpio-ranges = <&pfc 0 128 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7790_CLK_GPIO4>;
++		clocks = <&cpg CPG_MOD 908>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -264,7 +264,7 @@
+ 		gpio-ranges = <&pfc 0 160 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7790_CLK_GPIO5>;
++		clocks = <&cpg CPG_MOD 907>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -274,7 +274,7 @@
+ 				"renesas,rcar-thermal";
+ 		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp5_clks R8A7790_CLK_THERMAL>;
++		clocks = <&cpg CPG_MOD 522>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#thermal-sensor-cells = <0>;
+ 	};
+@@ -292,7 +292,7 @@
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7790_CLK_CMT0>;
++		clocks = <&cpg CPG_MOD 124>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 
+@@ -312,7 +312,7 @@
+ 			     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_CMT1>;
++		clocks = <&cpg CPG_MOD 329>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 
+@@ -330,7 +330,7 @@
+ 			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp4_clks R8A7790_CLK_IRQC>;
++		clocks = <&cpg CPG_MOD 407>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -358,7 +358,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12", "ch13", "ch14";
+-		clocks = <&mstp2_clks R8A7790_CLK_SYS_DMAC0>;
++		clocks = <&cpg CPG_MOD 219>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -389,7 +389,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12", "ch13", "ch14";
+-		clocks = <&mstp2_clks R8A7790_CLK_SYS_DMAC1>;
++		clocks = <&cpg CPG_MOD 218>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -418,7 +418,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12";
+-		clocks = <&mstp5_clks R8A7790_CLK_AUDIO_DMAC0>;
++		clocks = <&cpg CPG_MOD 502>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -447,7 +447,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12";
+-		clocks = <&mstp5_clks R8A7790_CLK_AUDIO_DMAC1>;
++		clocks = <&cpg CPG_MOD 501>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -460,7 +460,7 @@
+ 		interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "ch0", "ch1";
+-		clocks = <&mstp3_clks R8A7790_CLK_USBDMAC0>;
++		clocks = <&cpg CPG_MOD 330>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <2>;
+@@ -472,7 +472,7 @@
+ 		interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
+ 			      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "ch0", "ch1";
+-		clocks = <&mstp3_clks R8A7790_CLK_USBDMAC1>;
++		clocks = <&cpg CPG_MOD 331>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <2>;
+@@ -484,7 +484,7 @@
+ 		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6508000 0 0x40>;
+ 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_I2C0>;
++		clocks = <&cpg CPG_MOD 931>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <110>;
+ 		status = "disabled";
+@@ -496,7 +496,7 @@
+ 		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6518000 0 0x40>;
+ 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_I2C1>;
++		clocks = <&cpg CPG_MOD 930>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+@@ -508,7 +508,7 @@
+ 		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6530000 0 0x40>;
+ 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_I2C2>;
++		clocks = <&cpg CPG_MOD 929>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+@@ -520,7 +520,7 @@
+ 		compatible = "renesas,i2c-r8a7790", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6540000 0 0x40>;
+ 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_I2C3>;
++		clocks = <&cpg CPG_MOD 928>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <110>;
+ 		status = "disabled";
+@@ -533,7 +533,7 @@
+ 			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
++		clocks = <&cpg CPG_MOD 318>;
+ 		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
+ 		       <&dmac1 0x61>, <&dmac1 0x62>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -548,7 +548,7 @@
+ 			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_IIC1>;
++		clocks = <&cpg CPG_MOD 323>;
+ 		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
+ 		       <&dmac1 0x65>, <&dmac1 0x66>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -563,7 +563,7 @@
+ 			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6520000 0 0x425>;
+ 		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_IIC2>;
++		clocks = <&cpg CPG_MOD 300>;
+ 		dmas = <&dmac0 0x69>, <&dmac0 0x6a>,
+ 		       <&dmac1 0x69>, <&dmac1 0x6a>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -578,7 +578,7 @@
+ 			     "renesas,rmobile-iic";
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_IICDVFS>;
++		clocks = <&cpg CPG_MOD 926>;
+ 		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
+ 		       <&dmac1 0x77>, <&dmac1 0x78>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -590,7 +590,7 @@
+ 		compatible = "renesas,mmcif-r8a7790", "renesas,sh-mmcif";
+ 		reg = <0 0xee200000 0 0x80>;
+ 		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_MMCIF0>;
++		clocks = <&cpg CPG_MOD 315>;
+ 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
+ 		       <&dmac1 0xd1>, <&dmac1 0xd2>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -604,7 +604,7 @@
+ 		compatible = "renesas,mmcif-r8a7790", "renesas,sh-mmcif";
+ 		reg = <0 0xee220000 0 0x80>;
+ 		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
++		clocks = <&cpg CPG_MOD 305>;
+ 		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>,
+ 		       <&dmac1 0xe1>, <&dmac1 0xe2>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -623,7 +623,7 @@
+ 		compatible = "renesas,sdhi-r8a7790";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
++		clocks = <&cpg CPG_MOD 314>;
+ 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
+ 		       <&dmac1 0xcd>, <&dmac1 0xce>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -636,7 +636,7 @@
+ 		compatible = "renesas,sdhi-r8a7790";
+ 		reg = <0 0xee120000 0 0x328>;
+ 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_SDHI1>;
++		clocks = <&cpg CPG_MOD 313>;
+ 		dmas = <&dmac0 0xc9>, <&dmac0 0xca>,
+ 		       <&dmac1 0xc9>, <&dmac1 0xca>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -649,7 +649,7 @@
+ 		compatible = "renesas,sdhi-r8a7790";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
++		clocks = <&cpg CPG_MOD 312>;
+ 		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
+ 		       <&dmac1 0xc1>, <&dmac1 0xc2>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -662,7 +662,7 @@
+ 		compatible = "renesas,sdhi-r8a7790";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_SDHI3>;
++		clocks = <&cpg CPG_MOD 311>;
+ 		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
+ 		       <&dmac1 0xd3>, <&dmac1 0xd4>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -676,7 +676,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c40000 0 64>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_SCIFA0>;
++		clocks = <&cpg CPG_MOD 204>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
+ 		       <&dmac1 0x21>, <&dmac1 0x22>;
+@@ -690,7 +690,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c50000 0 64>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_SCIFA1>;
++		clocks = <&cpg CPG_MOD 203>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
+ 		       <&dmac1 0x25>, <&dmac1 0x26>;
+@@ -704,7 +704,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c60000 0 64>;
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_SCIFA2>;
++		clocks = <&cpg CPG_MOD 202>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
+ 		       <&dmac1 0x27>, <&dmac1 0x28>;
+@@ -718,7 +718,7 @@
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_SCIFB0>;
++		clocks = <&cpg CPG_MOD 206>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
+ 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
+@@ -732,7 +732,7 @@
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_SCIFB1>;
++		clocks = <&cpg CPG_MOD 207>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
+ 		       <&dmac1 0x19>, <&dmac1 0x1a>;
+@@ -746,7 +746,7 @@
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_SCIFB2>;
++		clocks = <&cpg CPG_MOD 216>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
+ 		       <&dmac1 0x1d>, <&dmac1 0x1e>;
+@@ -760,7 +760,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6e60000 0 64>;
+ 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_SCIF0>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 721>, <&cpg CPG_CORE R8A7790_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
+@@ -775,7 +775,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6e68000 0 64>;
+ 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_SCIF1>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 720>, <&cpg CPG_CORE R8A7790_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
+@@ -790,7 +790,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6e56000 0 64>;
+ 		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_SCIF2>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 310>, <&cpg CPG_CORE R8A7790_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
+@@ -805,7 +805,7 @@
+ 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c0000 0 96>;
+ 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_HSCIF0>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 717>, <&cpg CPG_CORE R8A7790_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
+@@ -820,7 +820,7 @@
+ 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c8000 0 96>;
+ 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_HSCIF1>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 716>, <&cpg CPG_CORE R8A7790_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
+@@ -834,7 +834,7 @@
+ 		compatible = "renesas,ether-r8a7790";
+ 		reg = <0 0xee700000 0 0x400>;
+ 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_ETHER>;
++		clocks = <&cpg CPG_MOD 813>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		phy-mode = "rmii";
+ 		#address-cells = <1>;
+@@ -847,7 +847,7 @@
+ 			     "renesas,etheravb-rcar-gen2";
+ 		reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
+ 		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_ETHERAVB>;
++		clocks = <&cpg CPG_MOD 812>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -858,7 +858,7 @@
+ 		compatible = "renesas,sata-r8a7790";
+ 		reg = <0 0xee300000 0 0x2000>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_SATA0>;
++		clocks = <&cpg CPG_MOD 815>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -867,7 +867,7 @@
+ 		compatible = "renesas,sata-r8a7790";
+ 		reg = <0 0xee500000 0 0x2000>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_SATA1>;
++		clocks = <&cpg CPG_MOD 814>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -876,7 +876,7 @@
+ 		compatible = "renesas,usbhs-r8a7790", "renesas,rcar-gen2-usbhs";
+ 		reg = <0 0xe6590000 0 0x100>;
+ 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_HSUSB>;
++		clocks = <&cpg CPG_MOD 704>;
+ 		dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
+ 		       <&usb_dmac1 0>, <&usb_dmac1 1>;
+ 		dma-names = "ch0", "ch1", "ch2", "ch3";
+@@ -893,7 +893,7 @@
+ 		reg = <0 0xe6590100 0 0x100>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		clocks = <&mstp7_clks R8A7790_CLK_HSUSB>;
++		clocks = <&cpg CPG_MOD 704>;
+ 		clock-names = "usbhs";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+@@ -912,7 +912,7 @@
+ 		compatible = "renesas,vin-r8a7790";
+ 		reg = <0 0xe6ef0000 0 0x1000>;
+ 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN0>;
++		clocks = <&cpg CPG_MOD 811>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -921,7 +921,7 @@
+ 		compatible = "renesas,vin-r8a7790";
+ 		reg = <0 0xe6ef1000 0 0x1000>;
+ 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN1>;
++		clocks = <&cpg CPG_MOD 810>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -930,7 +930,7 @@
+ 		compatible = "renesas,vin-r8a7790";
+ 		reg = <0 0xe6ef2000 0 0x1000>;
+ 		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN2>;
++		clocks = <&cpg CPG_MOD 809>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -939,7 +939,7 @@
+ 		compatible = "renesas,vin-r8a7790";
+ 		reg = <0 0xe6ef3000 0 0x1000>;
+ 		interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN3>;
++		clocks = <&cpg CPG_MOD 808>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -948,7 +948,7 @@
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe920000 0 0x8000>;
+ 		interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7790_CLK_VSP1_R>;
++		clocks = <&cpg CPG_MOD 130>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -956,7 +956,7 @@
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe928000 0 0x8000>;
+ 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7790_CLK_VSP1_S>;
++		clocks = <&cpg CPG_MOD 131>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -964,7 +964,7 @@
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe930000 0 0x8000>;
+ 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU0>;
++		clocks = <&cpg CPG_MOD 128>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -972,7 +972,7 @@
+ 		compatible = "renesas,vsp1";
+ 		reg = <0 0xfe938000 0 0x8000>;
+ 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU1>;
++		clocks = <&cpg CPG_MOD 127>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -985,11 +985,9 @@
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_DU0>,
+-			 <&mstp7_clks R8A7790_CLK_DU1>,
+-			 <&mstp7_clks R8A7790_CLK_DU2>,
+-			 <&mstp7_clks R8A7790_CLK_LVDS0>,
+-			 <&mstp7_clks R8A7790_CLK_LVDS1>;
++		clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
++			 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 726>,
++			 <&cpg CPG_MOD 725>;
+ 		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
+ 		status = "disabled";
+ 
+@@ -1019,8 +1017,8 @@
+ 		compatible = "renesas,can-r8a7790", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e80000 0 0x1000>;
+ 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_RCAN0>,
+-			 <&cpg_clocks R8A7790_CLK_RCAN>, <&can_clk>;
++		clocks = <&cpg CPG_MOD 916>, <&cpg CPG_CORE R8A7790_CLK_RCAN>,
++			 <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+@@ -1030,8 +1028,8 @@
+ 		compatible = "renesas,can-r8a7790", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e88000 0 0x1000>;
+ 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_RCAN1>,
+-			 <&cpg_clocks R8A7790_CLK_RCAN>, <&can_clk>;
++		clocks = <&cpg CPG_MOD 915>, <&cpg CPG_CORE R8A7790_CLK_RCAN>,
++			 <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+@@ -1041,7 +1039,7 @@
+ 		compatible = "renesas,jpu-r8a7790", "renesas,rcar-gen2-jpu";
+ 		reg = <0 0xfe980000 0 0x10300>;
+ 		interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7790_CLK_JPU>;
++		clocks = <&cpg CPG_MOD 106>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -1108,376 +1106,14 @@
+ 			clock-frequency = <0>;
+ 		};
+ 
+-		/* Special CPG clocks */
+-		cpg_clocks: cpg_clocks@e6150000 {
+-			compatible = "renesas,r8a7790-cpg-clocks",
+-				     "renesas,rcar-gen2-cpg-clocks";
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a7790-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk &usb_extal_clk>;
+-			#clock-cells = <1>;
+-			clock-output-names = "main", "pll0", "pll1", "pll3",
+-					     "lb", "qspi", "sdh", "sd0", "sd1",
+-					     "z", "rcan", "adsp";
++			clocks = <&extal_clk>, <&usb_extal_clk>;
++			clock-names = "extal", "usb_extal";
++			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
+ 		};
+-
+-		/* Variable factor clocks */
+-		sd2_clk: sd2@e6150078 {
+-			compatible = "renesas,r8a7790-div6-clock", "renesas,cpg-div6-clock";
+-			reg = <0 0xe6150078 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-		sd3_clk: sd3@e615026c {
+-			compatible = "renesas,r8a7790-div6-clock", "renesas,cpg-div6-clock";
+-			reg = <0 0xe615026c 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-		mmc0_clk: mmc0@e6150240 {
+-			compatible = "renesas,r8a7790-div6-clock", "renesas,cpg-div6-clock";
+-			reg = <0 0xe6150240 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-		mmc1_clk: mmc1@e6150244 {
+-			compatible = "renesas,r8a7790-div6-clock", "renesas,cpg-div6-clock";
+-			reg = <0 0xe6150244 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-		ssp_clk: ssp@e6150248 {
+-			compatible = "renesas,r8a7790-div6-clock", "renesas,cpg-div6-clock";
+-			reg = <0 0xe6150248 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-		ssprs_clk: ssprs@e615024c {
+-			compatible = "renesas,r8a7790-div6-clock", "renesas,cpg-div6-clock";
+-			reg = <0 0xe615024c 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-
+-		/* Fixed factor clocks */
+-		pll1_div2_clk: pll1_div2 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <2>;
+-			clock-mult = <1>;
+-		};
+-		z2_clk: z2 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <2>;
+-			clock-mult = <1>;
+-		};
+-		zg_clk: zg {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <3>;
+-			clock-mult = <1>;
+-		};
+-		zx_clk: zx {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <3>;
+-			clock-mult = <1>;
+-		};
+-		zs_clk: zs {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <6>;
+-			clock-mult = <1>;
+-		};
+-		hp_clk: hp {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <12>;
+-			clock-mult = <1>;
+-		};
+-		i_clk: i {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <2>;
+-			clock-mult = <1>;
+-		};
+-		b_clk: b {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <12>;
+-			clock-mult = <1>;
+-		};
+-		p_clk: p {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <24>;
+-			clock-mult = <1>;
+-		};
+-		cl_clk: cl {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <48>;
+-			clock-mult = <1>;
+-		};
+-		m2_clk: m2 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <8>;
+-			clock-mult = <1>;
+-		};
+-		imp_clk: imp {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <4>;
+-			clock-mult = <1>;
+-		};
+-		rclk_clk: rclk {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <(48 * 1024)>;
+-			clock-mult = <1>;
+-		};
+-		oscclk_clk: oscclk {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <(12 * 1024)>;
+-			clock-mult = <1>;
+-		};
+-		zb3_clk: zb3 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL3>;
+-			#clock-cells = <0>;
+-			clock-div = <4>;
+-			clock-mult = <1>;
+-		};
+-		zb3d2_clk: zb3d2 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL3>;
+-			#clock-cells = <0>;
+-			clock-div = <8>;
+-			clock-mult = <1>;
+-		};
+-		ddr_clk: ddr {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7790_CLK_PLL3>;
+-			#clock-cells = <0>;
+-			clock-div = <8>;
+-			clock-mult = <1>;
+-		};
+-		mp_clk: mp {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-			clock-div = <15>;
+-			clock-mult = <1>;
+-		};
+-		cp_clk: cp {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&extal_clk>;
+-			#clock-cells = <0>;
+-			clock-div = <2>;
+-			clock-mult = <1>;
+-		};
+-
+-		/* Gate clocks */
+-		mstp0_clks: mstp0_clks@e6150130 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150130 0 4>, <0 0xe6150030 0 4>;
+-			clocks = <&mp_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <R8A7790_CLK_MSIOF0>;
+-			clock-output-names = "msiof0";
+-		};
+-		mstp1_clks: mstp1_clks@e6150134 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
+-			clocks = <&zs_clk>, <&zs_clk>, <&zs_clk>, <&zs_clk>, <&m2_clk>,
+-				 <&zs_clk>, <&p_clk>, <&zg_clk>, <&zs_clk>, <&zs_clk>,
+-				 <&zs_clk>, <&zs_clk>, <&p_clk>, <&p_clk>, <&rclk_clk>,
+-				 <&cp_clk>, <&zs_clk>, <&zs_clk>, <&zs_clk>, <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_VCP1 R8A7790_CLK_VCP0 R8A7790_CLK_VPC1
+-				R8A7790_CLK_VPC0 R8A7790_CLK_JPU R8A7790_CLK_SSP1
+-				R8A7790_CLK_TMU1 R8A7790_CLK_3DG R8A7790_CLK_2DDMAC
+-				R8A7790_CLK_FDP1_2 R8A7790_CLK_FDP1_1 R8A7790_CLK_FDP1_0
+-				R8A7790_CLK_TMU3 R8A7790_CLK_TMU2 R8A7790_CLK_CMT0
+-				R8A7790_CLK_TMU0 R8A7790_CLK_VSP1_DU1 R8A7790_CLK_VSP1_DU0
+-				R8A7790_CLK_VSP1_R R8A7790_CLK_VSP1_S
+-			>;
+-			clock-output-names =
+-				"vcp1", "vcp0", "vpc1", "vpc0", "jpu", "ssp1",
+-				"tmu1", "3dg", "2ddmac", "fdp1-2", "fdp1-1",
+-				"fdp1-0", "tmu3", "tmu2", "cmt0", "tmu0",
+-				"vsp1-du1", "vsp1-du0", "vsp1-rt", "vsp1-sy";
+-		};
+-		mstp2_clks: mstp2_clks@e6150138 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
+-			clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>,
+-				 <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>, <&zs_clk>,
+-				 <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_SCIFA2 R8A7790_CLK_SCIFA1 R8A7790_CLK_SCIFA0
+-				R8A7790_CLK_MSIOF2 R8A7790_CLK_SCIFB0 R8A7790_CLK_SCIFB1
+-				R8A7790_CLK_MSIOF1 R8A7790_CLK_MSIOF3 R8A7790_CLK_SCIFB2
+-				R8A7790_CLK_SYS_DMAC1 R8A7790_CLK_SYS_DMAC0
+-			>;
+-			clock-output-names =
+-				"scifa2", "scifa1", "scifa0", "msiof2", "scifb0",
+-				"scifb1", "msiof1", "msiof3", "scifb2",
+-				"sys-dmac1", "sys-dmac0";
+-		};
+-		mstp3_clks: mstp3_clks@e615013c {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
+-			clocks = <&hp_clk>, <&cp_clk>, <&mmc1_clk>, <&p_clk>, <&sd3_clk>,
+-				 <&sd2_clk>, <&cpg_clocks R8A7790_CLK_SD1>, <&cpg_clocks R8A7790_CLK_SD0>, <&mmc0_clk>,
+-				 <&hp_clk>, <&mp_clk>, <&hp_clk>, <&mp_clk>, <&rclk_clk>,
+-				 <&hp_clk>, <&hp_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_IIC2 R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SCIF2 R8A7790_CLK_SDHI3
+-				R8A7790_CLK_SDHI2 R8A7790_CLK_SDHI1 R8A7790_CLK_SDHI0 R8A7790_CLK_MMCIF0
+-				R8A7790_CLK_IIC0 R8A7790_CLK_PCIEC R8A7790_CLK_IIC1 R8A7790_CLK_SSUSB R8A7790_CLK_CMT1
+-				R8A7790_CLK_USBDMAC0 R8A7790_CLK_USBDMAC1
+-			>;
+-			clock-output-names =
+-				"iic2", "tpu0", "mmcif1", "scif2", "sdhi3",
+-				"sdhi2", "sdhi1", "sdhi0", "mmcif0",
+-				"iic0", "pciec", "iic1", "ssusb", "cmt1",
+-				"usbdmac0", "usbdmac1";
+-		};
+-		mstp4_clks: mstp4_clks@e6150140 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
+-			clocks = <&cp_clk>, <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <R8A7790_CLK_IRQC R8A7790_CLK_INTC_SYS>;
+-			clock-output-names = "irqc", "intc-sys";
+-		};
+-		mstp5_clks: mstp5_clks@e6150144 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
+-			clocks = <&hp_clk>, <&hp_clk>, <&cpg_clocks R8A7790_CLK_ADSP>,
+-				 <&extal_clk>, <&p_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_AUDIO_DMAC0 R8A7790_CLK_AUDIO_DMAC1
+-				R8A7790_CLK_ADSP_MOD R8A7790_CLK_THERMAL
+-				R8A7790_CLK_PWM
+-			>;
+-			clock-output-names = "audmac0", "audmac1", "adsp_mod",
+-					     "thermal", "pwm";
+-		};
+-		mstp7_clks: mstp7_clks@e615014c {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+-			clocks = <&mp_clk>, <&hp_clk>, <&zs_clk>, <&zs_clk>, <&p_clk>,
+-				 <&p_clk>, <&zx_clk>, <&zx_clk>, <&zx_clk>, <&zx_clk>,
+-				 <&zx_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_EHCI R8A7790_CLK_HSUSB R8A7790_CLK_HSCIF1
+-				R8A7790_CLK_HSCIF0 R8A7790_CLK_SCIF1 R8A7790_CLK_SCIF0
+-				R8A7790_CLK_DU2 R8A7790_CLK_DU1 R8A7790_CLK_DU0
+-				R8A7790_CLK_LVDS1 R8A7790_CLK_LVDS0
+-			>;
+-			clock-output-names =
+-				"ehci", "hsusb", "hscif1", "hscif0", "scif1",
+-				"scif0", "du2", "du1", "du0", "lvds1", "lvds0";
+-		};
+-		mstp8_clks: mstp8_clks@e6150990 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
+-			clocks = <&hp_clk>, <&zg_clk>, <&zg_clk>, <&zg_clk>,
+-			         <&zg_clk>, <&hp_clk>, <&p_clk>, <&zs_clk>,
+-				 <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_MLB R8A7790_CLK_VIN3 R8A7790_CLK_VIN2
+-				R8A7790_CLK_VIN1 R8A7790_CLK_VIN0
+-				R8A7790_CLK_ETHERAVB R8A7790_CLK_ETHER
+-				R8A7790_CLK_SATA1 R8A7790_CLK_SATA0
+-			>;
+-			clock-output-names =
+-				"mlb", "vin3", "vin2", "vin1", "vin0",
+-				"etheravb", "ether", "sata1", "sata0";
+-		};
+-		mstp9_clks: mstp9_clks@e6150994 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
+-			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&p_clk>, <&p_clk>, <&cpg_clocks R8A7790_CLK_QSPI>, <&cp_clk>,
+-				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_GPIO5 R8A7790_CLK_GPIO4 R8A7790_CLK_GPIO3
+-				R8A7790_CLK_GPIO2 R8A7790_CLK_GPIO1 R8A7790_CLK_GPIO0
+-				R8A7790_CLK_RCAN1 R8A7790_CLK_RCAN0 R8A7790_CLK_QSPI_MOD R8A7790_CLK_IICDVFS
+-				R8A7790_CLK_I2C3 R8A7790_CLK_I2C2 R8A7790_CLK_I2C1 R8A7790_CLK_I2C0
+-			>;
+-			clock-output-names =
+-				"gpio5", "gpio4", "gpio3", "gpio2", "gpio1", "gpio0",
+-				"rcan1", "rcan0", "qspi_mod", "iic3",
+-				"i2c3", "i2c2", "i2c1", "i2c0";
+-		};
+-		mstp10_clks: mstp10_clks@e6150998 {
+-			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
+-			clocks = <&p_clk>,
+-				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SSI_ALL>, <&mstp10_clks R8A7790_CLK_SSI_ALL>,
+-				<&p_clk>,
+-				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7790_CLK_SCU_ALL>, <&mstp10_clks R8A7790_CLK_SCU_ALL>;
+-
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7790_CLK_SSI_ALL
+-				R8A7790_CLK_SSI9 R8A7790_CLK_SSI8 R8A7790_CLK_SSI7 R8A7790_CLK_SSI6 R8A7790_CLK_SSI5
+-				R8A7790_CLK_SSI4 R8A7790_CLK_SSI3 R8A7790_CLK_SSI2 R8A7790_CLK_SSI1 R8A7790_CLK_SSI0
+-				R8A7790_CLK_SCU_ALL
+-				R8A7790_CLK_SCU_DVC1 R8A7790_CLK_SCU_DVC0
+-				R8A7790_CLK_SCU_CTU1_MIX1 R8A7790_CLK_SCU_CTU0_MIX0
+-				R8A7790_CLK_SCU_SRC9 R8A7790_CLK_SCU_SRC8 R8A7790_CLK_SCU_SRC7 R8A7790_CLK_SCU_SRC6 R8A7790_CLK_SCU_SRC5
+-				R8A7790_CLK_SCU_SRC4 R8A7790_CLK_SCU_SRC3 R8A7790_CLK_SCU_SRC2 R8A7790_CLK_SCU_SRC1 R8A7790_CLK_SCU_SRC0
+-			>;
+-			clock-output-names =
+-				"ssi-all",
+-				"ssi9", "ssi8", "ssi7", "ssi6", "ssi5",
+-				"ssi4", "ssi3", "ssi2", "ssi1", "ssi0",
+-				"scu-all",
+-				"scu-dvc1", "scu-dvc0",
+-				"scu-ctu1-mix1", "scu-ctu0-mix0",
+-				"scu-src9", "scu-src8", "scu-src7", "scu-src6", "scu-src5",
+-				"scu-src4", "scu-src3", "scu-src2", "scu-src1", "scu-src0";
+-		};
+ 	};
+ 
+ 	prr: chipid@ff000044 {
+@@ -1500,7 +1136,7 @@
+ 		compatible = "renesas,qspi-r8a7790", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
+ 		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7790_CLK_QSPI_MOD>;
++		clocks = <&cpg CPG_MOD 917>;
+ 		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
+ 		       <&dmac1 0x17>, <&dmac1 0x18>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -1516,7 +1152,7 @@
+ 			     "renesas,rcar-gen2-msiof";
+ 		reg = <0 0xe6e20000 0 0x0064>;
+ 		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp0_clks R8A7790_CLK_MSIOF0>;
++		clocks = <&cpg CPG_MOD 0>;
+ 		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
+ 		       <&dmac1 0x51>, <&dmac1 0x52>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -1531,7 +1167,7 @@
+ 			     "renesas,rcar-gen2-msiof";
+ 		reg = <0 0xe6e10000 0 0x0064>;
+ 		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_MSIOF1>;
++		clocks = <&cpg CPG_MOD 208>;
+ 		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
+ 		       <&dmac1 0x55>, <&dmac1 0x56>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -1546,7 +1182,7 @@
+ 			     "renesas,rcar-gen2-msiof";
+ 		reg = <0 0xe6e00000 0 0x0064>;
+ 		interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_MSIOF2>;
++		clocks = <&cpg CPG_MOD 205>;
+ 		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
+ 		       <&dmac1 0x41>, <&dmac1 0x42>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -1561,7 +1197,7 @@
+ 			     "renesas,rcar-gen2-msiof";
+ 		reg = <0 0xe6c90000 0 0x0064>;
+ 		interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7790_CLK_MSIOF3>;
++		clocks = <&cpg CPG_MOD 215>;
+ 		dmas = <&dmac0 0x45>, <&dmac0 0x46>,
+ 		       <&dmac1 0x45>, <&dmac1 0x46>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -1575,7 +1211,7 @@
+ 		compatible = "renesas,xhci-r8a7790", "renesas,rcar-gen2-xhci";
+ 		reg = <0 0xee000000 0 0xc00>;
+ 		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_SSUSB>;
++		clocks = <&cpg CPG_MOD 328>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		phys = <&usb2 1>;
+ 		phy-names = "usb";
+@@ -1588,7 +1224,7 @@
+ 		reg = <0 0xee090000 0 0xc00>,
+ 		      <0 0xee080000 0 0x1100>;
+ 		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
++		clocks = <&cpg CPG_MOD 703>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 
+@@ -1623,7 +1259,7 @@
+ 		reg = <0 0xee0b0000 0 0xc00>,
+ 		      <0 0xee0a0000 0 0x1100>;
+ 		interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
++		clocks = <&cpg CPG_MOD 703>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 
+@@ -1641,7 +1277,7 @@
+ 	pci2: pci@ee0d0000 {
+ 		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
+ 		device_type = "pci";
+-		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
++		clocks = <&cpg CPG_MOD 703>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		reg = <0 0xee0d0000 0 0xc00>,
+ 		      <0 0xee0c0000 0 0x1100>;
+@@ -1693,7 +1329,7 @@
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
+ 		interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7790_CLK_PCIEC>, <&pcie_bus_clk>;
++		clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
+ 		clock-names = "pcie", "pcie_bus";
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		status = "disabled";
+@@ -1714,21 +1350,22 @@
+ 			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
+ 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+ 
+-		clocks = <&mstp10_clks R8A7790_CLK_SSI_ALL>,
+-			<&mstp10_clks R8A7790_CLK_SSI9>, <&mstp10_clks R8A7790_CLK_SSI8>,
+-			<&mstp10_clks R8A7790_CLK_SSI7>, <&mstp10_clks R8A7790_CLK_SSI6>,
+-			<&mstp10_clks R8A7790_CLK_SSI5>, <&mstp10_clks R8A7790_CLK_SSI4>,
+-			<&mstp10_clks R8A7790_CLK_SSI3>, <&mstp10_clks R8A7790_CLK_SSI2>,
+-			<&mstp10_clks R8A7790_CLK_SSI1>, <&mstp10_clks R8A7790_CLK_SSI0>,
+-			<&mstp10_clks R8A7790_CLK_SCU_SRC9>, <&mstp10_clks R8A7790_CLK_SCU_SRC8>,
+-			<&mstp10_clks R8A7790_CLK_SCU_SRC7>, <&mstp10_clks R8A7790_CLK_SCU_SRC6>,
+-			<&mstp10_clks R8A7790_CLK_SCU_SRC5>, <&mstp10_clks R8A7790_CLK_SCU_SRC4>,
+-			<&mstp10_clks R8A7790_CLK_SCU_SRC3>, <&mstp10_clks R8A7790_CLK_SCU_SRC2>,
+-			<&mstp10_clks R8A7790_CLK_SCU_SRC1>, <&mstp10_clks R8A7790_CLK_SCU_SRC0>,
+-			<&mstp10_clks R8A7790_CLK_SCU_CTU0_MIX0>, <&mstp10_clks R8A7790_CLK_SCU_CTU1_MIX1>,
+-			<&mstp10_clks R8A7790_CLK_SCU_CTU0_MIX0>, <&mstp10_clks R8A7790_CLK_SCU_CTU1_MIX1>,
+-			<&mstp10_clks R8A7790_CLK_SCU_DVC0>, <&mstp10_clks R8A7790_CLK_SCU_DVC1>,
+-			<&audio_clk_a>, <&audio_clk_b>, <&audio_clk_c>, <&m2_clk>;
++		clocks = <&cpg CPG_MOD 1005>,
++			 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++			 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++			 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++			 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++			 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++			 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++			 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++			 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++			 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++			 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++			 <&cpg CPG_MOD 1021>, <&cpg CPG_MOD 1020>,
++			 <&cpg CPG_MOD 1021>, <&cpg CPG_MOD 1020>,
++			 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++			 <&audio_clk_a>, <&audio_clk_b>, <&audio_clk_c>,
++			 <&cpg CPG_CORE R8A7790_CLK_M2>;
+ 		clock-names = "ssi-all",
+ 				"ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
+ 				"ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0",
 -- 
-git-series 0.9.1
+2.7.4
