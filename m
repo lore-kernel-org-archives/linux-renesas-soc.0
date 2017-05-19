@@ -1,288 +1,310 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52008 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753974AbdESRhJ (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51300 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755168AbdESIaT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 13:37:09 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Fri, 19 May 2017 04:30:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-In-Reply-To: <87fug3ot48.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dBlpl-00050B-U1@debutante>
-Date: Fri, 19 May 2017 18:37:01 +0100
-Subject: Applied "ASoC: rsnd: add HDMI output support" to the asoc tree
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] clk: renesas: Rework Kconfig and Makefile logic
+Date: Fri, 19 May 2017 10:30:07 +0200
+Message-Id: <1495182607-20856-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The goals are to:
+  - Allow precise control over and automatic selection of which
+    (sub)drivers are used for which SoC (which may change in the
+    future),
+  - Allow adding support for new SoCs easily,
+  - Allow compile-testing of all (sub)drivers,
+  - Keep driver selection logic in the subsystem-specific Kconfig,
+    independent from the architecture-specific Kconfig (i.e. no "select"
+    from arch/arm64/Kconfig.platforms), to avoid dependencies.
 
-   ASoC: rsnd: add HDMI output support
+This is implemented by:
+  - Introducing Kconfig symbols for all drivers and sub-drivers,
+  - Introducing the Kconfig symbol CLK_RENESAS, which is enabled
+    automatically when building for a Renesas ARM platform, and which
+    enables all required drivers without interaction of the user, based
+    on SoC-specific ARCH_* symbols,
+  - Allowing the user to enable any Kconfig symbol manually if
+    COMPILE_TEST is enabled,
+  - Using the new Kconfig symbols instead of the ARCH_* symbols to
+    control compilation in the Makefile,
+  - Always entering drivers/clk/renesas/ during the build.
 
-has been applied to the asoc tree at
+Note that currently not all (sub)drivers are enabled for
+compile-testing, as they depend on independent fixes in other
+subsystems.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 7fa72cca39a042228965a578b9249216082591e0 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 18 May 2017 01:28:22 +0000
-Subject: [PATCH] ASoC: rsnd: add HDMI output support
-
-Renesas R-Car Gen3 can output HDMI sound if SSIU/SSI are connected to
-R-Car built-in HDMI device (R-Car Gen3 built-in HDMI device will be
-controlled by DRM/KMS driver).
-If SSIx was connected to HDMI0/1 on DT, SSI driver will detect it
-automatically by this patch.
-Note is that now Renesas R-Car sound driver is assuming that it is
-using OF-graph base simple card for HDMI sound.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- sound/soc/sh/Kconfig     |  2 +-
- sound/soc/sh/rcar/core.c |  7 ++++--
- sound/soc/sh/rcar/gen.c  |  2 ++
- sound/soc/sh/rcar/rsnd.h |  9 ++++++++
- sound/soc/sh/rcar/ssi.c  | 58 ++++++++++++++++++++++++++++++++++++++++++++++++
- sound/soc/sh/rcar/ssiu.c | 37 ++++++++++++++++++++++++++++++
- 6 files changed, 112 insertions(+), 3 deletions(-)
+To be queued in clk-renesas-for-v4.13.
 
-diff --git a/sound/soc/sh/Kconfig b/sound/soc/sh/Kconfig
-index 147ebecfed94..1aa5cd77ca24 100644
---- a/sound/soc/sh/Kconfig
-+++ b/sound/soc/sh/Kconfig
-@@ -38,7 +38,7 @@ config SND_SOC_RCAR
- 	tristate "R-Car series SRU/SCU/SSIU/SSI support"
- 	depends on COMMON_CLK
- 	depends on OF || COMPILE_TEST
--	select SND_SIMPLE_CARD
-+	select SND_SIMPLE_CARD_UTILS
- 	select REGMAP_MMIO
- 	help
- 	  This option enables R-Car SRU/SCU/SSIU/SSI sound support
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 41b2e782b0bf..080431543141 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -909,8 +909,11 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
- 	 */
- 	dai_i = 0;
- 	if (is_graph) {
--		for_each_endpoint_of_node(dai_node, dai_np)
--			__rsnd_dai_probe(priv, dai_np, dai_i++, is_graph);
-+		for_each_endpoint_of_node(dai_node, dai_np) {
-+			__rsnd_dai_probe(priv, dai_np, dai_i, is_graph);
-+			rsnd_ssi_parse_hdmi_connection(priv, dai_np, dai_i);
-+			dai_i++;
-+		}
- 	} else {
- 		for_each_child_of_node(dai_node, dai_np)
- 			__rsnd_dai_probe(priv, dai_np, dai_i++, is_graph);
-diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
-index 63b6d3c28021..99f93a17511e 100644
---- a/sound/soc/sh/rcar/gen.c
-+++ b/sound/soc/sh/rcar/gen.c
-@@ -219,6 +219,8 @@ static int rsnd_gen2_probe(struct rsnd_priv *priv)
- 		RSND_GEN_S_REG(SSI_SYS_STATUS5,	0x884),
- 		RSND_GEN_S_REG(SSI_SYS_STATUS6,	0x888),
- 		RSND_GEN_S_REG(SSI_SYS_STATUS7,	0x88c),
-+		RSND_GEN_S_REG(HDMI0_SEL,	0x9e0),
-+		RSND_GEN_S_REG(HDMI1_SEL,	0x9e4),
+v2:
+  - Add Acked-by,
+  - Remove ability to do compile-testing from all drivers that need
+    pending fixes:
+      - dummy of_clk_get_from_provider() for CONFIG_OF=n,
+      - dummy of_device_compatible_match() for CONFIG_OF=n,
+      - dummy rcar_rst_read_mode_pins() if rcar-rst is not built,
+      - new helper of_node_get_match_data().
+    These will be re-enabled for compile-testing later.
+
+This rework was sparked by a discussion with Olof about the Renesas
+clock driver dependencies.
+
+Before anyone responds "But the CLK_R8A779[0-4] symbols can be removed,
+just select CLK_RCAR_GEN2 directly!": the latter will go away, as the
+shared R-Car Gen2 clock driver (which depends on describing most clocks
+in DT, which is error prone, inflexible, and which prevents implementing
+module reset support) will be replaced by SoC-specific drivers using the
+CPG/MSSR driver core, as is already done on R-Car Gen3 and on RZ/G.
+Compatibility with old DTBs will be preserved through a new Kconfig
+option.
+---
+ drivers/clk/Makefile                   |   2 +-
+ drivers/clk/renesas/Kconfig            | 125 +++++++++++++++++++++++++++++----
+ drivers/clk/renesas/Makefile           |  37 +++++-----
+ drivers/clk/renesas/renesas-cpg-mssr.c |   8 +--
+ 4 files changed, 135 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index c19983afcb81c9d1..8ea0c55645b0db95 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -75,7 +75,7 @@ obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+-obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
++obj-y					+= renesas/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 2586dfa0026bb015..9c8b44db39f14326 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -1,20 +1,115 @@
++config CLK_RENESAS
++	bool "Renesas SoC clock support" if COMPILE_TEST && !ARCH_RENESAS
++	default y if ARCH_RENESAS
++	select CLK_EMEV2 if ARCH_EMEV2
++	select CLK_RZA1 if ARCH_R7S72100
++	select CLK_R8A73A4 if ARCH_R8A73A4
++	select CLK_R8A7740 if ARCH_R8A7740
++	select CLK_R8A7743 if ARCH_R8A7743
++	select CLK_R8A7745 if ARCH_R8A7745
++	select CLK_R8A7778 if ARCH_R8A7778
++	select CLK_R8A7779 if ARCH_R8A7779
++	select CLK_R8A7790 if ARCH_R8A7790
++	select CLK_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
++	select CLK_R8A7792 if ARCH_R8A7792
++	select CLK_R8A7794 if ARCH_R8A7794
++	select CLK_R8A7795 if ARCH_R8A7795
++	select CLK_R8A7796 if ARCH_R8A7796
++	select CLK_SH73A0 if ARCH_SH73A0
++
++if CLK_RENESAS
++
++# SoC
++config CLK_EMEV2
++	bool "Emma Mobile EV2 clock support" if COMPILE_TEST
++
++config CLK_RZA1
++	bool
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A73A4
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7740
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7743
++	bool
++	select CLK_RCAR_GEN2_CPG
++
++config CLK_R8A7745
++	bool
++	select CLK_RCAR_GEN2_CPG
++
++config CLK_R8A7778
++	bool
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A7779
++	bool
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A7790
++	bool
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7791
++	bool
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7792
++	bool
++	select CLK_RCAR_GEN2
++
++config CLK_R8A7794
++	bool
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7795
++	bool
++	select CLK_RCAR_GEN3_CPG
++
++config CLK_R8A7796
++	bool
++	select CLK_RCAR_GEN3_CPG
++
++config CLK_SH73A0
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++
++# Family
++config CLK_RCAR_GEN2
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_RCAR_GEN2_CPG
++	bool
++	select CLK_RENESAS_CPG_MSSR
++
++config CLK_RCAR_GEN3_CPG
++	bool
++	select CLK_RENESAS_CPG_MSSR
++
++
++# Generic
+ config CLK_RENESAS_CPG_MSSR
+ 	bool
+-	default y if ARCH_R8A7743
+-	default y if ARCH_R8A7745
+-	default y if ARCH_R8A7795
+-	default y if ARCH_R8A7796
++	select CLK_RENESAS_DIV6
  
- 		/* FIXME: it needs SSI_MODE2/3 in the future */
- 		RSND_GEN_M_REG(SSI_BUSIF_MODE,	0x0,	0x80),
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 4d8e0584b644..037e33ffa69d 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -170,6 +170,8 @@ enum rsnd_reg {
- 	RSND_REG_SSI_SYS_STATUS5,
- 	RSND_REG_SSI_SYS_STATUS6,
- 	RSND_REG_SSI_SYS_STATUS7,
-+	RSND_REG_HDMI0_SEL,
-+	RSND_REG_HDMI1_SEL,
+ config CLK_RENESAS_CPG_MSTP
+ 	bool
+-	default y if ARCH_R7S72100
+-	default y if ARCH_R8A73A4
+-	default y if ARCH_R8A7740
+-	default y if ARCH_R8A7778
+-	default y if ARCH_R8A7779
+-	default y if ARCH_R8A7790
+-	default y if ARCH_R8A7791
+-	default y if ARCH_R8A7792
+-	default y if ARCH_R8A7793
+-	default y if ARCH_R8A7794
+-	default y if ARCH_SH73A0
++
++config CLK_RENESAS_DIV6
++	bool "DIV6 clock support" if COMPILE_TEST
++
++endif # CLK_RENESAS
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 5b8fccf574787632..aa24c2f5078ca333 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -1,19 +1,22 @@
+-obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7743)		+= r8a7743-cpg-mssr.o rcar-gen2-cpg.o
+-obj-$(CONFIG_ARCH_R8A7745)		+= r8a7745-cpg-mssr.o rcar-gen2-cpg.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
+-obj-$(CONFIG_ARCH_R8A7796)		+= r8a7796-cpg-mssr.o rcar-gen3-cpg.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
++# SoC
++obj-$(CONFIG_CLK_EMEV2)			+= clk-emev2.o
++obj-$(CONFIG_CLK_RZA1)			+= clk-rz.o
++obj-$(CONFIG_CLK_R8A73A4)		+= clk-r8a73a4.o
++obj-$(CONFIG_CLK_R8A7740)		+= clk-r8a7740.o
++obj-$(CONFIG_CLK_R8A7743)		+= r8a7743-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7745)		+= r8a7745-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7778)		+= clk-r8a7778.o
++obj-$(CONFIG_CLK_R8A7779)		+= clk-r8a7779.o
++obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
++obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
  
- 	/* SSI */
- 	RSND_REG_SSICR,
-@@ -646,6 +648,13 @@ int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod);
- int rsnd_ssi_use_busif(struct rsnd_dai_stream *io);
- u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io);
+-obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
++# Family
++obj-$(CONFIG_CLK_RCAR_GEN2)		+= clk-rcar-gen2.o
++obj-$(CONFIG_CLK_RCAR_GEN2_CPG)		+= rcar-gen2-cpg.o
++obj-$(CONFIG_CLK_RCAR_GEN3_CPG)		+= rcar-gen3-cpg.o
++
++# Generic
++obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o
+ obj-$(CONFIG_CLK_RENESAS_CPG_MSTP)	+= clk-mstp.o
++obj-$(CONFIG_CLK_RENESAS_DIV6)		+= clk-div6.o
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 51d4af0a53ec2d38..9ebe0bec42a8dbfc 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -627,25 +627,25 @@ static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
  
-+#define RSND_SSI_HDMI_PORT0	0xf0
-+#define RSND_SSI_HDMI_PORT1	0xf1
-+int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io);
-+void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
-+				    struct device_node *endpoint,
-+				    int dai_i);
-+
- #define rsnd_ssi_is_pin_sharing(io)	\
- 	__rsnd_ssi_is_pin_sharing(rsnd_io_to_mod_ssi(io))
- int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 135c5669f796..d0602c189736 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -11,6 +11,7 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
-+#include <sound/simple_card_utils.h>
- #include <linux/delay.h>
- #include "rsnd.h"
- #define RSND_SSI_NAME_SIZE 16
-@@ -81,6 +82,8 @@ struct rsnd_ssi {
- /* flags */
- #define RSND_SSI_CLK_PIN_SHARE		(1 << 0)
- #define RSND_SSI_NO_BUSIF		(1 << 1) /* SSI+DMA without BUSIF */
-+#define RSND_SSI_HDMI0			(1 << 2) /* for HDMI0 */
-+#define RSND_SSI_HDMI1			(1 << 3) /* for HDMI1 */
  
- #define for_each_rsnd_ssi(pos, priv, i)					\
- 	for (i = 0;							\
-@@ -99,6 +102,20 @@ struct rsnd_ssi {
- #define rsnd_ssi_is_run_mods(mod, io) \
- 	(rsnd_ssi_run_mods(io) & (1 << rsnd_mod_id(mod)))
- 
-+int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io)
-+{
-+	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
-+	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
-+
-+	if (rsnd_ssi_mode_flags(ssi) & RSND_SSI_HDMI0)
-+		return RSND_SSI_HDMI_PORT0;
-+
-+	if (rsnd_ssi_mode_flags(ssi) & RSND_SSI_HDMI1)
-+		return RSND_SSI_HDMI_PORT1;
-+
-+	return 0;
-+}
-+
- int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
- {
- 	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
-@@ -835,6 +852,47 @@ void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
- 	of_node_put(node);
- }
- 
-+static void __rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
-+					     struct rsnd_dai_stream *io,
-+					     struct device_node *remote_ep)
-+{
-+	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
-+	struct rsnd_ssi *ssi;
-+
-+	if (!mod)
-+		return;
-+
-+	ssi  = rsnd_mod_to_ssi(mod);
-+
-+	if (strstr(remote_ep->full_name, "hdmi0")) {
-+		ssi->flags |= RSND_SSI_HDMI0;
-+		dev_dbg(dev, "%s[%d] connected to HDMI0\n",
-+			 rsnd_mod_name(mod), rsnd_mod_id(mod));
-+	}
-+
-+	if (strstr(remote_ep->full_name, "hdmi1")) {
-+		ssi->flags |= RSND_SSI_HDMI1;
-+		dev_dbg(dev, "%s[%d] connected to HDMI1\n",
-+			rsnd_mod_name(mod), rsnd_mod_id(mod));
-+	}
-+}
-+
-+void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
-+				    struct device_node *endpoint,
-+				    int dai_i)
-+{
-+	struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
-+	struct device_node *remote_ep;
-+
-+	remote_ep = of_graph_get_remote_endpoint(endpoint);
-+	if (!remote_ep)
-+		return;
-+
-+	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->playback, remote_ep);
-+	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->capture,  remote_ep);
-+}
-+
- struct rsnd_mod *rsnd_ssi_mod_get(struct rsnd_priv *priv, int id)
- {
- 	if (WARN_ON(id < 0 || id >= rsnd_ssi_nr(priv)))
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index 14fafdaf1395..13d648ef1ed6 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -123,6 +123,7 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 			       struct rsnd_dai_stream *io,
- 			       struct rsnd_priv *priv)
- {
-+	int hdmi = rsnd_ssi_hdmi_port(io);
- 	int ret;
- 
- 	ret = rsnd_ssiu_init(mod, io, priv);
-@@ -149,6 +150,42 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 			       rsnd_get_dalign(mod, io));
- 	}
- 
-+	if (hdmi) {
-+		enum rsnd_mod_type rsnd_ssi_array[] = {
-+			RSND_MOD_SSIM1,
-+			RSND_MOD_SSIM2,
-+			RSND_MOD_SSIM3,
-+		};
-+		struct rsnd_mod *ssi_mod = rsnd_io_to_mod_ssi(io);
-+		struct rsnd_mod *pos;
-+		u32 val;
-+		int i, shift;
-+
-+		i = rsnd_mod_id(ssi_mod);
-+
-+		/* output all same SSI as default */
-+		val =	i << 16 |
-+			i << 20 |
-+			i << 24 |
-+			i << 28 |
-+			i;
-+
-+		for_each_rsnd_mod_array(i, pos, io, rsnd_ssi_array) {
-+			shift	= (i * 4) + 16;
-+			val	= (val & ~(0xF << shift)) |
-+				rsnd_mod_id(pos) << shift;
-+		}
-+
-+		switch (hdmi) {
-+		case RSND_SSI_HDMI_PORT0:
-+			rsnd_mod_write(mod, HDMI0_SEL, val);
-+			break;
-+		case RSND_SSI_HDMI_PORT1:
-+			rsnd_mod_write(mod, HDMI1_SEL, val);
-+			break;
-+		}
-+	}
-+
- 	return 0;
- }
- 
+ static const struct of_device_id cpg_mssr_match[] = {
+-#ifdef CONFIG_ARCH_R8A7743
++#ifdef CONFIG_CLK_R8A7743
+ 	{
+ 		.compatible = "renesas,r8a7743-cpg-mssr",
+ 		.data = &r8a7743_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7745
++#ifdef CONFIG_CLK_R8A7745
+ 	{
+ 		.compatible = "renesas,r8a7745-cpg-mssr",
+ 		.data = &r8a7745_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7795
++#ifdef CONFIG_CLK_R8A7795
+ 	{
+ 		.compatible = "renesas,r8a7795-cpg-mssr",
+ 		.data = &r8a7795_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7796
++#ifdef CONFIG_CLK_R8A7796
+ 	{
+ 		.compatible = "renesas,r8a7796-cpg-mssr",
+ 		.data = &r8a7796_cpg_mssr_info,
 -- 
-2.11.0
+2.7.4
