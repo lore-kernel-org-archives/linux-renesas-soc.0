@@ -1,75 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751428AbdESQQJ (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:35904 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752010AbdESJOX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 May 2017 12:16:09 -0400
-From: Kieran Bingham <kbingham@kernel.org>
-To: sakari.ailus@iki.fi, laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        niklas.soderlund@ragnatech.se,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 1/2] device property: Add fwnode_graph_get_port_parent
-Date: Fri, 19 May 2017 17:16:02 +0100
-Message-Id: <6d3ca9a2f4af281191b6672489f6d2a6d036d372.1495210364.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.9f22ad082e363959e4679246793bc4698479a44e.1495210364.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.9f22ad082e363959e4679246793bc4698479a44e.1495210364.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.9f22ad082e363959e4679246793bc4698479a44e.1495210364.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.9f22ad082e363959e4679246793bc4698479a44e.1495210364.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 19 May 2017 05:14:23 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 19 May 2017 11:14:15 +0200
+Message-Id: <1495185256-26674-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-Provide a helper to obtain the parent device fwnode without first
-parsing the remote-endpoint as per fwnode_graph_get_remote_port_parent.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
- - Rebase on top of Sakari's acpi-graph-clean branch and simplify
+ arch/arm/boot/dts/r8a7793.dtsi | 125 ++++++++++++++++++++---------------------
+ 1 file changed, 60 insertions(+), 65 deletions(-)
 
- drivers/base/property.c  | 13 +++++++++++++
- include/linux/property.h |  2 ++
- 2 files changed, 15 insertions(+)
-
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index b311a6fa7d0c..310c53b6b7fc 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -1169,6 +1169,19 @@ fwnode_graph_get_next_endpoint(struct fwnode_handle *fwnode,
- EXPORT_SYMBOL_GPL(fwnode_graph_get_next_endpoint);
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index da6d877c2d93f569..49107c88a6dda75e 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -954,71 +954,66 @@
+ 		status = "disabled";
+ 	};
  
- /**
-+ * fwnode_graph_get_port_parent - Return the device fwnode of a port endpoint
-+ * @endpoint: Endpoint firmware node of the port
-+ *
-+ * Returns firmware node of the device the @endpoint belongs to.
-+ */
-+struct fwnode_handle *
-+fwnode_graph_get_port_parent(struct fwnode_handle *endpoint)
-+{
-+	return fwnode_call_ptr_op(endpoint, graph_get_port_parent);
-+}
-+EXPORT_SYMBOL_GPL(fwnode_graph_get_port_parent);
+-	clocks {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		/* External root clock */
+-		extal_clk: extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/*
+-		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
+-		 * default. Boards that provide audio clocks should override them.
+-		 */
+-		audio_clk_a: audio_clk_a {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_b: audio_clk_b {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_c: audio_clk_c {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External USB clock - can be overridden by the board */
+-		usb_extal_clk: usb_extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
+-		};
+-
+-		/* External CAN clock */
+-		can_clk: can {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External SCIF clock */
+-		scif_clk: scif {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* Special CPG clocks */
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a7793-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&usb_extal_clk>;
+-			clock-names = "extal", "usb_extal";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-		};
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
 +
-+/**
-  * fwnode_graph_get_remote_port_parent - Return fwnode of a remote device
-  * @fwnode: Endpoint firmware node pointing to the remote endpoint
-  *
-diff --git a/include/linux/property.h b/include/linux/property.h
-index b9f4838d9882..af95d5d84192 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -275,6 +275,8 @@ void *device_get_mac_address(struct device *dev, char *addr, int alen);
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* Special CPG clocks */
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7793-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&usb_extal_clk>;
++		clock-names = "extal", "usb_extal";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
+ 	};
  
- struct fwnode_handle *fwnode_graph_get_next_endpoint(
- 	struct fwnode_handle *fwnode, struct fwnode_handle *prev);
-+struct fwnode_handle *fwnode_graph_get_port_parent(
-+	struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_port_parent(
- 	struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_port(
+ 	rst: reset-controller@e6160000 {
 -- 
-git-series 0.9.1
+2.7.4
