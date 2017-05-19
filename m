@@ -1,62 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933876AbdEVN7o (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:33166 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753938AbdESJDf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 09:59:44 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 25/35] arm64: dts: r8a7796: add Sound MIX support
-Date: Mon, 22 May 2017 15:58:58 +0200
-Message-Id: <53394b600bda5d4793d37b0010410a379fd09905.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
+        Fri, 19 May 2017 05:03:35 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/5] ARM: dts: rcar-gen2: Convert to new CPG/MSSR bindings
+Date: Fri, 19 May 2017 11:03:15 +0200
+Message-Id: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+	Hi Simon, Magnus,
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
+clk-mstp, and clk-div6 drivers, which depend on most clocks being
+described in DT.  Especially the module (MSTP) clocks are cumbersome and
+error prone, due to 3 arrays (clocks, clock-indices, and
+clock-output-names) to be kept in sync. In addition, the clk-mstp driver
+cannot be extended easily to also support module resets, which are
+provided by the same hardware module.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 7b74da1d1568..8651fc93304d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1197,6 +1197,7 @@
- 				 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
- 				 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
- 				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
- 				 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
- 				 <&audio_clk_a>, <&audio_clk_b>,
- 				 <&audio_clk_c>,
-@@ -1208,6 +1209,7 @@
- 				      "src.9", "src.8", "src.7", "src.6",
- 				      "src.5", "src.4", "src.3", "src.2",
- 				      "src.1", "src.0",
-+				      "mix.1", "mix.0",
- 				      "ctu.1", "ctu.0",
- 				      "dvc.0", "dvc.1",
- 				      "clk_a", "clk_b", "clk_c", "clk_i";
-@@ -1225,6 +1227,11 @@
- 				};
- 			};
- 
-+			rcar_sound,mix {
-+				mix0: mix-0 { };
-+				mix1: mix-1 { };
-+			};
-+
- 			rcar_sound,ctu {
- 				ctu00: ctu-0 { };
- 				ctu01: ctu-1 { };
+Hence when developing support for R-Car Gen3 SoCs, another approach was
+chosen, which led to the CPG/MSSR driver core, and SoC-specific
+subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
+
+This series complements the series "[PATCH v2 00/10] clk: renesas:
+rcar-gen2: Add new CPG/MSSR drivers", and converts the various R-Car
+Gen2 DTSes to migrate to the new CPG/MSSR drivers.
+
+Note that module reset descriptions will be added later.
+
+Dependencies:
+  - This has a hard dependency on "[PATCH v2 00/10] clk: renesas:
+    rcar-gen2: Add new CPG/MSSR drivers", which is planned to be queued
+    for v4.13.
+    Hence this series must _not_ be applied before v4.13-rc1!
+  - To avoid a small but harmless regression (Ethernet PHY falling back
+    to polling instead of using its IRQ), "of_mdio: Fix broken PHY IRQ
+    in case of probe deferral" should be applied first.
+
+For testing, this patch series, incl. all dependencies, are available in
+the topic/rcar2-cpg-mssr-v2 branch of my renesas-drivers git repository
+at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
+r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
+been compared before and after the conversion.
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  ARM: dts: r8a7790: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7791: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7792: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7793: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7794: Convert to new CPG/MSSR bindings
+
+ arch/arm/boot/dts/r8a7790-lager.dts   |   7 +-
+ arch/arm/boot/dts/r8a7790.dtsi        | 557 ++++++----------------------------
+ arch/arm/boot/dts/r8a7791-koelsch.dts |   4 +-
+ arch/arm/boot/dts/r8a7791-porter.dts  |   4 +-
+ arch/arm/boot/dts/r8a7791.dtsi        | 557 +++++++---------------------------
+ arch/arm/boot/dts/r8a7792-blanche.dts |   3 +-
+ arch/arm/boot/dts/r8a7792-wheat.dts   |   3 +-
+ arch/arm/boot/dts/r8a7792.dtsi        | 333 ++++----------------
+ arch/arm/boot/dts/r8a7793-gose.dts    |   4 +-
+ arch/arm/boot/dts/r8a7793.dtsi        | 459 +++++-----------------------
+ arch/arm/boot/dts/r8a7794-alt.dts     |   3 +-
+ arch/arm/boot/dts/r8a7794-silk.dts    |   3 +-
+ arch/arm/boot/dts/r8a7794.dtsi        | 528 +++++---------------------------
+ 13 files changed, 430 insertions(+), 2035 deletions(-)
+
 -- 
-2.1.4
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
