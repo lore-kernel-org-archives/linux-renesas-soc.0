@@ -1,42 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:50475 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbdE1Hwe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 28 May 2017 03:52:34 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: rcar: use correct length when unmapping DMA
-Date: Sun, 28 May 2017 09:52:17 +0200
-Message-Id: <20170528075217.1214-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+Cc: linux-media@vger.kernel.org, geert@linux-m68k.org,
+        magnus.damm@gmail.com, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        horms@verge.net.au, devicetree@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3 2/4] media: adv7180: add adv7180cp, adv7180st compatible strings
+Date: Fri, 19 May 2017 15:07:02 +0200
+Message-Id: <1495199224-16337-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Because we need to transfer some bytes with PIO, the msg length is not
-the length of the DMA buffer. Use the correct value which we used when
-doing the mapping.
+Used to differentiate between models with 3 and 6 inputs.
 
-Fixes: 73e8b0528346e8 ("i2c: rcar: add DMA support")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/i2c/busses/i2c-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/adv7180.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 214bf2835d1f95..8be3e6cb8fe686 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -319,7 +319,7 @@ static void rcar_i2c_dma_unmap(struct rcar_i2c_priv *priv)
- 	rcar_i2c_write(priv, ICFBSCR, TCYC06);
- 
- 	dma_unmap_single(chan->device->dev, sg_dma_address(&priv->sg),
--			 priv->msg->len, priv->dma_direction);
-+			 sg_dma_len(&priv->sg), priv->dma_direction);
- 
- 	priv->dma_direction = DMA_NONE;
- }
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index bdbbf8c..78de7dd 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -1452,6 +1452,8 @@ static SIMPLE_DEV_PM_OPS(adv7180_pm_ops, adv7180_suspend, adv7180_resume);
+ #ifdef CONFIG_OF
+ static const struct of_device_id adv7180_of_id[] = {
+ 	{ .compatible = "adi,adv7180", },
++	{ .compatible = "adi,adv7180cp", },
++	{ .compatible = "adi,adv7180st", },
+ 	{ .compatible = "adi,adv7182", },
+ 	{ .compatible = "adi,adv7280", },
+ 	{ .compatible = "adi,adv7280-m", },
 -- 
-2.11.0
+2.7.4
+
