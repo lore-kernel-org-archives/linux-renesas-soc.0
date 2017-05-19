@@ -1,110 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:53450 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751908AbdEOMoR (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:60140 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752765AbdESJOX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 May 2017 08:44:17 -0400
+        Fri, 19 May 2017 05:14:23 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/3] arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
-Date: Mon, 15 May 2017 14:44:10 +0200
-Message-Id: <1494852253-8572-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 19 May 2017 11:14:12 +0200
+Message-Id: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+	Hi Simon, Magnus,
 
-This patch series adds support for Renesas Salvator-X and H3ULCB
-development boards equipped with revision ES2.0 of the R-Car H3 SoC.
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-Our goal is to have a single kernel image supporting both ES1. and ES2.0
-revisions of the R-Car H3 SoC, and let r8a7795-salvator-x.dtb and
-r8a7795-h3ulcb.dtb represent the latest production hardware.
-As R-Car H3 ES1.x SoCs are pre-production revisions, the DTB files for
-these revisions are renamed to r8a7795-es1-salvator-x.dtb resp.
-r8a7795-es1-h3ulcb.dtb.
+Hence this patch series implements this for the various R-Car Gen2
+DTSes that still need this (r8a7792.dtsi is OK).
 
-While this will cause a slight inconvenience for developers using
-pre-production hardware, it will make it easier to deploy production
-hardware, and phase out support for pre-production hardware later.
-Note that unless you need access to new features not yet described in
-DT, you can keep on using the existing DTBs on pre-production hardware.
+As this depends on "[PATCH 0/5] ARM: dts: rcar-gen2: Convert to new
+CPG/MSSR bindings", it cannot be applied yet, but it's never too early
+to gather Acked-by's ;-)
 
-  - Patch 1 adds support for the R-Car H3 ES2.0 Soc, by providing 2
-    .dtsi files: r8a7795.dtsi (ES2.0), and r8a7795-es1.dtsi (ES1.x).
-  - Patch 2 adds support for Salvator-X with R-Car H3 ES2.0 by providing
-    2 .dts files: r8a7795-salvator-x.dts (ES2.0), and
-    r8a7795-es1-salvator-x.dts(ES1.x),
-  - Patch 3 adds support for ator-X with R-Car H3 ES2.0 by providing 2
-    .dts files: r8a7795-salvator-x.dts (ES2.0), and
-    r8a7795-es1-salvator-x.dts(ES1.x).
+Thanks!
 
-While patch 1 has no user-visible impact, patches 2 and 3 do.
+Geert Uytterhoeven (4):
+  ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
 
-Changes compared to v3:
-  - Remove "/remove/overrides", as r8a7795-es1.dtsi does additions only,
-  - Move node and property deletion guidelines above the scissors,
-  - Rebase on top of r8a7795 HDMI support (but most of that is "hidden"
-    thanks to git's smart copy from/to patch format),
-
-Changes compared to v2:
-  - Rebase on top of common Salvator-X board support extraction,
-  - Remove the "compatible" property from the DU node in r8a7795.dtsi,
-    in addition to the "vsps" property,
-  - Add support for ES2.0-based H3ULCB.
-
-For changes compared to v1 (which was not posted), please refer to the
-individual patches.
-
-Dependencies:
-  - This patch series is against renesas-devel-20170515-v4.12-rc1,
-  - Thanks to git's smart copy from/to patch format, it should be
-    applicable with and without "[PATCH 0/2] arm64: dts: salvator-x: Move
-    HDMI0 to common Salvator-X board support".
-
-This series is available in the topic/r8a7795es2-dt-v4 branch of my
-renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-An integration branch (incl. all dependencies) for testing is provided
-as topic/r8a7795es2-integration.  I plan to update this branch when any
-of the dependencies are updated.
-
-This has been tested on Salvator-X (H3 ES1.0 and ES2.0), and H3ULCB with
-H3 ES1.1.
-
-This has not been tested on H3ULCB with H3 ES2.0 due to lack of
-hardware, so perhaps you want to defer patch 3. However, adding ES2.0
-support to both boards at the same time has its advantages (e.g. to answer
-the question "in which kernel version do I need a DTB with 'es1' in its
-name?").
-
-Thanks for applying (at least) the first two patches!
-
-Geert Uytterhoeven (3):
-  arm64: dts: r8a7795: Add support for R-Car H3 ES2.0
-  arm64: dts: r8a7795: salvator-x: Add support for R-Car H3 ES2.0
-  arm64: dts: r8a7795: h3ulcb: Add support for R-Car H3 ES2.0
-
- arch/arm64/boot/dts/renesas/Makefile               |  1 +
- .../{r8a7795-h3ulcb.dts => r8a7795-es1-h3ulcb.dts} |  4 +-
- ...5-salvator-x.dts => r8a7795-es1-salvator-x.dts} |  4 +-
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi       | 84 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 71 +-----------------
- 7 files changed, 92 insertions(+), 76 deletions(-)
- copy arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb.dts => r8a7795-es1-h3ulcb.dts} (91%)
- copy arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => r8a7795-es1-salvator-x.dts} (94%)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+ arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7793.dtsi | 125 ++++++++++++++++++-------------------
+ arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++-------------------
+ 4 files changed, 251 insertions(+), 272 deletions(-)
 
 -- 
 2.7.4
