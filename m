@@ -1,84 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47786 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933920AbdEVOAG (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36658 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755217AbdESNHT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 May 2017 10:00:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/35] arm64: dts: renesas: r8a7795-salvator-x: Enable HDMI outputs
-Date: Mon, 22 May 2017 15:59:05 +0200
-Message-Id: <428154de8d668bb9e8cb73793c51cea361fa4ad8.1495457812.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1495457812.git.horms+renesas@verge.net.au>
-References: <cover.1495457812.git.horms+renesas@verge.net.au>
+        Fri, 19 May 2017 09:07:19 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+Cc: linux-media@vger.kernel.org, geert@linux-m68k.org,
+        magnus.damm@gmail.com, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        horms@verge.net.au, devicetree@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3 4/4] ARM: dts: gose: add composite video input
+Date: Fri, 19 May 2017 15:07:04 +0200
+Message-Id: <1495199224-16337-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1495199224-16337-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Adds VIN, decoder and connector.
 
-Enable the HDMI encoders for the H3 Salvator-X board. The number of
-encoders varies between the H3 and M3-W SoCs, so they can't be enabled
-in the common salvator-x.dtsi file.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm/boot/dts/r8a7793-gose.dts | 59 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 2a5358b8f229..fcd9ca73f2c7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -58,6 +58,40 @@
- 	status = "okay";
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 30f0835..76e3aca 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -275,6 +275,16 @@
+ 		};
+ 	};
+ 
++	composite-in {
++		compatible = "composite-video-connector";
++
++		port {
++			composite_con_in: endpoint {
++				remote-endpoint = <&adv7180_in>;
++			};
++		};
++	};
++
+ 	x2_clk: x2-clock {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -411,6 +421,11 @@
+ 		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
+ 		function = "vin0";
+ 	};
++
++	vin1_pins: vin1 {
++		groups = "vin1_data8", "vin1_clk";
++		function = "vin1";
++	};
  };
  
-+&hdmi0 {
-+	status = "okay";
+ &ether {
+@@ -542,6 +557,32 @@
+ 		reg = <0x12>;
+ 	};
+ 
++	composite-in@20 {
++		compatible = "adi,adv7180cp";
++		reg = <0x20>;
++		remote = <&vin1>;
 +
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
++		port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7180_in: endpoint {
++					remote-endpoint = <&composite_con_in>;
++				};
++			};
++
++			port@3 {
++				reg = <3>;
++				adv7180_out: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin1ep>;
++				};
 +			};
 +		};
 +	};
-+};
 +
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
-+
-+&hdmi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi1_out: endpoint {
-+				remote-endpoint = <&hdmi1_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi1_con {
-+	remote-endpoint = <&rcar_dw_hdmi1_out>;
-+};
-+
- &ohci2 {
- 	status = "okay";
+ 	hdmi@39 {
+ 		compatible = "adi,adv7511w";
+ 		reg = <0x39>;
+@@ -670,3 +711,21 @@
+ 		};
+ 	};
  };
++
++/* composite video input */
++&vin1 {
++	pinctrl-0 = <&vin1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vin1ep: endpoint {
++			remote-endpoint = <&adv7180_out>;
++			bus-width = <8>;
++		};
++	};
++};
 -- 
-2.1.4
+2.7.4
