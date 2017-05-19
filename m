@@ -1,62 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40350 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754081AbdEIOMJ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46685 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755574AbdESNcH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 May 2017 10:12:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Cc: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
-Date: Tue,  9 May 2017 16:11:56 +0200
-Message-Id: <1494339117-31221-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
-References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+        Fri, 19 May 2017 09:32:07 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 6/6] mmc: sdhi: add CMD23 support to R-Car Gen2 & Gen3
+Date: Fri, 19 May 2017 15:31:55 +0200
+Message-Id: <20170519133155.22945-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
+References: <20170519133155.22945-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Such entries are treated as pin zero, which was
-registered before, thus leading to pinctrl registration failures:
-
-    sh-pfc pfc-sh7264: pin 0 already registered
-    sh-pfc pfc-sh7264: error during pin registration
-    sh-pfc pfc-sh7264: could not register: -22
-    sh-pfc: probe of pfc-sh7264 failed with error -22
-
-Remove GPIO_PH[0-7] from the enum to fix this.
-
-Fixes: 41797f75486d8ca3 ("sh: Add pinmux for sh7264")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Untested due to lack of hardware.
----
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7264.h b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-index 4d1ef6d74bd6050c..2ae0e938b657a109 100644
---- a/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-+++ b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-@@ -43,9 +43,7 @@ enum {
- 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
- 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
- 
--	/* Port H */
--	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
--	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
-+	/* Port H - Port H does not have a Data Register */
- 
- 	/* Port I - not on device */
- 
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index acc42e0a341129..7eab55adc5b288 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -54,7 +54,8 @@ static struct renesas_sdhi_scc rcar_gen2_scc_taps[] = {
+ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+ 			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
++	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
++			  MMC_CAP_CMD23,
+ 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.dma_rx_offset	= 0x2000,
+ 	.scc_offset	= 0x0300,
+@@ -73,7 +74,8 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+ 			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
++	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
++			  MMC_CAP_CMD23,
+ 	.bus_shift	= 2,
+ 	.scc_offset	= 0x1000,
+ 	.taps		= rcar_gen3_scc_taps,
 -- 
-2.7.4
+2.11.0
