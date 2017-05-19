@@ -1,156 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37772 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753964AbdEQJwq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 May 2017 05:52:46 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        alsa-devel@alsa-project.org
-In-Reply-To: <874lxbsyaz.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1dAvdG-0006ut-Tt@debutante>
-Date: Wed, 17 May 2017 10:52:38 +0100
-Subject: Applied "ASoC: rsnd: move "renesas,rsrc-card" to "simple-scu-audio-card" on Document" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 05/10] clk: renesas: Add r8a7793 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:46:00 +0200
+Message-Id: <1495183565-21679-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Add all R-Car M2-N Clock Pulse Generator Core Clock Outputs, as listed
+in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+Hardware User's Manual rev. 2.00.
 
-   ASoC: rsnd: move "renesas,rsrc-card" to "simple-scu-audio-card" on Document
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 0378bb966765e06fdb0e00d592a6fcfbb71afa3c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 26 Apr 2017 02:26:30 +0000
-Subject: [PATCH] ASoC: rsnd: move "renesas,rsrc-card" to
- "simple-scu-audio-card" on Document
-
-"renesas,rsrc-card" is exchanged to "simple-scu-card".
-Let's update Document
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- .../devicetree/bindings/sound/renesas,rsnd.txt     | 30 +++++++++++-----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7793-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index 15a7316e4c91..3332910a9a11 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -83,11 +83,11 @@ SRC can convert [xx]Hz to [yy]Hz. Then, it has below 2 modes
- **     Asynchronous mode
- ------------------
- 
--You need to use "renesas,rsrc-card" sound card for it.
-+You need to use "simple-scu-audio-card" sound card for it.
- example)
- 
- 	sound {
--		compatible = "renesas,rsrc-card";
-+		compatible = "simple-scu-audio-card";
- 		...
- 		/*
- 		 * SRC Asynchronous mode setting
-@@ -97,12 +97,12 @@ example)
- 		 * Inputed 48kHz data will be converted to
- 		 * system specified Hz
- 		 */
--		convert-rate = <48000>;
-+		simple-audio-card,convert-rate = <48000>;
- 		...
--		cpu {
-+		simple-audio-card,cpu {
- 			sound-dai = <&rcar_sound>;
- 		};
--		codec {
-+		simple-audio-card,codec {
- 			...
- 		};
- 	};
-@@ -141,23 +141,23 @@ For more detail information, see below
- 	${LINUX}/sound/soc/sh/rcar/ctu.c
- 	 - comment of header
- 
--You need to use "renesas,rsrc-card" sound card for it.
-+You need to use "simple-scu-audio-card" sound card for it.
- example)
- 
- 	sound {
--		compatible = "renesas,rsrc-card";
-+		compatible = "simple-scu-audio-card";
- 		...
- 		/*
- 		 * CTU setting
- 		 * All input data will be converted to 2ch
- 		 * as output data
- 		 */
--		convert-channels = <2>;
-+		simple-audio-card,convert-channels = <2>;
- 		...
--		cpu {
-+		simple-audio-card,cpu {
- 			sound-dai = <&rcar_sound>;
- 		};
--		codec {
-+		simple-audio-card,codec {
- 			...
- 		};
- 	};
-@@ -190,22 +190,22 @@ and these sounds will be merged by MIX.
- 	aplay -D plughw:0,0 xxxx.wav &
- 	aplay -D plughw:0,1 yyyy.wav
- 
--You need to use "renesas,rsrc-card" sound card for it.
-+You need to use "simple-scu-audio-card" sound card for it.
- Ex)
- 	[MEM] -> [SRC1] -> [CTU02] -+-> [MIX0] -> [DVC0] -> [SSI0]
- 	                            |
- 	[MEM] -> [SRC2] -> [CTU03] -+
- 
- 	sound {
--		compatible = "renesas,rsrc-card";
-+		compatible = "simple-scu-audio-card";
- 		...
--		cpu@0 {
-+		simple-audio-card,cpu@0 {
- 			sound-dai = <&rcar_sound 0>;
- 		};
--		cpu@1 {
-+		simple-audio-card,cpu@1 {
- 			sound-dai = <&rcar_sound 1>;
- 		};
--		codec {
-+		simple-audio-card,codec {
- 			...
- 		};
- 	};
+diff --git a/include/dt-bindings/clock/r8a7793-cpg-mssr.h b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..8809b0f62d615457
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7793 CPG Core Clocks */
++#define R8A7793_CLK_Z			0
++#define R8A7793_CLK_ZG			1
++#define R8A7793_CLK_ZTR			2
++#define R8A7793_CLK_ZTRD2		3
++#define R8A7793_CLK_ZT			4
++#define R8A7793_CLK_ZX			5
++#define R8A7793_CLK_ZS			6
++#define R8A7793_CLK_HP			7
++#define R8A7793_CLK_I			8
++#define R8A7793_CLK_B			9
++#define R8A7793_CLK_LB			10
++#define R8A7793_CLK_P			11
++#define R8A7793_CLK_CL			12
++#define R8A7793_CLK_M2			13
++#define R8A7793_CLK_ADSP		14
++#define R8A7793_CLK_ZB3			15
++#define R8A7793_CLK_ZB3D2		16
++#define R8A7793_CLK_DDR			17
++#define R8A7793_CLK_SDH			18
++#define R8A7793_CLK_SD0			19
++#define R8A7793_CLK_SD2			20
++#define R8A7793_CLK_SD3			21
++#define R8A7793_CLK_MMC0		22
++#define R8A7793_CLK_MP			23
++#define R8A7793_CLK_SSP			24
++#define R8A7793_CLK_SSPRS		25
++#define R8A7793_CLK_QSPI		26
++#define R8A7793_CLK_CP			27
++#define R8A7793_CLK_RCAN		28
++#define R8A7793_CLK_R			29
++#define R8A7793_CLK_OSC			30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__ */
 -- 
-2.11.0
+2.7.4
